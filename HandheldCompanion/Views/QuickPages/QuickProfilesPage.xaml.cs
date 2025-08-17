@@ -498,14 +498,14 @@ public partial class QuickProfilesPage : Page
                     int selectedIndex = 0;
 
                     // get self or main profile
-                    Profile mainProfile = ManagerFactory.profileManager.GetProfileForSubProfile(selectedProfile);
+                    Profile mainProfile = ManagerFactory.profileManager.GetParent(selectedProfile);
 
                     IEnumerable<Profile> profiles = ManagerFactory.profileManager.GetSubProfilesFromProfile(mainProfile, true);
                     foreach (Profile profile in profiles)
                     {
-                        cb_SubProfiles.Items.Add(profile);
+                        int idx = cb_SubProfiles.Items.Add(profile);
                         if (profile.Guid == selectedProfile.Guid)
-                            selectedIndex = cb_SubProfiles.Items.IndexOf(profile);
+                            selectedIndex = idx;
                     }
 
                     cb_SubProfiles.SelectedIndex = selectedIndex;
@@ -1038,7 +1038,7 @@ public partial class QuickProfilesPage : Page
 
         // pick the profile to select in the main combobox
         Profile target = selectedProfile.IsSubProfile
-            ? ManagerFactory.profileManager.GetProfileForSubProfile(selectedProfile)
+            ? ManagerFactory.profileManager.GetParent(selectedProfile)
             : selectedProfile;
 
         // find a matching instance in the ComboBox (in case instances differ)

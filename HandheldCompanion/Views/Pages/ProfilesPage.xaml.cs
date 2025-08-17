@@ -344,8 +344,13 @@ public partial class ProfilesPage : Page
                         exists = false;
                         break;
                     case ContentDialogResult.Secondary:
-                        profile.IsSubProfile = true;
-                        exists = false;
+                        {
+                            Profile mainProfile = ManagerFactory.profileManager.GetProfileFromPath(path, true, true);
+                            profile.IsSubProfile = true;
+                            profile.ParentGuid = mainProfile.Guid;
+
+                            exists = false;
+                        }
                         break;
                     default:
                         exists = true;
@@ -1179,6 +1184,7 @@ public partial class ProfilesPage : Page
         newSubProfile.Name = Properties.Resources.ProfilesPage_NewSubProfile;
         newSubProfile.Guid = Guid.NewGuid();
         newSubProfile.IsSubProfile = true;
+        newSubProfile.ParentGuid = selectedMainProfile.Guid;
 
         ManagerFactory.profileManager.UpdateOrCreateProfile(newSubProfile);
     }
@@ -1206,7 +1212,7 @@ public partial class ProfilesPage : Page
         switch (dialogTask.Result)
         {
             case ContentDialogResult.Primary:
-                ManagerFactory.profileManager.DeleteSubProfile(subProfile);
+                ManagerFactory.profileManager.DeleteProfile(subProfile);
                 break;
         }
     }

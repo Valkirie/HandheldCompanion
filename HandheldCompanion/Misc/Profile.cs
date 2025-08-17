@@ -70,16 +70,18 @@ public class ProcessWindowSettings
 [Serializable]
 public partial class Profile : ICloneable, IComparable
 {
-    [JsonIgnore] public const int SensivityArraySize = 49; // x + 1 (hidden)
+    [JsonIgnore]
+    public const int SensivityArraySize = 49; // x + 1 (hidden)
 
-    [JsonIgnore] private ProfileErrorCode _ErrorCode = ProfileErrorCode.None;
+    [JsonIgnore]
+    private ProfileErrorCode _ErrorCode = ProfileErrorCode.None;
     [JsonIgnore]
     public ProfileErrorCode ErrorCode
     {
         get
         {
             if (IsSubProfile)
-                return ManagerFactory.profileManager.GetProfileFromPath(Path, true, true).ErrorCode;
+                return ManagerFactory.profileManager.GetProfileFromGuid(ParentGuid, true, true).ErrorCode;
             else
                 return _ErrorCode;
         }
@@ -94,11 +96,15 @@ public partial class Profile : ICloneable, IComparable
     public string Name { get; set; } = string.Empty;
     public string Path { get; set; } = string.Empty;
     public string Arguments { get; set; } = string.Empty;
+    [JsonIgnore]
+    public string FileName { get; set; } = string.Empty;
 
     public bool IsSubProfile { get; set; }
     public bool IsFavoriteSubProfile { get; set; }
 
     public Guid Guid { get; set; } = Guid.NewGuid();
+    public Guid ParentGuid { get; set; } = Guid.Empty;
+
     public DateTime DateCreated { get; set; } = DateTime.MinValue;
     public DateTime DateModified { get; set; } = DateTime.MinValue;
     public DateTime LastUsed { get; set; } = DateTime.MinValue;
@@ -202,7 +208,7 @@ public partial class Profile : ICloneable, IComparable
         }
         else
         {
-            throw new Exception("Can't create a profile with no path");
+            // throw new Exception("Can't create a profile with no path");
         }
 
         // initialize layout
@@ -238,16 +244,15 @@ public partial class Profile : ICloneable, IComparable
 
     public string GetFileName()
     {
-        var name = Name;
+        string name = Name;
 
-        if (!Default)
-            name = System.IO.Path.GetFileNameWithoutExtension(Executable);
-
-        // sub profile files will be of form "executable - #guid"
         if (IsSubProfile)
-            name = $"{name} - {Guid}";
+        {
+            Profile mainProfile = ManagerFactory.profileManager.GetProfileFromGuid(ParentGuid, true);
+            name = $"{mainProfile.Name} - {name}";
+        }
 
-        return $"{name}.json";
+        return $"{FileUtils.MakeValidFileName(name)}.json";
     }
 
     public static string RemoveSpecialCharacters(string input)
@@ -271,7 +276,7 @@ public partial class Profile : ICloneable, IComparable
     public string GetOwnerName()
     {
         if (IsSubProfile)
-            return ManagerFactory.profileManager.GetProfileForSubProfile(this).Name;
+            return ManagerFactory.profileManager.GetParent(this).Name;
         else
             return string.Empty;
     }

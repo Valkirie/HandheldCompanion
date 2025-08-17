@@ -217,7 +217,7 @@ namespace HandheldCompanion.ViewModels
             if (processEx is null)
                 return;
 
-            switch(processEx.Filter)
+            switch (processEx.Filter)
             {
                 // prevent critical processes from being listed
                 case ProcessEx.ProcessFilter.Restricted:

@@ -39,7 +39,7 @@ namespace HandheldCompanion.Managers
         private static UpdateStatus updateStatus;
         private static readonly Dictionary<string, UpdateFile> updateFiles = new();
 
-        private static string updateUrl = "";
+        private static string updateUrl = string.Empty;
         private static readonly HttpClient httpClient;
         private static readonly string InstallPath;
 

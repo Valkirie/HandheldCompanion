@@ -256,11 +256,11 @@ namespace HandheldCompanion.ViewModels
 
                 // pick the profile to select in the main combobox
                 Profile target = Profile.IsSubProfile
-                    ? ManagerFactory.profileManager.GetProfileForSubProfile(Profile)
+                    ? ManagerFactory.profileManager.GetParent(Profile)
                     : Profile;
 
                 // find a matching instance in the ComboBox (in case instances differ)
-                var match = page.cB_Profiles.Items
+                Profile? match = page.cB_Profiles.Items
                     .OfType<Profile>()
                     .FirstOrDefault(p => p.Guid == target.Guid);
 

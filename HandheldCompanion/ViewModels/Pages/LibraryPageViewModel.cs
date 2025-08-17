@@ -11,7 +11,6 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
-using HandheldCompanion.Shared;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Pages;
 using iNKORE.UI.WPF.Modern.Controls;
@@ -232,14 +231,7 @@ namespace HandheldCompanion.ViewModels
                                 else
                                 {
                                     isCreation = true;
-                                    try
-                                    {
-                                        profile = new Profile(game.Executable);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        LogManager.LogError(ex.Message);
-                                    }
+                                    profile = new Profile(game.Executable);
                                 }
 
                                 if (profile is null)
@@ -251,6 +243,7 @@ namespace HandheldCompanion.ViewModels
                                 exe.IndexOf("crash", StringComparison.OrdinalIgnoreCase) < 0 &&
                                 exe.IndexOf("setup", StringComparison.OrdinalIgnoreCase) < 0 &&
                                 exe.IndexOf("error", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                exe.IndexOf("updater", StringComparison.OrdinalIgnoreCase) < 0 &&
                                 exe.IndexOf("installer", StringComparison.OrdinalIgnoreCase) < 0);
 
                                 if (string.IsNullOrEmpty(profile.Path) && Executables.Any())
@@ -263,7 +256,7 @@ namespace HandheldCompanion.ViewModels
                                 profile.Executables = Executables.ToList();
 
                                 ManagerFactory.profileManager.UpdateOrCreateProfile(profile, isCreation ? UpdateSource.Creation : UpdateSource.Background);
-                                ManagerFactory.libraryManager.RefreshProfileArts(profile);
+                                ManagerFactory.libraryManager.RefreshProfileArts(profile, isCreation ? UpdateSource.Creation : UpdateSource.LibraryUpdate);
                             }
                         }
                         break;

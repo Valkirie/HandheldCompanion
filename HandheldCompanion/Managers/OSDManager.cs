@@ -335,7 +335,7 @@ public static class OSDManager
                     {
                         var name = OverlayOrder[i];
                         var content = EntryContent(name, gpu);
-                        if (content == "") continue;
+                        if (content == string.Empty) continue;
                         Content.Add(content);
                     }
 

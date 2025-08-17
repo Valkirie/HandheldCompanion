@@ -596,7 +596,7 @@ namespace HandheldCompanion.Managers
             });
         }
 
-        public async void RefreshProfileArts(Profile profile)
+        public async void RefreshProfileArts(Profile profile, UpdateSource source = UpdateSource.LibraryUpdate)
         {
             // skip if profile is default
             if (profile.Default)

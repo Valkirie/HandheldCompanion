@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using System.Text.RegularExpressions;
 using System.Xml;
 using File = System.IO.File;
 
@@ -254,6 +255,14 @@ namespace HandheldCompanion.Utils
                 return true;
             }
             catch { return false; }
+        }
+
+        public static string MakeValidFileName(this string name)
+        {
+            string invalidChars = Regex.Escape(new string(System.IO.Path.GetInvalidFileNameChars()));
+            string invalidRegStr = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
+
+            return Regex.Replace(name, invalidRegStr, "_");
         }
     }
 }
