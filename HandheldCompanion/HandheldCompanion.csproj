@@ -3,47 +3,76 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFrameworks>net9.0-windows10.0.19041.0</TargetFrameworks>
-	<GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
-	<AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
-	<PlatformTarget>x64</PlatformTarget>
+    <GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
+    <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
+    <PlatformTarget>x64</PlatformTarget>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <StartupObject>HandheldCompanion.App</StartupObject>
     <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-    <Version>0.27.0.1</Version>
+    <Version>0.27.0.2</Version>
     <Platforms>x64</Platforms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-	  <NeutralResourcesLanguage>en-US</NeutralResourcesLanguage>
+    <NeutralResourcesLanguage>en-US</NeutralResourcesLanguage>
+    <!-- Ensure 32-bit isn't preferred anywhere -->
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-	<ApplicationManifest>DEBUG.manifest</ApplicationManifest>
+    <ApplicationManifest>DEBUG.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-	<ApplicationManifest>RELEASE.manifest</ApplicationManifest>
+    <ApplicationManifest>RELEASE.manifest</ApplicationManifest>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
   </PropertyGroup>
+
+  <!-- Clean Release settings + perf publish knobs -->
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
     <Optimize>true</Optimize>
+
+    <!-- Do not produce the .dev runtimeconfig in Release -->
+    <GenerateRuntimeConfigDevFile>false</GenerateRuntimeConfigDevFile>
+
+    <!-- ReadyToRun + Crossgen2 + Composite -->
     <PublishReadyToRun>true</PublishReadyToRun>
     <PublishReadyToRunUseCrossgen2>true</PublishReadyToRunUseCrossgen2>
+    <PublishReadyToRunComposite>true</PublishReadyToRunComposite>
+
+    <!-- PGO (you already had this) -->
     <EnableProfileGuidedOptimization>true</EnableProfileGuidedOptimization>
+
+    <!-- Single-file tuning: trade size for startup perf -->
     <PublishSingleFile>true</PublishSingleFile>
+    <EnableCompressionInSingleFile>false</EnableCompressionInSingleFile>
+    <IncludeAllContentForSelfExtract>false</IncludeAllContentForSelfExtract>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|x64'">
     <DebugType>full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|x64'">
     <DebugType>full</DebugType>
   </PropertyGroup>
+
+  <!-- Runtime JIT/PGO & GC tuning -->
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.Runtime.TieredCompilation" Value="true" />
+    <RuntimeHostConfigurationOption Include="System.Runtime.TieredPGO"          Value="true" />
+    <RuntimeHostConfigurationOption Include="System.Runtime.QuickJit"           Value="true" />
+    <RuntimeHostConfigurationOption Include="System.Runtime.QuickJitForLoops"   Value="true" />
+    <RuntimeHostConfigurationOption Include="System.GC.Server"                  Value="true" />
+    <RuntimeHostConfigurationOption Include="System.GC.Concurrent"              Value="true" />
+  </ItemGroup>
+  
   <ItemGroup>
     <Page Remove="Properties\DesignTimeResources.xaml" />
   </ItemGroup>
