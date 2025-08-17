@@ -405,7 +405,7 @@ public class ProfileManager : IManager
             if (profile.LastUsed != processEx.Process.StartTime || !string.Equals(profile.Path, processEx.Path, StringComparison.OrdinalIgnoreCase))
             {
                 profile.LastUsed = processEx.Process.StartTime;
-                // profile.Path = processEx.Path;
+                profile.Path = processEx.Path;
 
                 // update profile
                 UpdateOrCreateProfile(profile);
@@ -442,7 +442,7 @@ public class ProfileManager : IManager
                 if (profile.LastUsed != processEx.Process.StartTime || !string.Equals(profile.Path, processEx.Path, StringComparison.OrdinalIgnoreCase))
                 {
                     profile.LastUsed = processEx.Process.StartTime;
-                    // profile.Path = processEx.Path;
+                    profile.Path = processEx.Path;
 
                     // update profile
                     UpdateOrCreateProfile(profile);
