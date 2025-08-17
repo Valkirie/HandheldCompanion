@@ -1,6 +1,5 @@
-using System.Collections.Generic;
-using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Managers.Overlay.Widget;
+using System.Collections.Generic;
 
 namespace HandheldCompanion.Managers.Overlay;
 

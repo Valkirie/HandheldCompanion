@@ -1,6 +1,6 @@
 namespace HandheldCompanion.Managers.Overlay.Widget;
 
-public class RamWidget: IWidget
+public class RamWidget : IWidget
 {
     public void Build(OverlayEntry entry, short? level = null)
     {
@@ -8,10 +8,10 @@ public class RamWidget: IWidget
         switch (_level)
         {
             case WidgetLevel.FULL:
-                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetMemoryUsage(), PlatformManager.LibreHardwareMonitor.GetMemoryTotal(), "GB");
+                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardware.GetMemoryUsage(), PlatformManager.LibreHardware.GetMemoryTotal(), "GB");
                 break;
             case WidgetLevel.MINIMAL:
-                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetMemoryUsage(), "GB");
+                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardware.GetMemoryUsage(), "GB");
                 break;
         }
     }

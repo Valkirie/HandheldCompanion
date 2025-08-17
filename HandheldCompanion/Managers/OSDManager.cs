@@ -1,5 +1,4 @@
-﻿using HandheldCompanion.GraphicsProcessingUnit;
-using HandheldCompanion.Shared;
+﻿using HandheldCompanion.Shared;
 
 using RTSSSharedMemoryNET;
 
@@ -229,7 +228,7 @@ public static class OSDManager
         {
         }
 
-        Exit:
+    Exit:
         return string.Join("\n", Content);
     }
 

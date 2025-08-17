@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace HandheldCompanion.Managers.Overlay.Widget;
 
-public class TimeWidget: IWidget
+public class TimeWidget : IWidget
 {
     public void Build(OverlayEntry entry, short? level = null)
     {
