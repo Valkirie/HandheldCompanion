@@ -244,6 +244,7 @@ namespace HandheldCompanion.ViewModels
                                 exe.IndexOf("setup", StringComparison.OrdinalIgnoreCase) < 0 &&
                                 exe.IndexOf("error", StringComparison.OrdinalIgnoreCase) < 0 &&
                                 exe.IndexOf("updater", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                exe.IndexOf("uninst", StringComparison.OrdinalIgnoreCase) < 0 &&
                                 exe.IndexOf("installer", StringComparison.OrdinalIgnoreCase) < 0);
 
                                 if (string.IsNullOrEmpty(profile.Path) && Executables.Any())
