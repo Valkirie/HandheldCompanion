@@ -1401,5 +1401,17 @@ namespace HandheldCompanion.Properties
                 this["QuickToolsSlideAnimation"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool QuickToolsApplyNoise {
+            get {
+                return ((bool)(this["QuickToolsApplyNoise"]));
+            }
+            set {
+                this["QuickToolsApplyNoise"] = value;
+            }
+        }
     }
 }

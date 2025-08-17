@@ -243,20 +243,26 @@
                 </ui:SettingsCard>
 
                 <!--  Quicktools backdrop  -->
-                <ui:SettingsCard
+                <ui:SettingsExpander
                     d:Visibility="Visible"
                     Description="{l:Static resx:Resources.SettingsPage_QuickToolsBackdrop}"
                     Header="{l:Static resx:Resources.SettingsPage_QuickToolsBackdropHeader}">
-                    <ui:SettingsCard.HeaderIcon>
+                    <ui:SettingsExpander.HeaderIcon>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
-                    </ui:SettingsCard.HeaderIcon>
+                    </ui:SettingsExpander.HeaderIcon>
                     <ComboBox Name="cB_QuickToolsBackdrop" SelectionChanged="cB_QuickToolsBackdrop_SelectionChanged">
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropNone}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropMica}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropTabbed}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropAcrylic}" />
                     </ComboBox>
-                </ui:SettingsCard>
+
+                    <ui:SettingsExpander.Items>
+                        <ui:SettingsCard Header="Apply noise to window's background">
+                            <ui:ToggleSwitch Name="QuickToolsNoiseToggle" Toggled="QuickToolsNoiseToggle_Toggled" />
+                        </ui:SettingsCard>
+                    </ui:SettingsExpander.Items>
+                </ui:SettingsExpander>
 
                 <!--  Virtual keyboard  -->
                 <ui:SettingsCard

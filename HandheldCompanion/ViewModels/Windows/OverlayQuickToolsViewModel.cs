@@ -7,6 +7,7 @@ namespace HandheldCompanion.ViewModels
     {
         public Visibility QuickKeyboardVisibility => ManagerFactory.settingsManager.GetBoolean("QuickKeyboardVisibility") ? Visibility.Visible : Visibility.Collapsed;
         public Visibility QuickTrackpadVisibility => ManagerFactory.settingsManager.GetBoolean("QuickTrackpadVisibility") ? Visibility.Visible : Visibility.Collapsed;
+        public bool QuickToolsApplyNoise => ManagerFactory.settingsManager.GetBoolean("QuickToolsApplyNoise");
 
         public OverlayQuickToolsViewModel()
         {
@@ -41,6 +42,7 @@ namespace HandheldCompanion.ViewModels
 
             OnPropertyChanged("QuickKeyboardVisibility");
             OnPropertyChanged("QuickTrackpadVisibility");
+            OnPropertyChanged("QuickToolsApplyNoise");
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
@@ -49,6 +51,7 @@ namespace HandheldCompanion.ViewModels
             {
                 case "QuickKeyboardVisibility":
                 case "QuickTrackpadVisibility":
+                case "QuickToolsApplyNoise":
                     OnPropertyChanged(name);
                     break;
             }

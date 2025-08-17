@@ -228,6 +228,9 @@ public partial class SettingsPage : Page
                 case "GPUManagerMonitor":
                     Toggle_GPUMonitor.IsOn = Convert.ToBoolean(value);
                     break;
+                case "QuickToolsApplyNoise":
+                    QuickToolsNoiseToggle.IsOn = Convert.ToBoolean(value);
+                    break;
             }
         });
     }
@@ -613,5 +616,13 @@ public partial class SettingsPage : Page
             return;
 
         ManagerFactory.settingsManager.SetProperty("GPUManagerMonitor", Toggle_GPUMonitor.IsOn);
+    }
+
+    private void QuickToolsNoiseToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("QuickToolsApplyNoise", QuickToolsNoiseToggle.IsOn);
     }
 }
