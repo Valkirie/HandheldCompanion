@@ -13,7 +13,7 @@ namespace HandheldCompanion.Utils
 {
     static class FileUtils
     {
-        public static CommonFileDialogResult CommonFileDialog(out string path, out string arguments, out string name)
+        public static CommonFileDialogResult CommonFileDialog(out string path, out string arguments, out string name, string initialPath = null)
         {
             path = string.Empty;
             arguments = string.Empty;
@@ -24,6 +24,10 @@ namespace HandheldCompanion.Utils
             openFileDialog.Filters.Add(new CommonFileDialogFilter("Shortcuts", "*.lnk"));
             openFileDialog.Filters.Add(new CommonFileDialogFilter("UWP manifest", "*AppxManifest.xml"));
             openFileDialog.NavigateToShortcut = false;
+
+            string? dir = Path.GetDirectoryName(initialPath);
+            if (File.Exists(initialPath) && !string.IsNullOrEmpty(dir) && Directory.Exists(dir))
+                openFileDialog.InitialDirectory = dir;
 
             CommonFileDialogResult errorCode = openFileDialog.ShowDialog();
             if (errorCode != CommonFileDialogResult.Ok)

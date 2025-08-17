@@ -421,7 +421,7 @@ namespace HandheldCompanion.ViewModels
             {
                 string path = string.Empty;
 
-                FileUtils.CommonFileDialog(out path, out _, out _);
+                FileUtils.CommonFileDialog(out path, out _, out _, ProfilesPage.selectedProfile.Path);
 
                 ProfilesPage.selectedProfile.Executables.Add(path);
                 ManagerFactory.profileManager.UpdateOrCreateProfile(ProfilesPage.selectedProfile, UpdateSource.ProfilesPage);
