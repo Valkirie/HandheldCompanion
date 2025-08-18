@@ -530,7 +530,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             // skip if inputs were remapped
-            if (IsMapped)
+            if (!IsMapped)
                 return;
 
             // skip if page doesn't have focus

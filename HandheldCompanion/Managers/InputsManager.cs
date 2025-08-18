@@ -586,7 +586,8 @@ public static class InputsManager
 
     private static void UpdateInputs(ControllerState controllerState, bool IsMapped)
     {
-        if (!IsMapped)
+        // skip if inputs were remapped
+        if (IsMapped)
             return;
 
         // prepare button state

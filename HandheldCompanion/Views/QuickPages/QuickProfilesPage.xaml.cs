@@ -384,7 +384,7 @@ public partial class QuickProfilesPage : Page
                 case PlatformStatus.Started:
                     StackProfileFramerate.IsEnabled = true;
                     break;
-                default
+                default:
                     StackProfileFramerate.IsEnabled = false;
                     break;
             }

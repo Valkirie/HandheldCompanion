@@ -65,7 +65,8 @@ public class AYANEOFlipDS : AYANEOFlipKB
         if (prevState.Equals(Inputs.ButtonState))
             return;
 
-        if (!IsMapped)
+        // skip if inputs were remapped
+        if (IsMapped)
             return;
 
         // if screen button is pressed, turn on bottom screen
