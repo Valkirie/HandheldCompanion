@@ -80,8 +80,16 @@ public partial class Profile : ICloneable, IComparable
     {
         get
         {
-            if (IsSubProfile)
-                return ManagerFactory.profileManager.GetProfileFromGuid(ParentGuid, true, true).ErrorCode;
+            if (IsSubProfile && ParentGuid != Guid.Empty)
+            {
+                Profile parentProfile = ManagerFactory.profileManager.GetProfileFromGuid(ParentGuid, true, true);
+
+                // corrupted profile, shouldn't happen
+                if (parentProfile.Guid == this.Guid)
+                    return _ErrorCode;
+
+                return parentProfile.ErrorCode;
+            }
             else
                 return _ErrorCode;
         }

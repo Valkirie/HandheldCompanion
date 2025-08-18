@@ -507,7 +507,8 @@ public class ProfileManager : IManager
     public Profile GetDefault()
     {
         // Try to find the default profile; if none is found, fall back to a new Profile
-        return profiles.Values.FirstOrDefault(p => p.Default) ?? new Profile();
+        Profile? defaultProfile = profiles.Values.Where(p => p.Default).FirstOrDefault();
+        return defaultProfile ?? new Profile();
     }
 
     public Profile GetCurrent()
@@ -850,6 +851,18 @@ public class ProfileManager : IManager
     {
         // Decide which profile to run through the sanitizer
         Profile profileToSanitize = profile.IsSubProfile ? GetParent(profile) : profile;
+
+        if (profile.ParentGuid == profile.Guid)
+        {
+            LogManager.LogError("Profile {0}-{1} is its own parent {1}", profile.Name, profile.Guid);
+            profile.ParentGuid = Guid.Empty;
+        }
+
+        if (profile.Default && !string.IsNullOrEmpty(profile.Path))
+        {
+            LogManager.LogError("Profile {0}-{1} is default with not null path {2}", profile.Name, profile.Guid, profile.Path);
+            profile.Default = false;
+        }
 
         // Manage ErrorCode
         profileToSanitize.ErrorCode = ProfileErrorCode.None;
