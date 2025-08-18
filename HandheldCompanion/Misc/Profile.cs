@@ -296,10 +296,10 @@ public partial class Profile : ICloneable, IComparable
 
     public List<string> GetExecutables(bool addMain)
     {
-        List<string> execs = Executables;
+        List<string> execs = new(Executables);
 
         if (addMain)
-            execs.Add(Executable);
+            execs.Add(Path);
 
         return execs;
     }

@@ -633,10 +633,9 @@ namespace HandheldCompanion.ViewModels
 
             OnPropertyChanged(nameof(HasWindows));
 
-            ProfileExecutables.Clear();
-            if (selectedProfile.Executables != null)
-                foreach (var exe in selectedProfile.Executables)
-                    ProfileExecutables.Add(exe);
+            ProfileExecutables.SafeClear();
+            foreach (string path in selectedProfile.Executables)
+                ProfileExecutables.SafeAdd(path);
 
             // keep SelectedIndex valid
             var idx = selectedProfile.Executables.IndexOf(selectedProfile.Path);

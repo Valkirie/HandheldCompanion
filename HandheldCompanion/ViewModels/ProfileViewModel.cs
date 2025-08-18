@@ -217,18 +217,19 @@ namespace HandheldCompanion.ViewModels
                                 return;
 
                             // wait up to 10 sec for any visible window
+                            List<string> execs = profile.GetExecutables(true);
+
                             Task timeout = Task.Delay(TimeSpan.FromSeconds(10));
-                            while (!timeout.IsCompleted && ManagerFactory.profileManager.GetCurrent().Guid != profile.Guid)
+                            while (!timeout.IsCompleted && !ProcessManager.GetProcesses().Any(p => execs.Contains(p.Path)))
                                 await Task.Delay(300).ConfigureAwait(false);
 
-                            if (ManagerFactory.profileManager.GetCurrent().Guid == profile.Guid)
+                            if (ProcessManager.GetProcesses().Any(p => execs.Contains(p.Path)))
                                 MainWindow.GetCurrent().SetState(WindowState.Minimized);
 
                             // hide the dialog
                             UIHelper.TryInvoke(() => dialog.Hide());
 
                             // Wait until none of the known executables are running
-                            List<string> execs = profile.GetExecutables(true);
                             while (ProcessManager.GetProcesses().Any(p => execs.Contains(p.Path)))
                                 await Task.Delay(300).ConfigureAwait(false);
 
