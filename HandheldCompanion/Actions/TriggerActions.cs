@@ -17,7 +17,7 @@ namespace HandheldCompanion.Actions
         public TriggerActions()
         {
             this.actionType = ActionType.Trigger;
-            this.Value = byte.MinValue;
+            this.Value = short.MinValue;
         }
 
         public TriggerActions(AxisLayoutFlags axis) : this()
@@ -28,13 +28,13 @@ namespace HandheldCompanion.Actions
         public void Execute(AxisFlags axis, float value, ShiftSlot shiftSlot)
         {
             // update value
-            this.Value = (byte)Math.Clamp(value, byte.MinValue, byte.MaxValue);
+            this.Value = (short)Math.Clamp(value, byte.MinValue, byte.MaxValue);
 
             // call parent, check shiftSlot
             base.Execute(axis, shiftSlot);
 
             // skip if zero
-            if (this.Value is byte bValue && bValue == 0)
+            if (this.Value is short sValue && sValue == 0)
                 return;
 
             // Apply inner and outer deadzone adjustments

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace HandheldCompanion.Inputs
 {
@@ -70,6 +71,39 @@ namespace HandheldCompanion.Inputs
                     // write it back
                     Gyroscope[state] = vector;
                 }
+            }
+        }
+
+        private static ref Vector3 GetRef(Dictionary<SensorState, Vector3> dict, SensorState state)
+            => ref CollectionsMarshal.GetValueRefOrNullRef(dict, state);
+
+        /// <summary>Set all accelerometer & gyroscope entries to Vector3.Zero (no reallocs).</summary>
+        public void Zero()
+        {
+            foreach (var s in SensorStates)
+            {
+                GetRef(Accelerometer, s) = Vector3.Zero;
+                GetRef(Gyroscope, s) = Vector3.Zero;
+            }
+        }
+
+        /// <summary>Copy values from another GyroState (no new dictionaries).</summary>
+        public void CopyFrom(GyroState src)
+        {
+            foreach (var s in SensorStates)
+            {
+                GetRef(Accelerometer, s) = src.Accelerometer[s];
+                GetRef(Gyroscope, s) = src.Gyroscope[s];
+            }
+        }
+
+        /// <summary>Copy values from provided dictionaries (keeps our dictionaries).</summary>
+        public void CopyFrom(Dictionary<SensorState, Vector3> accelerometer, Dictionary<SensorState, Vector3> gyroscope)
+        {
+            foreach (var s in SensorStates)
+            {
+                GetRef(Accelerometer, s) = accelerometer[s];
+                GetRef(Gyroscope, s) = gyroscope[s];
             }
         }
 
