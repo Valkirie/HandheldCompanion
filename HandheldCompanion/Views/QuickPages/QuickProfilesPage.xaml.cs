@@ -381,12 +381,11 @@ public partial class QuickProfilesPage : Page
             switch (status)
             {
                 case PlatformStatus.Ready:
-                    var Processor = PerformanceManager.GetProcessor();
+                case PlatformStatus.Started:
                     StackProfileFramerate.IsEnabled = true;
                     break;
-                case PlatformStatus.Stalled:
-                    // StackProfileFramerate.IsEnabled = false;
-                    // StackProfileAutoTDP.IsEnabled = false;
+                default
+                    StackProfileFramerate.IsEnabled = false;
                     break;
             }
         });
