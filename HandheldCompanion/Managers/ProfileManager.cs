@@ -862,6 +862,7 @@ public class ProfileManager : IManager
         {
             LogManager.LogError("Profile {0}-{1} is default with not null path {2}", profile.Name, profile.Guid, profile.Path);
             profile.Default = false;
+            profile.Path = profile.Executables.First() ?? string.Empty;
         }
 
         // Manage ErrorCode
