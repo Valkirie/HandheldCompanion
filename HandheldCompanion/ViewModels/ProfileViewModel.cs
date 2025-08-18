@@ -7,6 +7,7 @@ using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -198,7 +199,7 @@ namespace HandheldCompanion.ViewModels
                     // set profile as favorite
                     ManagerFactory.profileManager.SetSubProfileAsFavorite(Profile);
 
-                    await Task.Run(() =>
+                    await Task.Run(async () =>
                     {
                         ProcessStartInfo psi = new ProcessStartInfo
                         {
@@ -215,27 +216,21 @@ namespace HandheldCompanion.ViewModels
                             if (process == null)
                                 return;
 
-                            // give it a moment to initialize
-                            try
-                            {
-                                process.WaitForInputIdle(3000);
-                            }
-                            catch { }
-
                             // wait up to 10 sec for any visible window
-                            IntPtr hWnd = ProcessUtils.WaitForVisibleWindow(process, 10);
-                            if (hWnd != IntPtr.Zero)
-                            {
-                                if (IsMainPage)
-                                    MainWindow.GetCurrent().SetState(WindowState.Minimized);
+                            Task timeout = Task.Delay(TimeSpan.FromSeconds(10));
+                            while (!timeout.IsCompleted && ManagerFactory.profileManager.GetCurrent().Guid != profile.Guid)
+                                await Task.Delay(300).ConfigureAwait(false);
 
-                                ProcessUtils.SetForegroundWindow(hWnd);
-                            }
+                            if (ManagerFactory.profileManager.GetCurrent().Guid == profile.Guid)
+                                MainWindow.GetCurrent().SetState(WindowState.Minimized);
 
                             // hide the dialog
                             UIHelper.TryInvoke(() => dialog.Hide());
 
-                            process.WaitForExit();
+                            // Wait until none of the known executables are running
+                            List<string> execs = profile.GetExecutables(true);
+                            while (ProcessManager.GetProcesses().Any(p => execs.Contains(p.Path)))
+                                await Task.Delay(300).ConfigureAwait(false);
 
                             if (IsMainPage)
                                 MainWindow.GetCurrent().SetState(WindowState.Normal);

@@ -619,8 +619,8 @@ public static class ControllerManager
         {
             IController controller = null;
 
-            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(10));
-            while (DateTime.Now < timeout && controller == null)
+            Task timeout = Task.Delay(TimeSpan.FromSeconds(10));
+            while (!timeout.IsCompleted && controller == null)
             {
                 if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out controller))
                     break;
@@ -821,8 +821,8 @@ public static class ControllerManager
         {
             IController controller = null;
 
-            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(10));
-            while (DateTime.Now < timeout && controller == null)
+            Task timeout = Task.Delay(TimeSpan.FromSeconds(10));
+            while (!timeout.IsCompleted && controller == null)
             {
                 if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out controller))
                     break;
@@ -1305,8 +1305,8 @@ public static class ControllerManager
 
                         // Remove current virtual controller
                         VirtualManager.SetControllerMode(HIDmode.NoController);
-                        DateTime timeout = DateTime.Now.AddSeconds(4);
-                        while (DateTime.Now < timeout && GetVirtualControllers<XInputController>().Any())
+                        Task timeout = Task.Delay(TimeSpan.FromSeconds(4));
+                        while (!timeout.IsCompleted && GetVirtualControllers<XInputController>().Any())
                             await Task.Delay(100);
 
                         // Create temporary virtual controllers
@@ -1315,20 +1315,20 @@ public static class ControllerManager
                         int usedSlots = VirtualManager.CreateTemporaryControllers();
 
                         // Wait for virtual controllers to appear
-                        timeout = DateTime.Now.AddSeconds(4);
-                        while (DateTime.Now < timeout && GetVirtualControllers<XInputController>().Count() < usedSlots)
+                        timeout = Task.Delay(TimeSpan.FromSeconds(4));
+                        while (!timeout.IsCompleted && GetVirtualControllers<XInputController>().Count() < usedSlots)
                             await Task.Delay(100);
 
                         // Dispose temporary
                         VirtualManager.DisposeTemporaryControllers();
-                        timeout = DateTime.Now.AddSeconds(4);
-                        while (DateTime.Now < timeout && GetVirtualControllers<XInputController>().Count() > usedSlots)
+                        timeout = Task.Delay(TimeSpan.FromSeconds(4));
+                        while (!timeout.IsCompleted && GetVirtualControllers<XInputController>().Count() > usedSlots)
                             await Task.Delay(100);
 
                         // Resume main virtual controller
                         VirtualManager.SetControllerMode(HIDmode.Xbox360Controller);
-                        timeout = DateTime.Now.AddSeconds(4);
-                        while (DateTime.Now < timeout && !GetVirtualControllers<XInputController>().Any())
+                        timeout = Task.Delay(TimeSpan.FromSeconds(4));
+                        while (!timeout.IsCompleted && !GetVirtualControllers<XInputController>().Any())
                             await Task.Delay(100);
                     }
                     else if (managerStatus != ControllerManagerStatus.Succeeded)
@@ -1349,8 +1349,8 @@ public static class ControllerManager
                         await Task.Delay(1000);
                         VirtualManager.Resume(false);
 
-                        DateTime timeout = DateTime.Now.AddSeconds(4);
-                        while (DateTime.Now < timeout && !GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Any())
+                        Task timeout = Task.Delay(TimeSpan.FromSeconds(4));
+                        while (!timeout.IsCompleted && !GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Any())
                             await Task.Delay(100);
                     }
                     else if (managerStatus != ControllerManagerStatus.Succeeded)
@@ -1562,8 +1562,8 @@ public static class ControllerManager
         {
             PnPDevice pnPDevice = null;
 
-            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
-            while (DateTime.Now < timeout && pnPDevice is null)
+            Task timeout = Task.Delay(TimeSpan.FromSeconds(3));
+            while (!timeout.IsCompleted && pnPDevice is null)
             {
                 try { pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId); } catch { }
                 Task.Delay(1000).Wait();
@@ -1616,8 +1616,8 @@ public static class ControllerManager
         {
             PnPDevice pnPDevice = null;
 
-            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
-            while (DateTime.Now < timeout && pnPDevice is null)
+            Task timeout = Task.Delay(TimeSpan.FromSeconds(3));
+            while (!timeout.IsCompleted && pnPDevice is null)
             {
                 try { pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId); } catch { }
                 Task.Delay(1000).Wait();

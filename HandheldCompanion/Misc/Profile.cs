@@ -293,4 +293,14 @@ public partial class Profile : ICloneable, IComparable
     {
         return Name;
     }
+
+    public List<string> GetExecutables(bool addMain)
+    {
+        List<string> execs = Executables;
+
+        if (addMain)
+            execs.Add(Executable);
+
+        return execs;
+    }
 }

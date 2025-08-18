@@ -561,9 +561,9 @@ public class DeviceManager : IManager
             try
             {
                 PnPDetails deviceEx = null;
-                DateTime timeout = DateTime.Now.AddSeconds(8);
 
-                while (DateTime.Now < timeout && deviceEx is null)
+                Task timeout = Task.Delay(TimeSpan.FromSeconds(8));
+                while (!timeout.IsCompleted && deviceEx is null)
                 {
                     try { deviceEx = FindDevice(instanceId); } catch { }
                     await Task.Delay(100).ConfigureAwait(false);
@@ -616,8 +616,9 @@ public class DeviceManager : IManager
             }
 
             PnPDetails deviceEx = null;
-            DateTime timeout = DateTime.Now.AddSeconds(8);
-            while (DateTime.Now < timeout && deviceEx is null)
+
+            Task timeout = Task.Delay(TimeSpan.FromSeconds(8));
+            while (!timeout.IsCompleted && deviceEx is null)
             {
                 try { deviceEx = FindDevice(instanceId); } catch { }
                 await Task.Delay(100).ConfigureAwait(false);
@@ -647,8 +648,9 @@ public class DeviceManager : IManager
             try
             {
                 PnPDetails deviceEx = null;
-                DateTime timeout = DateTime.Now.AddSeconds(8);
-                while (DateTime.Now < timeout && deviceEx is null)
+
+                Task timeout = Task.Delay(TimeSpan.FromSeconds(8));
+                while (!timeout.IsCompleted && deviceEx is null)
                 {
                     try { deviceEx = GetDetails(obj.SymLink); } catch { }
                     await Task.Delay(100).ConfigureAwait(false);
@@ -687,8 +689,9 @@ public class DeviceManager : IManager
             }
 
             PnPDetails deviceEx = null;
-            DateTime timeout = DateTime.Now.AddSeconds(8);
-            while (DateTime.Now < timeout && deviceEx is null)
+
+            Task timeout = Task.Delay(TimeSpan.FromSeconds(8));
+            while (!timeout.IsCompleted && deviceEx is null)
             {
                 try { deviceEx = FindDevice(instanceId); } catch { }
                 await Task.Delay(100).ConfigureAwait(false);
@@ -741,8 +744,8 @@ public class DeviceManager : IManager
         PnPDetails? details = null;
 
         // try to retrieve PnPDetails
-        DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(6));
-        while (DateTime.Now < timeout && details is null)
+        Task timeout = Task.Delay(TimeSpan.FromSeconds(6));
+        while (!timeout.IsCompleted && details is null)
         {
             foreach (PnPDetails pnPDetails in ManagerFactory.deviceManager.PnPDevices.Values)
             {

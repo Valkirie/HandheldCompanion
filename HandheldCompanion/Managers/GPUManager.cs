@@ -47,8 +47,8 @@ namespace HandheldCompanion.Managers
             if (!IsLoaded_IGCL && GPU.HasIntelGPU())
             {
                 // wait until Intel GPU service is ready
-                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(7));
-                while (DateTime.Now < timeout && !IntelGPU.HasServiceStatus(ServiceControllerStatus.Running))
+                Task timeout = Task.Delay(TimeSpan.FromSeconds(7));
+                while (!timeout.IsCompleted && !IntelGPU.HasServiceStatus(ServiceControllerStatus.Running))
                     await Task.Delay(1000).ConfigureAwait(false);
 
                 if (!IntelGPU.HasServiceStatus(ServiceControllerStatus.Running))
