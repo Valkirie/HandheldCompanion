@@ -19,7 +19,6 @@ namespace HandheldCompanion.Devices
         public LegionGoSZ1()
         {
             // device specific settings
-            // todo: create image
             ProductIllustration = "device_legion_go_s";
 
             // used to monitor OEM specific inputs
@@ -41,14 +40,6 @@ namespace HandheldCompanion.Devices
             cTDP = new double[] { 5, 30 };
             GfxClock = new double[] { 100, 2700 };
             CpuClock = 5000;
-
-            Capabilities |= DeviceCapabilities.DynamicLighting;
-            Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
-
-            DynamicLightingCapabilities |= LEDLevel.SolidColor;
-            DynamicLightingCapabilities |= LEDLevel.Breathing;
-            DynamicLightingCapabilities |= LEDLevel.Rainbow;
-            DynamicLightingCapabilities |= LEDLevel.Wheel;
 
             DefaultLayout.AxisLayout[AxisLayoutFlags.RightPad] = [new MouseActions { MouseType = MouseActionsType.Move, Filtering = true, Sensivity = 15 }];
             DefaultLayout.ButtonLayout[ButtonFlags.RightPadClick] = [new MouseActions { MouseType = MouseActionsType.LeftButton }];

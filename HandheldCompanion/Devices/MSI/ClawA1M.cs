@@ -20,6 +20,7 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.IGCL.IGCLBackend;
+using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices;
 
@@ -205,6 +206,10 @@ public class ClawA1M : IDevice
         Capabilities |= DeviceCapabilities.OEMCPU;
         Capabilities |= DeviceCapabilities.BatteryChargeLimit;
         Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
+
+        // dynamic lighting capacities
+        DynamicLightingCapabilities |= LEDLevel.SolidColor;
+        DynamicLightingCapabilities |= LEDLevel.Ambilight;
 
         // battery bypass settings
         BatteryBypassMin = 60;
@@ -666,24 +671,33 @@ public class ClawA1M : IDevice
     public override bool SetLedBrightness(int brightness)
     {
         Color LEDMainColor = ManagerFactory.settingsManager.GetColor("LEDMainColor");
+        Color LEDSecondColor = ManagerFactory.settingsManager.GetColor("LEDSecondColor");
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-            return device.Write(GetRGB(brightness, LEDMainColor.R, LEDMainColor.G, LEDMainColor.B), 0, 64);
+            return device.Write(GetRGB(brightness, LEDMainColor, LEDSecondColor), 0, 64);
 
         return false;
     }
 
-    public override bool SetLedColor(Color MainColor, Color SecondaryColor, DeviceUtils.LEDLevel level, int speed = 100)
+    public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed = 100)
     {
         int LEDBrightness = ManagerFactory.settingsManager.GetInt("LEDBrightness");
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-            return device.Write(GetRGB(LEDBrightness, MainColor.R, MainColor.G, MainColor.B), 0, 64);
+        {
+            switch (level)
+            {
+                case LEDLevel.SolidColor:
+                    return device.Write(GetRGB(LEDBrightness, MainColor, MainColor), 0, 64);
+                case LEDLevel.Ambilight:
+                    return device.Write(GetRGB(LEDBrightness, MainColor, SecondaryColor), 0, 64);
+            }
+        }
 
         return false;
     }
 
-    private byte[] GetRGB(double brightness, byte red, byte green, byte blue)
+    private byte[] GetRGB(double brightness, Color MainColor, Color SecondaryColor)
     {
         // grab the right array (or null if no device)
         byte[]? RGBdata = FirmwareDevice?.RGB;
@@ -712,11 +726,14 @@ public class ClawA1M : IDevice
         };
 
         // Append [red, green, blue] * 9
-        for (int i = 0; i < 9; i++)
+        // right is 0, 1, 2, 3
+        // left is 4, 5, 6, 7
+
+        for (int i = 0; i < 8; i++)
         {
-            data.Add(red);
-            data.Add(green);
-            data.Add(blue);
+            data.Add(i < 4 ? SecondaryColor.R : MainColor.R);
+            data.Add(i < 4 ? SecondaryColor.G : MainColor.G);
+            data.Add(i < 4 ? SecondaryColor.B : MainColor.B);
         }
 
         return data.ToArray();

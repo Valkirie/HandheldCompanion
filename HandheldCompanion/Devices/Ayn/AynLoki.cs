@@ -46,6 +46,8 @@ public class AynLoki : IDevice
         // device specific capacities        
         Capabilities |= DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.DynamicLighting;
+
+        // dynamic lighting capacities
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
 
         OEMChords.Add(new KeyboardChord("Guide",

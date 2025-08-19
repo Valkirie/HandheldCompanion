@@ -26,12 +26,14 @@ namespace HandheldCompanion.Devices.AYANEO
 
         public AYANEODeviceCEc()
         {
+            // device specific capacities
             this.Capabilities |= DeviceCapabilities.FanControl;
             this.Capabilities |= DeviceCapabilities.DynamicLighting;
             this.Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
             this.Capabilities |= DeviceCapabilities.BatteryChargeLimit;
             this.Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
 
+            // dynamic lighting capacities
             this.DynamicLightingCapabilities = LEDLevel.SolidColor;
 
             this.ECDetails = new ECDetails
