@@ -109,6 +109,8 @@ namespace HandheldCompanion.ViewModels
                         return PlatformManager.Steam.GetLogo();
                     case PlatformType.Origin:
                         return PlatformManager.Origin.GetLogo();
+                    case PlatformType.EADesktop:
+                        return PlatformManager.EADesktop.GetLogo();
                     case PlatformType.UbisoftConnect:
                         return PlatformManager.UbisoftConnect.GetLogo();
                     case PlatformType.GOG:

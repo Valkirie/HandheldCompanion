@@ -1,5 +1,6 @@
 ﻿using GameLib.Core;
 using GameLib.Plugin.BattleNet.Model;
+using GameLib.Plugin.EA.Model;
 using GameLib.Plugin.Epic.Model;
 using GameLib.Plugin.Gog.Model;
 using GameLib.Plugin.Origin.Model;
@@ -108,6 +109,7 @@ namespace HandheldCompanion.ViewModels
             { typeof(RockstarGame), PlatformType.Rockstar },
             { typeof(SteamGame), PlatformType.Steam },
             { typeof(UbisoftGame), PlatformType.UbisoftConnect },
+            { typeof(EAGame), PlatformType.EADesktop },
         };
 
         private LibraryPage LibraryPage;
@@ -184,6 +186,9 @@ namespace HandheldCompanion.ViewModels
                                     break;
                                 case "Origin":
                                     games.AddRange(PlatformManager.Origin.GetGames());
+                                    break;
+                                case "EA Desktop":
+                                    games.AddRange(PlatformManager.EADesktop.GetGames());
                                     break;
                                 case "Riot":
                                     games.AddRange(PlatformManager.RiotGames.GetGames());

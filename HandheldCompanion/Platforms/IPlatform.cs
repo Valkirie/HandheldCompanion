@@ -25,6 +25,7 @@ public enum PlatformType
     Epic = 6,
     RiotGames = 7,
     Rockstar = 8,
+    EADesktop = 9,
 
     RTSS = 20
 }
