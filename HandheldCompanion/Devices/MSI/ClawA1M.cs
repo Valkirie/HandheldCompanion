@@ -433,6 +433,10 @@ public class ClawA1M : IDevice
             Device_Removed();
     }
 
+    private int LEDBrightness = 100;
+    private Color LEDMainColor = Colors.Black;
+    private Color LEDSecondColor = Colors.Black;
+
     protected override void QuerySettings()
     {
         // raise events
@@ -670,8 +674,8 @@ public class ClawA1M : IDevice
 
     public override bool SetLedBrightness(int brightness)
     {
-        Color LEDMainColor = ManagerFactory.settingsManager.GetColor("LEDMainColor");
-        Color LEDSecondColor = ManagerFactory.settingsManager.GetColor("LEDSecondColor");
+        // store value
+        LEDBrightness = brightness;
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
             return device.Write(GetRGB(brightness, LEDMainColor, LEDSecondColor), 0, 64);
@@ -681,7 +685,9 @@ public class ClawA1M : IDevice
 
     public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed = 100)
     {
-        int LEDBrightness = ManagerFactory.settingsManager.GetInt("LEDBrightness");
+        // store values
+        LEDMainColor = MainColor;
+        LEDSecondColor = SecondaryColor;
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
