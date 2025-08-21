@@ -54,7 +54,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public int LongPressDelay
+        public float LongPressDelay
         {
             get => Action is not null ? Action.ActionTimer : 0;
             set
@@ -136,18 +136,18 @@ namespace HandheldCompanion.ViewModels
 
         public bool Turbo
         {
-            get => Action is not null && Action.Turbo;
+            get => Action is not null && Action.IsTurbo;
             set
             {
                 if (Action is not null && value != Turbo)
                 {
-                    Action.Turbo = value;
+                    Action.IsTurbo = value;
                     OnPropertyChanged(nameof(Turbo));
                 }
             }
         }
 
-        public int TurboDelay
+        public float TurboDelay
         {
             get => Action is not null ? Action.TurboDelay : 0;
             set
@@ -175,12 +175,12 @@ namespace HandheldCompanion.ViewModels
 
         public bool Toggle
         {
-            get => Action is not null && Action.Toggle;
+            get => Action is not null && Action.IsToggle;
             set
             {
                 if (Action is not null && value != Toggle)
                 {
-                    Action.Toggle = value;
+                    Action.IsToggle = value;
                     OnPropertyChanged(nameof(Toggle));
                 }
             }

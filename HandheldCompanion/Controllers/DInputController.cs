@@ -1,5 +1,5 @@
 ﻿using HandheldCompanion.Managers;
-using HidLibrary;
+using hidapi;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.DirectInput;
 using System;
@@ -58,7 +58,7 @@ public class DInputController : IController
                     if (SymLink.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
                     {
                         joystick = lookup_joystick;
-                        joystickHid = HidDevices.GetDevice(devicePath);
+                        joystickHid = new HidDevice(details.VendorID, details.ProductID);
                         break;
                     }
                 }
@@ -103,9 +103,27 @@ public class DInputController : IController
             return;
 
         // Acquire joystick
-        try { joystick?.Acquire(); } catch { }
+        try
+        {
+            joystick?.Acquire();
+            joystickHid?.OpenDevice();
+        }
+        catch { }
 
         base.Plug();
+    }
+
+    public override void Gone()
+    {
+        if (!IsConnected())
+            return;
+
+        // Unacquire the joystick
+        try
+        {
+            joystickHid?.EndRead();
+        }
+        catch { }
     }
 
     public override void Unplug()
@@ -114,7 +132,12 @@ public class DInputController : IController
             return;
 
         // Unacquire the joystick
-        try { joystick?.Unacquire(); } catch { }
+        try
+        {
+            joystick?.Unacquire();
+            joystickHid?.Close();
+        }
+        catch { }
 
         base.Unplug();
     }

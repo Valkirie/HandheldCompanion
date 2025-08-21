@@ -337,7 +337,7 @@ public class NeptuneController : SteamController
         rumbleThread = new Thread(RumbleThreadLoop)
         {
             IsBackground = true,
-            Priority = ThreadPriority.Highest
+            Priority = ThreadPriority.Normal
         };
         rumbleThread.Start();
 

@@ -161,12 +161,13 @@ public class HotkeysManager : IManager
                     // too old
                     throw new Exception("Hotkey is outdated.");
                 }
-
-                // we've been doing back and forth on ButtonState State type
-                // let's make sure we get a ConcurrentDictionary
-                outputraw = outputraw.Replace(
-                        "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"",
-                        "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"");
+                else if (version <= Version.Parse("0.27.0.7"))
+                {
+                    // let's make sure we get a Dictionary
+                    outputraw = outputraw.Replace(
+                        "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"",
+                        "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"");
+                }
 
                 // parse profile
                 if (hotkey is null)
@@ -292,7 +293,7 @@ public class HotkeysManager : IManager
                 JObject? oldState = (JObject)dictionary["inputsChord"]["State"]["State"];
                 foreach (var keyValuePair in oldState)
                     if (Enum.TryParse(keyValuePair.Key, out ButtonFlags flag))
-                        hotkey.inputsChord.ButtonState.State[flag] = (bool)keyValuePair.Value;
+                        hotkey.inputsChord.ButtonState[flag] = (bool)keyValuePair.Value;
 
                 // Migrate IsPinned
                 bool isPinned = (bool)dictionary["IsPinned"];

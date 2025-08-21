@@ -8,7 +8,6 @@ using Nefarius.ViGEm.Client.Exceptions;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
 using System.Numerics;
-using static HandheldCompanion.Inputs.GyroState;
 
 namespace HandheldCompanion.Targets
 {
@@ -134,20 +133,17 @@ namespace HandheldCompanion.Targets
                 outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(DS4Touch.RightPadTouch.Y >> 4);
             }
 
-            // Use gyro sensor data, map to proper range, invert where needed
-            if (Inputs.GyroState.Gyroscope.TryGetValue(SensorState.DSU, out Vector3 gyrometer))
-            {
-                outDS4Report.wGyroX = (short)InputUtils.rangeMap(gyrometer.X, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
-                outDS4Report.wGyroY = (short)InputUtils.rangeMap(gyrometer.Y, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
-                outDS4Report.wGyroZ = (short)InputUtils.rangeMap(gyrometer.Z, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
-            }
+            // Gyro (DSU)
+            Vector3 g = Inputs.GyroState.GetGyroscope(GyroState.SensorState.DSU);
+            outDS4Report.wGyroX = (short)InputUtils.rangeMap(g.X, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
+            outDS4Report.wGyroY = (short)InputUtils.rangeMap(g.Y, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
+            outDS4Report.wGyroZ = (short)InputUtils.rangeMap(g.Z, -2000.0f, 2000.0f, short.MinValue, short.MaxValue);
 
-            if (Inputs.GyroState.Accelerometer.TryGetValue(SensorState.DSU, out Vector3 accelerometer))
-            {
-                outDS4Report.wAccelX = (short)InputUtils.rangeMap(accelerometer.X, -4.0f, 4.0f, short.MinValue, short.MaxValue);
-                outDS4Report.wAccelY = (short)InputUtils.rangeMap(accelerometer.Y, -4.0f, 4.0f, short.MinValue, short.MaxValue);
-                outDS4Report.wAccelZ = (short)InputUtils.rangeMap(accelerometer.Z, -4.0f, 4.0f, short.MinValue, short.MaxValue);
-            }
+            // Accel (DSU)
+            Vector3 a = Inputs.GyroState.GetAccelerometer(GyroState.SensorState.DSU);
+            outDS4Report.wAccelX = (short)InputUtils.rangeMap(a.X, -4.0f, 4.0f, short.MinValue, short.MaxValue);
+            outDS4Report.wAccelY = (short)InputUtils.rangeMap(a.Y, -4.0f, 4.0f, short.MinValue, short.MaxValue);
+            outDS4Report.wAccelZ = (short)InputUtils.rangeMap(a.Z, -4.0f, 4.0f, short.MinValue, short.MaxValue);
 
             // todo: implement battery value based on device
             outDS4Report.bBatteryLvlSpecial = 11;

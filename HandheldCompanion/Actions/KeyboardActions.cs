@@ -9,7 +9,7 @@ using WindowsInput.Events;
 namespace HandheldCompanion.Actions
 {
     [Serializable]
-    public class KeyboardActions : IActions
+    public sealed class KeyboardActions : IActions
     {
         public VirtualKeyCode Key;
 
@@ -22,66 +22,51 @@ namespace HandheldCompanion.Actions
 
         public KeyboardActions()
         {
-            this.actionType = ActionType.Keyboard;
-
-            this.Value = false;
-            this.prevValue = false;
+            actionType = ActionType.Keyboard;
+            outBool = false;
+            prevBool = false;
         }
 
         public KeyboardActions(VirtualKeyCode key) : this()
         {
-            this.Key = key;
+            Key = key;
         }
 
-        public override void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot)
+        public override void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot, float delta)
         {
-            base.Execute(button, value, shiftSlot);
+            base.Execute(button, value, shiftSlot, delta);
 
-            switch (this.Value)
+            if (outBool)
             {
-                case true:
-                    {
-                        if (IsKeyDown)
-                            return;
-
-                        IsKeyDown = true;
-                        pressed = ModifierMap[Modifiers];
-                        KeyboardSimulator.KeyDown(pressed);
-                        KeyboardSimulator.KeyDown(Key);
-                        SetHaptic(button, false);
-                    }
-                    break;
-                case false:
-                    {
-                        if (!IsKeyDown)
-                            return;
-
-                        IsKeyDown = false;
-                        KeyboardSimulator.KeyUp(Key);
-                        KeyboardSimulator.KeyUp(pressed);
-                        SetHaptic(button, true);
-                    }
-                    break;
+                if (IsKeyDown) return;
+                IsKeyDown = true;
+                pressed = ModifierMap[Modifiers];
+                KeyboardSimulator.KeyDown(pressed);
+                KeyboardSimulator.KeyDown(Key);
+                SetHaptic(button, false);
+            }
+            else
+            {
+                if (!IsKeyDown) return;
+                IsKeyDown = false;
+                KeyboardSimulator.KeyUp(Key);
+                KeyboardSimulator.KeyUp(pressed);
+                SetHaptic(button, true);
             }
         }
 
-        public override void Execute(AxisLayout layout, ShiftSlot shiftSlot)
+        public override void Execute(AxisLayout layout, ShiftSlot shiftSlot, float delta)
         {
-            // update value
-            this.Vector = layout.vector;
+            outVector = layout.vector;
+            base.Execute(layout, shiftSlot, delta);
 
-            // call parent, check shiftSlot
-            base.Execute(layout, shiftSlot);
-
-            // skip if zero
-            if (this.Vector == Vector2.Zero && !IsKeyDown)
+            if (outVector == Vector2.Zero && !IsKeyDown)
                 return;
 
-            MotionDirection direction = InputUtils.GetMotionDirection(this.Vector, motionThreshold);
-            bool value = (direction.HasFlag(motionDirection) || motionDirection.HasFlag(direction)) && direction != MotionDirection.None;
+            var direction = InputUtils.GetMotionDirection(outVector, motionThreshold);
+            bool press = DirectionMatches(direction, motionDirection);
 
-            // transition to Button Execute()
-            Execute(ButtonFlags.None, value, shiftSlot);
+            Execute(ButtonFlags.None, press, shiftSlot, delta);
         }
     }
 }

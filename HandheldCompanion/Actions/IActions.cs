@@ -5,6 +5,7 @@ using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Actions
@@ -75,44 +76,42 @@ namespace HandheldCompanion.Actions
     [Serializable]
     public abstract class IActions : ICloneable
     {
-        public static Dictionary<ModifierSet, KeyCode[]> ModifierMap = new()
+        public static readonly Dictionary<ModifierSet, KeyCode[]> ModifierMap = new()
         {
-            { ModifierSet.None,            new KeyCode[] { } },
-            { ModifierSet.Shift,           new KeyCode[] { KeyCode.LShift } },
-            { ModifierSet.Control,         new KeyCode[] { KeyCode.LControl } },
-            { ModifierSet.Alt,             new KeyCode[] { KeyCode.LMenu } },
-            { ModifierSet.ShiftControl,    new KeyCode[] { KeyCode.LShift, KeyCode.LControl } },
-            { ModifierSet.ShiftAlt,        new KeyCode[] { KeyCode.LShift, KeyCode.LMenu } },
-            { ModifierSet.ControlAlt,      new KeyCode[] { KeyCode.LControl, KeyCode.LMenu } },
-            { ModifierSet.ShiftControlAlt, new KeyCode[] { KeyCode.LShift, KeyCode.LControl, KeyCode.LMenu } },
+            { ModifierSet.None,            Array.Empty<KeyCode>() },
+            { ModifierSet.Shift,           new [] { KeyCode.LShift } },
+            { ModifierSet.Control,         new [] { KeyCode.LControl } },
+            { ModifierSet.Alt,             new [] { KeyCode.LMenu } },
+            { ModifierSet.ShiftControl,    new [] { KeyCode.LShift, KeyCode.LControl } },
+            { ModifierSet.ShiftAlt,        new [] { KeyCode.LShift, KeyCode.LMenu } },
+            { ModifierSet.ControlAlt,      new [] { KeyCode.LControl, KeyCode.LMenu } },
+            { ModifierSet.ShiftControlAlt, new [] { KeyCode.LShift, KeyCode.LControl, KeyCode.LMenu } },
         };
 
         public ActionType actionType = ActionType.Disabled;
         public PressType pressType = PressType.Short;
         public ActionState actionState = ActionState.Stopped;
 
-        protected object Value;
-        protected object prevValue;
+        // Replaces boxed Value/prevValue
+        protected bool outBool;      // “current output” for button-like actions
+        protected bool prevBool;     // last input state for edge detection
 
-        protected Vector2 Vector = new();
+        protected Vector2 outVector = new();
         protected Vector2 prevVector = new();
 
-        public int ActionTimer = 200; // default value for steam
-        public int pressTimer = -1; // -1 inactive, >= 0 active
-
-        private int pressCount = 0; // used to store previous press value for double tap
+        public float ActionTimer = 200.0f;   // default value for steam
+        public float PressTimer = -1.0f;     // -1 inactive, >= 0 active
+        private int PressCount = 0;     // used for double tap
 
         public bool HasTurbo = true;
         public bool HasToggle = true;
         public bool HasInterruptable = true;
 
-        public bool Turbo;
-        public int TurboDelay = 30;
-        protected int TurboIdx;
-        protected bool IsTurboed;
+        public bool IsToggle = false;
+        public bool IsTurbo = false;
 
-        public bool Toggle;
-        protected bool IsToggled;
+        public float TurboDelay = 30.0f;
+        private float TurboCountdown = 0.0f;     // countdown (ms) before flipping
 
         public bool Interruptable = true;
         public ShiftSlot ShiftSlot = ShiftSlot.Any;
@@ -123,92 +122,49 @@ namespace HandheldCompanion.Actions
         public MotionDirection motionDirection = MotionDirection.None;
         public float motionThreshold = 4000;
 
-        public IActions()
+        // Axis-only shift mask flag to avoid sentinel assignments
+        protected bool axisSlotDisabled;
+
+        public IActions() { }
+
+        public virtual void SetHaptic(ButtonFlags button, bool released)
         {
+            if (HapticMode == HapticMode.Off) return;
+            if (HapticMode == HapticMode.Down && released) return;
+            if (HapticMode == HapticMode.Up && !released) return;
+
+            ControllerManager.GetTarget()?.SetHaptic(HapticStrength, button);
         }
 
-        public virtual void SetHaptic(ButtonFlags button, bool up)
+        // AxisFlags version: just compute shift-slot gating (no work)
+        public virtual void Execute(AxisFlags axis, ShiftSlot shiftSlot, float delta)
         {
-            if (this.HapticMode == HapticMode.Off) return;
-            if (this.HapticMode == HapticMode.Down && up) return;
-            if (this.HapticMode == HapticMode.Up && !up) return;
-
-            ControllerManager.GetTarget()?.SetHaptic(this.HapticStrength, button);
+            axisSlotDisabled = !IsShiftAllowed(shiftSlot, ShiftSlot);
         }
 
-        public virtual void Execute(AxisFlags axis, ShiftSlot shiftSlot)
+        // AxisLayout version: zero vector when masked to skip downstream work
+        public virtual void Execute(AxisLayout layout, ShiftSlot shiftSlot, float delta)
         {
-            // manage shift slot
-            switch (ShiftSlot)
-            {
-                case ShiftSlot.None:
-                    if (shiftSlot != ShiftSlot.None)
-                        this.Value = (short)0;
-                    break;
-
-                case ShiftSlot.Any:
-                    // do nothing
-                    break;
-
-                default:
-                    if (!shiftSlot.HasFlag(ShiftSlot))
-                        this.Value = (short)0;
-                    break;
-            }
+            if (!IsShiftAllowed(shiftSlot, ShiftSlot))
+                outVector = Vector2.Zero;
         }
 
-        public virtual void Execute(AxisLayout layout, ShiftSlot shiftSlot)
-        {
-            // manage shift slot
-            switch (ShiftSlot)
-            {
-                case ShiftSlot.None:
-                    if (shiftSlot != ShiftSlot.None)
-                        this.Vector = Vector2.Zero;
-                    break;
-
-                case ShiftSlot.Any:
-                    // do nothing
-                    break;
-
-                default:
-                    if (!shiftSlot.HasFlag(ShiftSlot))
-                        this.Vector = Vector2.Zero;
-                    break;
-            }
-        }
-
-        public virtual void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot = Actions.ShiftSlot.None)
+        public virtual void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot, float delta)
         {
             if (actionState == ActionState.Suspended)
             {
-                // bypass output
-                this.Value = false;
-                this.prevValue = value;
+                outBool = false;
+                prevBool = value;
                 return;
             }
             else if (actionState == ActionState.Forced)
             {
-                // bypass output
                 value = true;
             }
 
-            switch (ShiftSlot)
-            {
-                case ShiftSlot.None:
-                    if (shiftSlot != ShiftSlot.None)
-                        value = false;
-                    break;
-
-                case ShiftSlot.Any:
-                    // do nothing
-                    break;
-
-                default:
-                    if (!shiftSlot.HasFlag(ShiftSlot))
-                        value = false;
-                    break;
-            }
+            // shift gating
+            if (!IsShiftAllowed(shiftSlot, ShiftSlot))
+                value = false;
 
             switch (pressType)
             {
@@ -216,226 +172,179 @@ namespace HandheldCompanion.Actions
                     {
                         if (value)
                         {
-                            // update state
                             actionState = ActionState.Running;
+                            PressTimer += delta;
 
-                            // update timer
-                            pressTimer += TimerManager.GetPeriod();
-
-                            if (pressTimer >= ActionTimer)
+                            if (PressTimer >= ActionTimer)
                             {
-                                // update state
                                 actionState = ActionState.Succeed;
                             }
                             else
                             {
-                                // bypass output
-                                this.Value = false;
-                                this.prevValue = value;
+                                outBool = false;
+                                prevBool = value;
                                 return;
                             }
                         }
                         else
                         {
-                            // key was released too early
                             if (actionState == ActionState.Running)
                             {
-                                // update state
                                 actionState = ActionState.Aborted;
-
-                                // update timer
-                                pressTimer = Math.Max(50, pressTimer);
+                                PressTimer = Math.Max(50, PressTimer);
                             }
-                            else if (actionState == ActionState.Succeed)
+                            else if (actionState == ActionState.Succeed || actionState == ActionState.Stopped)
                             {
-                                // update state
-                                actionState = ActionState.Stopped;
-
-                                // update timer
-                                pressTimer = -1;
-                            }
-                            else if (actionState == ActionState.Stopped)
-                            {
-                                // update timer
-                                pressTimer = -1;
+                                actionState = (actionState == ActionState.Succeed) ? ActionState.Stopped : actionState;
+                                PressTimer = -1;
                             }
 
                             if (actionState == ActionState.Aborted)
                             {
-                                // set to aborted for a time equal to the actions was "running"
-                                if (pressTimer >= 0)
-                                {
-                                    // update state
-                                    actionState = ActionState.Aborted;
-
-                                    // update timer
-                                    pressTimer -= TimerManager.GetPeriod();
-                                }
-                                else
-                                {
-                                    // update state
-                                    actionState = ActionState.Stopped;
-
-                                    // update timer
-                                    pressTimer = -1;
-                                }
+                                // keep Aborted for the time it was "running"
+                                if (PressTimer >= 0) PressTimer -= delta;
+                                else { actionState = ActionState.Stopped; PressTimer = -1; }
                             }
                         }
+                        break;
                     }
-                    break;
 
                 case PressType.Hold:
                     {
-                        if (value || (pressTimer <= ActionTimer && pressTimer >= 0))
+                        if (value || (PressTimer <= ActionTimer && PressTimer >= 0))
                         {
-                            // update state
                             actionState = ActionState.Running;
-
-                            // update timer
-                            pressTimer += TimerManager.GetPeriod();
-
-                            // bypass output (simple)
-                            value = true;
+                            PressTimer += delta;
+                            value = true; // simple bypass
                         }
-                        else if (pressTimer >= ActionTimer)
+                        else if (PressTimer >= ActionTimer)
                         {
-                            // update state
                             actionState = ActionState.Stopped;
-
-                            // reset var(s)
-                            pressTimer = -1;
+                            PressTimer = -1;
                         }
+                        break;
                     }
-                    break;
 
                 case PressType.Double:
                     {
-                        // increase press count
-                        if (prevValue is bool pbValue && pbValue != value && value)
-                            pressCount++;
+                        if (prevBool != value && value)
+                            PressCount++;
 
-                        switch (pressCount)
+                        switch (PressCount)
                         {
                             default:
                                 {
                                     if (actionState != ActionState.Stopped)
                                     {
-                                        // update timer
-                                        pressTimer += TimerManager.GetPeriod();
-
-                                        if (pressTimer >= 50)
+                                        PressTimer += delta;
+                                        if (PressTimer >= 50)
                                         {
-                                            // update state
                                             actionState = ActionState.Stopped;
-
-                                            // reset var(s)
-                                            pressCount = 0;
-                                            pressTimer = 0;
+                                            PressCount = 0;
+                                            PressTimer = 0;
                                         }
                                     }
-
-                                    // bypass output
-                                    this.Value = false;
-                                    this.prevValue = value;
+                                    outBool = false;
+                                    prevBool = value;
                                     return;
                                 }
 
                             case 1:
                                 {
-                                    // update state
                                     actionState = ActionState.Running;
+                                    PressTimer += delta;
 
-                                    // update timer
-                                    pressTimer += TimerManager.GetPeriod();
-
-                                    // too slow to press again ?
-                                    if (pressTimer > ActionTimer)
+                                    if (PressTimer > ActionTimer)
                                     {
-                                        // update state
                                         actionState = ActionState.Aborted;
-
-                                        // reset var(s)
-                                        pressCount = 0;
-                                        pressTimer = 0;
+                                        PressCount = 0;
+                                        PressTimer = 0;
                                     }
-
-                                    // bypass output
-                                    this.Value = false;
-                                    this.prevValue = value;
+                                    outBool = false;
+                                    prevBool = value;
                                     return;
                                 }
 
                             case 2:
                                 {
-                                    // on time
-                                    if (pressTimer <= ActionTimer && value)
+                                    if (PressTimer <= ActionTimer && value)
                                     {
-                                        // update state
                                         actionState = ActionState.Succeed;
-
-                                        // reset var(s)
-                                        pressCount = 2;
-                                        pressTimer = ActionTimer;
+                                        PressCount = 2;
+                                        PressTimer = ActionTimer;
                                     }
                                     else
                                     {
-                                        // update state
                                         actionState = ActionState.Stopped;
-
-                                        // reset var(s)
-                                        pressCount = 0;
-                                        pressTimer = 0;
+                                        PressCount = 0;
+                                        PressTimer = 0;
                                     }
+                                    break;
                                 }
-                                break;
                         }
+                        break;
                     }
-                    break;
             }
 
-            if (Toggle)
+            // Toggle
+            if (IsToggle)
             {
-                if (prevValue is bool pbValue && pbValue != value && value)
-                    IsToggled = !IsToggled;
+                if (prevBool != value && value) HasToggle = !HasToggle;
             }
             else
-                IsToggled = false;
-
-            if (Turbo)
             {
-                if (value || IsToggled)
-                {
-                    if (TurboIdx % TurboDelay == 0)
-                        IsTurboed = !IsTurboed;
+                HasToggle = false;
+            }
 
-                    TurboIdx += TimerManager.GetPeriod();
+            // Turbo (countdown, no modulo)
+            if (IsTurbo)
+            {
+                if (value || HasToggle)
+                {
+                    TurboCountdown -= delta;
+                    if (TurboCountdown <= 0)
+                    {
+                        HasTurbo = !HasTurbo;
+                        TurboCountdown += Math.Max(1, TurboDelay);
+                    }
                 }
                 else
                 {
-                    IsTurboed = false;
-                    TurboIdx = 0;
+                    HasTurbo = false;
+                    TurboCountdown = TurboDelay;
                 }
             }
             else
-                IsTurboed = false;
+            {
+                HasTurbo = false;
+            }
 
-            // update previous value
-            prevValue = value;
+            // final outBool
+            if (IsToggle && IsTurbo) outBool = HasToggle && HasTurbo;
+            else if (IsToggle) outBool = HasToggle;
+            else if (IsTurbo) outBool = HasTurbo;
+            else outBool = value;
 
-            // update value
-            if (Toggle && Turbo)
-                this.Value = IsToggled && IsTurboed;
-            else if (Toggle)
-                this.Value = IsToggled;
-            else if (Turbo)
-                this.Value = IsTurboed;
-            else
-                this.Value = value;
+            prevBool = value;
         }
 
-        public object Clone()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected static bool IsShiftAllowed(ShiftSlot current, ShiftSlot required)
         {
-            return CloningHelper.DeepClone(this);
+            switch (required)
+            {
+                case ShiftSlot.None: return current == ShiftSlot.None;
+                case ShiftSlot.Any: return true;
+                default: return (current & required) != 0;
+            }
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected static bool DirectionMatches(MotionDirection direction, MotionDirection mask)
+        {
+            return direction != MotionDirection.None && ((direction & mask) != 0);
+        }
+
+        public object Clone() => CloningHelper.DeepClone(this);
     }
 }

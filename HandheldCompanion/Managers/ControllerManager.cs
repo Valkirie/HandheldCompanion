@@ -104,7 +104,7 @@ public static class ControllerManager
         pumpThread = new Thread(pumpThreadLoop)
         {
             IsBackground = true,
-            Priority = ThreadPriority.Highest
+            Priority = ThreadPriority.AboveNormal
         };
         pumpThread.Start();
 
@@ -224,7 +224,7 @@ public static class ControllerManager
         MainWindow.overlayModel?.UpdateReport(controllerState, gamepadMotion, delta);
 
         // compute layout (null-safe mapping)
-        ControllerState mapped = ManagerFactory.layoutManager?.MapController(controllerState) ?? controllerState;
+        ControllerState mapped = ManagerFactory.layoutManager?.MapController(controllerState, delta) ?? controllerState;
         EventHelper.RaiseAsync(InputsUpdated, mapped, true);
 
         // controller is muted

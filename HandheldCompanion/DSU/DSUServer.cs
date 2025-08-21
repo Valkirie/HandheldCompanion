@@ -15,7 +15,6 @@ using System.Net.Sockets;
 using System.Numerics;
 using System.Threading;
 using System.Windows.Forms;
-using static HandheldCompanion.Inputs.GyroState;
 
 namespace HandheldCompanion;
 
@@ -565,19 +564,17 @@ public static class DSUServer
             {
                 default:
                     {
-                        if (Inputs.GyroState.Gyroscope.TryGetValue(SensorState.DSU, out Vector3 gyrometer))
-                        {
-                            gyroX = gyrometer.X;
-                            gyroY = gyrometer.Y;
-                            gyroZ = gyrometer.Z;
-                        }
+                        // Gyro (DSU)
+                        Vector3 g = Inputs.GyroState.GetGyroscope(GyroState.SensorState.DSU);
+                        gyroX = g.X;
+                        gyroY = g.Y;
+                        gyroZ = g.Z;
 
-                        if (Inputs.GyroState.Accelerometer.TryGetValue(SensorState.DSU, out Vector3 accelerometer))
-                        {
-                            accelX = accelerometer.X;
-                            accelY = accelerometer.Y;
-                            accelZ = accelerometer.Z;
-                        }
+                        // Accel (DSU)
+                        Vector3 a = Inputs.GyroState.GetAccelerometer(GyroState.SensorState.DSU);
+                        accelX = a.X;
+                        accelY = a.Y;
+                        accelZ = a.Z;
                     }
                     break;
 

@@ -323,22 +323,28 @@ public class LayoutManager : IManager
 
         if (layoutMode == LayoutModes.Gamepad)
         {
-            SetActiveLayout(profileLayout);
+            if (!currentLayout.Equals(profileLayout))
+                SetActiveLayout(profileLayout);
         }
         else if (layoutMode == LayoutModes.Desktop)
         {
-            SetActiveLayout(desktopLayout);
+            if (!currentLayout.Equals(desktopLayout))
+                SetActiveLayout(desktopLayout);
         }
         else if (layoutMode == LayoutModes.Auto)
         {
             if (UIGamepad.HasFocus() && defaultLayout is not null)
             {
-                SetActiveLayout(defaultLayout);
+                if (!currentLayout.Equals(defaultLayout))
+                    SetActiveLayout(defaultLayout);
             }
             else
             {
                 ProcessEx processEx = ProcessManager.GetCurrent();
-                SetActiveLayout((processEx == null || processEx.IsGame() || processEx.Filter == ProcessEx.ProcessFilter.HandheldCompanion) ? profileLayout : desktopLayout);
+                Layout targetLayout = (processEx == null || processEx.IsGame() || processEx.Filter == ProcessEx.ProcessFilter.HandheldCompanion) ? profileLayout : desktopLayout;
+
+                if (!currentLayout.Equals(targetLayout))
+                    SetActiveLayout(targetLayout);
             }
         }
     }
@@ -520,7 +526,7 @@ public class LayoutManager : IManager
                 if (actions[i] is TriggerActions ta) EnsureXY(ta.Axis);
     }
 
-    public ControllerState MapController(ControllerState controllerState)
+    public ControllerState MapController(ControllerState controllerState, float delta)
     {
         // 1:1 mapping when no active layout
         if (currentLayout is null)
@@ -536,12 +542,14 @@ public class LayoutManager : IManager
             // compute ShiftSlot
             ShiftSlot shiftSlot = ShiftSlot.None;
 
+            // in ms
+            delta *= 1000.0f;
+
             // Iterate only over buttons that actually have actions, but also consider real buttons present in state
             // to maintain shifter behavior even if the button is unmapped elsewhere.
-            foreach (var kv in controllerState.ButtonState.State)
+            foreach (ButtonFlags button in ButtonState.AllButtons)
             {
-                var button = kv.Key;
-                var value = kv.Value;
+                bool value = controllerState.ButtonState[button];
 
                 if (!_buttonPlan.TryGetValue(button, out var actions))
                     continue;
@@ -554,17 +562,16 @@ public class LayoutManager : IManager
 
                     // cast once
                     var sAction = (ShiftActions)act;
-                    sAction.Execute(button, value, shiftSlot);
+                    sAction.Execute(button, value, shiftSlot, delta);
                     if (sAction.GetValue())
                         shiftSlot |= sAction.ShiftSlot;
                 }
             }
 
             // process button-based map
-            foreach (var kv in controllerState.ButtonState.State)
+            foreach (ButtonFlags button in ButtonState.AllButtons)
             {
-                var button = kv.Key;
-                var value = kv.Value;
+                bool value = controllerState.ButtonState[button];
 
                 if (!_buttonPlan.TryGetValue(button, out var actions))
                 {
@@ -582,25 +589,25 @@ public class LayoutManager : IManager
                         case ActionType.Button:
                             {
                                 var b = (ButtonActions)act;
-                                b.Execute(button, value, shiftSlot);
+                                b.Execute(button, value, shiftSlot, delta);
                                 bool outVal = b.GetValue() || outputState.ButtonState[b.Button];
                                 outputState.ButtonState[b.Button] = outVal;
                                 break;
                             }
                         case ActionType.Keyboard:
                             {
-                                ((KeyboardActions)act).Execute(button, value, shiftSlot);
+                                ((KeyboardActions)act).Execute(button, value, shiftSlot, delta);
                                 break;
                             }
                         case ActionType.Mouse:
                             {
-                                ((MouseActions)act).Execute(button, value, shiftSlot);
+                                ((MouseActions)act).Execute(button, value, shiftSlot, delta);
                                 break;
                             }
                         case ActionType.Trigger:
                             {
                                 var t = (TriggerActions)act;
-                                t.Execute(button, value, shiftSlot);
+                                t.Execute(button, value, shiftSlot, delta);
                                 // write Y only (triggers)
                                 var xyOut = _axisXY[t.Axis];
                                 byte add = t.GetValue();
@@ -643,20 +650,20 @@ public class LayoutManager : IManager
                         case ActionType.Button:
                             {
                                 var b = (ButtonActions)act;
-                                b.Execute(inLayout, shiftSlot);
+                                b.Execute(inLayout, shiftSlot, delta);
                                 bool outVal = b.GetValue() || outputState.ButtonState[b.Button];
                                 outputState.ButtonState[b.Button] = outVal;
                                 break;
                             }
                         case ActionType.Keyboard:
                             {
-                                ((KeyboardActions)act).Execute(inLayout, shiftSlot);
+                                ((KeyboardActions)act).Execute(inLayout, shiftSlot, delta);
                                 break;
                             }
                         case ActionType.Joystick:
                             {
                                 var ax = (AxisActions)act;
-                                ax.Execute(inLayout, shiftSlot);
+                                ax.Execute(inLayout, shiftSlot, delta);
 
                                 var xyOut = _axisXY[ax.Axis];
                                 short addX = (short)Math.Clamp(ax.XOuput, short.MinValue, short.MaxValue);
@@ -669,7 +676,7 @@ public class LayoutManager : IManager
                         case ActionType.Trigger:
                             {
                                 var t = (TriggerActions)act;
-                                t.Execute(xyIn.Y, inLayout.vector.Y, shiftSlot); // Y drives trigger
+                                t.Execute(xyIn.Y, inLayout.vector.Y, shiftSlot, delta); // Y drives trigger
 
                                 var xyOut = _axisXY[t.Axis];
                                 byte add = t.GetValue();
@@ -679,7 +686,7 @@ public class LayoutManager : IManager
                         case ActionType.Mouse:
                             {
                                 var m = (MouseActions)act;
-                                m.Execute(inLayout, touched, shiftSlot);
+                                m.Execute(inLayout, touched, shiftSlot, delta);
                                 break;
                             }
                     }
@@ -705,7 +712,7 @@ public class LayoutManager : IManager
                     case ActionType.Joystick:
                         {
                             var a = (AxisActions)action;
-                            a.Execute(inLayout, shiftSlot);
+                            a.Execute(inLayout, shiftSlot, delta);
 
                             // blend with stick using gyro weight logic
                             var xyOut = _axisXY[a.Axis];
@@ -726,7 +733,7 @@ public class LayoutManager : IManager
                             if (ControllerState.AxisTouchButtons.TryGetValue(inLayout.flags, out var touchButton))
                                 touched = controllerState.ButtonState[touchButton];
 
-                            m.Execute(inLayout, touched, shiftSlot);
+                            m.Execute(inLayout, touched, shiftSlot, delta);
                             break;
                         }
                 }

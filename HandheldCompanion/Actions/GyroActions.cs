@@ -25,8 +25,6 @@ namespace HandheldCompanion.Actions
         public const int DefaultDeadzone = 10;
         public const float DefaultGyroWeight = 1.2f;
 
-        public GyroActions()
-        {
-        }
+        public GyroActions() { }
     }
 }

@@ -24,7 +24,7 @@ public class DClawController : DInputController
 
     private Thread rumbleThread;
     private bool rumbleThreadRunning;
-    private int rumbleThreadInterval = 10;
+    private int rumbleThreadInterval = 100; // (ms)
 
     public DClawController() : base()
     { }
@@ -52,7 +52,7 @@ public class DClawController : DInputController
             rumbleThread = new Thread(RumbleThreadLoop)
             {
                 IsBackground = true,
-                Priority = ThreadPriority.Highest
+                Priority = ThreadPriority.Normal
             };
             rumbleThread.Start();
         }
@@ -79,13 +79,27 @@ public class DClawController : DInputController
         base.Unplug();
     }
 
+    private byte prevLarge = 0;
+    private byte prevSmall = 0;
     private async void RumbleThreadLoop(object? obj)
     {
         while (rumbleThreadRunning)
         {
-            byte largeVal = (byte)(FeedbackLargeMotor != 0 ? 193 : 0);
-            byte smallVal = (byte)(FeedbackSmallMotor != 0 ? 193 : 0);
-            WriteVibration(largeVal, smallVal);
+            // values snapshot
+            byte LargeMotor = FeedbackLargeMotor;
+            byte SmallMotor = FeedbackSmallMotor;
+
+            byte largeVal = (byte)(LargeMotor != 0 ? 193 : 0);
+            byte smallVal = (byte)(SmallMotor != 0 ? 193 : 0);
+
+            if (prevLarge != LargeMotor || prevSmall != SmallMotor)
+            {
+                WriteVibration(largeVal, smallVal);
+
+                // update prev values
+                prevLarge = LargeMotor;
+                prevSmall = SmallMotor;
+            }
 
             Thread.Sleep(rumbleThreadInterval);
         }
