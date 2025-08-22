@@ -64,16 +64,18 @@ public static class WPFUtils
     }
 
     // A function that takes a list of controls and returns the top-left control
-    public static Control GetTopLeftControl<T>(List<Control> controls) where T : Control
+    public static Control GetTopLeftControl<T>(List<Control> controls, List<Type> typesToIgnore = null) where T : Control
     {
         // filter list
         controls = controls.Where(c => c is T && c.IsEnabled).ToList();
 
+        // Filter based on exclusion type list
+        if (typesToIgnore is not null)
+            controls = controls.Where(c => !typesToIgnore.Contains(c.GetType())).ToList();
+
         // If no controls are found, return null
         if (controls == null || controls.Count == 0)
-        {
             return null;
-        }
 
         // Initialize the top left control with the first element of the list
         Control topLeft = controls[0];
