@@ -307,6 +307,32 @@
                     </ui:SettingsCard.HeaderIcon>
                 </ui:SettingsCard>
             </ikw:SimpleStackPanel>
+
+            <!--  Related support  -->
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_RelatedSupport}" />
+            <ikw:SimpleStackPanel Spacing="3">
+                <ui:SettingsExpander Header="Help with controller settings">
+                    <ui:SettingsExpander.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xf6fa;" />
+                    </ui:SettingsExpander.HeaderIcon>
+
+                    <ui:SettingsExpander.Items>
+                        <ui:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
+                            <StackPanel Margin="-12,0,0,0" Orientation="Vertical">
+                                <ui:HyperlinkButton Content="Testing your game controller inputs" NavigateUri="https://hardwaretester.com/gamepad" />
+                                <ui:HyperlinkButton
+                                    Command="{Binding OpenWindowsControl}"
+                                    CommandParameter="joy.cpl"
+                                    Content="Configuring your game controllers settings" />
+                                <ui:HyperlinkButton
+                                    Command="{Binding NavigateSettings}"
+                                    CommandParameter="ms-settings:connecteddevices"
+                                    Content="Troobleshooting bluetooth controllers connection issues" />
+                            </StackPanel>
+                        </ui:SettingsCard>
+                    </ui:SettingsExpander.Items>
+                </ui:SettingsExpander>
+            </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
     </Grid>
 </Page>

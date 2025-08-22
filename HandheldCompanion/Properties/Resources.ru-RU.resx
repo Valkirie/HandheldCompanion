@@ -3368,4 +3368,7 @@
   <data name="PerformancePage_PL1PL2Warning" xml:space="preserve">
     <value />
   </data>
+  <data name="ControllerPage_RelatedSupport" xml:space="preserve">
+    <value />
+  </data>
 </root>

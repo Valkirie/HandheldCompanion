@@ -826,6 +826,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Related support.
+        /// </summary>
+        public static string ControllerPage_RelatedSupport {
+            get {
+                return ResourceManager.GetString("ControllerPage_RelatedSupport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to HD rumble.
         /// </summary>
         public static string ControllerPage_SteamControllerHDRumble {
