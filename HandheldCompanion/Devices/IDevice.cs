@@ -364,7 +364,7 @@ public abstract class IDevice
         PullSensors();
     }
 
-    public IEnumerable<ButtonFlags> OEMButtons => OEMChords.Where(a => !a.silenced).SelectMany(a => a.state.Buttons).Distinct();
+    public IEnumerable<ButtonFlags> OEMButtons => OEMChords.Where(chord => !chord.silenced).SelectMany(chord => chord.state.Buttons).Distinct();
 
     public virtual bool IsSupported => true;
 

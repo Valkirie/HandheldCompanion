@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -32,6 +33,10 @@ public partial class Layout : ICloneable, IDisposable
 
         // Generic button mapping
         foreach (ButtonFlags button in controller.GetTargetButtons())
+            ButtonLayout[button] = [new InheritActions()];
+
+        // Device button mapping
+        foreach (ButtonFlags button in IDevice.GetCurrent().OEMButtons)
             ButtonLayout[button] = [new InheritActions()];
 
         // Generic axis mapping
