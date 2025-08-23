@@ -181,13 +181,13 @@
 
                 <ItemsControl
                     Grid.Column="0"
+                    HorizontalAlignment="Center"
                     ItemsSource="{Binding PagedProfiles}"
                     VirtualizingPanel.IsVirtualizing="True"
                     VirtualizingPanel.VirtualizationMode="Recycling">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel
-                                HorizontalAlignment="Center"
                                 ItemHeight="100"
                                 ItemWidth="90"
                                 Orientation="Horizontal" />
