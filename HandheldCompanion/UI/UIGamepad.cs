@@ -344,9 +344,12 @@ namespace HandheldCompanion.Managers
                 // update status
                 _navigating = _goingForward;
 
-                List<Type> IgnoreList = new();
+                List<Type> IgnoreList = new() { typeof(NavigationViewItem) };
+
                 if (IsQuicktools)
+                {
                     IgnoreList.Add(typeof(AppBarButton));
+                }
 
                 Control control;
                 if (prevControl.TryGetValue(gamepadPage.Tag, out control))
