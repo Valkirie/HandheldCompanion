@@ -10,10 +10,11 @@ namespace HandheldCompanion.Inputs;
 public partial class ButtonState : ICloneable, IDisposable
 {
     public static readonly ButtonFlags[] AllButtons = Enum.GetValues<ButtonFlags>();
+    private const int MaxValue = (int)ButtonFlags.Max;
 
     // Runtime storage (no locks, no dictionaries)
     [JsonIgnore]
-    private bool[] _pressed = new bool[AllButtons.Length];
+    private bool[] _pressed = new bool[MaxValue];
 
     // Kept only so existing JSON (de)serialization does not break.
     // We fill this from the array when serializing, and read it into the array when deserializing.
@@ -24,37 +25,35 @@ public partial class ButtonState : ICloneable, IDisposable
     public ButtonState(Dictionary<ButtonFlags, bool> state)
     {
         // initialize array from incoming dictionary
-        _pressed = new bool[AllButtons.Length];
+        _pressed = new bool[MaxValue];
         if (state != null)
         {
-            for (int i = 0; i < AllButtons.Length; i++)
-                _pressed[i] = state.TryGetValue(AllButtons[i], out var v) && v;
+            for (int i = 0; i < MaxValue; i++)
+                _pressed[i] = state.TryGetValue((ButtonFlags)i, out var v) && v;
         }
     }
 
     public ButtonState()
     {
-        _pressed = new bool[AllButtons.Length];
+        _pressed = new bool[MaxValue];
     }
 
     ~ButtonState() => Dispose(false);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int IndexOf(ButtonFlags button) => Array.IndexOf(AllButtons, button);
+    private static int IndexOf(ButtonFlags button) => (int)button;
 
     public bool this[ButtonFlags button]
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
-            int idx = IndexOf(button);
-            return idx >= 0 && _pressed[idx];
+            return _pressed[(int)button];
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         set
         {
-            int idx = IndexOf(button);
-            if (idx >= 0) _pressed[idx] = value;
+            _pressed[(int)button] = value;
         }
     }
 
@@ -64,9 +63,9 @@ public partial class ButtonState : ICloneable, IDisposable
         get
         {
             // snapshot of currently pressed buttons
-            var list = new List<ButtonFlags>();
-            for (int i = 0; i < AllButtons.Length; i++)
-                if (_pressed[i]) list.Add(AllButtons[i]);
+            List<ButtonFlags> list = new List<ButtonFlags>();
+            for (int i = 0; i < MaxValue; i++)
+                if (_pressed[i]) list.Add((ButtonFlags)i);
             return list;
         }
     }
@@ -94,7 +93,7 @@ public partial class ButtonState : ICloneable, IDisposable
     {
         if (other is null) return false;
         // Equivalent to: for every button, this[b] == other[b]
-        for (int i = 0; i < AllButtons.Length; i++)
+        for (int i = 0; i < MaxValue; i++)
             if (_pressed[i] != other._pressed[i]) return false;
         return true;
     }
@@ -179,17 +178,17 @@ public partial class ButtonState : ICloneable, IDisposable
     private void OnSerializing(StreamingContext _)
     {
         // Populate State from array so JSON stays backward compatible
-        State = new Dictionary<ButtonFlags, bool>(AllButtons.Length);
-        for (int i = 0; i < AllButtons.Length; i++)
-            State[AllButtons[i]] = _pressed[i];
+        State = new Dictionary<ButtonFlags, bool>(MaxValue);
+        for (int i = 0; i < MaxValue; i++)
+            State[(ButtonFlags)i] = _pressed[i];
     }
 
     [OnDeserialized]
     private void OnDeserialized(StreamingContext _)
     {
         // Populate array from State
-        if (_pressed == null || _pressed.Length != AllButtons.Length)
-            _pressed = new bool[AllButtons.Length];
+        if (_pressed == null || _pressed.Length != MaxValue)
+            _pressed = new bool[MaxValue];
 
         if (State == null || State.Count == 0)
         {
@@ -197,7 +196,7 @@ public partial class ButtonState : ICloneable, IDisposable
             return;
         }
 
-        for (int i = 0; i < AllButtons.Length; i++)
-            _pressed[i] = State.TryGetValue(AllButtons[i], out var v) && v;
+        for (int i = 0; i < MaxValue; i++)
+            _pressed[i] = State.TryGetValue((ButtonFlags)i, out var v) && v;
     }
 }

@@ -100,5 +100,5 @@ public enum ButtonFlags : byte
     HOTKEY_GYRO_AIMING = 142,
     HOTKEY_END = 150,
 
-    Max = 255
+    Max = 151
 }

@@ -15,7 +15,8 @@ public partial class AxisState : ICloneable, IDisposable
 
     // Runtime storage (no locks, no dictionaries)
     [JsonIgnore]
-    private short[] _values = new short[AllAxis.Length];
+    private short[] _values = new short[MaxValue];
+    private const int MaxValue = (int)AxisFlags.Max;
 
     // Kept only so existing JSON (de)serialization does not break.
     public Dictionary<AxisFlags, short> State = new();
@@ -24,37 +25,35 @@ public partial class AxisState : ICloneable, IDisposable
 
     public AxisState(Dictionary<AxisFlags, short> state)
     {
-        _values = new short[AllAxis.Length];
+        _values = new short[MaxValue];
         if (state != null)
         {
-            for (int i = 0; i < AllAxis.Length; i++)
-                _values[i] = state.TryGetValue(AllAxis[i], out var v) ? v : (short)0;
+            for (int i = 0; i < MaxValue; i++)
+                _values[i] = state.TryGetValue((AxisFlags)i, out var v) ? v : (short)0;
         }
     }
 
     public AxisState()
     {
-        _values = new short[AllAxis.Length];
+        _values = new short[MaxValue];
     }
 
     ~AxisState() => Dispose(false);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int IndexOf(AxisFlags axis) => Array.IndexOf(AllAxis, axis);
+    private static int IndexOf(AxisFlags axis) => (int)axis;
 
     public short this[AxisFlags axis]
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
-            int idx = IndexOf(axis);
-            return idx >= 0 ? _values[idx] : (short)0;
+            return _values[(int)axis];
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         set
         {
-            int idx = IndexOf(axis);
-            if (idx >= 0) _values[idx] = value;
+            _values[(int)axis] = value;
         }
     }
 
@@ -63,9 +62,9 @@ public partial class AxisState : ICloneable, IDisposable
     {
         get
         {
-            var list = new List<AxisFlags>();
-            for (int i = 0; i < AllAxis.Length; i++)
-                if (_values[i] != 0) list.Add(AllAxis[i]);
+            List<AxisFlags> list = new List<AxisFlags>();
+            for (int i = 0; i < MaxValue; i++)
+                if (_values[i] != 0) list.Add((AxisFlags)i);
             return list;
         }
     }
@@ -193,16 +192,16 @@ public partial class AxisState : ICloneable, IDisposable
     [OnSerializing]
     private void OnSerializing(StreamingContext _)
     {
-        State = new Dictionary<AxisFlags, short>(AllAxis.Length);
-        for (int i = 0; i < AllAxis.Length; i++)
-            State[AllAxis[i]] = _values[i];
+        State = new Dictionary<AxisFlags, short>(MaxValue);
+        for (int i = 0; i < MaxValue; i++)
+            State[(AxisFlags)i] = _values[i];
     }
 
     [OnDeserialized]
     private void OnDeserialized(StreamingContext _)
     {
-        if (_values == null || _values.Length != AllAxis.Length)
-            _values = new short[AllAxis.Length];
+        if (_values == null || _values.Length != MaxValue)
+            _values = new short[MaxValue];
 
         if (State == null || State.Count == 0)
         {
@@ -210,7 +209,7 @@ public partial class AxisState : ICloneable, IDisposable
             return;
         }
 
-        for (int i = 0; i < AllAxis.Length; i++)
-            _values[i] = State.TryGetValue(AllAxis[i], out var v) ? v : (short)0;
+        for (int i = 0; i < MaxValue; i++)
+            _values[i] = State.TryGetValue((AxisFlags)i, out var v) ? v : (short)0;
     }
 }

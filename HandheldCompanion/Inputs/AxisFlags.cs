@@ -19,7 +19,8 @@ public enum AxisFlags : byte
     LeftPadY = 9,
     RightPadY = 10,
 
-    GyroX = 11, GyroY = 12,
+    GyroX = 11,
+    GyroY = 12,
 
     Max = 13
 }
