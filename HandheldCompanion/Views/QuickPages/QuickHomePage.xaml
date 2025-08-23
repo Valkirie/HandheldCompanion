@@ -22,7 +22,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <converters:WidthToColumnsConverter x:Key="WidthToColumns" DesiredItemWidth="90" />
+        <converters:WidthToColumnsConverter x:Key="WidthToColumns" DesiredItemWidth="100" />
     </Page.Resources>
 
     <Grid>
@@ -47,8 +47,9 @@
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel
+                                HorizontalAlignment="Center"
                                 ItemHeight="100"
-                                ItemWidth="90"
+                                ItemWidth="100"
                                 Orientation="Horizontal" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
