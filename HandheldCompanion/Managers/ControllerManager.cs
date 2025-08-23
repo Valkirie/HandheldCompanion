@@ -350,12 +350,10 @@ public static class ControllerManager
                             controller = new SDLController(gamepad, deviceIndex, details);
                             break;
 
-                        /*
                     case SDL.GamepadType.Xbox360:
                     case SDL.GamepadType.XboxOne:
-                        controller = new Xbox360Controller(gamepad, deviceIndex, details);
+                        // controller = new Xbox360Controller(gamepad, deviceIndex, details);
                         break;
-                        */
 
                         case SDL.GamepadType.PS3:
                         case SDL.GamepadType.PS4:
