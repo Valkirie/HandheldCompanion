@@ -19,7 +19,10 @@ namespace HandheldCompanion.Commands.Functions.Windows
         {
             Task.Run(() =>
             {
-                Process.Start(new ProcessStartInfo("ms-actioncenter://") { UseShellExecute = true });
+                Process.Start(new ProcessStartInfo("ms-actioncenter://")
+                {
+                    UseShellExecute = true
+                });
             });
 
             base.Execute(IsKeyDown, IsKeyUp, false);

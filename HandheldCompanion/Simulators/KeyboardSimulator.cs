@@ -4,6 +4,7 @@ using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Inputs;
 using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Simulators;
@@ -135,10 +136,12 @@ public static class KeyboardSimulator
         }
     }
 
-    public static void KeyPress(VirtualKeyCode[] keys)
+    public static async void KeyPress(VirtualKeyCode[] keys, int delay = 250)
     {
         foreach (var key in keys)
             KeyDown(key);
+
+        await Task.Delay(delay);
 
         foreach (var key in keys)
             KeyUp(key);
