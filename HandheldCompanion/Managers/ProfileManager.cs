@@ -620,12 +620,12 @@ public class ProfileManager : IManager
                     }
                 }
             }
-            else if (version <= Version.Parse("0.26.0.2"))
+            if (version <= Version.Parse("0.26.0.2"))
             {
                 // get previous path, if any
                 string path = jObject.GetValue("Path")?.ToString() ?? string.Empty;
             }
-            else if (version <= Version.Parse("0.27.0.7"))
+            if (version <= Version.Parse("0.27.0.7"))
             {
                 // let's make sure we get a Dictionary
                 outputraw = outputraw.Replace(

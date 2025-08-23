@@ -151,17 +151,17 @@ public class HotkeysManager : IManager
 
             try
             {
+                if (version == Version.Parse("0.0.0.0"))
+                {
+                    // too old
+                    throw new Exception("Hotkey is outdated.");
+                }
                 if (jObject.ContainsKey("hotkeyId"))
                 {
                     // this goes back to 0.21.4.1 ?
                     hotkey = MigrateFrom0_21_4_1(fileName, jObject);
                 }
-                else if (version == Version.Parse("0.0.0.0"))
-                {
-                    // too old
-                    throw new Exception("Hotkey is outdated.");
-                }
-                else if (version <= Version.Parse("0.27.0.7"))
+                if (version <= Version.Parse("0.27.0.7"))
                 {
                     // let's make sure we get a Dictionary
                     outputraw = outputraw.Replace(
