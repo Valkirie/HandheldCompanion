@@ -350,10 +350,12 @@ public static class ControllerManager
                             controller = new SDLController(gamepad, deviceIndex, details);
                             break;
 
+                            /*
                         case SDL.GamepadType.Xbox360:
                         case SDL.GamepadType.XboxOne:
                             controller = new Xbox360Controller(gamepad, deviceIndex, details);
                             break;
+                            */
 
                         case SDL.GamepadType.PS3:
                         case SDL.GamepadType.PS4:
@@ -373,6 +375,9 @@ public static class ControllerManager
                     LogManager.LogWarning("Unsupported SDL controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
                     return;
                 }
+
+                // hacky: filter phantom devices
+                await Task.Delay(2000).ConfigureAwait(false);
 
                 while (!controller.IsReady && controller.IsConnected())
                     await Task.Delay(250).ConfigureAwait(false);
@@ -564,8 +569,6 @@ public static class ControllerManager
                                     try
                                     {
                                         controller = new DClawController(details);
-                                        // hacky: MSI will eventually create an controller for a few milliseconds, then delete it
-                                        await Task.Delay(2000).ConfigureAwait(false);
                                     }
                                     catch { }
                                     break;
@@ -580,6 +583,9 @@ public static class ControllerManager
                 LogManager.LogWarning("Unsupported Generic controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
                 return;
             }
+
+            // hacky: filter phantom devices
+            await Task.Delay(2000).ConfigureAwait(false);
 
             while (!controller.IsReady && controller.IsConnected())
                 await Task.Delay(250).ConfigureAwait(false);
@@ -754,8 +760,6 @@ public static class ControllerManager
                                     try
                                     {
                                         controller = new XClawController(details);
-                                        // hacky: MSI will eventually create an controller for a few milliseconds, then delete it
-                                        await Task.Delay(2000).ConfigureAwait(false);
                                     }
                                     catch { }
                                     break;
@@ -782,6 +786,9 @@ public static class ControllerManager
                 LogManager.LogWarning("Unsupported XInput controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
                 return;
             }
+
+            // hacky: filter phantom devices
+            await Task.Delay(2000).ConfigureAwait(false);
 
             while (!controller.IsReady && controller.IsConnected())
                 await Task.Delay(250).ConfigureAwait(false);
