@@ -48,12 +48,15 @@ public partial class AxisState : ICloneable, IDisposable
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
-            return _values[(int)axis];
+            int idx = (int)axis;
+            return (idx < _values.Length && idx >= 0) ? _values[idx] : (short)0;
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         set
         {
-            _values[(int)axis] = value;
+            int idx = (int)axis;
+            if (idx < _values.Length && idx >= 0)
+                _values[idx] = value;
         }
     }
 

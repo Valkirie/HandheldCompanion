@@ -48,12 +48,15 @@ public partial class ButtonState : ICloneable, IDisposable
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
-            return _pressed[(int)button];
+            int idx = (int)button;
+            return (idx < _pressed.Length && idx >= 0) ? _pressed[idx] : false;
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         set
         {
-            _pressed[(int)button] = value;
+            int idx = (int)button;
+            if (idx < _pressed.Length && idx >= 0)
+                _pressed[idx] = value;
         }
     }
 
