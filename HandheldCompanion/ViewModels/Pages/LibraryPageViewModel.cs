@@ -214,9 +214,9 @@ namespace HandheldCompanion.ViewModels
                                 bool isCreation;
 
                                 // Try to find an existing profile
-                                if (game is SteamGame steamGame)
+                                if (game.Executables.Any())
                                 {
-                                    foreach (string executable in steamGame.Executables)
+                                    foreach (string executable in game.Executables)
                                     {
                                         profile = ManagerFactory.profileManager.GetProfileFromPath(executable, true, true);
                                         if (!profile.Default)
