@@ -14,7 +14,8 @@ public enum AsusMode
 {
     Performance = 0,
     Turbo = 1,
-    Silent = 2
+    Silent = 2,
+    Manual = 4,
 }
 
 public enum AsusGPU

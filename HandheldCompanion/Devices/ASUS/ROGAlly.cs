@@ -27,8 +27,6 @@ public class ROGAlly : IDevice
         { 168, ButtonFlags.OEM4 },
     };
 
-    private static bool customFanControl = false;
-
     private const byte INPUT_HID_ID = 0x5a;
     private const byte AURA_HID_ID = 0x5d;
 
@@ -361,19 +359,12 @@ public class ROGAlly : IDevice
 
         switch (enable)
         {
-            case false:
-                {
-                    if (customFanControl)
-                    {
-                        customFanControl = false;
-                        AsusACPI.DeviceSet(AsusACPI.PerformanceMode, mode);
-                    }
-                }
-                break;
             case true:
-                customFanControl = true;
+                mode = (int)AsusMode.Manual;
                 break;
         }
+
+        AsusACPI.DeviceSet(AsusACPI.PerformanceMode, mode);
     }
 
     public override void SetFanDuty(double percent)
@@ -383,6 +374,7 @@ public class ROGAlly : IDevice
 
         AsusACPI.SetFanSpeed(AsusFan.CPU, Convert.ToByte(percent));
         AsusACPI.SetFanSpeed(AsusFan.GPU, Convert.ToByte(percent));
+        AsusACPI.SetFanSpeed(AsusFan.Mid, Convert.ToByte(percent));
     }
 
     public override float ReadFanDuty()
