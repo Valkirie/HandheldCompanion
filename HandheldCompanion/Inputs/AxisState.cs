@@ -11,6 +11,7 @@ namespace HandheldCompanion.Inputs;
 public partial class AxisState : ICloneable, IDisposable
 {
     public static readonly AxisFlags[] AllAxis = Enum.GetValues<AxisFlags>();
+    public static readonly AxisLayoutFlags[] AllAxisLayoutFlags = Enum.GetValues<AxisLayoutFlags>();
 
     // Runtime storage (no locks, no dictionaries)
     [JsonIgnore]

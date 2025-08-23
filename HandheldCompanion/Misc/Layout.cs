@@ -32,7 +32,7 @@ public partial class Layout : ICloneable, IDisposable
         IController controller = ControllerManager.GetDefaultXBOX();
 
         // Generic button mapping
-        foreach (ButtonFlags button in controller.GetTargetButtons())
+        foreach (ButtonFlags button in ButtonState.AllButtons)
             ButtonLayout[button] = [new InheritActions()];
 
         // Device button mapping
@@ -40,9 +40,18 @@ public partial class Layout : ICloneable, IDisposable
             ButtonLayout[button] = [new InheritActions()];
 
         // Generic axis mapping
-        IEnumerable<AxisLayoutFlags> allAxes = controller.GetTargetAxis().Union(controller.GetTargetTriggers());
-        foreach (AxisLayoutFlags axis in allAxes)
-            AxisLayout[axis] = [new InheritActions()];
+        foreach (AxisLayoutFlags axis in AxisState.AllAxisLayoutFlags)
+        {
+            switch (axis)
+            {
+                default:
+                    AxisLayout[axis] = [new InheritActions()];
+                    break;
+                case AxisLayoutFlags.Gyroscope:
+                    // GyroLayout[axis] = new InheritActions();
+                    break;
+            }
+        }
     }
 
     public void FillDefault()

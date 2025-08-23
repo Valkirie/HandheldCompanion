@@ -1400,14 +1400,14 @@
                             Width="220"
                             VerticalAlignment="Center"
                             SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="Disabled" IsEnabled="True" />
-                            <ComboBoxItem Content="Button" IsEnabled="False" />
-                            <ComboBoxItem Content="Axis" IsEnabled="True" />
-                            <ComboBoxItem Content="Keyboard" IsEnabled="False" />
-                            <ComboBoxItem Content="Mouse" IsEnabled="True" />
-                            <ComboBoxItem Content="Trigger" IsEnabled="False" />
-                            <ComboBoxItem Content="Shift" IsEnabled="False" />
-                            <ComboBoxItem Content="Inherit" IsEnabled="False" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="False" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Joystick}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Keyboard}" IsEnabled="False" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Mouse}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="False" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="False" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="False" />
                         </ComboBox>
 
                         <ComboBox
@@ -2037,14 +2037,14 @@
                                 Width="220"
                                 VerticalAlignment="Center"
                                 SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ComboBoxItem Content="Disabled" IsEnabled="True" />
-                                <ComboBoxItem Content="Button" IsEnabled="True" />
-                                <ComboBoxItem Content="Axis" IsEnabled="True" />
-                                <ComboBoxItem Content="Keyboard" IsEnabled="True" />
-                                <ComboBoxItem Content="Mouse" IsEnabled="True" />
-                                <ComboBoxItem Content="Trigger" IsEnabled="False" />
-                                <ComboBoxItem Content="Shift" IsEnabled="False" />
-                                <ComboBoxItem Content="Inherit" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Joystick}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Keyboard}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Mouse}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="False" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="False" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="True" />
                             </ComboBox>
 
                             <ComboBox
@@ -2705,14 +2705,14 @@
                                 Width="220"
                                 VerticalAlignment="Center"
                                 SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ComboBoxItem Content="Disabled" IsEnabled="True" />
-                                <ComboBoxItem Content="Button" IsEnabled="True" />
-                                <ComboBoxItem Content="Axis" IsEnabled="False" />
-                                <ComboBoxItem Content="Keyboard" IsEnabled="True" />
-                                <ComboBoxItem Content="Mouse" IsEnabled="True" />
-                                <ComboBoxItem Content="Trigger" IsEnabled="True" />
-                                <ComboBoxItem Content="Shift" IsEnabled="False" />
-                                <ComboBoxItem Content="Inherit" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Joystick}" IsEnabled="False" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Keyboard}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Mouse}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="True" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="False" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="True" />
                             </ComboBox>
 
                             <ComboBox

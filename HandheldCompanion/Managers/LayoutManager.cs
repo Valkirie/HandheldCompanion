@@ -31,8 +31,8 @@ public class LayoutManager : IManager
 
     private Layout currentLayout = new();
     private Layout profileLayout = new();
-    private Layout defaultLayout = null;
-    private Layout desktopLayout = null;
+    private Layout? defaultLayout = null;
+    private Layout? desktopLayout = null;
 
     private ControllerState outputState = new();
 
@@ -355,12 +355,17 @@ public class LayoutManager : IManager
         layoutTimer.Start();
     }
 
-    public Layout GetCurrent()
+    public Layout? GetDefault()
+    {
+        return defaultLayout;
+    }
+
+    public Layout? GetCurrent()
     {
         return currentLayout;
     }
 
-    public Layout GetDesktop()
+    public Layout? GetDesktop()
     {
         return desktopLayout;
     }
@@ -418,6 +423,8 @@ public class LayoutManager : IManager
             UpdateInherit();
             // build caches for the new layout
             BuildPlans();
+
+            LayoutChanged?.Invoke(currentLayout);
         }
     }
 
@@ -795,6 +802,9 @@ public class LayoutManager : IManager
     }
 
     #region events
+
+    public event LayoutChangedEventHandler LayoutChanged;
+    public delegate void LayoutChangedEventHandler(Layout layout);
 
     public event UpdatedEventHandler Updated;
     public delegate void UpdatedEventHandler(LayoutTemplate layoutTemplate);

@@ -213,6 +213,7 @@ public partial class MainWindow : GamepadWindow
         // start non-threaded managers
         InputsManager.Start();
         TimerManager.Start();
+        MotionManager.Start();
         ManagerFactory.settingsManager.Start();
 
         // Load MVVM pages after the Models / data have been created.
@@ -748,6 +749,7 @@ public partial class MainWindow : GamepadWindow
         SensorsManager.Stop();
         ControllerManager.Stop();
         InputsManager.Stop(true);
+        TimerManager.Stop();
         OSDManager.Stop();
         SystemManager.Stop();
         DynamicLightingManager.Stop();
