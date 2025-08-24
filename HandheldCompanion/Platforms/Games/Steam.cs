@@ -8,7 +8,6 @@ using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -36,7 +35,7 @@ public class Steam : IPlatform
 
     public Steam()
     {
-        PlatformType = PlatformType.Steam;
+        PlatformType = GamePlatform.Steam;
 
         // refresh library
         Refresh();
@@ -52,6 +51,11 @@ public class Steam : IPlatform
             "steamclient64.dll"
         ];
 
+        BlacklistIds =
+        [
+            "228980",
+        ];
+
         if (!IsInstalled)
         {
             LogManager.LogWarning("Steam is not available. You can get it from: {0}", "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe");
@@ -62,17 +66,6 @@ public class Steam : IPlatform
         debounceTimer = new Timer(1000); // 1 second delay
         debounceTimer.AutoReset = false; // Trigger only once per activation
         debounceTimer.Elapsed += DebounceTimer_Elapsed;
-    }
-
-    public override bool IsRelated(Process process)
-    {
-        string? path = ProcessUtils.GetPathToApp(process.Id);
-
-        foreach (string? executable in steamLauncher.Games.SelectMany(game => game.Executables))
-            if (string.Equals(path, executable))
-                return true;
-
-        return base.IsRelated(process);
     }
 
     public override bool Start()
@@ -260,7 +253,7 @@ public class Steam : IPlatform
 
     public override IEnumerable<IGame> GetGames()
     {
-        return steamLauncher.Games;
+        return steamLauncher.Games.Where(game => !BlacklistIds.Contains(game.Id));
     }
 
     public override Image GetLogo()

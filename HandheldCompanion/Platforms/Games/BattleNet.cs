@@ -3,6 +3,7 @@ using GameLib.Plugin.BattleNet;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 
 namespace HandheldCompanion.Platforms.Games;
 
@@ -18,7 +19,7 @@ public class BattleNet : IPlatform
 
     public BattleNet()
     {
-        PlatformType = PlatformType.BattleNet;
+        PlatformType = GamePlatform.BattleNet;
 
         // refresh library
         Refresh();
@@ -42,7 +43,7 @@ public class BattleNet : IPlatform
 
     public override IEnumerable<IGame> GetGames()
     {
-        return battlenetLauncher.Games;
+        return battlenetLauncher.Games.Where(game => !BlacklistIds.Contains(game.Id));
     }
 
     public override Image GetLogo()

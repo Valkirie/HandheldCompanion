@@ -1,9 +1,9 @@
 ﻿using GameLib.Core;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Platforms.Games;
 using HandheldCompanion.Platforms.Misc;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace HandheldCompanion.Managers;
@@ -92,17 +92,38 @@ public class PlatformManager : IManager
         base.Stop();
     }
 
-    public static PlatformType GetPlatform(Process proc)
+    public static GamePlatform GetPlatform(ProcessEx proc)
     {
         foreach (IPlatform platform in GamingPlatforms)
             if (platform.IsRelated(proc))
                 return platform.PlatformType;
 
-        return PlatformType.Windows;
+        return GamePlatform.Generic;
     }
 
-    public static IEnumerable<IGame> GetGames()
+    public static IEnumerable<IGame> GetGames(GamePlatform gamePlatform)
     {
-        return GamingPlatforms.SelectMany(platform => platform.GetGames());
+        List<IGame> games = new List<IGame>();
+
+        if (gamePlatform.HasFlag(GamePlatform.Steam))
+            games.AddRange(Steam.GetGames());
+        if (gamePlatform.HasFlag(GamePlatform.Origin))
+            games.AddRange(Origin.GetGames());
+        if (gamePlatform.HasFlag(GamePlatform.UbisoftConnect))
+            games.AddRange(UbisoftConnect.GetGames());
+        if (gamePlatform.HasFlag(GamePlatform.GOG))
+            games.AddRange(GOGGalaxy.GetGames());
+        if (gamePlatform.HasFlag(GamePlatform.BattleNet))
+            games.AddRange(BattleNet.GetGames());
+        if (gamePlatform.HasFlag(GamePlatform.Epic))
+            games.AddRange(Epic.GetGames());
+        if (gamePlatform.HasFlag(GamePlatform.RiotGames))
+            games.AddRange(RiotGames.GetGames());
+        if (gamePlatform.HasFlag(GamePlatform.Rockstar))
+            games.AddRange(Rockstar.GetGames());
+        if (gamePlatform.HasFlag(GamePlatform.EADesktop))
+            games.AddRange(EADesktop.GetGames());
+
+        return games;
     }
 }

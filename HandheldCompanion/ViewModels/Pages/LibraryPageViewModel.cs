@@ -99,17 +99,17 @@ namespace HandheldCompanion.ViewModels
 
         public bool IsLibraryConnected => ManagerFactory.libraryManager.IsConnected;
 
-        private Dictionary<Type, PlatformType> keyValuePairs = new Dictionary<Type, PlatformType>()
+        private Dictionary<Type, GamePlatform> keyValuePairs = new Dictionary<Type, GamePlatform>()
         {
-            { typeof(BattleNetGame), PlatformType.BattleNet },
-            { typeof(EpicGame), PlatformType.Epic },
-            { typeof(GogGame), PlatformType.GOG },
-            { typeof(OriginGame), PlatformType.Origin },
-            { typeof(GameLib.Plugin.RiotGames.Model.Game), PlatformType.RiotGames },
-            { typeof(RockstarGame), PlatformType.Rockstar },
-            { typeof(SteamGame), PlatformType.Steam },
-            { typeof(UbisoftGame), PlatformType.UbisoftConnect },
-            { typeof(EAGame), PlatformType.EADesktop },
+            { typeof(BattleNetGame), GamePlatform.BattleNet },
+            { typeof(EpicGame), GamePlatform.Epic },
+            { typeof(GogGame), GamePlatform.GOG },
+            { typeof(OriginGame), GamePlatform.Origin },
+            { typeof(GameLib.Plugin.RiotGames.Model.Game), GamePlatform.RiotGames },
+            { typeof(RockstarGame), GamePlatform.Rockstar },
+            { typeof(SteamGame), GamePlatform.Steam },
+            { typeof(UbisoftGame), GamePlatform.UbisoftConnect },
+            { typeof(EAGame), GamePlatform.EADesktop },
         };
 
         private LibraryPage LibraryPage;
@@ -173,43 +173,39 @@ namespace HandheldCompanion.ViewModels
                             switch (param)
                             {
                                 case "All":
-                                    games.AddRange(PlatformManager.GetGames());
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.All));
                                     break;
                                 case "BattleNet":
-                                    games.AddRange(PlatformManager.BattleNet.GetGames());
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.BattleNet));
                                     break;
                                 case "Epic":
-                                    games.AddRange(PlatformManager.Epic.GetGames());
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.Epic));
                                     break;
                                 case "GOG":
-                                    games.AddRange(PlatformManager.GOGGalaxy.GetGames());
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.GOG));
                                     break;
                                 case "Origin":
-                                    games.AddRange(PlatformManager.Origin.GetGames());
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.Origin));
                                     break;
                                 case "EA Desktop":
-                                    games.AddRange(PlatformManager.EADesktop.GetGames());
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.EADesktop));
                                     break;
                                 case "Riot":
-                                    games.AddRange(PlatformManager.RiotGames.GetGames());
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.RiotGames));
                                     break;
                                 case "Rockstar":
-                                    games.AddRange(PlatformManager.Rockstar.GetGames());
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.Rockstar));
                                     break;
                                 case "Steam":
-                                    games.AddRange(PlatformManager.Steam.GetGames());
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.Steam));
                                     break;
                                 case "Ubisoft":
-                                    games.AddRange(PlatformManager.UbisoftConnect.GetGames());
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.UbisoftConnect));
                                     break;
                             }
 
                             foreach (IGame game in games)
                             {
-                                // Skip Steamworks Shared for Steam games
-                                if (game is SteamGame && game.Id == "228980")
-                                    continue;
-
                                 Profile profile = null;
                                 bool isCreation;
 
@@ -249,6 +245,9 @@ namespace HandheldCompanion.ViewModels
                                 exe.IndexOf("setup", StringComparison.OrdinalIgnoreCase) < 0 &&
                                 exe.IndexOf("error", StringComparison.OrdinalIgnoreCase) < 0 &&
                                 exe.IndexOf("updater", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                exe.IndexOf("cheat", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                exe.IndexOf("editor", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                exe.IndexOf("tool", StringComparison.OrdinalIgnoreCase) < 0 &&
                                 exe.IndexOf("uninst", StringComparison.OrdinalIgnoreCase) < 0 &&
                                 exe.IndexOf("installer", StringComparison.OrdinalIgnoreCase) < 0);
 

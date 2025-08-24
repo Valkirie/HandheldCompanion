@@ -3,6 +3,7 @@ using GameLib.Plugin.EA;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 
 namespace HandheldCompanion.Platforms.Games;
 
@@ -18,7 +19,7 @@ public class EADesktop : IPlatform
 
     public EADesktop()
     {
-        PlatformType = PlatformType.EADesktop;
+        PlatformType = GamePlatform.EADesktop;
 
         // refresh library
         Refresh();
@@ -42,7 +43,7 @@ public class EADesktop : IPlatform
 
     public override IEnumerable<IGame> GetGames()
     {
-        return eaLauncher.Games;
+        return eaLauncher.Games.Where(game => !BlacklistIds.Contains(game.Id));
     }
 
     public override Image GetLogo()

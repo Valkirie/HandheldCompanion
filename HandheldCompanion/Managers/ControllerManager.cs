@@ -1029,7 +1029,7 @@ public static class ControllerManager
                 else
                 {
                     // mode: hybrid
-                    if (foregroundProcess?.Platform == PlatformType.Steam)
+                    if (foregroundProcess?.Platform == GamePlatform.Steam)
                     {
                         // application is either steam or a steam game
                         // restore embedded controller and mute virtual controller

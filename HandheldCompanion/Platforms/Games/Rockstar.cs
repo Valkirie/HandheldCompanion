@@ -3,6 +3,7 @@ using GameLib.Plugin.RiotGames;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 
 namespace HandheldCompanion.Platforms.Games;
 
@@ -18,7 +19,7 @@ public class Rockstar : IPlatform
 
     public Rockstar()
     {
-        PlatformType = PlatformType.Rockstar;
+        PlatformType = GamePlatform.Rockstar;
 
         // refresh library
         Refresh();
@@ -42,7 +43,7 @@ public class Rockstar : IPlatform
 
     public override IEnumerable<IGame> GetGames()
     {
-        return rockstartLauncher.Games;
+        return rockstartLauncher.Games.Where(game => !BlacklistIds.Contains(game.Id));
     }
 
     public override Image GetLogo()

@@ -35,7 +35,6 @@ public class RTSS : IPlatform
     public RTSS()
     {
         Name = "RTSS";
-        PlatformType = PlatformType.RTSS;
         ExecutableName = "RTSS.exe";
 
         ExpectedVersion = new Version(7, 3, 4);

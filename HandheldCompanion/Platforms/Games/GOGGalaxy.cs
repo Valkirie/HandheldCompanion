@@ -3,6 +3,7 @@ using GameLib.Plugin.Gog;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 
 namespace HandheldCompanion.Platforms.Games;
 
@@ -18,7 +19,7 @@ public class GOGGalaxy : IPlatform
 
     public GOGGalaxy()
     {
-        PlatformType = PlatformType.GOG;
+        PlatformType = GamePlatform.GOG;
 
         // refresh library
         Refresh();
@@ -50,7 +51,7 @@ public class GOGGalaxy : IPlatform
 
     public override IEnumerable<IGame> GetGames()
     {
-        return gogLauncher.Games;
+        return gogLauncher.Games.Where(game => !BlacklistIds.Contains(game.Id));
     }
 
     public override Image GetLogo()

@@ -3,6 +3,7 @@ using GameLib.Plugin.Epic;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 
 namespace HandheldCompanion.Platforms.Games;
 
@@ -18,7 +19,7 @@ public class Epic : IPlatform
 
     public Epic()
     {
-        PlatformType = PlatformType.Epic;
+        PlatformType = GamePlatform.Epic;
 
         // refresh library
         Refresh();
@@ -42,7 +43,7 @@ public class Epic : IPlatform
 
     public override IEnumerable<IGame> GetGames()
     {
-        return epicLauncher.Games;
+        return epicLauncher.Games.Where(game => !BlacklistIds.Contains(game.Id));
     }
 
     public override Image GetLogo()

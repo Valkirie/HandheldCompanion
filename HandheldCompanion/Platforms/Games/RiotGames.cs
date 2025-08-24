@@ -3,6 +3,7 @@ using GameLib.Plugin.RiotGames;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 
 namespace HandheldCompanion.Platforms.Games;
 
@@ -18,7 +19,7 @@ public class RiotGames : IPlatform
 
     public RiotGames()
     {
-        PlatformType = PlatformType.RiotGames;
+        PlatformType = GamePlatform.RiotGames;
 
         // refresh library
         Refresh();
@@ -42,7 +43,7 @@ public class RiotGames : IPlatform
 
     public override IEnumerable<IGame> GetGames()
     {
-        return riotLauncher.Games;
+        return riotLauncher.Games.Where(game => !BlacklistIds.Contains(game.Id));
     }
 
     public override Image GetLogo()
