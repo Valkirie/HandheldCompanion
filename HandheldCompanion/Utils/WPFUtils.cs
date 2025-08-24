@@ -100,7 +100,32 @@ public static class WPFUtils
 
     public enum Direction { None, Left, Right, Up, Down }
 
-    public static Control GetClosestControl<T>(Control source, List<Control> controls, Direction direction, List<Type> typesToIgnore = null) where T : Control
+    public static Control? GetClosestControl<T>(Control source, List<Control> controls, Direction direction, List<Type> typesToIgnore = null) where T : Control
+    {
+        List<Control> controlsInDirection = GetControlInDirection<T>(source, controls, direction, typesToIgnore);
+
+        // If no controls are found, return source
+        if (controlsInDirection.Count == 0) return source;
+
+        // Flatten the groups and sort controls by distance
+        Control[] clostests = controlsInDirection.OrderBy(c => GetDistanceV3(source, c, direction)).ToArray();
+        return clostests.FirstOrDefault();
+    }
+
+    public static Control? GetFurthestControl<T>(Control source, List<Control> controls, Direction direction, List<Type> typesToIgnore = null) where T : Control
+    {
+        List<Control> controlsInDirection = GetControlInDirection<T>(source, controls, direction, typesToIgnore);
+
+        // If no controls are found, return source
+        if (controlsInDirection.Count == 0) return source;
+
+        // Flatten the groups and sort controls by distance
+        Control[] furthests = controlsInDirection.OrderByDescending(c => GetDistanceV3(source, c, direction)).ToArray();
+        return furthests.FirstOrDefault();
+    }
+
+
+    private static List<Control> GetControlInDirection<T>(Control source, List<Control> controls, Direction direction, List<Type> typesToIgnore = null) where T : Control
     {
         // Filter list based on requested type
         controls = controls.Where(c => c is T && c.IsEnabled && c.Opacity != 0).ToList();
@@ -112,20 +137,7 @@ public static class WPFUtils
         // Filter out the controls that are not in the given direction
         controls = controls.Where(c => c != source && IsInDirection(source, c, direction)).ToList();
 
-        // If no controls are found, return source
-        if (controls.Count == 0) return source;
-
-        /*
-        // Group controls by their nearest common parent
-        var groupedControls = controls
-            .GroupBy(c => GetNearestCommonParent(source, c))
-            .OrderBy(g => g.Key == null ? double.MaxValue : GetDistanceV2(source, g.First(), direction))
-            .ToList();
-        */
-
-        // Flatten the groups and sort controls by distance
-        Control[] closestControls = controls.OrderBy(c => GetDistanceV3(source, c, direction)).ToArray();
-        return closestControls.FirstOrDefault();
+        return controls;
     }
 
     // Helper method to find the nearest common parent of two controls

@@ -906,8 +906,8 @@ namespace HandheldCompanion.Managers
                             focusedElement = prevNavigation;
 
                             // set state(s)
-                            _goingForward = true;
-                            _navigating = true;
+                            // _goingForward = true;
+                            _navigating = false;
 
                             direction = WPFUtils.Direction.Left;
                         }
@@ -923,8 +923,8 @@ namespace HandheldCompanion.Managers
                             focusedElement = prevNavigation;
 
                             // set state(s)
-                            _goingForward = true;
-                            _navigating = true;
+                            // _goingForward = true;
+                            _navigating = false;
 
                             direction = WPFUtils.Direction.Right;
                         }
@@ -994,8 +994,27 @@ namespace HandheldCompanion.Managers
                                 {
                                     if (focusedElement is not null)
                                     {
-                                        focusedElement = WPFUtils.GetClosestControl<NavigationViewItem>(focusedElement, gamepadWindow.controlElements, direction);
-                                        Focus(focusedElement);
+                                        Control target = WPFUtils.GetClosestControl<NavigationViewItem>(focusedElement, gamepadWindow.controlElements, direction);
+
+                                        if (IsQuicktools)
+                                        {
+                                            // we're at the extreme edge ?
+                                            if (focusedElement.Equals(target))
+                                            {
+                                                switch (direction)
+                                                {
+                                                    case WPFUtils.Direction.Left:
+                                                        direction = WPFUtils.Direction.Right;
+                                                        break;
+                                                    case WPFUtils.Direction.Right:
+                                                        direction = WPFUtils.Direction.Left;
+                                                        break;
+                                                }
+                                                target = WPFUtils.GetFurthestControl<NavigationViewItem>(focusedElement, gamepadWindow.controlElements, direction);
+                                            }
+                                        }
+
+                                        Focus(target);
                                     }
                                 }
                                 return;
