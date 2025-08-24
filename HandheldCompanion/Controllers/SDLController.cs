@@ -209,6 +209,7 @@ namespace HandheldCompanion.Controllers
             switch ((EventType)e.Type)
             {
                 case EventType.Quit:
+                case EventType.GamepadUpdateComplete:
                     // implement me
                     break;
 
@@ -309,10 +310,6 @@ namespace HandheldCompanion.Controllers
 
                         break;
                     }
-
-                case EventType.GamepadUpdateComplete:
-                    // implement me
-                    break;
 
                 case EventType.GamepadTouchpadDown:
                 case EventType.GamepadTouchpadUp:
