@@ -549,56 +549,41 @@ public class DeviceManager : IManager
         return Regex.Replace(devicePath, pattern, string.Empty);
     }
 
-    private readonly ConcurrentDictionary<string, Task> arrivalInProgress = new();
-    private readonly ConcurrentDictionary<string, Task> hidArrivalInProgress = new();
+    private readonly ConcurrentDictionary<string, Task> _perDevice = new();
 
     private void XUsbDevice_DeviceArrived(DeviceEventArgs obj)
     {
         var instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-
-        var arrivalTask = Task.Run(async () =>
+        EnqueuePerDevice(instanceId, async () =>
         {
-            try
-            {
-                var deviceEx = await WaitUntilAsync(() => FindDevice(instanceId)).ConfigureAwait(false);
-                if (deviceEx is null || !deviceEx.isGaming) return;
+            var deviceEx = await WaitUntilAsync(() => FindDevice(instanceId)).ConfigureAwait(false);
+            if (deviceEx is null || !deviceEx.isGaming) return;
 
-                deviceEx.isXInput = true;
-                deviceEx.baseContainerDevicePath = obj.SymLink;
-                deviceEx.XInputDeviceIdx = GetDeviceIndex(deviceEx.baseContainerDevicePath);
+            deviceEx.isXInput = true;
+            deviceEx.baseContainerDevicePath = obj.SymLink;
+            deviceEx.XInputDeviceIdx = GetDeviceIndex(deviceEx.baseContainerDevicePath);
 
-                if (deviceEx.EnumeratorName.Equals("USB", StringComparison.InvariantCultureIgnoreCase))
-                    deviceEx.XInputUserIndex = await GetXInputIndexAsync(deviceEx.baseContainerDevicePath, false).ConfigureAwait(false);
+            if (deviceEx.EnumeratorName.Equals("USB", StringComparison.InvariantCultureIgnoreCase))
+                deviceEx.XInputUserIndex = await GetXInputIndexAsync(deviceEx.baseContainerDevicePath, false).ConfigureAwait(false);
 
-                if (deviceEx.XInputUserIndex == byte.MaxValue)
-                    deviceEx.XInputUserIndex = (byte)XInputController.TryGetUserIndex(deviceEx);
+            if (deviceEx.XInputUserIndex == byte.MaxValue)
+                deviceEx.XInputUserIndex = (byte)XInputController.TryGetUserIndex(deviceEx);
 
-                deviceEx.InterfaceGuid = obj.InterfaceGuid;
+            deviceEx.InterfaceGuid = obj.InterfaceGuid;
 
-                LogManager.LogDebug("XUsbDevice {4} arrived on slot {5}: {0} (VID:{1}, PID:{2}) {3}",
-                    deviceEx.Name, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId,
-                    deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
+            LogManager.LogDebug("XUsbDevice {4} arrived on slot {5}: {0} (VID:{1}, PID:{2}) {3}",
+                deviceEx.Name, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId,
+                deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
 
-                XUsbDeviceArrived?.Invoke(deviceEx, obj.InterfaceGuid);
-            }
-            finally
-            {
-                arrivalInProgress.TryRemove(instanceId, out _);
-            }
+            XUsbDeviceArrived?.Invoke(deviceEx, obj.InterfaceGuid);
         });
-
-        arrivalInProgress[instanceId] = arrivalTask;
     }
 
     private void XUsbDevice_DeviceRemoved(DeviceEventArgs obj)
     {
-        _ = Task.Run(async () =>
+        var instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+        EnqueuePerDevice(instanceId, async () =>
         {
-            var instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-
-            if (arrivalInProgress.TryGetValue(instanceId, out var pending))
-                try { await pending.ConfigureAwait(false); } catch { /* swallow */ }
-
             var deviceEx = await WaitUntilAsync(() => FindDevice(instanceId)).ConfigureAwait(false);
             if (deviceEx is null) return;
 
@@ -614,40 +599,25 @@ public class DeviceManager : IManager
     private void HidDevice_DeviceArrived(DeviceEventArgs obj)
     {
         var instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-
-        var arrivalTask = Task.Run(async () =>
+        EnqueuePerDevice(instanceId, async () =>
         {
-            try
-            {
-                var deviceEx = await WaitUntilAsync(() => GetDetails(obj.SymLink)).ConfigureAwait(false);
+            var deviceEx = await WaitUntilAsync(() => GetDetails(obj.SymLink)).ConfigureAwait(false);
+            if (deviceEx is null || deviceEx.isXInput) return; // XInput handled by XUSB
 
-                // skip if XInput (handled by XUSB logic)
-                if (deviceEx is null || deviceEx.isXInput) return;
+            deviceEx.InterfaceGuid = obj.InterfaceGuid;
 
-                deviceEx.InterfaceGuid = obj.InterfaceGuid;
-                LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}",
-                    deviceEx.Name, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId);
+            LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}",
+                deviceEx.Name, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId);
 
-                HidDeviceArrived?.Invoke(deviceEx, obj.InterfaceGuid);
-            }
-            finally
-            {
-                hidArrivalInProgress.TryRemove(instanceId, out _);
-            }
+            HidDeviceArrived?.Invoke(deviceEx, obj.InterfaceGuid);
         });
-
-        hidArrivalInProgress[instanceId] = arrivalTask;
     }
 
     private void HidDevice_DeviceRemoved(DeviceEventArgs obj)
     {
-        _ = Task.Run(async () =>
+        var instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+        EnqueuePerDevice(instanceId, async () =>
         {
-            var instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-
-            if (hidArrivalInProgress.TryGetValue(instanceId, out var pending))
-                try { await pending.ConfigureAwait(false); } catch { }
-
             var deviceEx = await WaitUntilAsync(() => FindDevice(instanceId)).ConfigureAwait(false);
             if (deviceEx is null || deviceEx.isXInput) return;
 
@@ -657,6 +627,22 @@ public class DeviceManager : IManager
                 HidDeviceRemoved?.Invoke(deviceEx, obj.InterfaceGuid);
             }
         });
+    }
+
+    private Task EnqueuePerDevice(string instanceId, Func<Task> work)
+    {
+        Task next = _perDevice.AddOrUpdate(
+            instanceId,
+            _ => Task.Run(work),
+            (_, tail) => tail.ContinueWith(_ => work(), TaskScheduler.Default).Unwrap());
+
+        _ = next.ContinueWith(_ =>
+        {
+            _perDevice.TryGetValue(instanceId, out var current);
+            if (current == next) _perDevice.TryRemove(instanceId, out _);
+        }, TaskScheduler.Default);
+
+        return next;
     }
 
     private static async Task<T?> WaitUntilAsync<T>(Func<T?> probe, int timeoutMs = 8000, int pollMs = 100) where T : class
