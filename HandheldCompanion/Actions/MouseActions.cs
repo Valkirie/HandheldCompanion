@@ -1,9 +1,10 @@
-using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Simulators;
 using HandheldCompanion.Utils;
 using System;
 using System.ComponentModel;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Actions
@@ -48,11 +49,21 @@ namespace HandheldCompanion.Actions
         public ModifierSet Modifiers = ModifierSet.None;
 
         // settings axis
-        public int Sensivity = 35;
-        public float Acceleration = 1.0f;
+        public int Sensivity = 33;
+        public float Acceleration = 1.0f;   // Acceleration <= 1.0 => off; > 1.0 => stronger memory/boost
         public int Deadzone = 15;           // stick only
         public bool Filtering = false;      // pad only
         public float FilterCutoff = 0.05f;  // pad only
+
+        // runtime variables
+        private float accelMemory = 0.0f;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static float Smooth01(float x)
+        {
+            x = Math.Clamp(x, 0f, 1f);
+            return x * x * (3f - 2f * x);
+        }
 
         public MouseActions()
         {
@@ -172,11 +183,25 @@ namespace HandheldCompanion.Actions
                 deltaVector.Y = (float)mouseFilter.axis2Filter.Filter(deltaVector.Y, 1);
             }
 
-            if (Acceleration != 1.0f)
+            float s = MathF.Max(0f, Acceleration - 1.0f);
+            if (s > 0f)
             {
-                deltaVector.X = (float)(Math.Sign(deltaVector.X) * Math.Pow(Math.Abs(deltaVector.X), Acceleration));
-                deltaVector.Y = (float)(Math.Sign(deltaVector.Y) * Math.Pow(Math.Abs(deltaVector.Y), Acceleration));
-                sensitivityFinetune = (float)Math.Pow(sensitivityFinetune, Acceleration);
+                // decay memory with a half-life that grows with 's'
+                // half-life ~ 24 ms when s→0, up to ~144 ms when s=1 (Acceleration=2.0)
+                float halfLifeMs = 24f + 120f * s;
+                float decay = (float)Math.Exp(-0.69314718056f * (delta / halfLifeMs));
+
+                float mag = deltaVector.Length();
+                if (mag > accelMemory)
+                    accelMemory = mag;
+                else
+                    accelMemory *= decay;
+
+                float t = Smooth01(MathF.Min(1f, accelMemory));
+                float gainMax = 1f + 2.6f * s; // 2.6f tweak me
+                float gain = 1f + (gainMax - 1f) * t;
+
+                deltaVector *= gain;
             }
 
             deltaVector *= Sensivity * sensitivityFinetune;
