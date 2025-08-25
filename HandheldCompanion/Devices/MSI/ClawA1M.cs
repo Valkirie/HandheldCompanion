@@ -394,7 +394,7 @@ public class ClawA1M : IDevice
             fanTable[4] = (byte)profile.FanProfile.fanSpeeds[6]; // 60%
             fanTable[5] = (byte)profile.FanProfile.fanSpeeds[8]; // 80%
             fanTable[6] = (byte)profile.FanProfile.fanSpeeds[9]; // 90%
-            fanTable[7] = (byte)profile.FanProfile.fanSpeeds[100]; // 100%
+            fanTable[7] = (byte)profile.FanProfile.fanSpeeds[10]; // 100%
         }
         else
         {
