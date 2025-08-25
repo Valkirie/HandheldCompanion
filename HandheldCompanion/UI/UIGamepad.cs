@@ -399,7 +399,7 @@ namespace HandheldCompanion.Managers
 
         public void Focus(Control control, Control parent = null, bool force = false)
         {
-            if (control is null)
+            if (control is null || !HasFocus())
                 return;
 
             // prevent keyboard focus from overlapping with our own tooltip logic
@@ -906,8 +906,8 @@ namespace HandheldCompanion.Managers
                             focusedElement = prevNavigation;
 
                             // set state(s)
-                            // _goingForward = true;
-                            _navigating = false;
+                            _goingForward = true;
+                            _navigating = true;
 
                             direction = WPFUtils.Direction.Left;
                         }
@@ -923,8 +923,8 @@ namespace HandheldCompanion.Managers
                             focusedElement = prevNavigation;
 
                             // set state(s)
-                            // _goingForward = true;
-                            _navigating = false;
+                            _goingForward = true;
+                            _navigating = true;
 
                             direction = WPFUtils.Direction.Right;
                         }

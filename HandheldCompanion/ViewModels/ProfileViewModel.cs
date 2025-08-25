@@ -218,10 +218,10 @@ namespace HandheldCompanion.ViewModels
                             if (process == null)
                                 return;
 
-                            // wait up to 30 sec for any visible window
+                            // wait up to 60 sec for any visible window
                             List<string> execs = profile.GetExecutables(true);
 
-                            Task timeout = Task.Delay(TimeSpan.FromSeconds(30));
+                            Task timeout = Task.Delay(TimeSpan.FromSeconds(60));
                             while (!timeout.IsCompleted && !ProcessManager.GetProcesses().Any(p => execs.Contains(p.Path)))
                                 await Task.Delay(300).ConfigureAwait(false);
 
@@ -233,7 +233,7 @@ namespace HandheldCompanion.ViewModels
 
                             // Wait until none of the known executables are running
                             while (ProcessManager.GetProcesses().Any(p => execs.Contains(p.Path)))
-                                await Task.Delay(300).ConfigureAwait(false);
+                                await Task.Delay(1000).ConfigureAwait(false);
 
                             if (IsMainPage)
                                 MainWindow.GetCurrent().SetState(WindowState.Normal);
