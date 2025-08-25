@@ -172,18 +172,6 @@ namespace HandheldCompanion.Controllers
             base.Plug();
         }
 
-        public override void InjectState(ButtonState State, bool IsKeyDown, bool IsKeyUp)
-        {
-            base.InjectState(State, IsKeyDown, IsKeyUp);
-            ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
-        }
-
-        public override void InjectButton(ButtonFlags button, bool IsKeyDown, bool IsKeyUp)
-        {
-            base.InjectButton(button, IsKeyDown, IsKeyUp);
-            ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
-        }
-
         private bool touchpad = false;
         private static readonly Dictionary<GamepadButton, ButtonFlags> _buttonMap = new()
         {
@@ -296,7 +284,10 @@ namespace HandheldCompanion.Controllers
                         GamepadButton gpBtn = (GamepadButton)e.GButton.Button;
 
                         if (_buttonMap.TryGetValue(gpBtn, out var flag))
+                        {
+                            isDown |= InjectedButtons[flag];
                             Inputs.ButtonState[flag] = isDown;
+                        }
 
                         // edge-case(s)
                         switch (gpBtn)

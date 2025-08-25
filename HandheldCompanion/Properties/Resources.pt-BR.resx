@@ -292,10 +292,10 @@
   <data name="Hotkey_ExpandDesc" xml:space="preserve">
     <value>Pressione esta combinação de teclas: Alt + Enter</value>
   </data>
-  <data name="Hotkey_Guide" xml:space="preserve">
+  <data name="Hotkey_ButtonCommands" xml:space="preserve">
     <value>Guia ou Botão PS</value>
   </data>
-  <data name="Hotkey_GuideDesc" xml:space="preserve">
+  <data name="Hotkey_ButtonCommandsDesc" xml:space="preserve">
     <value>Simular a entrada de um botão Xbox Guia ou botão Sony PS</value>
   </data>
   <data name="Hotkey_Keyboard" xml:space="preserve">

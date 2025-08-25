@@ -283,10 +283,10 @@
   <data name="Hotkey_ExpandDesc" xml:space="preserve">
     <value>다음 키를 누르세요: Alt + Enter</value>
   </data>
-  <data name="Hotkey_Guide" xml:space="preserve">
+  <data name="Hotkey_ButtonCommands" xml:space="preserve">
     <value>가이드 또는 PS 버튼</value>
   </data>
-  <data name="Hotkey_GuideDesc" xml:space="preserve">
+  <data name="Hotkey_ButtonCommandsDesc" xml:space="preserve">
     <value>Xbox 가이드 또는 Sony PS 버튼 입력을 시뮬레이트합니다.</value>
   </data>
   <data name="Hotkey_Keyboard" xml:space="preserve">

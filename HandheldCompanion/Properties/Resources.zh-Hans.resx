@@ -277,10 +277,10 @@
   <data name="Hotkey_ExpandDesc" xml:space="preserve">
     <value>输出指令：Alt + Enter</value>
   </data>
-  <data name="Hotkey_Guide" xml:space="preserve">
+  <data name="Hotkey_ButtonCommands" xml:space="preserve">
     <value>XBOX/PS 按键</value>
   </data>
-  <data name="Hotkey_GuideDesc" xml:space="preserve">
+  <data name="Hotkey_ButtonCommandsDesc" xml:space="preserve">
     <value>模拟Xbox菜单键或者索尼PS键</value>
   </data>
   <data name="Hotkey_Keyboard" xml:space="preserve">

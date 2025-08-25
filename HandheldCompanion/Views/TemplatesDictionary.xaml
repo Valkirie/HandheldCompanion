@@ -301,6 +301,35 @@
                     </ComboBox>
                 </ui:SettingsCard>
 
+                <!--  ButtonCommands  -->
+                <ui:SettingsCard Header="Gamepad button" Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdHC:ButtonCommands}}">
+                    <ComboBox
+                        DisplayMemberPath="Content"
+                        ItemsSource="{Binding ButtonCommandsValues, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedItem="{Binding ButtonCommandsButton, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </ui:SettingsCard>
+
+                <!--  ButtonCommands  -->
+                <ui:SettingsCard Header="Release interval" Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdHC:ButtonCommands}}">
+
+                    <DockPanel>
+                        <TextBlock
+                            Width="35"
+                            VerticalAlignment="Center"
+                            Text="{Binding ButtonCommandsDelay, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}"
+                            TextAlignment="Center" />
+                        <Slider
+                            Margin="6,0,0,0"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            Maximum="1000"
+                            Minimum="100"
+                            TickFrequency="50"
+                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                            Value="{Binding ButtonCommandsDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                </ui:SettingsCard>
+
                 <!--  Keystrokes (CommandTypeIndex == 2)  -->
                 <ui:SettingsCard
                     Description="{l:Static resx:Resources.Hotkey_OutputDesc}"

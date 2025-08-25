@@ -101,39 +101,39 @@ namespace HandheldCompanion.Controllers.Steam
 
             ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
 
-            Inputs.ButtonState[ButtonFlags.B1] = input.State.ButtonState[GordonControllerButton.BtnA];
-            Inputs.ButtonState[ButtonFlags.B2] = input.State.ButtonState[GordonControllerButton.BtnB];
-            Inputs.ButtonState[ButtonFlags.B3] = input.State.ButtonState[GordonControllerButton.BtnX];
-            Inputs.ButtonState[ButtonFlags.B4] = input.State.ButtonState[GordonControllerButton.BtnY];
+            Inputs.ButtonState[ButtonFlags.B1] |= input.State.ButtonState[GordonControllerButton.BtnA];
+            Inputs.ButtonState[ButtonFlags.B2] |= input.State.ButtonState[GordonControllerButton.BtnB];
+            Inputs.ButtonState[ButtonFlags.B3] |= input.State.ButtonState[GordonControllerButton.BtnX];
+            Inputs.ButtonState[ButtonFlags.B4] |= input.State.ButtonState[GordonControllerButton.BtnY];
 
-            Inputs.ButtonState[ButtonFlags.DPadUp] = input.State.ButtonState[GordonControllerButton.BtnDpadUp];
-            Inputs.ButtonState[ButtonFlags.DPadDown] = input.State.ButtonState[GordonControllerButton.BtnDpadDown];
-            Inputs.ButtonState[ButtonFlags.DPadLeft] = input.State.ButtonState[GordonControllerButton.BtnDpadLeft];
-            Inputs.ButtonState[ButtonFlags.DPadRight] = input.State.ButtonState[GordonControllerButton.BtnDpadRight];
+            Inputs.ButtonState[ButtonFlags.DPadUp] |= input.State.ButtonState[GordonControllerButton.BtnDpadUp];
+            Inputs.ButtonState[ButtonFlags.DPadDown] |= input.State.ButtonState[GordonControllerButton.BtnDpadDown];
+            Inputs.ButtonState[ButtonFlags.DPadLeft] |= input.State.ButtonState[GordonControllerButton.BtnDpadLeft];
+            Inputs.ButtonState[ButtonFlags.DPadRight] |= input.State.ButtonState[GordonControllerButton.BtnDpadRight];
 
-            Inputs.ButtonState[ButtonFlags.Start] = input.State.ButtonState[GordonControllerButton.BtnOptions];
-            Inputs.ButtonState[ButtonFlags.Back] = input.State.ButtonState[GordonControllerButton.BtnMenu];
-            Inputs.ButtonState[ButtonFlags.Special] = input.State.ButtonState[GordonControllerButton.BtnSteam];
+            Inputs.ButtonState[ButtonFlags.Start] |= input.State.ButtonState[GordonControllerButton.BtnOptions];
+            Inputs.ButtonState[ButtonFlags.Back] |= input.State.ButtonState[GordonControllerButton.BtnMenu];
+            Inputs.ButtonState[ButtonFlags.Special] |= input.State.ButtonState[GordonControllerButton.BtnSteam];
 
             var L2 = input.State.AxesState[GordonControllerAxis.L2];
             var R2 = input.State.AxesState[GordonControllerAxis.R2];
 
-            Inputs.ButtonState[ButtonFlags.L2Soft] = L2 > Gamepad.TriggerThreshold;
-            Inputs.ButtonState[ButtonFlags.R2Soft] = R2 > Gamepad.TriggerThreshold;
+            Inputs.ButtonState[ButtonFlags.L2Soft] |= L2 > Gamepad.TriggerThreshold;
+            Inputs.ButtonState[ButtonFlags.R2Soft] |= R2 > Gamepad.TriggerThreshold;
 
-            Inputs.ButtonState[ButtonFlags.L2Full] = L2 > Gamepad.TriggerThreshold * 8;
-            Inputs.ButtonState[ButtonFlags.R2Full] = R2 > Gamepad.TriggerThreshold * 8;
+            Inputs.ButtonState[ButtonFlags.L2Full] |= L2 > Gamepad.TriggerThreshold * 8;
+            Inputs.ButtonState[ButtonFlags.R2Full] |= R2 > Gamepad.TriggerThreshold * 8;
 
             Inputs.AxisState[AxisFlags.L2] = L2;
             Inputs.AxisState[AxisFlags.R2] = R2;
 
-            Inputs.ButtonState[ButtonFlags.L1] = input.State.ButtonState[GordonControllerButton.BtnL1];
-            Inputs.ButtonState[ButtonFlags.R1] = input.State.ButtonState[GordonControllerButton.BtnR1];
+            Inputs.ButtonState[ButtonFlags.L1] |= input.State.ButtonState[GordonControllerButton.BtnL1];
+            Inputs.ButtonState[ButtonFlags.R1] |= input.State.ButtonState[GordonControllerButton.BtnR1];
             Inputs.ButtonState[ButtonFlags.L4] = input.State.ButtonState[GordonControllerButton.BtnL4];
             Inputs.ButtonState[ButtonFlags.R4] = input.State.ButtonState[GordonControllerButton.BtnR4];
 
             // Left Stick
-            Inputs.ButtonState[ButtonFlags.LeftStickClick] = input.State.ButtonState[GordonControllerButton.BtnLStickPress];
+            Inputs.ButtonState[ButtonFlags.LeftStickClick] |= input.State.ButtonState[GordonControllerButton.BtnLStickPress];
             Inputs.AxisState[AxisFlags.LeftStickX] = input.State.AxesState[GordonControllerAxis.LeftStickX];
             Inputs.AxisState[AxisFlags.LeftStickY] = input.State.AxesState[GordonControllerAxis.LeftStickY];
 

@@ -122,27 +122,27 @@ public class DClawController : DInputController
             if (state.RotationX == 32767 && state.RotationY == 32767 && state.RotationZ == 32767)
                 return;
 
-            Inputs.ButtonState[ButtonFlags.B1] = state.Buttons[1]; // A
-            Inputs.ButtonState[ButtonFlags.B2] = state.Buttons[2]; // B
-            Inputs.ButtonState[ButtonFlags.B3] = state.Buttons[0]; // X
-            Inputs.ButtonState[ButtonFlags.B4] = state.Buttons[3]; // Y
+            Inputs.ButtonState[ButtonFlags.B1] |= state.Buttons[1]; // A
+            Inputs.ButtonState[ButtonFlags.B2] |= state.Buttons[2]; // B
+            Inputs.ButtonState[ButtonFlags.B3] |= state.Buttons[0]; // X
+            Inputs.ButtonState[ButtonFlags.B4] |= state.Buttons[3]; // Y
 
             int pov = state.PointOfViewControllers[0];
-            Inputs.ButtonState[ButtonFlags.DPadUp] = pov == 0 || pov == 4500 || pov == 31500;
-            Inputs.ButtonState[ButtonFlags.DPadRight] = pov == 9000 || pov == 4500 || pov == 13500;
-            Inputs.ButtonState[ButtonFlags.DPadDown] = pov == 18000 || pov == 13500 || pov == 22500;
-            Inputs.ButtonState[ButtonFlags.DPadLeft] = pov == 27000 || pov == 31500 || pov == 22500;
+            Inputs.ButtonState[ButtonFlags.DPadUp] |= (pov == 0 || pov == 4500 || pov == 31500);
+            Inputs.ButtonState[ButtonFlags.DPadRight] |= (pov == 9000 || pov == 4500 || pov == 13500);
+            Inputs.ButtonState[ButtonFlags.DPadDown] |= (pov == 18000 || pov == 13500 || pov == 22500);
+            Inputs.ButtonState[ButtonFlags.DPadLeft] |= (pov == 27000 || pov == 31500 || pov == 22500);
 
-            Inputs.ButtonState[ButtonFlags.L1] = state.Buttons[4];
-            Inputs.ButtonState[ButtonFlags.R1] = state.Buttons[5];
-            Inputs.ButtonState[ButtonFlags.L2Full] = state.Buttons[6];
-            Inputs.ButtonState[ButtonFlags.R2Full] = state.Buttons[7];
+            Inputs.ButtonState[ButtonFlags.L1] |= state.Buttons[4];
+            Inputs.ButtonState[ButtonFlags.R1] |= state.Buttons[5];
+            Inputs.ButtonState[ButtonFlags.L2Full] |= state.Buttons[6];
+            Inputs.ButtonState[ButtonFlags.R2Full] |= state.Buttons[7];
 
-            Inputs.ButtonState[ButtonFlags.Back] = state.Buttons[8];
-            Inputs.ButtonState[ButtonFlags.Start] = state.Buttons[9];
+            Inputs.ButtonState[ButtonFlags.Back] |= state.Buttons[8];
+            Inputs.ButtonState[ButtonFlags.Start] |= state.Buttons[9];
 
-            Inputs.ButtonState[ButtonFlags.LeftStickClick] = state.Buttons[10];
-            Inputs.ButtonState[ButtonFlags.RightStickClick] = state.Buttons[11];
+            Inputs.ButtonState[ButtonFlags.LeftStickClick] |= state.Buttons[10];
+            Inputs.ButtonState[ButtonFlags.RightStickClick] |= state.Buttons[11];
 
             Inputs.ButtonState[ButtonFlags.OEM3] = state.Buttons[15]; // M1
             Inputs.ButtonState[ButtonFlags.OEM4] = state.Buttons[16]; // M2

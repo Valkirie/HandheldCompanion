@@ -4606,6 +4606,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Gamepad button.
+        /// </summary>
+        public static string Hotkey_ButtonCommands {
+            get {
+                return ResourceManager.GetString("Hotkey_ButtonCommands", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Simulate a gamepad button input.
+        /// </summary>
+        public static string Hotkey_ButtonCommandsDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_ButtonCommandsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Toggle emulated controller type.
         /// </summary>
         public static string Hotkey_ChangeHIDMode {
@@ -5079,24 +5097,6 @@ namespace HandheldCompanion.Properties {
         public static string Hotkey_GameBarDesc {
             get {
                 return ResourceManager.GetString("Hotkey_GameBarDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Guide or PS button.
-        /// </summary>
-        public static string Hotkey_Guide {
-            get {
-                return ResourceManager.GetString("Hotkey_Guide", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Simulate a Xbox Guide or Sony PS button input.
-        /// </summary>
-        public static string Hotkey_GuideDesc {
-            get {
-                return ResourceManager.GetString("Hotkey_GuideDesc", resourceCulture);
             }
         }
         

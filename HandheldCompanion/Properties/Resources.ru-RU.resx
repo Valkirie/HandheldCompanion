@@ -273,10 +273,10 @@
   <data name="Hotkey_ExpandDesc" xml:space="preserve">
     <value>Нажать сочетание: Alt + Enter</value>
   </data>
-  <data name="Hotkey_Guide" xml:space="preserve">
+  <data name="Hotkey_ButtonCommands" xml:space="preserve">
     <value>Guide или PS кнопка</value>
   </data>
-  <data name="Hotkey_GuideDesc" xml:space="preserve">
+  <data name="Hotkey_ButtonCommandsDesc" xml:space="preserve">
     <value>Эмулировать Xbox Guide или Sony PS кнопки</value>
   </data>
   <data name="Hotkey_Keyboard" xml:space="preserve">

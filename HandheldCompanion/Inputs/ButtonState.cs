@@ -136,6 +136,16 @@ public partial class ButtonState : ICloneable, IDisposable
         Array.Copy(origin._pressed, target._pressed, origin._pressed.Length);
     }
 
+    public static void Inject(ButtonState origin, ButtonState target)
+    {
+        if (origin is null || target is null) return;
+        for (int i = 0; i < origin._pressed.Length; i++)
+        {
+            if (origin._pressed[i] != target._pressed[i])
+                target._pressed[i] = true;
+        }
+    }
+
     public override bool Equals(object obj)
     {
         if (obj is not ButtonState other) return false;
