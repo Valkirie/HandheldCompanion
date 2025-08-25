@@ -50,10 +50,9 @@ namespace HandheldCompanion.Actions
         public override void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot, float delta)
         {
             base.Execute(button, value, shiftSlot, delta);
-            if (!outBool) return;
 
             // Preserve prior behavior (motionThreshold cast to byte as before)
-            current = (byte)motionThreshold;
+            current = (byte)(outBool ? motionThreshold : 0);
         }
 
         public byte GetValue() => current;
