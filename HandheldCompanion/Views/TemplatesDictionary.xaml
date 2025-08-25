@@ -911,7 +911,7 @@
 
             <Button
                 Grid.Column="0"
-                Margin="0,0,2,0"
+                Margin="0,1,2,1"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Stretch"
                 Command="{Binding ButtonCommand}">
@@ -1498,7 +1498,7 @@
             </Grid.ColumnDefinitions>
 
             <Button
-                Margin="0,0,2,0"
+                Margin="0,1,2,1"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Stretch"
                 Command="{Binding ButtonCommand}">
@@ -1804,7 +1804,7 @@
             </Grid.ColumnDefinitions>
 
             <Button
-                Margin="0,0,2,0"
+                Margin="0,1,2,1"
                 VerticalAlignment="Stretch"
                 Command="{Binding ButtonCommand}">
                 <ui:FontIcon
