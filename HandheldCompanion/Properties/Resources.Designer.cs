@@ -6002,15 +6002,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Input type.
-        /// </summary>
-        public static string LayoutPage_InputType {
-            get {
-                return ResourceManager.GetString("LayoutPage_InputType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Interruptable.
         /// </summary>
         public static string LayoutPage_Interruptable {
@@ -6070,6 +6061,51 @@ namespace HandheldCompanion.Properties {
         public static string LayoutPage_PressToToggle {
             get {
                 return ResourceManager.GetString("LayoutPage_PressToToggle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Action type.
+        /// </summary>
+        public static string LayoutPage_PressType {
+            get {
+                return ResourceManager.GetString("LayoutPage_PressType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trigger the action immediately when the button is pressed (or released).
+        /// </summary>
+        public static string LayoutPage_PressTypeTooltip0 {
+            get {
+                return ResourceManager.GetString("LayoutPage_PressTypeTooltip0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trigger the action after holding the button for the specified duration.
+        /// </summary>
+        public static string LayoutPage_PressTypeTooltip1 {
+            get {
+                return ResourceManager.GetString("LayoutPage_PressTypeTooltip1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trigger the action on press and keep it active for the specified duration.
+        /// </summary>
+        public static string LayoutPage_PressTypeTooltip2 {
+            get {
+                return ResourceManager.GetString("LayoutPage_PressTypeTooltip2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trigger the action when the button is pressed twice within the specified time window.
+        /// </summary>
+        public static string LayoutPage_PressTypeTooltip3 {
+            get {
+                return ResourceManager.GetString("LayoutPage_PressTypeTooltip3", resourceCulture);
             }
         }
         

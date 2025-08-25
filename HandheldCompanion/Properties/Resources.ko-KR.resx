@@ -3026,9 +3026,6 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   <data name="LayoutPage_InputShift" xml:space="preserve">
     <value />
   </data>
-  <data name="LayoutPage_InputType" xml:space="preserve">
-    <value />
-  </data>
   <data name="QuickApplicationsPage_QuickStart" xml:space="preserve">
     <value />
   </data>
@@ -3386,6 +3383,9 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   <data name="PerformancePage_PL1PL2Warning" xml:space="preserve">
     <value />
   </data>
+  <data name="ControllerPage_RelatedSupport" xml:space="preserve">
+    <value />
+  </data>
   <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
     <value>컨트롤러의 진동의 세기를 변경</value>
   </data>
@@ -3398,7 +3398,19 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
     <value>아직 장치가 지원되지 않는 것 같습니다. 소프트웨어가 예상대로 실행되지 않을 수 있습니다.</value>
   </data>
-  <data name="ControllerPage_RelatedSupport" xml:space="preserve">
+  <data name="LayoutPage_PressType" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_PressTypeTooltip0" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_PressTypeTooltip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_PressTypeTooltip2" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_PressTypeTooltip3" xml:space="preserve">
     <value />
   </data>
 </root>

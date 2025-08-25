@@ -4,6 +4,7 @@ using HandheldCompanion.Controllers;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Properties;
 using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,18 @@ namespace HandheldCompanion.ViewModels
                 {
                     Action.pressType = (PressType)value;
                     OnPropertyChanged(nameof(PressTypeIndex));
+                    OnPropertyChanged(nameof(PressTypeTooltip));
                 }
+            }
+        }
+
+        // todo: use resources
+        public string PressTypeTooltip
+        {
+            get
+            {
+                string key = $"LayoutPage_PressTypeTooltip{PressTypeIndex}";
+                return Resources.ResourceManager.GetString(key) ?? string.Empty;
             }
         }
 

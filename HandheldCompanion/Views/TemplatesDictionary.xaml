@@ -1318,22 +1318,26 @@
                                     <ColumnDefinition Width="5*" MinWidth="200" />
                                 </Grid.ColumnDefinitions>
 
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.LayoutPage_InputType}" />
+                                <StackPanel VerticalAlignment="Bottom">
+                                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.LayoutPage_PressType}" />
+
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="{Binding PressTypeTooltip, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
 
                                 <ComboBox
                                     Grid.Column="1"
                                     Margin="12,0,0,0"
                                     HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
+                                    VerticalAlignment="Bottom"
                                     HorizontalContentAlignment="Left"
                                     SelectedIndex="{Binding PressTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <ComboBoxItem Content="Short press" ToolTip="Press the button and get an immediate action." />
-                                    <ComboBoxItem Content="Long press" ToolTip="Hold the button down until a specified duration and get an action." />
-                                    <ComboBoxItem Content="Hold press" ToolTip="Press the button and get an action for a specified duration." />
-                                    <ComboBoxItem Content="Double press" ToolTip="Double press the button within a specified duration and get an action." />
+                                    <ComboBoxItem Content="Single press" ToolTip="{x:Static resx:Resources.LayoutPage_PressTypeTooltip0}" />
+                                    <ComboBoxItem Content="Long press" ToolTip="{x:Static resx:Resources.LayoutPage_PressTypeTooltip1}" />
+                                    <ComboBoxItem Content="Timed hold" ToolTip="{x:Static resx:Resources.LayoutPage_PressTypeTooltip2}" />
+                                    <ComboBoxItem Content="Double press" ToolTip="{x:Static resx:Resources.LayoutPage_PressTypeTooltip3}" />
                                 </ComboBox>
                             </Grid>
                         </ikw:SimpleStackPanel>
