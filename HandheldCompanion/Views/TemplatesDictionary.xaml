@@ -5,14 +5,17 @@
     xmlns:cmdHC="clr-namespace:HandheldCompanion.Commands.Functions.HC"
     xmlns:cmdWIN="clr-namespace:HandheldCompanion.Commands.Functions.Windows"
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:effects="clr-namespace:Microsoft.Expression.Media.Effects;assembly=Microsoft.Expression.Effects"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
-    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels">
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
+    mc:Ignorable="d">
 
     <converters:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
     <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -908,11 +911,9 @@
 
             <Button
                 Grid.Column="0"
-                Width="44"
-                Height="44"
-                Margin="0,2,2,0"
+                Margin="0,0,2,0"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Top"
+                VerticalAlignment="Stretch"
                 Command="{Binding ButtonCommand}">
                 <ui:FontIcon
                     HorizontalAlignment="Stretch"
@@ -921,39 +922,141 @@
                     Glyph="&#xECC9;" />
             </Button>
 
-            <Expander Grid.Column="1" HorizontalAlignment="Stretch">
-                <Expander.Header>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
+            <ui:SettingsExpander Grid.Column="1">
+                <ui:SettingsExpander.Content>
+                    <DockPanel>
+                        <ComboBox MinWidth="120" SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Joystick}" IsEnabled="False" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Keyboard}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Mouse}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="True" />
+                        </ComboBox>
 
-                        <DockPanel Grid.Column="2" HorizontalAlignment="Right">
-                            <ComboBox
-                                Width="220"
-                                Margin="12,0,0,0"
+                        <ComboBox
+                            MinWidth="180"
+                            Margin="3,0,0,0"
+                            DisplayMemberPath="Content"
+                            ItemsSource="{Binding Targets, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedItem="{Binding SelectedTarget, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedValuePath="Content">
+                            <ComboBox.Style>
+                                <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
+                                    <Setter Property="IsEnabled" Value="True" />
+                                    <Style.Triggers>
+                                        <!--  Disable when ActionTypeIndex is 0  -->
+                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                        <!--  Disable when ActionTypeIndex is 7  -->
+                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="7">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ComboBox.Style>
+                        </ComboBox>
+                    </DockPanel>
+                </ui:SettingsExpander.Content>
+
+                <ui:SettingsExpander.Items>
+                    <!--  Keyboard/Mouse  -->
+                    <!--  Modifiers  -->
+                    <ui:SettingsCard Header="Modifier(s)" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3|4}">
+                        <ComboBox SelectedIndex="{Binding ModifierIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="None" />
+                            <ComboBoxItem Content="Shift" />
+                            <ComboBoxItem Content="Control" />
+                            <ComboBoxItem Content="Alt" />
+                            <ComboBoxItem Content="Shift + Control" />
+                            <ComboBoxItem Content="Shift + Alt" />
+                            <ComboBoxItem Content="Control + Alt" />
+                            <ComboBoxItem Content="Shift + Control + Alt" />
+                        </ComboBox>
+                    </ui:SettingsCard>
+
+                    <!--  Trigger  -->
+                    <!--  Value  -->
+                    <ui:SettingsCard Header="Trigger value" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=5}">
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding TriggerOutput, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0}}" />
+
+                            <Slider
+                                Margin="3,0,0,0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="255"
+                                Minimum="10"
+                                TickFrequency="5"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding TriggerOutput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Turbo  -->
+                    <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_HoldToRepeat}" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6}">
+                        <ui:ToggleSwitch
+                            HorizontalAlignment="Right"
+                            IsOn="{Binding Turbo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                    </ui:SettingsCard>
+                    <ui:SettingsCard
+                        Header="Repeat rate"
+                        IsEnabled="{Binding Turbo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Visibility="{Binding Turbo, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding TurboDelay, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} ms}" />
+
+                            <Slider
+                                Margin="3,0,0,0"
                                 VerticalAlignment="Center"
-                                SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="True" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="True" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Joystick}" IsEnabled="False" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Keyboard}" IsEnabled="True" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Mouse}" IsEnabled="True" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="True" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="True" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="True" />
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="100"
+                                Minimum="10"
+                                TickFrequency="5"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding TurboDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Interruptable  -->
+                    <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_Interruptable}" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6}">
+                        <ui:ToggleSwitch IsOn="{Binding Interruptable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                    </ui:SettingsCard>
+
+                    <!--  Toggle  -->
+                    <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_PressToToggle}" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6}">
+                        <ui:ToggleSwitch IsOn="{Binding Toggle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                    </ui:SettingsCard>
+
+                    <!--  Haptic  -->
+                    <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_HapticFeedback}" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6}">
+                        <DockPanel>
+                            <ComboBox Width="105" SelectedIndex="{Binding HapticModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBoxItem Content="Off" />
+                                <ComboBoxItem Content="Down" />
+                                <ComboBoxItem Content="Up" />
+                                <ComboBoxItem Content="Both" />
                             </ComboBox>
-
                             <ComboBox
-                                Width="220"
-                                Margin="12,0,0,0"
-                                VerticalAlignment="Center"
-                                DisplayMemberPath="Content"
-                                ItemsSource="{Binding Targets, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                SelectedItem="{Binding SelectedTarget, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                SelectedValuePath="Content">
+                                Width="105"
+                                Margin="3,0,0,0"
+                                SelectedIndex="{Binding HapticStrengthIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBoxItem Content="Low" />
+                                <ComboBoxItem Content="Medium" />
+                                <ComboBoxItem Content="High" />
                                 <ComboBox.Style>
                                     <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
                                         <Setter Property="IsEnabled" Value="True" />
@@ -971,454 +1074,66 @@
                                 </ComboBox.Style>
                             </ComboBox>
                         </DockPanel>
-                    </Grid>
-                </Expander.Header>
+                    </ui:SettingsCard>
 
-                <Expander.Content>
-                    <ikw:SimpleStackPanel Margin="30,-10,0,-4" Spacing="3">
+                    <!--  Input Type and Shifting  -->
+                    <ui:SettingsCard
+                        Description="{x:Static resx:Resources.LayoutPage_InputShiftDesc}"
+                        Header="{x:Static resx:Resources.LayoutPage_InputShift}"
+                        Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
+                        <ComboBox SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="Disabled on shift" />
+                            <ComboBoxItem Content="Enabled with shift A" />
+                            <ComboBoxItem Content="Enabled with shift B" />
+                            <ComboBoxItem Content="Enabled with shift C" />
+                            <ComboBoxItem Content="Enabled with shift D" />
+                            <ComboBoxItem Content="Always enabled" />
+                        </ComboBox>
+                    </ui:SettingsCard>
 
-                        <!--  Button 2 Button, Long press  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding PressTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3}">
+                    <!--  Action type  -->
+                    <ui:SettingsCard
+                        Description="{Binding PressTypeTooltip, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Header="{x:Static resx:Resources.LayoutPage_PressType}"
+                        Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
+                        <ComboBox SelectedIndex="{Binding PressTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="Single press" ToolTip="{x:Static resx:Resources.LayoutPage_PressTypeTooltip0}" />
+                            <ComboBoxItem Content="Long press" ToolTip="{x:Static resx:Resources.LayoutPage_PressTypeTooltip1}" />
+                            <ComboBoxItem Content="Timed hold" ToolTip="{x:Static resx:Resources.LayoutPage_PressTypeTooltip2}" />
+                            <ComboBoxItem Content="Double press" ToolTip="{x:Static resx:Resources.LayoutPage_PressTypeTooltip3}" />
+                        </ComboBox>
+                    </ui:SettingsCard>
 
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
+                    <!--  Long press  -->
+                    <!--  Press duration  -->
+                    <ui:SettingsCard
+                        Header="Press duration"
+                        IsEnabled="{Binding HasDuration, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Visibility="{Binding HasDuration, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding LongPressDelay, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} ms}" />
 
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Press duration (ms)" />
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding LongPressDelay, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="2000"
-                                        Minimum="100"
-                                        TickFrequency="10"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding LongPressDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-                        </ikw:SimpleStackPanel>
-
-                        <!--  Button 2 Keyboard/Mouse, modifiers  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3|4}">
-
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Modifier(s)" />
-
-                                <DockPanel Grid.Column="1" HorizontalAlignment="Right">
-                                    <ComboBox
-                                        Width="180"
-                                        VerticalAlignment="Center"
-                                        SelectedIndex="{Binding ModifierIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                        <ComboBoxItem Content="None" />
-                                        <ComboBoxItem Content="Shift" />
-                                        <ComboBoxItem Content="Control" />
-                                        <ComboBoxItem Content="Alt" />
-                                        <ComboBoxItem Content="Shift + Control" />
-                                        <ComboBoxItem Content="Shift + Alt" />
-                                        <ComboBoxItem Content="Control + Alt" />
-                                        <ComboBoxItem Content="Shift + Control + Alt" />
-                                    </ComboBox>
-                                </DockPanel>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-                        </ikw:SimpleStackPanel>
-
-                        <!--  Button 2 Trigger  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=5}">
-
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Trigger threshold" />
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding TriggerOutput, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0}}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="255"
-                                        Minimum="10"
-                                        TickFrequency="5"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding TriggerOutput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-                        </ikw:SimpleStackPanel>
-
-                        <!--  Button 2 Button/Keyboard/Mouse  -->
-                        <Grid Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6}">
-                            <ikw:SimpleStackPanel Spacing="3">
-                                <!--  Repeat  -->
-                                <ikw:SimpleStackPanel IsEnabled="{Binding HasTurbo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="3">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*" MinWidth="200" />
-                                            <ColumnDefinition Width="8*" MinWidth="120" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{x:Static resx:Resources.LayoutPage_HoldToRepeat}" />
-
-                                        <ui:ToggleSwitch
-                                            Grid.Column="1"
-                                            HorizontalAlignment="Right"
-                                            IsOn="{Binding Turbo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                                    </Grid>
-
-                                    <!--  Repeat rate (hidden)  -->
-                                    <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding Turbo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                                        <!--  Separator  -->
-                                        <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
-
-                                        <Grid Height="40">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="5*" MinWidth="200" />
-                                                <ColumnDefinition Width="5*" MinWidth="200" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <TextBlock
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="Repeat rate" />
-
-                                            <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                                <TextBox
-                                                    Height="31"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Center"
-                                                    HorizontalContentAlignment="Center"
-                                                    IsReadOnly="True"
-                                                    Text="{Binding TurboDelay, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} ms}" />
-
-                                                <Slider
-                                                    Margin="6,0,0,0"
-                                                    VerticalAlignment="Center"
-                                                    IsMoveToPointEnabled="True"
-                                                    IsSnapToTickEnabled="True"
-                                                    Maximum="100"
-                                                    Minimum="10"
-                                                    TickFrequency="5"
-                                                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                                    Value="{Binding TurboDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DockPanel>
-                                        </Grid>
-                                    </ikw:SimpleStackPanel>
-
-                                    <!--  Separator  -->
-                                    <Separator
-                                        Margin="-46,0,-16,0"
-                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                        BorderThickness="0,1,0,0" />
-                                </ikw:SimpleStackPanel>
-                                <Grid IsEnabled="{Binding HasInterruptable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.LayoutPage_Interruptable}" />
-
-                                    <ui:ToggleSwitch
-                                        Grid.Column="1"
-                                        HorizontalAlignment="Right"
-                                        IsOn="{Binding Interruptable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    Margin="-46,0,-16,0"
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
-
-                                <Grid IsEnabled="{Binding HasToggle, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.LayoutPage_PressToToggle}" />
-
-                                    <ui:ToggleSwitch
-                                        Grid.Column="1"
-                                        HorizontalAlignment="Right"
-                                        IsOn="{Binding Toggle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    Margin="-46,0,-16,0"
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
-
-                                <!--  Haptic  -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.LayoutPage_HapticFeedback}" />
-
-                                    <DockPanel Grid.Column="1" HorizontalAlignment="Right">
-                                        <ComboBox
-                                            Width="105"
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            SelectedIndex="{Binding HapticModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                            <ComboBoxItem Content="Off" />
-                                            <ComboBoxItem Content="Down" />
-                                            <ComboBoxItem Content="Up" />
-                                            <ComboBoxItem Content="Both" />
-                                        </ComboBox>
-                                        <ComboBox
-                                            Width="105"
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            SelectedIndex="{Binding HapticStrengthIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                            <ComboBoxItem Content="Low" />
-                                            <ComboBoxItem Content="Medium" />
-                                            <ComboBoxItem Content="High" />
-                                            <ComboBox.Style>
-                                                <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
-                                                    <Setter Property="IsEnabled" Value="True" />
-                                                    <Style.Triggers>
-                                                        <!--  Disable when ActionTypeIndex is 0  -->
-                                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
-                                                            <Setter Property="IsEnabled" Value="False" />
-                                                        </DataTrigger>
-                                                        <!--  Disable when ActionTypeIndex is 7  -->
-                                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="7">
-                                                            <Setter Property="IsEnabled" Value="False" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </ComboBox.Style>
-                                        </ComboBox>
-                                    </DockPanel>
-                                </Grid>
-                            </ikw:SimpleStackPanel>
-                        </Grid>
-
-                        <!--  Input Type and Shifting  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.LayoutPage_InputShift}" />
-
-                                <ComboBox
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    HorizontalContentAlignment="Left"
-                                    SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <ComboBoxItem Content="Disabled on shift" />
-                                    <ComboBoxItem Content="Enabled with shift A" />
-                                    <ComboBoxItem Content="Enabled with shift B" />
-                                    <ComboBoxItem Content="Enabled with shift C" />
-                                    <ComboBoxItem Content="Enabled with shift D" />
-                                    <ComboBoxItem Content="Always enabled" />
-                                </ComboBox>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <StackPanel VerticalAlignment="Bottom">
-                                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.LayoutPage_PressType}" />
-
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{Binding PressTypeTooltip, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </StackPanel>
-
-                                <ComboBox
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Bottom"
-                                    HorizontalContentAlignment="Left"
-                                    SelectedIndex="{Binding PressTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <ComboBoxItem Content="Single press" ToolTip="{x:Static resx:Resources.LayoutPage_PressTypeTooltip0}" />
-                                    <ComboBoxItem Content="Long press" ToolTip="{x:Static resx:Resources.LayoutPage_PressTypeTooltip1}" />
-                                    <ComboBoxItem Content="Timed hold" ToolTip="{x:Static resx:Resources.LayoutPage_PressTypeTooltip2}" />
-                                    <ComboBoxItem Content="Double press" ToolTip="{x:Static resx:Resources.LayoutPage_PressTypeTooltip3}" />
-                                </ComboBox>
-                            </Grid>
-                        </ikw:SimpleStackPanel>
-                    </ikw:SimpleStackPanel>
-                </Expander.Content>
-            </Expander>
+                            <Slider
+                                Margin="3,0,0,0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="2000"
+                                Minimum="100"
+                                TickFrequency="10"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding LongPressDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+                </ui:SettingsExpander.Items>
+            </ui:SettingsExpander>
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="ButtonStackTemplate" DataType="{x:Type viewmodels:ButtonStackViewModel}">
-        <StackPanel Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <DockPanel>
-                <Button
-                    Grid.Column="0"
-                    Width="44"
-                    Height="44"
-                    Margin="0,2,2,0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Top"
-                    Command="{Binding ButtonCommand}"
-                    Style="{DynamicResource AccentButtonStyle}">
-                    <ui:FontIcon
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                        Glyph="&#xECC8;" />
-                </Button>
-
-                <ui:FontIcon
-                    Width="40"
-                    Height="40"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                    <ui:FontIcon.Style>
-                        <Style TargetType="{x:Type ui:FontIcon}">
-                            <Setter Property="Foreground" Value="{DynamicResource WindowTextBrush}" />
-                            <Setter Property="FontFamily" Value="{DynamicResource PhoneFontFamilyNormal}" />
-                            <Setter Property="FontSize" Value="14" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                    <Setter Property="Foreground" Value="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                    <Setter Property="FontFamily" Value="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                    <Setter Property="FontSize" Value="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ui:FontIcon.Style>
-                </ui:FontIcon>
-
-                <TextBlock
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    FontSize="14">
-                    <TextBlock.Text>
-                        <MultiBinding Converter="{StaticResource ResourceFormatConverter}" ConverterParameter="LayoutPage_ExecuteActionsNumFormat">
-                            <Binding
-                                FallbackValue="No Name"
-                                Mode="OneWay"
-                                Path="Name"
-                                TargetNullValue="Unknown"
-                                UpdateSourceTrigger="PropertyChanged" />
-                            <Binding
-                                FallbackValue="0"
-                                Mode="OneWay"
-                                Path="ActionNumber"
-                                TargetNullValue="0"
-                                UpdateSourceTrigger="PropertyChanged" />
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-            </DockPanel>
-
-            <ItemsControl ItemTemplate="{StaticResource ButtonMappingTemplate}" ItemsSource="{Binding ButtonMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-        </StackPanel>
-    </DataTemplate>
-
+    <!--  TODO: Migrate to SettingsExpander  -->
     <DataTemplate x:Key="GyroMappingTemplate" DataType="{x:Type viewmodels:GyroMappingViewModel}">
         <Expander HorizontalAlignment="Stretch">
             <Expander.Header>
@@ -1994,46 +1709,6 @@
         </Expander>
     </DataTemplate>
 
-    <DataTemplate x:Key="GyroStackTemplate" DataType="{x:Type viewmodels:GyroStackViewModel}">
-        <StackPanel Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <DockPanel>
-                <ui:FontIcon
-                    Width="40"
-                    Height="40"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                    <ui:FontIcon.Style>
-                        <Style TargetType="{x:Type ui:FontIcon}">
-                            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                            <Setter Property="FontFamily" Value="{DynamicResource PhoneFontFamilyNormal}" />
-                            <Setter Property="FontSize" Value="14" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                    <Setter Property="Foreground" Value="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                    <Setter Property="FontFamily" Value="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                    <Setter Property="FontSize" Value="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ui:FontIcon.Style>
-                </ui:FontIcon>
-
-                <TextBlock
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    FontSize="14"
-                    Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-            </DockPanel>
-
-            <ItemsControl ItemTemplate="{StaticResource GyroMappingTemplate}" ItemsSource="{Binding GyroMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-        </StackPanel>
-    </DataTemplate>
-
     <DataTemplate x:Key="AxisMappingTemplate" DataType="{x:Type viewmodels:AxisMappingViewModel}">
         <Grid Margin="48,0,0,0">
             <Grid.ColumnDefinitions>
@@ -2042,12 +1717,9 @@
             </Grid.ColumnDefinitions>
 
             <Button
-                Grid.Column="0"
-                Width="44"
-                Height="44"
-                Margin="0,2,2,0"
+                Margin="0,0,2,0"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Top"
+                VerticalAlignment="Stretch"
                 Command="{Binding ButtonCommand}">
                 <ui:FontIcon
                     HorizontalAlignment="Stretch"
@@ -2056,652 +1728,301 @@
                     Glyph="&#xECC9;" />
             </Button>
 
-            <Expander Grid.Column="1" HorizontalAlignment="Stretch">
-                <Expander.Header>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
+            <ui:SettingsExpander Grid.Column="1">
+                <ui:SettingsExpander.Content>
+                    <DockPanel>
+                        <ComboBox MinWidth="120" SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Joystick}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Keyboard}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Mouse}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="False" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="False" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="True" />
+                        </ComboBox>
 
-                        <DockPanel Grid.Column="2" HorizontalAlignment="Right">
-                            <ComboBox
-                                Width="220"
+                        <ComboBox
+                            MinWidth="180"
+                            Margin="3,0,0,0"
+                            VerticalAlignment="Center"
+                            DisplayMemberPath="Content"
+                            ItemsSource="{Binding Targets, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedItem="{Binding SelectedTarget, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedValuePath="Content">
+                            <ComboBox.Style>
+                                <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
+                                    <Setter Property="IsEnabled" Value="True" />
+                                    <Style.Triggers>
+                                        <!--  Disable when ActionTypeIndex is 0  -->
+                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                        <!--  Disable when ActionTypeIndex is 7  -->
+                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="7">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ComboBox.Style>
+                        </ComboBox>
+                    </DockPanel>
+                </ui:SettingsExpander.Content>
+
+                <ui:SettingsExpander.Items>
+                    <!--  Axis Direction  -->
+                    <!--  TODO: Translate me  -->
+                    <ui:SettingsCard Header="Axis direction" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <StackPanel>
+                            <WrapPanel Orientation="Horizontal">
+                                <CheckBox Content="Up" IsChecked="{Binding IsUp, Mode=TwoWay}" />
+                                <CheckBox Content="Down" IsChecked="{Binding IsDown, Mode=TwoWay}" />
+                            </WrapPanel>
+                            <WrapPanel Orientation="Horizontal">
+                                <CheckBox Content="Left" IsChecked="{Binding IsLeft, Mode=TwoWay}" />
+                                <CheckBox Content="Right" IsChecked="{Binding IsRight, Mode=TwoWay}" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Axis Threshold  -->
+                    <!--  TODO: Translate me  -->
+                    <ui:SettingsCard Header="Axis threshold" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                            <TextBox
+                                Height="31"
+                                HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="True" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="True" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Joystick}" IsEnabled="True" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Keyboard}" IsEnabled="True" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Mouse}" IsEnabled="True" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="False" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="False" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="True" />
-                            </ComboBox>
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Axis2ButtonThreshold, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" />
 
-                            <ComboBox
-                                Width="220"
+                            <Slider
+                                Grid.Column="1"
                                 Margin="12,0,0,0"
+                                HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
-                                DisplayMemberPath="Content"
-                                ItemsSource="{Binding Targets, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                SelectedItem="{Binding SelectedTarget, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                SelectedValuePath="Content">
-                                <ComboBox.Style>
-                                    <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
-                                        <Setter Property="IsEnabled" Value="True" />
-                                        <Style.Triggers>
-                                            <!--  Disable when ActionTypeIndex is 0  -->
-                                            <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
-                                                <Setter Property="IsEnabled" Value="False" />
-                                            </DataTrigger>
-                                            <!--  Disable when ActionTypeIndex is 7  -->
-                                            <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="7">
-                                                <Setter Property="IsEnabled" Value="False" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ComboBox.Style>
-                            </ComboBox>
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="10000"
+                                Maximum="32000"
+                                Minimum="2000"
+                                SmallChange="2000"
+                                TickFrequency="2000"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Axis2ButtonThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
-                    </Grid>
-                </Expander.Header>
+                    </ui:SettingsCard>
 
-                <Expander.Content>
-                    <ikw:SimpleStackPanel Margin="30,-10,0,-4" Spacing="3">
+                    <!--  Output shape  -->
+                    <!--  TODO: Translate me  -->
+                    <ui:SettingsCard Header="Output shape" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                        <ComboBox SelectedIndex="{Binding Axis2AxisOutputShapeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem>Default</ComboBoxItem>
+                            <ComboBoxItem>Circle</ComboBoxItem>
+                            <ComboBoxItem>Cross</ComboBoxItem>
+                            <ComboBoxItem>Square</ComboBoxItem>
+                        </ComboBox>
+                    </ui:SettingsCard>
 
-                        <!--  Axis 2 Button|Keyboard|Mouse  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
-                            <!--  Axis Direction  -->
-                            <!--  TODO: Translate me  -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
+                    <!--  Invert horizontal  -->
+                    <!--  TODO: Translate me  -->
+                    <ui:SettingsCard Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                        <CheckBox Content="Invert horizontal axis" IsChecked="{Binding Axis2AxisInvertHorizontal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </ui:SettingsCard>
 
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Axis direction" />
+                    <!--  Invert vertical  -->
+                    <!--  TODO: Translate me  -->
+                    <ui:SettingsCard Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                        <CheckBox Content="Invert vertical axis" IsChecked="{Binding Axis2AxisInvertVertical, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </ui:SettingsCard>
 
-                                <StackPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center">
-                                    <WrapPanel Orientation="Horizontal">
-                                        <CheckBox Content="Up" IsChecked="{Binding IsUp, Mode=TwoWay}" />
-                                        <CheckBox Content="Down" IsChecked="{Binding IsDown, Mode=TwoWay}" />
-                                    </WrapPanel>
-                                    <WrapPanel Orientation="Horizontal">
-                                        <CheckBox Content="Left" IsChecked="{Binding IsLeft, Mode=TwoWay}" />
-                                        <CheckBox Content="Right" IsChecked="{Binding IsRight, Mode=TwoWay}" />
-                                    </WrapPanel>
-                                </StackPanel>
-                            </Grid>
+                    <!--  Inner deadzone  -->
+                    <ui:SettingsCard Header="Inner deadzone" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Axis2AxisInnerDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
 
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
+                            <Slider
+                                Margin="6,0,0,0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="25"
+                                Minimum="0"
+                                TickFrequency="1"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Axis2AxisInnerDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
 
-                            <!--  Axis Threshold  -->
-                            <!--  TODO: Translate me  -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
+                    <!--  Outer deadzone  -->
+                    <ui:SettingsCard Header="Outer deadzone" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Axis2AxisOuterDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
 
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Axis threshold" />
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Axis2ButtonThreshold, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" />
+                            <Slider
+                                Margin="3,0,0,0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="25"
+                                Minimum="0"
+                                TickFrequency="5"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Axis2AxisOuterDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
 
-                                    <Slider
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Center"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        LargeChange="10000"
-                                        Maximum="32000"
-                                        Minimum="2000"
-                                        SmallChange="2000"
-                                        TickFrequency="2000"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Axis2ButtonThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-                        </ikw:SimpleStackPanel>
+                    <!--  Anti deadzone  -->
+                    <ui:SettingsCard Header="Anti deadzone" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Axis2AxisAntiDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
 
-                        <!--  Axis 2 Axis  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                            <Slider
+                                Margin="3,0,0,0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="25"
+                                Minimum="0"
+                                TickFrequency="5"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Axis2AxisAntiDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
 
-                            <!--  Output shape  -->
-                            <!--  TODO: Translate me  -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
+                    <!--  Mouse Axis  -->
+                    <!--  Sensitivity  -->
+                    <ui:SettingsCard Header="Sensitivity" Visibility="{Binding Axis2MouseVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Axis2MousePointerSpeed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
 
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Output shape" />
+                            <Slider
+                                Margin="3,0,0,0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="100"
+                                Minimum="5"
+                                TickFrequency="10"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Axis2MousePointerSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
 
-                                <ComboBox
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    HorizontalContentAlignment="Left"
-                                    SelectedIndex="{Binding Axis2AxisOutputShapeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <ComboBoxItem>Default</ComboBoxItem>
-                                    <ComboBoxItem>Circle</ComboBoxItem>
-                                    <ComboBoxItem>Cross</ComboBoxItem>
-                                    <ComboBoxItem>Square</ComboBoxItem>
-                                </ComboBox>
-                            </Grid>
+                    <!--  Mouse Axis  -->
+                    <!--  Acceleration  -->
+                    <ui:SettingsCard Header="Acceleration" Visibility="{Binding Axis2MouseVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Axis2MouseAcceleration, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N2} %}" />
 
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
+                            <Slider
+                                Margin="3,0,0,0"
+                                AutoToolTipPrecision="2"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="2.00"
+                                Minimum="1.00"
+                                TickFrequency="0.05"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat={}{0:N2} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Axis2MouseAcceleration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
 
-                            <!--  Invert horizontal  -->
-                            <!--  TODO: Translate me  -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
+                    <!--  Mouse Axis  -->
+                    <!--  Touchpad: Filtering  -->
+                    <ui:SettingsCard
+                        d:Visibility="Visible"
+                        Header="Filtering"
+                        Visibility="{Binding Axis2TouchpadVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <ui:ToggleSwitch IsOn="{Binding Axis2MouseFiltering, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                    </ui:SettingsCard>
 
-                                <CheckBox
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    HorizontalContentAlignment="Left"
-                                    Content="Invert horizontal axis"
-                                    IsChecked="{Binding Axis2AxisInvertHorizontal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            </Grid>
+                    <!--  Mouse Axis  -->
+                    <!--  Touchpad: Filtering cutoff  -->
+                    <ui:SettingsCard
+                        d:Visibility="Visible"
+                        Header="Filtering cutoff (less is more filter)"
+                        Visibility="{Binding Axis2MouseFiltering, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Axis2MouseFilterCutoff, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N3}" />
 
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
+                            <Slider
+                                Margin="3,0,0,0"
+                                AutoToolTipPrecision="3"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="0.1"
+                                Minimum="0.01"
+                                TickFrequency="0.005"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Axis2MouseFilterCutoff, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
 
-                            <!--  Invert vertical  -->
-                            <!--  TODO: Translate me  -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
+                    <!--  Mouse Axis  -->
+                    <!--  Deadzone  -->
+                    <ui:SettingsCard Header="Deadzone" Visibility="{Binding Axis2JoystickVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Axis2MouseDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0} %}" />
 
-                                <CheckBox
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    HorizontalContentAlignment="Left"
-                                    Content="Invert vertical axis"
-                                    IsChecked="{Binding Axis2AxisInvertVertical, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            </Grid>
+                            <Slider
+                                Margin="3,0,0,0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="100"
+                                Minimum="0"
+                                TickFrequency="5"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Axis2MouseDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
 
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-
-                            <!--  Inner deadzone  -->
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Inner deadzone" />
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Axis2AxisInnerDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="25"
-                                        Minimum="0"
-                                        TickFrequency="1"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Axis2AxisInnerDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-
-                            <!--  Outer deadzone  -->
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Outer deadzone" />
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Axis2AxisOuterDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="25"
-                                        Minimum="0"
-                                        TickFrequency="1"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Axis2AxisOuterDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-
-                            <!--  Anti deadzone  -->
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Anti deadzone" />
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Axis2AxisAntiDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="25"
-                                        Minimum="0"
-                                        TickFrequency="1"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Axis2AxisAntiDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-                        </ikw:SimpleStackPanel>
-
-                        <!--  Axis 2 Mouse Axis  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding Axis2MouseVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
-
-                            <!--  Sensitivity  -->
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Sensitivity" />
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Axis2MousePointerSpeed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="100"
-                                        Minimum="5"
-                                        TickFrequency="1"
-                                        ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Axis2MousePointerSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-
-                            <!--  Acceleration  -->
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Acceleration" />
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Axis2MouseAcceleration, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N2} %}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        AutoToolTipPrecision="2"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="2.00"
-                                        Minimum="1.00"
-                                        TickFrequency="0.05"
-                                        ToolTip="{Binding Value, StringFormat={}{0:N2} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Axis2MouseAcceleration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0"
-                                Visibility="{Binding TouchpadVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                            <!--  Filtering  -->
-                            <Grid Visibility="{Binding TouchpadVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="2*" MinWidth="200" />
-                                    <ColumnDefinition Width="8*" MinWidth="120" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Filtering" />
-
-                                <ui:ToggleSwitch
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Right"
-                                    IsOn="{Binding Axis2MouseFiltering, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                            </Grid>
-
-                            <!--  Filtering (hidden)  -->
-                            <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding Axis2MouseFiltering, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                                <!--  Separator  -->
-                                <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
-
-                                <!--  Filtering cutoff  -->
-                                <Grid Height="40">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Filtering cutoff (less is more filter)" />
-
-                                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                        <TextBox
-                                            Height="31"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Center"
-                                            HorizontalContentAlignment="Center"
-                                            IsReadOnly="True"
-                                            Text="{Binding Axis2MouseFilterCutoff, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N3}" />
-
-                                        <Slider
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            AutoToolTipPrecision="3"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            Maximum="0.1"
-                                            Minimum="0.01"
-                                            TickFrequency="0.005"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            Value="{Binding Axis2MouseFilterCutoff, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </DockPanel>
-                                </Grid>
-                            </ikw:SimpleStackPanel>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0"
-                                Visibility="{Binding JoystickVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                            <!--  Deadzone  -->
-                            <Grid Height="40" Visibility="{Binding JoystickVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Deadzone" />
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Axis2MouseDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0} %}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="100"
-                                        Minimum="0"
-                                        TickFrequency="1"
-                                        ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Axis2MouseDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-                        </ikw:SimpleStackPanel>
-
-                        <!--  Input Shifting  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <StackPanel VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Mode shifting" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="Define under which circumstances this input should be shifted"
-                                        TextWrapping="Wrap" />
-                                </StackPanel>
-
-                                <ComboBox
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    HorizontalContentAlignment="Left"
-                                    SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <ComboBoxItem Content="Disabled on shift" />
-                                    <ComboBoxItem Content="Enabled with shift A" />
-                                    <ComboBoxItem Content="Enabled with shift B" />
-                                    <ComboBoxItem Content="Enabled with shift C" />
-                                    <ComboBoxItem Content="Enabled with shift D" />
-                                    <ComboBoxItem Content="Always enabled" />
-                                </ComboBox>
-                            </Grid>
-                        </ikw:SimpleStackPanel>
-                    </ikw:SimpleStackPanel>
-                </Expander.Content>
-            </Expander>
+                    <!--  Input Type and Shifting  -->
+                    <ui:SettingsCard
+                        Description="{x:Static resx:Resources.LayoutPage_InputShiftDesc}"
+                        Header="{x:Static resx:Resources.LayoutPage_InputShift}"
+                        Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
+                        <ComboBox SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="Disabled on shift" />
+                            <ComboBoxItem Content="Enabled with shift A" />
+                            <ComboBoxItem Content="Enabled with shift B" />
+                            <ComboBoxItem Content="Enabled with shift C" />
+                            <ComboBoxItem Content="Enabled with shift D" />
+                            <ComboBoxItem Content="Always enabled" />
+                        </ComboBox>
+                    </ui:SettingsCard>
+                </ui:SettingsExpander.Items>
+            </ui:SettingsExpander>
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="AxisStackTemplate" DataType="{x:Type viewmodels:AxisStackViewModel}">
-        <StackPanel Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <DockPanel>
-                <Button
-                    Grid.Column="0"
-                    Width="44"
-                    Height="44"
-                    Margin="0,2,2,0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Top"
-                    Command="{Binding ButtonCommand}"
-                    Style="{DynamicResource AccentButtonStyle}">
-                    <ui:FontIcon
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                        Glyph="&#xECC8;" />
-                </Button>
-
-                <ui:FontIcon
-                    Width="40"
-                    Height="40"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                    <ui:FontIcon.Style>
-                        <Style TargetType="{x:Type ui:FontIcon}">
-                            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                            <Setter Property="FontFamily" Value="{DynamicResource PhoneFontFamilyNormal}" />
-                            <Setter Property="FontSize" Value="14" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                    <Setter Property="Foreground" Value="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                    <Setter Property="FontFamily" Value="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
-                                    <Setter Property="FontSize" Value="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ui:FontIcon.Style>
-                </ui:FontIcon>
-
-                <TextBlock
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    FontSize="14">
-                    <TextBlock.Text>
-                        <MultiBinding Converter="{StaticResource ResourceFormatConverter}" ConverterParameter="LayoutPage_ExecuteActionsNumFormat">
-                            <Binding
-                                FallbackValue="No Name"
-                                Mode="OneWay"
-                                Path="Name"
-                                TargetNullValue="Unknown"
-                                UpdateSourceTrigger="PropertyChanged" />
-                            <Binding
-                                FallbackValue="0"
-                                Mode="OneWay"
-                                Path="ActionNumber"
-                                TargetNullValue="0"
-                                UpdateSourceTrigger="PropertyChanged" />
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-            </DockPanel>
-
-            <ItemsControl ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding AxisMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-        </StackPanel>
-    </DataTemplate>
-
+    <!--  TODO: Migrate to SettingsExpander  -->
     <DataTemplate x:Key="TriggerMappingTemplate" DataType="{x:Type viewmodels:TriggerMappingViewModel}">
         <Grid Margin="48,0,0,0">
             <Grid.ColumnDefinitions>
@@ -2987,6 +2308,187 @@
         </Grid>
     </DataTemplate>
 
+    <DataTemplate x:Key="ButtonStackTemplate" DataType="{x:Type viewmodels:ButtonStackViewModel}">
+        <StackPanel Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <DockPanel>
+                <Button
+                    Grid.Column="0"
+                    Width="44"
+                    Height="44"
+                    Margin="0,2,2,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Command="{Binding ButtonCommand}"
+                    Style="{DynamicResource AccentButtonStyle}">
+                    <ui:FontIcon
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                        Glyph="&#xECC8;" />
+                </Button>
+
+                <ui:FontIcon
+                    Width="40"
+                    Height="40"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ui:FontIcon.Style>
+                        <Style TargetType="{x:Type ui:FontIcon}">
+                            <Setter Property="Foreground" Value="{DynamicResource WindowTextBrush}" />
+                            <Setter Property="FontFamily" Value="{DynamicResource PhoneFontFamilyNormal}" />
+                            <Setter Property="FontSize" Value="14" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="Foreground" Value="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="FontFamily" Value="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="FontSize" Value="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ui:FontIcon.Style>
+                </ui:FontIcon>
+
+                <TextBlock
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    FontSize="14">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource ResourceFormatConverter}" ConverterParameter="LayoutPage_ExecuteActionsNumFormat">
+                            <Binding
+                                FallbackValue="No Name"
+                                Mode="OneWay"
+                                Path="Name"
+                                TargetNullValue="Unknown"
+                                UpdateSourceTrigger="PropertyChanged" />
+                            <Binding
+                                FallbackValue="0"
+                                Mode="OneWay"
+                                Path="ActionNumber"
+                                TargetNullValue="0"
+                                UpdateSourceTrigger="PropertyChanged" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+
+            <ItemsControl ItemTemplate="{StaticResource ButtonMappingTemplate}" ItemsSource="{Binding ButtonMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="GyroStackTemplate" DataType="{x:Type viewmodels:GyroStackViewModel}">
+        <StackPanel Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <DockPanel>
+                <ui:FontIcon
+                    Width="40"
+                    Height="40"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ui:FontIcon.Style>
+                        <Style TargetType="{x:Type ui:FontIcon}">
+                            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <Setter Property="FontFamily" Value="{DynamicResource PhoneFontFamilyNormal}" />
+                            <Setter Property="FontSize" Value="14" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="Foreground" Value="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="FontFamily" Value="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="FontSize" Value="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ui:FontIcon.Style>
+                </ui:FontIcon>
+
+                <TextBlock
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    FontSize="14"
+                    Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+            </DockPanel>
+
+            <ItemsControl ItemTemplate="{StaticResource GyroMappingTemplate}" ItemsSource="{Binding GyroMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="AxisStackTemplate" DataType="{x:Type viewmodels:AxisStackViewModel}">
+        <StackPanel Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <DockPanel>
+                <Button
+                    Grid.Column="0"
+                    Width="44"
+                    Height="44"
+                    Margin="0,2,2,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Command="{Binding ButtonCommand}"
+                    Style="{DynamicResource AccentButtonStyle}">
+                    <ui:FontIcon
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                        Glyph="&#xECC8;" />
+                </Button>
+
+                <ui:FontIcon
+                    Width="40"
+                    Height="40"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ui:FontIcon.Style>
+                        <Style TargetType="{x:Type ui:FontIcon}">
+                            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <Setter Property="FontFamily" Value="{DynamicResource PhoneFontFamilyNormal}" />
+                            <Setter Property="FontSize" Value="14" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="Foreground" Value="{Binding GlyphForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="FontFamily" Value="{Binding GlyphFontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IsNullConverter}}" Value="False">
+                                    <Setter Property="FontSize" Value="{Binding GlyphFontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ui:FontIcon.Style>
+                </ui:FontIcon>
+
+                <TextBlock
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    FontSize="14">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource ResourceFormatConverter}" ConverterParameter="LayoutPage_ExecuteActionsNumFormat">
+                            <Binding
+                                FallbackValue="No Name"
+                                Mode="OneWay"
+                                Path="Name"
+                                TargetNullValue="Unknown"
+                                UpdateSourceTrigger="PropertyChanged" />
+                            <Binding
+                                FallbackValue="0"
+                                Mode="OneWay"
+                                Path="ActionNumber"
+                                TargetNullValue="0"
+                                UpdateSourceTrigger="PropertyChanged" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+
+            <ItemsControl ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding AxisMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
+    </DataTemplate>
     <DataTemplate x:Key="TriggerStackTemplate" DataType="{x:Type viewmodels:TriggerStackViewModel}">
         <StackPanel Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <DockPanel>

@@ -42,7 +42,6 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        // todo: use resources
         public string PressTypeTooltip
         {
             get
@@ -236,6 +235,8 @@ namespace HandheldCompanion.ViewModels
                 }
             }
         }
+
+        public bool HasDuration => PressTypeIndex != (int)PressType.Short;
 
         #endregion
 

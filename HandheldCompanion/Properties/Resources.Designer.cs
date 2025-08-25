@@ -6002,6 +6002,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Define under which circumstances this input should be shifted.
+        /// </summary>
+        public static string LayoutPage_InputShiftDesc {
+            get {
+                return ResourceManager.GetString("LayoutPage_InputShiftDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Interruptable.
         /// </summary>
         public static string LayoutPage_Interruptable {

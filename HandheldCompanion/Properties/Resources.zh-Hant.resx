@@ -3854,4 +3854,7 @@
   <data name="LayoutPage_PressTypeTooltip3" xml:space="preserve">
     <value />
   </data>
+  <data name="LayoutPage_InputShiftDesc" xml:space="preserve">
+    <value />
+  </data>
 </root>

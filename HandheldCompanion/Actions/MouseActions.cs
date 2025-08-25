@@ -48,7 +48,7 @@ namespace HandheldCompanion.Actions
         public ModifierSet Modifiers = ModifierSet.None;
 
         // settings axis
-        public int Sensivity = 33;
+        public int Sensivity = 35;
         public float Acceleration = 1.0f;
         public int Deadzone = 15;           // stick only
         public bool Filtering = false;      // pad only
