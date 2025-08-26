@@ -1,5 +1,6 @@
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Misc;
@@ -449,7 +450,7 @@ public class LayoutManager : IManager
             IController controller = ControllerManager.GetTargetOrDefault();
             if (controller is not null)
             {
-                foreach (ButtonFlags buttonFlags in controller.GetTargetButtons())
+                foreach (ButtonFlags buttonFlags in ButtonState.AllButtons.Union(IDevice.GetCurrent().OEMButtons))
                 {
                     if (currentLayout.ButtonLayout.TryGetValue(buttonFlags, out var actions) && actions.Any(action => action is InheritActions))
                     {
