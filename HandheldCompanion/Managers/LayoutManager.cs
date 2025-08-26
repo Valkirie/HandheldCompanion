@@ -447,30 +447,26 @@ public class LayoutManager : IManager
         lock (updateLock)
         {
             // Check for inherit(s) and replace actions with default layout actions where necessary
-            IController controller = ControllerManager.GetTargetOrDefault();
-            if (controller is not null)
+            foreach (ButtonFlags buttonFlags in ButtonState.AllButtons.Union(IDevice.GetCurrent().OEMButtons))
             {
-                foreach (ButtonFlags buttonFlags in ButtonState.AllButtons.Union(IDevice.GetCurrent().OEMButtons))
+                if (currentLayout.ButtonLayout.TryGetValue(buttonFlags, out var actions) && actions.Any(action => action is InheritActions))
                 {
-                    if (currentLayout.ButtonLayout.TryGetValue(buttonFlags, out var actions) && actions.Any(action => action is InheritActions))
+                    // Replace with default layout actions
+                    if (defaultLayout.ButtonLayout.TryGetValue(buttonFlags, out var defaultActions))
+                        currentLayout.ButtonLayout[buttonFlags].AddRange(defaultActions);
+                }
+            }
+
+            // Check for inherit(s) and replace actions with default layout actions where necessary
+            foreach (AxisLayoutFlags axisLayout in AxisState.AllAxisLayoutFlags)
+            {
+                if (currentLayout.AxisLayout.TryGetValue(axisLayout, out List<IActions>? actions))
+                {
+                    foreach (IActions action in actions.Where(act => act is InheritActions))
                     {
                         // Replace with default layout actions
-                        if (defaultLayout.ButtonLayout.TryGetValue(buttonFlags, out var defaultActions))
-                            currentLayout.ButtonLayout[buttonFlags].AddRange(defaultActions);
-                    }
-                }
-
-                // Check for inherit(s) and replace actions with default layout actions where necessary
-                foreach (AxisLayoutFlags axisLayout in AxisState.AllAxisLayoutFlags)
-                {
-                    if (currentLayout.AxisLayout.TryGetValue(axisLayout, out List<IActions>? actions))
-                    {
-                        foreach (IActions action in actions.Where(act => act is InheritActions))
-                        {
-                            // Replace with default layout actions
-                            if (defaultLayout.AxisLayout.TryGetValue(axisLayout, out var defaultActions))
-                                currentLayout.AxisLayout[axisLayout] = defaultActions;
-                        }
+                        if (defaultLayout.AxisLayout.TryGetValue(axisLayout, out var defaultActions))
+                            currentLayout.AxisLayout[axisLayout] = defaultActions;
                     }
                 }
             }
