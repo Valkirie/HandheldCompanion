@@ -461,7 +461,7 @@ public class LayoutManager : IManager
                 }
 
                 // Check for inherit(s) and replace actions with default layout actions where necessary
-                foreach (AxisLayoutFlags axisLayout in controller.GetTargetAxis().Union(controller.GetTargetTriggers()))
+                foreach (AxisLayoutFlags axisLayout in AxisState.AllAxisLayoutFlags)
                 {
                     if (currentLayout.AxisLayout.TryGetValue(axisLayout, out List<IActions>? actions))
                     {
