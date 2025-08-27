@@ -36,7 +36,7 @@
             <ikw:SimpleStackPanel VerticalAlignment="Top" Spacing="3">
                 <!--  Shortcuts  -->
                 <ItemsControl
-                    HorizontalAlignment="Center"
+                    HorizontalAlignment="Left"
                     dd:DragDrop.DefaultDragAdornerOpacity="1"
                     dd:DragDrop.DragAdornerTranslation="-50,15"
                     dd:DragDrop.DropHandler="{Binding}"
