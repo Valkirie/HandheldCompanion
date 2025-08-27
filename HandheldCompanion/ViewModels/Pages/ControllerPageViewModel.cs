@@ -120,7 +120,7 @@ namespace HandheldCompanion.ViewModels
                 await Task.Delay(2000).ConfigureAwait(false);
 
                 // force (re)scan
-                ControllerManager.QueryDevices();
+                ControllerManager.Rescan();
 
                 // set flag
                 ScanHardwareVisibility = Visibility.Collapsed;

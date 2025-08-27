@@ -576,6 +576,19 @@ public class ROGAlly : IDevice
         }
     }
 
+    public bool XBoxController(bool disabled)
+    {
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            if (!device.IsConnected)
+                return false;
+
+            return device.WriteFeatureData(new byte[] { 0x5A, 0xD1, 0x0B, 0x01, disabled ? (byte)0x02 : (byte)0x01 }, 64);
+        }
+
+        return false;
+    }
+
     public void SetBatteryChargeLimit(int chargeLimit)
     {
         if (!IsOpen)

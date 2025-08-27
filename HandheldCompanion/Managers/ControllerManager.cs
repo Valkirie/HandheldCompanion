@@ -407,12 +407,6 @@ public static class ControllerManager
                 while (!controller.IsReady && controller.IsConnected())
                     await Task.Delay(250).ConfigureAwait(false);
 
-                if (!controller.IsConnected())
-                {
-                    LogManager.LogWarning("SDL controller: VID:{0} and PID:{1} was unplugged before being ready", details.GetVendorID(), details.GetProductID());
-                    return;
-                }
-
                 // controller is ready
                 controller.IsBusy = false;
 
@@ -612,12 +606,6 @@ public static class ControllerManager
             while (!controller.IsReady && controller.IsConnected())
                 await Task.Delay(250).ConfigureAwait(false);
 
-            if (!controller.IsConnected())
-            {
-                LogManager.LogWarning("Generic controller: VID:{0} and PID:{1} was unplugged before being ready", details.GetVendorID(), details.GetProductID());
-                return;
-            }
-
             // controller is ready
             controller.IsBusy = false;
 
@@ -730,6 +718,18 @@ public static class ControllerManager
                         try { controller = new XInputController(details); } catch { }
                         break;
 
+                    // Asus
+                    case "0x0B05":
+                        {
+                            switch(details.GetProductID())
+                            {
+                                case "0x1B4C": // ASUS Xbox Adaptive Controller
+                                    try { controller = new XboxAdaptiveController(details); } catch { }
+                                    break;
+                            }
+                        }
+                        break;
+
                     // Lenovo
                     case "0x17EF":
                     case "0x1A86":
@@ -811,12 +811,6 @@ public static class ControllerManager
 
             while (!controller.IsReady && controller.IsConnected())
                 await Task.Delay(250).ConfigureAwait(false);
-
-            if (!controller.IsConnected())
-            {
-                LogManager.LogWarning("XInput controller: VID:{0} and PID:{1} was unplugged before being ready", details.GetVendorID(), details.GetProductID());
-                return;
-            }
 
             // controller is ready
             controller.IsBusy = false;
@@ -1126,7 +1120,7 @@ public static class ControllerManager
         QueryDevices();
     }
 
-    public static void QueryDevices()
+    private static void QueryDevices()
     {
         // manage events
         ManagerFactory.deviceManager.XUsbDeviceArrived += XUsbDeviceArrived;
@@ -1134,13 +1128,13 @@ public static class ControllerManager
         ManagerFactory.deviceManager.HidDeviceArrived += HidDeviceArrived;
         ManagerFactory.deviceManager.HidDeviceRemoved += HidDeviceRemoved;
 
-        foreach (PnPDetails? device in ManagerFactory.deviceManager.PnPDevices.Values)
-        {
-            if (device.isXInput)
-                XUsbDeviceArrived(device, DeviceInterfaceIds.XUsbDevice);
-            else if (device.isGaming)
-                HidDeviceArrived(device, DeviceInterfaceIds.HidDevice);
-        }
+        Rescan();
+    }
+
+    public static void Rescan()
+    {
+        ManagerFactory.deviceManager.RefreshDInput();
+        ManagerFactory.deviceManager.RefreshXInput();
 
         // Reopen all SDL gamepads
         uint[] gamepads = SDL.GetGamepads(out int count);
@@ -1586,6 +1580,20 @@ public static class ControllerManager
     {
         try
         {
+            // get controller
+            if (Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
+            {
+                // edge-case
+                if (controller is XboxAdaptiveController xboxController)
+                {
+                    // set status
+                    controller.IsBusy = true;
+                    PowerCyclers[baseContainerDeviceInstanceId] = true;
+
+                    return xboxController.Disable();
+                }
+            }
+
             PnPDevice pnPDevice = null;
 
             Task timeout = Task.Delay(TimeSpan.FromSeconds(3));
@@ -1622,8 +1630,7 @@ public static class ControllerManager
             }
 
             // cycle controller
-            if (Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
-                return controller.CyclePort();
+            return controller?.CyclePort() ?? false;
         }
         catch { }
 
@@ -1640,6 +1647,14 @@ public static class ControllerManager
     {
         try
         {
+            // get controller
+            if (Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
+            {
+                // edge-case
+                if (controller is XboxAdaptiveController xboxController)
+                    return xboxController.Enable();
+            }
+
             PnPDevice pnPDevice = null;
 
             Task timeout = Task.Delay(TimeSpan.FromSeconds(3));

@@ -97,8 +97,8 @@ public class DeviceManager : IManager
         HidDeviceListener.StartListen(DeviceInterfaceIds.HidDevice);
 
         RefreshDrivers();
-        RefreshXInput();
         RefreshDInput();
+        RefreshXInput();
         RefreshDisplayAdapters(true);
 
         base.Start();
@@ -153,7 +153,7 @@ public class DeviceManager : IManager
             var arrival = device.GetProperty<DateTimeOffset>(DevicePropertyKey.Device_LastArrivalDate);
 
             // add new device
-            devices.Add(path, arrival);
+            devices[path] = arrival;
         }
 
         // sort devices list
@@ -175,7 +175,7 @@ public class DeviceManager : IManager
             var arrival = device.GetProperty<DateTimeOffset>(DevicePropertyKey.Device_LastArrivalDate);
 
             // add new device
-            devices.Add(path, arrival);
+            devices[path] =  arrival;
         }
 
         // sort devices list
@@ -259,8 +259,6 @@ public class DeviceManager : IManager
     {
         try
         {
-            string SymLink = SymLinkToInstanceId(path, DeviceInterfaceIds.HidDevice.ToString());
-
             PnPDevice children = PnPDevice.GetDeviceByInterfaceId(path);
 
             // get attributes
@@ -342,7 +340,7 @@ public class DeviceManager : IManager
             PnPDetails details = new PnPDetails
             {
                 devicePath = path,
-                SymLink = SymLink,
+                SymLink = SymLinkToInstanceId(path, DeviceInterfaceIds.HidDevice.ToString()),
                 Name = parent.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),
                 EnumeratorName = parent.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName),
                 deviceInstanceId = children.InstanceId.ToUpper(),
@@ -549,14 +547,36 @@ public class DeviceManager : IManager
         return Regex.Replace(devicePath, pattern, string.Empty);
     }
 
-    private readonly ConcurrentDictionary<string, Task> _perDevice = new();
+    private readonly ConcurrentDictionary<string, Task> _usbDevice = new();
+    private readonly ConcurrentDictionary<string, Task> _hidDevice = new();
 
     private void XUsbDevice_DeviceArrived(DeviceEventArgs obj)
     {
         var instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-        EnqueuePerDevice(instanceId, async () =>
+        if (instanceId.Contains("USB"))
         {
-            var deviceEx = await WaitUntilAsync(() => FindDevice(instanceId)).ConfigureAwait(false);
+            PnPDevice device = PnPDevice.GetDeviceByInterfaceId(obj.SymLink);
+            while (device.Children is not null)
+                device = (PnPDevice)device.Children.FirstOrDefault();
+
+            int deviceIndex = 0;
+            while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.HidDevice, out string? symlink, out string? instId, deviceIndex++))
+            {
+                if (string.IsNullOrEmpty(symlink))
+                    continue;
+
+                PnPDevice foundDevice = PnPDevice.GetDeviceByInterfaceId(symlink);
+                if (foundDevice.Equals(device))
+                {
+                    obj.SymLink = symlink;
+                    break;
+                }
+            }
+        }
+
+        EnqueuePerDevice(instanceId, _usbDevice, async () =>
+        {
+            var deviceEx = await WaitUntilAsync(() => GetDetails(obj.SymLink)).ConfigureAwait(false);
             if (deviceEx is null || !deviceEx.isGaming) return;
 
             deviceEx.isXInput = true;
@@ -582,7 +602,7 @@ public class DeviceManager : IManager
     private void XUsbDevice_DeviceRemoved(DeviceEventArgs obj)
     {
         var instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-        EnqueuePerDevice(instanceId, async () =>
+        EnqueuePerDevice(instanceId, _usbDevice, async () =>
         {
             var deviceEx = await WaitUntilAsync(() => FindDevice(instanceId)).ConfigureAwait(false);
             if (deviceEx is null) return;
@@ -599,7 +619,7 @@ public class DeviceManager : IManager
     private void HidDevice_DeviceArrived(DeviceEventArgs obj)
     {
         var instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-        EnqueuePerDevice(instanceId, async () =>
+        EnqueuePerDevice(instanceId, _hidDevice, async () =>
         {
             var deviceEx = await WaitUntilAsync(() => GetDetails(obj.SymLink)).ConfigureAwait(false);
             if (deviceEx is null || deviceEx.isXInput) return; // XInput handled by XUSB
@@ -616,7 +636,7 @@ public class DeviceManager : IManager
     private void HidDevice_DeviceRemoved(DeviceEventArgs obj)
     {
         var instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-        EnqueuePerDevice(instanceId, async () =>
+        EnqueuePerDevice(instanceId, _hidDevice, async () =>
         {
             var deviceEx = await WaitUntilAsync(() => FindDevice(instanceId)).ConfigureAwait(false);
             if (deviceEx is null || deviceEx.isXInput) return;
@@ -629,23 +649,23 @@ public class DeviceManager : IManager
         });
     }
 
-    private Task EnqueuePerDevice(string instanceId, Func<Task> work)
+    private Task EnqueuePerDevice(string instanceId, ConcurrentDictionary<string, Task> keyValuePairs, Func<Task> work)
     {
-        Task next = _perDevice.AddOrUpdate(
+        Task next = keyValuePairs.AddOrUpdate(
             instanceId,
             _ => Task.Run(work),
             (_, tail) => tail.ContinueWith(_ => work(), TaskScheduler.Default).Unwrap());
 
         _ = next.ContinueWith(_ =>
         {
-            _perDevice.TryGetValue(instanceId, out var current);
-            if (current == next) _perDevice.TryRemove(instanceId, out _);
+            keyValuePairs.TryGetValue(instanceId, out var current);
+            if (current == next) keyValuePairs.TryRemove(instanceId, out _);
         }, TaskScheduler.Default);
 
         return next;
     }
 
-    private static async Task<T?> WaitUntilAsync<T>(Func<T?> probe, int timeoutMs = 8000, int pollMs = 100) where T : class
+    private static async Task<T?> WaitUntilAsync<T>(Func<T?> probe, int timeoutMs = 4000, int pollMs = 100) where T : class
     {
         var until = DateTime.UtcNow.AddMilliseconds(timeoutMs);
         while (DateTime.UtcNow < until)

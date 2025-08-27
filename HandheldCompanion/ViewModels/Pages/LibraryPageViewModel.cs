@@ -383,6 +383,7 @@ namespace HandheldCompanion.ViewModels
                 LibraryPage.ProfilesRepeater.ItemsSource = null;
                 LibraryPage.ProfilesRepeater.ItemsSource = ProfilesView;
             }
+            catch (NullReferenceException) { }
             catch { }
         }
 
