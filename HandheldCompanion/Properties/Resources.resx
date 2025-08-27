@@ -2542,7 +2542,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Overlay</value>
   </data>
   <data name="ProfilesPage_DefaultDeviceProfile" xml:space="preserve">
-    <value>This is a default device preset and cannot be edited. These are comparable to the presets provided by the devices original software.</value>
+    <value>This is a default preset for the device, comparable to the one provided by the manufacturer. Please modify with caution.</value>
   </data>
   <data name="PowerProfileLegionGoBetterBattery" xml:space="preserve">
     <value>Efficiency</value>

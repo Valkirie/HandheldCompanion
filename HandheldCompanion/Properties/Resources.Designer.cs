@@ -8364,7 +8364,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This is a default device preset and cannot be edited. These are comparable to the presets provided by the devices original software..
+        ///   Looks up a localized string similar to This is a default preset for the device, comparable to the one provided by the manufacturer. Please modify with caution..
         /// </summary>
         public static string ProfilesPage_DefaultDeviceProfile {
             get {
