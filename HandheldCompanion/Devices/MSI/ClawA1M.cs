@@ -354,35 +354,10 @@ public class ClawA1M : IDevice
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
 
-        // raise events
-        switch (ManagerFactory.powerProfileManager.Status)
-        {
-            default:
-            case ManagerStatus.Initializing:
-                ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
-                break;
-            case ManagerStatus.Initialized:
-                QueryPowerProfile();
-                break;
-        }
-
         Device_Inserted();
     }
 
-    private void QueryPowerProfile()
-    {
-        // manage events
-        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
-
-        PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
-    }
-
-    private void PowerProfileManager_Initialized()
-    {
-        QueryPowerProfile();
-    }
-
-    private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    protected override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
         byte[] fanTable = new byte[8];
         if (profile.FanProfile.fanMode == FanMode.Software)
@@ -405,6 +380,9 @@ public class ClawA1M : IDevice
         // update fan table
         SetFanTable(fanTable);
 
+        // update fan mode
+        SetFanControl(profile.FanProfile.fanMode != FanMode.Hardware);
+
         // MSI Center, API_UserScenario
         bool IsDcMode = SystemInformation.PowerStatus.PowerLineStatus == PowerLineStatus.Offline;
         if (profile.Guid == BetterBatteryGuid)
@@ -423,8 +401,6 @@ public class ClawA1M : IDevice
         {
             SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.SportMode);
         }
-
-        SetFanControl(profile.FanProfile.fanMode != FanMode.Hardware);
     }
 
     private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
@@ -497,8 +473,6 @@ public class ClawA1M : IDevice
         // manage events
         ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
-        ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
-        ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
 
         base.Close();
     }

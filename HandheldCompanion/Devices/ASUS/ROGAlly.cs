@@ -2,6 +2,7 @@
 using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
@@ -212,6 +213,50 @@ public class ROGAlly : IDevice
         Device_Inserted();
     }
 
+    private static byte[] defaultCPUFan = new byte[] { 0x3A, 0x3D, 0x40, 0x44, 0x48, 0x4D, 0x51, 0x62, 0x08, 0x11, 0x16, 0x1A, 0x22, 0x29, 0x30, 0x45 };
+    private static byte[] defaultGPUFan = new byte[] { 0x3A, 0x3D, 0x40, 0x44, 0x48, 0x4D, 0x51, 0x62, 0x0C, 0x16, 0x1D, 0x1F, 0x26, 0x2D, 0x34, 0x4A };
+
+    private static byte[] ToAsusCurve(double[] fanSpeeds)
+    {
+        if (fanSpeeds is null || fanSpeeds.Length != 11)
+            return defaultCPUFan;
+
+        int[] anchorTemps = { 20, 30, 40, 50, 60, 70, 80, 90 }; // °C
+        int[] sourceIdx = { 2, 3, 4, 5, 6, 7, 8, 9 }; // map to 0..100 steps
+
+        byte[] curve = new byte[16];
+
+        // first 8: temps
+        for (int i = 0; i < 8; i++)
+            curve[i] = (byte)anchorTemps[i];
+
+        // last 8: duties (clamped 0..100, monotonic non-decreasing)
+        byte last = 0;
+        for (int i = 0; i < 8; i++)
+        {
+            byte duty = (byte)Math.Max(0, Math.Min(100, Math.Round(fanSpeeds[sourceIdx[i]])));
+            if (duty < last) duty = last;   // ensure monotonic
+            curve[8 + i] = last = duty;
+        }
+        return curve;
+    }
+
+    protected override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    {
+        if (profile.FanProfile.fanMode == FanMode.Software)
+        {
+            byte[] asus = ToAsusCurve(profile.FanProfile.fanSpeeds);
+            AsusACPI.SetFanCurve(AsusFan.CPU, asus);
+            AsusACPI.SetFanCurve(AsusFan.GPU, asus);
+            AsusACPI.SetFanCurve(AsusFan.Mid, asus);
+        }
+        else
+        {
+            // restore default fan table
+            SetFanControl(false);
+        }
+    }
+
     private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
     {
         if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
@@ -359,14 +404,16 @@ public class ROGAlly : IDevice
 
         switch (enable)
         {
-            case true:
-                mode = (int)AsusMode.Manual;
+            case false:
+                // restore default
+                AsusACPI.SetFanCurve(AsusFan.CPU, defaultCPUFan);
+                AsusACPI.SetFanCurve(AsusFan.GPU, defaultGPUFan);
+                AsusACPI.SetFanCurve(AsusFan.Mid, defaultCPUFan);
                 break;
         }
-
-        AsusACPI.DeviceSet(AsusACPI.PerformanceMode, mode);
     }
 
+    /*
     public override void SetFanDuty(double percent)
     {
         if (!IsOpen)
@@ -376,6 +423,7 @@ public class ROGAlly : IDevice
         AsusACPI.SetFanSpeed(AsusFan.GPU, Convert.ToByte(percent));
         AsusACPI.SetFanSpeed(AsusFan.Mid, Convert.ToByte(percent));
     }
+    */
 
     public override float ReadFanDuty()
     {
@@ -602,12 +650,12 @@ public class ROGAlly : IDevice
 
     public override void set_long_limit(int limit)
     {
-        AsusACPI.DeviceSet(AsusACPI.PPT_APUA0, limit);
         AsusACPI.DeviceSet(AsusACPI.PPT_APUA3, limit);
     }
 
     public override void set_short_limit(int limit)
     {
+        AsusACPI.DeviceSet(AsusACPI.PPT_APUA0, limit);
         AsusACPI.DeviceSet(AsusACPI.PPT_APUC1, limit);
     }
 

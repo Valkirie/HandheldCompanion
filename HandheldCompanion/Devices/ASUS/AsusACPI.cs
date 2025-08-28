@@ -60,7 +60,7 @@ namespace HandheldCompanion.Devices.ASUS
         public const int PPT_APUA3 = 0x001200A3;
 
         /// <summary>
-        /// sPPT (slow boost limit) / PL2
+        /// sPPT (short boost limit) / PL2
         /// </summary>
         public const int PPT_APUA0 = 0x001200A0;
 
