@@ -44,6 +44,13 @@ public static class ControllerManager
     private static readonly ConcurrentDictionary<string, IController> Controllers = new();
     public static readonly ConcurrentDictionary<string, bool> PowerCyclers = new();
 
+    private static readonly ConcurrentDictionary<string, Task> xusbArrivalInProgress = new();
+    private static readonly ConcurrentDictionary<string, Task> xusbRemovalInProgress = new();
+    private static readonly ConcurrentDictionary<string, Task> hidArrivalInProgress = new();
+    private static readonly ConcurrentDictionary<string, Task> hidRemovalInProgress = new();
+    private static readonly ConcurrentDictionary<uint, Task> sdlArrivalInProgress = new();
+    private static readonly ConcurrentDictionary<uint, Task> sdlRemovalInProgress = new();
+
     private static Thread watchdogThread;
     private static bool watchdogThreadRunning;
     private static Thread pumpThread;
@@ -298,425 +305,431 @@ public static class ControllerManager
 
     private static async void SDL_GamepadAdded(uint deviceIndex)
     {
-        if (!SDL.IsGamepad(deviceIndex))
+        // If a removal is running for this SDL slot, wait it out first
+        if (sdlRemovalInProgress.TryGetValue(deviceIndex, out var pendingRemove))
+            try { await pendingRemove.ConfigureAwait(false); } catch { /* swallow */ }
+
+        var addTask = Task.Run(async () =>
         {
-            LogManager.LogError("Controller at index: {0} is not a recognized game controller", deviceIndex);
-            return;
-        }
-
-        nint gamepad = SDL.OpenGamepad(deviceIndex);
-        if (gamepad == IntPtr.Zero)
-        {
-            LogManager.LogError($"Failed to open controller {deviceIndex}: {SDL.GetError()}");
-        }
-        else
-        {
-            string? name = SDL.GetGamepadName(gamepad);
-            string? path = SDL.GetGamepadPath(gamepad);
-            uint userIndex = (uint)SDL.GetGamepadPlayerIndex(gamepad);
-
-            if (string.IsNullOrEmpty(path))
-                return;
-
-            if (path.Contains("XInput"))
-                path = DeviceManager.GetPathFromUserIndex(userIndex);
-
-            // get cleared path
-            if (DeviceManager.TryExtractInterfaceGuid(path, out Guid interfaceGuid))
-                path = DeviceManager.SymLinkToInstanceId(path, interfaceGuid.ToString());
-
-            // prepare PnPDetails
-            PnPDetails? details = DeviceManager.GetDeviceFromInstanceId(path);
-            if (details is null)
-            {
-                LogManager.LogError($"Failed to retrieve PnPDetails for controller {deviceIndex}");
-                return;
-            }
-
             try
             {
-                Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller);
-                PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
-
-                if (controller != null)
+                if (!SDL.IsGamepad(deviceIndex))
                 {
-                    // skip XInput controller
-                    if (controller is XInputController) return;
-
-                    // skip DInput controller
-                    if (controller is DInputController) return;
-
-                    // controller is known
-                    // set power cycling
-                    IsPowerCycling = true;
-                    PowerCyclers[details.baseContainerDeviceInstanceId] = IsPowerCycling;
-
-                    if (controller is SDLController SDLController)
-                    {
-                        SDLController.gamepad = gamepad;
-                        SDLController.deviceIndex = deviceIndex;
-                    }
-
-                    // update PnPDetails
-                    controller.AttachDetails(details);
-
-                    // check if HID path has changed
-                    if (controller.GetInstanceId() != details.deviceInstanceId)
-                    {
-                        // refresh cloaking
-                        if (controller.IsHidden()) controller.Hide(false);
-                        else controller.Unhide(false);
-                    }
-                }
-                else
-                {
-                    // SDL
-                    SDL.GamepadType type = SDL.GetGamepadType(gamepad);
-                    switch (type)
-                    {
-                        default:
-                        case SDL.GamepadType.Unknown:
-                        case SDL.GamepadType.Standard:
-                            controller = new SDLController(gamepad, deviceIndex, details);
-                            break;
-
-                        case SDL.GamepadType.Xbox360:
-                        case SDL.GamepadType.XboxOne:
-                            // controller = new Xbox360Controller(gamepad, deviceIndex, details);
-                            break;
-
-                        case SDL.GamepadType.PS3:
-                        case SDL.GamepadType.PS4:
-                        case SDL.GamepadType.PS5:
-                            controller = new DualShock4Controller(gamepad, deviceIndex, details);
-                            break;
-
-                        case SDL.GamepadType.GameCube:
-                        case SDL.GamepadType.NintendoSwitchPro:
-                            controller = new NintendoSwitchProController(gamepad, deviceIndex, details);
-                            break;
-                    }
-                }
-
-                if (controller == null)
-                {
-                    LogManager.LogWarning("Unsupported SDL controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
+                    LogManager.LogError("Controller at index: {0} is not a recognized game controller", deviceIndex);
                     return;
                 }
 
-                while (!controller.IsReady && controller.IsConnected())
-                    await Task.Delay(250).ConfigureAwait(false);
+                nint gamepad = SDL.OpenGamepad(deviceIndex);
+                if (gamepad == IntPtr.Zero)
+                {
+                    LogManager.LogError($"Failed to open controller {deviceIndex}: {SDL.GetError()}");
+                }
+                else
+                {
+                    string? name = SDL.GetGamepadName(gamepad);
+                    string? path = SDL.GetGamepadPath(gamepad);
+                    uint userIndex = (uint)SDL.GetGamepadPlayerIndex(gamepad);
 
-                // controller is ready
-                controller.IsBusy = false;
+                    if (string.IsNullOrEmpty(path))
+                        return;
 
-                // store controller
-                Controllers[details.baseContainerDeviceInstanceId] = controller;
-                SDLControllers[deviceIndex] = (SDLController)controller;
+                    if (path.Contains("XInput"))
+                        path = DeviceManager.GetPathFromUserIndex(userIndex);
 
-                LogManager.LogInformation("SDL controller {0} plugged", controller.ToString());
-                ControllerPlugged?.Invoke(controller, false);
+                    if (DeviceManager.TryExtractInterfaceGuid(path, out Guid interfaceGuid))
+                        path = DeviceManager.SymLinkToInstanceId(path, interfaceGuid.ToString());
 
-                // let's not flood the toaster
-                if (!IsPowerCycling && !controller.IsVirtual())
-                    ToastManager.SendToast(controller.ToString(), "detected");
+                    PnPDetails? details = DeviceManager.GetDeviceFromInstanceId(path);
+                    if (details is null)
+                    {
+                        LogManager.LogError($"Failed to retrieve PnPDetails for controller {deviceIndex}");
+                        return;
+                    }
 
-                PickTargetController();
-                PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
+                    try
+                    {
+                        Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller);
+                        PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
+
+                        if (controller != null)
+                        {
+                            if (controller is XInputController) return;
+                            if (controller is DInputController) return;
+
+                            IsPowerCycling = true;
+                            PowerCyclers[details.baseContainerDeviceInstanceId] = IsPowerCycling;
+
+                            if (controller is SDLController SDLController)
+                            {
+                                SDLController.gamepad = gamepad;
+                                SDLController.deviceIndex = deviceIndex;
+                            }
+
+                            controller.AttachDetails(details);
+
+                            if (controller.GetInstanceId() != details.deviceInstanceId)
+                            {
+                                if (controller.IsHidden()) controller.Hide(false);
+                                else controller.Unhide(false);
+                            }
+                        }
+                        else
+                        {
+                            SDL.GamepadType type = SDL.GetGamepadType(gamepad);
+                            switch (type)
+                            {
+                                default:
+                                case SDL.GamepadType.Unknown:
+                                case SDL.GamepadType.Standard:
+                                    controller = new SDLController(gamepad, deviceIndex, details);
+                                    break;
+
+                                case SDL.GamepadType.Xbox360:
+                                case SDL.GamepadType.XboxOne:
+                                    // controller = new Xbox360Controller(gamepad, deviceIndex, details);
+                                    break;
+
+                                case SDL.GamepadType.PS3:
+                                case SDL.GamepadType.PS4:
+                                case SDL.GamepadType.PS5:
+                                    controller = new DualShock4Controller(gamepad, deviceIndex, details);
+                                    break;
+
+                                case SDL.GamepadType.GameCube:
+                                case SDL.GamepadType.NintendoSwitchPro:
+                                    controller = new NintendoSwitchProController(gamepad, deviceIndex, details);
+                                    break;
+                            }
+                        }
+
+                        if (controller == null)
+                        {
+                            LogManager.LogWarning("Unsupported SDL controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
+                            return;
+                        }
+
+                        while (!controller.IsReady && controller.IsConnected())
+                            await Task.Delay(250).ConfigureAwait(false);
+
+                        controller.IsBusy = false;
+
+                        Controllers[details.baseContainerDeviceInstanceId] = controller;
+                        SDLControllers[deviceIndex] = (SDLController)controller;
+
+                        LogManager.LogInformation("SDL controller {0} plugged", controller.ToString());
+                        ControllerPlugged?.Invoke(controller, false);
+
+                        if (!PowerCyclers.TryGetValue(controller.GetContainerInstanceId(), out bool wasCycling) || !wasCycling)
+                            if (!controller.IsVirtual())
+                                ToastManager.SendToast(controller.ToString(), "detected");
+
+                        PickTargetController();
+                        PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
+                    }
+                    finally { }
+                }
             }
             finally
             {
+                sdlArrivalInProgress.TryRemove(deviceIndex, out _);
             }
-        }
+        });
+
+        sdlArrivalInProgress[deviceIndex] = addTask;
     }
 
     private static async void SDL_GamepadRemoved(uint deviceIndex)
     {
-        if (SDLControllers.TryGetValue(deviceIndex, out SDLController controller))
-        {
-            string path = controller.GetContainerInstanceId();
+        // If add is still running, wait before removing
+        if (sdlArrivalInProgress.TryGetValue(deviceIndex, out var pendingAdd))
+            try { await pendingAdd.ConfigureAwait(false); } catch { }
 
+        var removeTask = Task.Run(async () =>
+        {
             try
             {
-                // close controller
-                SDL.CloseGamepad(controller.gamepad);
-
-                PowerCyclers.TryGetValue(path, out bool IsPowerCycling);
-                bool WasTarget = IsTargetController(controller.GetInstanceId());
-
-                LogManager.LogInformation("XInput controller {0} unplugged, cycling {1}", controller.ToString(), IsPowerCycling);
-                ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
-
-                if (!IsPowerCycling)
+                if (SDLControllers.TryGetValue(deviceIndex, out SDLController controller))
                 {
-                    controller.Gone();
+                    string path = controller.GetContainerInstanceId();
 
-                    if (controller.IsPhysical())
-                        controller.Unhide(false);
-
-                    if (WasTarget)
+                    try
                     {
-                        ClearTargetController();
-                        PickTargetController();
-                    }
-                    else
-                    {
-                        controller.Dispose();
-                    }
+                        SDL.CloseGamepad(controller.gamepad);
 
-                    Controllers.TryRemove(path, out _);
-                    SDLControllers.TryRemove(deviceIndex, out _);
+                        PowerCyclers.TryGetValue(path, out bool IsPowerCycling);
+                        bool WasTarget = IsTargetController(controller.GetInstanceId());
+
+                        LogManager.LogInformation("XInput controller {0} unplugged, cycling {1}", controller.ToString(), IsPowerCycling);
+                        ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
+
+                        if (!IsPowerCycling)
+                        {
+                            controller.Gone();
+
+                            if (controller.IsPhysical())
+                                controller.Unhide(false);
+
+                            if (WasTarget)
+                            {
+                                ClearTargetController();
+                                PickTargetController();
+                            }
+                            else
+                            {
+                                controller.Dispose();
+                            }
+
+                            Controllers.TryRemove(path, out _);
+                            SDLControllers.TryRemove(deviceIndex, out _);
+                        }
+                    }
+                    finally { }
                 }
             }
             finally
             {
+                sdlRemovalInProgress.TryRemove(deviceIndex, out _);
             }
-        }
+        });
+
+        sdlRemovalInProgress[deviceIndex] = removeTask;
     }
 
     private static async void HidDeviceArrived(PnPDetails details, Guid InterfaceGuid)
     {
-        if (!details.isGaming) return;
+        var key = details.baseContainerDeviceInstanceId;
 
-        try
+        // If a removal is running for this device, wait it out
+        if (hidRemovalInProgress.TryGetValue(key, out var pendingRemove))
+            try { await pendingRemove.ConfigureAwait(false); } catch { }
+
+        var addTask = Task.Run(async () =>
         {
-            Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller);
-            PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
-
-            // DInput
-            if (controller is not null)
+            try
             {
-                // skip XInput controller
-                if (controller is XInputController) return;
+                if (!details.isGaming) return;
 
-                // skip SDL HID controller
-                if (controller is SDLController) return;
-
-                controller.AttachDetails(details);
-
-                // hide or unhide "new" InstanceID (HID)
-                if (controller.GetInstanceId() != details.deviceInstanceId)
+                try
                 {
-                    if (controller.IsHidden())
-                        controller.Hide(false);
+                    Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller);
+                    PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
+
+                    if (controller is not null)
+                    {
+                        if (controller is XInputController) return;
+                        if (controller is SDLController) return;
+
+                        controller.AttachDetails(details);
+
+                        if (controller.GetInstanceId() != details.deviceInstanceId)
+                        {
+                            if (controller.IsHidden())
+                                controller.Hide(false);
+                            else
+                                controller.Unhide(false);
+                        }
+
+                        IsPowerCycling = true;
+                        PowerCyclers[details.baseContainerDeviceInstanceId] = IsPowerCycling;
+                    }
                     else
-                        controller.Unhide(false);
-                }
+                    {
+                        int VendorId = details.VendorID;
+                        int ProductId = details.ProductID;
 
-                // force set flag
-                IsPowerCycling = true;
-                PowerCyclers[details.baseContainerDeviceInstanceId] = IsPowerCycling;
-            }
-            else
-            {
-                int VendorId = details.VendorID;
-                int ProductId = details.ProductID;
-
-                // search for a supported controller
-                switch (VendorId)
-                {
-                    // STEAM
-                    case 0x28DE:
+                        switch (VendorId)
                         {
-                            switch (ProductId)
-                            {
-                                // WIRED STEAM CONTROLLER
-                                case 0x1102:
-                                    // MI == 0 is virtual keyboards
-                                    // MI == 1 is virtual mouse
-                                    // MI == 2 is controller proper
-                                    // No idea what's in case of more than one controller connected
-                                    if (details.GetMI() == 2)
+                            case 0x28DE:
+                                switch (ProductId)
+                                {
+                                    case 0x1102:
+                                        if (details.GetMI() == 2)
+                                            try { controller = new GordonController(details); } catch { }
+                                        break;
+                                    case 0x1142:
                                         try { controller = new GordonController(details); } catch { }
-                                    break;
-                                // WIRELESS STEAM CONTROLLER
-                                case 0x1142:
-                                    // MI == 0 is virtual keyboards
-                                    // MI == 1-4 are 4 controllers
-                                    // TODO: The dongle registers 4 controller devices, regardless how many are
-                                    // actually connected. There is no easy way to check for connection without
-                                    // actually talking to each controller.
-                                    try { controller = new GordonController(details); } catch { }
-                                    break;
+                                        break;
+                                    case 0x1205:
+                                        try { controller = new NeptuneController(details); } catch { }
+                                        break;
+                                }
+                                break;
 
-                                // STEAM DECK
-                                case 0x1205:
-                                    try { controller = new NeptuneController(details); } catch { }
-                                    break;
-                            }
+                            case 0x057E:
+                                switch (ProductId)
+                                {
+                                    case 0x2009:
+                                        break;
+                                }
+                                break;
+
+                            case 0x17EF:
+                                switch (ProductId)
+                                {
+                                    case 0x6183:
+                                    case 0x6184:
+                                    case 0x61EC:
+                                    case 0x61ED:
+                                        break;
+                                    case 0xE311:
+                                        break;
+                                }
+                                break;
+
+                            case 0x0DB0:
+                                switch (ProductId)
+                                {
+                                    case 0x1902:
+                                    case 0x1903:
+                                        try { controller = new DClawController(details); } catch { }
+                                        break;
+                                }
+                                break;
                         }
-                        break;
+                    }
 
-                    // NINTENDO
-                    case 0x057E:
-                        {
-                            switch (ProductId)
-                            {
-                                // Nintendo Wireless Gamepad
-                                case 0x2009:
-                                    break;
-                            }
-                        }
-                        break;
+                    if (controller == null)
+                    {
+                        LogManager.LogWarning("Unsupported Generic controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
+                        return;
+                    }
 
-                    // LENOVO
-                    case 0x17EF:
-                        {
-                            switch (ProductId)
-                            {
-                                // Legion Go
-                                case 0x6183:    // DInput
-                                case 0x6184:    // Dual DInput
-                                case 0x61EC:    // DInput (new firmware)
-                                case 0x61ED:    // Dual DInput (new firmware)
-                                    break;
+                    while (!controller.IsReady && controller.IsConnected())
+                        await Task.Delay(250).ConfigureAwait(false);
 
-                                // Legion Go S
-                                case 0xE311:
-                                    break;
-                            }
-                        }
-                        break;
+                    controller.IsBusy = false;
 
-                    // MSI
-                    case 0x0DB0:
-                        {
-                            switch (ProductId)
-                            {
-                                case 0x1902:
-                                case 0x1903:
-                                    try
-                                    {
-                                        controller = new DClawController(details);
-                                    }
-                                    catch { }
-                                    break;
-                            }
-                        }
-                        break;
+                    string path = controller.GetContainerInstanceId();
+                    Controllers[path] = controller;
+
+                    LogManager.LogInformation("Generic controller {0} plugged", controller.ToString());
+                    ControllerPlugged?.Invoke(controller, PowerCyclers.TryGetValue(path, out var pc) && pc);
+
+                    if (!(PowerCyclers.TryGetValue(path, out var isCycling) && isCycling) && !controller.IsVirtual())
+                        ToastManager.SendToast(controller.ToString(), "detected");
+
+                    PickTargetController();
+                    PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
                 }
+                catch { }
+                finally { }
             }
-
-            if (controller == null)
+            finally
             {
-                LogManager.LogWarning("Unsupported Generic controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
-                return;
+                hidArrivalInProgress.TryRemove(key, out _);
             }
+        });
 
-            while (!controller.IsReady && controller.IsConnected())
-                await Task.Delay(250).ConfigureAwait(false);
-
-            // controller is ready
-            controller.IsBusy = false;
-
-            // store controller
-            string path = controller.GetContainerInstanceId();
-            Controllers[path] = controller;
-
-            LogManager.LogInformation("Generic controller {0} plugged", controller.ToString());
-            ControllerPlugged?.Invoke(controller, IsPowerCycling);
-
-            // let's not flood the toaster
-            if (!IsPowerCycling && !controller.IsVirtual())
-                ToastManager.SendToast(controller.ToString(), "detected");
-
-            PickTargetController();
-            PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
-        }
-        catch { }
-        finally
-        {
-        }
+        hidArrivalInProgress[key] = addTask;
     }
 
     private static async void HidDeviceRemoved(PnPDetails details, Guid InterfaceGuid)
     {
-        try
+        var key = details.baseContainerDeviceInstanceId;
+
+        // If add is still running for this HID device, wait before removing
+        if (hidArrivalInProgress.TryGetValue(key, out var pendingAdd))
+            try { await pendingAdd.ConfigureAwait(false); } catch { }
+
+        var removeTask = Task.Run(async () =>
         {
-            IController controller = null;
-
-            Task timeout = Task.Delay(TimeSpan.FromSeconds(10));
-            while (!timeout.IsCompleted && controller == null)
+            try
             {
-                if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out controller))
-                    break;
+                try
+                {
+                    IController controller = null;
 
-                await Task.Delay(100).ConfigureAwait(false);
+                    Task timeout = Task.Delay(TimeSpan.FromSeconds(10));
+                    while (!timeout.IsCompleted && controller == null)
+                    {
+                        if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out controller))
+                            break;
+
+                        await Task.Delay(100).ConfigureAwait(false);
+                    }
+
+                    if (controller == null) return;
+                    if (controller is XInputController) return;
+                    if (controller is SDLController) return;
+
+                    PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
+                    bool WasTarget = IsTargetController(controller.GetInstanceId());
+
+                    LogManager.LogInformation("Generic controller {0} unplugged, cycling {1}", controller.ToString(), IsPowerCycling);
+                    ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
+
+                    if (!IsPowerCycling)
+                    {
+                        controller.Gone();
+
+                        if (controller.IsPhysical())
+                            controller.Unhide(false);
+
+                        if (WasTarget)
+                        {
+                            ClearTargetController();
+                            PickTargetController();
+                        }
+                        else
+                        {
+                            controller.Dispose();
+                        }
+
+                        Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
+                    }
+                }
+                catch { }
+                finally { }
             }
-
-            if (controller == null) return;
-
-            // skip XInput controller
-            if (controller is XInputController) return;
-
-            // skip SDL HID controller
-            if (controller is SDLController) return;
-
-            PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
-            bool WasTarget = IsTargetController(controller.GetInstanceId());
-
-            LogManager.LogInformation("Generic controller {0} unplugged, cycling {1}", controller.ToString(), IsPowerCycling);
-            ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
-
-            if (!IsPowerCycling)
+            finally
             {
-                controller.Gone();
-
-                if (controller.IsPhysical())
-                    controller.Unhide(false);
-
-                if (WasTarget)
-                {
-                    ClearTargetController();
-                    PickTargetController();
-                }
-                else
-                {
-                    controller.Dispose();
-                }
-
-                Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
+                hidRemovalInProgress.TryRemove(key, out _);
             }
-        }
-        catch { }
-        finally
-        {
-        }
+        });
+
+        hidRemovalInProgress[key] = removeTask;
     }
 
     private static async void XUsbDeviceArrived(PnPDetails details, Guid InterfaceGuid)
     {
-        try
+        var key = details.baseContainerDeviceInstanceId;
+
+        // If a removal is running for this controller, wait first
+        if (xusbRemovalInProgress.TryGetValue(key, out var pendingRemove))
+            try { await pendingRemove.ConfigureAwait(false); } catch { }
+
+        var addTask = Task.Run(async () =>
         {
-            Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller);
-            PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
-
-            if (controller != null)
+            try
             {
-                // skip DInput controller
-                if (controller is DInputController) return;
-
-                // skip SDL HID controller
-                if (controller is SDLController) return;
-
-                ((XInputController)controller).AttachDetails(details);
-
-                if (controller.GetInstanceId() != details.deviceInstanceId)
+                try
                 {
-                    if (controller.IsHidden()) controller.Hide(false);
-                    else controller.Unhide(false);
-                }
+                    Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller);
+                    PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
-                IsPowerCycling = true;
-                PowerCyclers[details.baseContainerDeviceInstanceId] = IsPowerCycling;
-            }
-            else
-            {
-                switch (details.GetVendorID())
-                {
-                    default:
-                        try { controller = new XInputController(details); } catch { }
-                        break;
+                    if (controller != null)
+                    {
+                        if (controller is DInputController) return;
+                        if (controller is SDLController) return;
+
+                        ((XInputController)controller).AttachDetails(details);
+
+                        if (controller.GetInstanceId() != details.deviceInstanceId)
+                        {
+                            if (controller.IsHidden()) controller.Hide(false);
+                            else controller.Unhide(false);
+                        }
+
+                        IsPowerCycling = true;
+                        PowerCyclers[details.baseContainerDeviceInstanceId] = IsPowerCycling;
+                    }
+                    else
+                    {
+                        switch (details.GetVendorID())
+                        {
+                            default:
+                                try { controller = new XInputController(details); } catch { }
+                                break;
 
                     // Asus
                     case "0x0B05":
@@ -730,164 +743,159 @@ public static class ControllerManager
                         }
                         break;
 
-                    // Lenovo
-                    case "0x17EF":
-                    case "0x1A86":
-                        {
-                            switch (details.GetProductID())
-                            {
-                                // Legion Go
-                                case "0x6182":  // old firmware
-                                case "0x61EB":  // new firmware
-                                    try { controller = new LegionController(details); } catch { }
-                                    break;
+                            case "0x17EF":
+                            case "0x1A86":
+                                switch (details.GetProductID())
+                                {
+                                    case "0x6182":
+                                    case "0x61EB":
+                                        try { controller = new LegionController(details); } catch { }
+                                        break;
 
-                                // Legion Go S
-                                case "0xE310":
-                                    try { controller = new LegionControllerS(details); } catch { }
-                                    break;
+                                    case "0xE310":
+                                        try { controller = new LegionControllerS(details); } catch { }
+                                        break;
 
-                                default:
-                                    try { controller = new XInputController(details); } catch { }
-                                    break;
-                            }
+                                    default:
+                                        try { controller = new XInputController(details); } catch { }
+                                        break;
+                                }
+                                break;
+
+                            case "0x3537":
+                                switch (details.GetProductID())
+                                {
+                                    case "0x1099":
+                                    case "0x103E":
+                                        details.isDongle = true;
+                                        goto case "0x1050";
+                                    default:
+                                    case "0x1050":
+                                        try { controller = new TarantulaProController(details); } catch { }
+                                        break;
+                                }
+                                break;
+
+                            case "0x0DB0":
+                                switch (details.GetProductID())
+                                {
+                                    case "0x1901":
+                                        try { controller = new XClawController(details); } catch { }
+                                        break;
+                                }
+                                break;
+
+                            case "0x1EE9":
+                                switch (details.GetProductID())
+                                {
+                                    case "0x1590":
+                                        try { controller = new ZoneController(details); } catch { }
+                                        break;
+                                }
+                                break;
                         }
-                        break;
+                    }
 
-                    // GameSir
-                    case "0x3537":
-                        {
-                            switch (details.GetProductID())
-                            {
-                                // Tarantula Pro (Dongle)
-                                case "0x1099":
-                                case "0x103E":
-                                    details.isDongle = true;
-                                    goto case "0x1050";
-                                // Tarantula Pro
-                                default:
-                                case "0x1050":
-                                    try { controller = new TarantulaProController(details); } catch { }
-                                    break;
-                            }
-                        }
-                        break;
+                    if (controller == null)
+                    {
+                        LogManager.LogWarning("Unsupported XInput controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
+                        return;
+                    }
 
-                    // MSI
-                    case "0x0DB0":
-                        {
-                            switch (details.GetProductID())
-                            {
-                                case "0x1901":
-                                    try
-                                    {
-                                        controller = new XClawController(details);
-                                    }
-                                    catch { }
-                                    break;
-                            }
-                        }
-                        break;
+                    while (!controller.IsReady && controller.IsConnected())
+                        await Task.Delay(250).ConfigureAwait(false);
 
-                    // ZOTAC
-                    case "0x1EE9":
-                        {
-                            switch (details.GetProductID())
-                            {
-                                case "0x1590":
-                                    try { controller = new ZoneController(details); } catch { }
-                                    break;
-                            }
-                        }
-                        break;
+                    controller.IsBusy = false;
+
+                    string path = details.baseContainerDeviceInstanceId;
+                    Controllers[path] = controller;
+
+                    LogManager.LogInformation("XInput controller {0} plugged", controller.ToString());
+                    ControllerPlugged?.Invoke(controller, PowerCyclers.TryGetValue(path, out var pc) && pc);
+
+                    if (!(PowerCyclers.TryGetValue(path, out var isCycling) && isCycling) && !controller.IsVirtual())
+                        ToastManager.SendToast(controller.ToString(), "detected");
+
+                    PickTargetController();
+                    PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
                 }
+                catch { }
+                finally { }
             }
-
-            if (controller == null)
+            finally
             {
-                LogManager.LogWarning("Unsupported XInput controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
-                return;
+                xusbArrivalInProgress.TryRemove(key, out _);
             }
+        });
 
-            while (!controller.IsReady && controller.IsConnected())
-                await Task.Delay(250).ConfigureAwait(false);
-
-            // controller is ready
-            controller.IsBusy = false;
-
-            // store controller
-            string path = details.baseContainerDeviceInstanceId;
-            Controllers[path] = controller;
-
-            LogManager.LogInformation("XInput controller {0} plugged", controller.ToString());
-            ControllerPlugged?.Invoke(controller, IsPowerCycling);
-
-            // let's not flood the toaster
-            if (!IsPowerCycling && !controller.IsVirtual())
-                ToastManager.SendToast(controller.ToString(), "detected");
-
-            PickTargetController();
-            PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
-        }
-        catch { }
-        finally
-        {
-        }
+        xusbArrivalInProgress[key] = addTask;
     }
 
     private static async void XUsbDeviceRemoved(PnPDetails details, Guid InterfaceGuid)
     {
-        try
+        var key = details.baseContainerDeviceInstanceId;
+
+        // If add is still running for this controller, wait before removing
+        if (xusbArrivalInProgress.TryGetValue(key, out var pendingAdd))
+            try { await pendingAdd.ConfigureAwait(false); } catch { }
+
+        var removeTask = Task.Run(async () =>
         {
-            IController controller = null;
-
-            Task timeout = Task.Delay(TimeSpan.FromSeconds(10));
-            while (!timeout.IsCompleted && controller == null)
+            try
             {
-                if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out controller))
-                    break;
+                try
+                {
+                    IController controller = null;
 
-                await Task.Delay(100).ConfigureAwait(false);
+                    Task timeout = Task.Delay(TimeSpan.FromSeconds(10));
+                    while (!timeout.IsCompleted && controller == null)
+                    {
+                        if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out controller))
+                            break;
+
+                        await Task.Delay(100).ConfigureAwait(false);
+                    }
+
+                    if (controller == null) return;
+                    if (controller is DInputController) return;
+                    if (controller is SDLController) return;
+
+                    PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
+                    bool WasTarget = IsTargetController(controller.GetInstanceId());
+
+                    LogManager.LogInformation("XInput controller {0} unplugged, cycling {1}", controller.ToString(), IsPowerCycling);
+                    ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
+
+                    if (!IsPowerCycling)
+                    {
+                        controller.Gone();
+
+                        if (controller.IsPhysical())
+                            controller.Unhide(false);
+
+                        if (WasTarget)
+                        {
+                            ClearTargetController();
+                            PickTargetController();
+                        }
+                        else
+                        {
+                            controller.Dispose();
+                        }
+
+                        Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
+                    }
+                }
+                catch { }
+                finally { }
             }
-
-            if (controller == null) return;
-
-            // skip DInput controller
-            if (controller is DInputController) return;
-
-            // skip SDL HID controller
-            if (controller is SDLController) return;
-
-            PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
-            bool WasTarget = IsTargetController(controller.GetInstanceId());
-
-            LogManager.LogInformation("XInput controller {0} unplugged, cycling {1}", controller.ToString(), IsPowerCycling);
-            ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
-
-            if (!IsPowerCycling)
+            finally
             {
-                controller.Gone();
-
-                if (controller.IsPhysical())
-                    controller.Unhide(false);
-
-                if (WasTarget)
-                {
-                    ClearTargetController();
-                    PickTargetController();
-                }
-                else
-                {
-                    controller.Dispose();
-                }
-
-                Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
+                xusbRemovalInProgress.TryRemove(key, out _);
             }
-        }
-        catch { }
-        finally
-        {
-        }
+        });
+
+        xusbRemovalInProgress[key] = removeTask;
     }
 
     public static void Stop()
