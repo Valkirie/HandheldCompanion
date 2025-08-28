@@ -12,7 +12,7 @@
     <StartupObject>HandheldCompanion.App</StartupObject>
     <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-    <Version>0.27.0.12</Version>
+    <Version>0.27.0.13</Version>
     <Platforms>x64</Platforms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
