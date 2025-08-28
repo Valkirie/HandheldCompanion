@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Devices.ASUS;
+﻿using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Devices.ASUS;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -171,6 +172,10 @@ public class ROGAlly : IDevice
             [KeyCode.F17],
             false, ButtonFlags.OEM4
         ));
+
+        // prepare hotkeys
+        DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
+        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
     }
 
     #region buffer

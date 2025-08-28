@@ -4,6 +4,7 @@ using HandheldCompanion.Commands.Functions.Multimedia;
 using HandheldCompanion.Commands.Functions.Multitasking;
 using HandheldCompanion.Commands.Functions.Performance;
 using HandheldCompanion.Commands.Functions.Windows;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
@@ -44,41 +45,15 @@ public class HotkeysManager : IManager
         foreach (string fileName in fileEntries)
             ProcessHotkey(fileName);
 
-        // get latest known version
-        // if last HC version used old hotkey engine and user has no defined hotkeys
-        Version LastVersion = Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
-        if (LastVersion < Version.Parse(Settings.VersionHotkeyManager) && hotkeys.Count == 0)
+        // deploy device-default hotkeys during first start
+        bool IsFirstStart = MainWindow.LastVersion == Version.Parse("0.0.0.0");
+        if (IsFirstStart)
         {
-            // create a few defaults hotkeys
-            if (!hotkeys.Values.Any(hotkey => hotkey.command is QuickToolsCommands quickToolsCommands))
-            {
-                Hotkey quicktools = new Hotkey() { command = new QuickToolsCommands() };
-                quicktools.inputsChord.ButtonState[ButtonFlags.Special] = true;
-                quicktools.inputsChord.chordType = InputsChordType.Click;
-
-                UpdateOrCreateHotkey(quicktools);
-            }
-
-            if (!hotkeys.Values.Any(hotkey => hotkey.command is MainWindowCommands mainWindowCommands))
-            {
-                Hotkey mainWindow = new Hotkey() { command = new MainWindowCommands() };
-                mainWindow.inputsChord.ButtonState[ButtonFlags.Special] = true;
-                mainWindow.inputsChord.chordType = InputsChordType.Long;
-
-                UpdateOrCreateHotkey(mainWindow);
-            }
-
-            if (!hotkeys.Values.Any(hotkey => hotkey.command is OverlayGamepadCommands overlayGamepadCommands))
-                UpdateOrCreateHotkey(new Hotkey() { command = new OverlayGamepadCommands(), IsPinned = true });
-
-            if (!hotkeys.Values.Any(hotkey => hotkey.command is OverlayTrackpadCommands overlayTrackpadCommands))
-                UpdateOrCreateHotkey(new Hotkey() { command = new OverlayTrackpadCommands(), IsPinned = true });
-
-            if (!hotkeys.Values.Any(hotkey => hotkey.command is OnScreenKeyboardCommands onScreenKeyboardCommands))
-                UpdateOrCreateHotkey(new Hotkey() { command = new OnScreenKeyboardCommands(), IsPinned = true });
+            foreach (KeyValuePair<Type, Hotkey> kvp in IDevice.GetCurrent().DeviceHotkeys)
+                UpdateOrCreateHotkey(kvp.Value);
         }
 
-        // mandatory hotkeys
+        // deploy mandatory hotkeys
         if (!hotkeys.Values.Any(hotkey => hotkey.command is DesktopLayoutCommands desktopLayoutCommands))
             UpdateOrCreateHotkey(new Hotkey() { command = new DesktopLayoutCommands(), IsPinned = true });
 
@@ -321,14 +296,9 @@ public class HotkeysManager : IManager
     public ButtonFlags GetAvailableButtonFlag()
     {
         HashSet<ButtonFlags> usedFlags = hotkeys.Values.Select(h => h.ButtonFlags).ToHashSet();
-        foreach (byte flagValue in Enumerable.Range((int)ButtonFlags.HOTKEY_START + 1, (int)ButtonFlags.HOTKEY_END - (int)ButtonFlags.HOTKEY_START + 2))
-        {
-            ButtonFlags flag = (ButtonFlags)flagValue;
+        foreach (ButtonFlags flag in Enumerable.Range((int)ButtonFlags.HOTKEY_USERSTART, ButtonFlags.HOTKEY_END - ButtonFlags.HOTKEY_USERSTART))
             if (!usedFlags.Contains(flag))
-            {
                 return flag;
-            }
-        }
 
         return ButtonFlags.None;
     }

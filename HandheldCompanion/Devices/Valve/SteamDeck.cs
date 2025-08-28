@@ -1,3 +1,4 @@
+using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Devices.Valve;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
@@ -88,6 +89,10 @@ public class SteamDeck : IDevice
             [], [],
             false, ButtonFlags.OEM1
         ));
+
+        // prepare hotkeys
+        DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.Special] = true;
+        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
     }
 
     public override string GetGlyph(ButtonFlags button)

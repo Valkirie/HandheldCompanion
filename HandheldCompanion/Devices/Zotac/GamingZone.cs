@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
@@ -127,6 +128,10 @@ namespace HandheldCompanion.Devices.Zotac
                 [KeyCode.LControl, KeyCode.LWin, KeyCode.F12],
                 false, ButtonFlags.OEM5
             ));
+
+            // prepare hotkeys
+            DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
+            DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
 
             // Quiet
             DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileGamingZoneBetterBattery, Properties.Resources.PowerProfileGamingZoneBetterBatteryDesc)

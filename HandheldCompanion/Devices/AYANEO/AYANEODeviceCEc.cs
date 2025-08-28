@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using System;
 using System.Collections.Generic;
@@ -82,6 +83,10 @@ namespace HandheldCompanion.Devices.AYANEO
                 [KeyCode.F16, KeyCode.LWin, KeyCode.RControlKey],
                 false, ButtonFlags.OEM4
             ));
+
+            // prepare hotkeys
+            DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
+            DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
         }
 
         public override bool Open()

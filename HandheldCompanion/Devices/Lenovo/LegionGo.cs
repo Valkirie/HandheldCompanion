@@ -1,3 +1,4 @@
+using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Inputs;
@@ -253,6 +254,10 @@ public class LegionGo : IDevice
 
         OEMChords.Add(new KeyboardChord("LegionR", [], [], false, ButtonFlags.OEM1));
         OEMChords.Add(new KeyboardChord("LegionL", [], [], false, ButtonFlags.OEM2));
+
+        // prepare hotkeys
+        DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
+        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
     }
 
     public override bool IsReady()

@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Devices.MSI;
+﻿using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Devices.MSI;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -278,6 +279,10 @@ public class ClawA1M : IDevice
             [KeyCode.LButton | KeyCode.OemClear],
             true, ButtonFlags.OEM5
         ));
+
+        // prepare hotkeys
+        DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
+        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
     }
 
     public override bool Open()

@@ -1,3 +1,5 @@
+using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Devices.Zotac;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
@@ -192,6 +194,8 @@ public abstract class IDevice
     protected bool DeviceOpen = false;
     public virtual bool IsOpen => DeviceOpen;
 
+    public Dictionary<Type, Hotkey> DeviceHotkeys = new();
+
     public IDevice()
     {
         GamepadMotion = new(ProductIllustration, CalibrationMode.Manual  /*| CalibrationMode.SensorFusion */);
@@ -204,6 +208,11 @@ public abstract class IDevice
             OSPowerMode = OSPowerMode.BetterPerformance,
             TDPOverrideValues = new double[] { this.nTDP[0], this.nTDP[1], this.nTDP[2] }
         });
+
+        // default hotkeys
+        DeviceHotkeys[typeof(QuickToolsCommands)] = new Hotkey() { command = new QuickToolsCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED0 };
+        DeviceHotkeys[typeof(MainWindowCommands)] = new Hotkey() { command = new MainWindowCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED1 };
+        DeviceHotkeys[typeof(OnScreenKeyboardCommands)] = new Hotkey() { command = new OnScreenKeyboardCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED2 };
     }
 
     public virtual bool Open()
