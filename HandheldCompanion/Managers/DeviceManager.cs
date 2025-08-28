@@ -175,7 +175,7 @@ public class DeviceManager : IManager
             var arrival = device.GetProperty<DateTimeOffset>(DevicePropertyKey.Device_LastArrivalDate);
 
             // add new device
-            devices[path] =  arrival;
+            devices[path] = arrival;
         }
 
         // sort devices list

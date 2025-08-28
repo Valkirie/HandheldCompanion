@@ -290,6 +290,17 @@ public abstract class IDevice
                 break;
         }
 
+        switch (ManagerFactory.powerProfileManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryPowerProfile();
+                break;
+        }
+
         // manage events
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
 
@@ -306,6 +317,7 @@ public abstract class IDevice
         ManagerFactory.deviceManager.UsbDeviceArrived += GenericDeviceUpdated;
         ManagerFactory.deviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
 
+        // raise events
         GenericDeviceUpdated(null, Guid.Empty);
     }
 
@@ -328,6 +340,35 @@ public abstract class IDevice
         QuerySettings();
     }
 
+    protected virtual void QueryPowerProfile()
+    {
+        // manage events
+        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
+
+        // raise events
+        PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
+    }
+
+    protected virtual void PowerProfileManager_Initialized()
+    {
+        QueryPowerProfile();
+    }
+
+    protected virtual void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    {
+        // apply profile Fan mode
+        switch (profile.FanProfile.fanMode)
+        {
+            default:
+            case FanMode.Hardware:
+                SetFanControl(false, profile.OEMPowerMode);
+                break;
+            case FanMode.Software:
+                SetFanControl(true, profile.OEMPowerMode);
+                break;
+        }
+    }
+
     public virtual void Close()
     {
         // disable fan control
@@ -345,6 +386,8 @@ public abstract class IDevice
 
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+        ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
+        ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
         VirtualManager.ControllerSelected -= VirtualManager_ControllerSelected;
         ManagerFactory.deviceManager.UsbDeviceArrived -= GenericDeviceUpdated;
         ManagerFactory.deviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
