@@ -731,17 +731,17 @@ public static class ControllerManager
                                 try { controller = new XInputController(details); } catch { }
                                 break;
 
-                    // Asus
-                    case "0x0B05":
-                        {
-                            switch (details.GetProductID())
-                            {
-                                case "0x1B4C": // ASUS Xbox Adaptive Controller
-                                    try { controller = new XboxAdaptiveController(details); } catch { }
-                                    break;
-                            }
-                        }
-                        break;
+                            // Asus
+                            case "0x0B05":
+                                {
+                                    switch (details.GetProductID())
+                                    {
+                                        case "0x1B4C": // ASUS Xbox Adaptive Controller
+                                            try { controller = new XboxAdaptiveController(details); } catch { }
+                                            break;
+                                    }
+                                }
+                                break;
 
                             case "0x17EF":
                             case "0x1A86":

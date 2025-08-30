@@ -368,7 +368,7 @@ namespace HandheldCompanion.Controllers
             // compute delta (ms)
             ulong now = GetPerformanceCounter();
             ulong tickDelta = now - lastCounter;
-            float deltaMillis = (float)tickDelta / freq;
+            float deltaMillis = tickDelta / freq;
 
             // store motion
             Inputs.GyroState.SetGyroscope(gX, gY, gZ);

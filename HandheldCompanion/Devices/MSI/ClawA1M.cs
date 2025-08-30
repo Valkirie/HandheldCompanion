@@ -173,8 +173,8 @@ public class ClawA1M : IDevice
         productIds = [PID_XINPUT, PID_DINPUT, PID_TESTING];
         hidFilters = new()
         {
-            { PID_XINPUT, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) },
-            { PID_DINPUT, new HidFilter(unchecked((short)0xFFF0), unchecked((short)0x0040)) },
+            { PID_XINPUT, new HidFilter(unchecked((short)0xFFA0), unchecked(0x0001)) },
+            { PID_DINPUT, new HidFilter(unchecked((short)0xFFF0), unchecked(0x0040)) },
         };
 
         // https://www.intel.com/content/www/us/en/products/sku/236847/intel-core-ultra-7-processor-155h-24m-cache-up-to-4-80-ghz/specifications.html
@@ -300,7 +300,7 @@ public class ClawA1M : IDevice
         byte[] box = GetMsiDCVarData(ref uefiVariableEx);
         if (uefiVariableEx != 0)
         {
-            if (box[1] == (byte)0)
+            if (box[1] == 0)
             {
                 InitOverBoost(true);
                 Thread.Sleep(600);
@@ -565,10 +565,10 @@ public class ClawA1M : IDevice
         byte iDataBlockIndex = 1;
 
         byte[] dataWMI = WMI.Get(Scope, Path, "Get_WMI", iDataBlockIndex, 32, out bool readWMI);
-        if (dataWMI.Length > 2 && dataWMI[1] >= (byte)2)
+        if (dataWMI.Length > 2 && dataWMI[1] >= 2)
         {
-            this.WmiMajorVersion = (int)dataWMI[1];
-            this.WmiMinorVersion = (int)dataWMI[2];
+            this.WmiMajorVersion = dataWMI[1];
+            this.WmiMinorVersion = dataWMI[2];
         }
     }
 
@@ -893,7 +893,7 @@ public class ClawA1M : IDevice
         GetBatteryChargeLimit(ref currentValue);
 
         // Update mask
-        byte mask = (byte)((uint)currentValue & (uint)sbyte.MaxValue);
+        byte mask = (byte)(currentValue & (uint)sbyte.MaxValue);
 
         // Build the complete 32-byte package
         byte[] fullPackage = new byte[32];

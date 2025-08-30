@@ -39,15 +39,15 @@ namespace HandheldCompanion.Devices
             ];
             hidFilters = new()
             {
-                { 0x6182, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) }, // xinput (old FW)
-                { 0x6183, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) }, // dinput (old FW)
-                { 0x6184, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) }, // dual_dinput (old FW)
-                { 0x6185, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) }, // fps (old FW)
+                { 0x6182, new HidFilter(unchecked((short)0xFFA0), unchecked(0x0001)) }, // xinput (old FW)
+                { 0x6183, new HidFilter(unchecked((short)0xFFA0), unchecked(0x0001)) }, // dinput (old FW)
+                { 0x6184, new HidFilter(unchecked((short)0xFFA0), unchecked(0x0001)) }, // dual_dinput (old FW)
+                { 0x6185, new HidFilter(unchecked((short)0xFFA0), unchecked(0x0001)) }, // fps (old FW)
 
-                { 0x61EB, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) }, // xinput (2025 FW)
-                { 0x61EC, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) }, // dinput (2025 FW)
-                { 0x61ED, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) }, // dual_dinput (2025 FW)
-                { 0x61EE, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) }, // fps (2025 FW)
+                { 0x61EB, new HidFilter(unchecked((short)0xFFA0), unchecked(0x0001)) }, // xinput (2025 FW)
+                { 0x61EC, new HidFilter(unchecked((short)0xFFA0), unchecked(0x0001)) }, // dinput (2025 FW)
+                { 0x61ED, new HidFilter(unchecked((short)0xFFA0), unchecked(0x0001)) }, // dual_dinput (2025 FW)
+                { 0x61EE, new HidFilter(unchecked((short)0xFFA0), unchecked(0x0001)) }, // fps (2025 FW)
             };
 
             // fix for threshold overflow

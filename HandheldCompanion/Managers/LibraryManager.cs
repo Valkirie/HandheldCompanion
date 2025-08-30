@@ -193,7 +193,7 @@ namespace HandheldCompanion.Managers
 
                         await Parallel.ForEachAsync(games, new ParallelOptions { MaxDegreeOfParallelism = 4 }, async (game, cancellationToken) =>
                         {
-                            long gameId = (long)game.Id;
+                            long gameId = game.Id;
 
                             SteamGridDbGrid[]? grids = await steamGridDb.GetGridsByGameIdAsync(
                                 gameId: game.Id,

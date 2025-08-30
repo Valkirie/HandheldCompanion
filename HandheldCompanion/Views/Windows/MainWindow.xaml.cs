@@ -646,7 +646,7 @@ public partial class MainWindow : GamepadWindow
         navView.SelectedItem = selectedItem;
 
         // Give gamepad focus
-        gamepadFocusManager.Focus((NavigationViewItem)selectedItem);
+        gamepadFocusManager.Focus(selectedItem);
 
         KeyValuePair<string, Page> item = _pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
         Page? _page = item.Value;
