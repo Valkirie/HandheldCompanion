@@ -210,9 +210,10 @@ public abstract class IDevice
         });
 
         // default hotkeys
-        DeviceHotkeys[typeof(QuickToolsCommands)] = new Hotkey() { command = new QuickToolsCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED0 };
-        DeviceHotkeys[typeof(MainWindowCommands)] = new Hotkey() { command = new MainWindowCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED1 };
-        DeviceHotkeys[typeof(OnScreenKeyboardCommands)] = new Hotkey() { command = new OnScreenKeyboardCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED2 };
+        DeviceHotkeys[typeof(DesktopLayoutCommands)] = new Hotkey() { command = new DesktopLayoutCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED0 };
+        DeviceHotkeys[typeof(QuickToolsCommands)] = new Hotkey() { command = new QuickToolsCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED1 };
+        DeviceHotkeys[typeof(MainWindowCommands)] = new Hotkey() { command = new MainWindowCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED2 };
+        DeviceHotkeys[typeof(OnScreenKeyboardCommands)] = new Hotkey() { command = new OnScreenKeyboardCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED3 };
     }
 
     public virtual bool Open()

@@ -632,6 +632,11 @@ public class ProfileManager : IManager
                     "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"",
                     "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"");
             }
+            if (version <= Version.Parse("0.27.0.13"))
+            {
+                // Clean legacy/unknown ButtonFlags
+                outputraw = HotkeysManager.StripUnknownButtonFlags(outputraw, out var removed);
+            }
 
             // parse profile
             profile = JsonConvert.DeserializeObject<Profile>(outputraw, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });

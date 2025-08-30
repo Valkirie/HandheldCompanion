@@ -11,13 +11,12 @@ public partial class ButtonState : ICloneable, IDisposable
 {
     public static readonly ButtonFlags[] AllButtons = Enum.GetValues<ButtonFlags>();
     private const int MaxValue = (int)ButtonFlags.Max;
+    private const int MaxButton = (int)ButtonFlags.B15;
 
-    // Runtime storage (no locks, no dictionaries)
     [JsonIgnore]
     private bool[] _pressed = new bool[MaxValue];
 
-    // Kept only so existing JSON (de)serialization does not break.
-    // We fill this from the array when serializing, and read it into the array when deserializing.
+    // Kept only so existing JSON (de)serialization does not break
     public Dictionary<ButtonFlags, bool> State = new();
 
     private bool _disposed = false;
@@ -39,9 +38,6 @@ public partial class ButtonState : ICloneable, IDisposable
     }
 
     ~ButtonState() => Dispose(false);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int IndexOf(ButtonFlags button) => (int)button;
 
     public bool this[ButtonFlags button]
     {
@@ -185,14 +181,13 @@ public partial class ButtonState : ICloneable, IDisposable
         _disposed = true;
     }
 
-    // ---- JSON glue: keep State only for (de)serialization compatibility ----
-
     [OnSerializing]
     private void OnSerializing(StreamingContext _)
     {
         // Populate State from array so JSON stays backward compatible
-        State = new Dictionary<ButtonFlags, bool>(MaxValue);
-        for (int i = 0; i < MaxValue; i++)
+        // Only populate non hotkey buttons
+        State = new Dictionary<ButtonFlags, bool>(MaxButton);
+        for (int i = 0; i <= MaxButton; i++)
             State[(ButtonFlags)i] = _pressed[i];
     }
 

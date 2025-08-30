@@ -719,8 +719,9 @@ public class ClawA1M : IDevice
         // Append [red, green, blue] * 9
         // right is 0, 1, 2, 3
         // left is 4, 5, 6, 7
+        // buttons is 8
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 9; i++)
         {
             data.Add(i < 4 ? SecondaryColor.R : MainColor.R);
             data.Add(i < 4 ? SecondaryColor.G : MainColor.G);

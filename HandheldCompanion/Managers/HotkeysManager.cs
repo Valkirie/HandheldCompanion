@@ -1,9 +1,4 @@
 ﻿using HandheldCompanion.Commands;
-using HandheldCompanion.Commands.Functions.HC;
-using HandheldCompanion.Commands.Functions.Multimedia;
-using HandheldCompanion.Commands.Functions.Multitasking;
-using HandheldCompanion.Commands.Functions.Performance;
-using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
@@ -14,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -50,12 +46,18 @@ public class HotkeysManager : IManager
         if (IsFirstStart)
         {
             foreach (KeyValuePair<Type, Hotkey> kvp in IDevice.GetCurrent().DeviceHotkeys)
-                UpdateOrCreateHotkey(kvp.Value);
-        }
+            {
+                Hotkey hotkey = kvp.Value;
 
-        // deploy mandatory hotkeys
-        if (!hotkeys.Values.Any(hotkey => hotkey.command is DesktopLayoutCommands desktopLayoutCommands))
-            UpdateOrCreateHotkey(new Hotkey() { command = new DesktopLayoutCommands(), IsPinned = true });
+                // skip if button flag is already used
+                if (hotkeys.Values.Any(hk => hk.ButtonFlags == hotkey.ButtonFlags))
+                    continue;
+
+                // skip if command is already used
+                if (!hotkeys.Values.Any(hk => hk.command == hotkey.command))
+                    UpdateOrCreateHotkey(hotkey);
+            }
+        }
 
         // manage events
         InputsManager.StoppedListening += InputsManager_StoppedListening;
@@ -133,15 +135,21 @@ public class HotkeysManager : IManager
                 }
                 if (jObject.ContainsKey("hotkeyId"))
                 {
-                    // this goes back to 0.21.4.1 ?
-                    hotkey = MigrateFrom0_21_4_1(fileName, jObject);
+                    // too old
+                    throw new Exception("Hotkey is outdated.");
                 }
+
                 if (version <= Version.Parse("0.27.0.7"))
                 {
                     // let's make sure we get a Dictionary
                     outputraw = outputraw.Replace(
                         "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"",
                         "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"");
+                }
+                if (version <= Version.Parse("0.27.0.13"))
+                {
+                    // Clean legacy/unknown ButtonFlags
+                    outputraw = StripUnknownButtonFlags(outputraw, out var removed);
                 }
 
                 // parse profile
@@ -180,111 +188,103 @@ public class HotkeysManager : IManager
         UpdateOrCreateHotkey(hotkey);
     }
 
-    private Hotkey? MigrateFrom0_21_4_1(string fileName, JObject? dictionary)
+    /// <summary>
+    /// Removes properties with keys that are not valid current ButtonFlags
+    /// from any JSON dictionary keyed by ButtonFlags (profiles or hotkeys).
+    /// Returns the cleaned JSON. 'removedCount' is how many entries got dropped.
+    /// </summary>
+    public static string StripUnknownButtonFlags(string json, out int removedCount)
     {
-        ICommands command = new EmptyCommands();
-
-        // This hotkey is from old format, need migrate to new hotkey
-        ushort hotkeyId = (ushort)dictionary["hotkeyId"];
-        if (hotkeyId > 0)
+        var root = JObject.Parse(json, new JsonLoadSettings
         {
-            switch (hotkeyId)
+            // If a file already had duplicate keys, keep last while loading.
+            DuplicatePropertyNameHandling = DuplicatePropertyNameHandling.Replace
+        });
+
+        removedCount = 0;
+
+        foreach (var obj in root.Descendants().OfType<JObject>())
+        {
+            if (!LooksLikeButtonFlagsDictionary(obj))
+                continue;
+
+            // Safe mutation over a snapshot of properties
+            foreach (var prop in obj.Properties().ToList())
             {
-                case 01:
-                    command = new OverlayGamepadCommands();
-                    break;
-                case 02:
-                    command = new OverlayTrackpadCommands();
-                    break;
-                case 03:
-                    command = new QuickOverlayCommands();
-                    break;
-                case 10:
-                    command = new QuickToolsCommands();
-                    break;
-                case 11:
-                    command = new TDPIncrease();
-                    break;
-                case 12:
-                    command = new TDPDecrease();
-                    break;
-                case 13:
-                    // "suspendResumeTask"
-                    break;
-                case 20:
-                    command = new OnScreenKeyboardCommands();
-                    break;
-                case 26:
-                    command = new KillForegroundCommands();
-                    break;
-                //case 21-28:
-                // "shortcutDesktop", "shortcutESC", "shortcutExpand", "shortcutTaskView", "shortcutTaskManager", "shortcutControlCenter", "shortcutPrintScreen"
-                //break;
-                case 30:
-                    command = new MainWindowCommands();
-                    break;
-                case 31:
-                    command = new DesktopLayoutCommands();
-                    break;
-                case 32:
-                    command = new HIDModeCommands();
-                    break;
-                case 33:
-                case 34:
-                    command = new CycleSubProfileCommands();
-                    break;
-                case 41:
-                    command = new BrightnessIncrease();
-                    break;
-                case 42:
-                    command = new BrightnessDecrease();
-                    break;
-                case 43:
-                    command = new VolumeIncrease();
-                    break;
-                case 44:
-                    command = new VolumeDecrease();
-                    break;
-            }
+                var key = prop.Name;
 
-            // Check if the above switch is handled, migrate to new hotkey and delete old file
-            if (command is not EmptyCommands)
-            {
-                Hotkey hotkey = new Hotkey();
-                hotkey.command = command;
+                // Keep Json.NET metadata like $type
+                if (key.StartsWith("$", StringComparison.Ordinal))
+                    continue;
 
-                // we couldn't find a free hotkey slot
-                if (hotkey.ButtonFlags == ButtonFlags.None)
-                    return null;
+                if (IsValidButtonFlagKey(key))
+                    continue;
 
-                // Migrate InputsType
-                int oldInputsType = (int)dictionary["inputsChord"]["InputsType"];
-                if (Enum.TryParse(oldInputsType.ToString(), out InputsChordType oldType))
-                {
-                    hotkey.inputsChord.chordType = oldType;
-                }
-
-                // Migrate Old State
-                JObject? oldState = (JObject)dictionary["inputsChord"]["State"]["State"];
-                foreach (var keyValuePair in oldState)
-                    if (Enum.TryParse(keyValuePair.Key, out ButtonFlags flag))
-                        hotkey.inputsChord.ButtonState[flag] = (bool)keyValuePair.Value;
-
-                // Migrate IsPinned
-                bool isPinned = (bool)dictionary["IsPinned"];
-                hotkey.IsPinned = isPinned;
-
-                // Delete the old file
-                File.Delete(fileName);
-
-                // Save new hotkey json
-                SerializeHotkey(hotkey);
-
-                return hotkey;
+                // Unknown / legacy / typo -> drop it
+                prop.Remove();
+                removedCount++;
             }
         }
 
-        return null;
+        return root.ToString(Formatting.Indented);
+    }
+
+    private static bool LooksLikeButtonFlagsDictionary(JObject obj)
+    {
+        // Strong signal: the object itself has a $type indicating a Dictionary<ButtonFlags, T>
+        if (obj.TryGetValue("$type", out var tkn) && tkn.Type == JTokenType.String)
+        {
+            var typeStr = (string)tkn!;
+            if (typeStr?.Contains("Dictionary`2[[", StringComparison.OrdinalIgnoreCase) == true
+                || typeStr?.Contains("SortedDictionary`2[[", StringComparison.OrdinalIgnoreCase) == true)
+            {
+                if (typeStr.Contains("HandheldCompanion.Inputs.ButtonFlags", StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+        }
+
+        // Heuristic fallback: many keys that parse as ButtonFlags names or numeric codes.
+        int keys = 0, plausible = 0;
+        foreach (var p in obj.Properties())
+        {
+            if (p.Name.StartsWith("$", StringComparison.Ordinal))
+                continue;
+
+            keys++;
+            if (IsButtonFlagNameOrNumber(p.Name))
+                plausible++;
+        }
+
+        // Treat as ButtonFlags dict if enough keys look like ButtonFlags
+        return keys > 0 && plausible >= Math.Max(1, keys / 2);
+    }
+
+    private static bool IsValidButtonFlagKey(string key)
+    {
+        // Current enum name?
+        if (Enum.TryParse<ButtonFlags>(key, ignoreCase: true, out var parsed)
+            && Enum.IsDefined(typeof(ButtonFlags), parsed))
+            return true;
+
+        // Numeric string like "66" -> valid if it maps to a defined enum value
+        if (byte.TryParse(key, NumberStyles.Integer, CultureInfo.InvariantCulture, out var b)
+            && Enum.IsDefined(typeof(ButtonFlags), (ButtonFlags)b))
+            return true;
+
+        return false;
+    }
+
+    private static bool IsButtonFlagNameOrNumber(string key)
+    {
+        if (Enum.TryParse<ButtonFlags>(key, ignoreCase: true, out var parsed)
+            && Enum.IsDefined(typeof(ButtonFlags), parsed))
+            return true;
+
+        if (byte.TryParse(key, NumberStyles.Integer, CultureInfo.InvariantCulture, out var b)
+            && Enum.IsDefined(typeof(ButtonFlags), (ButtonFlags)b))
+            return true;
+
+        return false;
     }
 
     private bool IsUsedButtonFlag(ButtonFlags buttonFlags)
@@ -295,10 +295,14 @@ public class HotkeysManager : IManager
 
     public ButtonFlags GetAvailableButtonFlag()
     {
-        HashSet<ButtonFlags> usedFlags = hotkeys.Values.Select(h => h.ButtonFlags).ToHashSet();
-        foreach (ButtonFlags flag in Enumerable.Range((int)ButtonFlags.HOTKEY_USERSTART, ButtonFlags.HOTKEY_END - ButtonFlags.HOTKEY_USERSTART))
-            if (!usedFlags.Contains(flag))
+        HashSet<ButtonFlags> used = hotkeys.Values.Select(h => h.ButtonFlags).ToHashSet();
+
+        for (byte button = (byte)ButtonFlags.HOTKEY_USER0; button <= (byte)ButtonFlags.HOTKEY_USER59; button++)
+        {
+            ButtonFlags flag = (ButtonFlags)button;
+            if (!used.Contains(flag))
                 return flag;
+        }
 
         return ButtonFlags.None;
     }
