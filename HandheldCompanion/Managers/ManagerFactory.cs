@@ -69,5 +69,17 @@ namespace HandheldCompanion.Managers
             foreach (IManager manager in Managers.Where(m => m.SuspendWithOS))
                 manager.Suspend();
         }
+
+        public static void Resume()
+        {
+            foreach (IManager manager in Managers.Where(m => m.SuspendWithOS))
+                manager.Resume();
+        }
+
+        public static void Suspend()
+        {
+            foreach (IManager manager in Managers.Where(m => m.SuspendWithOS))
+                manager.Suspend();
+        }
     }
 }

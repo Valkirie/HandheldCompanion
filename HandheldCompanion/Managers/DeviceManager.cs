@@ -561,6 +561,7 @@ public class DeviceManager : IManager
             try
             {
                 PnPDetails deviceEx = null;
+                DateTime timeout = DateTime.Now.AddSeconds(8);
 
                 Task timeout = Task.Delay(TimeSpan.FromSeconds(8));
                 while (!timeout.IsCompleted && deviceEx is null)

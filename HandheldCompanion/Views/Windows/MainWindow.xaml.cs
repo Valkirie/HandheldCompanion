@@ -93,6 +93,7 @@ public partial class MainWindow : GamepadWindow
 
     public static Version LastVersion => Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
     public static Version CurrentVersion => Version.Parse(fileVersionInfo.FileVersion);
+    private static bool StartMinimized => ManagerFactory.settingsManager.GetBoolean("StartMinimized");
 
     private static bool StartMinimized => ManagerFactory.settingsManager.GetBoolean("StartMinimized");
     private static bool PreloadPages => ManagerFactory.settingsManager.GetBoolean("PreloadPages");
