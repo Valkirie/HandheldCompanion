@@ -43,7 +43,7 @@ public partial class QuickProfilesPage : Page
     private CrossThreadLock graphicLock = new();
 
     private const ButtonFlags gyroButtonFlags = ButtonFlags.HOTKEY_GYRO_ACTIVATION_QP;
-    private Hotkey GyroHotkey = new(gyroButtonFlags) { IsInternal = true };
+    private Hotkey GyroHotkey = new(gyroButtonFlags) { IsInternal = true, Name = "HOTKEY_GYRO_ACTIVATION_QP" };
 
     private Profile realProfile;
 

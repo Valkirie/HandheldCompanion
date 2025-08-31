@@ -35,6 +35,9 @@ namespace HandheldCompanion
         public string Name { get; set; } = string.Empty;
         public Version Version { get; set; } = new();
 
+        [JsonIgnore]
+        public string FileName { get; set; } = string.Empty;
+
         public InputsChordType InputsChordType
         {
             get { return inputsChord.chordType; }
@@ -69,6 +72,16 @@ namespace HandheldCompanion
         ~Hotkey()
         {
             Dispose(false);
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        public string GetFileName()
+        {
+            return $"{ButtonFlags}.json";
         }
 
         public void SetChordType(InputsChordType chordType)

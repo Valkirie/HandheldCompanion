@@ -36,13 +36,14 @@ public class HotkeysManager : IManager
 
         base.PrepareStart();
 
+        bool IsFirstStart = MainWindow.LastVersion == Version.Parse("0.0.0.0");
+
         // process existing hotkeys
         string[] fileEntries = Directory.GetFiles(ManagerPath, "*.json", SearchOption.AllDirectories);
         foreach (string fileName in fileEntries)
             ProcessHotkey(fileName);
 
         // deploy device-default hotkeys during first start
-        bool IsFirstStart = MainWindow.LastVersion == Version.Parse("0.0.0.0");
         if (IsFirstStart)
         {
             foreach (KeyValuePair<Type, Hotkey> kvp in IDevice.GetCurrent().DeviceHotkeys)
@@ -54,8 +55,10 @@ public class HotkeysManager : IManager
                     continue;
 
                 // skip if command is already used
-                if (!hotkeys.Values.Any(hk => hk.command == hotkey.command))
-                    UpdateOrCreateHotkey(hotkey);
+                if (hotkeys.Values.Any(hk => hk.command.GetType() == hotkey.command.GetType()))
+                    continue;
+
+                UpdateOrCreateHotkey(hotkey, UpdateSource.Creation);
             }
         }
 
@@ -109,6 +112,7 @@ public class HotkeysManager : IManager
     private void ProcessHotkey(string fileName)
     {
         Hotkey? hotkey = null;
+        UpdateSource updateSource = UpdateSource.Serializer;
 
         try
         {
@@ -126,41 +130,36 @@ public class HotkeysManager : IManager
             if (jObject.ContainsKey("Version"))
                 version = Version.Parse((string)jObject["Version"]);
 
-            try
+            if (version == Version.Parse("0.0.0.0"))
             {
-                if (version == Version.Parse("0.0.0.0"))
-                {
-                    // too old
-                    throw new Exception("Hotkey is outdated.");
-                }
-                if (jObject.ContainsKey("hotkeyId"))
-                {
-                    // too old
-                    throw new Exception("Hotkey is outdated.");
-                }
-
-                if (version <= Version.Parse("0.27.0.7"))
-                {
-                    // let's make sure we get a Dictionary
-                    outputraw = outputraw.Replace(
-                        "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"",
-                        "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"");
-                }
-                if (version <= Version.Parse("0.27.0.13"))
-                {
-                    // Clean legacy/unknown ButtonFlags
-                    outputraw = StripUnknownButtonFlags(outputraw, out var removed);
-                }
-
-                // parse profile
-                if (hotkey is null)
-                    hotkey = JsonConvert.DeserializeObject<Hotkey>(outputraw, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+                // too old
+                throw new Exception("Hotkey is outdated.");
             }
-            catch (Exception ex)
+            if (jObject.ContainsKey("hotkeyId"))
             {
-                LogManager.LogError("Could not parse hotkey {0}. {1}", fileName, ex.Message);
-                return;
+                // too old
+                throw new Exception("Hotkey is outdated.");
             }
+
+            if (version <= Version.Parse("0.27.0.7"))
+            {
+                // let's make sure we get a Dictionary
+                outputraw = outputraw.Replace(
+                    "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"",
+                    "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"");
+            }
+            if (version <= Version.Parse("0.27.0.13"))
+            {
+                // Clean legacy/unknown ButtonFlags
+                outputraw = StripUnknownButtonFlags(outputraw, out var removed);
+            }
+
+            // parse profile
+            if (hotkey is null)
+                hotkey = JsonConvert.DeserializeObject<Hotkey>(outputraw, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+
+            // store fileName
+            hotkey.FileName = Path.GetFileName(fileName);
         }
         catch (Exception ex)
         {
@@ -168,24 +167,25 @@ public class HotkeysManager : IManager
             return;
         }
 
-        if (hotkey is null)
-            return;
-
         // check if button flags is already used
-        if (IsUsedButtonFlag(hotkey.ButtonFlags))
+        // or in case of updated hotkey naming convention
+        if (IsUsedButtonFlag(hotkey.ButtonFlags) || !hotkey.FileName.Equals(hotkey.GetFileName(), StringComparison.InvariantCultureIgnoreCase))
         {
             // update button flags
             hotkey.ButtonFlags = GetAvailableButtonFlag();
 
             // Delete the old file
             File.Delete(fileName);
+
+            // set update source so UpdateOrCreateHotkey() will (re)create the file
+            updateSource = UpdateSource.Creation;
         }
 
         // we couldn't find a free hotkey slot
         if (hotkey.ButtonFlags == ButtonFlags.None)
             return;
 
-        UpdateOrCreateHotkey(hotkey);
+        UpdateOrCreateHotkey(hotkey, updateSource);
     }
 
     /// <summary>
@@ -307,14 +307,16 @@ public class HotkeysManager : IManager
         return ButtonFlags.None;
     }
 
-    public void UpdateOrCreateHotkey(Hotkey hotkey)
+    public void UpdateOrCreateHotkey(Hotkey hotkey, UpdateSource source = UpdateSource.Background)
     {
         hotkeys[hotkey.ButtonFlags] = hotkey;
         Updated?.Invoke(hotkey);
 
+        if (source == UpdateSource.Serializer || hotkey.IsInternal)
+            return;
+
         // serialize profile
-        if (!hotkey.IsInternal)
-            SerializeHotkey(hotkey);
+        SerializeHotkey(hotkey);
     }
 
     public void SerializeHotkey(Hotkey hotkey)
