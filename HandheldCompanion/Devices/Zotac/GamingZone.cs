@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -17,13 +16,7 @@ namespace HandheldCompanion.Devices.Zotac
 {
     public class GamingZone : IDevice
     {
-        [DllImport("Kernel32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        protected static extern bool GetPhysicallyInstalledSystemMemory(out ulong TotalMemoryInKilobytes);
-
         private const byte INPUT_HID_ID = 0x00;
-
-        protected uint physicalInstalledRamGB = 16;
 
         private static Dictionary<uint, uint> defaultVRamSize = new Dictionary<uint, uint>
         {

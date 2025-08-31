@@ -223,6 +223,7 @@ namespace HandheldCompanion.Views.Pages
                             LedPresetsComboBox.SelectedIndex = presetIndex;
                         }
                         break;
+                    #region Legion Go
                     case "LegionControllerPassthrough":
                         Toggle_TouchpadPassthrough.IsOn = Convert.ToBoolean(value);
                         break;
@@ -232,6 +233,12 @@ namespace HandheldCompanion.Views.Pages
                     case "LegionControllerGyroIndex":
                         ComboBox_GyroController.SelectedIndex = Convert.ToInt32(value);
                         break;
+                    #endregion
+                    #region Zotac Gaming ZOne
+                    case "ZotacGamingZoneVRAM":
+                        ComboBox_GamingZoneVRAM.SelectedIndex = Convert.ToInt32(value);
+                        break;
+                    #endregion
                     case "BatteryChargeLimit":
                         Toggle_BatteryChargeLimit.IsOn = Convert.ToBoolean(value);
                         break;
@@ -605,8 +612,7 @@ namespace HandheldCompanion.Views.Pages
         }
         #endregion
 
-        #region Legion Go Device Settings
-
+        #region Legion Go
         private void Toggle_TouchpadPassthrough_Toggled(object sender, RoutedEventArgs e)
         {
             if (!IsLoaded)
@@ -738,12 +744,19 @@ namespace HandheldCompanion.Views.Pages
 
             SapientiaUsb.SetTriggerDeadzoneAndMargin(LegionGoTablet.RightJoyconIndex, trigger);
         }
-
         #endregion
 
+        #region Zotac Gaming Zone
         private void ComboBox_GamingZoneVRAM_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!IsLoaded)
+                return;
 
+            if (IDevice.GetCurrent() is GamingZone gamingZone)
+                gamingZone.SetVRamSize((uint)ComboBox_GamingZoneVRAM.SelectedIndex);
+
+            ManagerFactory.settingsManager.SetProperty("ZotacGamingZoneVRAM", ComboBox_GamingZoneVRAM.SelectedIndex);
         }
+        #endregion
     }
 }

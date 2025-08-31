@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using Windows.Devices.Sensors;
@@ -193,6 +194,11 @@ public abstract class IDevice
 
     protected bool DeviceOpen = false;
     public virtual bool IsOpen => DeviceOpen;
+
+    [DllImport("Kernel32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    protected static extern bool GetPhysicallyInstalledSystemMemory(out ulong TotalMemoryInKilobytes);
+    protected uint physicalInstalledRamGB = 16;
 
     public Dictionary<Type, Hotkey> DeviceHotkeys = new();
 
