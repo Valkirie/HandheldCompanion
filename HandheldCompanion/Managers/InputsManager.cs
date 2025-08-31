@@ -586,10 +586,17 @@ public static class InputsManager
 
     private static void UpdateInputs(ControllerState controllerState, bool IsMapped)
     {
+        // skip if inputs were remapped
+        if (IsMapped)
+            return;
+
         // prepare button state
         ButtonState.Overwrite(controllerState.ButtonState, buttonState);
+        // update previous state
         if (prevState.Equals(buttonState))
             return;
+        else
+            ButtonState.Overwrite(buttonState, prevState);
 
         if (!IsMapped)
             return;
@@ -662,9 +669,6 @@ public static class InputsManager
             bufferChord.ButtonState.Clear();
             successChord.ButtonState.Clear();
         }
-
-        // update previous state
-        ButtonState.Overwrite(buttonState, prevState);
     }
 
     private static void RemoveHalfPressIfFullPress(ButtonFlags fullPress, ButtonFlags halfPress)

@@ -1,17 +1,21 @@
-﻿using HandheldCompanion.Shared;
+﻿using GameLib.Core;
+using GameLib.Plugin.Steam;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Watchers;
 using Microsoft.Win32;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Timers;
 
-namespace HandheldCompanion.Platforms;
+namespace HandheldCompanion.Platforms.Games;
 
 public class Steam : IPlatform
 {
@@ -22,13 +26,20 @@ public class Steam : IPlatform
     private readonly int SteamAppsId = 413080;
     private SteamWatcher steamWatcher = new SteamWatcher();
 
+    // GameLib
+    private SteamLauncher steamLauncher = new(new LauncherOptions());
+    public override string Name => steamLauncher.Name;
+    public override string InstallPath => steamLauncher.InstallDir;
+    public override string ExecutablePath => steamLauncher.Executable;
+    public override string ExecutableName => Path.GetFileName(ExecutablePath);
+    public override bool IsInstalled => steamLauncher.IsInstalled;
+
     public Steam()
     {
         PlatformType = PlatformType.Steam;
 
-        Name = "Steam";
-        ExecutableName = "steam.exe";
-        RunningName = "steamwebhelper.exe";
+        // refresh library
+        Refresh();
 
         // store specific modules
         Modules =
@@ -41,21 +52,9 @@ public class Steam : IPlatform
             "steamclient64.dll"
         ];
 
-        // check if platform is installed
-        InstallPath = RegistryUtils.GetString(@"SOFTWARE\Wow6432Node\Valve\Steam", "InstallPath");
-        if (Path.Exists(InstallPath))
-        {
-            // update paths
-            ExecutablePath = Path.Combine(InstallPath, ExecutableName);
-
-            // check executable
-            IsInstalled = File.Exists(ExecutablePath);
-        }
-
         if (!IsInstalled)
         {
-            LogManager.LogWarning("Steam is not available. You can get it from: {0}",
-                "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe");
+            LogManager.LogWarning("Steam is not available. You can get it from: {0}", "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe");
             return;
         }
 
@@ -63,6 +62,17 @@ public class Steam : IPlatform
         debounceTimer = new Timer(1000); // 1 second delay
         debounceTimer.AutoReset = false; // Trigger only once per activation
         debounceTimer.Elapsed += DebounceTimer_Elapsed;
+    }
+
+    public override bool IsRelated(Process process)
+    {
+        string? path = ProcessUtils.GetPathToApp(process.Id);
+
+        foreach (string? executable in steamLauncher.Games.SelectMany(game => game.Executables))
+            if (string.Equals(path, executable))
+                return true;
+
+        return base.IsRelated(process);
     }
 
     public override bool Start()
@@ -90,6 +100,11 @@ public class Steam : IPlatform
         }
 
         return base.Stop();
+    }
+
+    public override void Refresh()
+    {
+        steamLauncher?.Refresh();
     }
 
     private void ActiveUserWatcher_RegistryChanged(object? sender, RegistryChangedEventArgs e)
@@ -146,7 +161,7 @@ public class Steam : IPlatform
     private void ActiveFileWatch_Changed()
     {
         int SteamInput = GetUseSteamControllerConfigValue();
-        base.SettingsValueChaned("UseSteamControllerConfig", SteamInput);
+        SettingsValueChaned("UseSteamControllerConfig", SteamInput);
     }
 
     private int GetActiveProcessValue()
@@ -234,37 +249,22 @@ public class Steam : IPlatform
 
     public override bool StartProcess()
     {
-        if (!IsInstalled)
-            return false;
-
-        if (IsRunning)
-            return false;
-
-        var process = Process.Start(new ProcessStartInfo
-        {
-            FileName = ExecutablePath
-        });
-
-        return process is not null;
+        return steamLauncher.Start();
     }
 
     public override bool StopProcess()
     {
-        if (!IsInstalled)
-            return false;
+        steamLauncher.Stop();
+        return true;
+    }
 
-        if (!IsRunning)
-            return false;
+    public override IEnumerable<IGame> GetGames()
+    {
+        return steamLauncher.Games;
+    }
 
-        var process = Process.Start(new ProcessStartInfo
-        {
-            FileName = ExecutablePath,
-            ArgumentList = { "-shutdown" },
-            WindowStyle = ProcessWindowStyle.Hidden,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        });
-
-        return process is not null;
+    public override Image GetLogo()
+    {
+        return steamLauncher.Logo;
     }
 }

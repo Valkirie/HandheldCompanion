@@ -84,6 +84,8 @@
             <converters:ResourceFormatConverter x:Key="ResourceFormatConverter" />
             <converters:EvenIndexFilterConverter x:Key="EvenIndexFilterConverter" />
             <converters:OddIndexFilterConverter x:Key="OddIndexFilterConverter" />
+            <converters:DrawingImageToImageSourceConverter x:Key="DrawingImageToImageSourceConverter" />
+            <converters:WidthToColumnsConverter x:Key="WidthToColumnsConverter" />
 
             <math:MathConverter x:Key="Math" />
 

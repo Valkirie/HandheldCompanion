@@ -4,9 +4,9 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
 using System;
-using System.Linq;
 using System.Windows;
 using WindowsInput.Events;
+using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices;
 
@@ -18,9 +18,12 @@ public class AYANEOFlipDS : AYANEOFlipKB
         this.ProductIllustration = "device_aya_flip_ds";
         this.ProductModel = "AYANEO Flip DS";
 
-        // TODO: Check if there really is no RGB but looks like it
+        // device specific capacities
         this.Capabilities -= DeviceCapabilities.DynamicLighting;
         this.Capabilities -= DeviceCapabilities.DynamicLightingBrightness;
+
+        // dynamic lighting capacities
+        this.DynamicLightingCapabilities = LEDLevel.SolidColor;
 
         // TODO: Add OEMChords for "Dual-Screen Keys" key here
         this.OEMChords.Add(new KeyboardChord("Custom Key Screen",
@@ -66,7 +69,8 @@ public class AYANEOFlipDS : AYANEOFlipKB
         if (prevState.Equals(Inputs.ButtonState))
             return;
 
-        if (!IsMapped)
+        // skip if inputs were remapped
+        if (IsMapped)
             return;
 
         // if screen button is pressed, turn on bottom screen

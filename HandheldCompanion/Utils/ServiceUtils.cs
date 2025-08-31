@@ -99,7 +99,7 @@ namespace HandheldCompanion.Utils
         /// <returns></returns>
         public static bool ChangeStartMode(ServiceController svc, ServiceStartMode mode, out string error)
         {
-            error = "";
+            error = string.Empty;
 
             var hManager = IntPtr.Zero;
             var hService = IntPtr.Zero;

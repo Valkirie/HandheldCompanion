@@ -8,6 +8,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Windows;
@@ -19,7 +20,6 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using static HandheldCompanion.GraphicsProcessingUnit.GPU;
 using static HandheldCompanion.Misc.ProcessEx;
 using Page = System.Windows.Controls.Page;
@@ -66,7 +66,6 @@ public partial class QuickProfilesPage : Page
         ManagerFactory.hotkeysManager.Updated += HotkeysManager_Updated;
         ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
         ManagerFactory.gpuManager.Unhooked += GPUManager_Unhooked;
-        PlatformManager.RTSS.Updated += RTSS_Updated;
         ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
 
         // raise events
@@ -78,6 +77,17 @@ public partial class QuickProfilesPage : Page
                 break;
             case ManagerStatus.Initialized:
                 QueryForeground();
+                break;
+        }
+
+        switch (ManagerFactory.platformManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.platformManager.Initialized += PlatformManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryPlatforms();
                 break;
         }
 
@@ -151,11 +161,21 @@ public partial class QuickProfilesPage : Page
         };
         UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
 
-        // force call
-        RTSS_Updated(PlatformManager.RTSS.Status);
-
         // store hotkey to manager
         ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
+    }
+
+    private void QueryPlatforms()
+    {
+        // manage events
+        PlatformManager.RTSS.Updated += RTSS_Updated;
+
+        RTSS_Updated(PlatformManager.RTSS.Status);
+    }
+
+    private void PlatformManager_Initialized()
+    {
+        QueryPlatforms();
     }
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
@@ -361,12 +381,11 @@ public partial class QuickProfilesPage : Page
             switch (status)
             {
                 case PlatformStatus.Ready:
-                    var Processor = PerformanceManager.GetProcessor();
+                case PlatformStatus.Started:
                     StackProfileFramerate.IsEnabled = true;
                     break;
-                case PlatformStatus.Stalled:
-                    // StackProfileFramerate.IsEnabled = false;
-                    // StackProfileAutoTDP.IsEnabled = false;
+                default:
+                    StackProfileFramerate.IsEnabled = false;
                     break;
             }
         });
@@ -478,14 +497,14 @@ public partial class QuickProfilesPage : Page
                     int selectedIndex = 0;
 
                     // get self or main profile
-                    Profile mainProfile = ManagerFactory.profileManager.GetProfileForSubProfile(selectedProfile);
+                    Profile mainProfile = ManagerFactory.profileManager.GetParent(selectedProfile);
 
                     IEnumerable<Profile> profiles = ManagerFactory.profileManager.GetSubProfilesFromProfile(mainProfile, true);
                     foreach (Profile profile in profiles)
                     {
-                        cb_SubProfiles.Items.Add(profile);
+                        int idx = cb_SubProfiles.Items.Add(profile);
                         if (profile.Guid == selectedProfile.Guid)
-                            selectedIndex = cb_SubProfiles.Items.IndexOf(profile);
+                            selectedIndex = idx;
                     }
 
                     cb_SubProfiles.SelectedIndex = selectedIndex;
@@ -591,7 +610,6 @@ public partial class QuickProfilesPage : Page
 
                 // get path
                 string path = currentProcess != null ? currentProcess.Path : string.Empty;
-                ImageSource imageSource = currentProcess?.ProcessIcon;
 
                 // update real profile
                 realProfile = ManagerFactory.profileManager.GetProfileFromPath(path, true);
@@ -600,24 +618,27 @@ public partial class QuickProfilesPage : Page
                 UIHelper.TryInvoke(() =>
                 {
                     ProfileToggle.IsOn = !realProfile.Default && realProfile.Enabled;
-                    ProfileIcon.Source = imageSource;
 
                     if (processEx is null)
                     {
                         ProfileIcon.Source = null;
 
-                        ProfileToggle.IsEnabled = false;
+                        ProcessCard.IsEnabled = false;
                         ProcessName.Text = Properties.Resources.QuickProfilesPage_Waiting;
-                        ProcessPath.Text = string.Empty;
+                        ProcessPath.Visibility = Visibility.Collapsed;
                         SubProfilesBorder.Visibility = Visibility.Collapsed;
                     }
                     else
                     {
-                        ProfileToggle.IsEnabled = true;
-                        ProcessName.Text = currentProcess.Executable;
-                        ProcessPath.Text = currentProcess.Path;
+                        ProfileIcon.Source = currentProcess?.ProcessIcon;
+
+                        ProcessCard.IsEnabled = true;
+                        ProcessName.Text = currentProcess?.Executable;
+                        ProcessPath.Visibility = Visibility.Visible;
                         SubProfilesBorder.Visibility = Visibility.Visible;
                     }
+
+                    ProcessPath.Text = path;
                 });
             }
             catch { }
@@ -660,7 +681,14 @@ public partial class QuickProfilesPage : Page
             return;
 
         // create profile
-        selectedProfile = new Profile(currentProcess.Path);
+        try
+        {
+            selectedProfile = new Profile(currentProcess.Path);
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError(ex.Message);
+        }
 
         // if an update is pending, execute it and stop timer
         if (UpdateTimer.Enabled)
@@ -1001,6 +1029,60 @@ public partial class QuickProfilesPage : Page
 
         selectedProfile.IntegerScalingType = (byte)IntegerScalingTypeComboBox.SelectedIndex;
         UpdateProfile();
+    }
+
+    private void UpdateMainWindowProfile()
+    {
+        var page = MainWindow.profilesPage;
+
+        // pick the profile to select in the main combobox
+        Profile target = selectedProfile.IsSubProfile
+            ? ManagerFactory.profileManager.GetParent(selectedProfile)
+            : selectedProfile;
+
+        // find a matching instance in the ComboBox (in case instances differ)
+        var match = page.cB_Profiles.Items
+            .OfType<Profile>()
+            .FirstOrDefault(p => p.Guid == target.Guid);
+
+        if (match is not null)
+            page.cB_Profiles.SelectedItem = match;
+
+        // subprofile picker: select current subprofile or reset
+        if (selectedProfile.IsSubProfile)
+            page.cb_SubProfilePicker.SelectedItem = selectedProfile;
+        else
+            page.cb_SubProfilePicker.SelectedIndex = 0;
+    }
+
+    private bool QuickToolsAutoHide => ManagerFactory.settingsManager.GetBoolean("QuickToolsAutoHide");
+    private void Button_OpenProfilePage_Click(object sender, RoutedEventArgs e)
+    {
+        UpdateMainWindowProfile();
+        MainWindow.NavView_Navigate(MainWindow.profilesPage);
+
+        // show main window
+        if (MainWindow.GetCurrent().WindowState == WindowState.Minimized)
+            MainWindow.GetCurrent().ToggleState();
+
+        // hide quicktools
+        if (QuickToolsAutoHide && OverlayQuickTools.GetCurrent().Visibility == Visibility.Visible)
+            OverlayQuickTools.GetCurrent().ToggleVisibility();
+    }
+
+    private void Button_OpenProfileLayout_Click(object sender, RoutedEventArgs e)
+    {
+        UpdateMainWindowProfile();
+        MainWindow.profilesPage.ControllerSettingsButton_Click(sender, e);
+        MainWindow.NavView_Navigate(MainWindow.layoutPage);
+
+        // show main window
+        if (MainWindow.GetCurrent().WindowState == WindowState.Minimized)
+            MainWindow.GetCurrent().ToggleState();
+
+        // hide quicktools
+        if (QuickToolsAutoHide && OverlayQuickTools.GetCurrent().Visibility == Visibility.Visible)
+            OverlayQuickTools.GetCurrent().ToggleVisibility();
     }
 
     private void Button_PowerSettings_Create_Click(object sender, RoutedEventArgs e)

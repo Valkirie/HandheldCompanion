@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Shared;
 using System;
 using System.Linq;
 
@@ -15,128 +16,145 @@ namespace HandheldCompanion.Misc
     {
         public FanMode fanMode = FanMode.Hardware;
 
-        //                            00, 10, 20, 30, 40, 50, 60, 70, 80, 90,  100°C
+        // y-axis: fan speed (%) at 0,10,...,100°C
         public double[] fanSpeeds = { 20, 20, 20, 30, 40, 50, 70, 80, 90, 100, 100 };
 
-        // A private variable to store the average temperature
+        // smoothing buffer
         private ConcurrentList<double> avgTemp;
 
-        // A private variable to store the aggressivity level
+        // user-tunable
         private int aggressivity;
 
-        // A public constructor
+        // --- Tjmax handling (latch) ---
+        private bool tjLatch;                     // latched at Tjmax
+        private DateTime tjLastHitUtc;            // last time we hit Tjmax
+        public double TjHysteresisC { get; set; } = 10.0;           // release when <= (Tjmax - this)
+        public TimeSpan TjCooldown { get; set; } = TimeSpan.FromSeconds(10);
+        public int TjReleaseSamples { get; set; } = 5;              // need N consecutive safe samples
+        private int belowCount;                                     // counter while below threshold
+
         public FanProfile()
         {
-            // Initialize the average temperature to zero
             this.avgTemp = [];
         }
 
-        // A public constructor that takes an array of fan speed values as a parameter
         public FanProfile(double[] fanSpeeds, int aggressivity) : this()
         {
             SetFanSpeed(fanSpeeds);
-
-            // Assign the aggressivity level to the private fields
             this.aggressivity = aggressivity;
         }
 
-        // A public method that takes an aggressivity level as a parameter and updates the aggressivity variable
         public void SetAggressivity(int aggressivity)
         {
-            // Check if the aggressivity level is within the range of 1 to 4
             if (aggressivity < 1 || aggressivity > 4)
-            {
                 throw new ArgumentException("Aggressivity level must be within the range of 1 to 4");
-            }
 
-            // Update the private field with the input value
             this.aggressivity = aggressivity;
         }
 
-        // A public method that returns the fan speed based on average temperature by linear interpolation
         public double GetFanSpeed()
         {
             double average = GetAverageTemperature();
             return GetFanSpeed(average);
         }
 
-        // A public method that takes a temperature as a parameter and returns the corresponding fan speed by linear interpolation
-        private bool TjmaxReached = false;
         public double GetFanSpeed(double temp)
         {
-            // Check if the temperature is within the °C range of Tjmax
-            if (temp >= IDevice.GetCurrent().Tjmax)
-                TjmaxReached = true;
+            // Clamp temp to our curve range
+            if (double.IsNaN(temp)) return 0.0;
+            temp = Math.Clamp(temp, 0.0, 100.0);
 
-            if (TjmaxReached)
+            // Trip latch if we hit or exceed Tjmax
+            double tjmax = IDevice.GetCurrent().Tjmax;
+            if (temp >= tjmax)
             {
-                if (temp <= 80)
-                    TjmaxReached = false;
-                else
-                    return 100.0d;
+                if (!tjLatch)
+                {
+                    tjLatch = true;
+                    LogManager.LogCritical("Cpu temperature has reached TJmax ({0})", tjmax);
+                }
+
+                tjLastHitUtc = DateTime.UtcNow;
+                belowCount = 0;
+                return 100.0;
             }
 
-            // Find the two closest points that bracket the temperature
-            int low = (int)Math.Floor(temp / fanSpeeds.Length);
+            // If latched, require: (a) cooldown elapsed AND (b) temp <= Tjmax - hysteresis for N consecutive samples
+            if (tjLatch)
+            {
+                bool cooldownOk = (DateTime.UtcNow - tjLastHitUtc) >= TjCooldown;
+                bool belowThreshold = temp <= (tjmax - TjHysteresisC);
 
-            // Add a condition to prevent high from being out of bounds
-            int high = low < (fanSpeeds.Length - 1) ? low + 1 : low;
+                if (cooldownOk && belowThreshold)
+                {
+                    belowCount++;
+                    if (belowCount >= TjReleaseSamples)
+                    {
+                        tjLatch = false;      // release
+                        belowCount = 0;
+                    }
+                }
+                else
+                {
+                    belowCount = 0;          // reset streak
+                }
 
-            // Linearly interpolate the fan speed value between the two closest points
-            double slope = (fanSpeeds[high] - fanSpeeds[low]) / fanSpeeds.Length;
-            double intercept = fanSpeeds[low] - slope * low * fanSpeeds.Length;
-            return slope * temp + intercept;
+                if (tjLatch)
+                    return 100.0;            // stay at max until released
+            }
+
+            // --- Correct interpolation on 0..100°C grid in 10°C steps ---
+            // X-axis (temperatures): 0,10,20,...,100  => indices 0..10
+            int lastIdx = fanSpeeds.Length - 1;
+
+            // Bracket indices
+            int i0 = Math.Min((int)Math.Floor(temp / 10.0), lastIdx);
+            int i1 = Math.Min(i0 + 1, lastIdx);
+
+            // Degenerate case (at 100°C or array of length 1)
+            if (i0 == i1) return fanSpeeds[i0];
+
+            double t0 = i0 * 10.0;
+            double t1 = i1 * 10.0;
+            double y0 = fanSpeeds[i0];
+            double y1 = fanSpeeds[i1];
+
+            double y = y0 + (temp - t0) * (y1 - y0) / (t1 - t0);
+            return Math.Clamp(y, 0.0, 100.0);
         }
 
-        // A public method that takes an array of fan speed values as a parameter and updates the fanSpeeds variable
         public void SetFanSpeed(double[] fanSpeeds)
         {
-            // Check if the array has the length of fanSpeeds and is not empty
             if (fanSpeeds.Length != this.fanSpeeds.Length || fanSpeeds.Length == 0)
-            {
                 throw new ArgumentException("Invalid input array");
-            }
 
-            // Check if the array is sorted in ascending order
             for (int i = 0; i < fanSpeeds.Length - 1; i++)
             {
                 if (fanSpeeds[i] > fanSpeeds[i + 1])
-                {
                     throw new ArgumentException("Input array must be sorted in ascending order");
-                }
             }
 
-            // Check if the fan speed values are within the range of 0 to 100
-            if (fanSpeeds[0] < 0 || fanSpeeds[fanSpeeds.Length - 1] > 100)
-            {
+            if (fanSpeeds[0] < 0 || fanSpeeds[^1] > 100)
                 throw new ArgumentException("Fan speed values must be within the range of 0 to 100");
-            }
 
-            // Update the private field with the input array
             this.fanSpeeds = fanSpeeds;
         }
 
-        // A public method that takes a temperature as a parameter and updates the avgTemp variable
         public void SetTemperature(double temp)
         {
-            // Check if the temperature is within the range of 0°C to 100°C
             if (temp < 0 || temp > 100)
                 return;
 
-            // Update the average temperature using a weighted average formula based on the aggressivity level
-            if (this.avgTemp.Count > aggressivity)
-                this.avgTemp.RemoveAt(aggressivity);
+            // Keep at most `aggressivity` samples (1..4)
+            if (this.avgTemp.Count >= aggressivity && this.avgTemp.Count > 0)
+                this.avgTemp.RemoveAt(0); // drop oldest
 
             this.avgTemp.Add(temp);
         }
 
-        // A public method that returns the average temperature
         public double GetAverageTemperature()
         {
-            if (this.avgTemp.Count != 0)
-                return this.avgTemp.Average();
-
-            return 50.0d;
+            return this.avgTemp.Count != 0 ? this.avgTemp.Average() : 50.0;
         }
     }
 }

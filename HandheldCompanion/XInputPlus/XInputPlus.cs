@@ -171,7 +171,7 @@ public static class XInputPlus
             XInputDLL64 = XInputPlus_XInputx64,
             DInputDLL64 = XInputPlus_DInputx64,                         // unused
             DInput8DLL64 = XInputPlus_DInput8x64,                       // unused
-            TargetProgram = "",                                         // Internal use
+            TargetProgram = string.Empty,                                         // Internal use
             LoaderDir = XInputPlus_InjectorDir,                         // "XInputPlus.ini" in this folder is used
             HookChildProcess = false,
             Launched = false                                           // Internal use

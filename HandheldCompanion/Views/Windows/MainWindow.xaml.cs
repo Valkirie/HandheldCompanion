@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
@@ -34,6 +35,7 @@ using System.Windows.Shell;
 using Windows.UI.ViewManagement;
 using Application = System.Windows.Application;
 using Control = System.Windows.Controls.Control;
+using Frame = System.Windows.Controls.Frame;
 using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
 using Page = System.Windows.Controls.Page;
 using RadioButton = System.Windows.Controls.RadioButton;
@@ -93,6 +95,9 @@ public partial class MainWindow : GamepadWindow
     public static Version CurrentVersion => Version.Parse(fileVersionInfo.FileVersion);
     private static bool StartMinimized => ManagerFactory.settingsManager.GetBoolean("StartMinimized");
 
+    private static bool StartMinimized => ManagerFactory.settingsManager.GetBoolean("StartMinimized");
+    private static bool PreloadPages => ManagerFactory.settingsManager.GetBoolean("PreloadPages");
+
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
     {
         // initialize splash screen
@@ -135,7 +140,7 @@ public partial class MainWindow : GamepadWindow
             ContextMenuStrip = new ContextMenuStrip()
         };
 
-        notifyIcon.DoubleClick += (sender, e) => { SwapWindowState(); };
+        notifyIcon.DoubleClick += (sender, e) => { ToggleState(); };
 
         AddNotifyIconItem(Properties.Resources.MainWindow_MainWindow);
         AddNotifyIconItem(Properties.Resources.MainWindow_QuickTools);
@@ -201,7 +206,6 @@ public partial class MainWindow : GamepadWindow
             Task.Run(() => VirtualManager.Start()),
             Task.Run(() => SensorsManager.Start()),
             Task.Run(() => ControllerManager.Start()),
-            Task.Run(() => PlatformManager.Start()),
             Task.Run(() => TaskManager.Start(CurrentExe)),
             Task.Run(() => PerformanceManager.Start()),
             Task.Run(() => UpdateManager.Start())
@@ -365,7 +369,7 @@ public partial class MainWindow : GamepadWindow
         notifyIcon.ContextMenuStrip.Items.Add(separator);
     }
 
-    public void SwapWindowState()
+    public void ToggleState()
     {
         // UI thread
         UIHelper.TryInvoke(() =>
@@ -428,9 +432,6 @@ public partial class MainWindow : GamepadWindow
         notificationsPage = new NotificationsPage("notifications");
         libraryPage = new LibraryPage("library");
 
-        // manage events
-        libraryPage.Loaded += HomePage_Loaded;
-
         // store pages
         _pages.Add("ControllerPage", controllerPage);
         _pages.Add("DevicePage", devicePage);
@@ -475,7 +476,7 @@ public partial class MainWindow : GamepadWindow
         switch (((ToolStripMenuItem)sender).Tag)
         {
             case "MainWindow":
-                SwapWindowState();
+                ToggleState();
                 break;
             case "QuickTools":
                 overlayquickTools.ToggleVisibility();
@@ -503,10 +504,15 @@ public partial class MainWindow : GamepadWindow
         prevWindowState = (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowPrevState");
     }
 
-    private void HomePage_Loaded(object sender, RoutedEventArgs e)
+    private bool Homepage_Loaded = false;
+    private void HomePage_Loaded()
     {
+        // set status
+        Homepage_Loaded = true;
+
         // home page is ready, display main window
         this.Visibility = Visibility.Visible;
+        notifyIcon.Visible = true;
 
         string TelemetryApproved = ManagerFactory.settingsManager.GetString("TelemetryApproved");
         if (string.IsNullOrEmpty(TelemetryApproved))
@@ -558,7 +564,7 @@ public partial class MainWindow : GamepadWindow
                         ManagerFactory.Resume();
 
                         // resume platform(s)
-                        PlatformManager.LibreHardwareMonitor.Start();
+                        PlatformManager.LibreHardware.Start();
 
                         // wait a bit more if device went to sleep for at least 30 minutes (arbitrary)
                         TimeSpan sleepDuration = resumeTime - pendingTime;
@@ -611,7 +617,7 @@ public partial class MainWindow : GamepadWindow
                         InputsManager.Stop(false);
 
                         // suspend platform(s)
-                        PlatformManager.LibreHardwareMonitor.Stop();
+                        PlatformManager.LibreHardware.Stop();
 
                         // close current device
                         CurrentDevice.Close();
@@ -743,7 +749,6 @@ public partial class MainWindow : GamepadWindow
         SensorsManager.Stop();
         ControllerManager.Stop();
         InputsManager.Stop(true);
-        PlatformManager.Stop();
         OSDManager.Stop();
         SystemManager.Stop();
         DynamicLightingManager.Stop();
@@ -791,8 +796,7 @@ public partial class MainWindow : GamepadWindow
         {
             case WindowState.Minimized:
                 {
-                    if (notifyIcon is not null)
-                        notifyIcon.Visible = true;
+                    notifyIcon.Visible = Homepage_Loaded;
                     ShowInTaskbar = false;
 
                     if (!NotifyInTaskbar)
@@ -805,8 +809,7 @@ public partial class MainWindow : GamepadWindow
             case WindowState.Normal:
             case WindowState.Maximized:
                 {
-                    if (notifyIcon is not null)
-                        notifyIcon.Visible = false;
+                    notifyIcon.Visible = false;
                     ShowInTaskbar = true;
 
                     Activate();
@@ -820,14 +823,87 @@ public partial class MainWindow : GamepadWindow
         }
     }
 
-    private void navView_Loaded(object sender, RoutedEventArgs e)
+    private const string HomeKey = "LibraryPage";
+    private readonly CancellationTokenSource _preloadCts = new();
+
+    private async void navView_Loaded(object sender, RoutedEventArgs e)
     {
-        // Add handler for ContentFrame navigation.
         ContentFrame.Navigated += On_Navigated;
 
-        // navigate to home page
-        NavigateToPage("LibraryPage");
+        // Preload HOME first (invisible, in PreloadFrame)
+        if (_pages.TryGetValue(HomeKey, out var homePage))
+        {
+            await PreloadInHiddenFrameAsync(PreloadFrame, homePage);
+
+            // IMPORTANT: detach from hidden frame before showing it in the visible one
+            if (ReferenceEquals(PreloadFrame.Content, homePage))
+                PreloadFrame.Content = null;
+
+            // Show Home in the visible frame
+            NavigateToPage(HomeKey);
+
+            // Now that Home is really ready, reveal window & run your callback
+            HomePage_Loaded();
+        }
+
+        // Warm the rest in the background (non-blocking)
+        if (PreloadPages)
+            _ = PreloadRemainingAsync(_preloadCts.Token);
     }
+
+    private async Task PreloadRemainingAsync(CancellationToken ct)
+    {
+        foreach (var kvp in _pages)
+        {
+            if (ct.IsCancellationRequested) break;
+            if (kvp.Key == HomeKey) continue;
+
+            var page = kvp.Value;
+
+            // Already warmed once? skip.
+            if (page.IsLoaded && !ReferenceEquals(PreloadFrame.Content, page))
+                continue;
+
+            try
+            {
+                await PreloadInHiddenFrameAsync(PreloadFrame, page);
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Background preload failed for {0}", page.GetType().Name);
+            }
+        }
+
+        // Optional: release the last preloaded page
+        PreloadFrame.Content = null;
+    }
+
+    private static Task PreloadInHiddenFrameAsync(Frame hiddenFrame, Page page)
+    {
+        // If this page has already been loaded once in the app lifetime,
+        // we're warmed; no need to wait again.
+        if (page.IsLoaded && !ReferenceEquals(hiddenFrame.Content, page))
+            return Task.CompletedTask;
+
+        var tcs = new TaskCompletionSource<object?>();
+
+        RoutedEventHandler? onLoaded = null;
+        onLoaded = (s, e) =>
+        {
+            page.Loaded -= onLoaded;
+            LogManager.LogInformation("Preloaded: {0}", page.GetType().Name);
+            tcs.TrySetResult(null);
+        };
+
+        // Subscribe before navigating
+        page.Loaded += onLoaded;
+
+        // Navigate the hidden frame to the *existing* instance
+        hiddenFrame.Navigate(page);
+
+        return tcs.Task;
+    }
+
 
     private void GamepadWindow_PreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
     {

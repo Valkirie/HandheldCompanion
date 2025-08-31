@@ -9,7 +9,7 @@ public struct OverlayColors
     public const string RAM_COLOR = "FF80C0";
     public const string BATT_COLOR = "FF8000";
     public const string FPS_COLOR = "FF0000";
-    
+
     public static string EntryColor(string name)
     {
         return name.ToUpper() switch

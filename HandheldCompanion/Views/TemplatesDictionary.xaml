@@ -17,6 +17,7 @@
     <converters:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
     <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+    <converters:DrawingImageToImageSourceConverter x:Key="DrawingImageToImageSourceConverter" />
     <converters:IndexToVisibilityConverter x:Key="IndexToVisibilityConverter" />
     <converters:IsEnabledConverter x:Key="IsEnabledConverter" />
     <converters:PercentageConverter x:Key="PercentageConverter" />
@@ -458,6 +459,15 @@
                                         TextWrapping="Wrap" />
                                 </StackPanel>
                             </Grid>
+
+                            <Image
+                                Width="32"
+                                Height="32"
+                                Margin="4"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Source="{Binding Platform, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DrawingImageToImageSourceConverter}}"
+                                Stretch="Uniform" />
                         </Grid>
 
                         <!--  Visual states MUST live on the template root  -->

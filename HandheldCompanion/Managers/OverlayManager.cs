@@ -1,8 +1,8 @@
-using System;
-using System.Collections.Generic;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Managers.Overlay;
 using HandheldCompanion.Managers.Overlay.Strategy;
+using System;
+using System.Collections.Generic;
 
 namespace HandheldCompanion.Managers;
 

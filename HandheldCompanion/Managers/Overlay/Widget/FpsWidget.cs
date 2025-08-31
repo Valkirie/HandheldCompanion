@@ -1,6 +1,6 @@
 namespace HandheldCompanion.Managers.Overlay.Widget;
 
-public class FPSWidget: IWidget
+public class FPSWidget : IWidget
 {
     public void Build(OverlayEntry entry, short? level = null)
     {

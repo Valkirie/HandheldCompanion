@@ -1060,8 +1060,8 @@ public abstract class IDevice
 
     protected bool IsECReady()
     {
-        DateTime timeout = DateTime.Now.AddMilliseconds(250);
-        while (DateTime.Now < timeout)
+        Task timeout = Task.Delay(TimeSpan.FromMilliseconds(250));
+        while (!timeout.IsCompleted)
             if ((ECRamReadByte(EC_SC) & EC_IBF) == 0x0)
                 return true;
 

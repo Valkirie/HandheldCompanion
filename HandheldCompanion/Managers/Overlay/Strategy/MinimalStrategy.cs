@@ -1,6 +1,6 @@
 namespace HandheldCompanion.Managers.Overlay.Strategy;
 
-public class MinimalStrategy: IOverlayStrategy
+public class MinimalStrategy : IOverlayStrategy
 {
     public string GetConfig()
     {

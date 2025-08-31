@@ -1,109 +1,106 @@
-﻿using HandheldCompanion.Platforms;
-using HandheldCompanion.Shared;
-using System;
+﻿using GameLib.Core;
+using HandheldCompanion.Platforms;
+using HandheldCompanion.Platforms.Games;
+using HandheldCompanion.Platforms.Misc;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace HandheldCompanion.Managers;
 
-public static class PlatformManager
+public class PlatformManager : IManager
 {
+    public static List<IPlatform> GamingPlatforms;
+    public static List<IPlatform> MiscPlatforms;
+    public static List<IPlatform> AllPlatforms;
+
     // gaming platforms
-    public static readonly Steam Steam = new();
-    public static readonly GOGGalaxy GOGGalaxy = new();
-    public static readonly UbisoftConnect UbisoftConnect = new();
+    public static Steam Steam;
+    public static GOGGalaxy GOGGalaxy;
+    public static UbisoftConnect UbisoftConnect;
+    public static BattleNet BattleNet;
+    public static Origin Origin;
+    public static Epic Epic;
+    public static RiotGames RiotGames;
+    public static Rockstar Rockstar;
 
     // misc platforms
-    public static RTSS RTSS = new();
-    public static Platforms.LibreHardwareMonitor LibreHardwareMonitor = new();
+    public static RTSS RTSS;
+    public static LibreHardware LibreHardware;
 
-    public static bool IsInitialized;
-
-    public static event InitializedEventHandler Initialized;
-    public delegate void InitializedEventHandler();
-
-    public static void Start()
+    public override void Start()
     {
-        if (IsInitialized)
+        if (Status.HasFlag(ManagerStatus.Initializing) || Status.HasFlag(ManagerStatus.Initialized))
             return;
 
-        if (Steam.IsInstalled)
-            Steam.Start();
+        base.PrepareStart();
 
-        if (GOGGalaxy.IsInstalled)
+        // initialize gaming platforms
+        Steam = new Steam();
+        GOGGalaxy = new GOGGalaxy();
+        UbisoftConnect = new UbisoftConnect();
+        BattleNet = new BattleNet();
+        Origin = new Origin();
+        Epic = new Epic();
+        RiotGames = new RiotGames();
+        Rockstar = new Rockstar();
+
+        // initialize misc platforms
+        RTSS = new RTSS();
+        LibreHardware = new LibreHardware();
+
+        // populate lists
+        GamingPlatforms = new() { Steam, GOGGalaxy, UbisoftConnect, BattleNet, Origin, Epic, RiotGames, Rockstar };
+        MiscPlatforms = new() { RTSS, LibreHardware };
+        AllPlatforms = new(GamingPlatforms.Concat(MiscPlatforms));
+
+        // start platforms
+        foreach (IPlatform platform in AllPlatforms)
         {
-            // do something
+            if (platform.IsInstalled)
+                platform.Start();
         }
 
-        if (UbisoftConnect.IsInstalled)
-        {
-            // do something
-        }
-
-        if (RTSS.IsInstalled)
-        {
-            RTSS.Start();
-        }
-
-        if (LibreHardwareMonitor.IsInstalled)
-        {
-            LibreHardwareMonitor.Start();
-        }
-
-        IsInitialized = true;
-        Initialized?.Invoke();
-
-        LogManager.LogInformation("{0} has started", "PlatformManager");
+        base.Start();
     }
 
-    public static void Stop()
+    public override void Stop()
     {
-        if (Steam.IsInstalled)
-            Steam.Stop(true);
+        if (Status.HasFlag(ManagerStatus.Halting) || Status.HasFlag(ManagerStatus.Halted))
+            return;
 
-        if (GOGGalaxy.IsInstalled)
-            GOGGalaxy.Stop(true);
+        base.PrepareStop();
 
-        if (UbisoftConnect.IsInstalled)
-            UbisoftConnect.Stop(true);
-
-        if (RTSS.IsInstalled)
+        // stop platforms
+        foreach (IPlatform platform in AllPlatforms)
         {
-            bool killRTSS = ManagerFactory.settingsManager.GetBoolean("PlatformRTSSEnabled");
-            RTSS.Stop(killRTSS);
+            if (platform.IsInstalled)
+            {
+                bool kill = true;
+
+                if (platform is RTSS)
+                    kill = ManagerFactory.settingsManager.GetBoolean("PlatformRTSSEnabled");
+                else if (platform is LibreHardware)
+                    kill = false;
+
+                platform.Stop(kill);
+            }
         }
 
-        if (LibreHardwareMonitor.IsInstalled)
-        {
-            LibreHardwareMonitor.Stop();
-        }
-
-        IsInitialized = false;
-
-        LogManager.LogInformation("{0} has stopped", "PlatformManager");
+        base.Stop();
     }
 
     public static PlatformType GetPlatform(Process proc)
     {
-        if (!IsInitialized)
-            return PlatformType.Windows;
+        foreach (IPlatform platform in GamingPlatforms)
+            if (platform.IsRelated(proc))
+                return platform.PlatformType;
 
-        // is this process part of a specific platform
-        if (Steam.IsRelated(proc))
-            return Steam.PlatformType;
-        if (GOGGalaxy.IsRelated(proc))
-            return GOGGalaxy.PlatformType;
-        if (UbisoftConnect.IsRelated(proc))
-            return UbisoftConnect.PlatformType;
         return PlatformType.Windows;
     }
 
-    [Flags]
-    private enum PlatformNeeds
+    public static IEnumerable<IGame> GetGames()
     {
-        None = 0,
-        AutoTDP = 1,
-        FramerateLimiter = 2,
-        OnScreenDisplay = 4,
-        OnScreenDisplayComplex = 8
+        return GamingPlatforms.SelectMany(platform => platform.GetGames());
     }
 }

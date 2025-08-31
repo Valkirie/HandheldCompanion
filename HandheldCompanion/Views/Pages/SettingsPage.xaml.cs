@@ -41,11 +41,30 @@ public partial class SettingsPage : Page
         ManagerFactory.multimediaManager.ScreenDisconnected += MultimediaManager_ScreenDisconnected;
         ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
 
+        // raise events
+        switch (ManagerFactory.platformManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.platformManager.Initialized += PlatformManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryPlatforms();
+                break;
+        }
+    }
+
+    private void QueryPlatforms()
+    {
+        // manage events
         PlatformManager.RTSS.Updated += RTSS_Updated;
 
-        // force call
-        // todo: make PlatformManager static
         RTSS_Updated(PlatformManager.RTSS.Status);
+    }
+
+    private void PlatformManager_Initialized()
+    {
+        QueryPlatforms();
     }
 
     private void MultimediaManager_ScreenConnected(DesktopScreen screen)
@@ -203,8 +222,14 @@ public partial class SettingsPage : Page
                 case "QuickTrackpadVisibility":
                     VirtualTrackpadToggle.IsOn = Convert.ToBoolean(value);
                     break;
+                case "QuickToolsSlideAnimation":
+                    QuicktoolsSlideAnimationToggle.IsOn = Convert.ToBoolean(value);
+                    break;
                 case "GPUManagerMonitor":
                     Toggle_GPUMonitor.IsOn = Convert.ToBoolean(value);
+                    break;
+                case "QuickToolsApplyNoise":
+                    QuickToolsNoiseToggle.IsOn = Convert.ToBoolean(value);
                     break;
             }
         });
@@ -577,11 +602,27 @@ public partial class SettingsPage : Page
         ManagerFactory.settingsManager.SetProperty("QuickTrackpadVisibility", VirtualTrackpadToggle.IsOn);
     }
 
+    private void QuicktoolsSlideAnimationToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("QuickToolsSlideAnimation", QuicktoolsSlideAnimationToggle.IsOn);
+    }
+
     private void Toggle_GPUMonitor_Toggled(object sender, RoutedEventArgs e)
     {
         if (!IsLoaded)
             return;
 
         ManagerFactory.settingsManager.SetProperty("GPUManagerMonitor", Toggle_GPUMonitor.IsOn);
+    }
+
+    private void QuickToolsNoiseToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("QuickToolsApplyNoise", QuickToolsNoiseToggle.IsOn);
     }
 }

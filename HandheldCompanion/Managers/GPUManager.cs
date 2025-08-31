@@ -11,7 +11,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceProcess;
-using System.Threading;
+using System.Threading.Tasks;
 using static HandheldCompanion.IGCL.IGCLBackend;
 
 namespace HandheldCompanion.Managers
@@ -37,7 +37,7 @@ namespace HandheldCompanion.Managers
 
         private object screenLock = new();
 
-        public override void Start()
+        public override async void Start()
         {
             if (Status.HasFlag(ManagerStatus.Initializing) || Status.HasFlag(ManagerStatus.Initialized))
                 return;
@@ -47,9 +47,9 @@ namespace HandheldCompanion.Managers
             if (!IsLoaded_IGCL && GPU.HasIntelGPU())
             {
                 // wait until Intel GPU service is ready
-                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(7));
-                while (DateTime.Now < timeout && !IntelGPU.HasServiceStatus(ServiceControllerStatus.Running))
-                    Thread.Sleep(1000);
+                Task timeout = Task.Delay(TimeSpan.FromSeconds(7));
+                while (!timeout.IsCompleted && !IntelGPU.HasServiceStatus(ServiceControllerStatus.Running))
+                    await Task.Delay(1000).ConfigureAwait(false);
 
                 if (!IntelGPU.HasServiceStatus(ServiceControllerStatus.Running))
                     LogManager.LogError("{0} is not ready. Some GPU related features might not work as expected", IntelGPU.serviceName);
@@ -319,7 +319,7 @@ namespace HandheldCompanion.Managers
             GPU.Stop();
         }
 
-        private void DeviceManager_DisplayAdapterArrived(AdapterInformation adapterInformation)
+        private async void DeviceManager_DisplayAdapterArrived(AdapterInformation adapterInformation)
         {
             // GPU is already part of the dictionary
             if (DisplayGPU.ContainsKey(adapterInformation))
@@ -356,7 +356,7 @@ namespace HandheldCompanion.Managers
             if (ManagerFactory.multimediaManager.IsRunning)
             {
                 while (ManagerFactory.multimediaManager.IsBusy)
-                    Thread.Sleep(1000);
+                    await Task.Delay(1000).ConfigureAwait(false);
 
                 // Force send an update
                 if (ManagerFactory.multimediaManager.PrimaryDesktop != null)

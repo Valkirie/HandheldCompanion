@@ -177,58 +177,68 @@ public static class ControllerManager
 
     private static void Tick(long ticks, float delta)
     {
-        if (!HasTargetController)
+        // Snapshot to avoid races after HasTargetController check
+        IController? tc = targetController;
+        if (!HasTargetController || tc is null)
             return;
 
-        // Debug.Assert(delta <= 0.020, $"Tick interval exceeded: expected <= {20}ms, got {delta * 1000.0f}ms");
-
         // pull controller
-        targetController.Tick(ticks, delta);
+        tc.Tick(ticks, delta);
 
-        ControllerState controllerState = targetController.Inputs;
+        // snapshot inputs; bail if not ready
+        ControllerState controllerState = tc.Inputs;
         if (controllerState is null)
             return;
 
-        Dictionary<byte, GamepadMotion> gamepadMotions = targetController.gamepadMotions;
-        if (gamepadMotions is null)
+        // snapshot motions; bail if not ready
+        Dictionary<byte, GamepadMotion>? motions = tc.gamepadMotions;
+        if (motions is null || motions.Count == 0)
             return;
 
         // raise event, before layout mapping
-        InputsUpdated?.Invoke(controllerState, false);
+        EventHelper.RaiseAsync(InputsUpdated, controllerState, false);
 
-        // get main motion
-        byte gamepadIndex = targetController.gamepadIndex;
-        GamepadMotion gamepadMotion = gamepadMotions[gamepadIndex];
-        if (gamepadMotion is null)
+        // get main motion safely
+        byte gamepadIndex = tc.gamepadIndex;
+        if (!motions.TryGetValue(gamepadIndex, out GamepadMotion gamepadMotion) || gamepadMotion is null)
             return;
 
+        // sensor override
         switch (sensorSelection)
         {
             case SensorFamily.Windows:
             case SensorFamily.SerialUSBIMU:
-                gamepadMotion = IDevice.GetCurrent().GamepadMotion;
-                SensorsManager.UpdateReport(controllerState, gamepadMotion, ref delta);
-                break;
+                {
+                    IDevice dev = IDevice.GetCurrent();
+                    GamepadMotion? devMotion = dev?.GamepadMotion;
+                    if (devMotion is null)
+                        break; // keep existing gamepadMotion if device motion not ready
+
+                    gamepadMotion = devMotion;
+                    SensorsManager.UpdateReport(controllerState, gamepadMotion, ref delta);
+                    break;
+                }
         }
 
+        // Update motion consumers (null-safe)
         MotionManager.UpdateReport(controllerState, gamepadMotion);
-        // slow task, make it threaded
-        Task.Run(() => MainWindow.overlayModel.UpdateReport(controllerState, gamepadMotion, delta));
+        MainWindow.overlayModel?.UpdateReport(controllerState, gamepadMotion, delta);
 
-        // compute layout
-        controllerState = ManagerFactory.layoutManager.MapController(controllerState);
-        InputsUpdated?.Invoke(controllerState, true);
+        // compute layout (null-safe mapping)
+        ControllerState mapped = ManagerFactory.layoutManager?.MapController(controllerState) ?? controllerState;
+        EventHelper.RaiseAsync(InputsUpdated, mapped, true);
 
         // controller is muted
         if (ControllerMuted)
         {
-            mutedState.ButtonState[ButtonFlags.Special] = controllerState.ButtonState[ButtonFlags.Special];
-            controllerState = mutedState;
+            // keep only Special passthrough
+            mutedState.ButtonState[ButtonFlags.Special] = mapped.ButtonState[ButtonFlags.Special];
+            mapped = mutedState;
         }
 
-        DS4Touch.UpdateInputs(controllerState);
-        VirtualManager.UpdateInputs(controllerState, gamepadMotion);
-        DSUServer.UpdateInputs(controllerState, gamepadMotions);
+        DS4Touch.UpdateInputs(mapped);
+        VirtualManager.UpdateInputs(mapped, gamepadMotion);
+        DSUServer.UpdateInputs(mapped, motions);
         DSUServer.Tick(ticks, delta);
     }
 
@@ -241,20 +251,11 @@ public static class ControllerManager
                 switch ((SDL.EventType)e.Type)
                 {
                     case SDL.EventType.GamepadAdded:
-                        LogManager.LogDebug($"Gamepad added: {e.GDevice.Which}");
                         SDL_GamepadAdded(e.GDevice.Which);
                         break;
 
                     case SDL.EventType.GamepadRemoved:
-                        LogManager.LogDebug($"Gamepad removed: {e.GDevice.Which}");
                         SDL_GamepadRemoved(e.GDevice.Which);
-                        break;
-
-                    case SDL.EventType.JoystickAxisMotion:
-                    case SDL.EventType.JoystickUpdateComplete:
-                    case SDL.EventType.JoystickButtonDown:
-                    case SDL.EventType.JoystickButtonUp:
-                    case SDL.EventType.JoystickHatMotion:
                         break;
 
                     default:
@@ -370,12 +371,18 @@ public static class ControllerManager
 
                 if (controller == null)
                 {
-                    LogManager.LogWarning("Unsupported controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
+                    LogManager.LogWarning("Unsupported SDL controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
                     return;
                 }
 
                 while (!controller.IsReady && controller.IsConnected())
                     await Task.Delay(250).ConfigureAwait(false);
+
+                if (!controller.IsConnected())
+                {
+                    LogManager.LogWarning("SDL controller: VID:{0} and PID:{1} was unplugged before being ready", details.GetVendorID(), details.GetProductID());
+                    return;
+                }
 
                 // controller is ready
                 controller.IsBusy = false;
@@ -555,7 +562,13 @@ public static class ControllerManager
                             {
                                 case 0x1902:
                                 case 0x1903:
-                                    try { controller = new DClawController(details); } catch { }
+                                    try
+                                    {
+                                        controller = new DClawController(details);
+                                        // hacky: MSI will eventually create an controller for a few milliseconds, then delete it
+                                        await Task.Delay(2000).ConfigureAwait(false);
+                                    }
+                                    catch { }
                                     break;
                             }
                         }
@@ -571,6 +584,12 @@ public static class ControllerManager
 
             while (!controller.IsReady && controller.IsConnected())
                 await Task.Delay(250).ConfigureAwait(false);
+
+            if (!controller.IsConnected())
+            {
+                LogManager.LogWarning("Generic controller: VID:{0} and PID:{1} was unplugged before being ready", details.GetVendorID(), details.GetProductID());
+                return;
+            }
 
             // controller is ready
             controller.IsBusy = false;
@@ -601,8 +620,8 @@ public static class ControllerManager
         {
             IController controller = null;
 
-            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(10));
-            while (DateTime.Now < timeout && controller == null)
+            Task timeout = Task.Delay(TimeSpan.FromSeconds(10));
+            while (!timeout.IsCompleted && controller == null)
             {
                 if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out controller))
                     break;
@@ -733,7 +752,13 @@ public static class ControllerManager
                             switch (details.GetProductID())
                             {
                                 case "0x1901":
-                                    try { controller = new XClawController(details); } catch { }
+                                    try
+                                    {
+                                        controller = new XClawController(details);
+                                        // hacky: MSI will eventually create an controller for a few milliseconds, then delete it
+                                        await Task.Delay(2000).ConfigureAwait(false);
+                                    }
+                                    catch { }
                                     break;
                             }
                         }
@@ -761,6 +786,12 @@ public static class ControllerManager
 
             while (!controller.IsReady && controller.IsConnected())
                 await Task.Delay(250).ConfigureAwait(false);
+
+            if (!controller.IsConnected())
+            {
+                LogManager.LogWarning("XInput controller: VID:{0} and PID:{1} was unplugged before being ready", details.GetVendorID(), details.GetProductID());
+                return;
+            }
 
             // controller is ready
             controller.IsBusy = false;
@@ -791,8 +822,8 @@ public static class ControllerManager
         {
             IController controller = null;
 
-            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(10));
-            while (DateTime.Now < timeout && controller == null)
+            Task timeout = Task.Delay(TimeSpan.FromSeconds(10));
+            while (!timeout.IsCompleted && controller == null)
             {
                 if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out controller))
                     break;
@@ -1275,8 +1306,8 @@ public static class ControllerManager
 
                         // Remove current virtual controller
                         VirtualManager.SetControllerMode(HIDmode.NoController);
-                        DateTime timeout = DateTime.Now.AddSeconds(4);
-                        while (DateTime.Now < timeout && GetVirtualControllers<XInputController>().Any())
+                        Task timeout = Task.Delay(TimeSpan.FromSeconds(4));
+                        while (!timeout.IsCompleted && GetVirtualControllers<XInputController>().Any())
                             await Task.Delay(100);
 
                         // Create temporary virtual controllers
@@ -1285,20 +1316,20 @@ public static class ControllerManager
                         int usedSlots = VirtualManager.CreateTemporaryControllers();
 
                         // Wait for virtual controllers to appear
-                        timeout = DateTime.Now.AddSeconds(4);
-                        while (DateTime.Now < timeout && GetVirtualControllers<XInputController>().Count() < usedSlots)
+                        timeout = Task.Delay(TimeSpan.FromSeconds(4));
+                        while (!timeout.IsCompleted && GetVirtualControllers<XInputController>().Count() < usedSlots)
                             await Task.Delay(100);
 
                         // Dispose temporary
                         VirtualManager.DisposeTemporaryControllers();
-                        timeout = DateTime.Now.AddSeconds(4);
-                        while (DateTime.Now < timeout && GetVirtualControllers<XInputController>().Count() > usedSlots)
+                        timeout = Task.Delay(TimeSpan.FromSeconds(4));
+                        while (!timeout.IsCompleted && GetVirtualControllers<XInputController>().Count() > usedSlots)
                             await Task.Delay(100);
 
                         // Resume main virtual controller
                         VirtualManager.SetControllerMode(HIDmode.Xbox360Controller);
-                        timeout = DateTime.Now.AddSeconds(4);
-                        while (DateTime.Now < timeout && !GetVirtualControllers<XInputController>().Any())
+                        timeout = Task.Delay(TimeSpan.FromSeconds(4));
+                        while (!timeout.IsCompleted && !GetVirtualControllers<XInputController>().Any())
                             await Task.Delay(100);
                     }
                     else if (managerStatus != ControllerManagerStatus.Succeeded)
@@ -1319,8 +1350,8 @@ public static class ControllerManager
                         await Task.Delay(1000);
                         VirtualManager.Resume(false);
 
-                        DateTime timeout = DateTime.Now.AddSeconds(4);
-                        while (DateTime.Now < timeout && !GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Any())
+                        Task timeout = Task.Delay(TimeSpan.FromSeconds(4));
+                        while (!timeout.IsCompleted && !GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Any())
                             await Task.Delay(100);
                     }
                     else if (managerStatus != ControllerManagerStatus.Succeeded)
@@ -1532,8 +1563,8 @@ public static class ControllerManager
         {
             PnPDevice pnPDevice = null;
 
-            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
-            while (DateTime.Now < timeout && pnPDevice is null)
+            Task timeout = Task.Delay(TimeSpan.FromSeconds(3));
+            while (!timeout.IsCompleted && pnPDevice is null)
             {
                 try { pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId); } catch { }
                 Task.Delay(1000).Wait();
@@ -1586,8 +1617,8 @@ public static class ControllerManager
         {
             PnPDevice pnPDevice = null;
 
-            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
-            while (DateTime.Now < timeout && pnPDevice is null)
+            Task timeout = Task.Delay(TimeSpan.FromSeconds(3));
+            while (!timeout.IsCompleted && pnPDevice is null)
             {
                 try { pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId); } catch { }
                 Task.Delay(1000).Wait();

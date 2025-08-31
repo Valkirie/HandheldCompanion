@@ -36,7 +36,8 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 - ASUS ROG Ally, ROG Ally X
 - ASUS ROG Z13
 - Lenovo Legion Go
-- MSI Claw A1M, MSI Claw A2VM
+- Legion Go S
+- MSI Claw A1M (1st Gen), MSI Claw A2VM (7/8 AI+), MSI Claw BZ2EM (A8)
 - AOKZOE A1 and A1 Pro
 - AOKZOE A2
 - Steam Deck (all models)
@@ -57,6 +58,7 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 - GPD Win 4 (all models)
 - GPD Win Mini (all models)
 - Ayn Loki (all models)
+- ZOTAC Gaming Zone
 
 ## Supported Sensors
 - Bosch BMI160 (and similar)

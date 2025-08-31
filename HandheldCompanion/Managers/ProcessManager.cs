@@ -78,7 +78,7 @@ public class ProcessManager : IManager
         m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, winDelegate, 0, 0, WINEVENT_OUTOFCONTEXT);
 
         ForegroundTimer = new Timer(2000);
-        ForegroundTimer.Elapsed += (sender, e) => ForegroundCallback();
+        ForegroundTimer.Elapsed += (sender, e) => ForegroundCallback(false);
 
         ProcessWatcher = new Timer(2000);
         ProcessWatcher.Elapsed += (sender, e) => ProcessWatcher_Elapsed();
@@ -234,7 +234,7 @@ public class ProcessManager : IManager
     private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
     {
         // Avoid locking UI thread by running the action in a task
-        Task.Run(() => ForegroundCallback());
+        Task.Run(() => ForegroundCallback(true));
     }
 
     private void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
@@ -333,13 +333,18 @@ public class ProcessManager : IManager
         return Processes.Values.Where(a => a.Executable.Equals(executable, StringComparison.InvariantCultureIgnoreCase)).ToList();
     }
 
-    private async void ForegroundCallback()
+    private async void ForegroundCallback(bool IsEventProc)
     {
         IntPtr hWnd = GetforegroundWindow();
 
         // skip if this window is already in foreground
         if (currenthWnd == hWnd || hWnd == IntPtr.Zero)
             return;
+
+        RawForeground?.Invoke(hWnd);
+
+        // update current foreground window
+        currenthWnd = hWnd;
 
         AutomationElement element = null;
         int processId = 0;
@@ -410,9 +415,6 @@ public class ProcessManager : IManager
 
             // raise event
             ForegroundChanged?.Invoke(process, prevProcess, filter);
-
-            // update current foreground window
-            currenthWnd = hWnd;
         }
         catch { }
     }
@@ -473,12 +475,13 @@ public class ProcessManager : IManager
                     try
                     {
                         proc.EnableRaisingEvents = true;
+                        proc.Exited += ProcessHalted;
                     }
                     catch (Exception)
                     {
-                        // Access denied
+                        // Access denied, don't go further
+                        return false;
                     }
-                    proc.Exited += ProcessHalted;
 
                     // Check process path
                     string path = ProcessUtils.GetPathToApp(proc.Id);
@@ -729,6 +732,9 @@ public class ProcessManager : IManager
     }
 
     #region events
+
+    public event RawForegroundEventHandler RawForeground;
+    public delegate void RawForegroundEventHandler(IntPtr hWnd);
 
     public event ForegroundChangedEventHandler ForegroundChanged;
     public delegate void ForegroundChangedEventHandler(ProcessEx? processEx, ProcessEx? backgroundEx, ProcessFilter filter);

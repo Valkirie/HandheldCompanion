@@ -3,47 +3,76 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFrameworks>net9.0-windows10.0.19041.0</TargetFrameworks>
-	<GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
-	<AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
-	<PlatformTarget>x64</PlatformTarget>
+    <GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
+    <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
+    <PlatformTarget>x64</PlatformTarget>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <StartupObject>HandheldCompanion.App</StartupObject>
     <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-    <Version>0.26.2.0</Version>
+    <Version>0.27.0.6</Version>
     <Platforms>x64</Platforms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-	  <NeutralResourcesLanguage>en-US</NeutralResourcesLanguage>
+    <NeutralResourcesLanguage>en-US</NeutralResourcesLanguage>
+    <!-- Ensure 32-bit isn't preferred anywhere -->
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-	<ApplicationManifest>DEBUG.manifest</ApplicationManifest>
+    <ApplicationManifest>DEBUG.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-	<ApplicationManifest>RELEASE.manifest</ApplicationManifest>
+    <ApplicationManifest>RELEASE.manifest</ApplicationManifest>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
   </PropertyGroup>
+
+  <!-- Clean Release settings + perf publish knobs -->
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
     <Optimize>true</Optimize>
+
+    <!-- Do not produce the .dev runtimeconfig in Release -->
+    <GenerateRuntimeConfigDevFile>false</GenerateRuntimeConfigDevFile>
+
+    <!-- ReadyToRun + Crossgen2 + Composite -->
     <PublishReadyToRun>true</PublishReadyToRun>
     <PublishReadyToRunUseCrossgen2>true</PublishReadyToRunUseCrossgen2>
+    <PublishReadyToRunComposite>true</PublishReadyToRunComposite>
+
+    <!-- PGO (you already had this) -->
     <EnableProfileGuidedOptimization>true</EnableProfileGuidedOptimization>
+
+    <!-- Single-file tuning: trade size for startup perf -->
     <PublishSingleFile>true</PublishSingleFile>
+    <EnableCompressionInSingleFile>false</EnableCompressionInSingleFile>
+    <IncludeAllContentForSelfExtract>false</IncludeAllContentForSelfExtract>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|x64'">
     <DebugType>full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|x64'">
     <DebugType>full</DebugType>
   </PropertyGroup>
+
+  <!-- Runtime JIT/PGO & GC tuning -->
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.Runtime.TieredCompilation" Value="true" />
+    <RuntimeHostConfigurationOption Include="System.Runtime.TieredPGO"          Value="true" />
+    <RuntimeHostConfigurationOption Include="System.Runtime.QuickJit"           Value="true" />
+    <RuntimeHostConfigurationOption Include="System.Runtime.QuickJitForLoops"   Value="true" />
+    <RuntimeHostConfigurationOption Include="System.GC.Server"                  Value="true" />
+    <RuntimeHostConfigurationOption Include="System.GC.Concurrent"              Value="true" />
+  </ItemGroup>
+  
   <ItemGroup>
     <Page Remove="Properties\DesignTimeResources.xaml" />
   </ItemGroup>
@@ -189,6 +218,7 @@
     <PackageReference Include="Crc32.NET" Version="1.2.0" />
     <PackageReference Include="dotnetCampus.Microsoft.Expression.Effects" Version="2.0.20525-alpha02" />
     <PackageReference Include="Fastenshtein" Version="1.0.10" />
+    <PackageReference Include="GameLib.NET" Version="1.4.1" />
     <PackageReference Include="gong-wpf-dragdrop" Version="4.0.0" />
     <PackageReference Include="GregsStack.InputSimulatorStandard" Version="1.3.5" />
     <PackageReference Include="HelixToolkit.Core.Wpf" Version="2.27.0" />
@@ -196,7 +226,7 @@
     <PackageReference Include="iNKORE.UI.WPF.Emojis" Version="0.3.6.4" />
     <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.10.1" />
     <PackageReference Include="Interop.IWshRuntimeLibrary" Version="1.0.1" />
-    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.5-pre436" />
+    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.5-pre441" />
     <PackageReference Include="LiveCharts.Wpf.Core" Version="0.9.8" />
     <PackageReference Include="MathConverter" Version="2.2.1" />
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
@@ -206,10 +236,11 @@
     <PackageReference Include="Nefarius.Utilities.Bluetooth" Version="1.8.2" />
     <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="5.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="NJsonSchema.Annotations" Version="11.4.0" />
     <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
     <PackageReference Include="PixiEditor.ColorPicker" Version="3.4.2" />
     <PackageReference Include="PrecisionTimer.NET" Version="3.0.0.7" />
-    <PackageReference Include="SDL3-CS" Version="3.2.18" />
+    <PackageReference Include="SDL3-CS" Version="3.2.20" />
     <PackageReference Include="Sentry" Version="5.12.0" />
     <PackageReference Include="SharpDX" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />

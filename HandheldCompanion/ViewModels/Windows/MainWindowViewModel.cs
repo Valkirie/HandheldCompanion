@@ -72,9 +72,12 @@ namespace HandheldCompanion.ViewModels
             _currentNotification = notification.Guid;
             _closeCts = new CancellationTokenSource();
 
-            // Hide previous InfoBar
-            IsInfoBarOpen = false;
-            await Task.Delay(1000).ConfigureAwait(false);
+            // Wait and hide previous InfoBar, if any
+            if (IsInfoBarOpen)
+            {
+                IsInfoBarOpen = false;
+                await Task.Delay(1000).ConfigureAwait(false);
+            }
 
             // Set up the InfoBar
             InfoBarTitle = notification.Title;

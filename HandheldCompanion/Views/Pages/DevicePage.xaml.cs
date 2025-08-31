@@ -83,7 +83,7 @@ namespace HandheldCompanion.Views.Pages
             {
                 ZotacGamingZonePanel.Visibility = Visibility.Visible;
             }
-            
+
             SetControlEnabledAndVisible(LEDSolidColor, LEDLevel.SolidColor);
             SetControlEnabledAndVisible(LEDBreathing, LEDLevel.Breathing);
             SetControlEnabledAndVisible(LEDRainbow, LEDLevel.Rainbow);

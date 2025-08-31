@@ -1,13 +1,11 @@
-﻿using HandheldCompanion.GraphicsProcessingUnit;
-using HandheldCompanion.Shared;
-
-using PrecisionTiming;
+﻿using HandheldCompanion.Shared;
 
 using RTSSSharedMemoryNET;
 
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Timers;
 
 namespace HandheldCompanion.Managers;
 
@@ -37,17 +35,17 @@ public static class OSDManager
     public static short OverlayVRAMLevel;
     public static short OverlayBATTLevel;
 
-    private static readonly PrecisionTimer RefreshTimer;
+    private static readonly Timer RefreshTimer;
     private static int RefreshInterval = 100;
 
     private static readonly ConcurrentDictionary<int, OSD> OnScreenDisplay = new();
     private static AppEntry OnScreenAppEntry;
-    private static List<string> Content;
+    private static List<string> Content = new();
 
     static OSDManager()
     {
-        RefreshTimer = new PrecisionTimer();
-        RefreshTimer.SetInterval(new Action(UpdateOSD), RefreshInterval, false, 0, TimerMode.Periodic, true);
+        RefreshTimer = new Timer(RefreshInterval) { AutoReset = true };
+        RefreshTimer.Elapsed += UpdateOSD;
     }
 
     public static void Start()
@@ -55,12 +53,8 @@ public static class OSDManager
         if (IsInitialized)
             return;
 
-        if (OverlayLevel != 0 && !RefreshTimer.IsRunning())
+        if (OverlayLevel != 0 && !RefreshTimer.Enabled)
             RefreshTimer.Start();
-
-        // manage events
-        PlatformManager.RTSS.Hooked += RTSS_Hooked;
-        PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
 
         // raise events
         switch (ManagerFactory.settingsManager.Status)
@@ -74,17 +68,37 @@ public static class OSDManager
                 break;
         }
 
-        if (PlatformManager.IsInitialized)
+        switch (ManagerFactory.platformManager.Status)
         {
-            AppEntry appEntry = PlatformManager.RTSS.GetAppEntry();
-            if (appEntry is not null)
-                RTSS_Hooked(appEntry);
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.platformManager.Initialized += PlatformManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryPlatforms();
+                break;
         }
 
         IsInitialized = true;
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "OSDManager");
+    }
+
+    private static void QueryPlatforms()
+    {
+        // manage events
+        PlatformManager.RTSS.Hooked += RTSS_Hooked;
+        PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
+
+        AppEntry appEntry = PlatformManager.RTSS.GetAppEntry();
+        if (appEntry is not null)
+            RTSS_Hooked(appEntry);
+    }
+
+    private static void PlatformManager_Initialized()
+    {
+        QueryPlatforms();
     }
 
     private static void SettingsManager_Initialized()
@@ -170,7 +184,7 @@ public static class OSDManager
         catch { }
     }
 
-    private static void UpdateOSD()
+    private static void UpdateOSD(object? sender, ElapsedEventArgs e)
     {
         if (OverlayLevel == 0)
             return;
@@ -214,7 +228,7 @@ public static class OSDManager
         {
         }
 
-        Exit:
+    Exit:
         return string.Join("\n", Content);
     }
 
@@ -238,10 +252,10 @@ public static class OSDManager
                 {
                     RefreshInterval = Convert.ToInt32(value);
 
-                    if (RefreshTimer.IsRunning())
+                    if (RefreshTimer.Enabled)
                     {
                         RefreshTimer.Stop();
-                        RefreshTimer.SetPeriod(RefreshInterval);
+                        RefreshTimer.Interval = RefreshInterval;
                         RefreshTimer.Start();
                     }
                 }
@@ -274,7 +288,7 @@ public static class OSDManager
                         else
                         {
                             // Other modes need the refresh timer to update OSD
-                            if (!RefreshTimer.IsRunning())
+                            if (!RefreshTimer.Enabled)
                                 RefreshTimer.Start();
                         }
                     }

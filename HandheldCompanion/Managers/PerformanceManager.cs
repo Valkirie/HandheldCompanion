@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using static HandheldCompanion.Processors.IntelProcessor;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
@@ -278,7 +279,6 @@ public static class PerformanceManager
             // and max limit for AutoTDP
             if (profile.TDPOverrideValues is not null)
                 AutoTDP = AutoTDPMax = profile.TDPOverrideValues[0];
-
         }
         else
         {
@@ -446,7 +446,12 @@ public static class PerformanceManager
         if (processor is null || !processor.IsInitialized)
             return;
 
-        if (!PlatformManager.RTSS.HasHook())
+        // we're not ready yet
+        if (!ManagerFactory.platformManager.IsReady)
+            return;
+
+        bool hasHook = PlatformManager.RTSS?.HasHook() ?? false;
+        if (!hasHook)
         {
             autotdpWatchdog.Interval = INTERVAL_DEGRADED;
             RestoreTDP(true);
@@ -466,7 +471,8 @@ public static class PerformanceManager
                 double unclampedProcessValueFPS = 0.0;
 
                 // todo: Store fps for data gathering from multiple points (OSD, Performance)
-                double processValueFPS = unclampedProcessValueFPS = PlatformManager.RTSS.GetFramerate(true);
+                double framerate = PlatformManager.RTSS?.GetFramerate(true) ?? 0.0d;
+                double processValueFPS = unclampedProcessValueFPS = framerate;
 
                 // Ensure realistic process values, prevent divide by 0
                 processValueFPS = Math.Clamp(processValueFPS, 5, 500);
@@ -496,7 +502,20 @@ public static class PerformanceManager
                 // Only update if we have a different TDP value to set
                 if (AutoTDP != AutoTDPPrev)
                 {
-                    double[] values = new double[3] { AutoTDP, AutoTDP, AutoTDP };
+                    int TDPBump = 0;
+
+                    if (GetProcessor() is IntelProcessor intelProcessor)
+                    {
+                        switch (intelProcessor.MicroArch)
+                        {
+                            // Official specification for Lunar Lake states that PL2 should always be at least 1 W higher than PL1
+                            case IntelMicroArch.LunarLake:
+                                TDPBump = 1;
+                                break;
+                        }
+                    }
+
+                    double[] values = new double[3] { AutoTDP, AutoTDP, AutoTDP + TDPBump };
                     RequestTDP(values, true);
                     AutoTDPPrev = AutoTDP;
 

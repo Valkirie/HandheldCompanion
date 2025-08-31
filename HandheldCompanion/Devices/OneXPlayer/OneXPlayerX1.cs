@@ -74,6 +74,8 @@ public class OneXPlayerX1 : IDevice
         Capabilities |= DeviceCapabilities.DynamicLighting;
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
         Capabilities |= DeviceCapabilities.DynamicLightingSecondLEDColor;
+
+        // dynamic lighting capacities
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
         DynamicLightingCapabilities |= LEDLevel.LEDPreset;
 

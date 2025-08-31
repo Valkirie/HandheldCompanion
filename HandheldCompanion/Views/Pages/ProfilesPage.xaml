@@ -374,7 +374,7 @@
                                     <!--  Path  -->
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition MinWidth="110" />
+                                            <ColumnDefinition MinWidth="140" />
                                             <ColumnDefinition Width="10*" MinWidth="200" />
                                         </Grid.ColumnDefinitions>
 
@@ -406,7 +406,7 @@
                                     <!--  Arguments  -->
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition MinWidth="110" />
+                                            <ColumnDefinition MinWidth="140" />
                                             <ColumnDefinition Width="10*" MinWidth="200" />
                                         </Grid.ColumnDefinitions>
 
@@ -434,10 +434,41 @@
                                         </DockPanel>
                                     </Grid>
 
+                                    <!--  Launch string  -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition MinWidth="140" />
+                                            <ColumnDefinition Width="10*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <DockPanel>
+                                            <ui:FontIcon
+                                                Height="40"
+                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                                Glyph="&#xedb5;" />
+                                            <TextBlock
+                                                Margin="12,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                                Style="{StaticResource BodyTextBlockStyle}"
+                                                Text="{l:Static resx:Resources.ProfilesPage_ProfileLaunchString}" />
+                                        </DockPanel>
+
+                                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                            <TextBox
+                                                Name="tB_ProfileLaunchString"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                BorderThickness="1"
+                                                TextChanged="tB_ProfileLaunchString_TextChanged" />
+                                        </DockPanel>
+                                    </Grid>
+
                                     <!--  Sub Profiles  -->
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition MinWidth="110" />
+                                            <ColumnDefinition MinWidth="140" />
                                             <ColumnDefinition Width="10*" MinWidth="200" />
                                         </Grid.ColumnDefinitions>
 
@@ -454,8 +485,9 @@
                                                 Style="{StaticResource BodyTextBlockStyle}"
                                                 Text="{l:Static resx:Resources.ProfilesPage_SubProfiles}" />
                                         </DockPanel>
-                                        <DockPanel Grid.Column="1">
-                                            <Grid Margin="12,0,0,0">
+
+                                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                            <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="8*" MinWidth="200" />
                                                     <ColumnDefinition Width="Auto" />
@@ -497,6 +529,63 @@
                                                     VerticalAlignment="Center"
                                                     Click="b_SubProfileRename_Click">
                                                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe712;" />
+                                                </Button>
+                                            </Grid>
+                                        </DockPanel>
+                                    </Grid>
+
+                                    <!--  Executables  -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition MinWidth="140" />
+                                            <ColumnDefinition Width="10*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <DockPanel>
+                                            <ui:FontIcon
+                                                Height="40"
+                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                                Glyph="&#xe8a5;" />
+                                            <TextBlock
+                                                Margin="12,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                                Style="{StaticResource BodyTextBlockStyle}"
+                                                Text="{l:Static resx:Resources.ProfilesPage_ProfileExecutables}" />
+                                        </DockPanel>
+
+                                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="8*" MinWidth="200" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <ComboBox
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Center"
+                                                    IsEnabled="{Binding HasProfileExecutables, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    ItemsSource="{Binding ProfileExecutables, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    SelectedIndex="{Binding ProfileExecutablesIdx, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                                <Button
+                                                    Grid.Column="1"
+                                                    Margin="6,0,0,0"
+                                                    VerticalAlignment="Center"
+                                                    Command="{Binding AddProfileExecutable}"
+                                                    Style="{DynamicResource AccentButtonStyle}">
+                                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe710;" />
+                                                </Button>
+
+                                                <Button
+                                                    Grid.Column="2"
+                                                    Margin="6,0,0,0"
+                                                    VerticalAlignment="Center"
+                                                    Command="{Binding RemoveProfileExecutable}"
+                                                    IsEnabled="{Binding HasProfileExecutables, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe738;" />
                                                 </Button>
                                             </Grid>
                                         </DockPanel>

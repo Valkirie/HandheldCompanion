@@ -313,10 +313,10 @@ namespace HandheldCompanion.Managers
                 gamepadMotion.SetCalibrationMode(CalibrationMode.Stillness | CalibrationMode.SensorFusion);
 
                 // wait until device is steady
-                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(5));
                 float confidence = 0.0f;
 
-                while (DateTime.Now < timeout)
+                Task timeout = Task.Delay(TimeSpan.FromSeconds(5));
+                while (!timeout.IsCompleted)
                 {
                     confidence = gamepadMotion.GetAutoCalibrationConfidence();
                     if (confidence == 1.0f)
