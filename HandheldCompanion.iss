@@ -25,7 +25,7 @@
 #define InstallerVersion        "0.2"
 #define MyAppSetupName         "Handheld Companion"
 #define MyBuildId              "HandheldCompanion"
-#define MyAppVersion           "0.27.0.6"
+#define MyAppVersion           "0.27.0.7"
 #define MyAppPublisher         "BenjaminLSR"
 #define MyAppCopyright         "Copyright © BenjaminLSR"
 #define MyAppURL               "https://github.com/Valkirie/HandheldCompanion"
