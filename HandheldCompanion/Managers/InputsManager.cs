@@ -598,9 +598,6 @@ public static class InputsManager
         else
             ButtonState.Overwrite(buttonState, prevState);
 
-        if (!IsMapped)
-            return;
-
         // half-press should be removed if full-press is also present
         RemoveHalfPressIfFullPress(ButtonFlags.L2Full, ButtonFlags.L2Soft);
         RemoveHalfPressIfFullPress(ButtonFlags.R2Full, ButtonFlags.R2Soft);
