@@ -97,8 +97,8 @@ public class DeviceManager : IManager
         HidDeviceListener.StartListen(DeviceInterfaceIds.HidDevice);
 
         RefreshDrivers();
-        RefreshDInput();
-        RefreshXInput();
+        RefreshDInputAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+        RefreshXInputAsync().ConfigureAwait(false).GetAwaiter().GetResult();
         RefreshDisplayAdapters(true);
 
         base.Start();
@@ -141,48 +141,63 @@ public class DeviceManager : IManager
         base.Stop();
     }
 
-    public void RefreshXInput()
+    public async Task RefreshXInputAsync()
     {
+        var tasks = new List<Task>();
         var deviceIndex = 0;
-        Dictionary<string, DateTimeOffset> devices = [];
+        var devices = new Dictionary<string, DateTimeOffset>();
 
-        while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.XUsbDevice, out var path, out var instanceId,
-                   deviceIndex++))
+        while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.XUsbDevice, out var path, out var _, deviceIndex++))
         {
             var device = PnPDevice.GetDeviceByInterfaceId(path);
-            var arrival = device.GetProperty<DateTimeOffset>(DevicePropertyKey.Device_LastArrivalDate);
-
-            // add new device
-            devices[path] = arrival;
+            devices[path] = device.GetProperty<DateTimeOffset>(DevicePropertyKey.Device_LastArrivalDate);
         }
 
-        // sort devices list
-        devices = devices.OrderBy(device => device.Value).ToDictionary(x => x.Key, x => x.Value);
-        foreach (var pair in devices)
-            XUsbDevice_DeviceArrived(new DeviceEventArgs
-            { InterfaceGuid = DeviceInterfaceIds.XUsbDevice, SymLink = pair.Key });
+        foreach (var (path, _) in devices.OrderBy(d => d.Value))
+        {
+            var args = new DeviceEventArgs { InterfaceGuid = DeviceInterfaceIds.XUsbDevice, SymLink = path };
+            XUsbDevice_DeviceArrived(args); // posts a Task into arrivalInProgress
+
+            var instanceId = SymLinkToInstanceId(args.SymLink, args.InterfaceGuid.ToString());
+            Task t;
+            // wait briefly until the arrival task is visible
+            var until = DateTime.UtcNow.AddMilliseconds(500);
+            while (!arrivalInProgress.TryGetValue(instanceId, out t) && DateTime.UtcNow < until)
+                await Task.Delay(10).ConfigureAwait(false);
+
+            if (t != null) tasks.Add(t);
+        }
+
+        await Task.WhenAll(tasks).ConfigureAwait(false);
     }
 
-    public void RefreshDInput()
+    public async Task RefreshDInputAsync()
     {
+        var tasks = new List<Task>();
         var deviceIndex = 0;
-        Dictionary<string, DateTimeOffset> devices = [];
+        var devices = new Dictionary<string, DateTimeOffset>();
 
-        while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.HidDevice, out var path, out var instanceId,
-                   deviceIndex++))
+        while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.HidDevice, out var path, out var _, deviceIndex++))
         {
             var device = PnPDevice.GetDeviceByInterfaceId(path);
-            var arrival = device.GetProperty<DateTimeOffset>(DevicePropertyKey.Device_LastArrivalDate);
-
-            // add new device
-            devices[path] = arrival;
+            devices[path] = device.GetProperty<DateTimeOffset>(DevicePropertyKey.Device_LastArrivalDate);
         }
 
-        // sort devices list
-        devices = devices.OrderBy(device => device.Value).ToDictionary(x => x.Key, x => x.Value);
-        foreach (var pair in devices)
-            HidDevice_DeviceArrived(new DeviceEventArgs
-            { InterfaceGuid = DeviceInterfaceIds.HidDevice, SymLink = pair.Key });
+        foreach (var (path, _) in devices.OrderBy(d => d.Value))
+        {
+            var args = new DeviceEventArgs { InterfaceGuid = DeviceInterfaceIds.HidDevice, SymLink = path };
+            HidDevice_DeviceArrived(args);
+
+            var instanceId = SymLinkToInstanceId(args.SymLink, args.InterfaceGuid.ToString());
+            Task t;
+            var until = DateTime.UtcNow.AddMilliseconds(500);
+            while (!hidArrivalInProgress.TryGetValue(instanceId, out t) && DateTime.UtcNow < until)
+                await Task.Delay(10).ConfigureAwait(false);
+
+            if (t != null) tasks.Add(t);
+        }
+
+        await Task.WhenAll(tasks).ConfigureAwait(false);
     }
 
     public PnPDetails FindDevice(string InstanceId)
