@@ -71,14 +71,11 @@ public class AMDProcessor : Processor
             if (!CanChangeTDP)
                 return;
 
-            // 15W : 15000
-            limit *= 1000;
-
-            // get device
-            IDevice device = IDevice.GetCurrent();
-
             if (HasOEMCPU && UseOEM)
             {
+                // get device
+                IDevice device = IDevice.GetCurrent();
+
                 switch (type)
                 {
                     case PowerType.Slow:
@@ -93,6 +90,9 @@ public class AMDProcessor : Processor
             {
                 if (ry != IntPtr.Zero)
                 {
+                    // 15W : 15000
+                    limit *= 1000;
+
                     switch (type)
                     {
                         case PowerType.Fast:
