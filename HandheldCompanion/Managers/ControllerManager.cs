@@ -1141,8 +1141,8 @@ public static class ControllerManager
 
     public static void Rescan()
     {
-        ManagerFactory.deviceManager.RefreshDInput();
-        ManagerFactory.deviceManager.RefreshXInput();
+        ManagerFactory.deviceManager.RefreshDInputAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+        ManagerFactory.deviceManager.RefreshXInputAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
         // Reopen all SDL gamepads
         uint[] gamepads = SDL.GetGamepads(out int count);

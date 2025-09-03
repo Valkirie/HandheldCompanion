@@ -394,28 +394,18 @@ public partial class QuickProfilesPage : Page
     private void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
         List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
-        if (profileLock.TryEnter())
+
+        // UI thread
+        UIHelper.TryInvoke(() =>
         {
-            try
-            {
-                // UI thread
-                UIHelper.TryInvoke(() =>
-                {
-                    cB_Framerate.Items.Clear();
+            cB_Framerate.Items.Clear();
 
-                    foreach (ScreenFramelimit frameLimit in frameLimits)
-                        cB_Framerate.Items.Add(frameLimit);
+            foreach (ScreenFramelimit frameLimit in frameLimits)
+                cB_Framerate.Items.Add(frameLimit);
 
-                    if (selectedProfile is not null)
-                        cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
-                });
-            }
-            catch { }
-            finally
-            {
-                profileLock.Exit();
-            }
-        }
+            if (selectedProfile is not null)
+                cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
+        });
     }
 
     public void SubmitProfile(UpdateSource source = UpdateSource.QuickProfilesPage)
@@ -1146,7 +1136,7 @@ public partial class QuickProfilesPage : Page
         if (cB_Framerate.SelectedIndex == -1)
             return;
 
-        if (cB_Framerate.SelectedItem is ScreenFramelimit screenFramelimit)
+        if (cB_Framerate.SelectedItem is ScreenFramelimit screenFramelimit && screenFramelimit.limit != selectedProfile.FramerateValue)
         {
             selectedProfile.FramerateValue = screenFramelimit.limit;
             UpdateProfile();

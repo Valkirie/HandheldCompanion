@@ -47,7 +47,7 @@ public static class SystemManager
     }
 
     private static bool IsPowerSuspended;
-    private static bool IsSessionLocked = true;
+    public static bool IsSessionLocked = true;
 
     private static SystemStatus currentSystemStatus = SystemStatus.SystemBooting;
     private static SystemStatus previousSystemStatus = SystemStatus.SystemBooting;
@@ -204,21 +204,15 @@ public static class SystemManager
             case SessionSwitchReason.SessionLock:
                 IsSessionLocked = true;
                 break;
-            default:
-                return;
         }
 
         LogManager.LogDebug("Session switched to {0}", e.Reason);
-
-        PerformSystemRoutine();
     }
 
     private static void PerformSystemRoutine()
     {
-        if (!IsPowerSuspended && !IsSessionLocked)
-            currentSystemStatus = SystemStatus.SystemReady;
-        else
-            currentSystemStatus = SystemStatus.SystemPending;
+        // update status
+        currentSystemStatus = IsPowerSuspended ? SystemStatus.SystemPending : SystemStatus.SystemReady;
 
         // only raise event is system status has changed
         if (previousSystemStatus == currentSystemStatus)
@@ -227,6 +221,7 @@ public static class SystemManager
         LogManager.LogInformation("System status set to {0}", currentSystemStatus);
         SystemStatusChanged?.Invoke(currentSystemStatus, previousSystemStatus);
 
+        // update status
         previousSystemStatus = currentSystemStatus;
     }
 }

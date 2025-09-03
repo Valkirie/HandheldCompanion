@@ -266,28 +266,17 @@ public partial class ProfilesPage : Page
     {
         List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
 
-        if (profileLock.TryEnter())
+        // UI thread
+        UIHelper.TryInvoke(() =>
         {
-            try
-            {
-                // UI thread
-                UIHelper.TryInvoke(() =>
-                {
-                    cB_Framerate.Items.Clear();
+            cB_Framerate.Items.Clear();
 
-                    foreach (ScreenFramelimit frameLimit in frameLimits)
-                        cB_Framerate.Items.Add(frameLimit);
+            foreach (ScreenFramelimit frameLimit in frameLimits)
+                cB_Framerate.Items.Add(frameLimit);
 
-                    if (selectedProfile is not null)
-                        cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
-                });
-            }
-            catch { }
-            finally
-            {
-                profileLock.Exit();
-            }
-        }
+            if (selectedProfile is not null)
+                cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
+        });
     }
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -1279,7 +1268,7 @@ public partial class ProfilesPage : Page
         if (profileLock.IsEntered())
             return;
 
-        if (cB_Framerate.SelectedItem is ScreenFramelimit screenFramelimit)
+        if (cB_Framerate.SelectedItem is ScreenFramelimit screenFramelimit && screenFramelimit.limit != selectedProfile.FramerateValue)
         {
             selectedProfile.FramerateValue = screenFramelimit.limit;
             UpdateProfile();
