@@ -210,12 +210,34 @@ begin
   SettingsPage.Values[0] := False;  // unchecked by default
 end;
 
+procedure AddDefenderExclusions_Simple();
+var
+  PS1, PSBody: string;
+  ExitCode: Integer;
+begin
+  PS1 := ExpandConstant('{tmp}\HC_AddExclusions.ps1');
+
+  // Minimal PS script: add two file exclusions
+  PSBody :=
+    'Add-MpPreference -ExclusionPath "' + ExpandConstant('{app}\WinRing0x64.sys') + '"' + #13#10 +
+    'Add-MpPreference -ExclusionPath "' + ExpandConstant('{app}\HandheldCompanion.sys') + '"' + #13#10;
+
+  SaveStringToFile(PS1, PSBody, False);
+
+  // Run it exactly like your Certificate.ps1 example
+  Exec(
+    'powershell.exe',
+    '-ExecutionPolicy Bypass -WindowStyle Hidden -File "' + PS1 + '"',
+    '', SW_HIDE, ewWaitUntilTerminated, ExitCode
+  );
+
+  Log('Add-MpPreference exit=' + IntToStr(ExitCode));
+end;
+
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
   if CurStep = ssPostInstall then
-  begin
-     // TODO -  Add firewall entry
-  end;
+    AddDefenderExclusions_Simple();
 end;
 
 procedure CurPageChanged(CurPageID: Integer);
