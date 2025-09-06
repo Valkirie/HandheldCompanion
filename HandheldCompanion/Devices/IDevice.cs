@@ -680,6 +680,7 @@ public abstract class IDevice
                             device = new OneXPlayerX1Intel();
                             break;
                         case "ONEXPLAYER X1 A":
+                        case "ONEXPLAYER X1z":
                             device = new OneXPlayerX1AMD();
                             break;
                         case "ONEXPLAYER X1 mini":
