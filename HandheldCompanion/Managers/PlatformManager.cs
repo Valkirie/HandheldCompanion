@@ -105,24 +105,14 @@ public class PlatformManager : IManager
     {
         List<IGame> games = new List<IGame>();
 
-        if (gamePlatform.HasFlag(GamePlatform.Steam))
-            games.AddRange(Steam.GetGames());
-        if (gamePlatform.HasFlag(GamePlatform.Origin))
-            games.AddRange(Origin.GetGames());
-        if (gamePlatform.HasFlag(GamePlatform.UbisoftConnect))
-            games.AddRange(UbisoftConnect.GetGames());
-        if (gamePlatform.HasFlag(GamePlatform.GOG))
-            games.AddRange(GOGGalaxy.GetGames());
-        if (gamePlatform.HasFlag(GamePlatform.BattleNet))
-            games.AddRange(BattleNet.GetGames());
-        if (gamePlatform.HasFlag(GamePlatform.Epic))
-            games.AddRange(Epic.GetGames());
-        if (gamePlatform.HasFlag(GamePlatform.RiotGames))
-            games.AddRange(RiotGames.GetGames());
-        if (gamePlatform.HasFlag(GamePlatform.Rockstar))
-            games.AddRange(Rockstar.GetGames());
-        if (gamePlatform.HasFlag(GamePlatform.EADesktop))
-            games.AddRange(EADesktop.GetGames());
+        foreach (IPlatform platform in GamingPlatforms)
+        {
+            if (!gamePlatform.HasFlag(platform.PlatformType))
+                continue;
+
+            platform.Refresh();
+            games.AddRange(platform.GetGames());
+        }
 
         return games;
     }
