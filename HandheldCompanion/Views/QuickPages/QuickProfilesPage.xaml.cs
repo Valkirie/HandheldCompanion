@@ -395,17 +395,28 @@ public partial class QuickProfilesPage : Page
     {
         List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
 
-        // UI thread
-        UIHelper.TryInvoke(() =>
+        if (profileLock.TryEnter())
         {
-            cB_Framerate.Items.Clear();
+            try
+            {
+                // UI thread
+                UIHelper.TryInvoke(() =>
+                {
+                    cB_Framerate.Items.Clear();
 
-            foreach (ScreenFramelimit frameLimit in frameLimits)
-                cB_Framerate.Items.Add(frameLimit);
+                    foreach (ScreenFramelimit frameLimit in frameLimits)
+                        cB_Framerate.Items.Add(frameLimit);
 
-            if (selectedProfile is not null)
-                cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
-        });
+                    if (selectedProfile is not null)
+                        cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
+                });
+            }
+            catch { }
+            finally
+            {
+                profileLock.Exit();
+            }
+        }
     }
 
     public void SubmitProfile(UpdateSource source = UpdateSource.QuickProfilesPage)
