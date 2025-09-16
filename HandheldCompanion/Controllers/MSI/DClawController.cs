@@ -189,7 +189,7 @@ public class DClawController : DInputController
         if (!IsConnected())
             return;
 
-        joystickHid?.Write(new byte[]
+        controller?.HidWrite(new byte[]
         {
             05, 01, 00, 00,
             (byte)(SmallMotor * VibrationStrength),
