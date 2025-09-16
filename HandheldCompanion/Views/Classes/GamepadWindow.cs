@@ -6,10 +6,14 @@ using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Threading;
 using WpfScreenHelper;
 
 namespace HandheldCompanion.Views.Classes
@@ -43,6 +47,22 @@ namespace HandheldCompanion.Views.Classes
         private AdornerLayer _adornerLayer;
         private HighlightAdorner _highlightAdorner;
 
+        protected const int WM_DISPLAYCHANGE = 0x007E;
+        protected const int WM_DPICHANGED = 0x02E0;
+        protected const int WM_DEVICECHANGE = 0x0219;
+
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmFlush();
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool RedrawWindow(IntPtr hWnd, IntPtr lprcUpdate, IntPtr hrgnUpdate, uint flags);
+        private const uint RDW_INVALIDATE = 0x0001;
+        private const uint RDW_INTERNALPAINT = 0x0002;
+        private const uint RDW_ERASE = 0x0004;
+        private const uint RDW_ALLCHILDREN = 0x0080;
+        private const uint RDW_UPDATENOW = 0x0100;
+        private const uint RDW_FRAME = 0x0400;
+
         public GamepadWindow()
         {
             LayoutUpdated += OnLayoutUpdated;
@@ -59,7 +79,61 @@ namespace HandheldCompanion.Views.Classes
 
         protected virtual IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
+            switch (msg)
+            {
+                case WM_DISPLAYCHANGE:
+                case WM_DPICHANGED:
+                case WM_DEVICECHANGE:
+                    ForceRecompose();
+                    break;
+            }
+
             return IntPtr.Zero;
+        }
+
+        private async void ForceRecompose()
+        {
+            await Task.Delay(1000).ConfigureAwait(false);
+
+            Dispatcher.Invoke(DispatcherPriority.Render, new Action(() =>
+            {
+                var source = hwndSource;
+                var target = source?.CompositionTarget as HwndTarget;
+                if (target == null) return;
+
+                target.RenderMode = RenderMode.SoftwareOnly;
+                RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
+
+                // Invalidate the WINDOW
+                this.InvalidateVisual();
+
+                // On the next render tick, flip back to hardware and force a redraw
+                EventHandler? kick = null;
+                kick = (s, e) =>
+                {
+                    CompositionTarget.Rendering -= kick;
+
+                    try
+                    {
+                        target.RenderMode = RenderMode.Default;
+                        RenderOptions.ProcessRenderMode = RenderMode.Default;
+
+                        this.InvalidateVisual();
+
+                        try { DwmFlush(); } catch { /* ignore */ }
+
+                        var h = source.Handle;
+                        RedrawWindow(h, IntPtr.Zero, IntPtr.Zero, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW | RDW_FRAME);
+
+                        // last-resort nudge for very stubborn cases
+                        var w = this.Width;
+                        this.Width = w + 1;
+                        this.Width = w;
+                    }
+                    catch { /* ignore */ }
+                };
+                CompositionTarget.Rendering += kick;
+            }));
         }
 
         public void SetFocusedElement(Control focusedControl)
