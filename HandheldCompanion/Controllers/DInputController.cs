@@ -106,7 +106,7 @@ public class DInputController : IController
         try
         {
             joystick?.Acquire();
-            controller?.Open();
+            controller?.Open(false);
         }
         catch { }
 

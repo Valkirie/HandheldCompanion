@@ -10,9 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Radios;
 using Page = System.Windows.Controls.Page;
@@ -25,7 +25,7 @@ namespace HandheldCompanion.Views.QuickPages;
 public partial class QuickDevicePage : Page
 {
     private IReadOnlyList<Radio> radios;
-    private Timer radioTimer;
+    private DispatcherTimer radioTimer;
 
     public QuickDevicePage()
     {
@@ -49,9 +49,11 @@ public partial class QuickDevicePage : Page
         NightLightToggle.IsEnabled = NightLight.Supported;
         NightLightToggle.IsOn = NightLight.Enabled;
 
-        // why is that part of a timer ?
-        radioTimer = new(1000);
-        radioTimer.Elapsed += RadioTimer_Elapsed;
+        radioTimer = new DispatcherTimer(DispatcherPriority.Background)
+        {
+            Interval = TimeSpan.FromSeconds(2) // 2s is plenty; go 5s if you like
+        };
+        radioTimer.Tick += RadioTimer_Tick;
         radioTimer.Start();
     }
 
@@ -144,38 +146,20 @@ public partial class QuickDevicePage : Page
         });
     }
 
-    private void RadioTimer_Elapsed(object? sender, ElapsedEventArgs e)
+    private async void RadioTimer_Tick(object? sender, EventArgs e)
     {
-        new Task(async () =>
-        {
-            // Get the Bluetooth adapter
-            BluetoothAdapter adapter = await BluetoothAdapter.GetDefaultAsync();
+        // Query radios directly; we’re on the UI dispatcher, no new Task()
+        var adapter = await BluetoothAdapter.GetDefaultAsync();
+        radios = await Radio.GetRadiosAsync();
 
-            // Get the Bluetooth radio
-            radios = await Radio.GetRadiosAsync();
+        WifiToggle.IsEnabled = radios?.Any(r => r.Kind == RadioKind.WiFi) == true;
+        BluetoothToggle.IsEnabled = radios?.Any(r => r.Kind == RadioKind.Bluetooth) == true;
 
-            // UI thread
-            UIHelper.TryInvoke(() =>
-            {
-                if (radios is null)
-                {
-                    WifiToggle.IsEnabled = false;
-                    BluetoothToggle.IsEnabled = false;
-                    return;
-                }
+        var wifi = radios?.FirstOrDefault(r => r.Kind == RadioKind.WiFi);
+        var bt = radios?.FirstOrDefault(r => r.Kind == RadioKind.Bluetooth);
 
-                Radio? wifiRadio = radios.FirstOrDefault(radio => radio.Kind == RadioKind.WiFi);
-                Radio? bluetoothRadio = radios.FirstOrDefault(radio => radio.Kind == RadioKind.Bluetooth);
-
-                // WIFI
-                WifiToggle.IsEnabled = wifiRadio != null;
-                WifiToggle.IsOn = wifiRadio?.State == RadioState.On;
-
-                // Bluetooth
-                BluetoothToggle.IsEnabled = bluetoothRadio != null;
-                BluetoothToggle.IsOn = bluetoothRadio?.State == RadioState.On;
-            });
-        }).Start();
+        WifiToggle.IsOn = wifi?.State == RadioState.On;
+        BluetoothToggle.IsOn = bt?.State == RadioState.On;
     }
 
     private CrossThreadLock multimediaLock = new();

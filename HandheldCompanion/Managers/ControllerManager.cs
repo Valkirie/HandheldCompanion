@@ -221,7 +221,7 @@ public static class ControllerManager
             return;
 
         // raise event, before layout mapping
-        EventHelper.RaiseAsync(InputsUpdated, controllerState, false);
+        EventHelper.RaiseInputsUpdatedAsync(InputsUpdated, controllerState, false);
 
         // get main motion safely
         byte gamepadIndex = tc.gamepadIndex;
@@ -251,7 +251,7 @@ public static class ControllerManager
 
         // compute layout (null-safe mapping)
         ControllerState mapped = ManagerFactory.layoutManager?.MapController(controllerState, delta) ?? controllerState;
-        EventHelper.RaiseAsync(InputsUpdated, mapped, true);
+        EventHelper.RaiseInputsUpdatedAsync(InputsUpdated, mapped, true);
 
         // controller is muted
         if (ControllerMuted)

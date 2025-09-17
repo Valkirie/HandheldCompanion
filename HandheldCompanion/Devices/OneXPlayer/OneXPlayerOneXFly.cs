@@ -151,10 +151,8 @@ public class OneXPlayerOneXFly : IDevice
     public override bool IsReady()
     {
         // Prepare list for all HID devices
-        HidDevice[] HidDeviceList = HidDevices.Enumerate(vendorId, productIds).ToArray();
-
-        // Check every HID device to find LED device
-        foreach (HidDevice device in HidDeviceList)
+        IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds);
+        foreach (HidDevice device in devices)
         {
             // OneXFly device for LED control does not support a FeatureReport, hardcoded to match the Interface Number
             if (device.IsConnected && device.DevicePath.Contains("&mi_00"))
