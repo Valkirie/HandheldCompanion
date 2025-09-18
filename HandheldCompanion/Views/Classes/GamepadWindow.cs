@@ -83,7 +83,6 @@ namespace HandheldCompanion.Views.Classes
             {
                 case WM_DISPLAYCHANGE:
                 case WM_DPICHANGED:
-                case WM_DEVICECHANGE:
                     ForceRecompose();
                     break;
             }
@@ -104,9 +103,6 @@ namespace HandheldCompanion.Views.Classes
                 target.RenderMode = RenderMode.SoftwareOnly;
                 RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
 
-                // Invalidate the WINDOW
-                this.InvalidateVisual();
-
                 // On the next render tick, flip back to hardware and force a redraw
                 EventHandler? kick = null;
                 kick = (s, e) =>
@@ -117,18 +113,6 @@ namespace HandheldCompanion.Views.Classes
                     {
                         target.RenderMode = RenderMode.Default;
                         RenderOptions.ProcessRenderMode = RenderMode.Default;
-
-                        this.InvalidateVisual();
-
-                        try { DwmFlush(); } catch { /* ignore */ }
-
-                        var h = source.Handle;
-                        RedrawWindow(h, IntPtr.Zero, IntPtr.Zero, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW | RDW_FRAME);
-
-                        // last-resort nudge for very stubborn cases
-                        var w = this.Width;
-                        this.Width = w + 1;
-                        this.Width = w;
                     }
                     catch { /* ignore */ }
                 };
