@@ -538,6 +538,10 @@ public partial class MainWindow : GamepadWindow
                         // when device resumes from sleep
                         resumeTime = DateTime.Now;
 
+                        // force recompose window(s)
+                        this.ForceRecompose();
+                        overlayquickTools.ForceRecompose();
+
                         // use device-specific delay
                         await Task.Delay(CurrentDevice.ResumeDelay); // Captures synchronization context
 
