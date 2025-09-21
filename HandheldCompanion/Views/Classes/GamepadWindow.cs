@@ -90,7 +90,7 @@ namespace HandheldCompanion.Views.Classes
             return IntPtr.Zero;
         }
 
-        private async void ForceRecompose()
+        public async void ForceRecompose()
         {
             await Task.Delay(1000).ConfigureAwait(false);
 

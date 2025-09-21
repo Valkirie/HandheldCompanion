@@ -952,7 +952,7 @@ public static class ControllerManager
         {
             // uncloak on close, if requested
             if (HIDuncloakonclose)
-                controller.Unhide(false);
+                controller.Unhide(!controller.IsBluetooth());
 
             // dispose controller
             // controller.Dispose();
