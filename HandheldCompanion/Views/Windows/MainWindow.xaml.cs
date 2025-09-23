@@ -781,6 +781,31 @@ public partial class MainWindow : GamepadWindow
         }
     }
 
+    void UpdateAltTabVisibility(bool visible)
+    {
+        var hwnd = new WindowInteropHelper(this).Handle;
+        if (hwnd == IntPtr.Zero) return;
+
+        var exStyle = GetWindowLongPtr(hwnd, GWL_EXSTYLE).ToInt64();
+
+        if (visible)
+        {
+            exStyle |= WS_EX_APPWINDOW;
+            exStyle &= ~WS_EX_TOOLWINDOW;
+        }
+        else
+        {
+            exStyle |= WS_EX_TOOLWINDOW;
+            exStyle &= ~WS_EX_APPWINDOW;
+        }
+
+        SetWindowLongPtr(hwnd, GWL_EXSTYLE, new IntPtr(exStyle));
+
+        // force a non-client refresh so style change applies immediately
+        SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+    }
+
     private void Window_StateChanged(object sender, EventArgs e)
     {
         switch (WindowState)
@@ -789,6 +814,7 @@ public partial class MainWindow : GamepadWindow
                 {
                     notifyIcon.Visible = Homepage_Loaded;
                     ShowInTaskbar = false;
+                    UpdateAltTabVisibility(false);
 
                     if (!NotifyInTaskbar)
                     {
@@ -800,6 +826,7 @@ public partial class MainWindow : GamepadWindow
             case WindowState.Normal:
             case WindowState.Maximized:
                 {
+                    UpdateAltTabVisibility(true);
                     notifyIcon.Visible = false;
                     ShowInTaskbar = true;
 
