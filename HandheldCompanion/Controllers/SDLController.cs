@@ -192,6 +192,11 @@ namespace HandheldCompanion.Controllers
             [GamepadButton.RightStick] = ButtonFlags.RightStickClick,
         };
 
+        public override void Tick(long ticks, float delta, bool commit = false)
+        {
+            ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
+        }
+
         public void PumpEvent(Event e)
         {
             switch ((EventType)e.Type)
