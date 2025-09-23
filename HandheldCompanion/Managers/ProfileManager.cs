@@ -184,18 +184,18 @@ public class ProfileManager : IManager
 
         // Get favorite sub-profile (unless asking for parent)
         if (!getParent)
-            profile = profiles.Values.FirstOrDefault(p => p.IsSubProfile && p.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase) || p.Executables.Contains(path) && p.IsFavoriteSubProfile);
+            profile = profiles.Values.FirstOrDefault(p => p.IsSubProfile && (p.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase) || p.Executables.Contains(path)) && p.IsFavoriteSubProfile);
 
         // If null, get profile by path
         var parentProfiles = profiles.Values.Where(p => !p.IsSubProfile);
-        profile ??= parentProfiles.FirstOrDefault(p => !p.IsSubProfile && p.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase) || p.Executables.Contains(path));
+        profile ??= parentProfiles.FirstOrDefault(p => !p.IsSubProfile && (p.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase) || p.Executables.Contains(path)));
 
         // If null, get profile by executable name
         // todo: improve me, maybe scroll through all string instead ?
         if (profile is null)
         {
             string exeName = Path.GetFileName(path);
-            profile = profiles.Values.FirstOrDefault(p => p.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase) || p.Executables.Contains(exeName));
+            profile = profiles.Values.FirstOrDefault(p => (p.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase) || p.Executables.Contains(exeName)));
         }
 
         // If null or disabled, return default
@@ -226,7 +226,7 @@ public class ProfileManager : IManager
     public IEnumerable<Profile> GetSubProfilesFromProfile(Profile mainProfile, bool addMain = false)
     {
         // get subprofile corresponding to path
-        IEnumerable<Profile> filteredSubProfiles = profiles.Values.Where(pr => pr.ParentGuid == mainProfile.Guid).OrderBy(pr => pr.Name);
+        IEnumerable<Profile> filteredSubProfiles = profiles.Values.Where(pr => pr.IsSubProfile && pr.ParentGuid == mainProfile.Guid).OrderBy(pr => pr.Name);
         if (addMain) filteredSubProfiles = filteredSubProfiles.InsertAt(mainProfile, 0);
         return filteredSubProfiles;
     }
@@ -234,7 +234,7 @@ public class ProfileManager : IManager
     public IEnumerable<Profile> GetSubProfilesFromProfile(Guid guid, bool addMain = false)
     {
         // get subprofile corresponding to path
-        IEnumerable<Profile> filteredSubProfiles = profiles.Values.Where(pr => pr.ParentGuid == guid).OrderBy(pr => pr.Name);
+        IEnumerable<Profile> filteredSubProfiles = profiles.Values.Where(pr => pr.IsSubProfile && pr.ParentGuid == guid).OrderBy(pr => pr.Name);
         if (addMain)
         {
             Profile mainProfile = GetProfileFromGuid(guid, true);
@@ -254,10 +254,12 @@ public class ProfileManager : IManager
         return GetProfileFromGuid(subProfile.ParentGuid);
     }
 
-    public void SetSubProfileAsFavorite(Profile subProfile)
+    public void SetFavorite(Profile subProfile)
     {
+        Guid guid = subProfile.IsSubProfile ? subProfile.ParentGuid : subProfile.Guid;
+
         // update favorite flag across all subprofiles sharing the same parent
-        foreach (Profile profile in GetSubProfilesFromProfile(subProfile.ParentGuid))
+        foreach (Profile profile in GetSubProfilesFromProfile(guid))
         {
             profile.IsFavoriteSubProfile = profile.Guid == subProfile.Guid ? true : false;
             SerializeProfile(profile);
@@ -981,7 +983,7 @@ public class ProfileManager : IManager
         // apply profile (silently)
         if (isCurrent)
         {
-            SetSubProfileAsFavorite(profile); // if sub profile, set it as favorite for main profile
+            SetFavorite(profile); // if sub profile, set it as favorite for main profile
             ApplyProfile(profile, source);
         }
 
