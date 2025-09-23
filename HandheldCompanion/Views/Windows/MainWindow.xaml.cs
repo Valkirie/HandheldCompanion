@@ -783,10 +783,7 @@ public partial class MainWindow : GamepadWindow
 
     void UpdateAltTabVisibility(bool visible)
     {
-        var hwnd = new WindowInteropHelper(this).Handle;
-        if (hwnd == IntPtr.Zero) return;
-
-        var exStyle = GetWindowLongPtr(hwnd, GWL_EXSTYLE).ToInt64();
+        var exStyle = GetWindowLongPtr(hwndSource.Handle, GWL_EXSTYLE).ToInt64();
 
         if (visible)
         {
@@ -799,10 +796,10 @@ public partial class MainWindow : GamepadWindow
             exStyle &= ~WS_EX_APPWINDOW;
         }
 
-        SetWindowLongPtr(hwnd, GWL_EXSTYLE, new IntPtr(exStyle));
+        SetWindowLongPtr(hwndSource.Handle, GWL_EXSTYLE, new IntPtr(exStyle));
 
         // force a non-client refresh so style change applies immediately
-        SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0,
+        SetWindowPos(hwndSource.Handle, IntPtr.Zero, 0, 0, 0, 0,
             SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
     }
 
