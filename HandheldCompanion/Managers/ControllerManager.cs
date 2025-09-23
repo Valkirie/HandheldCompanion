@@ -116,15 +116,6 @@ public static class ControllerManager
         SDL.SetEventEnabled((uint)SDL.EventType.GamepadAdded, true);
         SDL.SetEventEnabled((uint)SDL.EventType.GamepadRemoved, true);
 
-        // input pipeline used by SDLController.PumpEvent()
-        SDL.SetEventEnabled((uint)SDL.EventType.GamepadAxisMotion, true);
-        SDL.SetEventEnabled((uint)SDL.EventType.GamepadButtonDown, true);
-        SDL.SetEventEnabled((uint)SDL.EventType.GamepadButtonUp, true);
-        SDL.SetEventEnabled((uint)SDL.EventType.GamepadSensorUpdate, true);
-        SDL.SetEventEnabled((uint)SDL.EventType.GamepadTouchpadDown, true);
-        SDL.SetEventEnabled((uint)SDL.EventType.GamepadTouchpadUp, true);
-        SDL.SetEventEnabled((uint)SDL.EventType.GamepadTouchpadMotion, true);
-
         // manage pump thread
         pumpThreadRunning = true;
         pumpThread = new Thread(pumpThreadLoop)
@@ -281,22 +272,6 @@ public static class ControllerManager
 
                     case SDL.EventType.GamepadRemoved:
                         SDL_GamepadRemoved(e.GDevice.Which);
-                        break;
-
-                    case SDL.EventType.GamepadAxisMotion:
-                    case SDL.EventType.GamepadButtonDown:
-                    case SDL.EventType.GamepadButtonUp:
-                    case SDL.EventType.GamepadSensorUpdate:
-                    case SDL.EventType.GamepadTouchpadDown:
-                    case SDL.EventType.GamepadTouchpadUp:
-                    case SDL.EventType.GamepadTouchpadMotion:
-                        if (SDLControllers.TryGetValue(e.GDevice.Which, out SDLController controller))
-                            controller.PumpEvent(e);
-                        break;
-
-                    // implement me
-                    case SDL.EventType.GamepadUpdateComplete:
-                    case SDL.EventType.Quit:
                         break;
                 }
             }

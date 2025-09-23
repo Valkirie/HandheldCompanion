@@ -1,9 +1,9 @@
 ﻿using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using static SDL3.SDL;
 using Color = System.Windows.Media.Color;
 
@@ -192,183 +192,136 @@ namespace HandheldCompanion.Controllers
             [GamepadButton.RightStick] = ButtonFlags.RightStickClick,
         };
 
-        public void PumpEvent(Event e)
+        // Hack, SDL_CS has wrong implementation ?
+        [DllImport("SDL3", EntryPoint = "SDL_GetGamepadSensorData", ExactSpelling = true)]
+        internal static extern unsafe sbyte SDL_GetGamepadSensorData(nint gamepad, SensorType type, float* data, int numValues);
+
+        public override void Tick(long ticks, float delta, bool commit)
         {
-            switch ((EventType)e.Type)
+            if (!IsConnected() || Inputs is null || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
+                return;
+
+            ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
+
+            // --- BUTTONS ---
+            foreach (KeyValuePair<GamepadButton, ButtonFlags> kvp in _buttonMap)
             {
-                case EventType.Quit:
-                case EventType.GamepadUpdateComplete:
-                    // implement me
-                    break;
+                GamepadButton sdlBtn = kvp.Key;
+                ButtonFlags flag = kvp.Value;
 
-                case EventType.GamepadAxisMotion:
-                    {
-                        switch ((GamepadAxis)e.GAxis.Axis)
-                        {
-                            // Left joystick
-                            case GamepadAxis.LeftX:
-                                Inputs.AxisState[AxisFlags.LeftStickX] = e.GAxis.Value;
-                                break;
-                            case GamepadAxis.LeftY:
-                                Inputs.AxisState[AxisFlags.LeftStickY] = (short)InputUtils.MapRange(
-                                    e.GAxis.Value,
-                                    short.MinValue,
-                                    short.MaxValue,
-                                    short.MaxValue,
-                                    short.MinValue);
-                                break;
-
-                            // Right joystick
-                            case GamepadAxis.RightX:
-                                Inputs.AxisState[AxisFlags.RightStickX] = e.GAxis.Value;
-                                break;
-                            case GamepadAxis.RightY:
-                                Inputs.AxisState[AxisFlags.RightStickY] = (short)InputUtils.MapRange(
-                                    e.GAxis.Value,
-                                    short.MinValue,
-                                    short.MaxValue,
-                                    short.MaxValue,
-                                    short.MinValue);
-                                break;
-
-                            // Triggers
-                            case GamepadAxis.LeftTrigger:
-                                Inputs.AxisState[AxisFlags.L2] = (byte)InputUtils.MapRange(
-                                    e.GAxis.Value,
-                                    ushort.MinValue,
-                                    short.MaxValue,
-                                    byte.MinValue,
-                                    byte.MaxValue);
-                                break;
-                            case GamepadAxis.RightTrigger:
-                                Inputs.AxisState[AxisFlags.R2] = (byte)InputUtils.MapRange(
-                                    e.GAxis.Value,
-                                    ushort.MinValue,
-                                    short.MaxValue,
-                                    byte.MinValue,
-                                    byte.MaxValue);
-                                break;
-                        }
-                    }
-                    break;
-
-                case EventType.GamepadSensorUpdate:
-                    {
-                        switch ((SensorType)e.GSensor.Sensor)
-                        {
-                            case SensorType.Accel:
-                                unsafe
-                                {
-                                    aX = e.GSensor.Data[0] / 40.0f * 4.0f;
-                                    aY = e.GSensor.Data[1] / 40.0f * 4.0f;
-                                    aZ = e.GSensor.Data[2] / 40.0f * 4.0f;
-                                }
-                                break;
-
-                            case SensorType.Gyro:
-                                unsafe
-                                {
-                                    gX = e.GSensor.Data[0] / 40.0f * 2000.0f;
-                                    gY = e.GSensor.Data[1] / 40.0f * 2000.0f;
-                                    gZ = e.GSensor.Data[2] / 40.0f * 2000.0f;
-                                }
-                                break;
-                        }
-                    }
-                    break;
-
-                case EventType.GamepadButtonDown:
-                case EventType.GamepadButtonUp:
-                    {
-                        bool isDown = (EventType)e.Type == EventType.GamepadButtonDown;
-                        GamepadButton gpBtn = (GamepadButton)e.GButton.Button;
-
-                        if (_buttonMap.TryGetValue(gpBtn, out var flag))
-                        {
-                            isDown |= InjectedButtons[flag];
-                            Inputs.ButtonState[flag] = isDown;
-                        }
-
-                        // edge-case(s)
-                        switch (gpBtn)
-                        {
-                            // lifting one finger while the pad is still clicked will unclick it..
-                            // todo: store me in a bool so we can compute all vars at once later in the code
-                            case GamepadButton.Touchpad:
-                                touchpad = isDown;
-                                break;
-                        }
-
-                        break;
-                    }
-
-                case EventType.GamepadTouchpadDown:
-                case EventType.GamepadTouchpadUp:
-                case EventType.GamepadTouchpadMotion:
-                    {
-                        switch (e.GTouchpad.Touchpad)
-                        {
-                            case 0:
-                                {
-                                    switch (e.GTouchpad.Finger)
-                                    {
-                                        case 0:
-                                            Inputs.ButtonState[ButtonFlags.LeftPadTouch] = e.GTouchpad.Pressure == 1 ? true : false;
-                                            Inputs.AxisState[AxisFlags.LeftPadX] = (short)InputUtils.MapRange(e.GTouchpad.X, 0.0f, 1.0f, short.MinValue, short.MaxValue);
-                                            Inputs.AxisState[AxisFlags.LeftPadY] = (short)InputUtils.MapRange(e.GTouchpad.Y, 1.0f, 0.0f, short.MinValue, short.MaxValue);
-                                            break;
-                                        case 1:
-                                            Inputs.ButtonState[ButtonFlags.RightPadTouch] = e.GTouchpad.Pressure == 1 ? true : false;
-                                            Inputs.AxisState[AxisFlags.RightPadX] = (short)InputUtils.MapRange(e.GTouchpad.X, 0.0f, 1.0f, short.MinValue, short.MaxValue);
-                                            Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange(e.GTouchpad.Y, 1.0f, 0.0f, short.MinValue, short.MaxValue);
-                                            break;
-                                    }
-                                }
-                                break;
-
-                            case 1:
-                                {
-                                    switch (e.GTouchpad.Finger)
-                                    {
-                                        case 1:
-                                        case 0:
-                                            Inputs.ButtonState[ButtonFlags.RightPadTouch] = e.GTouchpad.Pressure == 1 ? true : false;
-                                            Inputs.AxisState[AxisFlags.RightPadX] = (short)InputUtils.MapRange(e.GTouchpad.X, 0.0f, 1.0f, short.MinValue, short.MaxValue);
-                                            Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange(e.GTouchpad.Y, 1.0f, 0.0f, short.MinValue, short.MaxValue);
-                                            break;
-                                    }
-                                }
-                                break;
-                        }
-                    }
-                    break;
-
-                default:
-                    break;
+                bool down = HasButton(sdlBtn) && GetGamepadButton(gamepad, sdlBtn);
+                down |= InjectedButtons[flag];
+                Inputs.ButtonState[flag] = down;
             }
 
-            // touch management
-            Inputs.ButtonState[ButtonFlags.LeftPadClick] = touchpad && Inputs.ButtonState[ButtonFlags.LeftPadTouch];
-            Inputs.ButtonState[ButtonFlags.RightPadClick] = touchpad && Inputs.ButtonState[ButtonFlags.RightPadTouch];
+            // touchpad button (edge-case)
+            if (HasButton(GamepadButton.Touchpad))
+                touchpad = GetGamepadButton(gamepad, GamepadButton.Touchpad);
 
-            // we need to reset the axis
-            // todo: make layout manager more resilient so this is not needed
-            if (!Inputs.ButtonState[ButtonFlags.LeftPadTouch])
+            // --- AXES / TRIGGERS ---
+            if (HasAxis(GamepadAxis.LeftX))
+                Inputs.AxisState[AxisFlags.LeftStickX] = GetGamepadAxis(gamepad, GamepadAxis.LeftX);
+
+            if (HasAxis(GamepadAxis.LeftY))
+                Inputs.AxisState[AxisFlags.LeftStickY] = (short)InputUtils.MapRange(
+                    GetGamepadAxis(gamepad, GamepadAxis.LeftY),
+                    short.MinValue, short.MaxValue,
+                    short.MaxValue, short.MinValue);
+
+            if (HasAxis(GamepadAxis.RightX))
+                Inputs.AxisState[AxisFlags.RightStickX] = GetGamepadAxis(gamepad, GamepadAxis.RightX);
+
+            if (HasAxis(GamepadAxis.RightY))
+                Inputs.AxisState[AxisFlags.RightStickY] = (short)InputUtils.MapRange(
+                    GetGamepadAxis(gamepad, GamepadAxis.RightY),
+                    short.MinValue, short.MaxValue,
+                    short.MaxValue, short.MinValue);
+
+            if (HasAxis(GamepadAxis.LeftTrigger))
+                Inputs.AxisState[AxisFlags.L2] = (byte)InputUtils.MapRange(
+                    GetGamepadAxis(gamepad, GamepadAxis.LeftTrigger),
+                    ushort.MinValue, short.MaxValue,
+                    byte.MinValue, byte.MaxValue);
+
+            if (HasAxis(GamepadAxis.RightTrigger))
+                Inputs.AxisState[AxisFlags.R2] = (byte)InputUtils.MapRange(
+                    GetGamepadAxis(gamepad, GamepadAxis.RightTrigger),
+                    ushort.MinValue, short.MaxValue,
+                    byte.MinValue, byte.MaxValue);
+
+            // --- TOUCHPADS ---
+            if (HasTouchpad)
             {
-                Inputs.AxisState[AxisFlags.LeftPadX] = 0;
-                Inputs.AxisState[AxisFlags.LeftPadY] = 0;
+                // left pad: touchpad 0, finger 0
+                if (GetGamepadTouchpadFinger(gamepad, 0, 0, out bool lDown, out float lx, out float ly, out float lp))
+                {
+                    Inputs.ButtonState[ButtonFlags.LeftPadTouch] = lDown;
+                    Inputs.AxisState[AxisFlags.LeftPadX] = (short)InputUtils.MapRange(lx, 0.0f, 1.0f, short.MinValue, short.MaxValue);
+                    Inputs.AxisState[AxisFlags.LeftPadY] = (short)InputUtils.MapRange(ly, 1.0f, 0.0f, short.MinValue, short.MaxValue);
+                }
+
+                // right pad: either (pad 0, finger 1) or (pad 1, finger 0/1)
+                bool rOk =
+                    GetGamepadTouchpadFinger(gamepad, 0, 1, out bool rDown, out float rx, out float ry, out float rp) ||
+                    GetGamepadTouchpadFinger(gamepad, 1, 0, out rDown, out rx, out ry, out rp) ||
+                    GetGamepadTouchpadFinger(gamepad, 1, 1, out rDown, out rx, out ry, out rp);
+
+                if (rOk)
+                {
+                    Inputs.ButtonState[ButtonFlags.RightPadTouch] = rDown;
+                    Inputs.AxisState[AxisFlags.RightPadX] = (short)InputUtils.MapRange(rx, 0.0f, 1.0f, short.MinValue, short.MaxValue);
+                    Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange(ry, 1.0f, 0.0f, short.MinValue, short.MaxValue);
+                }
+
+                // clicks follow: touchpad-button && respective touch
+                Inputs.ButtonState[ButtonFlags.LeftPadClick] = touchpad && Inputs.ButtonState[ButtonFlags.LeftPadTouch];
+                Inputs.ButtonState[ButtonFlags.RightPadClick] = touchpad && Inputs.ButtonState[ButtonFlags.RightPadTouch];
+
+                // zero axes when not touched
+                if (!Inputs.ButtonState[ButtonFlags.LeftPadTouch])
+                {
+                    Inputs.AxisState[AxisFlags.LeftPadX] = 0;
+                    Inputs.AxisState[AxisFlags.LeftPadY] = 0;
+                }
+                if (!Inputs.ButtonState[ButtonFlags.RightPadTouch])
+                {
+                    Inputs.AxisState[AxisFlags.RightPadX] = 0;
+                    Inputs.AxisState[AxisFlags.RightPadY] = 0;
+                }
             }
 
-            if (!Inputs.ButtonState[ButtonFlags.RightPadTouch])
-            {
-                Inputs.AxisState[AxisFlags.RightPadX] = 0;
-                Inputs.AxisState[AxisFlags.RightPadY] = 0;
-            }
+            float aX = 0, aY = 0, aZ = 0, gX = 0, gY = 0, gZ = 0;
 
-            // compute delta (ms)
-            ulong now = GetPerformanceCounter();
-            ulong tickDelta = now - lastCounter;
-            float deltaMillis = tickDelta / freq;
+            unsafe
+            {
+                if (HasAccel)
+                {
+                    Span<float> acc = stackalloc float[3];
+                    fixed (float* p = acc)
+                    {
+                        if (SDL_GetGamepadSensorData(gamepad, SensorType.Accel, p, 3) != 0)
+                        {
+                            aX = acc[0] / 40.0f * 4.0f;
+                            aY = acc[1] / 40.0f * 4.0f;
+                            aZ = acc[2] / 40.0f * 4.0f;
+                        }
+                    }
+                }
+
+                if (HasGyro)
+                {
+                    Span<float> gyr = stackalloc float[3];
+                    fixed (float* p = gyr)
+                    {
+                        if (SDL_GetGamepadSensorData(gamepad, SensorType.Gyro, p, 3) != 0)
+                        {
+                            gX = gyr[0] / 40.0f * 2000.0f;
+                            gY = gyr[1] / 40.0f * 2000.0f;
+                            gZ = gyr[2] / 40.0f * 2000.0f;
+                        }
+                    }
+                }
+            }
 
             // store motion
             Inputs.GyroState.SetGyroscope(gX, gY, gZ);
@@ -376,12 +329,9 @@ namespace HandheldCompanion.Controllers
 
             // process motion
             if (gamepadMotions.TryGetValue(gamepadIndex, out GamepadMotion gamepadMotion))
-                gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, deltaMillis);
+                gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
 
-            // update previous counter
-            lastCounter = now;
-
-            base.Tick(TimerManager.GetTimestamp(), deltaMillis);
+            base.Tick(ticks, delta);
         }
 
         public override void Unplug()
