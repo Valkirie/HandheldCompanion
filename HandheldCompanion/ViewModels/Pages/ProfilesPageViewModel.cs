@@ -28,7 +28,9 @@ namespace HandheldCompanion.ViewModels
         public ListCollectionView ProfilePickerCollectionViewDC { get; set; }
 
         public ObservableCollection<LibraryEntryViewModel> LibraryPickers { get; } = [];
-        public ObservableCollection<ProcessWindowViewModel> ProfileWindows { get; } = [];
+        public ObservableCollection<WindowListItemViewModel> AllWindows { get; } = [];
+
+        public bool HasAnyWindows => AllWindows.Any();
 
         private ProfilesPage profilesPage;
 
@@ -234,6 +236,15 @@ namespace HandheldCompanion.ViewModels
 
                 return new();
             }
+        }
+
+        private WindowListItemViewModel FindByHwndOrName(ProcessWindow pw)
+        {
+            var byHwnd = AllWindows.FirstOrDefault(w => w.Hwnd == pw.Hwnd && w.Hwnd != 0);
+            if (byHwnd != null) return byHwnd;
+
+            // try by name (profile may have normalized names, WindowManager does that internally)
+            return AllWindows.FirstOrDefault(w => string.Equals(w.Name, pw.Name, StringComparison.InvariantCultureIgnoreCase));
         }
 
         private async Task TriggerGameArtDownloadAsync(int value, LibraryType libraryType)
@@ -605,7 +616,6 @@ namespace HandheldCompanion.ViewModels
         }
 
         private ProcessEx selectedProcess;
-        public bool HasWindows => ProfileWindows.Any();
 
         public void ProfileChanged(Profile selectedProfile)
         {
@@ -621,17 +631,23 @@ namespace HandheldCompanion.ViewModels
             // windows management
             ClearWindows();
 
-            selectedProcess = ProcessManager.GetProcesses().Where(process => process.Path.Equals(selectedProfile.Path)).FirstOrDefault();
+            AllWindows.SafeClear();
+            foreach (var kvp in selectedProfile.WindowsSettings)
+                AllWindows.SafeAdd(new WindowListItemViewModel(kvp.Key, kvp.Value));
+
+            OnPropertyChanged(nameof(HasAnyWindows));
+
+            selectedProcess = ProcessManager.GetProcesses().FirstOrDefault(p => p.Path.Equals(selectedProfile.Path));
             if (selectedProcess is not null)
             {
-                selectedProcess.WindowAttached += SelectedProcess_WindowAttached;
-                selectedProcess.WindowDetached += SelectedProcess_WindowDetached;
+                selectedProcess.WindowAttached += SelectedProcess_WindowAttached_Merged;
+                selectedProcess.WindowDetached += SelectedProcess_WindowDetached_Merged;
 
                 foreach (ProcessWindow processWindow in selectedProcess.ProcessWindows.Values)
-                    SelectedProcess_WindowAttached(processWindow);
+                    SelectedProcess_WindowAttached_Merged(processWindow);
             }
 
-            OnPropertyChanged(nameof(HasWindows));
+            OnPropertyChanged(nameof(HasAnyWindows));
 
             ProfileExecutables.SafeClear();
             foreach (string path in selectedProfile.Executables)
@@ -645,37 +661,34 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(HasProfileExecutables));
         }
 
-        private void SelectedProcess_WindowAttached(ProcessWindow processWindow)
+        private void SelectedProcess_WindowAttached_Merged(ProcessWindow processWindow)
         {
-            ProcessWindowViewModel? foundWindow = ProfileWindows.FirstOrDefault(win => win.ProcessWindow.Hwnd == processWindow.Hwnd);
-            if (foundWindow is null)
-                ProfileWindows.SafeAdd(new ProcessWindowViewModel(processWindow));
+            var item = FindByHwndOrName(processWindow);
+            if (item is null)
+                AllWindows.SafeAdd(item = new WindowListItemViewModel(processWindow));
             else
-                foundWindow.ProcessWindow = processWindow;
+                item.UpdateFrom(processWindow);
 
-            OnPropertyChanged(nameof(HasWindows));
+            OnPropertyChanged(nameof(HasAnyWindows));
         }
 
-        private void SelectedProcess_WindowDetached(ProcessWindow processWindow)
+        private void SelectedProcess_WindowDetached_Merged(ProcessWindow processWindow)
         {
-            ProcessWindowViewModel? foundWindow = ProfileWindows.FirstOrDefault(win => win.ProcessWindow.Hwnd == processWindow.Hwnd);
-            if (foundWindow is not null)
-            {
-                ProfileWindows.SafeRemove(foundWindow);
-                foundWindow.Dispose();
-            }
+            var item = AllWindows.FirstOrDefault(w => w.Hwnd == processWindow.Hwnd);
+            if (item != null)
+                item.ProcessWindow = null; // keep it in the list, just mark as not present
 
-            OnPropertyChanged(nameof(HasWindows));
+            OnPropertyChanged(nameof(HasAnyWindows));
         }
 
         private void ClearWindows()
         {
-            ProfileWindows.SafeClear();
+            AllWindows.SafeClear();
 
             if (selectedProcess is not null)
             {
-                selectedProcess.WindowAttached -= SelectedProcess_WindowAttached;
-                selectedProcess.WindowDetached -= SelectedProcess_WindowDetached;
+                selectedProcess.WindowAttached -= SelectedProcess_WindowAttached_Merged;
+                selectedProcess.WindowDetached -= SelectedProcess_WindowDetached_Merged;
             }
         }
 
