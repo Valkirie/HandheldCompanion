@@ -474,7 +474,7 @@ namespace HandheldCompanion.Controllers
                 return false;
 
             // wait until any rumble task is complete
-            while(rumbleTask != null && !rumbleTask.IsCompleted)
+            while (rumbleTask != null && !rumbleTask.IsCompleted)
                 Task.Delay(100).Wait();
 
             // set flag

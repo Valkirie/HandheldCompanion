@@ -292,7 +292,7 @@ namespace HandheldCompanion.Platforms.Misc
             foreach (var sensor in cpu.Sensors)
             {
                 // May crash the app when Value is null, better to check first
-                if (sensor.Value is null)
+                if (!sensor.Value.HasValue || sensor.Value == 0)
                     continue;
 
                 switch (sensor.SensorType)
@@ -368,6 +368,10 @@ namespace HandheldCompanion.Platforms.Misc
         {
             foreach (var sensor in cpu.Sensors)
             {
+                // May crash the app when Value is null, better to check first
+                if (!sensor.Value.HasValue || sensor.Value == 0)
+                    continue;
+
                 switch (sensor.SensorType)
                 {
                     case SensorType.Data:
@@ -402,6 +406,10 @@ namespace HandheldCompanion.Platforms.Misc
         {
             foreach (var sensor in cpu.Sensors)
             {
+                // May crash the app when Value is null, better to check first
+                if (!sensor.Value.HasValue || sensor.Value == 0)
+                    continue;
+
                 switch (sensor.SensorType)
                 {
                     case SensorType.Level:

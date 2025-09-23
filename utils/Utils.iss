@@ -26,6 +26,54 @@ begin
 end;
 
 
+function isPawnIOInstalled(): boolean;
+var
+  installLocation, driverPath: string;
+begin
+  Result := False;
+
+  if not regUninstallKeyExists('PawnIO') then
+  begin
+    Log('PawnIO uninstall key not found.');
+    Exit;
+  end;
+
+  installLocation := regGetUninstallValue('PawnIO', 'InstallLocation');
+  if installLocation = '' then
+  begin
+    Log('PawnIO InstallLocation is empty or missing.');
+    Exit;
+  end;
+
+  // Normalize and build full path to driver
+  installLocation := RemoveQuotes(installLocation);
+  driverPath := AddBackslash(installLocation) + 'PawnIO.sys';
+
+  if FileExists(driverPath) then
+  begin
+    Log('PawnIO.sys found at: ' + driverPath);
+    Result := True;
+  end
+  else
+    Log('PawnIO.sys NOT found at: ' + driverPath);
+end;
+
+
+function GetInstalledPawnIOVersion(): string;
+begin
+  Result := '';
+  if not regUninstallKeyExists('PawnIO') then
+  begin
+    Log('PawnIO uninstall key not found (version unavailable).');
+    Exit;
+  end;
+
+  Result := regGetUninstallValue('PawnIO', 'DisplayVersion');
+  if Result = '' then
+    Log('PawnIO DisplayVersion is empty or missing.');
+end;
+
+
 function isHidHideInstalled():boolean;
 begin
   result:= false;
@@ -34,7 +82,7 @@ begin
     log('HidHide is already installed.');
     result:= true; 
   end;
-end; 
+end;
      
 
 function getInstalledHidHideVersion():string;
