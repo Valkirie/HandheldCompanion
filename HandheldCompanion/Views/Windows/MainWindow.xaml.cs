@@ -494,7 +494,7 @@ public partial class MainWindow : GamepadWindow
         source.AddHook(WndProc); // Hook into the window's message loop
 
         // restore window state
-        WindowState = StartMinimized ? WindowState.Minimized : (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowState");
+        SetState(StartMinimized ? WindowState.Minimized : (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowState"));
         prevWindowState = (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowPrevState");
     }
 
@@ -505,7 +505,6 @@ public partial class MainWindow : GamepadWindow
         Homepage_Loaded = true;
 
         // home page is ready, display main window
-        this.Visibility = Visibility.Visible;
         notifyIcon.Visible = true;
 
         string TelemetryApproved = ManagerFactory.settingsManager.GetString("TelemetryApproved");
