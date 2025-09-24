@@ -12,6 +12,7 @@ using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -722,6 +723,14 @@ namespace HandheldCompanion.Managers
                             radioButton.IsChecked = !radioButton.IsChecked;
 
                             radioButton.Command?.Execute(radioButton.CommandParameter);
+                        }
+                        else if (focusedElement is HyperlinkButton hyperlinkButton)
+                        {
+                            if (hyperlinkButton.NavigateUri is not null)
+                                Process.Start(new ProcessStartInfo(hyperlinkButton.NavigateUri.AbsoluteUri) { UseShellExecute = true });
+
+                            if (hyperlinkButton.Command is not null)
+                                hyperlinkButton.Command?.Execute(hyperlinkButton.CommandParameter);
                         }
                         else if (focusedElement is CheckBox checkBox)
                         {

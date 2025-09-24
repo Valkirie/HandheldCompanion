@@ -355,6 +355,7 @@ public static class WPFUtils
                 case "ToggleButton":
                 case "CheckBox":
                 case "RadioButton":
+                case "HyperlinkButton":
                     {
                         FrameworkElement asType = (FrameworkElement)current;
                         if (asType.IsEnabled && asType.Focusable && asType.IsVisible)
