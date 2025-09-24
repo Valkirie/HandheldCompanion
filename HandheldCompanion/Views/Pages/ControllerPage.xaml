@@ -281,13 +281,22 @@
                     <ui:ToggleSwitch Name="Toggle_Cloaked" Toggled="Toggle_Cloaked_Toggled" />
                 </ui:SettingsCard>
 
+                <!--  Uncloak on disconnect  -->
+                <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_UncloakOnDisconnectDesc}" Header="{l:Static resx:Resources.ControllerPage_UncloakOnDisconnect}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE7B3;" />
+                    </ui:SettingsCard.HeaderIcon>
+
+                    <ui:ToggleSwitch Name="Toggle_UncloakOnDisconnect" Toggled="Toggle_UncloakOnDisconnect_Toggled" />
+                </ui:SettingsCard>
+
                 <!--  Uncloak on close  -->
                 <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_UncloakOnCloseDesc}" Header="{l:Static resx:Resources.ControllerPage_UncloakOnClose}">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Glyph="&#xE7B3;" />
                     </ui:SettingsCard.HeaderIcon>
 
-                    <ui:ToggleSwitch Name="Toggle_Uncloak" Toggled="Toggle_Uncloak_Toggled" />
+                    <ui:ToggleSwitch Name="Toggle_UncloakOnClose" Toggled="Toggle_UncloakOnClose_Toggled" />
                 </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 

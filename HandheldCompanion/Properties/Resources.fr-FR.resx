@@ -1027,6 +1027,12 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
   <data name="WarningElevated" xml:space="preserve">
     <value>Exécutez cet outil en tant qu'administrateur pour déverrouiller ces paramètres</value>
   </data>
+  <data name="ControllerPage_SteamControllerMode" xml:space="preserve">
+    <value>Mode du contrôleur</value>
+  </data>
+  <data name="ControllerPage_SteamControllerModeDesc" xml:space="preserve">
+    <value>Changer le mode contrôleur : mode exclusif ou mode hybride. Le mode exclusif assurera que toutes les entrées sont gérées par le Handheld Companion (HC). Le mode hybride permettra à Steam de gérer les entrées depuis les applications Steam et HC de gérer les entrées d'autres applications.</value>
+  </data>
   <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
     <value>Paramètres du contrôleur</value>
   </data>
@@ -2179,6 +2185,15 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
   <data name="MainWindow_Select" xml:space="preserve">
     <value>Sélectionner</value>
   </data>
+  <data name="Hint_SteamInputReadme" xml:space="preserve">
+    <value>Handheld Companion désactivera la saisie Steam et redémarrera Steam</value>
+  </data>
+  <data name="Hint_SteamInputDesc" xml:space="preserve">
+    <value>Steam est déjà en cours d'exécution et Steam Input est activé, ce qui peut entraîner un comportement inattendu</value>
+  </data>
+  <data name="Hint_SteamInput" xml:space="preserve">
+    <value>Steam input est activé</value>
+  </data>
   <data name="Hint_SteamXboxDriversReadme" xml:space="preserve">
     <value>Vous pouvez désinstaller le pilote de fonctionnalités améliorées Steam Xbox Controller</value>
   </data>
@@ -2416,6 +2431,9 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
   <data name="ProfilesPage_EmulatedControllerDesc" xml:space="preserve">
     <value>Le contrôleur émulé à utiliser quand ce profil est actif</value>
   </data>
+  <data name="ControllerPage_ControllerManagement" xml:space="preserve">
+    <value>Gestion de contrôleur (expérimental)</value>
+  </data>
   <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
     <value>Automatically manage your controllers for greater compatibility</value>
   </data>
@@ -2442,6 +2460,9 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
   </data>
   <data name="Hint_RogAllyServiceCheckAction" xml:space="preserve">
     <value>Désactiver les services ASUS</value>
+  </data>
+  <data name="Hint_SteamInputAction" xml:space="preserve">
+    <value>Désactiver Steam Input</value>
   </data>
   <data name="MainWindow_navNotifications" xml:space="preserve">
     <value>Notifications</value>
@@ -2481,6 +2502,12 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
   </data>
   <data name="QuickProfilesPage_SubProfilesDesc" xml:space="preserve">
     <value>Sélectionner un sous-profil à appliquer</value>
+  </data>
+  <data name="Hotkey_CycleSubProfile" xml:space="preserve">
+    <value>Parcourir les sous-profils disponibles</value>
+  </data>
+  <data name="Hotkey_CycleSubProfileDesc" xml:space="preserve">
+    <value>Parcourir les sous-profils pour le jeu actuel</value>
   </data>
   <data name="DevicePage_FullFanSpeedDesc" xml:space="preserve">
     <value>Définir la vitesse max du ventilateur</value>
@@ -2689,744 +2716,11 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
   <data name="DevicePage_Lenovo_ControllerTriggerMargin" xml:space="preserve">
     <value>Marge de Déclenchement</value>
   </data>
-  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
-    <value>Oups, il semble que votre appareil n'est pas encore pris en charge. Le logiciel pourrait ne pas fonctionner comme prévu.</value>
-  </data>
-  <data name="Hotkey_OnScreenDisplay" xml:space="preserve">
-    <value>Affichage à l'écran</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
-    <value>Tentative {0}: </value>
-  </data>
-  <data name="DevicePage_BatteryOptions" xml:space="preserve">
-    <value>Options de batterie</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="DevicePage_BatteryChargeLimitPercent" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="PerformancePage_ParkingModeAllCoresAuto" xml:space="preserve">
-    <value>Auto (équilibrage P/E)</value>
-  </data>
-  <data name="PerformancePage_ParkingModeAllCoresPrefPCore" xml:space="preserve">
-    <value>Préférer les cœurs d'efficacité (E-cores)</value>
-  </data>
-  <data name="PerformancePage_ParkingModeAllCoresPrefECore" xml:space="preserve">
-    <value>Préférer les cœurs de performance (P-cores)</value>
-  </data>
-  <data name="PerformancePage_ParkingModeOnlyPCore" xml:space="preserve">
-    <value>Coeurs de performance uniquement (performance maximale)</value>
-  </data>
-  <data name="PerformancePage_ParkingModeOnlyECore" xml:space="preserve">
-    <value>Cœurs d'efficacité uniquement (efficacité maximale)</value>
-  </data>
-  <data name="Hotkey_XGMobile" xml:space="preserve">
-    <value>Activer/désactiver ROG XG Mobile</value>
-  </data>
-  <data name="Hotkey_XGMobileDesc" xml:space="preserve">
-    <value>Activer/désactiver l'état de ROG XG Mobile</value>
-  </data>
-  <data name="SettingsPage_Experimental" xml:space="preserve">
-    <value>Options expérimentales</value>
-  </data>
-  <data name="ProfilesPage_SuspendOnSleep" xml:space="preserve">
-    <value>Suspendre et reprendre l'application quand le système entre ou quitte l'état de veille</value>
-  </data>
-  <data name="OverlayPage_OnScreenDisplayOptions" xml:space="preserve">
-    <value>Options d'affichage sur l'écran</value>
-  </data>
-  <data name="HotkeysPage_Hotkeys" xml:space="preserve">
-    <value>Raccourcis</value>
-  </data>
-  <data name="HotkeysPage_RumbleOnExecution" xml:space="preserve">
-    <value>Vibration à l'exécution</value>
-  </data>
-  <data name="HotkeysPage_RumbleOnExecutionDesc" xml:space="preserve">
-    <value>Indique si le contrôleur doit vibrer quand un raccourci clavier est exécuté</value>
-  </data>
-  <data name="HotkeysPage_HotkeysSettings" xml:space="preserve">
-    <value>Réglages des raccourcis</value>
-  </data>
-  <data name="PerformancePage_CPUParkingMode" xml:space="preserve">
-    <value>Mode de stationnement du CPU</value>
-  </data>
-  <data name="PerformancePage_EnduranceGaming_Desc" xml:space="preserve">
-    <value>GPU Auto TDP based on desired FPS target</value>
-  </data>
-  <data name="SettingsPage_Priority" xml:space="preserve">
-    <value>Priorité</value>
-  </data>
-  <data name="SettingsPage_PriorityDesc" xml:space="preserve">
-    <value>Priorité du processus d'application</value>
-  </data>
-  <data name="SettingsPage_Priority_Normal" xml:space="preserve">
-    <value>Normal</value>
-  </data>
-  <data name="SettingsPage_Priority_AboveNormal" xml:space="preserve">
-    <value>Au dessus de la normale</value>
-  </data>
-  <data name="SettingsPage_Priority_High" xml:space="preserve">
-    <value>Élevé</value>
-  </data>
-  <data name="SettingsPage_QuickToolsBackdropHeader" xml:space="preserve">
-    <value>Arrière-plan du QuickTool</value>
-  </data>
-  <data name="MainWindow_navLibrary" xml:space="preserve">
-    <value>Bibliothèque</value>
-  </data>
-  <data name="ProfilesPage_Library_Desc" xml:space="preserve">
-    <value>Modifier les paramètres de la bibliothèque de profils</value>
-  </data>
-  <data name="ProfilesPage_ShowInLibrary" xml:space="preserve">
-    <value>Afficher dans la bibliothèque</value>
-  </data>
-  <data name="ProfilesPage_ShowInLibraryDesc" xml:space="preserve">
-    <value>Activer pour afficher le profil dans la bibliothèque</value>
-  </data>
-  <data name="ProfilesPage_Library_Title" xml:space="preserve">
-    <value>Paramètres de bibliothèque</value>
-  </data>
-  <data name="ProfilesPage_LibraryRefreshImage" xml:space="preserve">
-    <value>Image</value>
-  </data>
-  <data name="ProfilesPage_LibraryRefreshImageButton" xml:space="preserve">
-    <value>Télécharger</value>
-  </data>
-  <data name="ProfilesPage_LibraryRefreshImageDesc" xml:space="preserve">
-    <value>Télécharger les images pour ce profil. Pour de meilleurs résultats, associez le (sous) nom de profil avec le nom de l'application IGDB ou SteamGridDB</value>
-  </data>
-  <data name="LibraryDiscoverTitle" xml:space="preserve">
-    <value>Télécharger les métadonnées de jeu?</value>
-  </data>
-  <data name="LibraryDiscoverContent" xml:space="preserve">
-    <value>Cela va scanner toute votre bibliothèque pour charger ou actualiser les métadonnées et les pochettes pour chaque titre. Cela peut prendre plusieurs secondes à quelques minutes en fonction de votre connexion Internet. Voulez-vous continuer ?</value>
-  </data>
-  <data name="Hotkey_WindowStyle" xml:space="preserve">
-    <value>Style de la fenêtre</value>
-  </data>
-  <data name="Hotkey_WindowStyleDesc" xml:space="preserve">
-    <value>Spécifie comment une nouvelle fenêtre devrait apparaître au démarrage du processus</value>
-  </data>
-  <data name="Hotkey_WindowStyle_Normal" xml:space="preserve">
-    <value>Normal</value>
-  </data>
-  <data name="Hotkey_WindowStyle_Hidden" xml:space="preserve">
-    <value>Masqué</value>
-  </data>
-  <data name="Hotkey_WindowStyle_Minimized" xml:space="preserve">
-    <value>Minimisé</value>
-  </data>
-  <data name="Hotkey_WindowStyle_Maximized" xml:space="preserve">
-    <value>Maximisé</value>
-  </data>
-  <data name="Hotkey_RunAsAdministrator" xml:space="preserve">
-    <value>Exécuter en tant qu'administrateur</value>
-  </data>
-  <data name="Hotkey_RunAsAdministratorDesc" xml:space="preserve">
-    <value>Démarrer avec les privilèges administrateur</value>
-  </data>
-  <data name="Hotkey_ExecutableTargetPlaceholder" xml:space="preserve">
-    <value>Appuyer pour sélectionner un exécutable</value>
-  </data>
-  <data name="Hotkey_MainWindowPageDesc" xml:space="preserve">
-    <value>Définir la page vers laquelle naviguer à l’ouverture de la fenêtre principale</value>
-  </data>
-  <data name="Hotkey_MainWindowPage" xml:space="preserve">
-    <value>Page</value>
-  </data>
-  <data name="Hotkey_CycleSubProfileDirection" xml:space="preserve">
-    <value>Direction</value>
-  </data>
-  <data name="Hotkey_CycleSubProfileDirectionDesc" xml:space="preserve">
-    <value>Définir la direction de cycle du sous-profil</value>
-  </data>
-  <data name="Hotkey_CycleSubProfilePrev" xml:space="preserve">
-    <value>Précédent</value>
-  </data>
-  <data name="Hotkey_CycleSubProfileNext" xml:space="preserve">
-    <value>Suivant</value>
-  </data>
-  <data name="Hotkey_KeyboardLegacyPosition" xml:space="preserve">
-    <value>Position</value>
-  </data>
-  <data name="Hotkey_KeyboardLegacyPositionDesc" xml:space="preserve">
-    <value>Définir la position du clavier virtuel</value>
-  </data>
-  <data name="Hotkey_KeyboardLegacyPositionBottom" xml:space="preserve">
-    <value>Bas</value>
-  </data>
-  <data name="Hotkey_KeyboardLegacyPositionMaximize" xml:space="preserve">
-    <value>Maximise</value>
-  </data>
-  <data name="Hotkey_FunctionCategory_HandheldCompanion" xml:space="preserve">
-    <value>Handheld Companion</value>
-  </data>
-  <data name="Hotkey_FunctionCategory_PowerAndBattery" xml:space="preserve">
-    <value>Alimentation &amp; Batterie</value>
-  </data>
-  <data name="Hotkey_FunctionCategory_Windows" xml:space="preserve">
-    <value>Windows</value>
-  </data>
-  <data name="Hotkey_FunctionCategory_Multitasking" xml:space="preserve">
-    <value>Multitask</value>
-  </data>
-  <data name="Hotkey_FunctionCategory_Display" xml:space="preserve">
-    <value>Affichage</value>
-  </data>
-  <data name="Hotkey_FunctionCategory_Sound" xml:space="preserve">
-    <value>Son</value>
-  </data>
-  <data name="MainWindow_OpenNavigation" xml:space="preserve">
-    <value>Ouvrir la navigation</value>
-  </data>
-  <data name="ProfilesPage_Play" xml:space="preserve">
-    <value>Jouer</value>
-  </data>
-  <data name="DevicePage_TDPControlMethod" xml:space="preserve">
-    <value>Méthode de contrôle de la puissance thermique (TDP)</value>
-  </data>
-  <data name="DevicePage_TDPControlMethodDesc" xml:space="preserve">
-    <value>Sélectionner la méthode préférée pour gérer le TDP de l'appareil</value>
-  </data>
-  <data name="DevicePage_SecurityOptions" xml:space="preserve">
-    <value>Paramètres de sécurité</value>
-  </data>
-  <data name="DevicePage_CoreIsolation" xml:space="preserve">
-    <value>Isolation du noyau</value>
-  </data>
-  <data name="DevicePage_CoreIsolationDesc" xml:space="preserve">
-    <value>Fonctionnalités de sécurité disponibles sur votre appareil utilisant la sécurité basée sur la virtualisation. Peuvent empêcher la modification du TDP.</value>
-  </data>
-  <data name="DevicePage_PlatformOptions" xml:space="preserve">
-    <value>Paramètres de la plateforme</value>
-  </data>
-  <data name="DevicePage_ManufacturerApplication" xml:space="preserve">
-    <value>Application du fabricant</value>
-  </data>
-  <data name="DevicePage_ManufacturerApplicationDesc" xml:space="preserve">
-    <value>Activer ou désactiver les applications installées par le fabricant sur votre appareil.</value>
-  </data>
-  <data name="MainWindow_CloseNavigation" xml:space="preserve">
-    <value>Fermer navigation</value>
-  </data>
-  <data name="DevicePage_Lenovo_LeftController" xml:space="preserve">
-    <value>Manette gauche</value>
-  </data>
-  <data name="DevicePage_Lenovo_RightController" xml:space="preserve">
-    <value>Manette droite</value>
-  </data>
-  <data name="QuickDevicePage_DeviceSettings" xml:space="preserve">
-    <value>Réglages de l'appareil</value>
-  </data>
-  <data name="QuickDevicePage_Bluetooth" xml:space="preserve">
-    <value>Bluetooth</value>
-  </data>
-  <data name="QuickDevicePage_NightLight" xml:space="preserve">
-    <value>Lumière nocturne</value>
-  </data>
-  <data name="QuickDevicePage_DisplayResolution" xml:space="preserve">
-    <value>Display resolution and refresh rate</value>
-  </data>
-  <data name="QuickDevicePage_DynamicLighting" xml:space="preserve">
-    <value>Paramètres d'éclairage dynamique</value>
-  </data>
-  <data name="QuickDevicePage_DynamicLightingToggle" xml:space="preserve">
-    <value>Utiliser l'éclairage dynamique sur mon appareil</value>
-  </data>
-  <data name="QuickDevicePage_NightLightDesc" xml:space="preserve">
-    <value>Utiliser des couleurs chaudes pour aider à bloquer la lumière bleue</value>
-  </data>
-  <data name="SettingsPage_VirtualTrackpad" xml:space="preserve">
-    <value>Trackpad virtuel (non implémenté)</value>
-  </data>
-  <data name="SettingsPage_VirtualTrackpadDesc" xml:space="preserve">
-    <value>Afficher le raccourci virtuel du trackpad</value>
-  </data>
-  <data name="SettingsPage_VirtualKeyboard" xml:space="preserve">
-    <value>Clavier virtuel</value>
-  </data>
-  <data name="SettingsPage_VirtualKeyboardDesc" xml:space="preserve">
-    <value>Afficher le raccourci clavier virtuel</value>
-  </data>
-  <data name="LayoutPage_Profile" xml:space="preserve">
-    <value>Profil</value>
-  </data>
-  <data name="LayoutPage_LaytouDesktop" xml:space="preserve">
-    <value>Disposition : Bureau</value>
-  </data>
-  <data name="LayoutTemplate_Desktop" xml:space="preserve">
-    <value>Bureau</value>
-  </data>
-  <data name="LayoutTemplate_DesktopDesc" xml:space="preserve">
-    <value>Disposition pour la navigation sur le bureau</value>
-  </data>
-  <data name="LayoutTemplate_Default" xml:space="preserve">
-    <value>Manette (Xbox)</value>
-  </data>
-  <data name="LayoutTemplate_DefaultDesc" xml:space="preserve">
-    <value>Ce modèle est destiné aux jeux qui prennent déjà en charge les manettes. Conçu pour les jeux à double stick, tels que les twin-stick shooters, les jeux de plateforme défilants, etc.</value>
-  </data>
-  <data name="LayoutTemplate_Nintendo" xml:space="preserve">
-    <value>Manette (Nintendo)</value>
-  </data>
-  <data name="LayoutTemplate_NintendoDesc" xml:space="preserve">
-    <value>Ce modèle est destiné aux jeux qui ont déjà un support de manette intégré. Il est destiné aux jeux qui sont conçus avec une manette Nintendo en tête.</value>
-  </data>
-  <data name="LayoutTemplate_Keyboard" xml:space="preserve">
-    <value>Clavier (WASD) et Souris</value>
-  </data>
-  <data name="LayoutTemplate_KeyboardDesc" xml:space="preserve">
-    <value>Ce modèle fonctionne parfaitement pour les jeux conçus pour clavier et souris, sans support de manette. La manette déclenchera les événements clavier du jeu avec ses boutons, en supposant quelles touches servent à se déplacer (WASD pour le mouvement, espace pour sauter, etc.). Le pavé droit simulera le mouvement de la souris.</value>
-  </data>
-  <data name="LayoutTemplate_GamepadMouse" xml:space="preserve">
-    <value>Manette de jeu avec Trackpad Souris</value>
-  </data>
-  <data name="LayoutTemplate_GamepadMouseDesc" xml:space="preserve">
-    <value>Ce modèle est destiné aux jeux disposant déjà d’un support manette intégré. Le pavé droit sera utilisé pour l’émulation de la souris, ce qui peut ne pas fonctionner dans tous les jeux.</value>
-  </data>
-  <data name="LayoutTemplate_GamepadJoystick" xml:space="preserve">
-    <value>Manette avec joystick et pavé tactile</value>
-  </data>
-  <data name="LayoutTemplate_GamepadJoystickDesc" xml:space="preserve">
-    <value>Ce modèle est destiné aux jeux disposant déjà d’un support manette intégré et d’une caméra contrôlée à la troisième personne. FPS, jeux d’aventure à la troisième personne, etc.</value>
-  </data>
-  <data name="ProfilesPage_WindowsSettings" xml:space="preserve">
-    <value>Paramètres Windows</value>
-  </data>
-  <data name="ProfilesPage_SuspendOnOverlay" xml:space="preserve">
-    <value>Suspendre sur la superposition</value>
-  </data>
-  <data name="ProfilesPage_SuspendOnOverlayDesc" xml:space="preserve">
-    <value>Met en pause le jeu actif ou l'application de premier plan chaque fois que la barre latérale QuickTools est affichée.</value>
-  </data>
-  <data name="ProfilesPage_WindowsSettingsDesc" xml:space="preserve">
-    <value>Gérer les fenêtres associées au profil</value>
-  </data>
-  <data name="LayoutPage_ActionType_Disabled" xml:space="preserve">
-    <value>Désactivé</value>
-  </data>
-  <data name="LayoutPage_ActionType_Button" xml:space="preserve">
-    <value>Bouton</value>
-  </data>
-  <data name="LayoutPage_ActionType_Joystick" xml:space="preserve">
-    <value>Joystick</value>
-  </data>
-  <data name="LayoutPage_ActionType_Keyboard" xml:space="preserve">
-    <value>Clavier</value>
-  </data>
-  <data name="LayoutPage_ActionType_Mouse" xml:space="preserve">
-    <value>Souris</value>
-  </data>
-  <data name="LayoutPage_ActionType_Trigger" xml:space="preserve">
-    <value>Déclencheur</value>
-  </data>
-  <data name="LayoutPage_ActionType_Shift" xml:space="preserve">
-    <value>Maj</value>
-  </data>
-  <data name="LayoutPage_ActionType_Inherit" xml:space="preserve">
-    <value>Hérité</value>
-  </data>
-  <data name="LayoutPage_HoldToRepeat" xml:space="preserve">
-    <value>Maintenez pour répéter</value>
-  </data>
-  <data name="LayoutPage_Interruptable" xml:space="preserve">
-    <value>Interruptable</value>
-  </data>
-  <data name="LayoutPage_PressToToggle" xml:space="preserve">
-    <value>Appuyez pour activer/désactiver</value>
-  </data>
-  <data name="LayoutPage_HapticFeedback" xml:space="preserve">
-    <value>Retour haptique</value>
-  </data>
-  <data name="LayoutPage_InputShift" xml:space="preserve">
-    <value>Décalage d’entrée</value>
-  </data>
-  <data name="QuickApplicationsPage_QuickStart" xml:space="preserve">
-    <value>Démarrage rapide</value>
-  </data>
-  <data name="QuickApplicationsPage_Processes" xml:space="preserve">
-    <value>Processus</value>
-  </data>
-  <data name="QuickApplicationsPage_SuspendApplication" xml:space="preserve">
-    <value>Suspendre l'application</value>
-  </data>
-  <data name="QuickApplicationsPage_ResumeApplication" xml:space="preserve">
-    <value>Reprendre l'application</value>
-  </data>
-  <data name="PerformancePage_EnduranceGaming_Title" xml:space="preserve">
-    <value>Intel Endurance Gaming</value>
-  </data>
-  <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
-    <value>Définir le mode actuel de parking CPU</value>
-  </data>
-  <data name="QuickPerformancePage_EnduranceGamingPresetDesc" xml:space="preserve">
-    <value>Profil prédéfini</value>
-  </data>
-  <data name="QuickPerformancePage_EnduranceGamingPerformancePreset" xml:space="preserve">
-    <value>Performance - 60 IPS</value>
-  </data>
-  <data name="QuickPerformancePage_EnduranceGamingBalancedPreset" xml:space="preserve">
-    <value>Équilibré - 40 IPS</value>
-  </data>
-  <data name="QuickPerformancePage_EnduranceGamingEfficiencyPreset" xml:space="preserve">
-    <value>Efficience - 30 IPS</value>
-  </data>
-  <data name="QuickPerformancePage_EnduranceGamingPreset" xml:space="preserve">
-    <value>Préréglages Endurance Gaming</value>
-  </data>
-  <data name="Enum_DualShock4Controller_ButtonFlags_B1" xml:space="preserve">
-    <value>Croix</value>
-  </data>
-  <data name="Enum_DualShock4Controller_ButtonFlags_B2" xml:space="preserve">
-    <value>Cercle</value>
-  </data>
-  <data name="Enum_DualShock4Controller_ButtonFlags_B3" xml:space="preserve">
-    <value>Carré</value>
-  </data>
-  <data name="Enum_DualShock4Controller_ButtonFlags_B4" xml:space="preserve">
-    <value>Triangle</value>
-  </data>
-  <data name="Enum_DualShock4Controller_ButtonFlags_Back" xml:space="preserve">
-    <value>Partager</value>
-  </data>
-  <data name="Enum_DualShock4Controller_ButtonFlags_Special" xml:space="preserve">
-    <value>Sony</value>
-  </data>
-  <data name="Enum_DualShock4Controller_ButtonFlags_Start" xml:space="preserve">
-    <value>Options</value>
-  </data>
-  <data name="Enum_DualShock4Controller_AxisLayoutFlags_LeftPad" xml:space="preserve">
-    <value>Balayage du doigt gauche</value>
-  </data>
-  <data name="Enum_DualShock4Controller_AxisLayoutFlags_RightPad" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="Enum_DualShock4Controller_ButtonFlags_LeftPadClick" xml:space="preserve">
-    <value>Clic pavé gauche</value>
-  </data>
-  <data name="Enum_DualShock4Controller_ButtonFlags_LeftPadTouch" xml:space="preserve">
-    <value>Pavé gauche touch</value>
-  </data>
-  <data name="Enum_DualShock4Controller_ButtonFlags_RightPadClick" xml:space="preserve">
-    <value>Clic pavé droit</value>
-  </data>
-  <data name="Enum_DualShock4Controller_ButtonFlags_RightPadTouch" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="Enum_NintendoSwitchProController_AxisLayoutFlags_L2" xml:space="preserve">
-    <value>ZL</value>
-  </data>
-  <data name="Enum_NintendoSwitchProController_AxisLayoutFlags_R2" xml:space="preserve">
-    <value>ZR</value>
-  </data>
-  <data name="Enum_NintendoSwitchProController_ButtonFlags_B1" xml:space="preserve">
-    <value>B</value>
-  </data>
-  <data name="Enum_NintendoSwitchProController_ButtonFlags_B2" xml:space="preserve">
-    <value>A</value>
-  </data>
-  <data name="Enum_NintendoSwitchProController_ButtonFlags_B3" xml:space="preserve">
-    <value>Y</value>
-  </data>
-  <data name="Enum_NintendoSwitchProController_ButtonFlags_B4" xml:space="preserve">
-    <value>X</value>
-  </data>
-  <data name="Enum_NintendoSwitchProController_ButtonFlags_Back" xml:space="preserve">
-    <value>Moins</value>
-  </data>
-  <data name="Enum_NintendoSwitchProController_ButtonFlags_L1" xml:space="preserve">
-    <value>L</value>
-  </data>
-  <data name="Enum_NintendoSwitchProController_ButtonFlags_R1" xml:space="preserve">
-    <value>R</value>
-  </data>
-  <data name="Enum_NintendoSwitchProController_ButtonFlags_Special" xml:space="preserve">
-    <value>Home</value>
-  </data>
-  <data name="Enum_NintendoSwitchProController_ButtonFlags_Special2" xml:space="preserve">
-    <value>Capture</value>
-  </data>
-  <data name="Enum_NintendoSwitchProController_ButtonFlags_Start" xml:space="preserve">
-    <value>Plus</value>
-  </data>
-  <data name="Enum_DClawController_OEM3" xml:space="preserve">
-    <value>M1</value>
-  </data>
-  <data name="Enum_DClawController_OEM4" xml:space="preserve">
-    <value>M2</value>
-  </data>
-  <data name="Enum_Xbox360Controller_AxisLayoutFlags_L2" xml:space="preserve">
-    <value>L2</value>
-  </data>
-  <data name="Enum_Xbox360Controller_AxisLayoutFlags_LeftStick" xml:space="preserve">
-    <value>Joystick gauche</value>
-  </data>
-  <data name="Enum_Xbox360Controller_AxisLayoutFlags_LeftThumb" xml:space="preserve">
-    <value>Stick gauche</value>
-  </data>
-  <data name="Enum_Xbox360Controller_AxisLayoutFlags_R2" xml:space="preserve">
-    <value>R2</value>
-  </data>
-  <data name="Enum_Xbox360Controller_AxisLayoutFlags_RightStick" xml:space="preserve">
-    <value>Joystick droit</value>
-  </data>
-  <data name="Enum_Xbox360Controller_AxisLayoutFlags_RightThumb" xml:space="preserve">
-    <value>Stick droit</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_B1" xml:space="preserve">
-    <value>A</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_B2" xml:space="preserve">
-    <value>B</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_B3" xml:space="preserve">
-    <value>X</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_B4" xml:space="preserve">
-    <value>Y</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_B5" xml:space="preserve">
-    <value>B5</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_B6" xml:space="preserve">
-    <value>B6</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_B7" xml:space="preserve">
-    <value>B7</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_B8" xml:space="preserve">
-    <value>B8</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_Back" xml:space="preserve">
-    <value>Back (View)</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_DPadDown" xml:space="preserve">
-    <value>DPad Bas</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_DPadLeft" xml:space="preserve">
-    <value>DPad Gauche</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_DPadRight" xml:space="preserve">
-    <value>DPad Droite</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_DPadUp" xml:space="preserve">
-    <value>DPad Haut</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_L1" xml:space="preserve">
-    <value>LG</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_L2" xml:space="preserve">
-    <value>L2</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_L3" xml:space="preserve">
-    <value>L3</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_L4" xml:space="preserve">
-    <value>L4</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_L5" xml:space="preserve">
-    <value>L5</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumb" xml:space="preserve">
-    <value>Stick gauche</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumbDown" xml:space="preserve">
-    <value>Stick gauche vers le bas</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumbLeft" xml:space="preserve">
-    <value>Stick gauche vers la gauche</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumbRight" xml:space="preserve">
-    <value>Stick gauche vers la droite</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumbUp" xml:space="preserve">
-    <value>Stick gauche vers le haut</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_OEM1" xml:space="preserve">
-    <value>OEM1</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_OEM2" xml:space="preserve">
-    <value>OEM2</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_OEM3" xml:space="preserve">
-    <value>OEM3</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_R1" xml:space="preserve">
-    <value>RB</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_R2" xml:space="preserve">
-    <value>R2</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_R3" xml:space="preserve">
-    <value>R3</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_R4" xml:space="preserve">
-    <value>R4</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_R5" xml:space="preserve">
-    <value>R5</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumb" xml:space="preserve">
-    <value>Stick droit</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumbDown" xml:space="preserve">
-    <value>Stick droit vers le bas</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumbLeft" xml:space="preserve">
-    <value>Stick droit vers la gauche</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumbRight" xml:space="preserve">
-    <value>Stick droit vers la droite</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumbUp" xml:space="preserve">
-    <value>Stick droit vers le haut</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_Special" xml:space="preserve">
-    <value>Guide</value>
-  </data>
-  <data name="Enum_Xbox360Controller_ButtonFlags_Start" xml:space="preserve">
-    <value>Menu</value>
-  </data>
-  <data name="Enum_GamingZone_ButtonFlags_OEM1" xml:space="preserve">
-    <value>Zone</value>
-  </data>
-  <data name="Enum_GamingZone_ButtonFlags_OEM2" xml:space="preserve">
-    <value>Plus</value>
-  </data>
-  <data name="Enum_GamingZone_ButtonFlags_OEM3" xml:space="preserve">
-    <value>Home</value>
-  </data>
-  <data name="Enum_GamingZone_ButtonFlags_OEM4" xml:space="preserve">
-    <value>M1</value>
-  </data>
-  <data name="Enum_GamingZone_ButtonFlags_OEM5" xml:space="preserve">
-    <value>M3</value>
-  </data>
-  <data name="Hint_GamingZoneServices" xml:space="preserve">
-    <value>ZOTAC GAMING ONE Launcher et les services sont actifs</value>
-  </data>
-  <data name="Hint_GamingZoneServicesDesc" xml:space="preserve">
-    <value>ZOTAC GAMING ONE Launcher et Services sont déjà actifs sur votre console. Cela peut causer des problèmes de compatibilité avec l'application.</value>
-  </data>
-  <data name="PowerProfileGamingZoneBestPerformance" xml:space="preserve">
-    <value>Élevé</value>
-  </data>
-  <data name="PowerProfileGamingZoneBetterBattery" xml:space="preserve">
-    <value>Silencieux</value>
-  </data>
-  <data name="PowerProfileGamingZoneBetterPerformance" xml:space="preserve">
-    <value>Équilibré</value>
-  </data>
-  <data name="PowerProfileGamingZoneBestPerformanceDesc" xml:space="preserve">
-    <value>28W TDP</value>
-  </data>
-  <data name="PowerProfileGamingZoneBetterBatteryDesc" xml:space="preserve">
-    <value>8W TDP</value>
-  </data>
-  <data name="PowerProfileGamingZoneBetterPerformanceDesc" xml:space="preserve">
-    <value>15W TDP</value>
-  </data>
-  <data name="ControllerPage_LegionGoControllerSwap" xml:space="preserve">
-    <value>Basculer la disposition des boutons</value>
-  </data>
-  <data name="ControllerPage_LegionGoControllerSwapDesc" xml:space="preserve">
-    <value>Réaffecter la disposition des boutons : “Legion L” en “View” et “Legion R” en “Menu”</value>
-  </data>
-  <data name="DevicePage_GamingZone_VRAM" xml:space="preserve">
-    <value>Taille VRAM supplémentaire</value>
-  </data>
-  <data name="DevicePage_GamingZone_VRAMDesc" xml:space="preserve">
-    <value>Configurez une taille de mémoire supplémentaire pour les GPU intégrés</value>
-  </data>
-  <data name="ProfilesPage_Run" xml:space="preserve">
-    <value>Exécuter</value>
-  </data>
-  <data name="ProfilesPage_RunAs" xml:space="preserve">
-    <value>Exécuter en tant qu'administrateur</value>
-  </data>
-  <data name="ProfilesPage_ProfileLaunchString" xml:space="preserve">
-    <value>Commande de lancement</value>
-  </data>
-  <data name="ProfilesPage_ProfileExecutables" xml:space="preserve">
-    <value>Exécutables</value>
-  </data>
-  <data name="ProfilesPage_InputsSettings" xml:space="preserve">
-    <value>Paramètres d'entrée</value>
-  </data>
-  <data name="SettingsPage_QuickToolsWindowLocationBottomCenter" xml:space="preserve">
-    <value>En bas au centre</value>
-  </data>
-  <data name="LibraryScanTitle" xml:space="preserve">
-    <value>Mettre à jour la bibliothèque {0}?</value>
-  </data>
-  <data name="LibraryScanContent" xml:space="preserve">
-    <value>Cela va scanner la bibliothèque {0} et créer des profils pour chacun de vos jeux. Cela peut prendre plusieurs secondes à quelques minutes. Voulez-vous continuer?</value>
-  </data>
-  <data name="ProfilesPage_OpenProfilePage" xml:space="preserve">
-    <value>Ouvrir la page de profil</value>
-  </data>
-  <data name="ProfilesPage_OpenLayoutPage" xml:space="preserve">
-    <value>Ouvrir la page de mise en page</value>
-  </data>
-  <data name="SettingsPage_QuicktoolsSlideAnimation" xml:space="preserve">
-    <value>Animation du slide</value>
-  </data>
-  <data name="SettingsPage_QuicktoolsSlideAnimationDesc" xml:space="preserve">
-    <value>Définir le comportement de l'animation slider du QuickTool</value>
-  </data>
-  <data name="PerformancePage_PL1PL2Warning" xml:space="preserve">
-    <value>Définir PL1 égal à PL2 sur les processeurs Intel peut réduire les performances des jeux.</value>
-  </data>
-  <data name="ControllerPage_RelatedSupport" xml:space="preserve">
-    <value>Support associé</value>
-  </data>
-  <data name="LayoutPage_PressType" xml:space="preserve">
-    <value>Type d'action</value>
-  </data>
-  <data name="LayoutPage_PressTypeTooltip0" xml:space="preserve">
-    <value>Déclencher l'action immédiatement lorsque le bouton est pressé (ou relâché)</value>
-  </data>
-  <data name="LayoutPage_PressTypeTooltip1" xml:space="preserve">
-    <value>Déclencher l'action après avoir appuyé sur le bouton pendant la durée spécifiée</value>
-  </data>
-  <data name="LayoutPage_PressTypeTooltip2" xml:space="preserve">
-    <value>Déclencher l'action sur appui et la garder active pendant la durée spécifiée</value>
-  </data>
-  <data name="LayoutPage_PressTypeTooltip3" xml:space="preserve">
-    <value>Déclencher l'action lorsque le bouton est pressé deux fois dans la fenêtre de temps spécifiée</value>
-  </data>
-  <data name="LayoutPage_InputShiftDesc" xml:space="preserve">
-    <value>Définit dans quelles circonstances cette entrée doit être déplacée</value>
-  </data>
-  <data name="ControllerPage_SteamControllerMode" xml:space="preserve">
-    <value>Mode du contrôleur</value>
-  </data>
-  <data name="ControllerPage_SteamControllerModeDesc" xml:space="preserve">
-    <value>Changer le mode contrôleur : mode exclusif ou mode hybride. Le mode exclusif assurera que toutes les entrées sont gérées par le Handheld Companion (HC). Le mode hybride permettra à Steam de gérer les entrées depuis les applications Steam et HC de gérer les entrées d'autres applications.</value>
-  </data>
-  <data name="Hint_SteamInputReadme" xml:space="preserve">
-    <value>Handheld Companion désactivera la saisie Steam et redémarrera Steam</value>
-  </data>
-  <data name="Hint_SteamInputDesc" xml:space="preserve">
-    <value>Steam est déjà en cours d'exécution et Steam Input est activé, ce qui peut entraîner un comportement inattendu</value>
-  </data>
-  <data name="Hint_SteamInput" xml:space="preserve">
-    <value>Steam input est activé</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement" xml:space="preserve">
-    <value>Gestion de contrôleur (expérimental)</value>
-  </data>
-  <data name="Hint_SteamInputAction" xml:space="preserve">
-    <value>Désactiver Steam Input</value>
-  </data>
-  <data name="Hotkey_CycleSubProfile" xml:space="preserve">
-    <value>Parcourir les sous-profils disponibles</value>
-  </data>
-  <data name="Hotkey_CycleSubProfileDesc" xml:space="preserve">
-    <value>Parcourir les sous-profils pour le jeu actuel</value>
-  </data>
   <data name="DevicePage_DeviceSettings" xml:space="preserve">
     <value>Paramètres de l'appareil</value>
+  </data>
+  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
+    <value>Oups, il semble que votre appareil n'est pas encore pris en charge. Le logiciel pourrait ne pas fonctionner comme prévu.</value>
   </data>
   <data name="Enum_LegionController_ButtonFlags_RightPadClick" xml:space="preserve">
     <value>Double appui</value>
@@ -3810,6 +3104,9 @@ Merci d’utiliser HC et de nous aider à l’améliorer.</value>
   <data name="Hotkey_KeyboardLegacyDesc" xml:space="preserve">
     <value>Modifier le raccourci en appuyant sur un bouton ou une touche spéciale</value>
   </data>
+  <data name="Hotkey_OnScreenDisplay" xml:space="preserve">
+    <value>Affichage à l'écran</value>
+  </data>
   <data name="ControllerPage_SteamControllerModeHybrid" xml:space="preserve">
     <value>Hybride</value>
   </data>
@@ -3867,8 +3164,110 @@ Merci d’utiliser HC et de nous aider à l’améliorer.</value>
   <data name="Controller_Calibrate" xml:space="preserve">
     <value>Calibrer</value>
   </data>
+  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
+    <value>Tentative {0}: </value>
+  </data>
+  <data name="DevicePage_BatteryOptions" xml:space="preserve">
+    <value>Options de batterie</value>
+  </data>
   <data name="DevicePage_BatteryChargeLimitPercent" xml:space="preserve">
     <value>Niveau de charge maximal de la batterie</value>
+  </data>
+  <data name="PerformancePage_ParkingModeAllCoresAuto" xml:space="preserve">
+    <value>Auto (équilibrage P/E)</value>
+  </data>
+  <data name="PerformancePage_ParkingModeAllCoresPrefPCore" xml:space="preserve">
+    <value>Préférer les cœurs d'efficacité (E-cores)</value>
+  </data>
+  <data name="PerformancePage_ParkingModeAllCoresPrefECore" xml:space="preserve">
+    <value>Préférer les cœurs de performance (P-cores)</value>
+  </data>
+  <data name="PerformancePage_ParkingModeOnlyPCore" xml:space="preserve">
+    <value>Coeurs de performance uniquement (performance maximale)</value>
+  </data>
+  <data name="PerformancePage_ParkingModeOnlyECore" xml:space="preserve">
+    <value>Cœurs d'efficacité uniquement (efficacité maximale)</value>
+  </data>
+  <data name="Hotkey_XGMobile" xml:space="preserve">
+    <value>Activer/désactiver ROG XG Mobile</value>
+  </data>
+  <data name="Hotkey_XGMobileDesc" xml:space="preserve">
+    <value>Activer/désactiver l'état de ROG XG Mobile</value>
+  </data>
+  <data name="SettingsPage_Experimental" xml:space="preserve">
+    <value>Options expérimentales</value>
+  </data>
+  <data name="ProfilesPage_SuspendOnSleep" xml:space="preserve">
+    <value>Suspendre et reprendre l'application quand le système entre ou quitte l'état de veille</value>
+  </data>
+  <data name="OverlayPage_OnScreenDisplayOptions" xml:space="preserve">
+    <value>Options d'affichage sur l'écran</value>
+  </data>
+  <data name="HotkeysPage_Hotkeys" xml:space="preserve">
+    <value>Raccourcis</value>
+  </data>
+  <data name="HotkeysPage_RumbleOnExecution" xml:space="preserve">
+    <value>Vibration à l'exécution</value>
+  </data>
+  <data name="HotkeysPage_RumbleOnExecutionDesc" xml:space="preserve">
+    <value>Indique si le contrôleur doit vibrer quand un raccourci clavier est exécuté</value>
+  </data>
+  <data name="HotkeysPage_HotkeysSettings" xml:space="preserve">
+    <value>Réglages des raccourcis</value>
+  </data>
+  <data name="PerformancePage_CPUParkingMode" xml:space="preserve">
+    <value>Mode de stationnement du CPU</value>
+  </data>
+  <data name="PerformancePage_EnduranceGaming_Desc" xml:space="preserve">
+    <value>GPU Auto TDP based on desired FPS target</value>
+  </data>
+  <data name="SettingsPage_Priority" xml:space="preserve">
+    <value>Priorité</value>
+  </data>
+  <data name="SettingsPage_PriorityDesc" xml:space="preserve">
+    <value>Priorité du processus d'application</value>
+  </data>
+  <data name="SettingsPage_Priority_Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="SettingsPage_Priority_AboveNormal" xml:space="preserve">
+    <value>Au dessus de la normale</value>
+  </data>
+  <data name="SettingsPage_Priority_High" xml:space="preserve">
+    <value>Élevé</value>
+  </data>
+  <data name="SettingsPage_QuickToolsBackdropHeader" xml:space="preserve">
+    <value>Arrière-plan du QuickTool</value>
+  </data>
+  <data name="MainWindow_navLibrary" xml:space="preserve">
+    <value>Bibliothèque</value>
+  </data>
+  <data name="ProfilesPage_Library_Desc" xml:space="preserve">
+    <value>Modifier les paramètres de la bibliothèque de profils</value>
+  </data>
+  <data name="ProfilesPage_ShowInLibrary" xml:space="preserve">
+    <value>Afficher dans la bibliothèque</value>
+  </data>
+  <data name="ProfilesPage_ShowInLibraryDesc" xml:space="preserve">
+    <value>Activer pour afficher le profil dans la bibliothèque</value>
+  </data>
+  <data name="ProfilesPage_Library_Title" xml:space="preserve">
+    <value>Paramètres de bibliothèque</value>
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImage" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImageButton" xml:space="preserve">
+    <value>Télécharger</value>
+  </data>
+  <data name="ProfilesPage_LibraryRefreshImageDesc" xml:space="preserve">
+    <value>Télécharger les images pour ce profil. Pour de meilleurs résultats, associez le (sous) nom de profil avec le nom de l'application IGDB ou SteamGridDB</value>
+  </data>
+  <data name="LibraryDiscoverTitle" xml:space="preserve">
+    <value>Télécharger les métadonnées de jeu?</value>
+  </data>
+  <data name="LibraryDiscoverContent" xml:space="preserve">
+    <value>Cela va scanner toute votre bibliothèque pour charger ou actualiser les métadonnées et les pochettes pour chaque titre. Cela peut prendre plusieurs secondes à quelques minutes en fonction de votre connexion Internet. Voulez-vous continuer ?</value>
   </data>
   <data name="ProfilesPage_AreYouSureOverwriteSecondary" xml:space="preserve">
     <value>Créer un sous-profil</value>
@@ -3933,8 +3332,362 @@ Merci d’utiliser HC et de nous aider à l’améliorer.</value>
   <data name="LayoutPage_ExecuteActionsNumFormat" xml:space="preserve">
     <value>{0} exécute la/les action(s) {1}</value>
   </data>
+  <data name="Hotkey_WindowStyle" xml:space="preserve">
+    <value>Style de la fenêtre</value>
+  </data>
+  <data name="Hotkey_WindowStyleDesc" xml:space="preserve">
+    <value>Spécifie comment une nouvelle fenêtre devrait apparaître au démarrage du processus</value>
+  </data>
+  <data name="Hotkey_WindowStyle_Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="Hotkey_WindowStyle_Hidden" xml:space="preserve">
+    <value>Masqué</value>
+  </data>
+  <data name="Hotkey_WindowStyle_Minimized" xml:space="preserve">
+    <value>Minimisé</value>
+  </data>
+  <data name="Hotkey_WindowStyle_Maximized" xml:space="preserve">
+    <value>Maximisé</value>
+  </data>
+  <data name="Hotkey_RunAsAdministrator" xml:space="preserve">
+    <value>Exécuter en tant qu'administrateur</value>
+  </data>
+  <data name="Hotkey_RunAsAdministratorDesc" xml:space="preserve">
+    <value>Démarrer avec les privilèges administrateur</value>
+  </data>
+  <data name="Hotkey_ExecutableTargetPlaceholder" xml:space="preserve">
+    <value>Appuyer pour sélectionner un exécutable</value>
+  </data>
+  <data name="Hotkey_MainWindowPageDesc" xml:space="preserve">
+    <value>Définir la page vers laquelle naviguer à l’ouverture de la fenêtre principale</value>
+  </data>
+  <data name="Hotkey_MainWindowPage" xml:space="preserve">
+    <value>Page</value>
+  </data>
+  <data name="Hotkey_CycleSubProfileDirection" xml:space="preserve">
+    <value>Direction</value>
+  </data>
+  <data name="Hotkey_CycleSubProfileDirectionDesc" xml:space="preserve">
+    <value>Définir la direction de cycle du sous-profil</value>
+  </data>
+  <data name="Hotkey_CycleSubProfilePrev" xml:space="preserve">
+    <value>Précédent</value>
+  </data>
+  <data name="Hotkey_CycleSubProfileNext" xml:space="preserve">
+    <value>Suivant</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyPosition" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyPositionDesc" xml:space="preserve">
+    <value>Définir la position du clavier virtuel</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyPositionBottom" xml:space="preserve">
+    <value>Bas</value>
+  </data>
+  <data name="Hotkey_KeyboardLegacyPositionMaximize" xml:space="preserve">
+    <value>Maximise</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_HandheldCompanion" xml:space="preserve">
+    <value>Handheld Companion</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_PowerAndBattery" xml:space="preserve">
+    <value>Alimentation &amp; Batterie</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_Windows" xml:space="preserve">
+    <value>Windows</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_Multitasking" xml:space="preserve">
+    <value>Multitask</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_Display" xml:space="preserve">
+    <value>Affichage</value>
+  </data>
+  <data name="Hotkey_FunctionCategory_Sound" xml:space="preserve">
+    <value>Son</value>
+  </data>
+  <data name="MainWindow_OpenNavigation" xml:space="preserve">
+    <value>Ouvrir la navigation</value>
+  </data>
   <data name="Hotkey_Current" xml:space="preserve">
     <value>Actuel</value>
+  </data>
+  <data name="ProfilesPage_Play" xml:space="preserve">
+    <value>Jouer</value>
+  </data>
+  <data name="DevicePage_TDPControlMethod" xml:space="preserve">
+    <value>Méthode de contrôle de la puissance thermique (TDP)</value>
+  </data>
+  <data name="DevicePage_TDPControlMethodDesc" xml:space="preserve">
+    <value>Sélectionner la méthode préférée pour gérer le TDP de l'appareil</value>
+  </data>
+  <data name="DevicePage_SecurityOptions" xml:space="preserve">
+    <value>Paramètres de sécurité</value>
+  </data>
+  <data name="DevicePage_CoreIsolation" xml:space="preserve">
+    <value>Isolation du noyau</value>
+  </data>
+  <data name="DevicePage_CoreIsolationDesc" xml:space="preserve">
+    <value>Fonctionnalités de sécurité disponibles sur votre appareil utilisant la sécurité basée sur la virtualisation. Peuvent empêcher la modification du TDP.</value>
+  </data>
+  <data name="DevicePage_PlatformOptions" xml:space="preserve">
+    <value>Paramètres de la plateforme</value>
+  </data>
+  <data name="DevicePage_ManufacturerApplication" xml:space="preserve">
+    <value>Application du fabricant</value>
+  </data>
+  <data name="DevicePage_ManufacturerApplicationDesc" xml:space="preserve">
+    <value>Activer ou désactiver les applications installées par le fabricant sur votre appareil.</value>
+  </data>
+  <data name="MainWindow_CloseNavigation" xml:space="preserve">
+    <value>Fermer navigation</value>
+  </data>
+  <data name="DevicePage_Lenovo_LeftController" xml:space="preserve">
+    <value>Manette gauche</value>
+  </data>
+  <data name="DevicePage_Lenovo_RightController" xml:space="preserve">
+    <value>Manette droite</value>
+  </data>
+  <data name="QuickDevicePage_DeviceSettings" xml:space="preserve">
+    <value>Réglages de l'appareil</value>
+  </data>
+  <data name="QuickDevicePage_Bluetooth" xml:space="preserve">
+    <value>Bluetooth</value>
+  </data>
+  <data name="QuickDevicePage_NightLight" xml:space="preserve">
+    <value>Lumière nocturne</value>
+  </data>
+  <data name="QuickDevicePage_DisplayResolution" xml:space="preserve">
+    <value>Display resolution and refresh rate</value>
+  </data>
+  <data name="QuickDevicePage_DynamicLighting" xml:space="preserve">
+    <value>Paramètres d'éclairage dynamique</value>
+  </data>
+  <data name="QuickDevicePage_DynamicLightingToggle" xml:space="preserve">
+    <value>Utiliser l'éclairage dynamique sur mon appareil</value>
+  </data>
+  <data name="QuickDevicePage_NightLightDesc" xml:space="preserve">
+    <value>Utiliser des couleurs chaudes pour aider à bloquer la lumière bleue</value>
+  </data>
+  <data name="SettingsPage_VirtualTrackpad" xml:space="preserve">
+    <value>Trackpad virtuel (non implémenté)</value>
+  </data>
+  <data name="SettingsPage_VirtualTrackpadDesc" xml:space="preserve">
+    <value>Afficher le raccourci virtuel du trackpad</value>
+  </data>
+  <data name="SettingsPage_VirtualKeyboard" xml:space="preserve">
+    <value>Clavier virtuel</value>
+  </data>
+  <data name="SettingsPage_VirtualKeyboardDesc" xml:space="preserve">
+    <value>Afficher le raccourci clavier virtuel</value>
+  </data>
+  <data name="LayoutPage_Profile" xml:space="preserve">
+    <value>Profil</value>
+  </data>
+  <data name="LayoutPage_LaytouDesktop" xml:space="preserve">
+    <value>Disposition : Bureau</value>
+  </data>
+  <data name="LayoutTemplate_Desktop" xml:space="preserve">
+    <value>Bureau</value>
+  </data>
+  <data name="LayoutTemplate_DesktopDesc" xml:space="preserve">
+    <value>Disposition pour la navigation sur le bureau</value>
+  </data>
+  <data name="LayoutTemplate_Default" xml:space="preserve">
+    <value>Manette (Xbox)</value>
+  </data>
+  <data name="LayoutTemplate_DefaultDesc" xml:space="preserve">
+    <value>Ce modèle est destiné aux jeux qui prennent déjà en charge les manettes. Conçu pour les jeux à double stick, tels que les twin-stick shooters, les jeux de plateforme défilants, etc.</value>
+  </data>
+  <data name="LayoutTemplate_Nintendo" xml:space="preserve">
+    <value>Manette (Nintendo)</value>
+  </data>
+  <data name="LayoutTemplate_NintendoDesc" xml:space="preserve">
+    <value>Ce modèle est destiné aux jeux qui ont déjà un support de manette intégré. Il est destiné aux jeux qui sont conçus avec une manette Nintendo en tête.</value>
+  </data>
+  <data name="LayoutTemplate_Keyboard" xml:space="preserve">
+    <value>Clavier (WASD) et Souris</value>
+  </data>
+  <data name="LayoutTemplate_KeyboardDesc" xml:space="preserve">
+    <value>Ce modèle fonctionne parfaitement pour les jeux conçus pour clavier et souris, sans support de manette. La manette déclenchera les événements clavier du jeu avec ses boutons, en supposant quelles touches servent à se déplacer (WASD pour le mouvement, espace pour sauter, etc.). Le pavé droit simulera le mouvement de la souris.</value>
+  </data>
+  <data name="LayoutTemplate_GamepadMouse" xml:space="preserve">
+    <value>Manette de jeu avec Trackpad Souris</value>
+  </data>
+  <data name="LayoutTemplate_GamepadMouseDesc" xml:space="preserve">
+    <value>Ce modèle est destiné aux jeux disposant déjà d’un support manette intégré. Le pavé droit sera utilisé pour l’émulation de la souris, ce qui peut ne pas fonctionner dans tous les jeux.</value>
+  </data>
+  <data name="LayoutTemplate_GamepadJoystick" xml:space="preserve">
+    <value>Manette avec joystick et pavé tactile</value>
+  </data>
+  <data name="LayoutTemplate_GamepadJoystickDesc" xml:space="preserve">
+    <value>Ce modèle est destiné aux jeux disposant déjà d’un support manette intégré et d’une caméra contrôlée à la troisième personne. FPS, jeux d’aventure à la troisième personne, etc.</value>
+  </data>
+  <data name="ProfilesPage_WindowsSettings" xml:space="preserve">
+    <value>Paramètres Windows</value>
+  </data>
+  <data name="ProfilesPage_SuspendOnOverlay" xml:space="preserve">
+    <value>Suspendre sur la superposition</value>
+  </data>
+  <data name="ProfilesPage_SuspendOnOverlayDesc" xml:space="preserve">
+    <value>Met en pause le jeu actif ou l'application de premier plan chaque fois que la barre latérale QuickTools est affichée.</value>
+  </data>
+  <data name="ProfilesPage_WindowsSettingsDesc" xml:space="preserve">
+    <value>Gérer les fenêtres associées au profil</value>
+  </data>
+  <data name="LayoutPage_ActionType_Disabled" xml:space="preserve">
+    <value>Désactivé</value>
+  </data>
+  <data name="LayoutPage_ActionType_Button" xml:space="preserve">
+    <value>Bouton</value>
+  </data>
+  <data name="LayoutPage_ActionType_Joystick" xml:space="preserve">
+    <value>Joystick</value>
+  </data>
+  <data name="LayoutPage_ActionType_Keyboard" xml:space="preserve">
+    <value>Clavier</value>
+  </data>
+  <data name="LayoutPage_ActionType_Mouse" xml:space="preserve">
+    <value>Souris</value>
+  </data>
+  <data name="LayoutPage_ActionType_Trigger" xml:space="preserve">
+    <value>Déclencheur</value>
+  </data>
+  <data name="LayoutPage_ActionType_Shift" xml:space="preserve">
+    <value>Maj</value>
+  </data>
+  <data name="LayoutPage_ActionType_Inherit" xml:space="preserve">
+    <value>Hérité</value>
+  </data>
+  <data name="LayoutPage_HoldToRepeat" xml:space="preserve">
+    <value>Maintenez pour répéter</value>
+  </data>
+  <data name="LayoutPage_Interruptable" xml:space="preserve">
+    <value>Interruptable</value>
+  </data>
+  <data name="LayoutPage_PressToToggle" xml:space="preserve">
+    <value>Appuyez pour activer/désactiver</value>
+  </data>
+  <data name="LayoutPage_HapticFeedback" xml:space="preserve">
+    <value>Retour haptique</value>
+  </data>
+  <data name="LayoutPage_InputShift" xml:space="preserve">
+    <value>Décalage d’entrée</value>
+  </data>
+  <data name="QuickApplicationsPage_QuickStart" xml:space="preserve">
+    <value>Démarrage rapide</value>
+  </data>
+  <data name="QuickApplicationsPage_Processes" xml:space="preserve">
+    <value>Processus</value>
+  </data>
+  <data name="QuickApplicationsPage_SuspendApplication" xml:space="preserve">
+    <value>Suspendre l'application</value>
+  </data>
+  <data name="QuickApplicationsPage_ResumeApplication" xml:space="preserve">
+    <value>Reprendre l'application</value>
+  </data>
+  <data name="PerformancePage_EnduranceGaming_Title" xml:space="preserve">
+    <value>Intel Endurance Gaming</value>
+  </data>
+  <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
+    <value>Définir le mode actuel de parking CPU</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingPresetDesc" xml:space="preserve">
+    <value>Profil prédéfini</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingPerformancePreset" xml:space="preserve">
+    <value>Performance - 60 IPS</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingBalancedPreset" xml:space="preserve">
+    <value>Équilibré - 40 IPS</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingEfficiencyPreset" xml:space="preserve">
+    <value>Efficience - 30 IPS</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingPreset" xml:space="preserve">
+    <value>Préréglages Endurance Gaming</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_B1" xml:space="preserve">
+    <value>Croix</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_B2" xml:space="preserve">
+    <value>Cercle</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_B3" xml:space="preserve">
+    <value>Carré</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_B4" xml:space="preserve">
+    <value>Triangle</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_Back" xml:space="preserve">
+    <value>Partager</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_Special" xml:space="preserve">
+    <value>Sony</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_Start" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="Enum_DualShock4Controller_AxisLayoutFlags_LeftPad" xml:space="preserve">
+    <value>Balayage du doigt gauche</value>
+  </data>
+  <data name="Enum_DualShock4Controller_AxisLayoutFlags_RightPad" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_LeftPadClick" xml:space="preserve">
+    <value>Clic pavé gauche</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_LeftPadTouch" xml:space="preserve">
+    <value>Pavé gauche touch</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_RightPadClick" xml:space="preserve">
+    <value>Clic pavé droit</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_RightPadTouch" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_AxisLayoutFlags_L2" xml:space="preserve">
+    <value>ZL</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_AxisLayoutFlags_R2" xml:space="preserve">
+    <value>ZR</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_B1" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_B2" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_B3" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_B4" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_Back" xml:space="preserve">
+    <value>Moins</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_L1" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_R1" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_Special" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_Special2" xml:space="preserve">
+    <value>Capture</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_Start" xml:space="preserve">
+    <value>Plus</value>
+  </data>
+  <data name="Enum_DClawController_OEM3" xml:space="preserve">
+    <value>M1</value>
+  </data>
+  <data name="Enum_DClawController_OEM4" xml:space="preserve">
+    <value>M2</value>
   </data>
   <data name="Enum_TarantulaProController_ButtonFlags_B5" xml:space="preserve">
     <value>C1</value>
@@ -3963,7 +3716,257 @@ Merci d’utiliser HC et de nous aider à l’améliorer.</value>
   <data name="Enum_Xbox360Controller_AxisLayoutFlags_Gyroscope" xml:space="preserve">
     <value>Gyroscope</value>
   </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_L2" xml:space="preserve">
+    <value>L2</value>
+  </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_LeftStick" xml:space="preserve">
+    <value>Joystick gauche</value>
+  </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_LeftThumb" xml:space="preserve">
+    <value>Stick gauche</value>
+  </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_R2" xml:space="preserve">
+    <value>R2</value>
+  </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_RightStick" xml:space="preserve">
+    <value>Joystick droit</value>
+  </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_RightThumb" xml:space="preserve">
+    <value>Stick droit</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B1" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B2" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B3" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B4" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B5" xml:space="preserve">
+    <value>B5</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B6" xml:space="preserve">
+    <value>B6</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B7" xml:space="preserve">
+    <value>B7</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B8" xml:space="preserve">
+    <value>B8</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_Back" xml:space="preserve">
+    <value>Back (View)</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_DPadDown" xml:space="preserve">
+    <value>DPad Bas</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_DPadLeft" xml:space="preserve">
+    <value>DPad Gauche</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_DPadRight" xml:space="preserve">
+    <value>DPad Droite</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_DPadUp" xml:space="preserve">
+    <value>DPad Haut</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_L1" xml:space="preserve">
+    <value>LG</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_L2" xml:space="preserve">
+    <value>L2</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_L3" xml:space="preserve">
+    <value>L3</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_L4" xml:space="preserve">
+    <value>L4</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_L5" xml:space="preserve">
+    <value>L5</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumb" xml:space="preserve">
+    <value>Stick gauche</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumbDown" xml:space="preserve">
+    <value>Stick gauche vers le bas</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumbLeft" xml:space="preserve">
+    <value>Stick gauche vers la gauche</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumbRight" xml:space="preserve">
+    <value>Stick gauche vers la droite</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumbUp" xml:space="preserve">
+    <value>Stick gauche vers le haut</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_OEM1" xml:space="preserve">
+    <value>OEM1</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_OEM2" xml:space="preserve">
+    <value>OEM2</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_OEM3" xml:space="preserve">
+    <value>OEM3</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_R1" xml:space="preserve">
+    <value>RB</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_R2" xml:space="preserve">
+    <value>R2</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_R3" xml:space="preserve">
+    <value>R3</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_R4" xml:space="preserve">
+    <value>R4</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_R5" xml:space="preserve">
+    <value>R5</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumb" xml:space="preserve">
+    <value>Stick droit</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumbDown" xml:space="preserve">
+    <value>Stick droit vers le bas</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumbLeft" xml:space="preserve">
+    <value>Stick droit vers la gauche</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumbRight" xml:space="preserve">
+    <value>Stick droit vers la droite</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumbUp" xml:space="preserve">
+    <value>Stick droit vers le haut</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_Special" xml:space="preserve">
+    <value>Guide</value>
+  </data>
   <data name="Enum_Xbox360Controller_ButtonFlags_Special2" xml:space="preserve">
     <value>Spécial 2</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_Start" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM1" xml:space="preserve">
+    <value>Zone</value>
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM2" xml:space="preserve">
+    <value>Plus</value>
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM3" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM4" xml:space="preserve">
+    <value>M1</value>
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM5" xml:space="preserve">
+    <value>M3</value>
+  </data>
+  <data name="Hint_GamingZoneServices" xml:space="preserve">
+    <value>ZOTAC GAMING ONE Launcher et les services sont actifs</value>
+  </data>
+  <data name="Hint_GamingZoneServicesDesc" xml:space="preserve">
+    <value>ZOTAC GAMING ONE Launcher et Services sont déjà actifs sur votre console. Cela peut causer des problèmes de compatibilité avec l'application.</value>
+  </data>
+  <data name="PowerProfileGamingZoneBestPerformance" xml:space="preserve">
+    <value>Élevé</value>
+  </data>
+  <data name="PowerProfileGamingZoneBetterBattery" xml:space="preserve">
+    <value>Silencieux</value>
+  </data>
+  <data name="PowerProfileGamingZoneBetterPerformance" xml:space="preserve">
+    <value>Équilibré</value>
+  </data>
+  <data name="PowerProfileGamingZoneBestPerformanceDesc" xml:space="preserve">
+    <value>28W TDP</value>
+  </data>
+  <data name="PowerProfileGamingZoneBetterBatteryDesc" xml:space="preserve">
+    <value>8W TDP</value>
+  </data>
+  <data name="PowerProfileGamingZoneBetterPerformanceDesc" xml:space="preserve">
+    <value>15W TDP</value>
+  </data>
+  <data name="ControllerPage_LegionGoControllerSwap" xml:space="preserve">
+    <value>Basculer la disposition des boutons</value>
+  </data>
+  <data name="ControllerPage_LegionGoControllerSwapDesc" xml:space="preserve">
+    <value>Réaffecter la disposition des boutons : “Legion L” en “View” et “Legion R” en “Menu”</value>
+  </data>
+  <data name="DevicePage_GamingZone_VRAM" xml:space="preserve">
+    <value>Taille VRAM supplémentaire</value>
+  </data>
+  <data name="DevicePage_GamingZone_VRAMDesc" xml:space="preserve">
+    <value>Configurez une taille de mémoire supplémentaire pour les GPU intégrés</value>
+  </data>
+  <data name="ProfilesPage_Run" xml:space="preserve">
+    <value>Exécuter</value>
+  </data>
+  <data name="ProfilesPage_RunAs" xml:space="preserve">
+    <value>Exécuter en tant qu'administrateur</value>
+  </data>
+  <data name="ProfilesPage_ProfileLaunchString" xml:space="preserve">
+    <value>Commande de lancement</value>
+  </data>
+  <data name="ProfilesPage_ProfileExecutables" xml:space="preserve">
+    <value>Exécutables</value>
+  </data>
+  <data name="ProfilesPage_InputsSettings" xml:space="preserve">
+    <value>Paramètres d'entrée</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationBottomCenter" xml:space="preserve">
+    <value>En bas au centre</value>
+  </data>
+  <data name="LibraryScanTitle" xml:space="preserve">
+    <value>Mettre à jour la bibliothèque {0}?</value>
+  </data>
+  <data name="LibraryScanContent" xml:space="preserve">
+    <value>Cela va scanner la bibliothèque {0} et créer des profils pour chacun de vos jeux. Cela peut prendre plusieurs secondes à quelques minutes. Voulez-vous continuer?</value>
+  </data>
+  <data name="ProfilesPage_OpenProfilePage" xml:space="preserve">
+    <value>Ouvrir la page de profil</value>
+  </data>
+  <data name="ProfilesPage_OpenLayoutPage" xml:space="preserve">
+    <value>Ouvrir la page de mise en page</value>
+  </data>
+  <data name="SettingsPage_QuicktoolsSlideAnimation" xml:space="preserve">
+    <value>Animation du slide</value>
+  </data>
+  <data name="SettingsPage_QuicktoolsSlideAnimationDesc" xml:space="preserve">
+    <value>Définir le comportement de l'animation slider du QuickTool</value>
+  </data>
+  <data name="PerformancePage_PL1PL2Warning" xml:space="preserve">
+    <value>Définir PL1 égal à PL2 sur les processeurs Intel peut réduire les performances des jeux.</value>
+  </data>
+  <data name="ControllerPage_RelatedSupport" xml:space="preserve">
+    <value>Support associé</value>
+  </data>
+  <data name="LayoutPage_PressType" xml:space="preserve">
+    <value>Type d'action</value>
+  </data>
+  <data name="LayoutPage_PressTypeTooltip0" xml:space="preserve">
+    <value>Déclencher l'action immédiatement lorsque le bouton est pressé (ou relâché)</value>
+  </data>
+  <data name="LayoutPage_PressTypeTooltip1" xml:space="preserve">
+    <value>Déclencher l'action après avoir appuyé sur le bouton pendant la durée spécifiée</value>
+  </data>
+  <data name="LayoutPage_PressTypeTooltip2" xml:space="preserve">
+    <value>Déclencher l'action sur appui et la garder active pendant la durée spécifiée</value>
+  </data>
+  <data name="LayoutPage_PressTypeTooltip3" xml:space="preserve">
+    <value>Déclencher l'action lorsque le bouton est pressé deux fois dans la fenêtre de temps spécifiée</value>
+  </data>
+  <data name="LayoutPage_InputShiftDesc" xml:space="preserve">
+    <value>Définit dans quelles circonstances cette entrée doit être déplacée</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ControllerPage_UncloakOnDisconnect" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="ControllerPage_UncloakOnDisconnectDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
   </data>
 </root>

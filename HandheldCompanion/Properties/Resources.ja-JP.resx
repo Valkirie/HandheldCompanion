@@ -3434,4 +3434,10 @@
   <data name="LayoutPage_InputShiftDesc" xml:space="preserve">
     <value />
   </data>
+  <data name="ControllerPage_UncloakOnDisconnect" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="ControllerPage_UncloakOnDisconnectDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
 </root>

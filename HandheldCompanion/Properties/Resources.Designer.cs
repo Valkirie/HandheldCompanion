@@ -916,6 +916,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unhide controller on disconnect.
+        /// </summary>
+        public static string ControllerPage_UncloakOnDisconnect {
+            get {
+                return ResourceManager.GetString("ControllerPage_UncloakOnDisconnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore controller visibility when disconnected.
+        /// </summary>
+        public static string ControllerPage_UncloakOnDisconnectDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_UncloakOnDisconnectDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Vibrate controller on connect.
         /// </summary>
         public static string ControllerPage_VibrateDevice {

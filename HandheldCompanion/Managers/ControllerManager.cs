@@ -76,6 +76,11 @@ public static class ControllerManager
     private static Timer scenarioTimer = new(100) { AutoReset = false };
     private static Timer pickTimer = new(500) { AutoReset = false };
 
+    #region settings
+    private static bool HIDuncloakonclose => ManagerFactory.settingsManager.GetBoolean("HIDuncloakonclose");
+    private static bool HIDuncloakondisconnect => ManagerFactory.settingsManager.GetBoolean("HIDuncloakondisconnect");
+    #endregion
+
     public static bool IsInitialized;
 
     public enum ControllerManagerStatus
@@ -344,8 +349,10 @@ public static class ControllerManager
 
                             if (controller.GetInstanceId() != details.deviceInstanceId)
                             {
-                                if (controller.IsHidden()) controller.Hide(false);
-                                else controller.Unhide(false);
+                                if (controller.IsHidden())
+                                    controller.Hide(false);
+                                else
+                                    controller.Unhide(false);
                             }
                         }
                         else
@@ -441,7 +448,7 @@ public static class ControllerManager
                         {
                             controller.Gone();
 
-                            if (controller.IsPhysical())
+                            if (controller.IsPhysical() && HIDuncloakondisconnect)
                                 controller.Unhide(false);
 
                             if (WasTarget)
@@ -637,7 +644,7 @@ public static class ControllerManager
                     {
                         controller.Gone();
 
-                        if (controller.IsPhysical())
+                        if (controller.IsPhysical() && HIDuncloakondisconnect)
                             controller.Unhide(false);
 
                         if (WasTarget)
@@ -691,8 +698,10 @@ public static class ControllerManager
 
                         if (controller.GetInstanceId() != details.deviceInstanceId)
                         {
-                            if (controller.IsHidden()) controller.Hide(false);
-                            else controller.Unhide(false);
+                            if (controller.IsHidden())
+                                controller.Hide(false);
+                            else
+                                controller.Unhide(false);
                         }
 
                         IsPowerCycling = true;
@@ -845,7 +854,7 @@ public static class ControllerManager
                     {
                         controller.Gone();
 
-                        if (controller.IsPhysical())
+                        if (controller.IsPhysical() && HIDuncloakondisconnect)
                             controller.Unhide(false);
 
                         if (WasTarget)
@@ -922,7 +931,6 @@ public static class ControllerManager
         scenarioTimer.Elapsed -= ScenarioTimer_Elapsed;
         scenarioTimer.Stop();
 
-        bool HIDuncloakonclose = ManagerFactory.settingsManager.GetBoolean("HIDuncloakonclose");
         foreach (IController controller in GetPhysicalControllers<IController>())
         {
             // uncloak on close, if requested
@@ -1197,7 +1205,7 @@ public static class ControllerManager
 
             controller.Gone();
 
-            if (controller.IsPhysical())
+            if (controller.IsPhysical() && HIDuncloakondisconnect)
                 controller.Unhide(false);
 
             if (WasTarget)
