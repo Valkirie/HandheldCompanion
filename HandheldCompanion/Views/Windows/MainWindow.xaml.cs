@@ -372,10 +372,10 @@ public partial class MainWindow : GamepadWindow
             {
                 case WindowState.Normal:
                 case WindowState.Maximized:
-                    WindowState = WindowState.Minimized;
+                    SetState(WindowState.Minimized);
                     break;
                 case WindowState.Minimized:
-                    WindowState = prevWindowState;
+                    SetState(prevWindowState);
                     break;
             }
         });
@@ -385,6 +385,14 @@ public partial class MainWindow : GamepadWindow
     {
         UIHelper.TryInvoke(() =>
         {
+            switch (windowState)
+            {
+                case WindowState.Normal:
+                case WindowState.Maximized:
+                    Show();
+                    break;
+            }
+
             WindowState = windowState;
         });
     }
@@ -763,44 +771,17 @@ public partial class MainWindow : GamepadWindow
             case WindowState.Maximized:
                 ManagerFactory.settingsManager.SetProperty("MainWindowLeft", 0);
                 ManagerFactory.settingsManager.SetProperty("MainWindowTop", 0);
-                // ManagerFactory.settingsManager.SetProperty("MainWindowWidth", SystemParameters.MaximizedPrimaryScreenWidth);
-                // ManagerFactory.settingsManager.SetProperty("MainWindowHeight", SystemParameters.MaximizedPrimaryScreenHeight);
                 break;
         }
-
-        ManagerFactory.settingsManager.SetProperty("MainWindowState", (int)WindowState);
-        ManagerFactory.settingsManager.SetProperty("MainWindowPrevState", (int)prevWindowState);
 
         ManagerFactory.settingsManager.SetProperty("MainWindowIsPaneOpen", navView.IsPaneOpen);
 
         if (ManagerFactory.settingsManager.GetBoolean("CloseMinimises") && !appClosing)
         {
             e.Cancel = true;
-            WindowState = WindowState.Minimized;
+            SetState(WindowState.Minimized);
             return;
         }
-    }
-
-    void UpdateAltTabVisibility(bool visible)
-    {
-        var exStyle = GetWindowLongPtr(hwndSource.Handle, GWL_EXSTYLE).ToInt64();
-
-        if (visible)
-        {
-            exStyle |= WS_EX_APPWINDOW;
-            exStyle &= ~WS_EX_TOOLWINDOW;
-        }
-        else
-        {
-            exStyle |= WS_EX_TOOLWINDOW;
-            exStyle &= ~WS_EX_APPWINDOW;
-        }
-
-        SetWindowLongPtr(hwndSource.Handle, GWL_EXSTYLE, new IntPtr(exStyle));
-
-        // force a non-client refresh so style change applies immediately
-        SetWindowPos(hwndSource.Handle, IntPtr.Zero, 0, 0, 0, 0,
-            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
     }
 
     private void Window_StateChanged(object sender, EventArgs e)
@@ -809,9 +790,9 @@ public partial class MainWindow : GamepadWindow
         {
             case WindowState.Minimized:
                 {
+                    Hide();
                     notifyIcon.Visible = Homepage_Loaded;
                     ShowInTaskbar = false;
-                    UpdateAltTabVisibility(false);
 
                     if (!NotifyInTaskbar)
                     {
@@ -823,7 +804,6 @@ public partial class MainWindow : GamepadWindow
             case WindowState.Normal:
             case WindowState.Maximized:
                 {
-                    UpdateAltTabVisibility(true);
                     notifyIcon.Visible = false;
                     ShowInTaskbar = true;
 
@@ -833,6 +813,9 @@ public partial class MainWindow : GamepadWindow
                     Focus();
 
                     prevWindowState = WindowState;
+
+                    ManagerFactory.settingsManager.SetProperty("MainWindowState", (int)WindowState);
+                    ManagerFactory.settingsManager.SetProperty("MainWindowPrevState", (int)prevWindowState);
                 }
                 break;
         }

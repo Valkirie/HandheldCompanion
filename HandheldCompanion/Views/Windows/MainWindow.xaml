@@ -30,7 +30,6 @@
     SnapsToDevicePixels="True"
     StateChanged="Window_StateChanged"
     UseLayoutRounding="True"
-    Visibility="Collapsed"
     WindowState="Minimized"
     mc:Ignorable="d">
 

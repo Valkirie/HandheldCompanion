@@ -50,34 +50,6 @@ namespace HandheldCompanion.Views.Classes
         protected const int WM_DISPLAYCHANGE = 0x007E;
         protected const int WM_DPICHANGED = 0x02E0;
 
-        protected const int GWL_EXSTYLE = -20;
-        protected const int WS_EX_TOOLWINDOW = 0x00000080;
-        protected const int WS_EX_APPWINDOW = 0x00040000;
-        protected const uint SWP_NOSIZE = 0x0001;
-        protected const uint SWP_NOMOVE = 0x0002;
-        protected const uint SWP_NOZORDER = 0x0004;
-        protected const uint SWP_FRAMECHANGED = 0x0020;
-
-        #region imports
-        [DllImport("user32.dll", EntryPoint = "GetWindowLong")]
-        public static extern int GetWindowLong32(IntPtr hWnd, int nIndex);
-
-        [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr")]
-        public static extern IntPtr GetWindowLongPtr64(IntPtr hWnd, int nIndex);
-
-        [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
-        public static extern int SetWindowLong32(IntPtr hWnd, int nIndex, int dwNewLong);
-
-        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
-        public static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
-        #endregion
-
-        public static IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex) => IntPtr.Size == 8 ? GetWindowLongPtr64(hWnd, nIndex) : new IntPtr(GetWindowLong32(hWnd, nIndex));
-        public static IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong) => IntPtr.Size == 8 ? SetWindowLongPtr64(hWnd, nIndex, dwNewLong) : new IntPtr(SetWindowLong32(hWnd, nIndex, dwNewLong.ToInt32()));
-
         public GamepadWindow()
         {
             LayoutUpdated += OnLayoutUpdated;
