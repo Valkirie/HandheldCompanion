@@ -280,6 +280,10 @@ public class ClawA1M : IDevice
             true, ButtonFlags.OEM5
         ));
 
+        // Hacky, BIOS 10F
+        OEMChords.Add(new KeyboardChord("QS", [KeyCode.LWin, KeyCode.G], [KeyCode.G, KeyCode.LWin], false, ButtonFlags.OEM2));
+        OEMChords.Add(new KeyboardChord("QS, Long-press", [KeyCode.LWin, KeyCode.Tab], [KeyCode.Tab, KeyCode.LWin], false, ButtonFlags.OEM2));
+
         // prepare hotkeys
         DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
         DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
