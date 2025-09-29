@@ -93,7 +93,7 @@ namespace HandheldCompanion.Actions
         public ActionState actionState = ActionState.Stopped;
 
         // Replaces boxed Value/prevValue
-        protected bool outBool;      // “current output” for button-like actions
+        protected bool outBool;      // “current output?for button-like actions
         protected bool prevBool;     // last input state for edge detection
 
         protected Vector2 outVector = new();
@@ -119,7 +119,7 @@ namespace HandheldCompanion.Actions
         public HapticMode HapticMode = HapticMode.Off;
         public HapticStrength HapticStrength = HapticStrength.Low;
 
-        public MotionDirection motionDirection = MotionDirection.None;
+        public DeflectionDirection motionDirection = DeflectionDirection.None;
         public float motionThreshold = 4000;
 
         // Axis-only shift mask flag to avoid sentinel assignments
@@ -340,9 +340,9 @@ namespace HandheldCompanion.Actions
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected static bool DirectionMatches(MotionDirection direction, MotionDirection mask)
+        protected static bool DirectionMatches(DeflectionDirection direction, DeflectionDirection mask)
         {
-            return direction != MotionDirection.None && ((direction & mask) != 0);
+            return direction != DeflectionDirection.None && ((direction & mask) != 0);
         }
 
         public object Clone() => CloningHelper.DeepClone(this);

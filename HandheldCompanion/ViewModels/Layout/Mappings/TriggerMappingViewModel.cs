@@ -109,7 +109,7 @@ namespace HandheldCompanion.ViewModels
             if (actionType == ActionType.Button)
             {
                 if (Action is null || Action is not ButtonActions)
-                    Action = new ButtonActions() { motionThreshold = Gamepad.TriggerThreshold, motionDirection = MotionDirection.Up };
+                    Action = new ButtonActions() { motionThreshold = Gamepad.TriggerThreshold, motionDirection = DeflectionDirection.Up };
 
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var button in controller.GetTargetButtons())
@@ -131,7 +131,7 @@ namespace HandheldCompanion.ViewModels
             else if (actionType == ActionType.Keyboard)
             {
                 if (Action is null || Action is not KeyboardActions)
-                    Action = new KeyboardActions { motionThreshold = Gamepad.TriggerThreshold, motionDirection = MotionDirection.Up };
+                    Action = new KeyboardActions { motionThreshold = Gamepad.TriggerThreshold, motionDirection = DeflectionDirection.Up };
 
                 Targets.ReplaceWith(_keyboardKeysTargets);
                 SelectedTarget = _keyboardKeysTargets.FirstOrDefault(e => e.Tag.Equals(((KeyboardActions)Action).Key)) ?? _keyboardKeysTargets.First();
@@ -139,7 +139,7 @@ namespace HandheldCompanion.ViewModels
             else if (actionType == ActionType.Mouse)
             {
                 if (Action is null || Action is not MouseActions)
-                    Action = new MouseActions { motionThreshold = Gamepad.TriggerThreshold, motionDirection = MotionDirection.Up };
+                    Action = new MouseActions { motionThreshold = Gamepad.TriggerThreshold, motionDirection = DeflectionDirection.Up };
 
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var mouseType in Enum.GetValues<MouseActionsType>().Except(_unsupportedMouseActionTypes))

@@ -117,7 +117,7 @@ namespace HandheldCompanion.Actions
             if (outVector == Vector2.Zero && !IsCursorDown)
                 return;
 
-            var direction = InputUtils.GetMotionDirection(outVector, motionThreshold);
+            var direction = InputUtils.GetDeflectionDirection(outVector, motionThreshold);
             bool press = DirectionMatches(direction, motionDirection);
 
             Execute(ButtonFlags.None, press, shiftSlot, delta);

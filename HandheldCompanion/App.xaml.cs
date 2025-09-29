@@ -48,6 +48,22 @@ public partial class App : Application
     /// </summary>
     public App()
     {
+        // get current assembly
+        var CurrentAssembly = Assembly.GetExecutingAssembly();
+        var fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
+
+        // Get the MyDocuments folder path
+        string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        string logDirectory = System.IO.Path.Combine(myDocumentsPath, "HandheldCompanion", "logs");
+
+        // Set environment variables
+        Environment.SetEnvironmentVariable("LOG_PATH", logDirectory);
+        Environment.SetEnvironmentVariable("COMPlus_legacyCorruptedStateExceptionsPolicy", "1");
+
+        // initialize log
+        LogManager.Initialize("HandheldCompanion");
+        LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
+
         InitializeSentry();
 
         InjectResource();
@@ -87,18 +103,6 @@ public partial class App : Application
         // get current assembly
         var CurrentAssembly = Assembly.GetExecutingAssembly();
         var fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
-
-        // Get the MyDocuments folder path
-        string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        string logDirectory = System.IO.Path.Combine(myDocumentsPath, "HandheldCompanion", "logs");
-
-        // Set environment variables
-        Environment.SetEnvironmentVariable("LOG_PATH", logDirectory);
-        Environment.SetEnvironmentVariable("COMPlus_legacyCorruptedStateExceptionsPolicy", "1");
-
-        // initialize log
-        LogManager.Initialize("HandheldCompanion");
-        LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
 
         using (Process process = Process.GetCurrentProcess())
         {

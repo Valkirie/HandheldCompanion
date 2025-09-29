@@ -40,7 +40,7 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Action is IActions iActions && value != Axis2ButtonDirection)
                 {
-                    iActions.motionDirection = (MotionDirection)value;
+                    iActions.motionDirection = (DeflectionDirection)value;
                     OnPropertyChanged(nameof(Axis2ButtonDirection));
 
                     // Cascade notifications to dependent properties
@@ -54,56 +54,56 @@ namespace HandheldCompanion.ViewModels
 
         public bool IsLeft
         {
-            get => ((MotionDirection)Axis2ButtonDirection).HasFlag(MotionDirection.Left);
+            get => ((DeflectionDirection)Axis2ButtonDirection).HasFlag(DeflectionDirection.Left);
             set
             {
                 if (value != IsLeft)
                 {
                     Axis2ButtonDirection = value
-                        ? Axis2ButtonDirection | (int)MotionDirection.Left
-                        : Axis2ButtonDirection & ~(int)MotionDirection.Left;
+                        ? Axis2ButtonDirection | (int)DeflectionDirection.Left
+                        : Axis2ButtonDirection & ~(int)DeflectionDirection.Left;
                 }
             }
         }
 
         public bool IsRight
         {
-            get => ((MotionDirection)Axis2ButtonDirection).HasFlag(MotionDirection.Right);
+            get => ((DeflectionDirection)Axis2ButtonDirection).HasFlag(DeflectionDirection.Right);
             set
             {
                 if (value != IsRight)
                 {
                     Axis2ButtonDirection = value
-                        ? Axis2ButtonDirection | (int)MotionDirection.Right
-                        : Axis2ButtonDirection & ~(int)MotionDirection.Right;
+                        ? Axis2ButtonDirection | (int)DeflectionDirection.Right
+                        : Axis2ButtonDirection & ~(int)DeflectionDirection.Right;
                 }
             }
         }
 
         public bool IsUp
         {
-            get => ((MotionDirection)Axis2ButtonDirection).HasFlag(MotionDirection.Up);
+            get => ((DeflectionDirection)Axis2ButtonDirection).HasFlag(DeflectionDirection.Up);
             set
             {
                 if (value != IsUp)
                 {
                     Axis2ButtonDirection = value
-                        ? Axis2ButtonDirection | (int)MotionDirection.Up
-                        : Axis2ButtonDirection & ~(int)MotionDirection.Up;
+                        ? Axis2ButtonDirection | (int)DeflectionDirection.Up
+                        : Axis2ButtonDirection & ~(int)DeflectionDirection.Up;
                 }
             }
         }
 
         public bool IsDown
         {
-            get => ((MotionDirection)Axis2ButtonDirection).HasFlag(MotionDirection.Down);
+            get => ((DeflectionDirection)Axis2ButtonDirection).HasFlag(DeflectionDirection.Down);
             set
             {
                 if (value != IsDown)
                 {
                     Axis2ButtonDirection = value
-                        ? Axis2ButtonDirection | (int)MotionDirection.Down
-                        : Axis2ButtonDirection & ~(int)MotionDirection.Down;
+                        ? Axis2ButtonDirection | (int)DeflectionDirection.Down
+                        : Axis2ButtonDirection & ~(int)DeflectionDirection.Down;
                 }
             }
         }

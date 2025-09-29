@@ -51,7 +51,7 @@ namespace HandheldCompanion.Actions
             if (outVector == Vector2.Zero && !outBool)
                 return;
 
-            var direction = InputUtils.GetMotionDirection(outVector, motionThreshold);
+            var direction = InputUtils.GetDeflectionDirection(outVector, motionThreshold);
             bool press = DirectionMatches(direction, motionDirection);
 
             // transition to Button Execute()

@@ -3404,6 +3404,12 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   <data name="LayoutPage_InputShiftDesc" xml:space="preserve">
     <value />
   </data>
+  <data name="ControllerPage_UncloakOnDisconnect" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="ControllerPage_UncloakOnDisconnectDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
   <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
     <value>컨트롤러의 진동의 세기를 변경</value>
   </data>
@@ -3416,10 +3422,25 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
     <value>아직 장치가 지원되지 않는 것 같습니다. 소프트웨어가 예상대로 실행되지 않을 수 있습니다.</value>
   </data>
-  <data name="ControllerPage_UncloakOnDisconnect" type="System.Resources.ResXNullRef, System.Windows.Forms">
+  <data name="ControllerPage_ConnectWhenPlugged" xml:space="preserve">
     <value />
   </data>
-  <data name="ControllerPage_UncloakOnDisconnectDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
+  <data name="ControllerPage_ConnectWhenPluggedDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_ScanForHardwareChanges" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_HelpWithControllerSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_TestControllerInputs" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_ConfiguringControllersSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_TroobleshootingBluetoothControllersConnectionIssues" xml:space="preserve">
     <value />
   </data>
 </root>
