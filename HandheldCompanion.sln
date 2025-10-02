@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "steam-hidapi.net", "steam-h
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "controller-hidapi.net", "controller-hidapi.net\controller-hidapi.net.csproj", "{62E9B011-2D07-4A7E-8C71-33A26A5E5B34}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandheldCompanion.UWP", "HandheldCompanion.UWP\HandheldCompanion.UWP.csproj", "{DE1A633D-97C7-4D07-A999-C1BB7321FFA0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -44,6 +46,12 @@ Global
 		{62E9B011-2D07-4A7E-8C71-33A26A5E5B34}.Debug|x64.Build.0 = Debug|x64
 		{62E9B011-2D07-4A7E-8C71-33A26A5E5B34}.Release|x64.ActiveCfg = Release|x64
 		{62E9B011-2D07-4A7E-8C71-33A26A5E5B34}.Release|x64.Build.0 = Release|x64
+		{DE1A633D-97C7-4D07-A999-C1BB7321FFA0}.Debug|x64.ActiveCfg = Debug|x64
+		{DE1A633D-97C7-4D07-A999-C1BB7321FFA0}.Debug|x64.Build.0 = Debug|x64
+		{DE1A633D-97C7-4D07-A999-C1BB7321FFA0}.Debug|x64.Deploy.0 = Debug|x64
+		{DE1A633D-97C7-4D07-A999-C1BB7321FFA0}.Release|x64.ActiveCfg = Release|x64
+		{DE1A633D-97C7-4D07-A999-C1BB7321FFA0}.Release|x64.Build.0 = Release|x64
+		{DE1A633D-97C7-4D07-A999-C1BB7321FFA0}.Release|x64.Deploy.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
