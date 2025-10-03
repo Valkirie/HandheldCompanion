@@ -56,22 +56,6 @@ public partial class App : Application
     /// </summary>
     public App()
     {
-        // get current assembly
-        var CurrentAssembly = Assembly.GetExecutingAssembly();
-        var fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
-
-        // Get the MyDocuments folder path
-        string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        string logDirectory = System.IO.Path.Combine(myDocumentsPath, "HandheldCompanion", "logs");
-
-        // Set environment variables
-        Environment.SetEnvironmentVariable("LOG_PATH", logDirectory);
-        Environment.SetEnvironmentVariable("COMPlus_legacyCorruptedStateExceptionsPolicy", "1");
-
-        // initialize log
-        LogManager.Initialize("HandheldCompanion");
-        LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
-
         InitializeSentry();
 
         InjectResource();
@@ -169,7 +153,7 @@ public partial class App : Application
     /// <summary>
     /// Copies all content from source into dest, overwriting existing files
     /// except the reserved files (Certificate.pfx, SecretKeys.cs) at dest root.
-    /// Does NOT delete anything in dest; it�s a merge that preserves reserved files.
+    /// Does NOT delete anything in dest; it’s a merge that preserves reserved files.
     /// </summary>
     static void MergeCopyPreservingReserved(string source, string dest, bool tryDeleteSource)
     {
@@ -242,7 +226,7 @@ public partial class App : Application
 
         // initialize log
         LogManager.Initialize(ApplicationName);
-        LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
+        LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);        
 
         using (Process process = Process.GetCurrentProcess())
         {
