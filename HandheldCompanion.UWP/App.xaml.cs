@@ -1,4 +1,5 @@
-﻿using Microsoft.Gaming.XboxGameBar;
+﻿using HandheldCompanion.UWP.Views;
+using Microsoft.Gaming.XboxGameBar;
 using System;
 using System.Collections.Generic;
 using System.IO;

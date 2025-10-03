@@ -13,11 +13,16 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace HandheldCompanion.UWP
+// https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
+
+namespace HandheldCompanion.UWP.Views.Pages
 {
-    public sealed partial class MainPage : Page
+    /// <summary>
+    /// 可用于自身或导航至 Frame 内部的空白页。
+    /// </summary>
+    public sealed partial class PerformancePage : Page
     {
-        public MainPage()
+        public PerformancePage()
         {
             this.InitializeComponent();
         }

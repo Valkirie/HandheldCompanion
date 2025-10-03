@@ -1,0 +1,83 @@
+﻿<Page
+    x:Class="HandheldCompanion.UWP.Views.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:HandheldCompanion.UWP.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:Custom="using:Microsoft.UI.Xaml.Controls.Primitives"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:labs="using:CommunityToolkit.Labs.WinUI"
+    mc:Ignorable="d"
+    d:DesignWidth="400"
+    d:DesignHeight="400"
+    RequestedTheme="Dark"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <ResourceDictionary Source="/Styles/XboxStyle.xaml"/>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <labs:TokenView
+            Name="NavView"
+            IsWrapped="False"
+            Margin="10"
+            SelectionChanged="NavView_SelectionChanged">
+            <labs:TokenItem Content="Performance" Tag="PerformancePage">
+                <labs:TokenItem.Icon>
+                    <FontIcon Glyph="&#xE9D9;" />
+                </labs:TokenItem.Icon>
+            </labs:TokenItem>
+            <labs:TokenItem Content="Device">
+                <labs:TokenItem.Icon>
+                    <FontIcon Glyph="&#xE70A;" />
+                </labs:TokenItem.Icon>
+            </labs:TokenItem>
+            <labs:TokenItem Content="Profiles">
+                <labs:TokenItem.Icon>
+                    <FontIcon Glyph="&#xE77B;" />
+                </labs:TokenItem.Icon>
+            </labs:TokenItem>
+            <labs:TokenItem Content="Documents">
+                <labs:TokenItem.Icon>
+                    <FontIcon Glyph="&#xE8A5;" />
+                </labs:TokenItem.Icon>
+            </labs:TokenItem>
+            <labs:TokenItem Content="Web">
+                <labs:TokenItem.Icon>
+                    <FontIcon Glyph="&#xE774;" />
+                </labs:TokenItem.Icon>
+            </labs:TokenItem>
+            <labs:TokenItem Content="Settings">
+                <labs:TokenItem.Icon>
+                    <FontIcon Glyph="&#xE713;" />
+                </labs:TokenItem.Icon>
+            </labs:TokenItem>
+            <labs:TokenItem Content="People">
+                <labs:TokenItem.Icon>
+                    <FontIcon Glyph="&#xE716;" />
+                </labs:TokenItem.Icon>
+            </labs:TokenItem>
+            <labs:TokenItem Content="Folders">
+                <labs:TokenItem.Icon>
+                    <FontIcon Glyph="&#xE8B7;" />
+                </labs:TokenItem.Icon>
+            </labs:TokenItem>
+            <labs:TokenItem Content="Photos">
+                <labs:TokenItem.Icon>
+                    <FontIcon Glyph="&#xE91B;" />
+                </labs:TokenItem.Icon>
+            </labs:TokenItem>
+        </labs:TokenView>
+        <ScrollViewer Grid.Row="1">
+            <Frame Name="ContentFrame" Margin="10"/>
+        </ScrollViewer>
+    </Grid>
+</Page>

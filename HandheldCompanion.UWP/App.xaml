@@ -5,35 +5,6 @@
     xmlns:local="using:HandheldCompanion.UWP"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls">
     <Application.Resources>
-        <controls:XamlControlsResources>
-            <controls:XamlControlsResources.MergedDictionaries>
-                <!-- Xbox Game Bar style -->
-                <ResourceDictionary>
-                    <ResourceDictionary.ThemeDictionaries>
-                        <ResourceDictionary x:Key="Dark">
-                            <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#25282C" />
-                            <SolidColorBrush x:Key="ButtonBackground" Color="#3E434B"/>
-                            <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#484E58"/>
-                            <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#3A3F47"/>
-                            <SolidColorBrush x:Key="ButtonBackgroundDisabled" Color="#2C3035"/>
-                            <SolidColorBrush x:Key="ButtonBorderBrush" Color="#6B7584"/>
-                            <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="#6B7584"/>
-                            <SolidColorBrush x:Key="ButtonBorderBrushPressed" Color="#555D69"/>
-                            <SolidColorBrush x:Key="ButtonBorderBrushDisabled" Color="#3A3F46"/>
-                            <StaticResource x:Key="RepeatButtonBackground" ResourceKey="ButtonBackground"/>
-                            <StaticResource x:Key="RepeatButtonBackgroundPointerOver" ResourceKey="ButtonBackgroundPointerOver"/>
-                            <StaticResource x:Key="RepeatButtonBackgroundPressed" ResourceKey="ButtonBackgroundPressed"/>
-                            <StaticResource x:Key="RepeatButtonBackgroundDisabled" ResourceKey="ButtonBackgroundDisabled"/>
-                            <StaticResource x:Key="RepeatButtonBorderBrush" ResourceKey="ButtonBorderBrush"/>
-                            <StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="ButtonBorderBrushPointerOver"/>
-                            <StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="ButtonBorderBrushPressed"/>
-                            <StaticResource x:Key="RepeatButtonBorderBrushDisabled" ResourceKey="ButtonBorderBrushDisabled"/>
-                            <CornerRadius x:Key="ControlCornerRadius">8,8,8,8</CornerRadius>
-                            <Thickness x:Key="ButtonPadding">15,10,15,11</Thickness>
-                        </ResourceDictionary>
-                    </ResourceDictionary.ThemeDictionaries>
-                </ResourceDictionary>
-            </controls:XamlControlsResources.MergedDictionaries>
-        </controls:XamlControlsResources>
+        <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
     </Application.Resources>
 </Application>
