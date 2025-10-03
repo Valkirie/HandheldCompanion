@@ -66,11 +66,11 @@
   <!-- Runtime JIT/PGO & GC tuning -->
   <ItemGroup>
     <RuntimeHostConfigurationOption Include="System.Runtime.TieredCompilation" Value="true" />
-    <RuntimeHostConfigurationOption Include="System.Runtime.TieredPGO"          Value="true" />
-    <RuntimeHostConfigurationOption Include="System.Runtime.QuickJit"           Value="true" />
-    <RuntimeHostConfigurationOption Include="System.Runtime.QuickJitForLoops"   Value="true" />
-    <RuntimeHostConfigurationOption Include="System.GC.Server"                  Value="true" />
-    <RuntimeHostConfigurationOption Include="System.GC.Concurrent"              Value="true" />
+    <RuntimeHostConfigurationOption Include="System.Runtime.TieredPGO" Value="true" />
+    <RuntimeHostConfigurationOption Include="System.Runtime.QuickJit" Value="true" />
+    <RuntimeHostConfigurationOption Include="System.Runtime.QuickJitForLoops" Value="true" />
+    <RuntimeHostConfigurationOption Include="System.GC.Server" Value="true" />
+    <RuntimeHostConfigurationOption Include="System.GC.Concurrent" Value="true" />
   </ItemGroup>
   
   <ItemGroup>
@@ -246,6 +246,7 @@
     <PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
     <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
     <PackageReference Include="SharpDX.XInput" Version="4.2.0" />
+    <PackageReference Include="StreamJsonRpc" Version="2.22.23" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.7" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="9.0.7" />
     <PackageReference Include="System.Text.Json" Version="9.0.7" />

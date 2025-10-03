@@ -18,6 +18,33 @@
     </Page.Resources>
 
     <StackPanel Spacing="8">
+
+        <!--  Maximum CPU Count  -->
+        <controls:SettingsExpander Description="Controls CPU unparked core count limit" Header="Maximum CPU Count"
+                                   HeaderIcon="{ui:FontIcon Glyph='&#xe964;'}">
+
+            <ToggleSwitch Name="CPUCountToggle" IsOn="{Binding CPUCoreEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <controls:SettingsExpander.Items>
+                <controls:SettingsCard IsEnabled="{Binding CPUCoreEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <StackPanel>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Text=""
+                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" />
+                        <Slider
+                            Margin="8,0,104,0"
+                            VerticalAlignment="Center"
+                            Maximum="{Binding CPUCoreMaximum}"
+                            Minimum="2"
+                            TickFrequency="1"
+                            TickPlacement="BottomRight"
+                            Value="{Binding CPUCoreCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                </controls:SettingsCard>
+            </controls:SettingsExpander.Items>
+        </controls:SettingsExpander>
+
         <!--  Thermal Power (TDP) Limit  -->
         <controls:SettingsExpander
                 Description="Desc"
@@ -35,10 +62,10 @@
 
                     <StackPanel>
                         <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                            <TextBlock Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}" Text="{Binding PL1OverrideValue, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+                            <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" Text="{Binding PL1OverrideValue, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
                             <TextBlock
                                     Margin="2,0,0,0"
-                                    Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
+                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                     Text=" W" />
                         </StackPanel>
                         <Slider
@@ -62,10 +89,10 @@
 
                     <StackPanel>
                         <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                            <TextBlock Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}" Text="{Binding PL2OverrideValue, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+                            <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" Text="{Binding PL2OverrideValue, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
                             <TextBlock
                                     Margin="2,0,0,0"
-                                    Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
+                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                     Text=" W" />
                         </StackPanel>
                         <Slider
