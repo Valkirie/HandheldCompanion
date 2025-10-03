@@ -760,7 +760,7 @@ public class LayoutManager : IManager
                 if (j == currentIndex) continue;
                 var a2 = actions[j];
                 if (a2.ShiftSlot != slot) continue;
-                if (!a2.Interruptable) continue;
+                if (!a2.HasInterruptable) continue;
                 if (a2.actionState == ActionState.Succeed) continue;
 
                 var st = a2.actionState;
@@ -774,7 +774,7 @@ public class LayoutManager : IManager
                 for (int j = currentIndex + 1; j < actions.Length; j++)
                 {
                     var next = actions[j];
-                    if (next.ShiftSlot == slot && next.Interruptable)
+                    if (next.ShiftSlot == slot && next.HasInterruptable)
                     {
                         next.actionState = ActionState.Forced;
                         break;
@@ -790,7 +790,7 @@ public class LayoutManager : IManager
                 if (j == currentIndex) continue;
                 var a2 = actions[j];
                 if (a2.ShiftSlot != slot) continue;
-                if (!a2.Interruptable) continue;
+                if (!a2.HasInterruptable) continue;
                 if (a2.actionState == ActionState.Succeed) continue;
 
                 a2.actionState = ActionState.Suspended;

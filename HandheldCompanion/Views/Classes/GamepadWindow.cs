@@ -1,18 +1,19 @@
 ﻿using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Threading;
 using WpfScreenHelper;
 
 namespace HandheldCompanion.Views.Classes
@@ -48,10 +49,34 @@ namespace HandheldCompanion.Views.Classes
 
         protected const int WM_DISPLAYCHANGE = 0x007E;
         protected const int WM_DPICHANGED = 0x02E0;
+        protected const int WM_POWERBROADCAST = 0x0218;
+        protected const int WM_PAINT = 0x000F;
+
+        // hack variables
+        private Timer WMPaintTimer = new(100) { AutoReset = false };
+        private bool WMPaintPending = false;
+        private DateTime prevDraw = DateTime.MinValue;
+
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmFlush();
 
         public GamepadWindow()
         {
             LayoutUpdated += OnLayoutUpdated;
+            StateChanged += Window_StateChanged;
+            IsVisibleChanged += Window_VisibleChanged;
+
+            WMPaintTimer.Elapsed += WMPaintTimer_Elapsed;
+        }
+
+        protected virtual void Window_VisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            WMPaint_Trigger();
+        }
+
+        protected virtual void Window_StateChanged(object? sender, EventArgs e)
+        {
+            WMPaint_Trigger();
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -67,43 +92,57 @@ namespace HandheldCompanion.Views.Classes
         {
             switch (msg)
             {
-                case WM_DISPLAYCHANGE:
-                case WM_DPICHANGED:
-                    ForceRecompose();
+                case WM_PAINT:
+                    DateTime drawTime = DateTime.Now;
+
+                    double drawDiff = Math.Abs((prevDraw - drawTime).TotalMilliseconds);
+                    if (drawDiff < 200)
+                        WMPaint_Trigger();
+
+                    // update previous drawing time
+                    prevDraw = drawTime;
                     break;
             }
 
             return IntPtr.Zero;
         }
 
-        public async void ForceRecompose()
+        public void WMPaint_Trigger()
         {
-            await Task.Delay(1000).ConfigureAwait(false);
-
-            Dispatcher.Invoke(DispatcherPriority.Render, new Action(() =>
+            if (!WMPaintPending)
             {
-                var source = hwndSource;
-                var target = source?.CompositionTarget as HwndTarget;
-                if (target == null) return;
-
-                target.RenderMode = RenderMode.SoftwareOnly;
+                // disable GPU acceleration
+                if (hwndSource is not null)
+                    hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
                 RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
 
-                // On the next render tick, flip back to hardware and force a redraw
-                EventHandler? kick = null;
-                kick = (s, e) =>
-                {
-                    CompositionTarget.Rendering -= kick;
+                // set flag
+                WMPaintPending = true;
 
-                    try
-                    {
-                        target.RenderMode = RenderMode.Default;
-                        RenderOptions.ProcessRenderMode = RenderMode.Default;
-                    }
-                    catch { /* ignore */ }
-                };
-                CompositionTarget.Rendering += kick;
-            }));
+                LogManager.LogError("ProcessRenderMode set to {0}", RenderOptions.ProcessRenderMode);
+            }
+
+            if (WMPaintPending)
+            {
+                WMPaintTimer.Stop();
+                WMPaintTimer.Start();
+            }
+        }
+
+        private void WMPaintTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+        {
+            if (WMPaintPending)
+            {
+                // enable GPU acceleration
+                if (hwndSource is not null)
+                    hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
+                RenderOptions.ProcessRenderMode = RenderMode.Default;
+
+                // reset flag
+                WMPaintPending = false;
+
+                LogManager.LogError("ProcessRenderMode set to {0}", RenderOptions.ProcessRenderMode);
+            }
         }
 
         public void SetFocusedElement(Control focusedControl)

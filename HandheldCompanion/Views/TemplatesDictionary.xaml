@@ -1004,13 +1004,13 @@
                     <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_HoldToRepeat}" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6}">
                         <ui:ToggleSwitch
                             HorizontalAlignment="Right"
-                            IsOn="{Binding Turbo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            IsOn="{Binding HasTurbo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Style="{DynamicResource InvertedToggleSwitchStyle}" />
                     </ui:SettingsCard>
                     <ui:SettingsCard
                         Header="Repeat rate"
-                        IsEnabled="{Binding Turbo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        Visibility="{Binding Turbo, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        IsEnabled="{Binding HasTurbo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Visibility="{Binding HasTurbo, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <DockPanel>
                             <TextBox
                                 HorizontalContentAlignment="Center"
@@ -1033,12 +1033,12 @@
 
                     <!--  Interruptable  -->
                     <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_Interruptable}" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6}">
-                        <ui:ToggleSwitch IsOn="{Binding Interruptable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                        <ui:ToggleSwitch IsOn="{Binding HasInterruptable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource InvertedToggleSwitchStyle}" />
                     </ui:SettingsCard>
 
                     <!--  Toggle  -->
                     <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_PressToToggle}" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6}">
-                        <ui:ToggleSwitch IsOn="{Binding Toggle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                        <ui:ToggleSwitch IsOn="{Binding HasToggle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource InvertedToggleSwitchStyle}" />
                     </ui:SettingsCard>
 
                     <!--  Haptic  -->
@@ -1589,6 +1589,47 @@
                         </DockPanel>
                     </ui:SettingsCard>
 
+                    <!--  Turbo  -->
+                    <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_HoldToRepeat}" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <ui:ToggleSwitch
+                            HorizontalAlignment="Right"
+                            IsOn="{Binding HasTurbo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                    </ui:SettingsCard>
+                    <ui:SettingsCard
+                        Header="Repeat rate"
+                        IsEnabled="{Binding HasTurbo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Visibility="{Binding HasTurbo, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding TurboDelay, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} ms}" />
+
+                            <Slider
+                                Margin="3,0,0,0"
+                                VerticalAlignment="Center"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="100"
+                                Minimum="10"
+                                TickFrequency="5"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding TurboDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Interruptable  -->
+                    <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_Interruptable}" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <ui:ToggleSwitch IsOn="{Binding HasInterruptable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                    </ui:SettingsCard>
+
+                    <!--  Toggle  -->
+                    <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_PressToToggle}" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <ui:ToggleSwitch IsOn="{Binding HasToggle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                    </ui:SettingsCard>
+
                     <!--  Output shape  -->
                     <!--  TODO: Translate me  -->
                     <ui:SettingsCard Header="Output shape" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
@@ -1877,6 +1918,47 @@
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 Value="{Binding Axis2ButtonThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Turbo  -->
+                    <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_HoldToRepeat}" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <ui:ToggleSwitch
+                            HorizontalAlignment="Right"
+                            IsOn="{Binding HasTurbo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                    </ui:SettingsCard>
+                    <ui:SettingsCard
+                        Header="Repeat rate"
+                        IsEnabled="{Binding HasTurbo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Visibility="{Binding HasTurbo, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding TurboDelay, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} ms}" />
+
+                            <Slider
+                                Margin="3,0,0,0"
+                                VerticalAlignment="Center"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="100"
+                                Minimum="10"
+                                TickFrequency="5"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding TurboDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Interruptable  -->
+                    <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_Interruptable}" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <ui:ToggleSwitch IsOn="{Binding HasInterruptable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                    </ui:SettingsCard>
+
+                    <!--  Toggle  -->
+                    <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_PressToToggle}" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <ui:ToggleSwitch IsOn="{Binding HasToggle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource InvertedToggleSwitchStyle}" />
                     </ui:SettingsCard>
 
                     <!--  Inner deadzone  -->

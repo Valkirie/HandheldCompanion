@@ -204,7 +204,8 @@ public class ROGAlly : IDevice
         if (!success)
             return false;
 
-        return true;
+        // open Asus ACPI
+        return AsusACPI.Open();
     }
 
     public override void OpenEvents()

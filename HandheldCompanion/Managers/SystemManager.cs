@@ -207,12 +207,14 @@ public static class SystemManager
         }
 
         LogManager.LogDebug("Session switched to {0}", e.Reason);
+
+        PerformSystemRoutine();
     }
 
     private static void PerformSystemRoutine()
     {
         // update status
-        currentSystemStatus = IsPowerSuspended ? SystemStatus.SystemPending : SystemStatus.SystemReady;
+        currentSystemStatus = IsPowerSuspended || IsSessionLocked ? SystemStatus.SystemPending : SystemStatus.SystemReady;
 
         // only raise event is system status has changed
         if (previousSystemStatus == currentSystemStatus)

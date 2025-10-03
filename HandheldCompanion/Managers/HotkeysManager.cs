@@ -44,7 +44,7 @@ public class HotkeysManager : IManager
             ProcessHotkey(fileName);
 
         // deploy device-default hotkeys during first start
-        if (IsFirstStart)
+        if (IsFirstStart || fileEntries.Length == 0)
         {
             foreach (KeyValuePair<Type, Hotkey> kvp in IDevice.GetCurrent().DeviceHotkeys)
             {

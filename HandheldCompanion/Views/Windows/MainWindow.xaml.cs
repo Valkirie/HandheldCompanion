@@ -219,7 +219,19 @@ public partial class MainWindow : GamepadWindow
         Width = (int)Math.Max(MinWidth, ManagerFactory.settingsManager.GetDouble("MainWindowWidth"));
         Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, ManagerFactory.settingsManager.GetDouble("MainWindowLeft"));
         Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, ManagerFactory.settingsManager.GetDouble("MainWindowTop"));
-        navView.IsPaneOpen = ManagerFactory.settingsManager.GetBoolean("MainWindowIsPaneOpen");
+
+        bool MainWindowIsPaneOpen = ManagerFactory.settingsManager.GetBoolean("MainWindowIsPaneOpen");
+
+        navView.IsPaneOpen = MainWindowIsPaneOpen;
+        switch (MainWindowIsPaneOpen)
+        {
+            case true:
+                navView_PaneOpened(navView, null);
+                break;
+            case false:
+                navView_PaneClosed(navView, null);
+                break;
+        }
 
         // update setting(s)
         ManagerFactory.settingsManager.SetProperty("LastVersion", fileVersionInfo.FileVersion);
@@ -236,10 +248,6 @@ public partial class MainWindow : GamepadWindow
             case WM_DEVICECHANGE:
                 ManagerFactory.deviceManager.RefreshDisplayAdapters();
                 break;
-            case WM_QUERYENDSESSION:
-                break;
-
-
         }
 
         return base.WndProc(hwnd, msg, wParam, lParam, ref handled);
@@ -531,6 +539,7 @@ public partial class MainWindow : GamepadWindow
 
     private DateTime pendingTime = DateTime.Now;
     private DateTime resumeTime = DateTime.Now;
+
     private async void OnSystemStatusChanged(SystemManager.SystemStatus status, SystemManager.SystemStatus prevStatus)
     {
         if (status == prevStatus)
@@ -545,12 +554,14 @@ public partial class MainWindow : GamepadWindow
                         // when device resumes from sleep
                         resumeTime = DateTime.Now;
 
-                        // force recompose window(s)
-                        this.ForceRecompose();
-                        overlayquickTools.ForceRecompose();
+                        // resume UI ?
+                        this.WMPaint_Trigger();
+                        overlayquickTools.WMPaint_Trigger();
 
-                        // use device-specific delay
-                        await Task.Delay(CurrentDevice.ResumeDelay); // Captures synchronization context
+                        // wait a bit more if device went to sleep for at least 30 minutes (arbitrary)
+                        TimeSpan sleepDuration = resumeTime - pendingTime;
+                        if (sleepDuration.TotalMinutes >= 30)
+                            await Task.Delay(3000); // Captures synchronization context
 
                         // resume manager(s)
                         InputsManager.Start();
@@ -562,11 +573,6 @@ public partial class MainWindow : GamepadWindow
 
                         // resume platform(s)
                         PlatformManager.LibreHardware.Start();
-
-                        // wait a bit more if device went to sleep for at least 30 minutes (arbitrary)
-                        TimeSpan sleepDuration = resumeTime - pendingTime;
-                        if (sleepDuration.TotalMinutes > 30)
-                            await Task.Delay(CurrentDevice.ResumeDelay); // Captures synchronization context
 
                         VirtualManager.Resume(true);
                         ControllerManager.Resume(true);
@@ -581,10 +587,7 @@ public partial class MainWindow : GamepadWindow
 
                         // open current device (threaded to avoid device to hang)
                         if (CurrentDevice.Open())
-                        {
-                            // manage events
                             CurrentDevice.OpenEvents();
-                        }
                     }).Start();
                 }
                 break;
@@ -783,7 +786,7 @@ public partial class MainWindow : GamepadWindow
         }
     }
 
-    private void Window_StateChanged(object sender, EventArgs e)
+    protected override void Window_StateChanged(object? sender, EventArgs e)
     {
         switch (WindowState)
         {
@@ -818,6 +821,8 @@ public partial class MainWindow : GamepadWindow
                 }
                 break;
         }
+
+        base.Window_StateChanged(sender, e);
     }
 
     private const string HomeKey = "LibraryPage";
@@ -940,6 +945,46 @@ public partial class MainWindow : GamepadWindow
     {
         // todo: localize me
         PaneText.Text = Properties.Resources.MainWindow_OpenNavigation;
+    }
+
+    private void GamepadUIMore_Click(object sender, RoutedEventArgs e)
+    {
+        Task.Run(async () =>
+        {
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.Start, true, false);
+            await Task.Delay(40);
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.Start, false, true);
+        });
+    }
+
+    private void GamepadUISelect_Click(object sender, RoutedEventArgs e)
+    {
+        Task.Run(async () =>
+        {
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B1, true, false);
+            await Task.Delay(40);
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B1, false, true);
+        });
+    }
+
+    private void GamepadUIBack_Click(object sender, RoutedEventArgs e)
+    {
+        Task.Run(async () =>
+        {
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B2, true, false);
+            await Task.Delay(40);
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B2, false, true);
+        });
+    }
+
+    private void GamepadUIToggle_Click(object sender, RoutedEventArgs e)
+    {
+        Task.Run(async () =>
+        {
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B4, true, false);
+            await Task.Delay(40);
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B4, false, true);
+        });
     }
 
     private void On_Navigated(object sender, NavigationEventArgs e)

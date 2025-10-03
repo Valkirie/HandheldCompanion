@@ -180,9 +180,6 @@ public abstract class IDevice
     public string ProductIllustration = "device_generic";
     public string ProductModel = "default";
 
-    // minimum delay before trying to emulate a virtual controller on system resume (milliseconds)
-    public short ResumeDelay = 2000;
-
     // key press delay to use for certain scenarios
     public short KeyPressDelay = (short)(TimerManager.GetPeriod() * 2);
 

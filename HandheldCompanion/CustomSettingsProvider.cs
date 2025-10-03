@@ -30,24 +30,7 @@ namespace HandheldCompanion
         {
             base.Initialize(ApplicationName, config);
 
-            string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string applicationDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-
-            string settingsPath = Path.Combine(myDocumentsPath, "HandheldCompanion");
-            UserConfigPath = Path.Combine(settingsPath, UserConfigFileName);
-
-            if (!Directory.Exists(settingsPath))
-                Directory.CreateDirectory(settingsPath);
-
-            // one-time migration
-            string previousPath = Path.Combine(applicationDataPath, ApplicationName, UserConfigFileName);
-            if (File.Exists(previousPath))
-            {
-                if (!File.Exists(UserConfigPath))
-                    File.Move(previousPath, UserConfigPath);
-                else
-                    File.Delete(previousPath);
-            }
+            UserConfigPath = Path.Combine(App.SettingsPath, UserConfigFileName);
         }
 
         public override SettingsPropertyValueCollection GetPropertyValues(SettingsContext context, SettingsPropertyCollection collection)

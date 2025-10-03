@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Actions
@@ -101,19 +102,17 @@ namespace HandheldCompanion.Actions
 
         public float ActionTimer = 200.0f;   // default value for steam
         public float PressTimer = -1.0f;     // -1 inactive, >= 0 active
+
+        public bool HasTurbo = false;
+        public bool HasToggle = false;
+        public bool HasInterruptable = false;
+        public float TurboDelay = 30.0f;
+
+        private bool IsToggled = false;
+        private bool IsTurboed = false;
+        private float TurboCountdown = 0.0f;     // countdown (ms) before flipping
         private int PressCount = 0;     // used for double tap
 
-        public bool HasTurbo = true;
-        public bool HasToggle = true;
-        public bool HasInterruptable = true;
-
-        public bool IsToggle = false;
-        public bool IsTurbo = false;
-
-        public float TurboDelay = 30.0f;
-        private float TurboCountdown = 0.0f;     // countdown (ms) before flipping
-
-        public bool Interruptable = true;
         public ShiftSlot ShiftSlot = ShiftSlot.Any;
 
         public HapticMode HapticMode = HapticMode.Off;
@@ -287,42 +286,42 @@ namespace HandheldCompanion.Actions
             }
 
             // Toggle
-            if (IsToggle)
+            if (HasToggle)
             {
-                if (prevBool != value && value) HasToggle = !HasToggle;
+                if (prevBool != value && value) IsToggled = !IsToggled;
             }
             else
             {
-                HasToggle = false;
+                IsToggled = false;
             }
 
             // Turbo (countdown, no modulo)
-            if (IsTurbo)
+            if (HasTurbo)
             {
-                if (value || HasToggle)
+                if (value || IsToggled)
                 {
                     TurboCountdown -= delta;
                     if (TurboCountdown <= 0)
                     {
-                        HasTurbo = !HasTurbo;
+                        IsTurboed = !IsTurboed;
                         TurboCountdown += Math.Max(1, TurboDelay);
                     }
                 }
                 else
                 {
-                    HasTurbo = false;
+                    IsTurboed = false;
                     TurboCountdown = TurboDelay;
                 }
             }
             else
             {
-                HasTurbo = false;
+                IsTurboed = false;
             }
 
             // final outBool
-            if (IsToggle && IsTurbo) outBool = HasToggle && HasTurbo;
-            else if (IsToggle) outBool = HasToggle;
-            else if (IsTurbo) outBool = HasTurbo;
+            if (HasToggle && HasTurbo) outBool = IsToggled && IsTurboed;
+            else if (HasToggle) outBool = IsToggled;
+            else if (HasTurbo) outBool = IsTurboed;
             else outBool = value;
 
             prevBool = value;

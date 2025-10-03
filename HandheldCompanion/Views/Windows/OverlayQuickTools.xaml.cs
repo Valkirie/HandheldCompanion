@@ -619,7 +619,7 @@ public partial class OverlayQuickTools : GamepadWindow
         });
     }
 
-    private void GamepadWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+    protected override void Window_VisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
         switch (Visibility)
         {
@@ -642,6 +642,8 @@ public partial class OverlayQuickTools : GamepadWindow
                 clockUpdateTimer.Start();
                 break;
         }
+
+        base.Window_VisibleChanged(sender, e);
     }
 
     public void UpdateStyle()
