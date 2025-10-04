@@ -47,8 +47,10 @@ namespace HandheldCompanion.UWP.Views
             {
                 SwitchCompactMode(widget.CompactModeEnabled);
                 // Change theme to force reload ThemeResource
+                var lastTheme = this.RequestedTheme;
                 this.RequestedTheme = ElementTheme.Light;
                 this.RequestedTheme = ElementTheme.Dark;
+                this.RequestedTheme = lastTheme;
             });
         }
 

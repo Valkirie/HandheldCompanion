@@ -13,7 +13,6 @@
     mc:Ignorable="d"
     d:DesignWidth="400"
     d:DesignHeight="400"
-    RequestedTheme="Dark"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
