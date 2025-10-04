@@ -9,16 +9,9 @@
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d"
     d:DesignWidth="400"
-    d:DesignHeight="400"
-    RequestedTheme="Dark"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-    <Page.Resources>
-        <ResourceDictionary Source="/Styles/XboxStyle.xaml"/>
-    </Page.Resources>
+    d:DesignHeight="400">
 
     <StackPanel Spacing="8">
-
         <!--  Maximum CPU Count  -->
         <controls:SettingsExpander Description="Controls CPU unparked core count limit" Header="Maximum CPU Count"
                                    HeaderIcon="{ui:FontIcon Glyph='&#xe964;'}">

@@ -1,18 +1,11 @@
 ﻿using CommunityToolkit.Labs.WinUI;
 using HandheldCompanion.UWP.Views.Pages;
+using Microsoft.Gaming.XboxGameBar;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace HandheldCompanion.UWP.Views
@@ -20,6 +13,7 @@ namespace HandheldCompanion.UWP.Views
     public sealed partial class MainPage : Page
     {
         private readonly Dictionary<string, Type> _pages;
+        private readonly ResourceDictionary _compactResource;
 
         public MainPage()
         {
@@ -28,7 +22,45 @@ namespace HandheldCompanion.UWP.Views
                 { "PerformancePage", typeof(PerformancePage) },
             };
             this.InitializeComponent();
+            _compactResource = new ResourceDictionary
+            {
+                Source = new Uri("ms-appx:///Styles/CompactMode.xaml")
+            };
             NavView_Navigate(_pages.First().Key);
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            var widget = e.Parameter as XboxGameBarWidget;
+            if (widget != null)
+            {
+                SwitchCompactMode(widget.CompactModeEnabled);
+                widget.CompactModeEnabledChanged += Widget_CompactModeEnabledChanged;
+            }
+            base.OnNavigatedTo(e);
+        }
+
+        private void Widget_CompactModeEnabledChanged(XboxGameBarWidget widget, object _)
+        {
+            bool enabled = widget.CompactModeEnabled;
+            _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                SwitchCompactMode(widget.CompactModeEnabled);
+                // Change theme to force reload ThemeResource
+                this.RequestedTheme = ElementTheme.Light;
+                this.RequestedTheme = ElementTheme.Dark;
+            });
+        }
+
+        private void SwitchCompactMode(bool enabled)
+        {
+            if (enabled)
+            {
+                if (!this.Resources.MergedDictionaries.Contains(_compactResource))
+                    this.Resources.MergedDictionaries.Add(_compactResource);
+            }
+            else
+                this.Resources.MergedDictionaries.Remove(_compactResource);
         }
 
         private void NavView_SelectionChanged(object sender, SelectionChangedEventArgs e)
