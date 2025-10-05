@@ -37,6 +37,8 @@ namespace HandheldCompanion.Controllers
 
         public override bool IsWireless() => GetGamepadConnectionState(this.gamepad) == JoystickConnectionState.Wireless;
 
+        protected const byte TriggerThreshold = 60;
+
         private ulong lastCounter = GetPerformanceCounter();
         private readonly float freq = GetPerformanceFrequency();
 
@@ -238,16 +240,26 @@ namespace HandheldCompanion.Controllers
                     short.MaxValue, short.MinValue);
 
             if (HasAxis(GamepadAxis.LeftTrigger))
+            {
                 Inputs.AxisState[AxisFlags.L2] = (byte)InputUtils.MapRange(
                     GetGamepadAxis(gamepad, GamepadAxis.LeftTrigger),
                     ushort.MinValue, short.MaxValue,
                     byte.MinValue, byte.MaxValue);
 
+                Inputs.ButtonState[ButtonFlags.L2Soft] |= Inputs.AxisState[AxisFlags.L2] > TriggerThreshold;
+                Inputs.ButtonState[ButtonFlags.L2Full] |= Inputs.AxisState[AxisFlags.L2] > TriggerThreshold * 2;
+            }
+
             if (HasAxis(GamepadAxis.RightTrigger))
+            {
                 Inputs.AxisState[AxisFlags.R2] = (byte)InputUtils.MapRange(
                     GetGamepadAxis(gamepad, GamepadAxis.RightTrigger),
                     ushort.MinValue, short.MaxValue,
                     byte.MinValue, byte.MaxValue);
+
+                Inputs.ButtonState[ButtonFlags.R2Soft] |= Inputs.AxisState[AxisFlags.R2] > TriggerThreshold;
+                Inputs.ButtonState[ButtonFlags.R2Full] |= Inputs.AxisState[AxisFlags.R2] > TriggerThreshold * 2;
+            }
 
             // --- TOUCHPADS ---
             if (HasTouchpad)
