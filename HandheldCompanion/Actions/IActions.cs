@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Text.Json.Serialization;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Actions
@@ -105,7 +104,7 @@ namespace HandheldCompanion.Actions
 
         public bool HasTurbo = false;
         public bool HasToggle = false;
-        public bool HasInterruptable = false;
+        public bool HasInterruptable = true;
         public float TurboDelay = 30.0f;
 
         private bool IsToggled = false;

@@ -226,7 +226,7 @@ public partial class App : Application
 
         // initialize log
         LogManager.Initialize(ApplicationName);
-        LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);        
+        LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
 
         using (Process process = Process.GetCurrentProcess())
         {

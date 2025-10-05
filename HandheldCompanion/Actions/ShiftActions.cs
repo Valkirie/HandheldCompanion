@@ -23,7 +23,7 @@ namespace HandheldCompanion.Actions
     [Serializable]
     public sealed class ShiftActions : ButtonActions
     {
-        public ShiftSlot ShiftSlot;
+        public ShiftSlot ShiftSlot = ShiftSlot.None;
 
         public ShiftActions()
         {
@@ -32,6 +32,7 @@ namespace HandheldCompanion.Actions
             // disable few options
             HasInterruptable = false;
             HasTurbo = false;
+            HasToggle = false;
 
             outBool = false;
             prevBool = false;
