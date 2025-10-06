@@ -140,6 +140,16 @@ public class AYANEOFlipDS : AYANEOFlipKB
 
     public void CEcControl_SetSecDispBrightness(short brightness)
     {
-        this.ECRAMWrite(0x4e, (byte)((brightness * 0xff) / 100));
+        // clamp to [0,100] and scale to [0,255]
+        int clamped = Math.Clamp(brightness, (short)0, (short)100);
+        byte scaled = (byte)((clamped * 0xFF) / 100);
+
+        this.ECRAMWrite(0x4F, 0x00);    // reset/latch at 0x4F
+        this.ECRAMWrite(0x4E, scaled);  // write brightness at 0x4E
+    }
+
+    public byte CEcControl_GetSecDispBrightnessRaw()
+    {
+        return ECRamReadByte(0x4E);
     }
 }
