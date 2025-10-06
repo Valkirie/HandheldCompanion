@@ -1454,7 +1454,7 @@ public static class ControllerManager
             else if (latestExternalController is not null && ConnectOnPlug)
             {
                 // If current target is already external, keep it
-                if (targetController is not null && !targetController.IsDummy() && (targetController.IsWireless() || targetController.IsExternal()))
+                if (targetController is not null && (targetController.IsWireless() || targetController.IsExternal()))
                     deviceInstanceId = targetController.GetContainerInstanceId();
                 else
                     deviceInstanceId = latestExternalController.GetContainerInstanceId();

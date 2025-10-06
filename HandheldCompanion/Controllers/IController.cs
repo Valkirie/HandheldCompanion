@@ -233,7 +233,7 @@ namespace HandheldCompanion.Controllers
         {
             if (Details is not null)
                 return Details.isExternal;
-            return true;
+            return false;
         }
 
         public virtual bool IsXInput()
