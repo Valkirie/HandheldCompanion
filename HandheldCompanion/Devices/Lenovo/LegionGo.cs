@@ -235,7 +235,7 @@ public class LegionGo : IDevice
             OEMPowerMode = (int)LegionMode.Performance,
             Guid = BestPerformanceGuid,
             TDPOverrideEnabled = true,
-            TDPOverrideValues = new[] { 20.0d, 20.0d, 20.0d }
+            TDPOverrideValues = new[] { 25.0d, 25.0d, 25.0d }
         });
 
         // device specific capacities

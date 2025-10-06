@@ -141,12 +141,10 @@ public partial class MainWindow : GamepadWindow
 
         notifyIcon.DoubleClick += (sender, e) => { ToggleState(); };
 
-        AddNotifyIconItem(Properties.Resources.MainWindow_MainWindow);
-        AddNotifyIconItem(Properties.Resources.MainWindow_QuickTools);
-
+        AddNotifyIconItem(Properties.Resources.MainWindow_MainWindow, "MainWindow");
+        AddNotifyIconItem(Properties.Resources.MainWindow_QuickTools, "QuickTools");
         AddNotifyIconSeparator();
-
-        AddNotifyIconItem(Properties.Resources.MainWindow_Exit);
+        AddNotifyIconItem(Properties.Resources.MainWindow_Exit, "Exit");
 
         // paths
         Process process = Process.GetCurrentProcess();

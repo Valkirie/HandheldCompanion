@@ -5,7 +5,6 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
@@ -45,13 +44,17 @@ namespace HandheldCompanion.Controllers.Lenovo
             Wireless = 3,
         }
 
-        private const byte FRONT_IDX = 17;
-        private const byte BACK_IDX = 19;
-        private const byte STATUS_IDX = 1;
-        private const byte LCONTROLLER_STATE_IDX = 11;
-        private const byte RCONTROLLER_STATE_IDX = 12;
+        private const byte FRONT_IDX = 18;
+        private const byte BACK_IDX = 20;
+        private const byte TOUCH_IDX = 26;
 
-        private HashSet<int> READY_STATES = [25, 60];
+        private const byte LCONTROLLER_STATE_IDX = 12;
+        private const byte LCONTROLLER_ACCE_IDX = 35;
+        private const byte LCONTROLLER_GYRO_IDX = 41;
+
+        private const byte RCONTROLLER_STATE_IDX = 13;
+        private const byte RCONTROLLER_ACCE_IDX = 48;
+        private const byte RCONTROLLER_GYRO_IDX = 54;
 
         private controller_hidapi.net.LegionController Controller;
         private byte[] data = new byte[64];
@@ -74,7 +77,7 @@ namespace HandheldCompanion.Controllers.Lenovo
         private Vector2 lastKnownPosition;
         #endregion
 
-        public override bool IsReady => Controller?.GetStatus(STATUS_IDX) is byte status && READY_STATES.Contains(status);
+        public override bool IsReady => IsWireless() || IsWired();
 
         public LegionController() : base()
         { }
@@ -86,6 +89,7 @@ namespace HandheldCompanion.Controllers.Lenovo
 
             // get long press time from system settings
             SystemParametersInfo(0x006A, 0, ref longTapDuration, 0);
+
         }
 
         public override string ToString() => "Legion Controller";
@@ -113,6 +117,10 @@ namespace HandheldCompanion.Controllers.Lenovo
             SourceAxis.Add(AxisLayoutFlags.RightPad);
             SourceAxis.Add(AxisLayoutFlags.Gyroscope);
         }
+
+        public bool IsWired() =>
+            Controller?.GetStatus(LCONTROLLER_STATE_IDX) == (byte)ControllerState.Wired ||
+            Controller?.GetStatus(RCONTROLLER_STATE_IDX) == (byte)ControllerState.Wired;
 
         public override bool IsWireless() =>
             Controller?.GetStatus(LCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless ||
@@ -245,7 +253,7 @@ namespace HandheldCompanion.Controllers.Lenovo
 
         private void Controller_OnControllerInputReceived(byte[] Data)
         {
-            Buffer.BlockCopy(Data, 1, this.data, 0, Data.Length - 1);
+            Buffer.BlockCopy(Data, 0, this.data, 0, Data.Length);
         }
 
         public override void Tick(long ticks, float delta, bool commit)
@@ -266,16 +274,16 @@ namespace HandheldCompanion.Controllers.Lenovo
             Inputs.ButtonState[ButtonFlags.L4] = backButton.HasFlag(BackEnum.Y1);
             Inputs.ButtonState[ButtonFlags.L5] = backButton.HasFlag(BackEnum.Y2);
             Inputs.ButtonState[ButtonFlags.B5] = backButton.HasFlag(BackEnum.M2);
-            Inputs.ButtonState[ButtonFlags.B6] = data[20] == 128;   // Scroll click
-            Inputs.ButtonState[ButtonFlags.B7] = data[24] == 129;   // Scroll up
-            Inputs.ButtonState[ButtonFlags.B8] = data[24] == 255;   // Scroll down
+            Inputs.ButtonState[ButtonFlags.B6] = data[BACK_IDX] == 128;   // Scroll click
+            Inputs.ButtonState[ButtonFlags.B7] = data[BACK_IDX + 4] == 129;   // Scroll up
+            Inputs.ButtonState[ButtonFlags.B8] = data[BACK_IDX + 4] == 255;   // Scroll down
 
             // handle touchpad if passthrough is off
             if (!ControllerPassthrough)
             {
                 // Right Pad
-                ushort TouchpadX = (ushort)(data[25] << 8 | data[26]);
-                ushort TouchpadY = (ushort)(data[27] << 8 | data[28]);
+                ushort TouchpadX = (ushort)(data[TOUCH_IDX] << 8 | data[TOUCH_IDX + 1]);
+                ushort TouchpadY = (ushort)(data[TOUCH_IDX + 2] << 8 | data[TOUCH_IDX + 3]);
                 bool touched = TouchpadX != 0 || TouchpadY != 0;
 
                 HandleTouchpadInput(touched, TouchpadX, TouchpadY);
@@ -288,25 +296,26 @@ namespace HandheldCompanion.Controllers.Lenovo
                     default:
                     case 0: // LeftJoycon
                         {
-                            aX = (short)(data[34] << 8 | data[35]) * -(4.0f / short.MaxValue);
-                            aZ = (short)(data[36] << 8 | data[37]) * -(4.0f / short.MaxValue);
-                            aY = (short)(data[38] << 8 | data[39]) * -(4.0f / short.MaxValue);
+                            aX = (short)(data[LCONTROLLER_ACCE_IDX] << 8 | data[LCONTROLLER_ACCE_IDX + 1]) * -(4.0f / short.MaxValue);
+                            aZ = (short)(data[LCONTROLLER_ACCE_IDX + 2] << 8 | data[LCONTROLLER_ACCE_IDX + 3]) * -(4.0f / short.MaxValue);
+                            aY = (short)(data[LCONTROLLER_ACCE_IDX + 4] << 8 | data[LCONTROLLER_ACCE_IDX + 5]) * -(4.0f / short.MaxValue);
 
-                            gX = (short)(data[40] << 8 | data[41]) * -(2000.0f / short.MaxValue);
-                            gZ = (short)(data[42] << 8 | data[43]) * -(2000.0f / short.MaxValue);
-                            gY = (short)(data[44] << 8 | data[45]) * -(2000.0f / short.MaxValue);
+                            gX = (short)(data[LCONTROLLER_GYRO_IDX] << 8 | data[LCONTROLLER_GYRO_IDX + 1]) * -(2000.0f / short.MaxValue);
+                            // todo: invert gZ on LGO2
+                            gZ = (short)(data[LCONTROLLER_GYRO_IDX + 2] << 8 | data[LCONTROLLER_GYRO_IDX + 3]) * -(2000.0f / short.MaxValue);
+                            gY = (short)(data[LCONTROLLER_GYRO_IDX + 4] << 8 | data[LCONTROLLER_GYRO_IDX + 5]) * -(2000.0f / short.MaxValue);
                         }
                         break;
 
                     case 1: // RightJoycon
                         {
-                            aX = (short)(data[49] << 8 | data[50]) * -(4.0f / short.MaxValue);
-                            aZ = (short)(data[47] << 8 | data[48]) * (4.0f / short.MaxValue);
-                            aY = (short)(data[51] << 8 | data[52]) * -(4.0f / short.MaxValue);
+                            aX = (short)(data[RCONTROLLER_ACCE_IDX + 2] << 8 | data[RCONTROLLER_ACCE_IDX + 3]) * -(4.0f / short.MaxValue);
+                            aZ = (short)(data[RCONTROLLER_ACCE_IDX] << 8 | data[RCONTROLLER_ACCE_IDX + 1]) * (4.0f / short.MaxValue);
+                            aY = (short)(data[RCONTROLLER_ACCE_IDX + 4] << 8 | data[RCONTROLLER_ACCE_IDX + 5]) * -(4.0f / short.MaxValue);
 
-                            gX = (short)(data[55] << 8 | data[56]) * -(2000.0f / short.MaxValue);
-                            gZ = (short)(data[53] << 8 | data[54]) * (2000.0f / short.MaxValue);
-                            gY = (short)(data[57] << 8 | data[58]) * -(2000.0f / short.MaxValue);
+                            gX = (short)(data[RCONTROLLER_GYRO_IDX + 2] << 8 | data[RCONTROLLER_GYRO_IDX + 3]) * -(2000.0f / short.MaxValue);
+                            gZ = (short)(data[RCONTROLLER_GYRO_IDX] << 8 | data[RCONTROLLER_GYRO_IDX + 1]) * (2000.0f / short.MaxValue);
+                            gY = (short)(data[RCONTROLLER_GYRO_IDX + 4] << 8 | data[RCONTROLLER_GYRO_IDX + 5]) * -(2000.0f / short.MaxValue);
                         }
                         break;
                 }

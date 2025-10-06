@@ -1440,10 +1440,10 @@ public static class ControllerManager
                 .FirstOrDefault();
 
             // Pick the internal controller (built-in, non-removable)
-            IController? internalController = controllers
-                .FirstOrDefault(c => c.IsInternal());
+            IController? internalController = controllers.FirstOrDefault(c => c.IsInternal());
 
-            string deviceInstanceId = string.Empty;
+            // Default, use current target
+            string deviceInstanceId = targetController?.GetContainerInstanceId() ?? string.Empty;
 
             // If user has disabled auto-connect and we already have a real controller, keep it
             if (!ConnectOnPlug && targetController is not null && !targetController.IsDummy())
@@ -1453,15 +1453,11 @@ public static class ControllerManager
             // If we have an external controller plugged-in and user wants controller to connect when plugged
             else if (latestExternalController is not null && ConnectOnPlug)
             {
-                if (targetController is null || targetController.IsDummy())
-                {
-                    // If no previous controller or dummy, pick external
-                    deviceInstanceId = latestExternalController.GetContainerInstanceId();
-                }
-                else if (targetController.IsWireless() || targetController.IsExternal())
-                {
+                // If current target is already external, keep it
+                if (targetController is not null && (targetController.IsWireless() || targetController.IsExternal()))
                     deviceInstanceId = targetController.GetContainerInstanceId();
-                }
+                else
+                    deviceInstanceId = latestExternalController.GetContainerInstanceId();
             }
             else if (internalController is not null)
             {

@@ -77,8 +77,7 @@ public class ROGAlly : IDevice
         vendorId = 0x0B05;
         productIds = [0x1ABE];
 
-        // https://www.amd.com/en/products/apu/amd-ryzen-z1
-        // https://www.amd.com/en/products/apu/amd-ryzen-z1-extreme
+        // https://www.amd.com/en/products/processors/handhelds/ryzen-z-series/z1-series/z1-extreme.html
         // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 5, 30 };

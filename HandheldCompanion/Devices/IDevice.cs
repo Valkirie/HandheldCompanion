@@ -1,5 +1,6 @@
 using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
+using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Devices.Zotac;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
@@ -785,13 +786,17 @@ public abstract class IDevice
                 {
                     switch (SystemModel)
                     {
-                        case "83E1":
+                        case "83E1":    // Legion Go
                             device = new LegionGoTablet();
                             break;
-                        case "83L3": // Legion Go S Z2 Go
+                        case "83N0":    // Legion Go 2
+                        case "83N1":
+                            device = new LegionGoTablet2();
+                            break;
+                        case "83L3":    // Legion Go S Z2 Go
                             device = new LegionGoSZ2();
                             break;
-                        case "83N6": // Legion Go S Z1E
+                        case "83N6":    // Legion Go S Z1E
                         case "83Q2":
                         case "83Q3":
                             device = new LegionGoSZ1();
