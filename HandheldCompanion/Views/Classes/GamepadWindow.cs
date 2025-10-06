@@ -112,14 +112,12 @@ namespace HandheldCompanion.Views.Classes
             if (!WMPaintPending)
             {
                 // disable GPU acceleration
-                if (hwndSource is not null)
-                    hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
                 RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
 
                 // set flag
                 WMPaintPending = true;
 
-                LogManager.LogError("ProcessRenderMode set to {0}", RenderOptions.ProcessRenderMode);
+                LogManager.LogWarning("ProcessRenderMode set to {0}", RenderOptions.ProcessRenderMode);
             }
 
             if (WMPaintPending)
@@ -134,14 +132,12 @@ namespace HandheldCompanion.Views.Classes
             if (WMPaintPending)
             {
                 // enable GPU acceleration
-                if (hwndSource is not null)
-                    hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
                 RenderOptions.ProcessRenderMode = RenderMode.Default;
 
                 // reset flag
                 WMPaintPending = false;
 
-                LogManager.LogError("ProcessRenderMode set to {0}", RenderOptions.ProcessRenderMode);
+                LogManager.LogWarning("ProcessRenderMode set to {0}", RenderOptions.ProcessRenderMode);
             }
         }
 
