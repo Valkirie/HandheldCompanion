@@ -33,7 +33,6 @@ using System.Windows.Media;
 using System.Windows.Navigation;
 using System.Windows.Shell;
 using Windows.UI.ViewManagement;
-using Application = System.Windows.Application;
 using Control = System.Windows.Controls.Control;
 using Frame = System.Windows.Controls.Frame;
 using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;

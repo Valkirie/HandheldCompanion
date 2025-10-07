@@ -2,6 +2,7 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -102,14 +103,28 @@ namespace HandheldCompanion.Actions
         public float ActionTimer = 200.0f;   // default value for steam
         public float PressTimer = -1.0f;     // -1 inactive, >= 0 active
 
+        [JsonProperty("HasTurbo")]
         public bool HasTurbo = false;
+        [JsonProperty("HasToggle")]
         public bool HasToggle = false;
+        [JsonProperty("HasInterruptable")]
         public bool HasInterruptable = true;
         public float TurboDelay = 30.0f;
 
+        [JsonIgnore]
         private bool IsToggled = false;
+        [JsonIgnore]
         private bool IsTurboed = false;
         private float TurboCountdown = 0.0f;     // countdown (ms) before flipping
+
+        #region legacy
+        // legacy aliases: read old saves, map to new fields
+        [JsonProperty("IsTurbo")]
+        private bool Legacy_IsTurbo { set { HasTurbo = value; } }
+        [JsonProperty("IsToggle")]
+        private bool Legacy_IsToggle { set { HasToggle = value; } }
+        #endregion
+
         private int PressCount = 0;     // used for double tap
 
         public ShiftSlot ShiftSlot = ShiftSlot.Any;
