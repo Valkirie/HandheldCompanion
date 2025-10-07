@@ -117,7 +117,7 @@ public partial class SettingsPage : Page
         UIHelper.TryInvoke(() =>
         {
             DesktopScreen? selectedScreen = cB_QuickToolsDevicePath.Items.OfType<DesktopScreen>()
-                .FirstOrDefault(screen => screen.DevicePath.Equals(DevicePath) || screen.ToString().Equals(DeviceName));
+                .FirstOrDefault(screen => screen.DevicePath.Equals(DevicePath) || screen.FriendlyName.Equals(DeviceName));
 
             if (selectedScreen != null)
                 cB_QuickToolsDevicePath.SelectedItem = selectedScreen;
@@ -557,7 +557,7 @@ public partial class SettingsPage : Page
 
         if (cB_QuickToolsDevicePath.SelectedItem is DesktopScreen desktopScreen)
         {
-            ManagerFactory.settingsManager.SetProperty("QuickToolsDeviceName", desktopScreen.ToString());
+            ManagerFactory.settingsManager.SetProperty("QuickToolsDeviceName", desktopScreen.FriendlyName);
             ManagerFactory.settingsManager.SetProperty("QuickToolsDevicePath", desktopScreen.DevicePath);
         }
     }

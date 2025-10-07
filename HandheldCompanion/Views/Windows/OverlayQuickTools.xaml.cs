@@ -279,7 +279,7 @@ public partial class OverlayQuickTools : GamepadWindow
         DesktopScreen friendlyScreen = null;
         foreach (KeyValuePair<string, DesktopScreen> screen in ManagerFactory.multimediaManager.AllScreens)
         {
-            if (screen.Value.DevicePath.Equals(DevicePath) || screen.Value.ToString().Equals(DeviceName))
+            if (screen.Value.DevicePath.Equals(DevicePath) || screen.Value.FriendlyName.Equals(DeviceName))
             {
                 friendlyScreen = screen.Value;
                 break;
