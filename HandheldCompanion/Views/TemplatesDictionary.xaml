@@ -5,14 +5,17 @@
     xmlns:cmdHC="clr-namespace:HandheldCompanion.Commands.Functions.HC"
     xmlns:cmdWIN="clr-namespace:HandheldCompanion.Commands.Functions.Windows"
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:effects="clr-namespace:Microsoft.Expression.Media.Effects;assembly=Microsoft.Expression.Effects"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
-    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels">
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
+    mc:Ignorable="d">
 
     <converters:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
     <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -299,6 +302,35 @@
                         <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_CycleSubProfilePrev}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_CycleSubProfileNext}" />
                     </ComboBox>
+                </ui:SettingsCard>
+
+                <!--  ButtonCommands  -->
+                <ui:SettingsCard Header="Gamepad button" Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdHC:ButtonCommands}}">
+                    <ComboBox
+                        DisplayMemberPath="Content"
+                        ItemsSource="{Binding ButtonCommandsValues, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedItem="{Binding ButtonCommandsButton, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </ui:SettingsCard>
+
+                <!--  ButtonCommands  -->
+                <ui:SettingsCard Header="Release interval" Visibility="{Binding Command, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter={x:Type cmdHC:ButtonCommands}}">
+
+                    <DockPanel>
+                        <TextBlock
+                            Width="35"
+                            VerticalAlignment="Center"
+                            Text="{Binding ButtonCommandsDelay, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}"
+                            TextAlignment="Center" />
+                        <Slider
+                            Margin="6,0,0,0"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            Maximum="1000"
+                            Minimum="100"
+                            TickFrequency="50"
+                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                            Value="{Binding ButtonCommandsDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
                 </ui:SettingsCard>
 
                 <!--  Keystrokes (CommandTypeIndex == 2)  -->
@@ -879,11 +911,9 @@
 
             <Button
                 Grid.Column="0"
-                Width="44"
-                Height="44"
-                Margin="0,2,2,0"
+                Margin="0,1,2,1"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Top"
+                VerticalAlignment="Stretch"
                 Command="{Binding ButtonCommand}">
                 <ui:FontIcon
                     HorizontalAlignment="Stretch"
@@ -892,39 +922,141 @@
                     Glyph="&#xECC9;" />
             </Button>
 
-            <Expander Grid.Column="1" HorizontalAlignment="Stretch">
-                <Expander.Header>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
+            <ui:SettingsExpander Grid.Column="1">
+                <ui:SettingsExpander.Content>
+                    <DockPanel>
+                        <ComboBox MinWidth="120" SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Joystick}" IsEnabled="False" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Keyboard}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Mouse}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="True" />
+                        </ComboBox>
 
-                        <DockPanel Grid.Column="2" HorizontalAlignment="Right">
-                            <ComboBox
-                                Width="220"
-                                Margin="12,0,0,0"
+                        <ComboBox
+                            MinWidth="180"
+                            Margin="3,0,0,0"
+                            DisplayMemberPath="Content"
+                            ItemsSource="{Binding Targets, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedItem="{Binding SelectedTarget, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedValuePath="Content">
+                            <ComboBox.Style>
+                                <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
+                                    <Setter Property="IsEnabled" Value="True" />
+                                    <Style.Triggers>
+                                        <!--  Disable when ActionTypeIndex is 0  -->
+                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                        <!--  Disable when ActionTypeIndex is 7  -->
+                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="7">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ComboBox.Style>
+                        </ComboBox>
+                    </DockPanel>
+                </ui:SettingsExpander.Content>
+
+                <ui:SettingsExpander.Items>
+                    <!--  Keyboard/Mouse  -->
+                    <!--  Modifiers  -->
+                    <ui:SettingsCard Header="Modifier(s)" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3|4}">
+                        <ComboBox SelectedIndex="{Binding ModifierIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="None" />
+                            <ComboBoxItem Content="Shift" />
+                            <ComboBoxItem Content="Control" />
+                            <ComboBoxItem Content="Alt" />
+                            <ComboBoxItem Content="Shift + Control" />
+                            <ComboBoxItem Content="Shift + Alt" />
+                            <ComboBoxItem Content="Control + Alt" />
+                            <ComboBoxItem Content="Shift + Control + Alt" />
+                        </ComboBox>
+                    </ui:SettingsCard>
+
+                    <!--  Trigger  -->
+                    <!--  Value  -->
+                    <ui:SettingsCard Header="Trigger value" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=5}">
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding TriggerOutput, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0}}" />
+
+                            <Slider
+                                Margin="3,0,0,0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="255"
+                                Minimum="10"
+                                TickFrequency="5"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding TriggerOutput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Turbo  -->
+                    <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_HoldToRepeat}" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6}">
+                        <ui:ToggleSwitch
+                            HorizontalAlignment="Right"
+                            IsOn="{Binding Turbo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                    </ui:SettingsCard>
+                    <ui:SettingsCard
+                        Header="Repeat rate"
+                        IsEnabled="{Binding Turbo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Visibility="{Binding Turbo, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding TurboDelay, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} ms}" />
+
+                            <Slider
+                                Margin="3,0,0,0"
                                 VerticalAlignment="Center"
-                                SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="True" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="True" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Joystick}" IsEnabled="False" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Keyboard}" IsEnabled="True" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Mouse}" IsEnabled="True" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="True" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="True" />
-                                <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="True" />
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="100"
+                                Minimum="10"
+                                TickFrequency="5"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding TurboDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Interruptable  -->
+                    <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_Interruptable}" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6}">
+                        <ui:ToggleSwitch IsOn="{Binding Interruptable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                    </ui:SettingsCard>
+
+                    <!--  Toggle  -->
+                    <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_PressToToggle}" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6}">
+                        <ui:ToggleSwitch IsOn="{Binding Toggle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                    </ui:SettingsCard>
+
+                    <!--  Haptic  -->
+                    <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_HapticFeedback}" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6}">
+                        <DockPanel>
+                            <ComboBox Width="105" SelectedIndex="{Binding HapticModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBoxItem Content="Off" />
+                                <ComboBoxItem Content="Down" />
+                                <ComboBoxItem Content="Up" />
+                                <ComboBoxItem Content="Both" />
                             </ComboBox>
-
                             <ComboBox
-                                Width="220"
-                                Margin="12,0,0,0"
-                                VerticalAlignment="Center"
-                                DisplayMemberPath="Content"
-                                ItemsSource="{Binding Targets, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                SelectedItem="{Binding SelectedTarget, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                SelectedValuePath="Content">
+                                Width="105"
+                                Margin="3,0,0,0"
+                                SelectedIndex="{Binding HapticStrengthIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBoxItem Content="Low" />
+                                <ComboBoxItem Content="Medium" />
+                                <ComboBoxItem Content="High" />
                                 <ComboBox.Style>
                                     <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
                                         <Setter Property="IsEnabled" Value="True" />
@@ -942,375 +1074,890 @@
                                 </ComboBox.Style>
                             </ComboBox>
                         </DockPanel>
-                    </Grid>
-                </Expander.Header>
+                    </ui:SettingsCard>
 
-                <Expander.Content>
-                    <ikw:SimpleStackPanel Margin="30,-10,0,-4" Spacing="3">
+                    <!--  Input Type and Shifting  -->
+                    <ui:SettingsCard
+                        Description="{x:Static resx:Resources.LayoutPage_InputShiftDesc}"
+                        Header="{x:Static resx:Resources.LayoutPage_InputShift}"
+                        Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
+                        <ComboBox SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="Disabled on shift" />
+                            <ComboBoxItem Content="Enabled with shift A" />
+                            <ComboBoxItem Content="Enabled with shift B" />
+                            <ComboBoxItem Content="Enabled with shift C" />
+                            <ComboBoxItem Content="Enabled with shift D" />
+                            <ComboBoxItem Content="Always enabled" />
+                        </ComboBox>
+                    </ui:SettingsCard>
 
-                        <!--  Button 2 Button, Long press  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding PressTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3}">
+                    <!--  Action type  -->
+                    <ui:SettingsCard
+                        Description="{Binding PressTypeTooltip, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Header="{x:Static resx:Resources.LayoutPage_PressType}"
+                        Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
+                        <ComboBox SelectedIndex="{Binding PressTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="Single press" ToolTip="{x:Static resx:Resources.LayoutPage_PressTypeTooltip0}" />
+                            <ComboBoxItem Content="Long press" ToolTip="{x:Static resx:Resources.LayoutPage_PressTypeTooltip1}" />
+                            <ComboBoxItem Content="Timed hold" ToolTip="{x:Static resx:Resources.LayoutPage_PressTypeTooltip2}" />
+                            <ComboBoxItem Content="Double press" ToolTip="{x:Static resx:Resources.LayoutPage_PressTypeTooltip3}" />
+                        </ComboBox>
+                    </ui:SettingsCard>
 
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
+                    <!--  Long press  -->
+                    <!--  Press duration  -->
+                    <ui:SettingsCard
+                        Header="Press duration"
+                        IsEnabled="{Binding HasDuration, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Visibility="{Binding HasDuration, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding LongPressDelay, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} ms}" />
 
-                                <TextBlock
-                                    HorizontalAlignment="Left"
+                            <Slider
+                                Margin="3,0,0,0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="2000"
+                                Minimum="100"
+                                TickFrequency="10"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding LongPressDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+                </ui:SettingsExpander.Items>
+            </ui:SettingsExpander>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GyroMappingTemplate" DataType="{x:Type viewmodels:GyroMappingViewModel}">
+        <ui:SettingsExpander>
+            <ui:SettingsExpander.Content>
+                <DockPanel>
+                    <ComboBox Width="120" SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="True" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="False" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Joystick}" IsEnabled="True" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Keyboard}" IsEnabled="False" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Mouse}" IsEnabled="True" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="False" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="False" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="False" />
+                    </ComboBox>
+
+                    <ComboBox
+                        Width="180"
+                        Margin="3,0,0,0"
+                        DisplayMemberPath="Content"
+                        ItemsSource="{Binding Targets, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedItem="{Binding SelectedTarget, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedValuePath="Content">
+                        <ComboBox.Style>
+                            <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
+                                <Setter Property="IsEnabled" Value="True" />
+                                <Style.Triggers>
+                                    <!--  Disable when ActionTypeIndex is 0  -->
+                                    <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                    <!--  Disable when ActionTypeIndex is 7  -->
+                                    <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="7">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ComboBox.Style>
+                    </ComboBox>
+                </DockPanel>
+            </ui:SettingsExpander.Content>
+
+            <ui:SettingsExpander.Items>
+                <ui:SettingsCard Header="{l:Static resx:Resources.ProfilesPage_StyleofInput}">
+                    <ComboBox ItemsSource="{Binding MotionInputItems}" SelectedIndex="{Binding MotionInputIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type viewmodels:MotionInputViewModel}">
+                                <ikw:SimpleStackPanel
                                     VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Press duration (ms)" />
+                                    Orientation="Horizontal"
+                                    Spacing="3">
+                                    <ui:FontIcon Glyph="{Binding Glyph}" Visibility="{Binding HasGlyph, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    <TextBlock Text="{Binding Description}" />
+                                </ikw:SimpleStackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </ui:SettingsCard>
 
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding LongPressDelay, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                <ui:SettingsCard Description="{l:Static resx:Resources.ProfilesPage_UMCMotionOnOffDesc}" Header="{l:Static resx:Resources.ProfilesPage_UMCMotionOnOff}">
+                    <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3">
+                        <ComboBox SelectedIndex="{Binding MotionModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_UMCMotionOff}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_UMCMotionOn}" />
+                            <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_UMCMotionToggle}" />
+                        </ComboBox>
 
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="2000"
-                                        Minimum="100"
-                                        TickFrequency="10"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding LongPressDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-                        </ikw:SimpleStackPanel>
-
-                        <!--  Button 2 Keyboard/Mouse, modifiers  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3|4}">
-
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Modifier(s)" />
-
-                                <DockPanel Grid.Column="1" HorizontalAlignment="Right">
-                                    <ComboBox
-                                        Width="180"
-                                        VerticalAlignment="Center"
-                                        SelectedIndex="{Binding ModifierIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                        <ComboBoxItem Content="None" />
-                                        <ComboBoxItem Content="Shift" />
-                                        <ComboBoxItem Content="Control" />
-                                        <ComboBoxItem Content="Alt" />
-                                        <ComboBoxItem Content="Shift + Control" />
-                                        <ComboBoxItem Content="Shift + Alt" />
-                                        <ComboBoxItem Content="Control + Alt" />
-                                        <ComboBoxItem Content="Shift + Control + Alt" />
-                                    </ComboBox>
-                                </DockPanel>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-                        </ikw:SimpleStackPanel>
-
-                        <!--  Button 2 Trigger  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=5}">
-
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Trigger threshold" />
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding TriggerOutput, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0}}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="255"
-                                        Minimum="10"
-                                        TickFrequency="5"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding TriggerOutput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-                        </ikw:SimpleStackPanel>
-
-                        <!--  Button 2 Button/Keyboard/Mouse  -->
-                        <Grid Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6}">
-                            <ikw:SimpleStackPanel Spacing="3">
-                                <!--  Repeat  -->
-                                <ikw:SimpleStackPanel IsEnabled="{Binding HasTurbo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="3">
+                        <!--  Motion activator  -->
+                        <ItemsControl ItemsSource="{Binding HotkeysList}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*" MinWidth="200" />
-                                            <ColumnDefinition Width="8*" MinWidth="120" />
+                                            <ColumnDefinition Width="10*" />
+                                            <ColumnDefinition Width="45" />
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{x:Static resx:Resources.LayoutPage_HoldToRepeat}" />
+                                        <ToggleButton
+                                            Height="41"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"
+                                            Command="{Binding DefineButtonCommand}"
+                                            IsChecked="{Binding IsListening, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
 
-                                        <ui:ToggleSwitch
-                                            Grid.Column="1"
-                                            HorizontalAlignment="Right"
-                                            IsOn="{Binding Turbo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                                    </Grid>
-
-                                    <!--  Repeat rate (hidden)  -->
-                                    <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding Turbo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                                        <!--  Separator  -->
-                                        <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
-
-                                        <Grid Height="40">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="5*" MinWidth="200" />
-                                                <ColumnDefinition Width="5*" MinWidth="200" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <TextBlock
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="Repeat rate" />
-
-                                            <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                                <TextBox
-                                                    Height="31"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Center"
-                                                    HorizontalContentAlignment="Center"
-                                                    IsReadOnly="True"
-                                                    Text="{Binding TurboDelay, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} ms}" />
-
-                                                <Slider
-                                                    Margin="6,0,0,0"
-                                                    VerticalAlignment="Center"
-                                                    IsMoveToPointEnabled="True"
-                                                    IsSnapToTickEnabled="True"
-                                                    Maximum="100"
-                                                    Minimum="10"
-                                                    TickFrequency="5"
-                                                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                                    Value="{Binding TurboDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DockPanel>
-                                        </Grid>
-                                    </ikw:SimpleStackPanel>
-
-                                    <!--  Separator  -->
-                                    <Separator
-                                        Margin="-46,0,-16,0"
-                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                        BorderThickness="0,1,0,0" />
-                                </ikw:SimpleStackPanel>
-                                <Grid IsEnabled="{Binding HasInterruptable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.LayoutPage_Interruptable}" />
-
-                                    <ui:ToggleSwitch
-                                        Grid.Column="1"
-                                        HorizontalAlignment="Right"
-                                        IsOn="{Binding Interruptable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    Margin="-46,0,-16,0"
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
-
-                                <Grid IsEnabled="{Binding HasToggle, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.LayoutPage_PressToToggle}" />
-
-                                    <ui:ToggleSwitch
-                                        Grid.Column="1"
-                                        HorizontalAlignment="Right"
-                                        IsOn="{Binding Toggle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    Margin="-46,0,-16,0"
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
-
-                                <!--  Haptic  -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.LayoutPage_HapticFeedback}" />
-
-                                    <DockPanel Grid.Column="1" HorizontalAlignment="Right">
-                                        <ComboBox
-                                            Width="105"
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            SelectedIndex="{Binding HapticModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                            <ComboBoxItem Content="Off" />
-                                            <ComboBoxItem Content="Down" />
-                                            <ComboBoxItem Content="Up" />
-                                            <ComboBoxItem Content="Both" />
-                                        </ComboBox>
-                                        <ComboBox
-                                            Width="105"
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            SelectedIndex="{Binding HapticStrengthIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                            <ComboBoxItem Content="Low" />
-                                            <ComboBoxItem Content="Medium" />
-                                            <ComboBoxItem Content="High" />
-                                            <ComboBox.Style>
-                                                <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
-                                                    <Setter Property="IsEnabled" Value="True" />
+                                            <ToggleButton.Resources>
+                                                <Style BasedOn="{StaticResource {x:Type ToggleButton}}" TargetType="ToggleButton">
                                                     <Style.Triggers>
-                                                        <!--  Disable when ActionTypeIndex is 0  -->
-                                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
-                                                            <Setter Property="IsEnabled" Value="False" />
-                                                        </DataTrigger>
-                                                        <!--  Disable when ActionTypeIndex is 7  -->
-                                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="7">
-                                                            <Setter Property="IsEnabled" Value="False" />
+                                                        <DataTrigger Binding="{Binding IsExecuted}" Value="True">
+                                                            <DataTrigger.EnterActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimation
+                                                                            AutoReverse="True"
+                                                                            RepeatBehavior="1x"
+                                                                            Storyboard.TargetProperty="Opacity"
+                                                                            From="1.0"
+                                                                            To="0.0"
+                                                                            Duration="0:0:0.125" />
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </DataTrigger.EnterActions>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
-                                            </ComboBox.Style>
-                                        </ComboBox>
-                                    </DockPanel>
-                                </Grid>
-                            </ikw:SimpleStackPanel>
-                        </Grid>
+                                            </ToggleButton.Resources>
 
-                        <!--  Input Type and Shifting  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
+                                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
+                                                <ItemsControl ItemsSource="{Binding ButtonGlyphs}">
+                                                    <ItemsControl.Style>
+                                                        <Style TargetType="ItemsControl">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding ButtonGlyphs.Count}" Value="0">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding ButtonGlyphs.Count}">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ItemsControl.Style>
 
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
 
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.LayoutPage_InputShift}" />
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <ui:FontIcon
+                                                                FontFamily="PromptFont"
+                                                                FontSize="24"
+                                                                Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                                <ui:FontIcon.Style>
+                                                                    <Style TargetType="ui:FontIcon">
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding Foreground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="{x:Null}">
+                                                                                <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                        <Setter Property="Foreground" Value="{Binding Foreground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                                    </Style>
+                                                                </ui:FontIcon.Style>
+                                                            </ui:FontIcon>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
 
-                                <ComboBox
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    HorizontalContentAlignment="Left"
-                                    SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <ComboBoxItem Content="Disabled on shift" />
-                                    <ComboBoxItem Content="Enabled with shift A" />
-                                    <ComboBoxItem Content="Enabled with shift B" />
-                                    <ComboBoxItem Content="Enabled with shift C" />
-                                    <ComboBoxItem Content="Enabled with shift D" />
-                                    <ComboBoxItem Content="Always enabled" />
-                                </ComboBox>
-                            </Grid>
+                                                <TextBlock VerticalAlignment="Center" Text="{Binding KeyboardChord, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding KeyboardChord}" Value="">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding KeyboardChord}">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
 
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    Foreground="{DynamicResource NavigationViewSelectionIndicatorForeground}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="{Binding InputsChordType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            </ikw:SimpleStackPanel>
+                                        </ToggleButton>
 
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.LayoutPage_InputType}" />
-
-                                <ComboBox
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    HorizontalContentAlignment="Left"
-                                    SelectedIndex="{Binding PressTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <ComboBoxItem Content="Short press" ToolTip="Press the button and get an immediate action." />
-                                    <ComboBoxItem Content="Long press" ToolTip="Hold the button down until a specified duration and get an action." />
-                                    <ComboBoxItem Content="Hold press" ToolTip="Press the button and get an action for a specified duration." />
-                                    <ComboBoxItem Content="Double press" ToolTip="Double press the button within a specified duration and get an action." />
-                                </ComboBox>
-                            </Grid>
-                        </ikw:SimpleStackPanel>
+                                        <Button
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Stretch"
+                                            Command="{Binding EraseButtonCommand}">
+                                            <ui:FontIcon
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                Glyph="&#xe75c;" />
+                                        </Button>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </ikw:SimpleStackPanel>
-                </Expander.Content>
-            </Expander>
+                </ui:SettingsCard>
+
+                <!--  Joystick  -->
+                <!--  Gyrometer weight  -->
+                <ui:SettingsCard
+                    Description="Modify the gyrometer weight when applied against joystick movements"
+                    Header="Gyrometer weight"
+                    Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                    <DockPanel>
+                        <TextBox Text="{Binding GyroWeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}" TextAlignment="Center" />
+                        <Slider
+                            Margin="3,0,0,0"
+                            AutoToolTipPrecision="1"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            Maximum="2.0"
+                            Minimum="1.0"
+                            TickFrequency="0.1"
+                            TickPlacement="BottomRight"
+                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                            Value="{Binding GyroWeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                </ui:SettingsCard>
+
+                <!--  Joystick  -->
+                <!--  Output shape  -->
+                <ui:SettingsCard Header="Output shape" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                    <ComboBox SelectedIndex="{Binding Axis2AxisOutputShapeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBoxItem>Default</ComboBoxItem>
+                        <ComboBoxItem>Circle</ComboBoxItem>
+                        <ComboBoxItem>Cross</ComboBoxItem>
+                        <ComboBoxItem>Square</ComboBoxItem>
+                    </ComboBox>
+                </ui:SettingsCard>
+
+                <!--  Joystick  -->
+                <!--  Inner deadzone  -->
+                <ui:SettingsCard Header="Inner deadzone" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                    <DockPanel>
+                        <TextBox
+                            HorizontalContentAlignment="Center"
+                            IsReadOnly="True"
+                            Text="{Binding Axis2AxisInnerDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
+
+                        <Slider
+                            Margin="6,0,0,0"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            Maximum="25"
+                            Minimum="0"
+                            TickFrequency="1"
+                            TickPlacement="BottomRight"
+                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                            Value="{Binding Axis2AxisInnerDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                </ui:SettingsCard>
+
+                <!--  Joystick  -->
+                <!--  Outer deadzone  -->
+                <ui:SettingsCard Header="Outer deadzone" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                    <DockPanel>
+                        <TextBox
+                            HorizontalContentAlignment="Center"
+                            IsReadOnly="True"
+                            Text="{Binding Axis2AxisOuterDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
+
+                        <Slider
+                            Margin="3,0,0,0"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            Maximum="25"
+                            Minimum="0"
+                            TickFrequency="5"
+                            TickPlacement="BottomRight"
+                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                            Value="{Binding Axis2AxisOuterDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                </ui:SettingsCard>
+
+                <!--  Joystick  -->
+                <!--  Anti deadzone  -->
+                <ui:SettingsCard Header="Anti deadzone" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                    <DockPanel>
+                        <TextBox
+                            HorizontalContentAlignment="Center"
+                            IsReadOnly="True"
+                            Text="{Binding Axis2AxisAntiDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
+
+                        <Slider
+                            Margin="3,0,0,0"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            Maximum="25"
+                            Minimum="0"
+                            TickFrequency="5"
+                            TickPlacement="BottomRight"
+                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                            Value="{Binding Axis2AxisAntiDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                </ui:SettingsCard>
+
+                <!--  Mouse  -->
+                <!--  Pointer Speed  -->
+                <ui:SettingsCard Header="Sensitivity" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=4}">
+                    <DockPanel>
+                        <TextBox
+                            HorizontalContentAlignment="Center"
+                            IsReadOnly="True"
+                            Text="{Binding Axis2MousePointerSpeed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <Slider
+                            Margin="3,0,0,0"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            Maximum="100"
+                            Minimum="5"
+                            TickFrequency="1"
+                            TickPlacement="BottomRight"
+                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                            Value="{Binding Axis2MousePointerSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                </ui:SettingsCard>
+
+                <!--  Mouse  -->
+                <!--  Acceleration  -->
+                <ui:SettingsCard Header="Acceleration" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=4}">
+                    <DockPanel>
+                        <TextBox
+                            HorizontalContentAlignment="Center"
+                            IsReadOnly="True"
+                            Text="{Binding Axis2MouseAcceleration, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <Slider
+                            Margin="3,0,0,0"
+                            AutoToolTipPrecision="2"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            Maximum="2.00"
+                            Minimum="1.00"
+                            TickFrequency="0.05"
+                            TickPlacement="BottomRight"
+                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                            Value="{Binding Axis2MouseAcceleration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                </ui:SettingsCard>
+
+                <!--  Mouse  -->
+                <!--  Deadzone  -->
+                <ui:SettingsCard Header="Deadzone" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=4}">
+                    <DockPanel>
+                        <TextBox
+                            HorizontalContentAlignment="Center"
+                            IsReadOnly="True"
+                            Text="{Binding Axis2MouseDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <Slider
+                            Margin="3,0,0,0"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            Maximum="100"
+                            Minimum="0"
+                            TickFrequency="1"
+                            TickPlacement="BottomRight"
+                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                            Value="{Binding Axis2MouseDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                </ui:SettingsCard>
+            </ui:SettingsExpander.Items>
+        </ui:SettingsExpander>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AxisMappingTemplate" DataType="{x:Type viewmodels:AxisMappingViewModel}">
+        <Grid Margin="48,0,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <Button
+                Margin="0,1,2,1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Stretch"
+                Command="{Binding ButtonCommand}">
+                <ui:FontIcon
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                    Glyph="&#xECC9;" />
+            </Button>
+
+            <ui:SettingsExpander Grid.Column="1">
+                <ui:SettingsExpander.Content>
+                    <DockPanel>
+                        <ComboBox MinWidth="120" SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Joystick}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Keyboard}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Mouse}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="False" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="False" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="True" />
+                        </ComboBox>
+
+                        <ComboBox
+                            MinWidth="180"
+                            Margin="3,0,0,0"
+                            VerticalAlignment="Center"
+                            DisplayMemberPath="Content"
+                            ItemsSource="{Binding Targets, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedItem="{Binding SelectedTarget, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedValuePath="Content">
+                            <ComboBox.Style>
+                                <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
+                                    <Setter Property="IsEnabled" Value="True" />
+                                    <Style.Triggers>
+                                        <!--  Disable when ActionTypeIndex is 0  -->
+                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                        <!--  Disable when ActionTypeIndex is 7  -->
+                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="7">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ComboBox.Style>
+                        </ComboBox>
+                    </DockPanel>
+                </ui:SettingsExpander.Content>
+
+                <ui:SettingsExpander.Items>
+                    <!--  Axis Direction  -->
+                    <!--  TODO: Translate me  -->
+                    <ui:SettingsCard Header="Axis direction" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <StackPanel>
+                            <WrapPanel Orientation="Horizontal">
+                                <CheckBox Content="Up" IsChecked="{Binding IsUp, Mode=TwoWay}" />
+                                <CheckBox Content="Down" IsChecked="{Binding IsDown, Mode=TwoWay}" />
+                            </WrapPanel>
+                            <WrapPanel Orientation="Horizontal">
+                                <CheckBox Content="Left" IsChecked="{Binding IsLeft, Mode=TwoWay}" />
+                                <CheckBox Content="Right" IsChecked="{Binding IsRight, Mode=TwoWay}" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Axis Threshold  -->
+                    <!--  TODO: Translate me  -->
+                    <ui:SettingsCard Header="Axis threshold" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Axis2ButtonThreshold, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" />
+
+                            <Slider
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="100"
+                                Maximum="250"
+                                Minimum="10"
+                                SmallChange="10"
+                                TickFrequency="10"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Axis2ButtonThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Output shape  -->
+                    <!--  TODO: Translate me  -->
+                    <ui:SettingsCard Header="Output shape" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                        <ComboBox SelectedIndex="{Binding Axis2AxisOutputShapeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem>Default</ComboBoxItem>
+                            <ComboBoxItem>Circle</ComboBoxItem>
+                            <ComboBoxItem>Cross</ComboBoxItem>
+                            <ComboBoxItem>Square</ComboBoxItem>
+                        </ComboBox>
+                    </ui:SettingsCard>
+
+                    <!--  Invert horizontal  -->
+                    <!--  TODO: Translate me  -->
+                    <ui:SettingsCard Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                        <CheckBox Content="Invert horizontal axis" IsChecked="{Binding Axis2AxisInvertHorizontal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </ui:SettingsCard>
+
+                    <!--  Invert vertical  -->
+                    <!--  TODO: Translate me  -->
+                    <ui:SettingsCard Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                        <CheckBox Content="Invert vertical axis" IsChecked="{Binding Axis2AxisInvertVertical, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </ui:SettingsCard>
+
+                    <!--  Inner deadzone  -->
+                    <ui:SettingsCard Header="Inner deadzone" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Axis2AxisInnerDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
+
+                            <Slider
+                                Margin="6,0,0,0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="25"
+                                Minimum="0"
+                                TickFrequency="1"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Axis2AxisInnerDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Outer deadzone  -->
+                    <ui:SettingsCard Header="Outer deadzone" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Axis2AxisOuterDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
+
+                            <Slider
+                                Margin="3,0,0,0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="25"
+                                Minimum="0"
+                                TickFrequency="5"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Axis2AxisOuterDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Anti deadzone  -->
+                    <ui:SettingsCard Header="Anti deadzone" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Axis2AxisAntiDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
+
+                            <Slider
+                                Margin="3,0,0,0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="25"
+                                Minimum="0"
+                                TickFrequency="5"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Axis2AxisAntiDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Mouse Axis  -->
+                    <!--  Sensitivity  -->
+                    <ui:SettingsCard Header="Sensitivity" Visibility="{Binding Axis2MouseVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Axis2MousePointerSpeed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
+
+                            <Slider
+                                Margin="3,0,0,0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="100"
+                                Minimum="5"
+                                TickFrequency="10"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Axis2MousePointerSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Mouse Axis  -->
+                    <!--  Acceleration  -->
+                    <ui:SettingsCard Header="Acceleration" Visibility="{Binding Axis2MouseVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Axis2MouseAcceleration, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N2} %}" />
+
+                            <Slider
+                                Margin="3,0,0,0"
+                                AutoToolTipPrecision="2"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="2.00"
+                                Minimum="1.00"
+                                TickFrequency="0.05"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat={}{0:N2} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Axis2MouseAcceleration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Mouse Axis  -->
+                    <!--  Touchpad: Filtering  -->
+                    <ui:SettingsCard
+                        d:Visibility="Visible"
+                        Header="Filtering"
+                        Visibility="{Binding Axis2TouchpadVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <ui:ToggleSwitch IsOn="{Binding Axis2MouseFiltering, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                    </ui:SettingsCard>
+
+                    <!--  Mouse Axis  -->
+                    <!--  Touchpad: Filtering cutoff  -->
+                    <ui:SettingsCard
+                        d:Visibility="Visible"
+                        Header="Filtering cutoff (less is more filter)"
+                        Visibility="{Binding Axis2MouseFiltering, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Axis2MouseFilterCutoff, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N3}" />
+
+                            <Slider
+                                Margin="3,0,0,0"
+                                AutoToolTipPrecision="3"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="0.1"
+                                Minimum="0.01"
+                                TickFrequency="0.005"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Axis2MouseFilterCutoff, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Mouse Axis  -->
+                    <!--  Deadzone  -->
+                    <ui:SettingsCard Header="Deadzone" Visibility="{Binding Axis2JoystickVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Axis2MouseDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0} %}" />
+
+                            <Slider
+                                Margin="3,0,0,0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="100"
+                                Minimum="0"
+                                TickFrequency="5"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Axis2MouseDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Input Type and Shifting  -->
+                    <ui:SettingsCard
+                        Description="{x:Static resx:Resources.LayoutPage_InputShiftDesc}"
+                        Header="{x:Static resx:Resources.LayoutPage_InputShift}"
+                        Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
+                        <ComboBox SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="Disabled on shift" />
+                            <ComboBoxItem Content="Enabled with shift A" />
+                            <ComboBoxItem Content="Enabled with shift B" />
+                            <ComboBoxItem Content="Enabled with shift C" />
+                            <ComboBoxItem Content="Enabled with shift D" />
+                            <ComboBoxItem Content="Always enabled" />
+                        </ComboBox>
+                    </ui:SettingsCard>
+                </ui:SettingsExpander.Items>
+            </ui:SettingsExpander>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TriggerMappingTemplate" DataType="{x:Type viewmodels:TriggerMappingViewModel}">
+        <Grid Margin="48,0,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <Button
+                Margin="0,1,2,1"
+                VerticalAlignment="Stretch"
+                Command="{Binding ButtonCommand}">
+                <ui:FontIcon
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                    Glyph="&#xECC9;" />
+            </Button>
+
+            <ui:SettingsExpander Grid.Column="1">
+                <ui:SettingsExpander.Content>
+                    <DockPanel>
+                        <ComboBox MinWidth="120" SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Joystick}" IsEnabled="False" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Keyboard}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Mouse}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="True" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="False" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="True" />
+                        </ComboBox>
+
+                        <ComboBox
+                            Width="180"
+                            Margin="3,0,0,0"
+                            DisplayMemberPath="Content"
+                            ItemsSource="{Binding Targets, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedItem="{Binding SelectedTarget, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedValuePath="Content">
+                            <ComboBox.Style>
+                                <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
+                                    <Setter Property="IsEnabled" Value="True" />
+                                    <Style.Triggers>
+                                        <!--  Disable when ActionTypeIndex is 0  -->
+                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                        <!--  Disable when ActionTypeIndex is 7  -->
+                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="7">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ComboBox.Style>
+                        </ComboBox>
+                    </DockPanel>
+                </ui:SettingsExpander.Content>
+
+                <ui:SettingsExpander.Items>
+                    <!--  Axis Threshold  -->
+                    <!--  TODO: Translate me  -->
+                    <ui:SettingsCard Header="Axis threshold" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Axis2ButtonThreshold, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" />
+
+                            <Slider
+                                Margin="3,0,0,0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="100"
+                                Maximum="250"
+                                Minimum="10"
+                                SmallChange="10"
+                                TickFrequency="10"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Axis2ButtonThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Inner deadzone  -->
+                    <ui:SettingsCard Header="Inner deadzone" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=5}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Trigger2TriggerInnerDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
+
+                            <Slider
+                                Margin="6,0,0,0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="25"
+                                Minimum="0"
+                                TickFrequency="1"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Trigger2TriggerInnerDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Outer deadzone  -->
+                    <ui:SettingsCard Header="Outer deadzone" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=5}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Trigger2TriggerOuterDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
+
+                            <Slider
+                                Margin="3,0,0,0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="25"
+                                Minimum="0"
+                                TickFrequency="5"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Trigger2TriggerOuterDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Anti deadzone  -->
+                    <ui:SettingsCard Header="Anti deadzone" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=5}">
+                        <DockPanel>
+                            <TextBox
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Trigger2TriggerAntiDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
+
+                            <Slider
+                                Margin="3,0,0,0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="25"
+                                Minimum="0"
+                                TickFrequency="5"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                Value="{Binding Trigger2TriggerAntiDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
+                    <!--  Input Type and Shifting  -->
+                    <ui:SettingsCard
+                        Description="{x:Static resx:Resources.LayoutPage_InputShiftDesc}"
+                        Header="{x:Static resx:Resources.LayoutPage_InputShift}"
+                        Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
+                        <ComboBox SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="Disabled on shift" />
+                            <ComboBoxItem Content="Enabled with shift A" />
+                            <ComboBoxItem Content="Enabled with shift B" />
+                            <ComboBoxItem Content="Enabled with shift C" />
+                            <ComboBoxItem Content="Enabled with shift D" />
+                            <ComboBoxItem Content="Always enabled" />
+                        </ComboBox>
+                    </ui:SettingsCard>
+                </ui:SettingsExpander.Items>
+            </ui:SettingsExpander>
         </Grid>
     </DataTemplate>
 
@@ -1385,582 +2032,6 @@
             <ItemsControl ItemTemplate="{StaticResource ButtonMappingTemplate}" ItemsSource="{Binding ButtonMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
     </DataTemplate>
-
-    <DataTemplate x:Key="GyroMappingTemplate" DataType="{x:Type viewmodels:GyroMappingViewModel}">
-        <Expander HorizontalAlignment="Stretch">
-            <Expander.Header>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <DockPanel Grid.Column="2" HorizontalAlignment="Right">
-                        <ComboBox
-                            Width="220"
-                            VerticalAlignment="Center"
-                            SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="Disabled" IsEnabled="True" />
-                            <ComboBoxItem Content="Button" IsEnabled="False" />
-                            <ComboBoxItem Content="Axis" IsEnabled="True" />
-                            <ComboBoxItem Content="Keyboard" IsEnabled="False" />
-                            <ComboBoxItem Content="Mouse" IsEnabled="True" />
-                            <ComboBoxItem Content="Trigger" IsEnabled="False" />
-                            <ComboBoxItem Content="Shift" IsEnabled="False" />
-                            <ComboBoxItem Content="Inherit" IsEnabled="False" />
-                        </ComboBox>
-
-                        <ComboBox
-                            Width="220"
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            DisplayMemberPath="Content"
-                            ItemsSource="{Binding Targets, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            SelectedItem="{Binding SelectedTarget, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            SelectedValuePath="Content">
-                            <ComboBox.Style>
-                                <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
-                                    <Setter Property="IsEnabled" Value="True" />
-                                    <Style.Triggers>
-                                        <!--  Disable when ActionTypeIndex is 0  -->
-                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
-                                            <Setter Property="IsEnabled" Value="False" />
-                                        </DataTrigger>
-                                        <!--  Disable when ActionTypeIndex is 7  -->
-                                        <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="7">
-                                            <Setter Property="IsEnabled" Value="False" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ComboBox.Style>
-                        </ComboBox>
-                    </DockPanel>
-                </Grid>
-            </Expander.Header>
-            <Expander.Content>
-                <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5}">
-                    <!--  Shared  -->
-                    <Grid>
-                        <ikw:SimpleStackPanel Spacing="3">
-                            <ikw:SimpleStackPanel Spacing="3">
-
-                                <!--  Gyro input  -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.ProfilesPage_StyleofInput}"
-                                            ToolTip="{l:Static resx:Resources.ProfilesPage_StyleofInputTooltip}" />
-                                        <TextBlock
-                                            Name="Text_InputHint"
-                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            TextWrapping="Wrap" />
-                                    </StackPanel>
-
-                                    <ComboBox
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Left"
-                                        ItemsSource="{Binding MotionInputItems}"
-                                        SelectedIndex="{Binding MotionInputIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                        <ComboBox.ItemTemplate>
-                                            <DataTemplate DataType="{x:Type viewmodels:MotionInputViewModel}">
-                                                <ikw:SimpleStackPanel
-                                                    VerticalAlignment="Center"
-                                                    Orientation="Horizontal"
-                                                    Spacing="3">
-                                                    <ui:FontIcon Glyph="{Binding Glyph}" Visibility="{Binding HasGlyph, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                                    <TextBlock Text="{Binding Description}" />
-                                                </ikw:SimpleStackPanel>
-                                            </DataTemplate>
-                                        </ComboBox.ItemTemplate>
-                                    </ComboBox>
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0"
-                                    Opacity="0.25" />
-
-                                <!--  Gyro activator  -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.ProfilesPage_UMCMotionOnOff}" />
-                                        <TextBlock
-                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="{l:Static resx:Resources.ProfilesPage_UMCMotionOnOffDesc}"
-                                            TextWrapping="Wrap" />
-                                    </StackPanel>
-
-                                    <ikw:SimpleStackPanel
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        HorizontalAlignment="Stretch"
-                                        Orientation="Vertical"
-                                        Spacing="3">
-                                        <ComboBox
-                                            HorizontalAlignment="Stretch"
-                                            HorizontalContentAlignment="Left"
-                                            SelectedIndex="{Binding MotionModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                            <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_UMCMotionOff}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_UMCMotionOn}" />
-                                            <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_UMCMotionToggle}" />
-                                        </ComboBox>
-
-                                        <!--  Motion activator  -->
-                                        <ItemsControl ItemsSource="{Binding HotkeysList}">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="10*" />
-                                                            <ColumnDefinition Width="45" />
-                                                        </Grid.ColumnDefinitions>
-
-                                                        <ToggleButton
-                                                            Height="41"
-                                                            HorizontalAlignment="Stretch"
-                                                            VerticalAlignment="Stretch"
-                                                            Command="{Binding DefineButtonCommand}"
-                                                            IsChecked="{Binding IsListening, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-
-                                                            <ToggleButton.Resources>
-                                                                <Style BasedOn="{StaticResource {x:Type ToggleButton}}" TargetType="ToggleButton">
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding IsExecuted}" Value="True">
-                                                                            <DataTrigger.EnterActions>
-                                                                                <BeginStoryboard>
-                                                                                    <Storyboard>
-                                                                                        <DoubleAnimation
-                                                                                            AutoReverse="True"
-                                                                                            RepeatBehavior="1x"
-                                                                                            Storyboard.TargetProperty="Opacity"
-                                                                                            From="1.0"
-                                                                                            To="0.0"
-                                                                                            Duration="0:0:0.125" />
-                                                                                    </Storyboard>
-                                                                                </BeginStoryboard>
-                                                                            </DataTrigger.EnterActions>
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </ToggleButton.Resources>
-
-                                                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3">
-                                                                <ItemsControl ItemsSource="{Binding ButtonGlyphs}">
-                                                                    <ItemsControl.Style>
-                                                                        <Style TargetType="ItemsControl">
-                                                                            <Style.Triggers>
-                                                                                <DataTrigger Binding="{Binding ButtonGlyphs.Count}" Value="0">
-                                                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                                                </DataTrigger>
-                                                                                <DataTrigger Binding="{Binding ButtonGlyphs.Count}">
-                                                                                    <Setter Property="Visibility" Value="Visible" />
-                                                                                </DataTrigger>
-                                                                            </Style.Triggers>
-                                                                        </Style>
-                                                                    </ItemsControl.Style>
-
-                                                                    <ItemsControl.ItemsPanel>
-                                                                        <ItemsPanelTemplate>
-                                                                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3" />
-                                                                        </ItemsPanelTemplate>
-                                                                    </ItemsControl.ItemsPanel>
-
-                                                                    <ItemsControl.ItemTemplate>
-                                                                        <DataTemplate>
-                                                                            <ui:FontIcon
-                                                                                FontFamily="PromptFont"
-                                                                                FontSize="24"
-                                                                                Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                                                                <ui:FontIcon.Style>
-                                                                                    <Style TargetType="ui:FontIcon">
-                                                                                        <Style.Triggers>
-                                                                                            <DataTrigger Binding="{Binding Foreground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="{x:Null}">
-                                                                                                <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                                                                                            </DataTrigger>
-                                                                                        </Style.Triggers>
-                                                                                        <Setter Property="Foreground" Value="{Binding Foreground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                                                    </Style>
-                                                                                </ui:FontIcon.Style>
-                                                                            </ui:FontIcon>
-                                                                        </DataTemplate>
-                                                                    </ItemsControl.ItemTemplate>
-                                                                </ItemsControl>
-
-                                                                <TextBlock VerticalAlignment="Center" Text="{Binding KeyboardChord, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                                                    <TextBlock.Style>
-                                                                        <Style TargetType="TextBlock">
-                                                                            <Style.Triggers>
-                                                                                <DataTrigger Binding="{Binding KeyboardChord}" Value="">
-                                                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                                                </DataTrigger>
-                                                                                <DataTrigger Binding="{Binding KeyboardChord}">
-                                                                                    <Setter Property="Visibility" Value="Visible" />
-                                                                                </DataTrigger>
-                                                                            </Style.Triggers>
-                                                                        </Style>
-                                                                    </TextBlock.Style>
-                                                                </TextBlock>
-
-                                                                <TextBlock
-                                                                    VerticalAlignment="Center"
-                                                                    Foreground="{DynamicResource NavigationViewSelectionIndicatorForeground}"
-                                                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                                                    Text="{Binding InputsChordType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                            </ikw:SimpleStackPanel>
-                                                        </ToggleButton>
-
-                                                        <Button
-                                                            Grid.Column="1"
-                                                            HorizontalAlignment="Right"
-                                                            VerticalAlignment="Stretch"
-                                                            Command="{Binding EraseButtonCommand}">
-                                                            <ui:FontIcon
-                                                                HorizontalAlignment="Center"
-                                                                VerticalAlignment="Center"
-                                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                                                Glyph="&#xe75c;" />
-                                                        </Button>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                    </ikw:SimpleStackPanel>
-                                </Grid>
-
-                            </ikw:SimpleStackPanel>
-                        </ikw:SimpleStackPanel>
-                    </Grid>
-
-                    <!--  Separator  -->
-                    <Separator
-                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                        BorderThickness="0,1,0,0"
-                        Opacity="0.25" />
-
-                    <!--  Axis 2 Axis  -->
-                    <Grid Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
-                        <ikw:SimpleStackPanel Spacing="3">
-                            <ikw:SimpleStackPanel Spacing="3">
-
-                                <!--  Separator  -->
-                                <Separator
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0"
-                                    Opacity="0.25" />
-
-                                <!--  Gyro Weight  -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Gyrometer weight" />
-                                        <TextBlock
-                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="Modify the gyrometer weight when applied against joystick movements"
-                                            TextWrapping="Wrap" />
-                                    </StackPanel>
-
-                                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                        <TextBlock
-                                            Width="35"
-                                            VerticalAlignment="Center"
-                                            Text="{Binding GyroWeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}"
-                                            TextAlignment="Center" />
-                                        <Slider
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            AutoToolTipPrecision="1"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            Maximum="2.0"
-                                            Minimum="1.0"
-                                            TickFrequency="0.1"
-                                            TickPlacement="BottomRight"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            Value="{Binding GyroWeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </DockPanel>
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0"
-                                    Opacity="0.25" />
-
-                                <!--  Output shape  -->
-                                <!--  TODO: Translate me  -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Output shape" />
-
-                                    <ComboBox
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Left"
-                                        SelectedIndex="{Binding Axis2AxisOutputShapeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                        <ComboBoxItem>Default</ComboBoxItem>
-                                        <ComboBoxItem>Circle</ComboBoxItem>
-                                        <ComboBoxItem>Cross</ComboBoxItem>
-                                        <ComboBoxItem>Square</ComboBoxItem>
-                                    </ComboBox>
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0"
-                                    Opacity="0.25" />
-
-                                <!--  Inner deadzone  -->
-                                <Grid>
-                                    <ikw:SimpleStackPanel Spacing="3">
-                                        <Grid>
-                                            <TextBlock
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="Inner deadzone (%)" />
-                                            <TextBox
-                                                HorizontalAlignment="Right"
-                                                HorizontalContentAlignment="Center"
-                                                IsReadOnly="True"
-                                                Text="{Binding Axis2AxisInnerDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        </Grid>
-
-                                        <Slider
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            Maximum="25"
-                                            Minimum="0"
-                                            TickFrequency="1"
-                                            TickPlacement="BottomRight"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            Value="{Binding Axis2AxisInnerDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </ikw:SimpleStackPanel>
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0"
-                                    Opacity="0.25" />
-
-                                <!--  Outer deadzone  -->
-                                <Grid>
-                                    <ikw:SimpleStackPanel Spacing="3">
-                                        <Grid>
-                                            <TextBlock
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="Outer deadzone (%)" />
-                                            <TextBox
-                                                HorizontalAlignment="Right"
-                                                HorizontalContentAlignment="Center"
-                                                IsReadOnly="True"
-                                                Text="{Binding Axis2AxisOuterDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        </Grid>
-
-                                        <Slider
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            Maximum="25"
-                                            Minimum="0"
-                                            TickFrequency="1"
-                                            TickPlacement="BottomRight"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            Value="{Binding Axis2AxisOuterDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </ikw:SimpleStackPanel>
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0"
-                                    Opacity="0.25" />
-
-                                <!--  Anti deadzone  -->
-                                <Grid>
-                                    <ikw:SimpleStackPanel Spacing="3">
-                                        <Grid>
-                                            <TextBlock
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="Anti deadzone (%)" />
-                                            <TextBox
-                                                HorizontalAlignment="Right"
-                                                HorizontalContentAlignment="Center"
-                                                IsReadOnly="True"
-                                                Text="{Binding Axis2AxisAntiDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        </Grid>
-
-                                        <Slider
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            Maximum="25"
-                                            Minimum="0"
-                                            TickFrequency="1"
-                                            TickPlacement="BottomRight"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            Value="{Binding Axis2AxisAntiDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </ikw:SimpleStackPanel>
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0"
-                                    Opacity="0.25" />
-
-                            </ikw:SimpleStackPanel>
-                        </ikw:SimpleStackPanel>
-                    </Grid>
-
-                    <!--  GyroAxis 2 Mouse  -->
-                    <Grid Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=4}">
-                        <ikw:SimpleStackPanel Spacing="3">
-                            <ikw:SimpleStackPanel Spacing="3">
-                                <!--  Pointer Speed  -->
-                                <Grid>
-                                    <ikw:SimpleStackPanel Spacing="3">
-                                        <Grid>
-                                            <TextBlock
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="Sensitivity" />
-                                            <TextBox
-                                                HorizontalAlignment="Right"
-                                                HorizontalContentAlignment="Center"
-                                                IsReadOnly="True"
-                                                Text="{Binding Axis2MousePointerSpeed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        </Grid>
-
-                                        <Slider
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            Maximum="100"
-                                            Minimum="5"
-                                            TickFrequency="1"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            Value="{Binding Axis2MousePointerSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </ikw:SimpleStackPanel>
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0"
-                                    Opacity="0.25" />
-
-                                <!--  Acceleration  -->
-                                <Grid>
-                                    <ikw:SimpleStackPanel Spacing="3">
-                                        <Grid>
-                                            <TextBlock
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="Acceleration" />
-                                            <TextBox
-                                                HorizontalAlignment="Right"
-                                                HorizontalContentAlignment="Center"
-                                                IsReadOnly="True"
-                                                Text="{Binding Axis2MouseAcceleration, StringFormat=N2, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        </Grid>
-
-                                        <Slider
-                                            AutoToolTipPrecision="2"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            Maximum="2.00"
-                                            Minimum="1.00"
-                                            TickFrequency="0.05"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            Value="{Binding Axis2MouseAcceleration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </ikw:SimpleStackPanel>
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0"
-                                    Opacity="0.25" />
-
-                                <!--  Deadzone  -->
-                                <Grid>
-                                    <ikw:SimpleStackPanel Spacing="3">
-                                        <Grid>
-                                            <TextBlock
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="Deadzone" />
-                                            <TextBox
-                                                HorizontalAlignment="Right"
-                                                HorizontalContentAlignment="Center"
-                                                IsReadOnly="True"
-                                                Text="{Binding Axis2MouseDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        </Grid>
-
-                                        <Slider
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            Maximum="100"
-                                            Minimum="0"
-                                            TickFrequency="1"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            Value="{Binding Axis2MouseDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </ikw:SimpleStackPanel>
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0"
-                                    Opacity="0.25" />
-                            </ikw:SimpleStackPanel>
-                        </ikw:SimpleStackPanel>
-                    </Grid>
-                </ikw:SimpleStackPanel>
-            </Expander.Content>
-        </Expander>
-    </DataTemplate>
-
     <DataTemplate x:Key="GyroStackTemplate" DataType="{x:Type viewmodels:GyroStackViewModel}">
         <StackPanel Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <DockPanel>
@@ -2000,603 +2071,6 @@
             <ItemsControl ItemTemplate="{StaticResource GyroMappingTemplate}" ItemsSource="{Binding GyroMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
     </DataTemplate>
-
-    <DataTemplate x:Key="AxisMappingTemplate" DataType="{x:Type viewmodels:AxisMappingViewModel}">
-        <Grid Margin="48,0,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-
-            <Button
-                Grid.Column="0"
-                Width="44"
-                Height="44"
-                Margin="0,2,2,0"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Top"
-                Command="{Binding ButtonCommand}">
-                <ui:FontIcon
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                    Glyph="&#xECC9;" />
-            </Button>
-
-            <Expander Grid.Column="1" HorizontalAlignment="Stretch">
-                <Expander.Header>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel Grid.Column="2" HorizontalAlignment="Right">
-                            <ComboBox
-                                Width="220"
-                                VerticalAlignment="Center"
-                                SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ComboBoxItem Content="Disabled" IsEnabled="True" />
-                                <ComboBoxItem Content="Button" IsEnabled="True" />
-                                <ComboBoxItem Content="Axis" IsEnabled="True" />
-                                <ComboBoxItem Content="Keyboard" IsEnabled="True" />
-                                <ComboBoxItem Content="Mouse" IsEnabled="True" />
-                                <ComboBoxItem Content="Trigger" IsEnabled="False" />
-                                <ComboBoxItem Content="Shift" IsEnabled="False" />
-                                <ComboBoxItem Content="Inherit" IsEnabled="True" />
-                            </ComboBox>
-
-                            <ComboBox
-                                Width="220"
-                                Margin="12,0,0,0"
-                                VerticalAlignment="Center"
-                                DisplayMemberPath="Content"
-                                ItemsSource="{Binding Targets, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                SelectedItem="{Binding SelectedTarget, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                SelectedValuePath="Content">
-                                <ComboBox.Style>
-                                    <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
-                                        <Setter Property="IsEnabled" Value="True" />
-                                        <Style.Triggers>
-                                            <!--  Disable when ActionTypeIndex is 0  -->
-                                            <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
-                                                <Setter Property="IsEnabled" Value="False" />
-                                            </DataTrigger>
-                                            <!--  Disable when ActionTypeIndex is 7  -->
-                                            <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="7">
-                                                <Setter Property="IsEnabled" Value="False" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ComboBox.Style>
-                            </ComboBox>
-                        </DockPanel>
-                    </Grid>
-                </Expander.Header>
-
-                <Expander.Content>
-                    <ikw:SimpleStackPanel Margin="30,-10,0,-4" Spacing="3">
-
-                        <!--  Axis 2 Button|Keyboard|Mouse  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
-                            <!--  Axis Direction  -->
-                            <!--  TODO: Translate me  -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Axis direction" />
-
-                                <StackPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center">
-                                    <WrapPanel Orientation="Horizontal">
-                                        <CheckBox Content="Up" IsChecked="{Binding IsUp, Mode=TwoWay}" />
-                                        <CheckBox Content="Down" IsChecked="{Binding IsDown, Mode=TwoWay}" />
-                                    </WrapPanel>
-                                    <WrapPanel Orientation="Horizontal">
-                                        <CheckBox Content="Left" IsChecked="{Binding IsLeft, Mode=TwoWay}" />
-                                        <CheckBox Content="Right" IsChecked="{Binding IsRight, Mode=TwoWay}" />
-                                    </WrapPanel>
-                                </StackPanel>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-
-                            <!--  Axis Threshold  -->
-                            <!--  TODO: Translate me  -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Axis threshold" />
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Axis2ButtonThreshold, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" />
-
-                                    <Slider
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Center"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        LargeChange="10000"
-                                        Maximum="32000"
-                                        Minimum="2000"
-                                        SmallChange="2000"
-                                        TickFrequency="2000"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Axis2ButtonThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-                        </ikw:SimpleStackPanel>
-
-                        <!--  Axis 2 Axis  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
-
-                            <!--  Output shape  -->
-                            <!--  TODO: Translate me  -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Output shape" />
-
-                                <ComboBox
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    HorizontalContentAlignment="Left"
-                                    SelectedIndex="{Binding Axis2AxisOutputShapeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <ComboBoxItem>Default</ComboBoxItem>
-                                    <ComboBoxItem>Circle</ComboBoxItem>
-                                    <ComboBoxItem>Cross</ComboBoxItem>
-                                    <ComboBoxItem>Square</ComboBoxItem>
-                                </ComboBox>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-
-                            <!--  Invert horizontal  -->
-                            <!--  TODO: Translate me  -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <CheckBox
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    HorizontalContentAlignment="Left"
-                                    Content="Invert horizontal axis"
-                                    IsChecked="{Binding Axis2AxisInvertHorizontal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-
-                            <!--  Invert vertical  -->
-                            <!--  TODO: Translate me  -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <CheckBox
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    HorizontalContentAlignment="Left"
-                                    Content="Invert vertical axis"
-                                    IsChecked="{Binding Axis2AxisInvertVertical, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-
-                            <!--  Inner deadzone  -->
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Inner deadzone" />
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Axis2AxisInnerDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="25"
-                                        Minimum="0"
-                                        TickFrequency="1"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Axis2AxisInnerDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-
-                            <!--  Outer deadzone  -->
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Outer deadzone" />
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Axis2AxisOuterDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="25"
-                                        Minimum="0"
-                                        TickFrequency="1"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Axis2AxisOuterDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-
-                            <!--  Anti deadzone  -->
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Anti deadzone" />
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Axis2AxisAntiDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="25"
-                                        Minimum="0"
-                                        TickFrequency="1"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Axis2AxisAntiDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-                        </ikw:SimpleStackPanel>
-
-                        <!--  Axis 2 Mouse Axis  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding Axis2MouseVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
-
-                            <!--  Sensitivity  -->
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Sensitivity" />
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Axis2MousePointerSpeed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="100"
-                                        Minimum="5"
-                                        TickFrequency="1"
-                                        ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Axis2MousePointerSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-
-                            <!--  Acceleration  -->
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Acceleration" />
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Axis2MouseAcceleration, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N2} %}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        AutoToolTipPrecision="2"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="2.00"
-                                        Minimum="1.00"
-                                        TickFrequency="0.05"
-                                        ToolTip="{Binding Value, StringFormat={}{0:N2} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Axis2MouseAcceleration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0"
-                                Visibility="{Binding TouchpadVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                            <!--  Filtering  -->
-                            <Grid Visibility="{Binding TouchpadVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="2*" MinWidth="200" />
-                                    <ColumnDefinition Width="8*" MinWidth="120" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Filtering" />
-
-                                <ui:ToggleSwitch
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Right"
-                                    IsOn="{Binding Axis2MouseFiltering, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Style="{DynamicResource InvertedToggleSwitchStyle}" />
-                            </Grid>
-
-                            <!--  Filtering (hidden)  -->
-                            <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding Axis2MouseFiltering, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                                <!--  Separator  -->
-                                <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
-
-                                <!--  Filtering cutoff  -->
-                                <Grid Height="40">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Filtering cutoff (less is more filter)" />
-
-                                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                        <TextBox
-                                            Height="31"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Center"
-                                            HorizontalContentAlignment="Center"
-                                            IsReadOnly="True"
-                                            Text="{Binding Axis2MouseFilterCutoff, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N3}" />
-
-                                        <Slider
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            AutoToolTipPrecision="3"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            Maximum="0.1"
-                                            Minimum="0.01"
-                                            TickFrequency="0.005"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            Value="{Binding Axis2MouseFilterCutoff, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </DockPanel>
-                                </Grid>
-                            </ikw:SimpleStackPanel>
-
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0"
-                                Visibility="{Binding JoystickVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                            <!--  Deadzone  -->
-                            <Grid Height="40" Visibility="{Binding JoystickVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Deadzone" />
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Axis2MouseDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0} %}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="100"
-                                        Minimum="0"
-                                        TickFrequency="1"
-                                        ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Axis2MouseDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-                        </ikw:SimpleStackPanel>
-
-                        <!--  Input Shifting  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <StackPanel VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Mode shifting" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="Define under which circumstances this input should be shifted"
-                                        TextWrapping="Wrap" />
-                                </StackPanel>
-
-                                <ComboBox
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    HorizontalContentAlignment="Left"
-                                    SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <ComboBoxItem Content="Disabled on shift" />
-                                    <ComboBoxItem Content="Enabled with shift A" />
-                                    <ComboBoxItem Content="Enabled with shift B" />
-                                    <ComboBoxItem Content="Enabled with shift C" />
-                                    <ComboBoxItem Content="Enabled with shift D" />
-                                    <ComboBoxItem Content="Always enabled" />
-                                </ComboBox>
-                            </Grid>
-                        </ikw:SimpleStackPanel>
-                    </ikw:SimpleStackPanel>
-                </Expander.Content>
-            </Expander>
-        </Grid>
-    </DataTemplate>
-
     <DataTemplate x:Key="AxisStackTemplate" DataType="{x:Type viewmodels:AxisStackViewModel}">
         <StackPanel Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <DockPanel>
@@ -2668,292 +2142,6 @@
             <ItemsControl ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding AxisMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
     </DataTemplate>
-
-    <DataTemplate x:Key="TriggerMappingTemplate" DataType="{x:Type viewmodels:TriggerMappingViewModel}">
-        <Grid Margin="48,0,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-
-            <Button
-                Grid.Column="0"
-                Width="44"
-                Height="44"
-                Margin="0,2,2,0"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Top"
-                Command="{Binding ButtonCommand}">
-                <ui:FontIcon
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                    Glyph="&#xECC9;" />
-            </Button>
-
-            <Expander Grid.Column="1" HorizontalAlignment="Stretch">
-                <Expander.Header>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel Grid.Column="2" HorizontalAlignment="Right">
-                            <ComboBox
-                                Width="220"
-                                VerticalAlignment="Center"
-                                SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ComboBoxItem Content="Disabled" IsEnabled="True" />
-                                <ComboBoxItem Content="Button" IsEnabled="True" />
-                                <ComboBoxItem Content="Axis" IsEnabled="False" />
-                                <ComboBoxItem Content="Keyboard" IsEnabled="True" />
-                                <ComboBoxItem Content="Mouse" IsEnabled="True" />
-                                <ComboBoxItem Content="Trigger" IsEnabled="True" />
-                                <ComboBoxItem Content="Shift" IsEnabled="False" />
-                                <ComboBoxItem Content="Inherit" IsEnabled="True" />
-                            </ComboBox>
-
-                            <ComboBox
-                                Width="220"
-                                Margin="12,0,0,0"
-                                VerticalAlignment="Center"
-                                DisplayMemberPath="Content"
-                                ItemsSource="{Binding Targets, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                SelectedItem="{Binding SelectedTarget, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                SelectedValuePath="Content">
-                                <ComboBox.Style>
-                                    <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
-                                        <Setter Property="IsEnabled" Value="True" />
-                                        <Style.Triggers>
-                                            <!--  Disable when ActionTypeIndex is 0  -->
-                                            <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
-                                                <Setter Property="IsEnabled" Value="False" />
-                                            </DataTrigger>
-                                            <!--  Disable when ActionTypeIndex is 7  -->
-                                            <DataTrigger Binding="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="7">
-                                                <Setter Property="IsEnabled" Value="False" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ComboBox.Style>
-                            </ComboBox>
-                        </DockPanel>
-                    </Grid>
-                </Expander.Header>
-
-                <Expander.Content>
-                    <ikw:SimpleStackPanel Margin="30,-10,0,-4" Spacing="3">
-
-                        <!--  Trigger 2 Button|Keyboard|Mouse  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
-
-                            <!--  Trigger Threshold  -->
-                            <!--  TODO: Translate me  -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Trigger threshold" />
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Axis2ButtonThreshold, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" />
-
-                                    <Slider
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Center"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        LargeChange="100"
-                                        Maximum="250"
-                                        Minimum="10"
-                                        SmallChange="10"
-                                        TickFrequency="10"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Axis2ButtonThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-                        </ikw:SimpleStackPanel>
-
-                        <!--  Trigger 2 Trigger  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=5}">
-
-                            <!--  Inner deadzone  -->
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Inner deadzone" />
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Trigger2TriggerInnerDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0} %}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="25"
-                                        Minimum="0"
-                                        TickFrequency="1"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Trigger2TriggerInnerDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0"
-                                Opacity="0.25" />
-
-                            <!--  Outer deadzone  -->
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Outer deadzone" />
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Trigger2TriggerOuterDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0} %}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="25"
-                                        Minimum="0"
-                                        TickFrequency="1"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Trigger2TriggerOuterDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0"
-                                Opacity="0.25" />
-
-                            <!--  Anti deadzone  -->
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Anti deadzone" />
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Height="31"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Center"
-                                        IsReadOnly="True"
-                                        Text="{Binding Trigger2TriggerAntiDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0} %}" />
-
-                                    <Slider
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="25"
-                                        Minimum="0"
-                                        TickFrequency="1"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        Value="{Binding Trigger2TriggerAntiDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DockPanel>
-                            </Grid>
-                        </ikw:SimpleStackPanel>
-
-                        <!--  Input Shifting  -->
-                        <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
-                            <!--  Separator  -->
-                            <Separator
-                                Margin="-46,0,-16,0"
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0" />
-
-                            <Grid Height="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Input shift" />
-
-                                <ComboBox
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    HorizontalContentAlignment="Left"
-                                    SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <ComboBoxItem Content="Disabled on shift" />
-                                    <ComboBoxItem Content="Enabled with shift A" />
-                                    <ComboBoxItem Content="Enabled with shift B" />
-                                    <ComboBoxItem Content="Enabled with shift C" />
-                                    <ComboBoxItem Content="Enabled with shift D" />
-                                    <ComboBoxItem Content="Always enabled" />
-                                </ComboBox>
-                            </Grid>
-                        </ikw:SimpleStackPanel>
-                    </ikw:SimpleStackPanel>
-                </Expander.Content>
-            </Expander>
-        </Grid>
-    </DataTemplate>
-
     <DataTemplate x:Key="TriggerStackTemplate" DataType="{x:Type viewmodels:TriggerStackViewModel}">
         <StackPanel Visibility="{Binding IsSupported, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <DockPanel>

@@ -225,7 +225,7 @@ public class ProcessEx : IDisposable, ICloneable
     public nint Handle => Process?.Handle ?? IntPtr.Zero;
 
     public ProcessFilter Filter { get; set; }
-    public PlatformType Platform { get; set; }
+    public GamePlatform Platform { get; set; }
     public ImageSource ProcessIcon { get; private set; }
 
     public string Path { get; set; } = string.Empty;

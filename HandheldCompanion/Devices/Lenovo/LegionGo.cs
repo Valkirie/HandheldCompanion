@@ -1,3 +1,4 @@
+using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Inputs;
@@ -253,6 +254,10 @@ public class LegionGo : IDevice
 
         OEMChords.Add(new KeyboardChord("LegionR", [], [], false, ButtonFlags.OEM1));
         OEMChords.Add(new KeyboardChord("LegionL", [], [], false, ButtonFlags.OEM2));
+
+        // prepare hotkeys
+        DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
+        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
     }
 
     public override bool IsReady()
@@ -284,18 +289,6 @@ public class LegionGo : IDevice
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
 
-        // raise events
-        switch (ManagerFactory.powerProfileManager.Status)
-        {
-            default:
-            case ManagerStatus.Initializing:
-                ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
-                break;
-            case ManagerStatus.Initialized:
-                QueryPowerProfile();
-                break;
-        }
-
         Device_Inserted();
     }
 
@@ -304,8 +297,6 @@ public class LegionGo : IDevice
         // manage events
         ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
-        ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
-        ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
 
         // close devices
         foreach (HidDevice hidDevice in hidDevices.Values)
@@ -322,19 +313,6 @@ public class LegionGo : IDevice
         FreeSapientiaUsb();
 
         base.Close();
-    }
-
-    private void QueryPowerProfile()
-    {
-        // manage events
-        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
-
-        PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
-    }
-
-    private void PowerProfileManager_Initialized()
-    {
-        QueryPowerProfile();
     }
 
     protected override void QuerySettings()
@@ -366,7 +344,7 @@ public class LegionGo : IDevice
     }
 
     private FanTable defaultFanTable = new([44, 48, 55, 60, 71, 79, 87, 87, 100, 100]);
-    private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    protected override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
         if (profile.FanProfile.fanMode != FanMode.Hardware)
         {

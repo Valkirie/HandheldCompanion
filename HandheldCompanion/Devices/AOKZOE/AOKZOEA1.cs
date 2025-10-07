@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
 using HidLibrary;
 using System;
@@ -120,6 +121,10 @@ public class AOKZOEA1 : IDevice
             [KeyCode.Snapshot, KeyCode.LWin],
             false, ButtonFlags.OEM5
         ));
+
+        // prepare hotkeys
+        DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
+        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM3] = true;
     }
 
     public override bool Open()

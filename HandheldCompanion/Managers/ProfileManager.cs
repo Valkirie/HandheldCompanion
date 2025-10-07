@@ -551,13 +551,6 @@ public class ProfileManager : IManager
             }
 
             string outputraw = File.ReadAllText(fileName);
-
-            // we've been doing back and forth on ButtonState State type
-            // let's make sure we get a ConcurrentDictionary
-            outputraw = outputraw.Replace(
-                "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"",
-                "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"");
-
             JObject jObject = JObject.Parse(outputraw);
 
             // latest pre-versionning release
@@ -627,10 +620,22 @@ public class ProfileManager : IManager
                     }
                 }
             }
-            else if (version <= Version.Parse("0.26.0.2"))
+            if (version <= Version.Parse("0.26.0.2"))
             {
                 // get previous path, if any
                 string path = jObject.GetValue("Path")?.ToString() ?? string.Empty;
+            }
+            if (version <= Version.Parse("0.27.0.7"))
+            {
+                // let's make sure we get a Dictionary
+                outputraw = outputraw.Replace(
+                    "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"",
+                    "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"");
+            }
+            if (version <= Version.Parse("0.27.0.13"))
+            {
+                // Clean legacy/unknown ButtonFlags
+                outputraw = HotkeysManager.StripUnknownButtonFlags(outputraw, out var removed);
             }
 
             // parse profile

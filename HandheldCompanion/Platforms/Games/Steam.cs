@@ -8,7 +8,6 @@ using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -36,7 +35,7 @@ public class Steam : IPlatform
 
     public Steam()
     {
-        PlatformType = PlatformType.Steam;
+        PlatformType = GamePlatform.Steam;
 
         // refresh library
         Refresh();
@@ -50,6 +49,11 @@ public class Steam : IPlatform
             "gameoverlayrenderer64.dll",
             "steamclient.dll",
             "steamclient64.dll"
+        ];
+
+        BlacklistIds =
+        [
+            "228980",
         ];
 
         if (!IsInstalled)
@@ -260,7 +264,7 @@ public class Steam : IPlatform
 
     public override IEnumerable<IGame> GetGames()
     {
-        return steamLauncher.Games;
+        return steamLauncher.Games.Where(game => !BlacklistIds.Contains(game.Id));
     }
 
     public override Image GetLogo()

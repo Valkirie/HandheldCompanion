@@ -102,7 +102,7 @@ namespace HandheldCompanion.Inputs
             if (disposing)
             {
                 // Free managed resources
-                ButtonState?.Dispose();
+                ButtonState = null;
                 KeyState?.Clear();
             }
 

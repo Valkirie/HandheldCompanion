@@ -1,4 +1,4 @@
-using HandheldCompanion.Devices;
+﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Models;
@@ -42,8 +42,7 @@ public static class DynamicLightingManager
 
     private static Thread ambilightThread;
     private static bool ambilightThreadRunning;
-    private static int ambilightThreadDelay = defaultThreadDelay;
-    private const int defaultThreadDelay = 33;
+    private static int ambilightThreadDelay = 33;
 
     private static readonly object d3dLock = new object();
 
@@ -51,6 +50,17 @@ public static class DynamicLightingManager
 
     private static bool OSAmbientLightingEnabled = false;
     private const string OSAmbientLightingEnabledKey = "AmbientLightingEnabled";
+
+    private static bool LEDSettingsEnabled => ManagerFactory.settingsManager.GetBoolean("LEDSettingsEnabled");
+    private static bool AmbilightEnabled => LEDSettingsLevel == LEDLevel.Ambilight;
+
+    private static LEDLevel LEDSettingsLevel => (LEDLevel)ManagerFactory.settingsManager.GetInt("LEDSettingsLevel");
+    private static int LEDBrightness => ManagerFactory.settingsManager.GetInt("LEDBrightness");
+    private static int LEDSpeed => ManagerFactory.settingsManager.GetInt("LEDSpeed");
+    private static Color LEDMainColor => ManagerFactory.settingsManager.GetColor("LEDMainColor");
+    private static Color LEDSecondColor => ManagerFactory.settingsManager.GetColor("LEDSecondColor");
+    private static bool useSecondColor => ManagerFactory.settingsManager.GetBoolean("LEDUseSecondColor");
+    private static int LEDPresetIndex => ManagerFactory.settingsManager.GetInt("LEDPresetIndex");
 
     static DynamicLightingManager()
     {
@@ -78,9 +88,6 @@ public static class DynamicLightingManager
         // store and disable system setting AmbientLightingEnabled
         OSAmbientLightingEnabled = GetAmbientLightingEnabled();
         SetAmbientLightingEnabled(false);
-
-        // manage events
-        ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
 
         // raise events
         switch (ManagerFactory.settingsManager.Status)
@@ -113,6 +120,9 @@ public static class DynamicLightingManager
 
     private static void QueryMedia()
     {
+        // manage events
+        ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
+
         if (ManagerFactory.multimediaManager.PrimaryDesktop is not null)
             MultimediaManager_DisplaySettingsChanged(ManagerFactory.multimediaManager.PrimaryDesktop, ManagerFactory.multimediaManager.PrimaryDesktop.GetResolution());
     }
@@ -134,7 +144,7 @@ public static class DynamicLightingManager
 
         // raise events
         SettingsManager_SettingValueChanged("LEDAmbilightVerticalBlackBarDetection", ManagerFactory.settingsManager.GetString("LEDAmbilightVerticalBlackBarDetection"), false);
-        SettingsManager_SettingValueChanged("LEDSettingsEnabled", ManagerFactory.settingsManager.GetString("LEDSettingsEnabled"), false);
+        RequestUpdate();
     }
 
     public static void Stop()
@@ -177,9 +187,6 @@ public static class DynamicLightingManager
                 key.SetValue(OSAmbientLightingEnabledKey, enabled ? 1 : 0);
     }
 
-    private static bool LEDSettingsEnabled => ManagerFactory.settingsManager.GetBoolean("LEDSettingsEnabled");
-    private static bool AmbilightEnabled => ManagerFactory.settingsManager.GetInt("LEDSettingsLevel") == (int)LEDLevel.Ambilight;
-
     private static void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
         // Update the screen width and height values when display changes
@@ -189,14 +196,7 @@ public static class DynamicLightingManager
         squareSize = (int)Math.Floor((decimal)screenWidth / 10);
 
         // Restart Ambilight if necessary
-        if (AmbilightEnabled && LEDSettingsEnabled)
-        {
-            if (ambilightThreadRunning)
-                StopAmbilight();
-
-            if (InitializeDirect3DDevice())
-                StartAmbilight();
-        }
+        RequestUpdate();
     }
 
     private static void DisposeDirect3DResources()
@@ -246,7 +246,7 @@ public static class DynamicLightingManager
                         screenWidth,
                         screenHeight,
                         Format.A8R8G8B8,
-                        Pool.Scratch
+                        Pool.SystemMemory
                     );
 
                     return true;
@@ -297,7 +297,6 @@ public static class DynamicLightingManager
 
     private static void UpdateLED()
     {
-        bool LEDSettingsEnabled = ManagerFactory.settingsManager.GetBoolean("LEDSettingsEnabled");
         IDevice device = IDevice.GetCurrent();
         device.SetLedStatus(LEDSettingsEnabled);
 
@@ -310,18 +309,9 @@ public static class DynamicLightingManager
         }
 
         // Get LED settings
-        LEDLevel LEDSettingsLevel = (LEDLevel)ManagerFactory.settingsManager.GetInt("LEDSettingsLevel");
-        int LEDBrightness = ManagerFactory.settingsManager.GetInt("LEDBrightness");
-        int LEDSpeed = ManagerFactory.settingsManager.GetInt("LEDSpeed");
         device.SetLedBrightness(LEDBrightness);
 
-        // Get colors
-        Color LEDMainColor = ManagerFactory.settingsManager.GetColor("LEDMainColor");
-        Color LEDSecondColor = ManagerFactory.settingsManager.GetColor("LEDSecondColor");
-        bool useSecondColor = ManagerFactory.settingsManager.GetBoolean("LEDUseSecondColor");
-
         // Get preset
-        int LEDPresetIndex = ManagerFactory.settingsManager.GetInt("LEDPresetIndex");
         List<LEDPreset> presets = device.LEDPresets;
         LEDPreset? selectedPreset = LEDPresetIndex < presets.Count ? presets[LEDPresetIndex] : null;
 
@@ -342,18 +332,13 @@ public static class DynamicLightingManager
                 break;
 
             case LEDLevel.Ambilight:
-                if (!ambilightThreadRunning)
                 {
-                    if (InitializeDirect3DDevice())
-                    {
-                        // prepare LEDs
-                        device.SetLedBrightness(100);
-                        device.SetLedColor(Colors.Black, Colors.Black, LEDLevel.SolidColor);
+                    device.SetLedColor(Colors.Black, Colors.Black, LEDLevel.SolidColor);
 
-                        StartAmbilight();
-                    }
+                    if (!ambilightThreadRunning)
+                        if (InitializeDirect3DDevice())
+                            StartAmbilight();
                 }
-                ambilightThreadDelay = (int)(defaultThreadDelay / 100.0 * LEDSpeed);
                 break;
 
             case LEDLevel.LEDPreset:
@@ -362,13 +347,29 @@ public static class DynamicLightingManager
         }
     }
 
+    private const int MinTotalDelta = 18; // ~6 per channel
+    private const int MinUpdateIntervalMs = 25;
+    private static long lastLedUpdate = 0;
+
+    private static bool SignificantChange(Color a, Color b)
+    {
+        int d = Math.Abs(a.R - b.R) + Math.Abs(a.G - b.G) + Math.Abs(a.B - b.B);
+        return d >= MinTotalDelta;
+    }
+
     private static void ambilightThreadLoop(object? obj)
     {
         while (ambilightThreadRunning)
         {
             try
             {
-                lock (d3dLock)
+                if (!Monitor.TryEnter(d3dLock))
+                {
+                    Thread.Sleep(ambilightThreadDelay);
+                    continue;
+                }
+
+                try
                 {
                     if (device is null || surface is null)
                         continue;
@@ -376,17 +377,18 @@ public static class DynamicLightingManager
                     // Capture the screen
                     device.GetFrontBufferData(0, surface);
 
-                    // Lock the surface to access the pixel data
-                    dataRectangle = surface.LockRectangle(LockFlags.None);
+                    // Lock the surface to access the pixel data (read-only, avoid global syslock)
+                    dataRectangle = surface.LockRectangle(LockFlags.ReadOnly | LockFlags.NoSystemLock);
 
                     // Get the data pointer
                     dataPointer = dataRectangle.DataPointer;
 
                     // Apply vertical black bar detection if enabled
                     int VerticalBlackBarWidth = VerticalBlackBarDetectionEnabled ? DynamicLightingManager.VerticalBlackBarWidth() : 0;
+                    int yBandTop = (screenHeight / 2) - (squareSize / 2);
 
-                    Color currentColorLeft = CalculateColorAverage(1 + VerticalBlackBarWidth, 1);
-                    Color currentColorRight = CalculateColorAverage(screenWidth - squareSize - VerticalBlackBarWidth, ((screenHeight / 2) - (squareSize / 2)));
+                    Color currentColorLeft = CalculateColorAverage(0 + VerticalBlackBarWidth, yBandTop);
+                    Color currentColorRight = CalculateColorAverage(screenWidth - squareSize - VerticalBlackBarWidth, yBandTop);
 
                     // Unlock the surface
                     surface.UnlockRectangle();
@@ -398,16 +400,21 @@ public static class DynamicLightingManager
                     Color averageColorLeft = leftLedTracker.CalculateAverageColor();
                     Color averageColorRight = rightLedTracker.CalculateAverageColor();
 
-                    // Only send HID update instruction if the color is different
-                    if (averageColorLeft != previousColorLeft || averageColorRight != previousColorRight)
-                    {
-                        // Change LED colors of the device
-                        IDevice.GetCurrent().SetLedColor(averageColorLeft, averageColorRight, LEDLevel.Ambilight);
+                    // Skip tiny color changes + rate‑limit HID writes
+                    long now = Environment.TickCount64;
+                    bool changed = SignificantChange(averageColorLeft, previousColorLeft) || SignificantChange(averageColorRight, previousColorRight);
 
-                        // Update the previous colors for next time
+                    if (changed && (now - lastLedUpdate >= MinUpdateIntervalMs))
+                    {
+                        IDevice.GetCurrent().SetLedColor(averageColorLeft, averageColorRight, LEDLevel.Ambilight);
                         previousColorLeft = averageColorLeft;
                         previousColorRight = averageColorRight;
+                        lastLedUpdate = now;
                     }
+                }
+                finally
+                {
+                    Monitor.Exit(d3dLock);
                 }
             }
             catch { }
@@ -449,42 +456,44 @@ public static class DynamicLightingManager
         }
     }
 
-    private static Color CalculateColorAverage(int x, int y)
+    private static unsafe Color CalculateColorAverage(int x, int y)
     {
-        // Initialize the variables to store the sum of color values for the square
-        int squareRedSum = 0;
-        int squareGreenSum = 0;
-        int squareBlueSum = 0;
+        // Clamp ROI
+        int xEnd = Math.Min(x + squareSize, screenWidth);
+        int yEnd = Math.Min(y + squareSize, screenHeight);
 
-        List<Color> colorList = [];
+        byte* basePtr = (byte*)dataPointer.ToPointer();
+        int pitch = dataRectangle.Pitch;        // bytes per row
+        const int bpp = 4;                      // BGRA
 
-        // Count the number of red green and blue occurences in the grid, use step size
-        for (int xO = 0; xO < squareSize; xO += squareStep)
+        long sumR = 0, sumG = 0, sumB = 0;
+        int samples = 0;
+
+        for (int yy = y; yy < yEnd; yy += squareStep)
         {
-            for (int yO = 0; yO < squareSize; yO += squareStep)
+            byte* row = basePtr + (yy * pitch) + (x * bpp);
+            for (int xx = x; xx < xEnd; xx += squareStep)
             {
-                Color firstPixelColor = GetPixelColor(x + xO, y + yO);
+                // BGRA
+                byte b = row[0];
+                byte g = row[1];
+                byte r = row[2];
 
-                // todo: maybe we should ponderate black pixels weight
-                // if (firstPixelColor != Colors.Black)
-                colorList.Add(firstPixelColor);
+                sumR += r;
+                sumG += g;
+                sumB += b;
+                samples++;
+
+                row += bpp * squareStep;
             }
         }
 
-        foreach (Color color in colorList)
-        {
-            squareRedSum += color.R;
-            squareGreenSum += color.G;
-            squareBlueSum += color.B;
-        }
+        if (samples == 0) return Colors.Black;
 
-        // Calculate the average color value for the square by dividing by the number of pixels
-        int squareRedAverage = squareRedSum / colorList.Count;
-        int squareGreenAverage = squareGreenSum / colorList.Count;
-        int squareBlueAverage = squareBlueSum / colorList.Count;
-
-        // Convert the individual color values to a Color object
-        return Color.FromRgb((byte)squareRedAverage, (byte)squareGreenAverage, (byte)squareBlueAverage);
+        return Color.FromRgb(
+            (byte)(sumR / samples),
+            (byte)(sumG / samples),
+            (byte)(sumB / samples));
     }
 
     // Get the pixel color at a given position

@@ -231,6 +231,10 @@ public static class InputsManager
 
     private static void M_GlobalHook_KeyEvent(object? sender, KeyEventArgs e)
     {
+        // don't catch keyboard inputs until user is logged-in
+        if (SystemManager.IsSessionLocked)
+            return;
+
         KeyEventArgsExt args = (KeyEventArgsExt)e;
 
         bool Injected = (args.Flags & LLKHF_INJECTED) > 0;

@@ -1,3 +1,5 @@
+using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Devices.Zotac;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
@@ -14,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using Windows.Devices.Sensors;
@@ -192,6 +195,13 @@ public abstract class IDevice
     protected bool DeviceOpen = false;
     public virtual bool IsOpen => DeviceOpen;
 
+    [DllImport("Kernel32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    protected static extern bool GetPhysicallyInstalledSystemMemory(out ulong TotalMemoryInKilobytes);
+    protected uint physicalInstalledRamGB = 16;
+
+    public Dictionary<Type, Hotkey> DeviceHotkeys = new();
+
     public IDevice()
     {
         GamepadMotion = new(ProductIllustration, CalibrationMode.Manual  /*| CalibrationMode.SensorFusion */);
@@ -204,6 +214,12 @@ public abstract class IDevice
             OSPowerMode = OSPowerMode.BetterPerformance,
             TDPOverrideValues = new double[] { this.nTDP[0], this.nTDP[1], this.nTDP[2] }
         });
+
+        // default hotkeys
+        DeviceHotkeys[typeof(DesktopLayoutCommands)] = new Hotkey() { command = new DesktopLayoutCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED0 };
+        DeviceHotkeys[typeof(QuickToolsCommands)] = new Hotkey() { command = new QuickToolsCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED1 };
+        DeviceHotkeys[typeof(MainWindowCommands)] = new Hotkey() { command = new MainWindowCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED2 };
+        DeviceHotkeys[typeof(OnScreenKeyboardCommands)] = new Hotkey() { command = new OnScreenKeyboardCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED3 };
     }
 
     public virtual bool Open()
@@ -290,6 +306,17 @@ public abstract class IDevice
                 break;
         }
 
+        switch (ManagerFactory.powerProfileManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryPowerProfile();
+                break;
+        }
+
         // manage events
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
 
@@ -306,6 +333,7 @@ public abstract class IDevice
         ManagerFactory.deviceManager.UsbDeviceArrived += GenericDeviceUpdated;
         ManagerFactory.deviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
 
+        // raise events
         GenericDeviceUpdated(null, Guid.Empty);
     }
 
@@ -328,6 +356,35 @@ public abstract class IDevice
         QuerySettings();
     }
 
+    protected virtual void QueryPowerProfile()
+    {
+        // manage events
+        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
+
+        // raise events
+        PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
+    }
+
+    protected virtual void PowerProfileManager_Initialized()
+    {
+        QueryPowerProfile();
+    }
+
+    protected virtual void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    {
+        // apply profile Fan mode
+        switch (profile.FanProfile.fanMode)
+        {
+            default:
+            case FanMode.Hardware:
+                SetFanControl(false, profile.OEMPowerMode);
+                break;
+            case FanMode.Software:
+                SetFanControl(true, profile.OEMPowerMode);
+                break;
+        }
+    }
+
     public virtual void Close()
     {
         // disable fan control
@@ -345,6 +402,8 @@ public abstract class IDevice
 
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+        ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
+        ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
         VirtualManager.ControllerSelected -= VirtualManager_ControllerSelected;
         ManagerFactory.deviceManager.UsbDeviceArrived -= GenericDeviceUpdated;
         ManagerFactory.deviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
@@ -364,7 +423,7 @@ public abstract class IDevice
         PullSensors();
     }
 
-    public IEnumerable<ButtonFlags> OEMButtons => OEMChords.Where(a => !a.silenced).SelectMany(a => a.state.Buttons).Distinct();
+    public IEnumerable<ButtonFlags> OEMButtons => OEMChords.Where(chord => !chord.silenced).SelectMany(chord => chord.state.Buttons).Distinct();
 
     public virtual bool IsSupported => true;
 
@@ -621,6 +680,7 @@ public abstract class IDevice
                             device = new OneXPlayerX1Intel();
                             break;
                         case "ONEXPLAYER X1 A":
+                        case "ONEXPLAYER X1z":
                             device = new OneXPlayerX1AMD();
                             break;
                         case "ONEXPLAYER X1 mini":

@@ -3,6 +3,7 @@ using GameLib.Plugin.Origin;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 
 namespace HandheldCompanion.Platforms.Games;
 
@@ -18,7 +19,7 @@ public class Origin : IPlatform
 
     public Origin()
     {
-        PlatformType = PlatformType.Origin;
+        PlatformType = GamePlatform.Origin;
 
         // refresh library
         Refresh();
@@ -42,7 +43,7 @@ public class Origin : IPlatform
 
     public override IEnumerable<IGame> GetGames()
     {
-        return originLauncher.Games;
+        return originLauncher.Games.Where(game => !BlacklistIds.Contains(game.Id));
     }
 
     public override Image GetLogo()

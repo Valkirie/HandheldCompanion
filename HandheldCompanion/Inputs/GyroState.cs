@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Numerics;
-using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace HandheldCompanion.Inputs
 {
-    public class GyroState : ICloneable, IDisposable
+    public sealed class GyroState : ICloneable
     {
-        public Dictionary<SensorState, Vector3> Accelerometer = [];
-        public Dictionary<SensorState, Vector3> Gyroscope = [];
-        private bool _disposed = false; // Prevent multiple disposals
-
-        public static readonly SensorState[] SensorStates = (SensorState[])Enum.GetValues(typeof(SensorState));
         public enum SensorState
         {
             Default,
@@ -19,59 +13,50 @@ namespace HandheldCompanion.Inputs
             DSU
         }
 
-        public GyroState()
+        public static readonly SensorState[] SensorStates =
+            (SensorState[])Enum.GetValues(typeof(SensorState));
+
+        private readonly Vector3[] _accelerometer = new Vector3[SensorStates.Length];
+        private readonly Vector3[] _gyroscope = new Vector3[SensorStates.Length];
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int Idx(SensorState s) => (int)s;
+
+        public void SetAccelerometer(float ax, float ay, float az)
         {
-            foreach (SensorState state in SensorStates)
-            {
-                Accelerometer[state] = new();
-                Gyroscope[state] = new();
-            }
+            var v = new Vector3(ax, ay, az);
+            for (int i = 0; i < _accelerometer.Length; i++) _accelerometer[i] = v;
         }
 
-        ~GyroState()
+        public void SetGyroscope(float gx, float gy, float gz)
         {
-            Dispose(false);
+            var v = new Vector3(gx, gy, gz);
+            for (int i = 0; i < _gyroscope.Length; i++) _gyroscope[i] = v;
         }
 
-        public GyroState(Dictionary<SensorState, Vector3> accelerometer, Dictionary<SensorState, Vector3> gyroscope)
+        public void SetAccelerometer(SensorState s, float ax, float ay, float az) => _accelerometer[Idx(s)] = new Vector3(ax, ay, az);
+        public void SetGyroscope(SensorState s, float gx, float gy, float gz) => _gyroscope[Idx(s)] = new Vector3(gx, gy, gz);
+
+        public void SetGyroscope(SensorState s, Vector3 v) => _gyroscope[(int)s] = v;
+        public void SetAccelerometer(SensorState s, Vector3 v) => _accelerometer[(int)s] = v;
+
+        public Vector3 GetAccelerometer(SensorState s) => _accelerometer[Idx(s)];
+        public Vector3 GetGyroscope(SensorState s) => _gyroscope[Idx(s)];
+
+        public ref Vector3 GetGyroscopeRef(SensorState s) => ref _gyroscope[(int)s];
+        public ref Vector3 GetAccelerometerRef(SensorState s) => ref _accelerometer[(int)s];
+
+
+        public void Zero()
         {
-            foreach (SensorState state in SensorStates)
-            {
-                Accelerometer[state] = accelerometer[state];
-                Gyroscope[state] = gyroscope[state];
-            }
+            Array.Clear(_accelerometer, 0, _accelerometer.Length);
+            Array.Clear(_gyroscope, 0, _gyroscope.Length);
         }
 
-        public void SetAccelerometer(float aX, float aY, float aZ)
+        public void CopyFrom(GyroState src)
         {
-            foreach (SensorState state in SensorStates)
-            {
-                if (Accelerometer.TryGetValue(state, out Vector3 vector))
-                {
-                    vector.X = aX;
-                    vector.Y = aY;
-                    vector.Z = aZ;
-
-                    // write it back
-                    Accelerometer[state] = vector;
-                }
-            }
-        }
-
-        public void SetGyroscope(float gX, float gY, float gZ)
-        {
-            foreach (SensorState state in SensorStates)
-            {
-                if (Gyroscope.TryGetValue(state, out Vector3 vector))
-                {
-                    vector.X = gX;
-                    vector.Y = gY;
-                    vector.Z = gZ;
-
-                    // write it back
-                    Gyroscope[state] = vector;
-                }
-            }
+            Array.Copy(src._accelerometer, _accelerometer, _accelerometer.Length);
+            Array.Copy(src._gyroscope, _gyroscope, _gyroscope.Length);
         }
 
         private static ref Vector3 GetRef(Dictionary<SensorState, Vector3> dict, SensorState state)
@@ -109,30 +94,9 @@ namespace HandheldCompanion.Inputs
 
         public object Clone()
         {
-            return new GyroState(Accelerometer, Gyroscope);
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposed) return;
-
-            if (disposing)
-            {
-                // Free managed resources
-                Accelerometer?.Clear();
-                Accelerometer = null;
-
-                Gyroscope?.Clear();
-                Gyroscope = null;
-            }
-
-            _disposed = true;
+            var g = new GyroState();
+            g.CopyFrom(this);
+            return g;
         }
     }
 }

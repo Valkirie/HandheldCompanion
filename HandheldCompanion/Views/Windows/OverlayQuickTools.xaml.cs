@@ -109,7 +109,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
     public OverlayQuickTools()
     {
-        DataContext = new OverlayQuickToolsViewModel();
+        DataContext = new OverlayQuickToolsViewModel(this);
         InitializeComponent();
 
         CurrentWindow = this;
@@ -390,6 +390,8 @@ public partial class OverlayQuickTools : GamepadWindow
         // when sliding, we want to end at _Top and start just below the work area (to avoid flicker)
         _targetTop = _Top;
         _hiddenTop = workBottom + 2;    // +2 so it’s truly off-screen
+
+        UpdateStyle();
     }
 
     private bool ShouldSlideFromBottom() => QuickToolsLocation is 3 or 4 or 5;
@@ -689,11 +691,7 @@ public partial class OverlayQuickTools : GamepadWindow
             case WM_ACTIVATE:
                 {
                     handled = true;
-                    WPFUtils.SendMessage(
-                        hwndSource.Handle,
-                        WM_NCACTIVATE,
-                        new IntPtr(0),    // FALSE = show as inactive
-                        IntPtr.Zero);
+                    UpdateStyle();
                 }
                 break;
 
@@ -793,12 +791,17 @@ public partial class OverlayQuickTools : GamepadWindow
                     if (!_animActive) SlideShow();
                 }
 
-                WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
+                UpdateStyle();
 
                 InvokeGotGamepadWindowFocus();
                 clockUpdateTimer.Start();
                 break;
         }
+    }
+
+    public void UpdateStyle()
+    {
+        WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
     }
 
     private void Window_Closing(object sender, CancelEventArgs e)

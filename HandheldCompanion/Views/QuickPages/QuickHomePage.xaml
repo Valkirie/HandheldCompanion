@@ -22,7 +22,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <converters:WidthToColumnsConverter x:Key="WidthToColumns" DesiredItemWidth="90" />
+        <converters:WidthToColumnsConverter x:Key="WidthToColumns" DesiredItemWidth="100" />
     </Page.Resources>
 
     <Grid>
@@ -36,6 +36,7 @@
             <ikw:SimpleStackPanel VerticalAlignment="Top" Spacing="3">
                 <!--  Shortcuts  -->
                 <ItemsControl
+                    HorizontalAlignment="Left"
                     dd:DragDrop.DefaultDragAdornerOpacity="1"
                     dd:DragDrop.DragAdornerTranslation="-50,15"
                     dd:DragDrop.DropHandler="{Binding}"
@@ -48,7 +49,7 @@
                         <ItemsPanelTemplate>
                             <WrapPanel
                                 ItemHeight="100"
-                                ItemWidth="90"
+                                ItemWidth="100"
                                 Orientation="Horizontal" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>

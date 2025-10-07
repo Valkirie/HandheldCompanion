@@ -43,7 +43,7 @@ public partial class QuickProfilesPage : Page
     private CrossThreadLock graphicLock = new();
 
     private const ButtonFlags gyroButtonFlags = ButtonFlags.HOTKEY_GYRO_ACTIVATION_QP;
-    private Hotkey GyroHotkey = new(gyroButtonFlags) { IsInternal = true };
+    private Hotkey GyroHotkey = new(gyroButtonFlags) { IsInternal = true, Name = "HOTKEY_GYRO_ACTIVATION_QP" };
 
     private Profile realProfile;
 
@@ -395,17 +395,28 @@ public partial class QuickProfilesPage : Page
     {
         List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
 
-        // UI thread
-        UIHelper.TryInvoke(() =>
+        if (profileLock.TryEnter())
         {
-            cB_Framerate.Items.Clear();
+            try
+            {
+                // UI thread
+                UIHelper.TryInvoke(() =>
+                {
+                    cB_Framerate.Items.Clear();
 
-            foreach (ScreenFramelimit frameLimit in frameLimits)
-                cB_Framerate.Items.Add(frameLimit);
+                    foreach (ScreenFramelimit frameLimit in frameLimits)
+                        cB_Framerate.Items.Add(frameLimit);
 
-            if (selectedProfile is not null)
-                cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
-        });
+                    if (selectedProfile is not null)
+                        cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
+                });
+            }
+            catch { }
+            finally
+            {
+                profileLock.Exit();
+            }
+        }
     }
 
     public void SubmitProfile(UpdateSource source = UpdateSource.QuickProfilesPage)
@@ -1136,7 +1147,7 @@ public partial class QuickProfilesPage : Page
         if (cB_Framerate.SelectedIndex == -1)
             return;
 
-        if (cB_Framerate.SelectedItem is ScreenFramelimit screenFramelimit)
+        if (cB_Framerate.SelectedItem is ScreenFramelimit screenFramelimit && screenFramelimit.limit != selectedProfile.FramerateValue)
         {
             selectedProfile.FramerateValue = screenFramelimit.limit;
             UpdateProfile();

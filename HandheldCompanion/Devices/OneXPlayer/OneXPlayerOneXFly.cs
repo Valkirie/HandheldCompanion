@@ -1,4 +1,6 @@
+using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HidLibrary;
 using System;
@@ -85,6 +87,11 @@ public class OneXPlayerOneXFly : IDevice
             [KeyCode.LWin, KeyCode.D],
             false, ButtonFlags.OEM3
         ));
+
+        // prepare hotkeys
+        DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM3] = true;
+        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
+        DeviceHotkeys[typeof(OnScreenKeyboard)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
 
         /*
         OEMChords.Add(new DeviceChord("M1",

@@ -5,7 +5,7 @@ using System;
 namespace HandheldCompanion.Actions
 {
     [Serializable]
-    public class TriggerActions : IActions
+    public sealed class TriggerActions : IActions
     {
         public AxisLayoutFlags Axis;
 
@@ -14,54 +14,47 @@ namespace HandheldCompanion.Actions
         public int AxisDeadZoneInner = 0;
         public int AxisDeadZoneOuter = 0;
 
+        // runtime output (byte fits trigger path)
+        private byte current;
+
         public TriggerActions()
         {
-            this.actionType = ActionType.Trigger;
-            this.Value = short.MinValue;
+            actionType = ActionType.Trigger;
+            current = 0;
         }
 
         public TriggerActions(AxisLayoutFlags axis) : this()
         {
-            this.Axis = axis;
+            Axis = axis;
         }
 
-        public void Execute(AxisFlags axis, float value, ShiftSlot shiftSlot)
+        // Axis-driven trigger
+        public void Execute(AxisFlags axis, float value, ShiftSlot shiftSlot, float delta)
         {
-            // update value
-            this.Value = (short)Math.Clamp(value, byte.MinValue, byte.MaxValue);
+            base.Execute(axis, shiftSlot, delta);
+            if (axisSlotDisabled) { current = 0; return; }
 
-            // call parent, check shiftSlot
-            base.Execute(axis, shiftSlot);
+            // clamp to 0..255 (byte)
+            value = Math.Clamp(value, byte.MinValue, byte.MaxValue);
 
-            // skip if zero
-            if (this.Value is short sValue && sValue == 0)
-                return;
+            if (value == 0.0f) { current = 0; return; }
 
-            // Apply inner and outer deadzone adjustments
+            // deadzones
             value = InputUtils.InnerOuterDeadzone(value, AxisDeadZoneInner, AxisDeadZoneOuter, byte.MaxValue);
             value = InputUtils.ApplyAntiDeadzone(value, AxisAntiDeadZone, byte.MaxValue);
 
-            this.Value = (byte)value;
+            current = (byte)value;
         }
 
-        public override void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot = Actions.ShiftSlot.None)
+        // Button-driven trigger (pressType/toggle/turbo handled in base)
+        public override void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot, float delta)
         {
-            // call parent, check shiftSlot
-            base.Execute(button, value, shiftSlot);
+            base.Execute(button, value, shiftSlot, delta);
 
-            // skip if value is false
-            if (this.Value is bool bValue && !bValue)
-                return;
-
-            this.Value = (byte)motionThreshold;
+            // Preserve prior behavior (motionThreshold cast to byte as before)
+            current = (byte)(outBool ? motionThreshold : 0);
         }
 
-        public byte GetValue()
-        {
-            if (this.Value is byte sValue)
-                return sValue;
-
-            return 0;
-        }
+        public byte GetValue() => current;
     }
 }

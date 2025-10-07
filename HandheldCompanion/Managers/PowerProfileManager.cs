@@ -45,8 +45,7 @@ namespace HandheldCompanion.Managers
 
             foreach (PowerProfile profile in IDevice.GetCurrent().DevicePowerProfiles)
             {
-                // we want the OEM power profiles to be always up-to-date
-                if (profile.DeviceDefault || (profile.Default && !profiles.ContainsKey(profile.Guid)))
+                if ((profile.Default || profile.DeviceDefault) && !profiles.ContainsKey(profile.Guid))
                     UpdateOrCreateProfile(profile, UpdateSource.Serializer);
             }
 

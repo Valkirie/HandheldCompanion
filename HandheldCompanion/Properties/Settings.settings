@@ -162,7 +162,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="QuickToolsLocation" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1</Value>
+      <Value Profile="(Default)">5</Value>
     </Setting>
     <Setting Name="QuicktoolsBackdrop" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">3</Value>
@@ -204,7 +204,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="LEDSettingsLevel" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="LEDSettingsEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>

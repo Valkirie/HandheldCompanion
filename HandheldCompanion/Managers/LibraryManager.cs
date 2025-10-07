@@ -189,11 +189,11 @@ namespace HandheldCompanion.Managers
                             return entries.Values;
 
                         // Query IGDB using the search query.
-                        SteamGridDbGame[]? games = await steamGridDb.SearchForGamesAsync(name);
+                        SteamGridDbGame[]? games = await steamGridDb.SearchForGamesAsync(cleanedName);
 
                         await Parallel.ForEachAsync(games, new ParallelOptions { MaxDegreeOfParallelism = 4 }, async (game, cancellationToken) =>
                         {
-                            long gameId = (long)game.Id;
+                            long gameId = game.Id;
 
                             SteamGridDbGrid[]? grids = await steamGridDb.GetGridsByGameIdAsync(
                                 gameId: game.Id,

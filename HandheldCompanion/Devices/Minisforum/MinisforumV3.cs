@@ -88,45 +88,7 @@ public class MinisforumV3 : IDevice
         });
     }
 
-    public override void OpenEvents()
-    {
-        base.OpenEvents();
-
-        // raise events
-        switch (ManagerFactory.powerProfileManager.Status)
-        {
-            default:
-            case ManagerStatus.Initializing:
-                ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
-                break;
-            case ManagerStatus.Initialized:
-                QueryPowerProfile();
-                break;
-        }
-    }
-
-    public override void Close()
-    {
-        ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
-        ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
-
-        base.Close();
-    }
-
-    private void QueryPowerProfile()
-    {
-        // manage events
-        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
-
-        PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
-    }
-
-    private void PowerProfileManager_Initialized()
-    {
-        QueryPowerProfile();
-    }
-
-    private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    protected override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
         if (profile.IsDeviceDefault())
             setThermalMode(profile.OEMPowerMode);

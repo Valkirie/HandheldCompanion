@@ -250,7 +250,7 @@ public static class ControllerManager
         MainWindow.overlayModel?.UpdateReport(controllerState, gamepadMotion, delta);
 
         // compute layout (null-safe mapping)
-        ControllerState mapped = ManagerFactory.layoutManager?.MapController(controllerState) ?? controllerState;
+        ControllerState mapped = ManagerFactory.layoutManager?.MapController(controllerState, delta) ?? controllerState;
         EventHelper.RaiseAsync(InputsUpdated, mapped, true);
 
         // controller is muted
@@ -731,6 +731,18 @@ public static class ControllerManager
                                 try { controller = new XInputController(details); } catch { }
                                 break;
 
+                            // Asus
+                            case "0x0B05":
+                                {
+                                    switch (details.GetProductID())
+                                    {
+                                        case "0x1B4C": // ASUS Xbox Adaptive Controller
+                                            try { controller = new XboxAdaptiveController(details); } catch { }
+                                            break;
+                                    }
+                                }
+                                break;
+
                             case "0x17EF":
                             case "0x1A86":
                                 switch (details.GetProductID())
@@ -1019,7 +1031,7 @@ public static class ControllerManager
                 else
                 {
                     // mode: hybrid
-                    if (foregroundProcess?.Platform == PlatformType.Steam)
+                    if (foregroundProcess?.Platform == GamePlatform.Steam)
                     {
                         // application is either steam or a steam game
                         // restore embedded controller and mute virtual controller
@@ -1576,6 +1588,20 @@ public static class ControllerManager
     {
         try
         {
+            // get controller
+            if (Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
+            {
+                // edge-case
+                if (controller is XboxAdaptiveController xboxController)
+                {
+                    // set status
+                    controller.IsBusy = true;
+                    PowerCyclers[baseContainerDeviceInstanceId] = true;
+
+                    return xboxController.Disable();
+                }
+            }
+
             PnPDevice pnPDevice = null;
 
             Task timeout = Task.Delay(TimeSpan.FromSeconds(3));
@@ -1612,8 +1638,7 @@ public static class ControllerManager
             }
 
             // cycle controller
-            if (Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
-                return controller.CyclePort();
+            return controller?.CyclePort() ?? false;
         }
         catch { }
 
@@ -1630,6 +1655,14 @@ public static class ControllerManager
     {
         try
         {
+            // get controller
+            if (Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
+            {
+                // edge-case
+                if (controller is XboxAdaptiveController xboxController)
+                    return xboxController.Enable();
+            }
+
             PnPDevice pnPDevice = null;
 
             Task timeout = Task.Delay(TimeSpan.FromSeconds(3));

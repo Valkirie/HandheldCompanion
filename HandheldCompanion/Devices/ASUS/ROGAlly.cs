@@ -1,7 +1,9 @@
-﻿using HandheldCompanion.Devices.ASUS;
+﻿using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Devices.ASUS;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
@@ -26,8 +28,6 @@ public class ROGAlly : IDevice
         { 167, ButtonFlags.OEM4 },
         { 168, ButtonFlags.OEM4 },
     };
-
-    private static bool customFanControl = false;
 
     private const byte INPUT_HID_ID = 0x5a;
     private const byte AURA_HID_ID = 0x5d;
@@ -172,6 +172,10 @@ public class ROGAlly : IDevice
             [KeyCode.F17],
             false, ButtonFlags.OEM4
         ));
+
+        // prepare hotkeys
+        DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
+        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
     }
 
     #region buffer
@@ -212,6 +216,50 @@ public class ROGAlly : IDevice
         ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
 
         Device_Inserted();
+    }
+
+    private static byte[] defaultCPUFan = new byte[] { 0x3A, 0x3D, 0x40, 0x44, 0x48, 0x4D, 0x51, 0x62, 0x08, 0x11, 0x16, 0x1A, 0x22, 0x29, 0x30, 0x45 };
+    private static byte[] defaultGPUFan = new byte[] { 0x3A, 0x3D, 0x40, 0x44, 0x48, 0x4D, 0x51, 0x62, 0x0C, 0x16, 0x1D, 0x1F, 0x26, 0x2D, 0x34, 0x4A };
+
+    private static byte[] ToAsusCurve(double[] fanSpeeds)
+    {
+        if (fanSpeeds is null || fanSpeeds.Length != 11)
+            return defaultCPUFan;
+
+        int[] anchorTemps = { 20, 30, 40, 50, 60, 70, 80, 90 }; // °C
+        int[] sourceIdx = { 2, 3, 4, 5, 6, 7, 8, 9 }; // map to 0..100 steps
+
+        byte[] curve = new byte[16];
+
+        // first 8: temps
+        for (int i = 0; i < 8; i++)
+            curve[i] = (byte)anchorTemps[i];
+
+        // last 8: duties (clamped 0..100, monotonic non-decreasing)
+        byte last = 0;
+        for (int i = 0; i < 8; i++)
+        {
+            byte duty = (byte)Math.Max(0, Math.Min(100, Math.Round(fanSpeeds[sourceIdx[i]])));
+            if (duty < last) duty = last;   // ensure monotonic
+            curve[8 + i] = last = duty;
+        }
+        return curve;
+    }
+
+    protected override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    {
+        if (profile.FanProfile.fanMode == FanMode.Software)
+        {
+            byte[] asus = ToAsusCurve(profile.FanProfile.fanSpeeds);
+            AsusACPI.SetFanCurve(AsusFan.CPU, asus);
+            AsusACPI.SetFanCurve(AsusFan.GPU, asus);
+            AsusACPI.SetFanCurve(AsusFan.Mid, asus);
+        }
+        else
+        {
+            // restore default fan table
+            SetFanControl(false);
+        }
     }
 
     private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
@@ -362,20 +410,15 @@ public class ROGAlly : IDevice
         switch (enable)
         {
             case false:
-                {
-                    if (customFanControl)
-                    {
-                        customFanControl = false;
-                        AsusACPI.DeviceSet(AsusACPI.PerformanceMode, mode);
-                    }
-                }
-                break;
-            case true:
-                customFanControl = true;
+                // restore default
+                AsusACPI.SetFanCurve(AsusFan.CPU, defaultCPUFan);
+                AsusACPI.SetFanCurve(AsusFan.GPU, defaultGPUFan);
+                AsusACPI.SetFanCurve(AsusFan.Mid, defaultCPUFan);
                 break;
         }
     }
 
+    /*
     public override void SetFanDuty(double percent)
     {
         if (!IsOpen)
@@ -383,7 +426,9 @@ public class ROGAlly : IDevice
 
         AsusACPI.SetFanSpeed(AsusFan.CPU, Convert.ToByte(percent));
         AsusACPI.SetFanSpeed(AsusFan.GPU, Convert.ToByte(percent));
+        AsusACPI.SetFanSpeed(AsusFan.Mid, Convert.ToByte(percent));
     }
+    */
 
     public override float ReadFanDuty()
     {
@@ -584,6 +629,19 @@ public class ROGAlly : IDevice
         }
     }
 
+    public bool XBoxController(bool disabled)
+    {
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
+        {
+            if (!device.IsConnected)
+                return false;
+
+            return device.WriteFeatureData(new byte[] { 0x5A, 0xD1, 0x0B, 0x01, disabled ? (byte)0x02 : (byte)0x01 }, 64);
+        }
+
+        return false;
+    }
+
     public void SetBatteryChargeLimit(int chargeLimit)
     {
         if (!IsOpen)
@@ -597,12 +655,12 @@ public class ROGAlly : IDevice
 
     public override void set_long_limit(int limit)
     {
-        AsusACPI.DeviceSet(AsusACPI.PPT_APUA0, limit);
         AsusACPI.DeviceSet(AsusACPI.PPT_APUA3, limit);
     }
 
     public override void set_short_limit(int limit)
     {
+        AsusACPI.DeviceSet(AsusACPI.PPT_APUA0, limit);
         AsusACPI.DeviceSet(AsusACPI.PPT_APUC1, limit);
     }
 

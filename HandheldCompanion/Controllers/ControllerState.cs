@@ -48,13 +48,8 @@ namespace HandheldCompanion.Controllers
             if (disposing)
             {
                 // Free managed resources
-                ButtonState?.Dispose();
                 ButtonState = null;
-
-                AxisState?.Dispose();
                 AxisState = null;
-
-                GyroState?.Dispose();
                 GyroState = null;
             }
 

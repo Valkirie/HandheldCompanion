@@ -15,70 +15,49 @@ namespace HandheldCompanion.Actions
 
         public ButtonActions()
         {
-            this.actionType = ActionType.Button;
-
-            this.Value = false;
-            this.prevValue = false;
+            actionType = ActionType.Button;
+            outBool = false;
+            prevBool = false;
         }
 
         public ButtonActions(ButtonFlags button) : this()
         {
-            this.Button = button;
+            Button = button;
         }
 
-        public override void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot)
+        public override void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot, float delta)
         {
-            // call parent, check shiftSlot
-            base.Execute(button, value, shiftSlot);
+            base.Execute(button, value, shiftSlot, delta);
 
-            switch (this.Value)
+            if (outBool)
             {
-                case true:
-                    {
-                        if (IsKeyDown)
-                            return;
-
-                        IsKeyDown = true;
-                        SetHaptic(button, false);
-                    }
-                    break;
-                case false:
-                    {
-                        if (!IsKeyDown)
-                            return;
-
-                        IsKeyDown = false;
-                        SetHaptic(button, true);
-                    }
-                    break;
+                if (IsKeyDown) return;
+                IsKeyDown = true;
+                SetHaptic(button, false);
+            }
+            else
+            {
+                if (!IsKeyDown) return;
+                IsKeyDown = false;
+                SetHaptic(button, true);
             }
         }
 
-        public override void Execute(AxisLayout layout, ShiftSlot shiftSlot)
+        public override void Execute(AxisLayout layout, ShiftSlot shiftSlot, float delta)
         {
-            // update value
-            this.Vector = layout.vector;
+            outVector = layout.vector;
+            base.Execute(layout, shiftSlot, delta);
 
-            // call parent, check shiftSlot
-            base.Execute(layout, shiftSlot);
-
-            // skip if zero and button wasn't pressed
-            if (this.Vector == Vector2.Zero && (bool)this.Value == false)
+            if (outVector == Vector2.Zero && !outBool)
                 return;
 
-            MotionDirection direction = InputUtils.GetMotionDirection(this.Vector, motionThreshold);
-            bool value = (direction.HasFlag(motionDirection) || motionDirection.HasFlag(direction)) && direction != MotionDirection.None;
+            var direction = InputUtils.GetMotionDirection(outVector, motionThreshold);
+            bool press = DirectionMatches(direction, motionDirection);
 
             // transition to Button Execute()
-            Execute(this.Button, value, shiftSlot);
+            Execute(Button, press, shiftSlot, delta);
         }
 
-        public bool GetValue()
-        {
-            if (this.Value is bool bValue)
-                return bValue;
-
-            return false;
-        }
+        public bool GetValue() => outBool;
     }
 }

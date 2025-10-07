@@ -5,6 +5,7 @@ using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Pages;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -55,6 +56,8 @@ namespace HandheldCompanion.ViewModels
         public ObservableCollection<ControllerViewModel> PhysicalControllers { get; set; } = [];
         public ObservableCollection<ControllerViewModel> VirtualControllers { get; set; } = [];
         public ICommand ScanHardwareCommand { get; private set; }
+        public ICommand OpenWindowsControl { get; private set; }
+        public ICommand NavigateSettings { get; private set; }
 
         private Visibility _ScanHardwareVisibility = Visibility.Collapsed;
         public Visibility ScanHardwareVisibility
@@ -121,6 +124,18 @@ namespace HandheldCompanion.ViewModels
 
                 // set flag
                 ScanHardwareVisibility = Visibility.Collapsed;
+            });
+
+            OpenWindowsControl = new DelegateCommand<string>(async (target) =>
+            {
+                // Full-trust (Win32) component
+                Process.Start(new ProcessStartInfo("control.exe", target) { UseShellExecute = true });
+            });
+
+            NavigateSettings = new DelegateCommand<string>(async (target) =>
+            {
+                // Needed on .NET/WPF to invoke URI protocols
+                Process.Start(new ProcessStartInfo(target) { UseShellExecute = true });
             });
         }
 

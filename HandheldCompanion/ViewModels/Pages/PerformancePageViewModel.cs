@@ -114,8 +114,8 @@ namespace HandheldCompanion.ViewModels
 
         public bool SupportsGPUFreq => PerformanceManager.GetProcessor()?.CanChangeGPU ?? false;
 
-        public bool CanChangePreset => !SelectedPreset.DeviceDefault;
-        public bool CanDeletePreset => !SelectedPreset.Default;
+        public bool CanChangePreset => true; // !SelectedPreset.DeviceDefault;
+        public bool CanDeletePreset => !SelectedPreset.Default && !SelectedPreset.DeviceDefault;
 
         public bool HasWarning => !string.IsNullOrEmpty(Warning);
 

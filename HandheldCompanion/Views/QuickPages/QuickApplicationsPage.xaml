@@ -21,7 +21,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <converters:WidthToColumnsConverter x:Key="WidthToColumns" DesiredItemWidth="120" />
+        <converters:WidthToColumnsConverter x:Key="WidthToColumns" DesiredItemWidth="90" />
     </Page.Resources>
 
     <Grid>
@@ -181,6 +181,7 @@
 
                 <ItemsControl
                     Grid.Column="0"
+                    HorizontalAlignment="Center"
                     ItemsSource="{Binding PagedProfiles}"
                     VirtualizingPanel.IsVirtualizing="True"
                     VirtualizingPanel.VirtualizationMode="Recycling">
@@ -188,7 +189,7 @@
                         <ItemsPanelTemplate>
                             <WrapPanel
                                 ItemHeight="100"
-                                ItemWidth="100"
+                                ItemWidth="90"
                                 Orientation="Horizontal" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>

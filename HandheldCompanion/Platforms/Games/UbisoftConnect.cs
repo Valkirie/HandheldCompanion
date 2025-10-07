@@ -3,6 +3,7 @@ using GameLib.Plugin.Ubisoft;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 
 namespace HandheldCompanion.Platforms.Games;
 
@@ -18,7 +19,7 @@ public class UbisoftConnect : IPlatform
 
     public UbisoftConnect()
     {
-        PlatformType = PlatformType.UbisoftConnect;
+        PlatformType = GamePlatform.UbisoftConnect;
 
         // refresh library
         Refresh();
@@ -53,7 +54,7 @@ public class UbisoftConnect : IPlatform
 
     public override IEnumerable<IGame> GetGames()
     {
-        return ubisoftLauncher.Games;
+        return ubisoftLauncher.Games.Where(game => !BlacklistIds.Contains(game.Id));
     }
 
     public override Image GetLogo()

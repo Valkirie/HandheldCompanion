@@ -1,4 +1,6 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using System.Collections.Generic;
 using System.Numerics;
@@ -61,7 +63,13 @@ public class OneXPlayerMini : IDevice
             [KeyCode.LWin, KeyCode.D],
             false, ButtonFlags.OEM3
         ));
+
+        // prepare hotkeys
+        DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
+        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM3] = true;
+        DeviceHotkeys[typeof(OnScreenKeyboard)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
     }
+
     public override string GetGlyph(ButtonFlags button)
     {
         switch (button)

@@ -87,41 +87,33 @@ public class NeptuneController : SteamController
 
         ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
 
-        Inputs.ButtonState[ButtonFlags.B1] = input.State.ButtonState[NeptuneControllerButton.BtnA];
-        Inputs.ButtonState[ButtonFlags.B2] = input.State.ButtonState[NeptuneControllerButton.BtnB];
-        Inputs.ButtonState[ButtonFlags.B3] = input.State.ButtonState[NeptuneControllerButton.BtnX];
-        Inputs.ButtonState[ButtonFlags.B4] = input.State.ButtonState[NeptuneControllerButton.BtnY];
+        Inputs.ButtonState[ButtonFlags.B1] |= input.State.ButtonState[NeptuneControllerButton.BtnA];
+        Inputs.ButtonState[ButtonFlags.B2] |= input.State.ButtonState[NeptuneControllerButton.BtnB];
+        Inputs.ButtonState[ButtonFlags.B3] |= input.State.ButtonState[NeptuneControllerButton.BtnX];
+        Inputs.ButtonState[ButtonFlags.B4] |= input.State.ButtonState[NeptuneControllerButton.BtnY];
 
-        Inputs.ButtonState[ButtonFlags.DPadUp] = input.State.ButtonState[NeptuneControllerButton.BtnDpadUp];
-        Inputs.ButtonState[ButtonFlags.DPadDown] = input.State.ButtonState[NeptuneControllerButton.BtnDpadDown];
-        Inputs.ButtonState[ButtonFlags.DPadLeft] = input.State.ButtonState[NeptuneControllerButton.BtnDpadLeft];
-        Inputs.ButtonState[ButtonFlags.DPadRight] = input.State.ButtonState[NeptuneControllerButton.BtnDpadRight];
+        Inputs.ButtonState[ButtonFlags.DPadUp] |= input.State.ButtonState[NeptuneControllerButton.BtnDpadUp];
+        Inputs.ButtonState[ButtonFlags.DPadDown] |= input.State.ButtonState[NeptuneControllerButton.BtnDpadDown];
+        Inputs.ButtonState[ButtonFlags.DPadLeft] |= input.State.ButtonState[NeptuneControllerButton.BtnDpadLeft];
+        Inputs.ButtonState[ButtonFlags.DPadRight] |= input.State.ButtonState[NeptuneControllerButton.BtnDpadRight];
 
-        Inputs.ButtonState[ButtonFlags.Start] = input.State.ButtonState[NeptuneControllerButton.BtnOptions];
-        Inputs.ButtonState[ButtonFlags.Back] = input.State.ButtonState[NeptuneControllerButton.BtnMenu];
+        Inputs.ButtonState[ButtonFlags.Start] |= input.State.ButtonState[NeptuneControllerButton.BtnOptions];
+        Inputs.ButtonState[ButtonFlags.Back] |= input.State.ButtonState[NeptuneControllerButton.BtnMenu];
 
-        Inputs.ButtonState[ButtonFlags.Special] = input.State.ButtonState[NeptuneControllerButton.BtnSteam];
-        Inputs.ButtonState[ButtonFlags.OEM1] = input.State.ButtonState[NeptuneControllerButton.BtnQuickAccess];
+        Inputs.ButtonState[ButtonFlags.Special] |= input.State.ButtonState[NeptuneControllerButton.BtnSteam];
+        Inputs.ButtonState[ButtonFlags.OEM1] |= input.State.ButtonState[NeptuneControllerButton.BtnQuickAccess];
 
         var L2 = input.State.AxesState[NeptuneControllerAxis.L2] * byte.MaxValue / short.MaxValue;
         var R2 = input.State.AxesState[NeptuneControllerAxis.R2] * byte.MaxValue / short.MaxValue;
 
-        Inputs.ButtonState[ButtonFlags.L2Soft] = L2 > Gamepad.TriggerThreshold;
-        Inputs.ButtonState[ButtonFlags.R2Soft] = R2 > Gamepad.TriggerThreshold;
+        Inputs.ButtonState[ButtonFlags.L2Soft] |= L2 > Gamepad.TriggerThreshold;
+        Inputs.ButtonState[ButtonFlags.R2Soft] |= R2 > Gamepad.TriggerThreshold;
 
-        Inputs.ButtonState[ButtonFlags.L2Full] = L2 > Gamepad.TriggerThreshold * 8;
-        Inputs.ButtonState[ButtonFlags.R2Full] = R2 > Gamepad.TriggerThreshold * 8;
+        Inputs.ButtonState[ButtonFlags.L2Full] |= L2 > Gamepad.TriggerThreshold * 8;
+        Inputs.ButtonState[ButtonFlags.R2Full] |= R2 > Gamepad.TriggerThreshold * 8;
 
         Inputs.AxisState[AxisFlags.L2] = (short)L2;
         Inputs.AxisState[AxisFlags.R2] = (short)R2;
-
-        Inputs.ButtonState[ButtonFlags.LeftStickTouch] =
-            input.State.ButtonState[NeptuneControllerButton.BtnLStickTouch];
-        Inputs.ButtonState[ButtonFlags.RightStickTouch] =
-            input.State.ButtonState[NeptuneControllerButton.BtnRStickTouch];
-
-        Inputs.ButtonState[ButtonFlags.LeftStickClick] = input.State.ButtonState[NeptuneControllerButton.BtnLStickPress];
-        Inputs.ButtonState[ButtonFlags.RightStickClick] = input.State.ButtonState[NeptuneControllerButton.BtnRStickPress];
 
         Inputs.ButtonState[ButtonFlags.L1] = input.State.ButtonState[NeptuneControllerButton.BtnL1];
         Inputs.ButtonState[ButtonFlags.R1] = input.State.ButtonState[NeptuneControllerButton.BtnR1];
@@ -132,7 +124,7 @@ public class NeptuneController : SteamController
 
         // Left Stick
         Inputs.ButtonState[ButtonFlags.LeftStickTouch] = input.State.ButtonState[NeptuneControllerButton.BtnLStickTouch];
-        Inputs.ButtonState[ButtonFlags.LeftStickClick] = input.State.ButtonState[NeptuneControllerButton.BtnLStickPress];
+        Inputs.ButtonState[ButtonFlags.LeftStickClick] |= input.State.ButtonState[NeptuneControllerButton.BtnLStickPress];
 
         Inputs.AxisState[AxisFlags.LeftStickX] = input.State.AxesState[NeptuneControllerAxis.LeftStickX];
         Inputs.AxisState[AxisFlags.LeftStickY] = input.State.AxesState[NeptuneControllerAxis.LeftStickY];
@@ -146,7 +138,7 @@ public class NeptuneController : SteamController
 
         // Right Stick
         Inputs.ButtonState[ButtonFlags.RightStickTouch] = input.State.ButtonState[NeptuneControllerButton.BtnRStickTouch];
-        Inputs.ButtonState[ButtonFlags.RightStickClick] = input.State.ButtonState[NeptuneControllerButton.BtnRStickPress];
+        Inputs.ButtonState[ButtonFlags.RightStickClick] |= input.State.ButtonState[NeptuneControllerButton.BtnRStickPress];
 
         Inputs.AxisState[AxisFlags.RightStickX] = input.State.AxesState[NeptuneControllerAxis.RightStickX];
         Inputs.AxisState[AxisFlags.RightStickY] = input.State.AxesState[NeptuneControllerAxis.RightStickY];
@@ -337,7 +329,7 @@ public class NeptuneController : SteamController
         rumbleThread = new Thread(RumbleThreadLoop)
         {
             IsBackground = true,
-            Priority = ThreadPriority.Highest
+            Priority = ThreadPriority.Normal
         };
         rumbleThread.Start();
 

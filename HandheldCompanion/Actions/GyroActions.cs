@@ -21,12 +21,10 @@ namespace HandheldCompanion.Actions
         public const AxisLayoutFlags DefaultAxisLayoutFlags = AxisLayoutFlags.RightStick;
 
         public const MouseActionsType DefaultMouseActionsType = MouseActionsType.Move;
-        public const int DefaultSensivity = 33;
+        public const int DefaultSensivity = 35;
         public const int DefaultDeadzone = 10;
         public const float DefaultGyroWeight = 1.2f;
 
-        public GyroActions()
-        {
-        }
+        public GyroActions() { }
     }
 }

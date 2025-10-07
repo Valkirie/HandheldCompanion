@@ -15,8 +15,18 @@ namespace HandheldCompanion
     {
         public ButtonFlags ButtonFlags { get; set; }
 
-        public ICommands command { get; set; } = new EmptyCommands();
-        public InputsChord inputsChord { get; set; } = new();
+        private ICommands _command = new EmptyCommands();
+        public ICommands command
+        {
+            get { return _command; }
+            set
+            {
+                _command = value;
+                this.Name = command.Name;
+            }
+        }
+
+        public InputsChord inputsChord { get; set; } = new() { chordType = InputsChordType.Click };
 
         public bool IsPinned { get; set; } = false;
         public int PinIndex { get; set; } = -1;
@@ -24,6 +34,15 @@ namespace HandheldCompanion
 
         public string Name { get; set; } = string.Empty;
         public Version Version { get; set; } = new();
+
+        [JsonIgnore]
+        public string FileName { get; set; } = string.Empty;
+
+        public InputsChordType InputsChordType
+        {
+            get { return inputsChord.chordType; }
+            set { inputsChord.chordType = value; }
+        }
 
         private bool _disposed = false; // Prevent multiple disposals
 
@@ -53,6 +72,26 @@ namespace HandheldCompanion
         ~Hotkey()
         {
             Dispose(false);
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        public string GetFileName()
+        {
+            return $"{ButtonFlags}.json";
+        }
+
+        public void SetChordType(InputsChordType chordType)
+        {
+            this.inputsChord.chordType = chordType;
+        }
+
+        public void SetChordButton(ButtonFlags buttonFlags)
+        {
+            this.inputsChord.ButtonState[buttonFlags] = true;
         }
 
         public object Clone()

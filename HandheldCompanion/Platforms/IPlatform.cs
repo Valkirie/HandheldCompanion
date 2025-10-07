@@ -1,4 +1,5 @@
 ﻿using GameLib.Core;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
@@ -14,19 +15,21 @@ using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Platforms;
 
-public enum PlatformType
+[Flags]
+public enum GamePlatform
 {
-    Windows = 0,
+    Generic = 0,
     Steam = 1,
     Origin = 2,
-    UbisoftConnect = 3,
-    GOG = 4,
-    BattleNet = 5,
-    Epic = 6,
-    RiotGames = 7,
-    Rockstar = 8,
+    UbisoftConnect = 4,
+    GOG = 8,
+    BattleNet = 16,
+    Epic = 32,
+    RiotGames = 64,
+    Rockstar = 128,
+    EADesktop = 256,
 
-    RTSS = 20
+    All = Generic | Steam | Origin | UbisoftConnect | GOG | BattleNet | Epic | RiotGames | Rockstar | EADesktop
 }
 
 public enum PlatformStatus
@@ -43,6 +46,7 @@ public enum PlatformStatus
 public abstract class IPlatform : IDisposable
 {
     protected readonly object updateLock = new();
+    protected List<string> BlacklistIds = new List<string>();
 
     private Process _Process;
 
@@ -61,7 +65,7 @@ public abstract class IPlatform : IDisposable
 
     protected List<string> Modules = [];
 
-    public PlatformType PlatformType;
+    public GamePlatform PlatformType;
 
     protected Timer PlatformWatchdog;
     protected string SettingsPath;
@@ -200,12 +204,16 @@ public abstract class IPlatform : IDisposable
         return string.Empty;
     }
 
-    public virtual bool IsRelated(Process process)
+    public virtual bool IsRelated(ProcessEx process)
     {
         try
         {
+            // Check executables
+            if (GetGames().Any(game => game.Executables.Contains(process.Path)))
+                return true;
+
             // Loop through the modules of the process
-            foreach (ProcessModule module in process.Modules)
+            foreach (ProcessModule module in process.Process.Modules)
             {
                 try
                 {

@@ -14,14 +14,14 @@ namespace HandheldCompanion.Actions
     }
 
     [Serializable]
-    public class AxisActions : GyroActions
+    public sealed class AxisActions : GyroActions
     {
         public AxisLayoutFlags Axis;
 
         // Axis to axis
-        public int AxisAntiDeadZone = 0;
-        public int AxisDeadZoneInner = 0;
-        public int AxisDeadZoneOuter = 0;
+        public int AxisAntiDeadZone = 0;   // percent [0..100]
+        public int AxisDeadZoneInner = 0;  // percent [0..100]
+        public int AxisDeadZoneOuter = 0;  // percent [0..100]
         public OutputShape OutputShape = OutputShape.Default;
 
         public bool InvertHorizontal = false;
@@ -29,55 +29,56 @@ namespace HandheldCompanion.Actions
 
         public AxisActions()
         {
-            this.actionType = ActionType.Joystick;
+            actionType = ActionType.Joystick;
         }
 
         public AxisActions(AxisLayoutFlags axis) : this()
         {
-            this.Axis = axis;
+            Axis = axis;
         }
 
-        public float XOuput => this.Vector.X;
-        public float YOuput => this.Vector.Y;
+        public float XOuput => outVector.X;
+        public float YOuput => outVector.Y;
 
-        public override void Execute(AxisLayout layout, ShiftSlot shiftSlot)
+        public override void Execute(AxisLayout layout, ShiftSlot shiftSlot, float delta)
         {
-            // update value
-            this.Vector = layout.vector;
+            outVector = layout.vector;
+            base.Execute(layout, shiftSlot, delta);
 
-            // call parent, check shiftSlot
-            base.Execute(layout, shiftSlot);
-
-            // skip if zero
-            if (this.Vector == Vector2.Zero)
+            if (outVector == Vector2.Zero)
                 return;
 
-            this.Vector = InputUtils.ThumbScaledRadialInnerOuterDeadzone(this.Vector, AxisDeadZoneInner, AxisDeadZoneOuter);
-            this.Vector = InputUtils.ApplyAntiDeadzone(this.Vector, AxisAntiDeadZone);
+            // radial inner/outer (percentages)
+            outVector = InputUtils.ThumbScaledRadialInnerOuterDeadzone(outVector, AxisDeadZoneInner, AxisDeadZoneOuter);
+
+            // anti-deadzone (percentage)
+            outVector = InputUtils.ApplyAntiDeadzone(outVector, AxisAntiDeadZone);
 
             switch (OutputShape)
             {
-                default:
-                    break;
                 case OutputShape.Circle:
-                    this.Vector = InputUtils.ImproveCircularity(this.Vector);
+                    outVector = InputUtils.ImproveCircularity(outVector);
                     break;
+
                 case OutputShape.Cross:
-                    this.Vector = InputUtils.CrossDeadzoneMapping(this.Vector, AxisDeadZoneInner, AxisDeadZoneOuter);
-                    this.Vector = InputUtils.ImproveCircularity(this.Vector);
+                    // Use percent-based overload (no pre-normalization needed)
+                    outVector = InputUtils.CrossDeadzoneMapping(outVector, AxisDeadZoneInner, AxisDeadZoneOuter);
+                    outVector = InputUtils.ImproveCircularity(outVector);
                     break;
+
                 case OutputShape.Square:
-                    this.Vector = InputUtils.ImproveSquare(this.Vector);
+                    outVector = InputUtils.ImproveSquare(outVector);
+                    break;
+
+                default:
                     break;
             }
 
             // invert axis
-            this.Vector = new Vector2(InvertHorizontal ? -this.Vector.X : this.Vector.X, InvertVertical ? -this.Vector.Y : this.Vector.Y);
+            outVector = new Vector2(InvertHorizontal ? -outVector.X : outVector.X,
+                                 InvertVertical ? -outVector.Y : outVector.Y);
         }
 
-        public Vector2 GetValue()
-        {
-            return this.Vector;
-        }
+        public Vector2 GetValue() => outVector;
     }
 }

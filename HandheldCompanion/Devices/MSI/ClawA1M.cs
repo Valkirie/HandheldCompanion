@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Devices.MSI;
+﻿using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Devices.MSI;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -172,8 +173,8 @@ public class ClawA1M : IDevice
         productIds = [PID_XINPUT, PID_DINPUT, PID_TESTING];
         hidFilters = new()
         {
-            { PID_XINPUT, new HidFilter(unchecked((short)0xFFA0), unchecked((short)0x0001)) },
-            { PID_DINPUT, new HidFilter(unchecked((short)0xFFF0), unchecked((short)0x0040)) },
+            { PID_XINPUT, new HidFilter(unchecked((short)0xFFA0), unchecked(0x0001)) },
+            { PID_DINPUT, new HidFilter(unchecked((short)0xFFF0), unchecked(0x0040)) },
         };
 
         // https://www.intel.com/content/www/us/en/products/sku/236847/intel-core-ultra-7-processor-155h-24m-cache-up-to-4-80-ghz/specifications.html
@@ -278,6 +279,10 @@ public class ClawA1M : IDevice
             [KeyCode.LButton | KeyCode.OemClear],
             true, ButtonFlags.OEM5
         ));
+
+        // prepare hotkeys
+        DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
+        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
     }
 
     public override bool Open()
@@ -295,7 +300,7 @@ public class ClawA1M : IDevice
         byte[] box = GetMsiDCVarData(ref uefiVariableEx);
         if (uefiVariableEx != 0)
         {
-            if (box[1] == (byte)0)
+            if (box[1] == 0)
             {
                 InitOverBoost(true);
                 Thread.Sleep(600);
@@ -354,39 +359,14 @@ public class ClawA1M : IDevice
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
 
-        // raise events
-        switch (ManagerFactory.powerProfileManager.Status)
-        {
-            default:
-            case ManagerStatus.Initializing:
-                ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
-                break;
-            case ManagerStatus.Initialized:
-                QueryPowerProfile();
-                break;
-        }
-
         Device_Inserted();
     }
 
-    private void QueryPowerProfile()
+    protected override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
-        // manage events
-        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
-
-        PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
-    }
-
-    private void PowerProfileManager_Initialized()
-    {
-        QueryPowerProfile();
-    }
-
-    private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
-    {
-        if (profile.FanProfile.fanMode != FanMode.Hardware)
+        byte[] fanTable = new byte[8];
+        if (profile.FanProfile.fanMode == FanMode.Software)
         {
-            byte[] fanTable = new byte[7];
             fanTable[0] = (byte)profile.FanProfile.fanSpeeds[4]; // ?
             fanTable[1] = (byte)profile.FanProfile.fanSpeeds[0]; // 0%
             fanTable[2] = (byte)profile.FanProfile.fanSpeeds[2]; // 20%
@@ -394,10 +374,19 @@ public class ClawA1M : IDevice
             fanTable[4] = (byte)profile.FanProfile.fanSpeeds[6]; // 60%
             fanTable[5] = (byte)profile.FanProfile.fanSpeeds[8]; // 80%
             fanTable[6] = (byte)profile.FanProfile.fanSpeeds[9]; // 90%
-
-            // update fan table
-            SetFanTable(fanTable);
+            fanTable[7] = (byte)profile.FanProfile.fanSpeeds[10]; // 100%
         }
+        else
+        {
+            // restore default fan table
+            fanTable = new byte[8] { 49, 0, 40, 49, 58, 67, 75, 75 };
+        }
+
+        // update fan table
+        SetFanTable(fanTable);
+
+        // update fan mode
+        SetFanControl(profile.FanProfile.fanMode != FanMode.Hardware);
 
         // MSI Center, API_UserScenario
         bool IsDcMode = SystemInformation.PowerStatus.PowerLineStatus == PowerLineStatus.Offline;
@@ -417,8 +406,6 @@ public class ClawA1M : IDevice
         {
             SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.SportMode);
         }
-
-        SetFanControl(profile.FanProfile.fanMode != FanMode.Hardware);
     }
 
     private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
@@ -432,6 +419,10 @@ public class ClawA1M : IDevice
         if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
             Device_Removed();
     }
+
+    private int LEDBrightness = 100;
+    private Color LEDMainColor = Colors.Black;
+    private Color LEDSecondColor = Colors.Black;
 
     protected override void QuerySettings()
     {
@@ -487,8 +478,6 @@ public class ClawA1M : IDevice
         // manage events
         ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
-        ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
-        ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
 
         base.Close();
     }
@@ -576,10 +565,10 @@ public class ClawA1M : IDevice
         byte iDataBlockIndex = 1;
 
         byte[] dataWMI = WMI.Get(Scope, Path, "Get_WMI", iDataBlockIndex, 32, out bool readWMI);
-        if (dataWMI.Length > 2 && dataWMI[1] >= (byte)2)
+        if (dataWMI.Length > 2 && dataWMI[1] >= 2)
         {
-            this.WmiMajorVersion = (int)dataWMI[1];
-            this.WmiMinorVersion = (int)dataWMI[2];
+            this.WmiMajorVersion = dataWMI[1];
+            this.WmiMinorVersion = dataWMI[2];
         }
     }
 
@@ -670,8 +659,8 @@ public class ClawA1M : IDevice
 
     public override bool SetLedBrightness(int brightness)
     {
-        Color LEDMainColor = ManagerFactory.settingsManager.GetColor("LEDMainColor");
-        Color LEDSecondColor = ManagerFactory.settingsManager.GetColor("LEDSecondColor");
+        // store value
+        LEDBrightness = brightness;
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
             return device.Write(GetRGB(brightness, LEDMainColor, LEDSecondColor), 0, 64);
@@ -681,7 +670,9 @@ public class ClawA1M : IDevice
 
     public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed = 100)
     {
-        int LEDBrightness = ManagerFactory.settingsManager.GetInt("LEDBrightness");
+        // store values
+        LEDMainColor = MainColor;
+        LEDSecondColor = SecondaryColor;
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
@@ -728,8 +719,9 @@ public class ClawA1M : IDevice
         // Append [red, green, blue] * 9
         // right is 0, 1, 2, 3
         // left is 4, 5, 6, 7
+        // buttons is 8
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 9; i++)
         {
             data.Add(i < 4 ? SecondaryColor.R : MainColor.R);
             data.Add(i < 4 ? SecondaryColor.G : MainColor.G);
@@ -901,7 +893,7 @@ public class ClawA1M : IDevice
         GetBatteryChargeLimit(ref currentValue);
 
         // Update mask
-        byte mask = (byte)((uint)currentValue & (uint)sbyte.MaxValue);
+        byte mask = (byte)(currentValue & (uint)sbyte.MaxValue);
 
         // Build the complete 32-byte package
         byte[] fullPackage = new byte[32];

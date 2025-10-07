@@ -513,7 +513,7 @@ public class ProcessManager : IManager
                     processEx.AttachWindow(automationElement);
 
                     // Get the proper platform
-                    processEx.Platform = PlatformManager.GetPlatform(proc);
+                    processEx.Platform = PlatformManager.GetPlatform(processEx);
 
                     // Add to dictionary
                     Processes.TryAdd(processID, processEx);

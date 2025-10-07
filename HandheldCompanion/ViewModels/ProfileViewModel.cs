@@ -58,7 +58,7 @@ namespace HandheldCompanion.ViewModels
         public DateTime DateModified => _Profile.DateModified;
         public DateTime LastUsed => _Profile.LastUsed;
 
-        public PlatformType PlatformType => _Profile.PlatformType;
+        public GamePlatform PlatformType => _Profile.PlatformType;
 
         public bool IsAvailable => _Profile.CanExecute && !ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
 
@@ -103,23 +103,25 @@ namespace HandheldCompanion.ViewModels
                 switch (PlatformType)
                 {
                     default:
-                    case PlatformType.Windows:
+                    case GamePlatform.Generic:
                         return null;
-                    case PlatformType.Steam:
+                    case GamePlatform.Steam:
                         return PlatformManager.Steam.GetLogo();
-                    case PlatformType.Origin:
+                    case GamePlatform.Origin:
                         return PlatformManager.Origin.GetLogo();
-                    case PlatformType.UbisoftConnect:
+                    case GamePlatform.EADesktop:
+                        return PlatformManager.EADesktop.GetLogo();
+                    case GamePlatform.UbisoftConnect:
                         return PlatformManager.UbisoftConnect.GetLogo();
-                    case PlatformType.GOG:
+                    case GamePlatform.GOG:
                         return PlatformManager.GOGGalaxy.GetLogo();
-                    case PlatformType.BattleNet:
+                    case GamePlatform.BattleNet:
                         return PlatformManager.BattleNet.GetLogo();
-                    case PlatformType.Epic:
+                    case GamePlatform.Epic:
                         return PlatformManager.Epic.GetLogo();
-                    case PlatformType.RiotGames:
+                    case GamePlatform.RiotGames:
                         return PlatformManager.RiotGames.GetLogo();
-                    case PlatformType.Rockstar:
+                    case GamePlatform.Rockstar:
                         return PlatformManager.Rockstar.GetLogo();
                 }
             }
@@ -216,10 +218,10 @@ namespace HandheldCompanion.ViewModels
                             if (process == null)
                                 return;
 
-                            // wait up to 10 sec for any visible window
+                            // wait up to 60 sec for any visible window
                             List<string> execs = profile.GetExecutables(true);
 
-                            Task timeout = Task.Delay(TimeSpan.FromSeconds(10));
+                            Task timeout = Task.Delay(TimeSpan.FromSeconds(60));
                             while (!timeout.IsCompleted && !ProcessManager.GetProcesses().Any(p => execs.Contains(p.Path)))
                                 await Task.Delay(300).ConfigureAwait(false);
 
@@ -231,7 +233,7 @@ namespace HandheldCompanion.ViewModels
 
                             // Wait until none of the known executables are running
                             while (ProcessManager.GetProcesses().Any(p => execs.Contains(p.Path)))
-                                await Task.Delay(300).ConfigureAwait(false);
+                                await Task.Delay(1000).ConfigureAwait(false);
 
                             if (IsMainPage)
                                 MainWindow.GetCurrent().SetState(WindowState.Normal);

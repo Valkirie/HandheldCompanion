@@ -616,8 +616,8 @@ public partial class OverlayModel : OverlayWindow
         if (isStickMoved)
         {
             float gradientFactor = Math.Max(
-                Math.Abs(1 * X / (float)short.MaxValue),
-                Math.Abs(1 * Y / (float)short.MaxValue));
+                Math.Abs(1 * X / short.MaxValue),
+                Math.Abs(1 * Y / short.MaxValue));
 
             geometryModel3D.Material = GradientHighlight(
                 defaultMaterials[thumbRing],

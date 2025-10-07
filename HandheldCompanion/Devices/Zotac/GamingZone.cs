@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
@@ -7,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -16,13 +16,7 @@ namespace HandheldCompanion.Devices.Zotac
 {
     public class GamingZone : IDevice
     {
-        [DllImport("Kernel32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        protected static extern bool GetPhysicallyInstalledSystemMemory(out ulong TotalMemoryInKilobytes);
-
         private const byte INPUT_HID_ID = 0x00;
-
-        protected uint physicalInstalledRamGB = 16;
 
         private static Dictionary<uint, uint> defaultVRamSize = new Dictionary<uint, uint>
         {
@@ -127,6 +121,10 @@ namespace HandheldCompanion.Devices.Zotac
                 [KeyCode.LControl, KeyCode.LWin, KeyCode.F12],
                 false, ButtonFlags.OEM5
             ));
+
+            // prepare hotkeys
+            DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
+            DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
 
             // Quiet
             DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileGamingZoneBetterBattery, Properties.Resources.PowerProfileGamingZoneBetterBatteryDesc)
@@ -344,7 +342,7 @@ namespace HandheldCompanion.Devices.Zotac
             data[11] = (byte)ModifierKeyID.LeftCtrl | (byte)ModifierKeyID.LeftWinCMD;
 
             // Keyboard: F11
-            data[13] = (byte)BtnKeyboardMapPos[KeyCode.F11];
+            data[13] = BtnKeyboardMapPos[KeyCode.F11];
 
             ushort CRC = CalcZotacCRC(data, 5, 62);
             data[63] = (byte)(CRC >> 8);
@@ -370,7 +368,7 @@ namespace HandheldCompanion.Devices.Zotac
             data[11] = (byte)ModifierKeyID.LeftCtrl | (byte)ModifierKeyID.LeftWinCMD;
 
             // Keyboard: F12
-            data[13] = (byte)BtnKeyboardMapPos[KeyCode.F12];
+            data[13] = BtnKeyboardMapPos[KeyCode.F12];
 
             ushort CRC = CalcZotacCRC(data, 5, 62);
             data[63] = (byte)(CRC >> 8);
@@ -548,10 +546,10 @@ namespace HandheldCompanion.Devices.Zotac
 
         private static ushort CalcFast(ushort seed, byte c)
         {
-            uint num1 = (uint)(((int)seed ^ (int)c) & 0xFF);
+            uint num1 = (uint)((seed ^ c) & 0xFF);
             uint num2 = num1 & 0x0F;
             int num3 = ((int)num2 << 4) ^ (int)num1;
-            uint num4 = (uint)((uint)num3 >> 4);
+            uint num4 = (uint)num3 >> 4;
             uint intermediate = (uint)(((num3 << 1) ^ (int)num4) << 4 ^ (int)num2);
             return (ushort)((((intermediate << 3) ^ num4) ^ ((uint)seed >> 8)) & 0xFFFF);
         }
@@ -694,8 +692,8 @@ namespace HandheldCompanion.Devices.Zotac
         {
             uint vRAM = (physicalInstalledRamGB + additionSize) * 4U;
 
-            openLibSys.WriteIoPortByte((ushort)112, (byte)122);
-            openLibSys.WriteIoPortByte((ushort)113, (byte)vRAM);
+            openLibSys.WriteIoPortByte(112, 122);
+            openLibSys.WriteIoPortByte(113, (byte)vRAM);
         }
 
         public override void SetFanControl(bool enable, int mode)

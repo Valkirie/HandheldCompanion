@@ -149,6 +149,7 @@ namespace HandheldCompanion.Misc
                             TimeSpan.FromSeconds(3));
                     }
                 }
+                catch (ArgumentNullException) { }
                 catch { }
             }
 

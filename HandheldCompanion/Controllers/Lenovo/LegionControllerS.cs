@@ -172,8 +172,8 @@ namespace HandheldCompanion.Controllers.Lenovo
 
             // Front buttons (byte 0)
             FrontButtons frontButtons = (FrontButtons)data[0];
-            Inputs.ButtonState[ButtonFlags.OEM1] = frontButtons.HasFlag(FrontButtons.LegionL);
-            Inputs.ButtonState[ButtonFlags.OEM2] = frontButtons.HasFlag(FrontButtons.LegionR);
+            Inputs.ButtonState[ButtonFlags.OEM1] = frontButtons.HasFlag(FrontButtons.LegionR);
+            Inputs.ButtonState[ButtonFlags.OEM2] = frontButtons.HasFlag(FrontButtons.LegionL);
 
             // Extra Button Parsing (byte 2)
             BackButtons backButtons = (BackButtons)data[2];

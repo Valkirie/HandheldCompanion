@@ -66,9 +66,9 @@ public partial class MainWindow : GamepadWindow
     public static LibraryPage libraryPage;
 
     // overlay(s) vars
-    public static OverlayModel overlayModel;
-    public static OverlayTrackpad overlayTrackpad;
-    public static OverlayQuickTools overlayquickTools;
+    public static OverlayModel overlayModel = new();
+    public static OverlayTrackpad overlayTrackpad = new();
+    public static OverlayQuickTools overlayquickTools = new();
 
     public static string CurrentExe, CurrentPath;
 
@@ -95,6 +95,9 @@ public partial class MainWindow : GamepadWindow
     public static Version CurrentVersion => Version.Parse(fileVersionInfo.FileVersion);
     private static bool StartMinimized => ManagerFactory.settingsManager.GetBoolean("StartMinimized");
 
+    private static bool PreloadPages => ManagerFactory.settingsManager.GetBoolean("PreloadPages");
+
+    private static bool StartMinimized => ManagerFactory.settingsManager.GetBoolean("StartMinimized");
     private static bool PreloadPages => ManagerFactory.settingsManager.GetBoolean("PreloadPages");
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
@@ -167,14 +170,8 @@ public partial class MainWindow : GamepadWindow
         CurrentDevice.PullSensors();
         CurrentDevice.Initialize(FirstStart, NewUpdate);
 
-        // initialize device settings
-        ManagerFactory.settingsManager.SetProperty("FirstStart", false);
-
         // initialize UI sounds board
         UISounds uiSounds = new UISounds();
-
-        // load window(s)
-        loadWindows();
 
         // load page(s)
         overlayquickTools.loadPages();
@@ -213,6 +210,7 @@ public partial class MainWindow : GamepadWindow
         // start non-threaded managers
         InputsManager.Start();
         TimerManager.Start();
+        MotionManager.Start();
         ManagerFactory.settingsManager.Start();
 
         // Load MVVM pages after the Models / data have been created.
@@ -226,7 +224,7 @@ public partial class MainWindow : GamepadWindow
         Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, ManagerFactory.settingsManager.GetDouble("MainWindowTop"));
         navView.IsPaneOpen = ManagerFactory.settingsManager.GetBoolean("MainWindowIsPaneOpen");
 
-        // update LastVersion
+        // update setting(s)
         ManagerFactory.settingsManager.SetProperty("LastVersion", fileVersionInfo.FileVersion);
 
         // load gamepad navigation manager
@@ -456,14 +454,6 @@ public partial class MainWindow : GamepadWindow
         _pages.Add("AboutPage", aboutPage);
     }
 
-    private void loadWindows()
-    {
-        // initialize overlay
-        overlayModel = new OverlayModel();
-        overlayTrackpad = new OverlayTrackpad();
-        overlayquickTools = new OverlayQuickTools();
-    }
-
     private void GenericDeviceUpdated(PnPDevice device, Guid IntefaceGuid)
     {
         // todo: improve me
@@ -659,7 +649,7 @@ public partial class MainWindow : GamepadWindow
         navView.SelectedItem = selectedItem;
 
         // Give gamepad focus
-        gamepadFocusManager.Focus((NavigationViewItem)selectedItem);
+        gamepadFocusManager.Focus(selectedItem);
 
         KeyValuePair<string, Page> item = _pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
         Page? _page = item.Value;
@@ -748,6 +738,7 @@ public partial class MainWindow : GamepadWindow
         SensorsManager.Stop();
         ControllerManager.Stop();
         InputsManager.Stop(true);
+        TimerManager.Stop();
         OSDManager.Stop();
         SystemManager.Stop();
         DynamicLightingManager.Stop();
