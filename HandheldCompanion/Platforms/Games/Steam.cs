@@ -68,6 +68,17 @@ public class Steam : IPlatform
         debounceTimer.Elapsed += DebounceTimer_Elapsed;
     }
 
+    public override bool IsRelated(Process process)
+    {
+        string? path = ProcessUtils.GetPathToApp(process.Id);
+
+        foreach (string? executable in steamLauncher.Games.SelectMany(game => game.Executables))
+            if (string.Equals(path, executable))
+                return true;
+
+        return base.IsRelated(process);
+    }
+
     public override bool Start()
     {
         SteamActiveUserWatcher.RegistryChanged += ActiveUserWatcher_RegistryChanged;

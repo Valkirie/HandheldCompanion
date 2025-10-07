@@ -93,6 +93,9 @@ public class AMDProcessor : Processor
 
                 if (ry != IntPtr.Zero)
                 {
+                    // 15W : 15000
+                    limit *= 1000;
+
                     switch (type)
                     {
                         case PowerType.Fast:
