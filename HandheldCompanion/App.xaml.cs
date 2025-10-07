@@ -68,49 +68,6 @@ public partial class App : Application
         SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ApplicationName);
         LogsPath = Path.Combine(SettingsPath, "logs");
 
-        // one-time migration
-        string myDocumentsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ApplicationName);
-        bool settingsExists = Directory.Exists(SettingsPath);
-        bool docsExists = Directory.Exists(myDocumentsPath);
-
-        // both exist, compare by latest user.config write time (fallback to dir time)
-        if (settingsExists && docsExists)
-        {
-            DateTime settingsTime = GetLatestUserConfigWriteUtc(SettingsPath);
-            DateTime docsTime = GetLatestUserConfigWriteUtc(myDocumentsPath);
-
-            if (settingsTime < docsTime)
-            {
-                MessageBoxResult messageResult = MessageBox.Show(
-                    $"Newer settings were found in {myDocumentsPath}.\n" +
-                    $"Merge them into the current settings?",
-                    ApplicationName, MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
-                if (messageResult == MessageBoxResult.Yes)
-                    MergeCopyPreservingReserved(myDocumentsPath, SettingsPath, true, true);
-            }
-        }
-        // SettingsPath missing, docs exist, move if possible, else copy
-        else if (!settingsExists && docsExists)
-        {
-            try
-            {
-                // Fast path: if settings folder doesn't exist, we can safely move everything
-                Directory.Move(myDocumentsPath, SettingsPath);
-            }
-            catch
-            {
-                // Fallback to copy; no reserved files exist yet in a new SettingsPath anyway
-                MergeCopyPreservingReserved(myDocumentsPath, SettingsPath, true, true);
-            }
-        }
-
-        // none exist or failed to move, ensure SettingsPath exists
-        if (!Directory.Exists(SettingsPath))
-        {
-            try { Directory.CreateDirectory(SettingsPath); } catch { /* ignore */ }
-        }
-
 #if DEBUG
         if (!ManagerFactory.settingsManager.GetBoolean("MuteConsole"))
             AllocConsole();
@@ -261,6 +218,8 @@ public partial class App : Application
             }
         }
 
+        MigrateSettings();
+
         // define culture settings
         string currentCultureString = ManagerFactory.settingsManager.GetString("CurrentCulture");
         CultureInfo culture;
@@ -301,6 +260,52 @@ public partial class App : Application
 
         MainWindow = new MainWindow(fileVersionInfo, CurrentAssembly);
         MainWindow.Show();
+    }
+
+    private void MigrateSettings()
+    {
+        // one-time migration
+        string myDocumentsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ApplicationName);
+        bool settingsExists = Directory.Exists(SettingsPath);
+        bool docsExists = Directory.Exists(myDocumentsPath);
+
+        // both exist, compare by latest user.config write time (fallback to dir time)
+        if (settingsExists && docsExists)
+        {
+            DateTime settingsTime = GetLatestUserConfigWriteUtc(SettingsPath);
+            DateTime docsTime = GetLatestUserConfigWriteUtc(myDocumentsPath);
+
+            if (settingsTime < docsTime)
+            {
+                MessageBoxResult messageResult = MessageBox.Show(
+                    $"Newer settings were found in {myDocumentsPath}.\n" +
+                    $"Merge them into the current settings?",
+                    ApplicationName, MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+                if (messageResult == MessageBoxResult.Yes)
+                    MergeCopyPreservingReserved(myDocumentsPath, SettingsPath, true, true);
+            }
+        }
+        // SettingsPath missing, docs exist, move if possible, else copy
+        else if (!settingsExists && docsExists)
+        {
+            try
+            {
+                // Fast path: if settings folder doesn't exist, we can safely move everything
+                Directory.Move(myDocumentsPath, SettingsPath);
+            }
+            catch
+            {
+                // Fallback to copy; no reserved files exist yet in a new SettingsPath anyway
+                MergeCopyPreservingReserved(myDocumentsPath, SettingsPath, true, true);
+            }
+        }
+
+        // none exist or failed to move, ensure SettingsPath exists
+        if (!Directory.Exists(SettingsPath))
+        {
+            try { Directory.CreateDirectory(SettingsPath); } catch { /* ignore */ }
+        }
     }
 
     private void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
