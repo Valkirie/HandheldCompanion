@@ -68,6 +68,7 @@ public class AYANEOFlipDS : AYANEOFlipKB
     {
         if (prevState.Equals(Inputs.ButtonState))
             return;
+        ButtonState.Overwrite(Inputs.ButtonState, prevState);
 
         // skip if inputs were remapped
         if (IsMapped)
