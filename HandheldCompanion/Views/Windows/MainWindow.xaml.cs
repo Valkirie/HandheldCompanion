@@ -528,7 +528,7 @@ public partial class MainWindow : GamepadWindow
     private void NotificationManagerUpdated(Notification notification)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             HasNotifications.Visibility = ManagerFactory.notificationManager.Any ? Visibility.Visible : Visibility.Collapsed;
             HasNotifications.Value = ManagerFactory.notificationManager.Count;
