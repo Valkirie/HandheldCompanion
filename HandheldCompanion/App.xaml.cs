@@ -9,6 +9,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -86,7 +87,7 @@ public partial class App : Application
                     ApplicationName, MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
                 if (messageResult == MessageBoxResult.Yes)
-                    MergeCopyPreservingReserved(myDocumentsPath, SettingsPath, tryDeleteSource: true);
+                    MergeCopyPreservingReserved(myDocumentsPath, SettingsPath, true, true);
             }
         }
         // SettingsPath missing, docs exist, move if possible, else copy
@@ -100,7 +101,7 @@ public partial class App : Application
             catch
             {
                 // Fallback to copy; no reserved files exist yet in a new SettingsPath anyway
-                MergeCopyPreservingReserved(myDocumentsPath, SettingsPath, tryDeleteSource: true);
+                MergeCopyPreservingReserved(myDocumentsPath, SettingsPath, true, true);
             }
         }
 
@@ -155,7 +156,7 @@ public partial class App : Application
     /// except the reserved files (Certificate.pfx, SecretKeys.cs) at dest root.
     /// Does NOT delete anything in dest; it’s a merge that preserves reserved files.
     /// </summary>
-    static void MergeCopyPreservingReserved(string source, string dest, bool tryDeleteSource)
+    static void MergeCopyPreservingReserved(string source, string dest, bool tryDeleteSource, bool backupSource)
     {
         Directory.CreateDirectory(dest);
 
@@ -189,6 +190,13 @@ public partial class App : Application
                 // best-effort copy; ignore blocked files
             }
         }
+
+        if (backupSource)
+        {
+            using (FileStream zipFile = File.Open("HandheldCompanion.zip", FileMode.Create))
+                ZipFile.CreateFromDirectory(source, zipFile);
+        }
+
 
         if (tryDeleteSource)
         {

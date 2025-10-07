@@ -141,7 +141,7 @@ Type: filesandordirs; Name: "{app}"
 [Registry]
 ; Add LocalDumps keys
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps"; Flags: uninsdeletekeyifempty
-Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\HandheldCompanion.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{userdocs}\HandheldCompanion\dumps"; Flags: uninsdeletekey
+Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\HandheldCompanion.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{localappdata}\CrashDumps"; Flags: uninsdeletekey
 
 ; Add the compatibility flag to force HandheldCompanion.exe to run as administrator
 Root: HKLM; Subkey: "Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"; ValueType: string; ValueName: "{app}\{#MyAppExeName}"; ValueData: "~ RUNASADMIN"; Flags: uninsdeletevalue
@@ -327,25 +327,25 @@ begin
   begin
     if not(checkListBox.checked[keepAllCheck]) then
     begin
-      if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\profiles')) then
-        DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\profiles'), True, True, True);
-      if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys')) then
-        DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'), True, True, True);
-      DelTree(ExpandConstant('{localappdata}\HandheldCompanion'), True, True, True);
+      if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}\profiles')) then
+        DelTree(ExpandConstant('{localappdata}\{#MyBuildId}\profiles'), True, True, True);
+      if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}\hotkeys')) then
+        DelTree(ExpandConstant('{localappdata}\{#MyBuildId}\hotkeys'), True, True, True);
+      DelTree(ExpandConstant('{localappdata}\{#MyBuildId}'), True, True, True);
       Exit;
     end
     else
     begin
       if not(checkListBox.checked[profilesCheck]) then
-        if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\profiles')) then
-          DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\profiles'), True, True, True);
+        if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}\profiles')) then
+          DelTree(ExpandConstant('{localappdata}\{#MyBuildId}\profiles'), True, True, True);
 
       if not(checkListBox.checked[hotkeysCheck]) then
-        if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys')) then
-          DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'), True, True, True);
+        if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}\hotkeys')) then
+          DelTree(ExpandConstant('{localappdata}\{#MyBuildId}\hotkeys'), True, True, True);
 
       if not(checkListBox.checked[applicationSettingsCheck]) then
-        DelTree(ExpandConstant('{localappdata}\HandheldCompanion'), True, True, True);
+        DelTree(ExpandConstant('{localappdata}\{#MyBuildId}'), True, True, True);
     end;
 
     if not(keepHidhideCheckbox.Checked) then
