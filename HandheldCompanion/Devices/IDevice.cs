@@ -1,5 +1,6 @@
 using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
+using HandheldCompanion.Devices.AYANEO;
 using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Devices.Zotac;
 using HandheldCompanion.Helpers;
@@ -571,6 +572,9 @@ public abstract class IDevice
                             break;
                         case "FLIP DS":
                             device = new AYANEOFlipDS();
+                            break;
+                        case "FLIP 1S DS":
+                            device = new AYANEOFlip1SDS();
                             break;
                     }
                 }

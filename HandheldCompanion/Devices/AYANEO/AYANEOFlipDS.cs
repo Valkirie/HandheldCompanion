@@ -1,7 +1,6 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
 using System;
 using System.Windows;
@@ -40,18 +39,8 @@ public class AYANEOFlipDS : AYANEOFlipKB
             // set Quicktools to Maximize on bottom screen
             ManagerFactory.settingsManager.SetProperty("QuickToolsLocation", 2);
             ManagerFactory.settingsManager.SetProperty("QuickToolsDeviceName", "AYANEOQHD");
-        }
-
-        if (NewUpdate)
-        {
-            string currentVersion = MainWindow.CurrentVersion.ToString();
-            switch (currentVersion)
-            {
-                case "0.24.0.13":
-                    ManagerFactory.settingsManager.SetProperty("QuickKeyboardVisibility", "True");
-                    ManagerFactory.settingsManager.SetProperty("QuickTrackpadVisibility", "True");
-                    break;
-            }
+            ManagerFactory.settingsManager.SetProperty("QuickKeyboardVisibility", "True");
+            ManagerFactory.settingsManager.SetProperty("QuickTrackpadVisibility", "True");
         }
     }
 
