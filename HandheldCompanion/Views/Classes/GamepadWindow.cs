@@ -71,12 +71,14 @@ namespace HandheldCompanion.Views.Classes
 
         protected virtual void Window_VisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            WMPaint_Trigger();
+            if (IsLoaded)
+                WMPaint_Trigger();
         }
 
         protected virtual void Window_StateChanged(object? sender, EventArgs e)
         {
-            WMPaint_Trigger();
+            if (IsLoaded)
+                WMPaint_Trigger();
         }
 
         protected override void OnSourceInitialized(EventArgs e)

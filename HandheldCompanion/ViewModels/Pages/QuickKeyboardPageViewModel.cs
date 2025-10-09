@@ -31,6 +31,7 @@ namespace HandheldCompanion.ViewModels
         }
 
         public IDevice CurrentDevice { get; } = IDevice.GetCurrent();
+        public bool IsFlipDS => CurrentDevice is AYANEOFlipDS;
 
         public ICommand ShiftToggleClicked { get; private set; }
         private DateTime lastShiftToggleClick = DateTime.MinValue;
