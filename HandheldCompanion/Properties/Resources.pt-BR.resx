@@ -2545,19 +2545,19 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
     <value>Este é um modo padrão do dispositivo e não pode ser editado. Estes são comparáveis aos modos padrão fornecidos pelo software original dos dispositivos.</value>
   </data>
   <data name="PowerProfileLegionGoBetterBattery" xml:space="preserve">
-    <value>Legion Go - Quieto</value>
+    <value>Quieto</value>
   </data>
   <data name="PowerProfileLegionGoBetterBatteryDesc" xml:space="preserve">
     <value>Modo similar ao Quiet Mode no software Legion Space. TDP Limite: 8W</value>
   </data>
   <data name="PowerProfileLegionGoBetterPerformance" xml:space="preserve">
-    <value>Legion Go - Balanceado</value>
+    <value>Balanceado</value>
   </data>
   <data name="PowerProfileLegionGoBetterPerformanceDesc" xml:space="preserve">
     <value>Modo similar ao Balanced Mode no software Legion Space. TDP Limite: 15W</value>
   </data>
   <data name="PowerProfileLegionGoBestPerformance" xml:space="preserve">
-    <value>Legion Go - Desempenho</value>
+    <value>Desempenho</value>
   </data>
   <data name="PowerProfileLegionGoBestPerformanceDesc" xml:space="preserve">
     <value>Modo similar ao Performance Mode no software Legion Space. TDP Limite: 20W</value>

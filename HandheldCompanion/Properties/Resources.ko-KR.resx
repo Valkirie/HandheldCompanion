@@ -2505,19 +2505,19 @@
     <value>이것은 기본 장치 사전 설정이며 편집할 수 없습니다. 이는 디바이스의 원래 소프트웨어에서 제공하는 사전 설정과 비슷합니다.</value>
   </data>
   <data name="PowerProfileLegionGoBetterBattery" xml:space="preserve">
-    <value>Legion Go - Quiet</value>
+    <value>Quiet</value>
   </data>
   <data name="PowerProfileLegionGoBetterBatteryDesc" xml:space="preserve">
     <value>LS의 저소음 모드와 유사한 프리셋. TDP 제한: 8W</value>
   </data>
   <data name="PowerProfileLegionGoBetterPerformance" xml:space="preserve">
-    <value>Legion Go - Balanced</value>
+    <value>Balanced</value>
   </data>
   <data name="PowerProfileLegionGoBetterPerformanceDesc" xml:space="preserve">
     <value>LS의 균형 모드와 유사한 프리셋. TDP 제한: 15W</value>
   </data>
   <data name="PowerProfileLegionGoBestPerformance" xml:space="preserve">
-    <value>Legion Go - Performance</value>
+    <value>Performance</value>
   </data>
   <data name="PowerProfileLegionGoBestPerformanceDesc" xml:space="preserve">
     <value>LS의 성능 모드와 유사한 프리셋. TDP 제한: 20W</value>

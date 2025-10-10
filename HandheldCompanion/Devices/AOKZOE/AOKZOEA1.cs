@@ -136,8 +136,8 @@ public class AOKZOEA1 : IDevice
         // allow OneX button to pass key inputs
         LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM3);
 
-        ECRamDirectWrite(0x4F1, ECDetails, 0x40);
-        ECRamDirectWrite(0x4F2, ECDetails, 0x02);
+        ECRamDirectWriteByte(0x4F1, ECDetails, 0x40);
+        ECRamDirectWriteByte(0x4F2, ECDetails, 0x02);
 
         return (ECRamDirectReadByte(0x4F1, ECDetails) == 0x40 && ECRamDirectReadByte(0x4F2, ECDetails) == 0x02);
     }
@@ -148,8 +148,8 @@ public class AOKZOEA1 : IDevice
             return;
 
         LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM3);
-        ECRamDirectWrite(0x4F1, ECDetails, 0x00);
-        ECRamDirectWrite(0x4F2, ECDetails, 0x00);
+        ECRamDirectWriteByte(0x4F1, ECDetails, 0x00);
+        ECRamDirectWriteByte(0x4F2, ECDetails, 0x00);
         base.Close();
     }
 
@@ -163,8 +163,8 @@ public class AOKZOEA1 : IDevice
 
         // Update the fan control mode
         if (!enable)
-            ECRAMWrite(ACPI_FanPWMDutyCycle_Address, (byte)FanControlMode.Reset);
-        ECRAMWrite(ACPI_FanMode_Address, controlValue);
+            EcWriteByte(ACPI_FanPWMDutyCycle_Address, (byte)FanControlMode.Reset);
+        EcWriteByte(ACPI_FanMode_Address, controlValue);
     }
 
     public override void SetFanDuty(double percent)
@@ -179,7 +179,7 @@ public class AOKZOEA1 : IDevice
         fanSpeedSetpoint = Math.Min((byte)ECDetails.FanValueMax, Math.Max((byte)ECDetails.FanValueMin, fanSpeedSetpoint));
 
         // Set the requested fan speed
-        ECRAMWrite(ACPI_FanPWMDutyCycle_Address, fanSpeedSetpoint);
+        EcWriteByte(ACPI_FanPWMDutyCycle_Address, fanSpeedSetpoint);
     }
 
     public override string GetGlyph(ButtonFlags button)

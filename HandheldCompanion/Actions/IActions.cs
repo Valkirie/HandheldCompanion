@@ -94,7 +94,7 @@ namespace HandheldCompanion.Actions
         public ActionState actionState = ActionState.Stopped;
 
         // Replaces boxed Value/prevValue
-        protected bool outBool;      // “current output?for button-like actions
+        protected bool outBool;      // current output for button-like actions
         protected bool prevBool;     // last input state for edge detection
 
         protected Vector2 outVector = new();

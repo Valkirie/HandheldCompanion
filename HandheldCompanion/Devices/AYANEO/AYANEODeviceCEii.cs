@@ -75,7 +75,7 @@ namespace HandheldCompanion.Devices.AYANEO
         public bool ECRamDirectWrite(byte address, byte data, byte offset = 0xd1)
         {
             ushort address2 = BitConverter.ToUInt16(new byte[] { address, offset }, 0);
-            return base.ECRamDirectWrite(address2, this.ECDetails, data);
+            return base.ECRamDirectWriteByte(address2, this.ECDetails, data);
         }
 
         public override void SetFanDuty(double percent)

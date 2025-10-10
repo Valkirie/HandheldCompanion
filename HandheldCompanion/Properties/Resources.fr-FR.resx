@@ -2537,7 +2537,7 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
     <value>Ceci est un préréglage par défaut pour l'appareil, comparable à celui fourni par le fabricant. Veuillez le modifier avec prudence.</value>
   </data>
   <data name="PowerProfileLegionGoBetterBattery" xml:space="preserve">
-    <value>Legion Go - Quiet</value>
+    <value>Silencieux</value>
   </data>
   <data name="PowerProfileLegionGoBetterBatteryDesc" xml:space="preserve">
     <value>Preset similar to Quiet Mode in LS. TDP Limit: 8W</value>
@@ -2549,7 +2549,7 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
     <value>Préréglage similaire au mode équilibré dans LS. Limite TDP : 15W</value>
   </data>
   <data name="PowerProfileLegionGoBestPerformance" xml:space="preserve">
-    <value>Legion Go - Performance</value>
+    <value>Performance</value>
   </data>
   <data name="PowerProfileLegionGoBestPerformanceDesc" xml:space="preserve">
     <value>Mode similaire à Performance (LS), TDP 20 W</value>
@@ -3894,7 +3894,7 @@ Merci d’utiliser HC et de nous aider à l’améliorer.</value>
     <value>Basculer la disposition des boutons</value>
   </data>
   <data name="ControllerPage_LegionGoControllerSwapDesc" xml:space="preserve">
-    <value>Réaffecter la disposition des boutons : “Legion L” en “View” et “Legion R” en “Menu”</value>
+    <value>Réaffecter la disposition des boutons : "Legion L" en "View" et "Legion R" en "Menu"</value>
   </data>
   <data name="DevicePage_GamingZone_VRAM" xml:space="preserve">
     <value>Taille VRAM supplémentaire</value>

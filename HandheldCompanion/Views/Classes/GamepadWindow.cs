@@ -72,13 +72,19 @@ namespace HandheldCompanion.Views.Classes
         protected virtual void Window_VisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (IsLoaded)
-                WMPaint_Trigger();
+            {
+                WMPaintTimer.Stop();
+                WMPaintTimer.Start();
+            }
         }
 
         protected virtual void Window_StateChanged(object? sender, EventArgs e)
         {
             if (IsLoaded)
-                WMPaint_Trigger();
+            {
+                WMPaintTimer.Stop();
+                WMPaintTimer.Start();
+            }
         }
 
         protected override void OnSourceInitialized(EventArgs e)

@@ -38,7 +38,7 @@ public class AOKZOEA1Pro : AOKZOEA1
         var duty = percent * (ECDetails.FanValueMax - ECDetails.FanValueMin) / 100 + ECDetails.FanValueMin;
         var data = Convert.ToByte(duty);
 
-        ECRamDirectWrite(ECDetails.AddressFanDuty, ECDetails, data);
+        ECRamDirectWriteByte(ECDetails.AddressFanDuty, ECDetails, data);
     }
 
     public override void SetFanControl(bool enable, int mode = 0)
@@ -50,6 +50,6 @@ public class AOKZOEA1Pro : AOKZOEA1
             return;
 
         var data = Convert.ToByte(enable);
-        ECRamDirectWrite(ECDetails.AddressFanControl, ECDetails, data);
+        ECRamDirectWriteByte(ECDetails.AddressFanControl, ECDetails, data);
     }
 }

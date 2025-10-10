@@ -652,7 +652,7 @@ namespace HandheldCompanion.Managers
             }
             else if (entry is IGDBEntry IGDB)
             {
-                if (IGDB.Artwork is null)
+                if (IGDB.Artwork is null || artworkIndex != 0)
                 {
                     if (IGDB.Artworks?.Count > artworkIndex)
                         IGDB.Artwork = IGDB.Artworks[artworkIndex];

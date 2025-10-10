@@ -46,8 +46,8 @@ public class OneXPlayerMiniIntel : OneXPlayerMini
 
         // Update the fan control mode
         if (!enable)
-            ECRAMWrite(ACPI_FanPWMDutyCycle_Address, (byte)FanControlMode.Automatic);
-        ECRAMWrite(ACPI_FanMode_Address, controlValue);
+            EcWriteByte(ACPI_FanPWMDutyCycle_Address, (byte)FanControlMode.Automatic);
+        EcWriteByte(ACPI_FanMode_Address, controlValue);
     }
 
     public override void SetFanDuty(double percent)
@@ -62,6 +62,6 @@ public class OneXPlayerMiniIntel : OneXPlayerMini
         fanSpeedSetpoint = Math.Min((byte)ECDetails.FanValueMax, Math.Max((byte)ECDetails.FanValueMin, fanSpeedSetpoint));
 
         // Set the requested fan speed
-        ECRAMWrite(ACPI_FanPWMDutyCycle_Address, fanSpeedSetpoint);
+        EcWriteByte(ACPI_FanPWMDutyCycle_Address, fanSpeedSetpoint);
     }
 }

@@ -175,7 +175,7 @@ public class OneXPlayerX1 : IDevice
         }
 
         // allow OneX button to pass key inputs
-        ECRamDirectWrite(0x4EB, ECDetails, 0x40);
+        ECRamDirectWriteByte(0x4EB, ECDetails, 0x40);
         if (ECRamDirectReadByte(0x4EB, ECDetails) == 0x40)
             LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
 
@@ -208,7 +208,7 @@ public class OneXPlayerX1 : IDevice
             _serialPort.Close();
         }
 
-        ECRamDirectWrite(0x4EB, ECDetails, 0x00);
+        ECRamDirectWriteByte(0x4EB, ECDetails, 0x00);
         if (ECRamDirectReadByte(0x4EB, ECDetails) == 0x00)
             LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
 
@@ -458,7 +458,7 @@ public class OneXPlayerX1 : IDevice
         if (chargeLimit < 0 || chargeLimit > 100)
             return;
 
-        ECRamDirectWrite(ECBatteryLimitAddress, ECDetails, (byte)chargeLimit);
+        ECRamDirectWriteByte(ECBatteryLimitAddress, ECDetails, (byte)chargeLimit);
     }
 
     public void SetBatteryBypassChargingMode(int modeIndex)
@@ -484,6 +484,6 @@ public class OneXPlayerX1 : IDevice
                 break;
         }
 
-        ECRamDirectWrite(ECBypassChargingAddress, ECDetails, (byte)modeValue);
+        ECRamDirectWriteByte(ECBypassChargingAddress, ECDetails, (byte)modeValue);
     }
 }

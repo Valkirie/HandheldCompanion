@@ -304,34 +304,34 @@ namespace HandheldCompanion.Devices.AYANEO
 
         protected virtual void CEcControl_RgbI2cWrite(LEDGroup group, byte command, byte argument)
         {
-            this.ECRAMWrite(0x6d, (byte)group);
-            this.ECRAMWrite(0xb1, command);
-            this.ECRAMWrite(0xb2, argument);
-            this.ECRAMWrite(0xbf, 0x10);
+            this.EcWriteByte(0x6d, (byte)group);
+            this.EcWriteByte(0xb1, command);
+            this.EcWriteByte(0xb2, argument);
+            this.EcWriteByte(0xbf, 0x10);
             Thread.Sleep(5); // AYASpace does this so copied it here
-            this.ECRAMWrite(0xbf, 0xfe);
+            this.EcWriteByte(0xbf, 0xfe);
         }
 
         protected virtual void CEcControl_RgbHoldControl()
         {
-            this.ECRAMWrite(0xbf, 0xfe);
+            this.EcWriteByte(0xbf, 0xfe);
         }
 
         protected virtual void CEcControl_RgbReleaseControl()
         {
-            this.ECRAMWrite(0xbf, 0x00);
+            this.EcWriteByte(0xbf, 0x00);
         }
 
         protected virtual void CEcControl_BypassChargeOpen()
         {
             if (this.ECRamReadByte(0x1e) != 0x55)
-                this.ECRAMWrite(0x1e, 0x55);
+                this.EcWriteByte(0x1e, 0x55);
         }
 
         protected virtual void CEcControl_BypassChargeClose()
         {
             if (this.ECRamReadByte(0x1e) != 0xaa)
-                this.ECRAMWrite(0x1e, 0xaa);
+                this.EcWriteByte(0x1e, 0xaa);
         }
     }
 }

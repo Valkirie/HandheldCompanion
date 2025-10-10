@@ -701,7 +701,7 @@ namespace HandheldCompanion.Devices.Zotac
             if (!IsOpen)
                 return;
 
-            ECRamDirectWrite(ECDetails.AddressFanControl, ECDetails, Convert.ToByte(enable));
+            ECRamDirectWriteByte(ECDetails.AddressFanControl, ECDetails, Convert.ToByte(enable));
         }
 
         public override void SetFanDuty(double percent)
@@ -710,7 +710,7 @@ namespace HandheldCompanion.Devices.Zotac
                 return;
 
             byte fanValue = (byte)InputUtils.MapRange((float)percent, 0.0f, 100.0f, byte.MinValue, byte.MaxValue);
-            ECRamDirectWrite(ECDetails.AddressFanDuty, ECDetails, fanValue);
+            ECRamDirectWriteByte(ECDetails.AddressFanDuty, ECDetails, fanValue);
         }
 
         public override float ReadFanDuty() => ECRamDirectReadByte(ECDetails.AddressFanDuty, ECDetails);

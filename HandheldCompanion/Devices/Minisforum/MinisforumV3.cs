@@ -8,15 +8,6 @@ namespace HandheldCompanion.Devices;
 
 public class MinisforumV3 : IDevice
 {
-    [DllImport("minisforum.dll", CallingConvention = CallingConvention.Winapi)]
-    public static extern int getThermalMode();
-
-    [DllImport("minisforum.dll", CallingConvention = CallingConvention.Winapi)]
-    public static extern bool setThermalMode(int mode);
-
-    [DllImport("minisforum.dll", CallingConvention = CallingConvention.Winapi)]
-    public static extern int getFanSpeed();
-
     public enum MinisForumMode
     {
         Quiet = 0x01,
@@ -86,13 +77,5 @@ public class MinisforumV3 : IDevice
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 28.0d, 28.0d, 28.0d }
         });
-    }
-
-    protected override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
-    {
-        if (profile.IsDeviceDefault())
-            setThermalMode(profile.OEMPowerMode);
-        else
-            setThermalMode((int)MinisForumMode.Performance);
     }
 }

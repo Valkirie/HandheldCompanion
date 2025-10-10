@@ -79,7 +79,7 @@ public class AynLoki : IDevice
         byte controlValue = enable ? (byte)FanControlMode.Manual : (byte)FanControlMode.Automatic;
 
         // Update the fan control mode
-        ECRAMWrite(ACPI_FanMode_Address, controlValue);
+        EcWriteByte(ACPI_FanMode_Address, controlValue);
     }
 
     public override void SetFanDuty(double percent)
@@ -96,7 +96,7 @@ public class AynLoki : IDevice
         fanSpeedSetpoint = Math.Min((byte)128, Math.Max((byte)0, fanSpeedSetpoint));
 
         // Set the requested fan speed
-        ECRAMWrite(ACPI_FanPWMDutyCycle_Address, fanSpeedSetpoint);
+        EcWriteByte(ACPI_FanPWMDutyCycle_Address, fanSpeedSetpoint);
     }
 
     public override float ReadFanDuty()
@@ -150,18 +150,18 @@ public class AynLoki : IDevice
         */
 
         // Todo, this ec write might not be required, code example and documentation from Ayn conflict
-        ECRAMWrite(LED_Control_mode_Address, LED_Control_Save);
+        EcWriteByte(LED_Control_mode_Address, LED_Control_Save);
 
         uint LED_Control_Mode_Value = ECRamReadByte(LED_Control_mode_Address);
 
         if (LED_Control_Mode_Value == LED_Control_CompletedValue)
         {
             // Update RGB addresses with respective values
-            ECRAMWrite(PWM_R_Address, MainColor.R);
-            ECRAMWrite(PWM_G_Address, MainColor.G);
-            ECRAMWrite(PWM_B_Address, MainColor.B);
+            EcWriteByte(PWM_R_Address, MainColor.R);
+            EcWriteByte(PWM_G_Address, MainColor.G);
+            EcWriteByte(PWM_B_Address, MainColor.B);
 
-            ECRAMWrite(LED_Control_mode_Address, LED_Control_Save);
+            EcWriteByte(LED_Control_mode_Address, LED_Control_Save);
 
             //LogManager.LogDebug("AynLoki Set LED write memory done");
         }

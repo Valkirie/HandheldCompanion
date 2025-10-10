@@ -921,7 +921,7 @@ namespace HandheldCompanion.ViewModels
         {
             if (!value.HasValue) return;
 
-            // Clamp to your axis range and convert °C → X index (0..10)
+            // Clamp to your axis range and convert °C -> X index (0..10)
             double tempC = Math.Max(0, Math.Min(100, value.Value));
             double x = tempC / 10.0;
 

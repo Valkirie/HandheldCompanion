@@ -84,7 +84,7 @@ namespace HandheldCompanion.Devices
             // allow OneX button to pass key inputs
             LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM2);
 
-            ECRamDirectWrite(0x4EB, ECDetails, 0xEB);
+            ECRamDirectWriteByte(0x4EB, ECDetails, 0xEB);
 
             return ECRamDirectReadByte(0x4EB, ECDetails) == 0xEB;
         }
@@ -92,7 +92,7 @@ namespace HandheldCompanion.Devices
         public override void Close()
         {
             LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM2);
-            ECRamDirectWrite(0x4EB, ECDetails, 0x00);
+            ECRamDirectWriteByte(0x4EB, ECDetails, 0x00);
             base.Close();
         }
     }

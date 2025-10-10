@@ -135,7 +135,7 @@ public class OneXPlayerOneXFly : IDevice
         // allow OneX turbo button to pass key inputs
         LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
 
-        ECRamDirectWrite(0x4F1, ECDetails, 0x40);
+        ECRamDirectWriteByte(0x4F1, ECDetails, 0x40);
 
         return (ECRamDirectReadByte(0x4F1, ECDetails) == 0x40);
     }
@@ -143,7 +143,7 @@ public class OneXPlayerOneXFly : IDevice
     public override void Close()
     {
         LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
-        ECRamDirectWrite(0x4F1, ECDetails, 0x00);
+        ECRamDirectWriteByte(0x4F1, ECDetails, 0x00);
         base.Close();
     }
 

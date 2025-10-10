@@ -31,7 +31,7 @@
                 <EventTrigger RoutedEvent="Binding.TargetUpdated">
                     <BeginStoryboard>
                         <Storyboard>
-                            <!--  fade in from 0→1 in 300ms  -->
+                            <!--  fade in from 0->1 in 300ms  -->
                             <DoubleAnimation
                                 Storyboard.TargetProperty="Opacity"
                                 From="0"
@@ -341,7 +341,7 @@
                                         <EventTrigger RoutedEvent="Binding.TargetUpdated">
                                             <BeginStoryboard>
                                                 <Storyboard>
-                                                    <!--  fade in from 0→1 in 300ms  -->
+                                                    <!--  fade in from 0->1 in 300ms  -->
                                                     <DoubleAnimation
                                                         Storyboard.TargetProperty="Opacity"
                                                         From="0"

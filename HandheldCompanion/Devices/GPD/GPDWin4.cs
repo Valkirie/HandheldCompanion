@@ -102,7 +102,7 @@ public class GPDWin4 : IDevice
         var duty = percent * (ECDetails.FanValueMax - ECDetails.FanValueMin) / 100 + ECDetails.FanValueMin;
         var data = Convert.ToByte(duty);
 
-        ECRamDirectWrite(ECDetails.AddressFanControl, ECDetails, data);
+        ECRamDirectWriteByte(ECDetails.AddressFanControl, ECDetails, data);
     }
 
     public override bool Open()
@@ -119,7 +119,7 @@ public class GPDWin4 : IDevice
             EC_Chip_Ver = (byte)(EC_Chip_Ver | 0x80);
 
             LogManager.LogInformation("Unlocked GPD WIN 4 ({0}) fan control", EC_Chip_Ver);
-            return ECRamDirectWrite(0x1060, ECDetails, EC_Chip_Ver);
+            return ECRamDirectWriteByte(0x1060, ECDetails, EC_Chip_Ver);
         }
 
         return false;

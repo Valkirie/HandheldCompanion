@@ -195,7 +195,7 @@ public class MultimediaManager : IManager
                 if (m.Success && TryGetEdidMonitorName(m.Groups["instance"].Value, out var edidName))
                     return edidName;
 
-                // 2) DisplayConfig target friendly name (often “Generic PnP Monitor”, but keep as fallback)
+                // 2) DisplayConfig target friendly name (often "Generic PnP Monitor", but keep as fallback)
                 var target = PathDisplayTarget.GetDisplayTargets()
                     .FirstOrDefault(t => string.Equals(t.DevicePath, display.DevicePath, StringComparison.OrdinalIgnoreCase));
                 if (target != null && !string.IsNullOrWhiteSpace(target.FriendlyName))

@@ -201,7 +201,7 @@ public class LegionGo : IDevice
         BatteryBypassMin = 80;
         BatteryBypassMax = 80;
 
-        // Legion Go - Quiet
+        // Quiet
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBetterBattery, Properties.Resources.PowerProfileLegionGoBetterBatteryDesc)
         {
             Default = true,
@@ -214,7 +214,7 @@ public class LegionGo : IDevice
             TDPOverrideValues = new[] { 8.0d, 8.0d, 8.0d }
         });
 
-        // Legion Go - Balanced
+        // Balanced
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBetterPerformance, Properties.Resources.PowerProfileLegionGoBetterPerformanceDesc)
         {
             Default = true,
@@ -226,7 +226,7 @@ public class LegionGo : IDevice
             TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d }
         });
 
-        // Legion Go - Performance
+        // Performance
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBestPerformance, Properties.Resources.PowerProfileLegionGoBestPerformanceDesc)
         {
             Default = true,
