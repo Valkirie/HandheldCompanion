@@ -12,7 +12,6 @@ using HandheldCompanion.Sensors;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HidLibrary;
-using LibreHardwareMonitor.Hardware.Motherboard.Lpc.EC;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using Sentry;
 using System;
@@ -24,7 +23,6 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using Windows.Devices.Sensors;
 using WindowsInput.Events;
-using static HandheldCompanion.OpenLibSys;
 using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices;

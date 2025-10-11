@@ -1,99 +1,159 @@
 using HandheldCompanion.Devices;
-using HandheldCompanion.Shared;
-using LibreHardwareMonitor.PawnIo;
+using HandheldCompanion.Processors.AMD;
 using System;
 
-namespace HandheldCompanion.Processors
+namespace HandheldCompanion.Processors;
+
+public class AMDProcessor : Processor
 {
-    public class AMDProcessor : Processor
+    public readonly RyzenFamily family;
+    public readonly IntPtr ry;
+
+    public AMDProcessor()
     {
-        private readonly object _smuLock = new();
-        private RyzenSmu _smu;
-        private bool _smuReady;
-
-        public AMDProcessor()
+        ry = RyzenAdj.init_ryzenadj();
+        if (ry != IntPtr.Zero)
         {
-            try
+            family = RyzenAdj.get_cpu_family(ry);
+            switch (family)
             {
-                _smu = new RyzenSmu();
-                _smuReady = true;
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogError("PawnIO/RyzenSMU init failed: {0}", ex.Message);
-                _smuReady = false;
+                case RyzenFamily.FAM_RENOIR:
+                case RyzenFamily.FAM_LUCIENNE:
+                case RyzenFamily.FAM_CEZANNE:
+                case RyzenFamily.FAM_VANGOGH:
+                case RyzenFamily.FAM_REMBRANDT:
+                case RyzenFamily.FAM_MENDOCINO:
+                case RyzenFamily.FAM_PHOENIX:
+                case RyzenFamily.FAM_HAWKPOINT:
+                case RyzenFamily.FAM_KRACKANPOINT: /* Added to debug on KRK, STX, & STXH */
+                case RyzenFamily.FAM_STRIXPOINT:
+                case RyzenFamily.FAM_STRIXHALO:
+                    CanChangeGPU = true;
+                    break;
             }
 
-            CanChangeTDP = _smuReady || HasOEMCPU;
-            CanChangeGPU = _smuReady || HasOEMGPU;
+            switch (family)
+            {
+                default:
+                    CanChangeTDP = false;
+                    break;
 
-            IsInitialized = (CanChangeTDP || CanChangeGPU) && (_smuReady || HasOEMCPU || HasOEMGPU);
+                case RyzenFamily.FAM_RAVEN:
+                case RyzenFamily.FAM_PICASSO:
+                case RyzenFamily.FAM_DALI:
+                case RyzenFamily.FAM_RENOIR:
+                case RyzenFamily.FAM_LUCIENNE:
+                case RyzenFamily.FAM_CEZANNE:
+                case RyzenFamily.FAM_VANGOGH:
+                case RyzenFamily.FAM_REMBRANDT:
+                case RyzenFamily.FAM_MENDOCINO:
+                case RyzenFamily.FAM_PHOENIX:
+                case RyzenFamily.FAM_HAWKPOINT:
+                case RyzenFamily.FAM_KRACKANPOINT:
+                case RyzenFamily.FAM_STRIXPOINT:
+                case RyzenFamily.FAM_STRIXHALO:
+                    CanChangeTDP = true;
+                    break;
+            }
         }
 
-        public override void SetTDPLimit(PowerType type, double limit, bool immediate, int result)
-        {
-            lock (_smuLock)
-            {
-                if (!CanChangeTDP)
-                    return;
+        // check capabilities
+        CanChangeTDP |= HasOEMCPU;
+        CanChangeGPU |= HasOEMGPU;
 
-                if (HasOEMCPU && UseOEM)
+        IsInitialized = CanChangeTDP || CanChangeGPU;
+    }
+
+    public override void SetTDPLimit(PowerType type, double limit, bool immediate, int result)
+    {
+        lock (updateLock)
+        {
+            if (!CanChangeTDP)
+                return;
+
+            if (HasOEMCPU && UseOEM)
+            {
+                // get device
+                IDevice device = IDevice.GetCurrent();
+
+                switch (type)
                 {
-                    var device = IDevice.GetCurrent();
+                    case PowerType.Slow:
+                        device.set_long_limit((int)limit);
+                        break;
+                    case PowerType.Fast:
+                        device.set_short_limit((int)limit);
+                        break;
+                }
+            }
+            else
+            {
+                if (ry != IntPtr.Zero)
+                {
+                    // RyzenAdj use mW
                     switch (type)
                     {
-                        case PowerType.Slow: device.set_long_limit((int)limit); break;
-                        case PowerType.Fast: device.set_short_limit((int)limit); break;
+                        case PowerType.Fast:
+                            result = RyzenAdj.set_fast_limit(ry, (uint)(limit * 1000.0d));
+                            break;
+                        case PowerType.Slow:
+                            result = RyzenAdj.set_slow_limit(ry, (uint)(limit * 1000.0d));
+                            break;
+                        case PowerType.Stapm:
+                            result = RyzenAdj.set_stapm_limit(ry, (uint)(limit * 1000.0d));
+                            break;
                     }
-                    base.SetTDPLimit(type, limit, immediate, result);
-                    return;
                 }
-
-                if (!_smuReady)
-                    return;
-
-                // HC UI is in W; SMU ioctls expect mW
-                uint mw = (uint)Math.Round(limit * 1000.0);
-
-                bool ok = type switch
-                {
-                    PowerType.Fast => _smu.SetPptFastLimit(mw),
-                    PowerType.Slow => _smu.SetPptSlowLimit(mw),
-                    PowerType.Stapm => _smu.SetStapmLimit(mw),
-                    _ => false
-                };
-
-                result = ok ? 0 : unchecked((int)0x80004005);
-                base.SetTDPLimit(type, limit, immediate, result);
             }
+
+            base.SetTDPLimit(type, limit, immediate, result);
         }
+    }
 
-        public override void SetGPUClock(double clock, int result)
+    public override void SetGPUClock(double clock, int result)
+    {
+        lock (updateLock)
         {
-            lock (_smuLock)
+            if (!CanChangeGPU)
+                return;
+
+            // get device
+            IDevice device = IDevice.GetCurrent();
+
+            bool restore = (clock == 12750);
+
+            if (HasOEMGPU)
             {
-                if (!CanChangeGPU)
-                    return;
-
-                var device = IDevice.GetCurrent();
-                bool restore = (clock == 12750);
-
-                if (HasOEMGPU)
-                {
-                    device.set_min_gfxclk_freq((uint)(restore ? device.GfxClock[0] : clock));
-                    device.set_max_gfxclk_freq((uint)(restore ? device.GfxClock[1] : clock));
-                    base.SetGPUClock(clock, 0);
-                    return;
-                }
-
-                if (!_smuReady)
-                    return;
-
-                bool ok = _smu.SetGfxClock((uint)clock) || (_smu.SetMinGfxClock((uint)clock) & _smu.SetMaxGfxClock((uint)clock));
-
-                result = ok ? 0 : unchecked((int)0x80004005);
-                base.SetGPUClock(clock, result);
+                device.set_min_gfxclk_freq((uint)(restore ? IDevice.GetCurrent().GfxClock[0] : clock));
+                device.set_max_gfxclk_freq((uint)(restore ? IDevice.GetCurrent().GfxClock[1] : clock));
             }
+            else
+            {
+                switch (family)
+                {
+                    case RyzenFamily.FAM_RAVEN:
+                    case RyzenFamily.FAM_PICASSO:
+                    case RyzenFamily.FAM_DALI:
+                    case RyzenFamily.FAM_LUCIENNE:
+                        {
+                            result = RyzenAdj.set_min_gfxclk_freq(ry, (uint)(restore ? IDevice.GetCurrent().GfxClock[0] : clock));
+                            result = RyzenAdj.set_max_gfxclk_freq(ry, (uint)(restore ? IDevice.GetCurrent().GfxClock[1] : clock));
+                        }
+                        break;
+
+                    default:
+                        {
+                            // you can't restore default frequency on AMD GPUs
+                            if (restore)
+                                return;
+
+                            result = RyzenAdj.set_gfx_clk(ry, (uint)clock);
+                        }
+                        break;
+                }
+            }
+
+            base.SetGPUClock(clock, result);
         }
     }
 }
