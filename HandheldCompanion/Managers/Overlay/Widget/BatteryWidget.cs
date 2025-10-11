@@ -17,7 +17,7 @@ public class BatteryWidget: IWidget
                 if (!IsBatteryCharging() && null != TimeLeftInMinutes)
                 {
                     OSDManager.AddElementIfNotNull(entry, TimeBatteryHours(), "h");
-                    OSDManager.AddElementIfNotNull(entry, TimeBatteryMinutes(), "m");
+                    OSDManager.AddElementIfNotNull(entry, TimeBatteryMinutes(), "min");
                 }
 
                 break;
@@ -26,7 +26,7 @@ public class BatteryWidget: IWidget
                 if (!IsBatteryCharging() && null != TimeLeftInMinutes)
                 {
                     OSDManager.AddElementIfNotNull(entry, TimeBatteryHours(), "h");
-                    OSDManager.AddElementIfNotNull(entry, TimeBatteryMinutes(), "m");
+                    OSDManager.AddElementIfNotNull(entry, TimeBatteryMinutes(), "min");
                 }
                 break;
         }

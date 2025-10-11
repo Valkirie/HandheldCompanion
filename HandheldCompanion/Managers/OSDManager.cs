@@ -340,6 +340,7 @@ public struct OverlayEntryElement
             "W" => "00",   // Two digits forced, no decimal
             "%" => "00",   // Two digits forced, no decimal
             "C" => "00",   // Two digits forced, no decimal
+            "h" => "00", // Two digits forced, no decimal
             "min" => "00", // Two digits forced, no decimal
             "MB" => "0",   // No leading zeros, no decimal
             _ => "0.##"    // Default format (no leading zeros, up to 2 decimals)
