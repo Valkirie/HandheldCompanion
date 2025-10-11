@@ -16,10 +16,8 @@ namespace HandheldCompanion.Managers
         private const string ToastTag = "LatestToast";
 
         private static readonly ConcurrentQueue<(string Title, string Content, string Img, bool IsHero)> ToastQueue = new();
+        private static volatile int _isProcessing; // 0 = idle, 1 = processing
 
-        private static readonly SemaphoreSlim QueueSemaphore = new(1, 1);
-
-        private static DateTime LastToastTime = DateTime.MinValue;
         private static ToastNotification CurrentToastNotification;
 
         public static bool IsEnabled => ManagerFactory.settingsManager.GetBoolean("ToastEnable");
@@ -64,28 +62,44 @@ namespace HandheldCompanion.Managers
             return true;
         }
 
+        // 2) Replace ProcessToastQueue() with this:
         private static async Task ProcessToastQueue()
         {
-            // Only a single thread may dequeue & display at once:
-            if (!await QueueSemaphore.WaitAsync(1000))
+            // if already processing, bail quickly (the active loop will drain the queue)
+            if (Interlocked.Exchange(ref _isProcessing, 1) == 1)
                 return;
 
             try
             {
-                if (ToastQueue.TryDequeue(out var toastData))
+                while (ToastQueue.TryDequeue(out var toast))
                 {
-                    // We've already killed/cleared the old toast in SendToast(...), so show immediately.
-                    DisplayToast(toastData.Title, toastData.Content, toastData.Img, toastData.IsHero);
-                    LastToastTime = DateTime.Now;
+                    // Always build & show on the UI thread to avoid COM/WinRT deadlocks
+                    var dispatcher = System.Windows.Application.Current?.Dispatcher;
+                    if (dispatcher is null || dispatcher.CheckAccess())
+                    {
+                        DisplayToast(toast.Title, toast.Content, toast.Img, toast.IsHero);
+                    }
+                    else
+                    {
+                        // ApplicationIdle reduces contention during hot startup
+                        await dispatcher.InvokeAsync(
+                            () => DisplayToast(toast.Title, toast.Content, toast.Img, toast.IsHero),
+                            System.Windows.Threading.DispatcherPriority.ApplicationIdle
+                        );
+                    }
                 }
             }
             catch
             {
-                // Swallow any exceptions so we don’t break the app if toast fails
+                // never take the app down because of a toast
             }
             finally
             {
-                QueueSemaphore.Release();
+                Volatile.Write(ref _isProcessing, 0);
+
+                // In case something enqueued while we were releasing the flag
+                if (!ToastQueue.IsEmpty)
+                    _ = ProcessToastQueue();
             }
         }
 
@@ -126,19 +140,6 @@ namespace HandheldCompanion.Managers
 
                 // Keep a reference so we can also remove it from History if/when needed:
                 CurrentToastNotification = toastNotification;
-
-                // Optional: If the user dismisses or it times out, we could process further items.
-                toastNotification.Dismissed += (sender, args) =>
-                {
-                    if (args.Reason == ToastDismissalReason.UserCanceled ||
-                        args.Reason == ToastDismissalReason.TimedOut)
-                    {
-                        // If for any reason new toasts arrive later, we’d handle them here.
-                        _ = ProcessToastQueue();
-                    }
-                };
-
-                // toastNotification.ExpirationTime = DateTimeOffset.Now.AddSeconds(Interval / 1000.0);
             });
         }
 
