@@ -2,9 +2,9 @@ using System.Management;
 
 namespace HandheldCompanion.Managers.Overlay.Widget;
 
-public class BatteryWidget: IWidget
+public class BatteryWidget : IWidget
 {
-    private float? TimeLeftInMinutes => PlatformManager.LibreHardwareMonitor.GetBatteryTimeSpan();
+    private float? TimeLeftInMinutes => PlatformManager.LibreHardware.GetBatteryTimeSpan();
 
     public void Build(OverlayEntry entry, short? level = null)
     {
@@ -12,8 +12,8 @@ public class BatteryWidget: IWidget
         switch (overlayBattLevel)
         {
             case WidgetLevel.FULL:
-                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetBatteryLevel(), "%");
-                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetBatteryPower(), "W");
+                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardware.GetBatteryLevel(), "%");
+                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardware.GetBatteryPower(), "W");
                 if (!IsBatteryCharging() && null != TimeLeftInMinutes)
                 {
                     OSDManager.AddElementIfNotNull(entry, TimeBatteryHours(), "h");
@@ -22,7 +22,7 @@ public class BatteryWidget: IWidget
 
                 break;
             case WidgetLevel.MINIMAL:
-                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetBatteryLevel(), "%");
+                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardware.GetBatteryLevel(), "%");
                 if (!IsBatteryCharging() && null != TimeLeftInMinutes)
                 {
                     OSDManager.AddElementIfNotNull(entry, TimeBatteryHours(), "h");
