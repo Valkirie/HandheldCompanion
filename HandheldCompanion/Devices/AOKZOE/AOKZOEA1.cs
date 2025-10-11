@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
 using HidLibrary;
 using System;
@@ -60,6 +61,8 @@ public class AOKZOEA1 : IDevice
         Capabilities = DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.DynamicLighting;
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
+
+        // dynamic lighting capacities
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
         DynamicLightingCapabilities |= LEDLevel.Rainbow;
 
@@ -118,6 +121,10 @@ public class AOKZOEA1 : IDevice
             [KeyCode.Snapshot, KeyCode.LWin],
             false, ButtonFlags.OEM5
         ));
+
+        // prepare hotkeys
+        DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
+        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM3] = true;
     }
 
     public override bool Open()
@@ -132,7 +139,7 @@ public class AOKZOEA1 : IDevice
         ECRamDirectWrite(0x4F1, ECDetails, 0x40);
         ECRamDirectWrite(0x4F2, ECDetails, 0x02);
 
-        return (ECRamReadByte(0x4F1, ECDetails) == 0x40 && ECRamReadByte(0x4F2, ECDetails) == 0x02);
+        return (ECRamDirectReadByte(0x4F1, ECDetails) == 0x40 && ECRamDirectReadByte(0x4F2, ECDetails) == 0x02);
     }
 
     public override void Close()

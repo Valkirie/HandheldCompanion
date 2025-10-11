@@ -1,11 +1,13 @@
 ﻿using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -56,6 +58,8 @@ namespace HandheldCompanion.ViewModels
         public DateTime DateModified => _Profile.DateModified;
         public DateTime LastUsed => _Profile.LastUsed;
 
+        public GamePlatform PlatformType => _Profile.PlatformType;
+
         public bool IsAvailable => _Profile.CanExecute && !ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
 
         private bool _IsBusy;
@@ -89,6 +93,37 @@ namespace HandheldCompanion.ViewModels
                     }
                 }
                 return null;
+            }
+        }
+
+        public Image Platform
+        {
+            get
+            {
+                switch (PlatformType)
+                {
+                    default:
+                    case GamePlatform.Generic:
+                        return null;
+                    case GamePlatform.Steam:
+                        return PlatformManager.Steam.GetLogo();
+                    case GamePlatform.Origin:
+                        return PlatformManager.Origin.GetLogo();
+                    case GamePlatform.EADesktop:
+                        return PlatformManager.EADesktop.GetLogo();
+                    case GamePlatform.UbisoftConnect:
+                        return PlatformManager.UbisoftConnect.GetLogo();
+                    case GamePlatform.GOG:
+                        return PlatformManager.GOGGalaxy.GetLogo();
+                    case GamePlatform.BattleNet:
+                        return PlatformManager.BattleNet.GetLogo();
+                    case GamePlatform.Epic:
+                        return PlatformManager.Epic.GetLogo();
+                    case GamePlatform.RiotGames:
+                        return PlatformManager.RiotGames.GetLogo();
+                    case GamePlatform.Rockstar:
+                        return PlatformManager.Rockstar.GetLogo();
+                }
             }
         }
 
@@ -130,7 +165,7 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.processManager.ProcessStarted += ProcessManager_ProcessStarted;
             ManagerFactory.processManager.ProcessStopped += ProcessManager_ProcessStopped;
 
-            StartProcessCommand = new DelegateCommand(async () =>
+            StartProcessCommand = new DelegateCommand<bool>(async runAsAdmin =>
             {
                 // localize me
                 Dialog dialog = new Dialog(isQuickTools ? OverlayQuickTools.GetCurrent() : MainWindow.GetCurrent())
@@ -166,13 +201,15 @@ namespace HandheldCompanion.ViewModels
                     // set profile as favorite
                     ManagerFactory.profileManager.SetSubProfileAsFavorite(Profile);
 
-                    await Task.Run(() =>
+                    await Task.Run(async () =>
                     {
                         ProcessStartInfo psi = new ProcessStartInfo
                         {
-                            FileName = Profile.Path,
+                            FileName = !string.IsNullOrEmpty(profile.LaunchString) ? profile.LaunchString : Profile.Executable,
+                            WorkingDirectory = Directory.GetParent(Profile.Path)?.FullName ?? string.Empty,
                             Arguments = Profile.Arguments,
-                            UseShellExecute = true
+                            UseShellExecute = true,
+                            Verb = runAsAdmin ? "runas" : string.Empty,
                         };
 
                         using (Process? process = Process.Start(psi))
@@ -181,27 +218,22 @@ namespace HandheldCompanion.ViewModels
                             if (process == null)
                                 return;
 
-                            // give it a moment to initialize
-                            try
-                            {
-                                process.WaitForInputIdle(3000);
-                            }
-                            catch { }
+                            // wait up to 60 sec for any visible window
+                            List<string> execs = profile.GetExecutables(true);
 
-                            // wait up to 10 sec for any visible window
-                            IntPtr hWnd = ProcessUtils.WaitForVisibleWindow(process, 10);
-                            if (hWnd != IntPtr.Zero)
-                            {
-                                if (IsMainPage)
-                                    MainWindow.GetCurrent().SetState(WindowState.Minimized);
+                            Task timeout = Task.Delay(TimeSpan.FromSeconds(60));
+                            while (!timeout.IsCompleted && !ProcessManager.GetProcesses().Any(p => execs.Contains(p.Path)))
+                                await Task.Delay(300).ConfigureAwait(false);
 
-                                ProcessUtils.SetForegroundWindow(hWnd);
-                            }
+                            if (ProcessManager.GetProcesses().Any(p => execs.Contains(p.Path)))
+                                MainWindow.GetCurrent().SetState(WindowState.Minimized);
 
                             // hide the dialog
                             UIHelper.TryInvoke(() => dialog.Hide());
 
-                            process.WaitForExit();
+                            // Wait until none of the known executables are running
+                            while (ProcessManager.GetProcesses().Any(p => execs.Contains(p.Path)))
+                                await Task.Delay(1000).ConfigureAwait(false);
 
                             if (IsMainPage)
                                 MainWindow.GetCurrent().SetState(WindowState.Normal);
@@ -218,17 +250,26 @@ namespace HandheldCompanion.ViewModels
 
             Navigate = new DelegateCommand(async () =>
             {
+                var page = MainWindow.profilesPage;
+
+                // pick the profile to select in the main combobox
+                Profile target = Profile.IsSubProfile
+                    ? ManagerFactory.profileManager.GetParent(Profile)
+                    : Profile;
+
+                // find a matching instance in the ComboBox (in case instances differ)
+                Profile? match = page.cB_Profiles.Items
+                    .OfType<Profile>()
+                    .FirstOrDefault(p => p.Guid == target.Guid);
+
+                if (match is not null)
+                    page.cB_Profiles.SelectedItem = match;
+
+                // subprofile picker: select current subprofile or reset
                 if (Profile.IsSubProfile)
-                {
-                    Profile MasterProfile = ManagerFactory.profileManager.GetProfileForSubProfile(Profile);
-                    MainWindow.profilesPage.cB_Profiles.SelectedItem = MasterProfile;
-                    MainWindow.profilesPage.cb_SubProfilePicker.SelectedItem = Profile;
-                }
+                    page.cb_SubProfilePicker.SelectedItem = Profile;
                 else
-                {
-                    MainWindow.profilesPage.cB_Profiles.SelectedItem = Profile;
-                    MainWindow.profilesPage.cb_SubProfilePicker.SelectedIndex = 0;
-                }
+                    page.cb_SubProfilePicker.SelectedIndex = 0;
 
                 MainWindow.GetCurrent().NavigateToPage("ProfilesPage");
             });

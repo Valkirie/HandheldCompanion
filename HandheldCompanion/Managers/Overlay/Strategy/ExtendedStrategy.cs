@@ -1,9 +1,6 @@
-using System;
-using HandheldCompanion.GraphicsProcessingUnit;
-
 namespace HandheldCompanion.Managers.Overlay.Strategy;
 
-public class ExtendedStrategy: IOverlayStrategy
+public class ExtendedStrategy : IOverlayStrategy
 {
     public string GetConfig()
     {

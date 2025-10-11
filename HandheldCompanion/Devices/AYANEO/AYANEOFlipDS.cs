@@ -4,9 +4,9 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
 using System;
-using System.Linq;
 using System.Windows;
 using WindowsInput.Events;
+using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices;
 
@@ -18,9 +18,12 @@ public class AYANEOFlipDS : AYANEOFlipKB
         this.ProductIllustration = "device_aya_flip_ds";
         this.ProductModel = "AYANEO Flip DS";
 
-        // TODO: Check if there really is no RGB but looks like it
+        // device specific capacities
         this.Capabilities -= DeviceCapabilities.DynamicLighting;
         this.Capabilities -= DeviceCapabilities.DynamicLightingBrightness;
+
+        // dynamic lighting capacities
+        this.DynamicLightingCapabilities = LEDLevel.SolidColor;
 
         // TODO: Add OEMChords for "Dual-Screen Keys" key here
         this.OEMChords.Add(new KeyboardChord("Custom Key Screen",
@@ -61,16 +64,17 @@ public class AYANEOFlipDS : AYANEOFlipKB
     }
 
     private ButtonState prevState = new();
-    private void ControllerManager_InputsUpdated(ControllerState Inputs)
+    private void ControllerManager_InputsUpdated(ControllerState Inputs, bool IsMapped)
     {
         if (prevState.Equals(Inputs.ButtonState))
             return;
 
-        // update previous state
-        ButtonState.Overwrite(Inputs.ButtonState, prevState);
+        // skip if inputs were remapped
+        if (IsMapped)
+            return;
 
         // if screen button is pressed, turn on bottom screen
-        if (Inputs.ButtonState.Buttons.Contains(ButtonFlags.OEM5))
+        if (Inputs.ButtonState[ButtonFlags.OEM5])
         {
             bool enabled = ManagerFactory.settingsManager.GetBoolean("AYANEOFlipScreenEnabled");
             ManagerFactory.settingsManager.SetProperty("AYANEOFlipScreenEnabled", !enabled);

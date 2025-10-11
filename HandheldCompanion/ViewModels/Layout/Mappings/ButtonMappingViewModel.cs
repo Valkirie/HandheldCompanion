@@ -4,6 +4,7 @@ using HandheldCompanion.Controllers;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Properties;
 using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,17 @@ namespace HandheldCompanion.ViewModels
                 {
                     Action.pressType = (PressType)value;
                     OnPropertyChanged(nameof(PressTypeIndex));
+                    OnPropertyChanged(nameof(PressTypeTooltip));
                 }
+            }
+        }
+
+        public string PressTypeTooltip
+        {
+            get
+            {
+                string key = $"LayoutPage_PressTypeTooltip{PressTypeIndex}";
+                return Resources.ResourceManager.GetString(key) ?? string.Empty;
             }
         }
 
@@ -54,7 +65,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public int LongPressDelay
+        public float LongPressDelay
         {
             get => Action is not null ? Action.ActionTimer : 0;
             set
@@ -136,18 +147,18 @@ namespace HandheldCompanion.ViewModels
 
         public bool Turbo
         {
-            get => Action is not null && Action.Turbo;
+            get => Action is not null && Action.IsTurbo;
             set
             {
                 if (Action is not null && value != Turbo)
                 {
-                    Action.Turbo = value;
+                    Action.IsTurbo = value;
                     OnPropertyChanged(nameof(Turbo));
                 }
             }
         }
 
-        public int TurboDelay
+        public float TurboDelay
         {
             get => Action is not null ? Action.TurboDelay : 0;
             set
@@ -175,12 +186,12 @@ namespace HandheldCompanion.ViewModels
 
         public bool Toggle
         {
-            get => Action is not null && Action.Toggle;
+            get => Action is not null && Action.IsToggle;
             set
             {
                 if (Action is not null && value != Toggle)
                 {
-                    Action.Toggle = value;
+                    Action.IsToggle = value;
                     OnPropertyChanged(nameof(Toggle));
                 }
             }
@@ -224,6 +235,8 @@ namespace HandheldCompanion.ViewModels
                 }
             }
         }
+
+        public bool HasDuration => PressTypeIndex != (int)PressType.Short;
 
         #endregion
 

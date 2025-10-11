@@ -149,10 +149,7 @@
             <ikw:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="3">
 
                 <!--  Maximum CPU Count (already updated)  -->
-                <ui:SettingsExpander
-                    Description="{l:Static resx:Resources.PerformancePage_MaxCPU_Desc}"
-                    Header="{l:Static resx:Resources.PerformancePage_MaxCPU_Title}"
-                    IsExpanded="{Binding ElementName=CPUCountToggle, Path=IsOn, Mode=TwoWay}">
+                <ui:SettingsExpander Description="{l:Static resx:Resources.PerformancePage_MaxCPU_Desc}" Header="{l:Static resx:Resources.PerformancePage_MaxCPU_Title}">
                     <ui:SettingsExpander.HeaderIcon>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe964;" />
                     </ui:SettingsExpander.HeaderIcon>
@@ -160,7 +157,7 @@
                     <ui:ToggleSwitch Name="CPUCountToggle" IsOn="{Binding CPUCoreEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <ui:SettingsExpander.Items>
-                        <ui:SettingsCard Visibility="{Binding CPUCoreEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <ui:SettingsCard IsEnabled="{Binding CPUCoreEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
                                 <Label
                                     VerticalAlignment="Center"
@@ -187,8 +184,7 @@
                 <ui:SettingsExpander
                     Description="{l:Static resx:Resources.ProfilesPage_TDPOverrideDesc}"
                     Header="{l:Static resx:Resources.ProfilesPage_TDPOverride}"
-                    IsEnabled="{Binding SupportsTDP, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                    IsExpanded="{Binding ElementName=TDPOverrideToggle, Path=IsOn, Mode=TwoWay}">
+                    IsEnabled="{Binding SupportsTDP}">
                     <ui:SettingsExpander.HeaderIcon>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xeb3c;" />
                     </ui:SettingsExpander.HeaderIcon>
@@ -196,14 +192,21 @@
                     <ui:ToggleSwitch Name="TDPOverrideToggle" IsOn="{Binding TDPOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <ui:SettingsExpander.Items>
-                        <ui:SettingsCard Visibility="{Binding TDPOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <ui:SettingsCard IsEnabled="{Binding TDPOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ui:SettingsCard.HeaderIcon>
+                                PL1
+                            </ui:SettingsCard.HeaderIcon>
+
                             <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
-                                <Label
-                                    VerticalAlignment="Center"
-                                    Content="{Binding TDPOverrideValue, StringFormat={}{0:N0} W, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                    <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Text="{Binding PL1OverrideValue, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+                                    <TextBlock
+                                        Margin="2,0,0,0"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Text=" W" />
+                                </StackPanel>
                                 <Slider
-                                    Margin="8,0,104,0"
+                                    Margin="8,0,154,0"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
                                     AutoToolTipPrecision="0"
@@ -216,7 +219,38 @@
                                     TickFrequency="1"
                                     TickPlacement="BottomRight"
                                     ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                    Value="{Binding TDPOverrideValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    Value="{Binding PL1OverrideValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </DockPanel>
+                        </ui:SettingsCard>
+
+                        <ui:SettingsCard IsEnabled="{Binding TDPOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ui:SettingsCard.HeaderIcon>
+                                PL2
+                            </ui:SettingsCard.HeaderIcon>
+
+                            <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
+                                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                    <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Text="{Binding PL2OverrideValue, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+                                    <TextBlock
+                                        Margin="2,0,0,0"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Text=" W" />
+                                </StackPanel>
+                                <Slider
+                                    Margin="8,0,154,0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    AutoToolTipPrecision="0"
+                                    IsMoveToPointEnabled="True"
+                                    IsSnapToTickEnabled="True"
+                                    LargeChange="5"
+                                    Maximum="{Binding ConfigurableTDPOverrideUp, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Minimum="{Binding ConfigurableTDPOverrideDown, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    SmallChange="1"
+                                    TickFrequency="1"
+                                    TickPlacement="BottomRight"
+                                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                    Value="{Binding PL2OverrideValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             </DockPanel>
                         </ui:SettingsCard>
                     </ui:SettingsExpander.Items>
@@ -226,8 +260,7 @@
                 <ui:SettingsExpander
                     Description="{l:Static resx:Resources.ProfilesPage_AutoTDPDesc}"
                     Header="{l:Static resx:Resources.ProfilesPage_AutoTDP}"
-                    IsEnabled="{Binding SupportsAutoTDP, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                    IsExpanded="{Binding ElementName=AutoTDPOverrideToggle, Path=IsOn, Mode=TwoWay}">
+                    IsEnabled="{Binding SupportsAutoTDP, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                     <ui:SettingsExpander.HeaderIcon>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xea86;" />
                     </ui:SettingsExpander.HeaderIcon>
@@ -235,7 +268,7 @@
                     <ui:ToggleSwitch Name="AutoTDPOverrideToggle" IsOn="{Binding AutoTDPEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <ui:SettingsExpander.Items>
-                        <ui:SettingsCard Visibility="{Binding AutoTDPEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <ui:SettingsCard IsEnabled="{Binding AutoTDPEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
                                 <Label
                                     VerticalAlignment="Center"
@@ -266,7 +299,6 @@
                     Description="{l:Static resx:Resources.ProfilesPage_EPPDesc}"
                     Header="{l:Static resx:Resources.ProfilesPage_EPP}"
                     IsEnabled="False"
-                    IsExpanded="{Binding ElementName=EPPOverrideToggle, Path=IsOn, Mode=TwoWay}"
                     Visibility="Collapsed">
                     <ui:SettingsExpander.HeaderIcon>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe9e9;" />
@@ -275,7 +307,7 @@
                     <ui:ToggleSwitch Name="EPPOverrideToggle" IsOn="{Binding EPPOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <ui:SettingsExpander.Items>
-                        <ui:SettingsCard Visibility="{Binding EPPOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <ui:SettingsCard IsEnabled="{Binding EPPOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <StackPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
                                 <Slider
                                     Margin="0,0,104,0"
@@ -320,10 +352,7 @@
                 </ui:SettingsExpander>
 
                 <!--  Manual CPU Clock Control  -->
-                <ui:SettingsExpander
-                    Description="{l:Static resx:Resources.QuickPerformancePage_CPUControlDesc}"
-                    Header="{l:Static resx:Resources.QuickPerformancePage_CPUControl}"
-                    IsExpanded="{Binding ElementName=CPUOverrideToggle, Path=IsOn, Mode=TwoWay}">
+                <ui:SettingsExpander Description="{l:Static resx:Resources.QuickPerformancePage_CPUControlDesc}" Header="{l:Static resx:Resources.QuickPerformancePage_CPUControl}">
                     <ui:SettingsExpander.HeaderIcon>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xecc6;" />
                     </ui:SettingsExpander.HeaderIcon>
@@ -331,7 +360,7 @@
                     <ui:ToggleSwitch Name="CPUOverrideToggle" IsOn="{Binding CPUOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <ui:SettingsExpander.Items>
-                        <ui:SettingsCard Visibility="{Binding CPUOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <ui:SettingsCard IsEnabled="{Binding CPUOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
                                 <Label
                                     VerticalAlignment="Center"
@@ -361,7 +390,7 @@
                 <ui:SettingsExpander
                     Description="{l:Static resx:Resources.QuickPerformancePage_GPUControlDesc}"
                     Header="{l:Static resx:Resources.QuickPerformancePage_GPUControl}"
-                    IsExpanded="{Binding ElementName=GPUOverrideToggle, Path=IsOn, Mode=TwoWay}">
+                    IsEnabled="{Binding SupportsGPUFreq, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                     <ui:SettingsExpander.HeaderIcon>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xecc6;" />
                     </ui:SettingsExpander.HeaderIcon>
@@ -369,7 +398,7 @@
                     <ui:ToggleSwitch Name="GPUOverrideToggle" IsOn="{Binding GPUOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <ui:SettingsExpander.Items>
-                        <ui:SettingsCard IsEnabled="{Binding SupportsGPUFreq, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding GPUOverrideEnabled, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <ui:SettingsCard IsEnabled="{Binding GPUOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
                                 <Label
                                     VerticalAlignment="Center"
@@ -448,6 +477,37 @@
                 </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 
+            <!--  Power settings  -->
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="GPU settings" />
+            <ikw:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="3">
+
+                <!--  Intel Endurance Gaming  -->
+                <ui:SettingsExpander
+                    Description="{l:Static resx:Resources.PerformancePage_EnduranceGaming_Desc}"
+                    Header="{l:Static resx:Resources.PerformancePage_EnduranceGaming_Title}"
+                    IsEnabled="{Binding SupportsIntelEnduranceGaming, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ui:SettingsExpander.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe964;" />
+                    </ui:SettingsExpander.HeaderIcon>
+
+                    <ui:ToggleSwitch Name="EnduranceGamingToggle" IsOn="{Binding EnduranceGamingEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <ui:SettingsExpander.Items>
+                        <ui:SettingsCard Header="{l:Static resx:Resources.QuickPerformancePage_EnduranceGamingPreset}" IsEnabled="{Binding EnduranceGamingEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+
+                            <ComboBox
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                SelectedIndex="{Binding IntelEnduranceGamingPreset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBoxItem Name="EnduranceGamingPerformance" Content="{l:Static resx:Resources.QuickPerformancePage_EnduranceGamingPerformancePreset}" />
+                                <ComboBoxItem Name="EnduranceGamingBalanced" Content="{l:Static resx:Resources.QuickPerformancePage_EnduranceGamingBalancedPreset}" />
+                                <ComboBoxItem Name="EnduranceGamingEfficiency" Content="{l:Static resx:Resources.QuickPerformancePage_EnduranceGamingEfficiencyPreset}" />
+                            </ComboBox>
+                        </ui:SettingsCard>
+                    </ui:SettingsExpander.Items>
+                </ui:SettingsExpander>
+            </ikw:SimpleStackPanel>
+
             <!--  Fan settings  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_FanSettings}" />
             <ikw:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="3">
@@ -480,7 +540,6 @@
                             d:Visibility="Visible"
                             DataTooltip="{x:Null}"
                             DisableAnimations="True"
-                           
                             Zoom="None">
 
                             <lvc:CartesianChart.Series>
@@ -494,41 +553,44 @@
                                     StrokeThickness="4"
                                     Values="20,20,20,30,40,50,70,80,90,100,100" />
                             </lvc:CartesianChart.Series>
+
                             <lvc:CartesianChart.AxisY>
                                 <lvc:Axis
                                     Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
                                     LabelFormatter="{Binding Formatter}"
                                     MaxValue="100"
                                     MinValue="0">
-                                    <lvc:Axis.Sections>
-                                        <lvc:AxisSection
-                                            Panel.ZIndex="1"
-                                            DataLabel="True"
-                                            DataLabelForeground="{DynamicResource SystemControlPageTextBaseHighBrush}"
-                                            DisableAnimations="True"
-                                            SnapsToDevicePixels="True"
-                                            Stroke="{DynamicResource AccentAAFillColorDefaultBrush}"
-                                            StrokeThickness="1"
-                                            Value="{Binding YPointer}" />
-                                    </lvc:Axis.Sections>
                                     <lvc:Axis.Separator>
                                         <lvc:Separator Step="10" Stroke="{DynamicResource ExpanderHeaderBackground}" />
                                     </lvc:Axis.Separator>
                                 </lvc:Axis>
                             </lvc:CartesianChart.AxisY>
                             <lvc:CartesianChart.AxisX>
-                                <lvc:Axis Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}" Labels="0°C, 10°C, 20°C, 30°C, 40°C, 50°C, 60°C, 70°C, 80°C, 90°C, 100°C">
+                                <lvc:Axis
+                                    Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+                                    LabelFormatter="{Binding TempTickFormatter}"
+                                    MaxValue="10"
+                                    MinValue="0">
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Step="1" Stroke="{DynamicResource ExpanderHeaderBackground}" />
+                                    </lvc:Axis.Separator>
                                     <lvc:Axis.Sections>
                                         <lvc:AxisSection
                                             DataLabel="True"
                                             DataLabelForeground="{DynamicResource SystemControlPageTextBaseHighBrush}"
-                                            SnapsToDevicePixels="True"
-                                            Stroke="{DynamicResource AccentAAFillColorDefaultBrush}"
-                                            StrokeThickness="1"
-                                            Value="{Binding XPointer}" />
+                                            Stroke="{DynamicResource SystemControlForegroundAccentBrush}"
+                                            StrokeDashArray="2,2"
+                                            StrokeThickness="2"
+                                            Value="{Binding CpuTempX}" />
                                     </lvc:Axis.Sections>
+                                </lvc:Axis>
+
+                                <lvc:Axis
+                                    Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+                                    LabelFormatter="{Binding CpuXAxisFormatter}"
+                                    ShowLabels="True">
                                     <lvc:Axis.Separator>
-                                        <lvc:Separator Step="1" Stroke="{DynamicResource ExpanderHeaderBackground}" />
+                                        <lvc:Separator Step="0.01" StrokeThickness="0" />
                                     </lvc:Axis.Separator>
                                 </lvc:Axis>
                             </lvc:CartesianChart.AxisX>

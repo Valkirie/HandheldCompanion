@@ -11,8 +11,8 @@ namespace HandheldCompanion.Libraries
     {
         public string Storyline;
 
-        public Cover Cover;
-        public Artwork Artwork;
+        public Cover? Cover;
+        public Artwork? Artwork;
 
         [JsonIgnore] public List<Artwork> Artworks = new();
 

@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using HandheldCompanion.GraphicsProcessingUnit;
-using HandheldCompanion.Managers.Overlay.Widget;
 
 namespace HandheldCompanion.Managers.Overlay.Strategy;
 

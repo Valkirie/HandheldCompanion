@@ -31,7 +31,7 @@
         <ItemsControl ItemsSource="{Binding Notifications}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="3" />
+                    <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
 

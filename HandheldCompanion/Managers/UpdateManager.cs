@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Helpers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Notifications;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Views;
@@ -12,7 +13,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using HandheldCompanion.Notifications;
 using System.Timers;
 
 namespace HandheldCompanion.Managers
@@ -39,7 +39,7 @@ namespace HandheldCompanion.Managers
         private static UpdateStatus updateStatus;
         private static readonly Dictionary<string, UpdateFile> updateFiles = new();
 
-        private static string updateUrl = "";
+        private static string updateUrl = string.Empty;
         private static readonly HttpClient httpClient;
         private static readonly string InstallPath;
 
@@ -133,7 +133,7 @@ namespace HandheldCompanion.Managers
 
         private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
         {
-            switch(name)
+            switch (name)
             {
                 case "UpdateUrl":
                     updateUrl = Convert.ToString(value) ?? string.Empty;
@@ -278,7 +278,7 @@ namespace HandheldCompanion.Managers
 
                 // update message
                 UpdateAvailable.Message = $"Version {latestBuild.ToString()} is ready for download";
-                
+
                 ManagerFactory.notificationManager.Add(UpdateAvailable);
                 ToastManager.SendToast(UpdateAvailable.Action, UpdateAvailable.Message);
 

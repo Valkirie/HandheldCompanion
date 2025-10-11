@@ -2,7 +2,9 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels;
+
 using iNKORE.UI.WPF.Modern.Controls;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
@@ -185,12 +188,12 @@ public partial class LayoutPage : Page
         // levels (pages and mappings) could potentially be blocked for optimization.
         lock (updateLock)
         {
+            // Invoke Layout Updated to trigger ViewModel updates
+            LayoutUpdated?.Invoke(currentTemplate.Layout);
+
             // UI thread
             UIHelper.TryInvoke(() =>
             {
-                // Invoke Layout Updated to trigger ViewModel updates
-                LayoutUpdated?.Invoke(currentTemplate.Layout);
-
                 // clear layout selection
                 cB_Layouts.SelectedValue = null;
             });
@@ -388,7 +391,7 @@ public partial class LayoutPage : Page
                 navView.SelectedItem = NavViewItem;
 
             string header = currentTemplate.Product.Length > 0 ?
-                    "Profile: " + currentTemplate.Product : "Layout: Desktop";
+                    $"{Properties.Resources.LayoutPage_Profile}: " + currentTemplate.Product : $"{Properties.Resources.LayoutPage_LaytouDesktop}";
             parentNavView.Header = new TextBlock() { Text = header };
         }
     }

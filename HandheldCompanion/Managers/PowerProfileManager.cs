@@ -6,6 +6,7 @@ using HandheldCompanion.Views;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace HandheldCompanion.Managers
         private object profileLock = new();
         private PowerProfile currentProfile;
 
-        public Dictionary<Guid, PowerProfile> profiles = [];
+        public ConcurrentDictionary<Guid, PowerProfile> profiles = [];
 
         public PowerProfileManager()
         {
@@ -42,14 +43,13 @@ namespace HandheldCompanion.Managers
             foreach (var fileName in fileEntries)
                 ProcessProfile(fileName);
 
-            foreach (PowerProfile devicePowerProfile in IDevice.GetCurrent().DevicePowerProfiles)
+            foreach (PowerProfile profile in IDevice.GetCurrent().DevicePowerProfiles)
             {
-                if (!profiles.ContainsKey(devicePowerProfile.Guid))
-                    UpdateOrCreateProfile(devicePowerProfile, UpdateSource.Serializer);
+                if ((profile.Default || profile.DeviceDefault) && !profiles.ContainsKey(profile.Guid))
+                    UpdateOrCreateProfile(profile, UpdateSource.Serializer);
             }
 
             // manage events
-            PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged += LibreHardwareMonitor_CpuTemperatureChanged;
             ManagerFactory.profileManager.Applied += ProfileManager_Applied;
             ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
             SystemManager.PowerLineStatusChanged += SystemManager_PowerLineStatusChanged;
@@ -77,7 +77,29 @@ namespace HandheldCompanion.Managers
                     break;
             }
 
+            switch (ManagerFactory.platformManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.platformManager.Initialized += PlatformManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryPlatforms();
+                    break;
+            }
+
             base.Start();
+        }
+
+        private void QueryPlatforms()
+        {
+            // manage events
+            PlatformManager.LibreHardware.CPUTemperatureChanged += LibreHardwareMonitor_CpuTemperatureChanged;
+        }
+
+        private void PlatformManager_Initialized()
+        {
+            QueryPlatforms();
         }
 
         private void QueryProfile()
@@ -113,7 +135,7 @@ namespace HandheldCompanion.Managers
             base.PrepareStop();
 
             // manage events
-            PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged -= LibreHardwareMonitor_CpuTemperatureChanged;
+            PlatformManager.LibreHardware.CPUTemperatureChanged -= LibreHardwareMonitor_CpuTemperatureChanged;
             ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
             ManagerFactory.profileManager.Discarded -= ProfileManager_Discarded;
             ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
@@ -230,8 +252,7 @@ namespace HandheldCompanion.Managers
                     return;
 
                 // don't bother discarding settings, new one will be enforce shortly
-                if (!swapped)
-                    Discarded?.Invoke(powerProfile);
+                Discarded?.Invoke(powerProfile, swapped);
             }
         }
 
@@ -314,7 +335,7 @@ namespace HandheldCompanion.Managers
 
         public bool Contains(PowerProfile profile)
         {
-            return profiles.ContainsValue(profile);
+            return profiles.ContainsKey(profile.Guid);
         }
 
         public PowerProfile GetProfile(Guid guid)
@@ -375,7 +396,7 @@ namespace HandheldCompanion.Managers
 
             if (profiles.ContainsKey(profile.Guid))
             {
-                profiles.Remove(profile.Guid);
+                profiles.Remove(profile.Guid, out _);
 
                 lock (profileLock)
                 {
@@ -384,7 +405,7 @@ namespace HandheldCompanion.Managers
                 }
 
                 // raise event
-                Discarded?.Invoke(profile);
+                Discarded?.Invoke(profile, false);
 
                 // raise event(s)
                 Deleted?.Invoke(profile);
@@ -410,7 +431,7 @@ namespace HandheldCompanion.Managers
         public delegate void AppliedEventHandler(PowerProfile profile, UpdateSource source);
 
         public event DiscardedEventHandler Discarded;
-        public delegate void DiscardedEventHandler(PowerProfile profile);
+        public delegate void DiscardedEventHandler(PowerProfile profile, bool swapped);
         #endregion
     }
 }

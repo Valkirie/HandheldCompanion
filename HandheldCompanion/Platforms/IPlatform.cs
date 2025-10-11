@@ -1,9 +1,12 @@
-﻿using HandheldCompanion.Shared;
+﻿using GameLib.Core;
+using HandheldCompanion.Misc;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Security;
@@ -12,14 +15,21 @@ using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Platforms;
 
-public enum PlatformType
+[Flags]
+public enum GamePlatform
 {
-    Windows = 0,
+    Generic = 0,
     Steam = 1,
-    Origin = 2, // Implement me !
-    UbisoftConnect = 3,
-    GOG = 4,
-    RTSS = 5
+    Origin = 2,
+    UbisoftConnect = 4,
+    GOG = 8,
+    BattleNet = 16,
+    Epic = 32,
+    RiotGames = 64,
+    Rockstar = 128,
+    EADesktop = 256,
+
+    All = Generic | Steam | Origin | UbisoftConnect | GOG | BattleNet | Epic | RiotGames | Rockstar | EADesktop
 }
 
 public enum PlatformStatus
@@ -36,27 +46,26 @@ public enum PlatformStatus
 public abstract class IPlatform : IDisposable
 {
     protected readonly object updateLock = new();
-
-    private bool _IsInstalled;
+    protected List<string> BlacklistIds = new List<string>();
 
     private Process _Process;
-    protected string ExecutableName;
-    protected string RunningName;
-    protected string ExecutablePath;
+
+    public virtual string Name { get; set; }
+    public virtual string ExecutableName { get; set; }
+    public virtual string InstallPath { get; set; }
+    public virtual string ExecutablePath { get; set; }
+    public virtual bool IsInstalled { get; set; }
+
     protected Version ExpectedVersion;
 
-    public List<string> Executables => new() { ExecutableName, RunningName };
-
-    protected string InstallPath;
     protected bool IsStarting;
 
     protected bool KeepAlive;
     protected int MaxTentative = 3;
 
     protected List<string> Modules = [];
-    protected string Name;
 
-    public PlatformType PlatformType;
+    public GamePlatform PlatformType;
 
     protected Timer PlatformWatchdog;
     protected string SettingsPath;
@@ -76,7 +85,7 @@ public abstract class IPlatform : IDisposable
                 if (_Process is not null)
                     return _Process;
 
-                var processes = ProcessUtils.GetProcessesByExecutable(RunningName);
+                Process[] processes = ProcessUtils.GetProcessesByExecutable(ExecutableName);
                 if (processes.Length == 0)
                     return null;
 
@@ -93,22 +102,6 @@ public abstract class IPlatform : IDisposable
             {
                 return null;
             }
-        }
-    }
-
-    public bool IsInstalled
-    {
-        get => _IsInstalled;
-
-        set
-        {
-            _IsInstalled = value;
-
-            // raise event
-            if (value)
-                SetStatus(PlatformStatus.Ready);
-            else
-                SetStatus(PlatformStatus.Stalled);
         }
     }
 
@@ -182,6 +175,8 @@ public abstract class IPlatform : IDisposable
 
         Status = status;
         Updated?.Invoke(status);
+
+        LogManager.LogInformation("Platform {0} is {1}", this.GetType().Name, Status);
     }
 
     protected void SettingsValueChaned(string name, object value)
@@ -209,12 +204,16 @@ public abstract class IPlatform : IDisposable
         return string.Empty;
     }
 
-    public virtual bool IsRelated(Process process)
+    public virtual bool IsRelated(ProcessEx process)
     {
         try
         {
+            // Check executables
+            if (GetGames().Any(game => game.Executables.Contains(process.Path)))
+                return true;
+
             // Loop through the modules of the process
-            foreach (ProcessModule module in process.Modules)
+            foreach (ProcessModule module in process.Process.Modules)
             {
                 try
                 {
@@ -255,6 +254,9 @@ public abstract class IPlatform : IDisposable
 
         return true;
     }
+
+    public virtual void Refresh()
+    { }
 
     protected virtual void Process_Exited(object? sender, EventArgs e)
     {
@@ -357,6 +359,16 @@ public abstract class IPlatform : IDisposable
         {
             return false;
         }
+    }
+
+    public virtual IEnumerable<IGame> GetGames()
+    {
+        return new List<IGame>();
+    }
+
+    public virtual Image GetLogo()
+    {
+        return null;
     }
 
     public bool IsFileOverwritten(string FilePath, byte[] content)

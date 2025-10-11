@@ -1,11 +1,22 @@
-﻿using HandheldCompanion.Extensions;
+﻿using GameLib.Core;
+using GameLib.Plugin.BattleNet.Model;
+using GameLib.Plugin.EA.Model;
+using GameLib.Plugin.Epic.Model;
+using GameLib.Plugin.Gog.Model;
+using GameLib.Plugin.Origin.Model;
+using GameLib.Plugin.Rockstar.Model;
+using GameLib.Plugin.Steam.Model;
+using GameLib.Plugin.Ubisoft.Model;
+using HandheldCompanion.Extensions;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Platforms;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Pages;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -56,6 +67,7 @@ namespace HandheldCompanion.ViewModels
 
         public ICommand ToggleSortCommand { get; }
         public ICommand RefreshMetadataCommand { get; }
+        public ICommand ScanLibraryCommand { get; }
 
         private Color _highlightColor = Colors.Red;
         public Color HighlightColor
@@ -86,6 +98,19 @@ namespace HandheldCompanion.ViewModels
         }
 
         public bool IsLibraryConnected => ManagerFactory.libraryManager.IsConnected;
+
+        private Dictionary<Type, GamePlatform> keyValuePairs = new Dictionary<Type, GamePlatform>()
+        {
+            { typeof(BattleNetGame), GamePlatform.BattleNet },
+            { typeof(EpicGame), GamePlatform.Epic },
+            { typeof(GogGame), GamePlatform.GOG },
+            { typeof(OriginGame), GamePlatform.Origin },
+            { typeof(GameLib.Plugin.RiotGames.Model.Game), GamePlatform.RiotGames },
+            { typeof(RockstarGame), GamePlatform.Rockstar },
+            { typeof(SteamGame), GamePlatform.Steam },
+            { typeof(UbisoftGame), GamePlatform.UbisoftConnect },
+            { typeof(EAGame), GamePlatform.EADesktop },
+        };
 
         private LibraryPage LibraryPage;
         public LibraryPageViewModel(LibraryPage libraryPage)
@@ -121,6 +146,124 @@ namespace HandheldCompanion.ViewModels
                 {
                     case ContentDialogResult.Primary:
                         ManagerFactory.libraryManager.RefreshProfilesArts();
+                        break;
+                    default:
+                        break;
+                }
+            });
+
+            ScanLibraryCommand = new DelegateCommand<object>(async param =>
+            {
+                Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+                {
+                    Title = string.Format(Properties.Resources.LibraryScanTitle, param),
+                    Content = string.Format(Properties.Resources.LibraryScanContent, param),
+                    CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
+                    PrimaryButtonText = Properties.Resources.ProfilesPage_Yes
+                }.ShowAsync();
+
+                await dialogTask; // sync call
+
+                switch (dialogTask.Result)
+                {
+                    case ContentDialogResult.Primary:
+                        {
+                            List<IGame> games = new();
+
+                            switch (param)
+                            {
+                                case "All":
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.All));
+                                    break;
+                                case "BattleNet":
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.BattleNet));
+                                    break;
+                                case "Epic":
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.Epic));
+                                    break;
+                                case "GOG":
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.GOG));
+                                    break;
+                                case "Origin":
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.Origin));
+                                    break;
+                                case "EA Desktop":
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.EADesktop));
+                                    break;
+                                case "Riot":
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.RiotGames));
+                                    break;
+                                case "Rockstar":
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.Rockstar));
+                                    break;
+                                case "Steam":
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.Steam));
+                                    break;
+                                case "Ubisoft":
+                                    games.AddRange(PlatformManager.GetGames(GamePlatform.UbisoftConnect));
+                                    break;
+                            }
+
+                            foreach (IGame game in games)
+                            {
+                                Profile profile = null;
+                                bool isCreation;
+
+                                // Try to find an existing profile
+                                if (game.Executables.Any())
+                                {
+                                    foreach (string executable in game.Executables)
+                                    {
+                                        profile = ManagerFactory.profileManager.GetProfileFromPath(executable, true, true);
+                                        if (!profile.Default)
+                                            break;
+                                    }
+                                }
+                                else
+                                {
+                                    profile = ManagerFactory.profileManager.GetProfileFromPath(game.Executable, true, true);
+                                }
+
+                                // If profile is found and not default, update it. Otherwise, create a new one.
+                                if (profile != null && !profile.Default)
+                                {
+                                    isCreation = false;
+                                }
+                                else
+                                {
+                                    isCreation = true;
+                                    profile = new Profile(game.Executable);
+                                }
+
+                                if (profile is null)
+                                    return;
+
+                                // Filter out unwanted executables
+                                IEnumerable<string> Executables = game.Executables.Where(exe =>
+                                exe.IndexOf("redist", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                exe.IndexOf("crash", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                exe.IndexOf("setup", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                exe.IndexOf("error", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                exe.IndexOf("updater", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                exe.IndexOf("cheat", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                exe.IndexOf("editor", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                exe.IndexOf("tool", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                exe.IndexOf("uninst", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                exe.IndexOf("installer", StringComparison.OrdinalIgnoreCase) < 0);
+
+                                if (string.IsNullOrEmpty(profile.Path) && Executables.Any())
+                                    profile.Path = Executables.First();
+
+                                // Set common profile properties
+                                profile.Name = game.Name;
+                                profile.PlatformType = keyValuePairs[game.GetType()];
+                                profile.LaunchString = game.LaunchString;
+                                profile.Executables = Executables.ToList();
+
+                                ManagerFactory.profileManager.UpdateOrCreateProfile(profile, isCreation ? UpdateSource.Creation : UpdateSource.Background);
+                                ManagerFactory.libraryManager.RefreshProfileArts(profile, isCreation ? UpdateSource.Creation : UpdateSource.LibraryUpdate);
+                            }
+                        }
                         break;
                     default:
                         break;
@@ -168,7 +311,7 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(IsLibraryConnected));
         }
 
-        private void LibraryManager_NetworkAvailabilityChanged(object? sender, EventArgs e)
+        private void LibraryManager_NetworkAvailabilityChanged(bool status)
         {
             OnPropertyChanged(nameof(IsLibraryConnected));
         }
@@ -228,6 +371,10 @@ namespace HandheldCompanion.ViewModels
                     ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.LastUsed), direction));
                     ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.LastUsed));
                     break;
+                case 3:
+                    ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.PlatformType), direction));
+                    ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.PlatformType));
+                    break;
             }
 
             // hack to get ICollectionView to comply with ItemsRepeater
@@ -236,6 +383,7 @@ namespace HandheldCompanion.ViewModels
                 LibraryPage.ProfilesRepeater.ItemsSource = null;
                 LibraryPage.ProfilesRepeater.ItemsSource = ProfilesView;
             }
+            catch (NullReferenceException) { }
             catch { }
         }
 
@@ -298,6 +446,7 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
             ManagerFactory.profileManager.Deleted -= ProfileManager_Deleted;
             ManagerFactory.libraryManager.ProfileStatusChanged -= LibraryManager_ProfileStatusChanged;
+            ManagerFactory.libraryManager.NetworkAvailabilityChanged -= LibraryManager_NetworkAvailabilityChanged;
 
             base.Dispose();
         }

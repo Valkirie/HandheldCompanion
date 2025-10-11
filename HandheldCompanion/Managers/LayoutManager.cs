@@ -1,5 +1,6 @@
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Misc;
@@ -31,8 +32,8 @@ public class LayoutManager : IManager
 
     private Layout currentLayout = new();
     private Layout profileLayout = new();
-    private Layout defaultLayout = null;
-    private Layout desktopLayout = null;
+    private Layout? defaultLayout = null;
+    private Layout? desktopLayout = null;
 
     private ControllerState outputState = new();
 
@@ -323,22 +324,28 @@ public class LayoutManager : IManager
 
         if (layoutMode == LayoutModes.Gamepad)
         {
-            SetActiveLayout(profileLayout);
+            if (!currentLayout.Equals(profileLayout))
+                SetActiveLayout(profileLayout);
         }
         else if (layoutMode == LayoutModes.Desktop)
         {
-            SetActiveLayout(desktopLayout);
+            if (!currentLayout.Equals(desktopLayout))
+                SetActiveLayout(desktopLayout);
         }
         else if (layoutMode == LayoutModes.Auto)
         {
             if (UIGamepad.HasFocus() && defaultLayout is not null)
             {
-                SetActiveLayout(defaultLayout);
+                if (!currentLayout.Equals(defaultLayout))
+                    SetActiveLayout(defaultLayout);
             }
             else
             {
                 ProcessEx processEx = ProcessManager.GetCurrent();
-                SetActiveLayout((processEx == null || processEx.IsGame() || processEx.Filter == ProcessEx.ProcessFilter.HandheldCompanion) ? profileLayout : desktopLayout);
+                Layout targetLayout = (processEx == null || processEx.IsGame() || processEx.Filter == ProcessEx.ProcessFilter.HandheldCompanion) ? profileLayout : desktopLayout;
+
+                if (!currentLayout.Equals(targetLayout))
+                    SetActiveLayout(targetLayout);
             }
         }
     }
@@ -349,12 +356,17 @@ public class LayoutManager : IManager
         layoutTimer.Start();
     }
 
-    public Layout GetCurrent()
+    public Layout? GetDefault()
+    {
+        return defaultLayout;
+    }
+
+    public Layout? GetCurrent()
     {
         return currentLayout;
     }
 
-    public Layout GetDesktop()
+    public Layout? GetDesktop()
     {
         return desktopLayout;
     }
@@ -410,403 +422,324 @@ public class LayoutManager : IManager
 
             // (re)apply inheritance
             UpdateInherit();
+            // build caches for the new layout
+            BuildPlans();
+
+            LayoutChanged?.Invoke(currentLayout);
         }
     }
+
+    // --- Mapping plans & caches (rebuilt when currentLayout changes) ---
+    private Dictionary<ButtonFlags, IActions[]> _buttonPlan = new();
+    private Dictionary<AxisLayoutFlags, IActions[]> _axisPlan = new();
+    private Dictionary<AxisLayoutFlags, IActions> _gyroPlan = new(); // single action per flag in GyroLayout
+
+    // Cache AxisFlags (X,Y) for each AxisLayoutFlags to avoid per-tick GetAxisFlags & lookups
+    private readonly Dictionary<AxisLayoutFlags, (AxisFlags X, AxisFlags Y)> _axisXY = new();
+
+    // Reusable arrays to avoid multiple enumerations per tick
+    private ButtonFlags[] _plannedButtons = Array.Empty<ButtonFlags>();
+    private AxisLayoutFlags[] _plannedAxes = Array.Empty<AxisLayoutFlags>();
+    private AxisLayoutFlags[] _plannedGyroAxes = Array.Empty<AxisLayoutFlags>();
 
     private void UpdateInherit()
     {
         lock (updateLock)
         {
             // Check for inherit(s) and replace actions with default layout actions where necessary
-            IController controller = ControllerManager.GetTargetOrDefault();
-            if (controller is not null)
+            foreach (ButtonFlags buttonFlags in ButtonState.AllButtons.Union(IDevice.GetCurrent().OEMButtons))
             {
-                foreach (ButtonFlags buttonFlags in controller.GetTargetButtons())
+                if (currentLayout.ButtonLayout.TryGetValue(buttonFlags, out var actions) && actions.Any(action => action is InheritActions))
                 {
-                    if (currentLayout.ButtonLayout.TryGetValue(buttonFlags, out var actions) && actions.Any(action => action is InheritActions))
+                    // Replace with default layout actions
+                    if (defaultLayout.ButtonLayout.TryGetValue(buttonFlags, out var defaultActions))
+                        currentLayout.ButtonLayout[buttonFlags].AddRange(defaultActions);
+                }
+            }
+
+            // Check for inherit(s) and replace actions with default layout actions where necessary
+            foreach (AxisLayoutFlags axisLayout in AxisState.AllAxisLayoutFlags)
+            {
+                if (currentLayout.AxisLayout.TryGetValue(axisLayout, out List<IActions>? actions))
+                {
+                    foreach (IActions action in actions.Where(act => act is InheritActions))
                     {
                         // Replace with default layout actions
-                        if (defaultLayout.ButtonLayout.TryGetValue(buttonFlags, out var defaultActions))
-                            currentLayout.ButtonLayout[buttonFlags].AddRange(defaultActions);
-                    }
-                }
-
-                // Check for inherit(s) and replace actions with default layout actions where necessary
-                foreach (AxisLayoutFlags axisLayout in controller.GetTargetAxis().Union(controller.GetTargetTriggers()))
-                {
-                    if (currentLayout.AxisLayout.TryGetValue(axisLayout, out List<IActions>? actions))
-                    {
-                        foreach (IActions action in actions.Where(act => act is InheritActions))
-                        {
-                            // Replace with default layout actions
-                            if (defaultLayout.AxisLayout.TryGetValue(axisLayout, out var defaultActions))
-                                currentLayout.AxisLayout[axisLayout] = defaultActions;
-                        }
+                        if (defaultLayout.AxisLayout.TryGetValue(axisLayout, out var defaultActions))
+                            currentLayout.AxisLayout[axisLayout] = defaultActions;
                     }
                 }
             }
         }
     }
 
-    public ControllerState MapController(ControllerState controllerState)
+    private void BuildPlans()
     {
-        // when no profile active and default is disabled, do 1:1 controller mapping
+        // Clear old plans
+        _buttonPlan.Clear();
+        _axisPlan.Clear();
+        _gyroPlan.Clear();
+
+        // Buttons
+        foreach (var kv in currentLayout.ButtonLayout)
+        {
+            // Store as array to avoid enumerator allocations & repeated Count checks
+            var actions = kv.Value is List<IActions> list ? list.ToArray() : kv.Value.ToArray();
+            _buttonPlan[kv.Key] = actions;
+        }
+
+        // Axes (sticks/pads/triggers routed as axes)
+        foreach (var kv in currentLayout.AxisLayout)
+        {
+            var actions = kv.Value is List<IActions> list ? list.ToArray() : kv.Value.ToArray();
+            _axisPlan[kv.Key] = actions;
+        }
+
+        // Gyro
+        foreach (var kv in currentLayout.GyroLayout)
+        {
+            // GyroLayout maps one action per flag in current design
+            _gyroPlan[kv.Key] = kv.Value;
+        }
+
+        // Frozen key arrays for faster iteration
+        _plannedButtons = _buttonPlan.Keys.ToArray();
+        _plannedAxes = _axisPlan.Keys.ToArray();
+        _plannedGyroAxes = _gyroPlan.Keys.ToArray();
+
+        // Cache AxisFlags(X,Y) for every AxisLayoutFlags we will touch
+        _axisXY.Clear();
+        void EnsureXY(AxisLayoutFlags f)
+        {
+            if (_axisXY.ContainsKey(f)) return;
+            var layout = AxisLayout.Layouts[f];
+            _axisXY[f] = (layout.GetAxisFlags('X'), layout.GetAxisFlags('Y'));
+        }
+
+        foreach (var f in _plannedAxes) EnsureXY(f);
+        foreach (var f in _plannedGyroAxes) EnsureXY(f);
+
+        // Also ensure all possible output targets referenced by actions are cached
+        foreach (var actions in _axisPlan.Values)
+            for (int i = 0; i < actions.Length; i++)
+                if (actions[i] is AxisActions aa) EnsureXY(aa.Axis);
+                else if (actions[i] is TriggerActions ta) EnsureXY(ta.Axis);
+
+        foreach (var actions in _buttonPlan.Values)
+            for (int i = 0; i < actions.Length; i++)
+                if (actions[i] is TriggerActions ta) EnsureXY(ta.Axis);
+    }
+
+    public ControllerState MapController(ControllerState controllerState, float delta)
+    {
+        // 1:1 mapping when no active layout
         if (currentLayout is null)
             return controllerState;
 
         lock (updateLock)
         {
-            // clean output state, there should be no leaking of current controller state,
-            // only buttons/axes mapped from the layout should be passed on
-            // according to ChatGPT, (re)initializing ConcurrentDictionary is faster than clearing it
-            outputState.ButtonState.State = new();
-            outputState.AxisState.State = new();
+            // Reset output
+            outputState.ButtonState.Clear();
+            outputState.AxisState.Clear();
+            outputState.GyroState.CopyFrom(controllerState.GyroState);
 
-            // dispose previous state to prevent memory leak
-            outputState.GyroState?.Dispose();
-            outputState.GyroState = new(controllerState.GyroState.Accelerometer, controllerState.GyroState.Gyroscope);
-
-            // we need to check for shifter(s) first
+            // compute ShiftSlot
             ShiftSlot shiftSlot = ShiftSlot.None;
-            foreach (KeyValuePair<ButtonFlags, bool> buttonState in controllerState.ButtonState.State)
-            {
-                ButtonFlags button = buttonState.Key;
-                bool value = buttonState.Value;
 
-                // skip, if not mapped
-                if (!currentLayout.ButtonLayout.TryGetValue(button, out List<IActions> actions))
+            // in ms
+            delta *= 1000.0f;
+
+            // Iterate only over buttons that actually have actions, but also consider real buttons present in state
+            // to maintain shifter behavior even if the button is unmapped elsewhere.
+            foreach (ButtonFlags button in ButtonState.AllButtons)
+            {
+                bool value = controllerState.ButtonState[button];
+
+                if (!_buttonPlan.TryGetValue(button, out var actions))
                     continue;
 
-                foreach (IActions action in actions)
+                for (int i = 0; i < actions.Length; i++)
                 {
-                    switch (action.actionType)
-                    {
-                        // button to shift
-                        case ActionType.Shift:
-                            {
-                                ShiftActions sAction = action as ShiftActions;
-                                sAction.Execute(button, value, shiftSlot);
-                                bool outVal = sAction.GetValue();
+                    var act = actions[i];
+                    if (act.actionType != ActionType.Shift)
+                        continue;
 
-                                if (outVal) shiftSlot |= sAction.ShiftSlot;
-                            }
-                            break;
-                    }
+                    // cast once
+                    var sAction = (ShiftActions)act;
+                    sAction.Execute(button, value, shiftSlot, delta);
+                    if (sAction.GetValue())
+                        shiftSlot |= sAction.ShiftSlot;
                 }
             }
 
-            foreach (KeyValuePair<ButtonFlags, bool> buttonState in controllerState.ButtonState.State)
+            // process button-based map
+            foreach (ButtonFlags button in ButtonState.AllButtons)
             {
-                ButtonFlags button = buttonState.Key;
-                bool value = buttonState.Value;
+                bool value = controllerState.ButtonState[button];
 
-                // skip, if not mapped
-                // we might have to keep fake buttons
-                if (!currentLayout.ButtonLayout.TryGetValue(button, out List<IActions> actions))
+                if (!_buttonPlan.TryGetValue(button, out var actions))
                 {
+                    // passthrough if unmapped (keeps fake buttons behavior)
                     outputState.ButtonState[button] = value;
                     continue;
                 }
 
-                foreach (IActions action in actions)
+                for (int i = 0; i < actions.Length; i++)
                 {
-                    switch (action.actionType)
+                    var act = actions[i];
+
+                    switch (act.actionType)
                     {
-                        // button to button
                         case ActionType.Button:
                             {
-                                ButtonActions bAction = action as ButtonActions;
-                                bAction.Execute(button, value, shiftSlot);
-
-                                bool outVal = bAction.GetValue() || outputState.ButtonState[bAction.Button];
-                                outputState.ButtonState[bAction.Button] = outVal;
+                                var b = (ButtonActions)act;
+                                b.Execute(button, value, shiftSlot, delta);
+                                bool outVal = b.GetValue() || outputState.ButtonState[b.Button];
+                                outputState.ButtonState[b.Button] = outVal;
+                                break;
                             }
-                            break;
-
-                        // button to keyboard key
                         case ActionType.Keyboard:
                             {
-                                KeyboardActions kAction = action as KeyboardActions;
-                                kAction.Execute(button, value, shiftSlot);
+                                ((KeyboardActions)act).Execute(button, value, shiftSlot, delta);
+                                break;
                             }
-                            break;
-
-                        // button to mouse click
                         case ActionType.Mouse:
                             {
-                                MouseActions mAction = action as MouseActions;
-                                mAction.Execute(button, value, shiftSlot);
+                                ((MouseActions)act).Execute(button, value, shiftSlot, delta);
+                                break;
                             }
-                            break;
-
                         case ActionType.Trigger:
                             {
-                                TriggerActions tAction = action as TriggerActions;
-                                tAction.Execute(button, value, shiftSlot);
-
-                                // read output axis
-                                AxisLayout OutLayout = AxisLayout.Layouts[tAction.Axis];
-                                AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
-
-                                outputState.AxisState[OutAxisY] = (byte)Math.Clamp(outputState.AxisState[OutAxisY] + tAction.GetValue(), byte.MinValue, byte.MaxValue);
+                                var t = (TriggerActions)act;
+                                t.Execute(button, value, shiftSlot, delta);
+                                // write Y only (triggers)
+                                var xyOut = _axisXY[t.Axis];
+                                byte add = t.GetValue();
+                                outputState.AxisState[xyOut.Y] = (byte)Math.Clamp(outputState.AxisState[xyOut.Y] + add, byte.MinValue, byte.MaxValue);
+                                break;
                             }
-                            break;
                     }
 
-                    switch (action.actionState)
-                    {
-                        case ActionState.Aborted:
-                        case ActionState.Stopped:
-                            {
-                                foreach (IActions action2 in actions.Where(a => a.ShiftSlot == action.ShiftSlot))
-                                {
-                                    if (action2 == action)
-                                        continue;
-
-                                    if (!action2.Interruptable)
-                                        continue;
-
-                                    if (action2.actionState == ActionState.Succeed)
-                                        continue;
-
-                                    if (action2.actionState != ActionState.Stopped && action2.actionState != ActionState.Aborted)
-                                        action2.actionState = ActionState.Stopped;
-                                }
-
-                                if (action.actionState == ActionState.Aborted)
-                                {
-                                    int idx = actions.IndexOf(action);
-                                    if (idx >= 0 && idx < actions.Count - 1)
-                                    {
-                                        var currentShiftSlot = action.ShiftSlot;
-
-                                        // Find the next action with the same ShiftSlot after the current index
-                                        IActions nextAction = actions
-                                            .Skip(idx + 1)
-                                            .FirstOrDefault(a => a.ShiftSlot == currentShiftSlot && a.Interruptable);
-
-                                        if (nextAction != null)
-                                            nextAction.actionState = ActionState.Forced;
-                                    }
-                                }
-                            }
-                            break;
-
-                        case ActionState.Running:
-                            {
-                                foreach (IActions action2 in actions.Where(a => a.ShiftSlot == action.ShiftSlot))
-                                {
-                                    if (action2 == action)
-                                        continue;
-
-                                    if (!action2.Interruptable)
-                                        continue;
-
-                                    if (action2.actionState == ActionState.Succeed)
-                                        continue;
-
-                                    action2.actionState = ActionState.Suspended;
-                                }
-                            }
-                            break;
-                    }
+                    ApplyActionStateSideEffects(actions, i);
                 }
             }
 
-            foreach (KeyValuePair<AxisLayoutFlags, List<IActions>> axisLayout in currentLayout.AxisLayout)
+            // process axis-based map
+            for (int a = 0; a < _plannedAxes.Length; a++)
             {
-                AxisLayoutFlags flags = axisLayout.Key;
-                List<IActions> actions = axisLayout.Value;
+                var inFlag = _plannedAxes[a];
+                var actions = _axisPlan[inFlag];
 
-                // read origin values
-                AxisLayout InLayout = AxisLayout.Layouts[flags];
-                AxisFlags InAxisX = InLayout.GetAxisFlags('X');
-                AxisFlags InAxisY = InLayout.GetAxisFlags('Y');
+                // Read origin values
+                var xyIn = _axisXY[inFlag];
+                var inX = controllerState.AxisState[xyIn.X];
+                var inY = controllerState.AxisState[xyIn.Y];
 
-                InLayout.vector.X = controllerState.AxisState[InAxisX];
-                InLayout.vector.Y = controllerState.AxisState[InAxisY];
+                // Prepare InLayout (mutate the shared static to avoid allocs)
+                var inLayout = AxisLayout.Layouts[inFlag];
+                inLayout.vector.X = inX;
+                inLayout.vector.Y = inY;
 
-                // pull action(s)
-                foreach (IActions action in actions)
+                // "Touched" for pads (needed by MouseActions)
+                bool touched = false;
+                if (ControllerState.AxisTouchButtons.TryGetValue(inLayout.flags, out var touchButton))
+                    touched = controllerState.ButtonState[touchButton];
+
+                for (int i = 0; i < actions.Length; i++)
                 {
-                    switch (action.actionType)
+                    var act = actions[i];
+
+                    switch (act.actionType)
                     {
                         case ActionType.Button:
                             {
-                                ButtonActions bAction = action as ButtonActions;
-                                bAction.Execute(InLayout, shiftSlot);
-
-                                bool outVal = bAction.GetValue() || outputState.ButtonState[bAction.Button];
-                                outputState.ButtonState[bAction.Button] = outVal;
+                                var b = (ButtonActions)act;
+                                b.Execute(inLayout, shiftSlot, delta);
+                                bool outVal = b.GetValue() || outputState.ButtonState[b.Button];
+                                outputState.ButtonState[b.Button] = outVal;
+                                break;
                             }
-                            break;
-
-                        // button to keyboard key
                         case ActionType.Keyboard:
                             {
-                                KeyboardActions kAction = action as KeyboardActions;
-                                kAction.Execute(InLayout, shiftSlot);
+                                ((KeyboardActions)act).Execute(inLayout, shiftSlot, delta);
+                                break;
                             }
-                            break;
-
                         case ActionType.Joystick:
                             {
-                                AxisActions aAction = action as AxisActions;
-                                aAction.Execute(InLayout, shiftSlot);
+                                var ax = (AxisActions)act;
+                                ax.Execute(inLayout, shiftSlot, delta);
 
-                                // read output axis
-                                AxisLayout OutLayout = AxisLayout.Layouts[aAction.Axis];
-                                AxisFlags OutAxisX = OutLayout.GetAxisFlags('X');
-                                AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
+                                var xyOut = _axisXY[ax.Axis];
+                                short addX = (short)Math.Clamp(ax.XOuput, short.MinValue, short.MaxValue);
+                                short addY = (short)Math.Clamp(ax.YOuput, short.MinValue, short.MaxValue);
 
-                                outputState.AxisState[OutAxisX] = (short)Math.Clamp(outputState.AxisState[OutAxisX] + aAction.XOuput, short.MinValue, short.MaxValue);
-                                outputState.AxisState[OutAxisY] = (short)Math.Clamp(outputState.AxisState[OutAxisY] + aAction.YOuput, short.MinValue, short.MaxValue);
+                                outputState.AxisState[xyOut.X] = (short)Math.Clamp(outputState.AxisState[xyOut.X] + addX, short.MinValue, short.MaxValue);
+                                outputState.AxisState[xyOut.Y] = (short)Math.Clamp(outputState.AxisState[xyOut.Y] + addY, short.MinValue, short.MaxValue);
+                                break;
                             }
-                            break;
-
                         case ActionType.Trigger:
                             {
-                                TriggerActions tAction = action as TriggerActions;
-                                tAction.Execute(InAxisY, (byte)InLayout.vector.Y, shiftSlot);
+                                var t = (TriggerActions)act;
+                                t.Execute(xyIn.Y, inLayout.vector.Y, shiftSlot, delta); // Y drives trigger
 
-                                // read output axis
-                                AxisLayout OutLayout = AxisLayout.Layouts[tAction.Axis];
-                                AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
-
-                                outputState.AxisState[OutAxisY] = (byte)Math.Clamp(outputState.AxisState[OutAxisY] + tAction.GetValue(), byte.MinValue, byte.MaxValue);
+                                var xyOut = _axisXY[t.Axis];
+                                byte add = t.GetValue();
+                                outputState.AxisState[xyOut.Y] = (byte)Math.Clamp(outputState.AxisState[xyOut.Y] + add, byte.MinValue, byte.MaxValue);
+                                break;
                             }
-                            break;
-
                         case ActionType.Mouse:
                             {
-                                MouseActions mAction = action as MouseActions;
-
-                                // This buttonState check won't work here if UpdateInputs is event based, might need a rework in the future
-                                bool touched = false;
-                                if (ControllerState.AxisTouchButtons.TryGetValue(InLayout.flags, out ButtonFlags touchButton))
-                                    touched = controllerState.ButtonState[touchButton];
-
-                                mAction.Execute(InLayout, touched, shiftSlot);
+                                var m = (MouseActions)act;
+                                m.Execute(inLayout, touched, shiftSlot, delta);
+                                break;
                             }
-                            break;
                     }
 
-                    switch (action.actionState)
-                    {
-                        case ActionState.Aborted:
-                        case ActionState.Stopped:
-                            {
-                                foreach (IActions action2 in actions.Where(a => a.ShiftSlot == action.ShiftSlot))
-                                {
-                                    if (action2 == action)
-                                        continue;
-
-                                    if (!action2.Interruptable)
-                                        continue;
-
-                                    if (action2.actionState == ActionState.Succeed)
-                                        continue;
-
-                                    if (action2.actionState != ActionState.Stopped && action2.actionState != ActionState.Aborted)
-                                        action2.actionState = ActionState.Stopped;
-                                }
-
-                                if (action.actionState == ActionState.Aborted)
-                                {
-                                    int idx = actions.IndexOf(action);
-                                    if (idx >= 0 && idx < actions.Count - 1)
-                                    {
-                                        var currentShiftSlot = action.ShiftSlot;
-
-                                        // Find the next action with the same ShiftSlot after the current index
-                                        IActions nextAction = actions
-                                            .Skip(idx + 1)
-                                            .FirstOrDefault(a => a.ShiftSlot == currentShiftSlot && a.Interruptable);
-
-                                        if (nextAction != null)
-                                            nextAction.actionState = ActionState.Forced;
-                                    }
-                                }
-                            }
-                            break;
-
-                        case ActionState.Running:
-                            {
-                                foreach (IActions action2 in actions.Where(a => a.ShiftSlot == action.ShiftSlot))
-                                {
-                                    if (action2 == action)
-                                        continue;
-
-                                    if (!action2.Interruptable)
-                                        continue;
-
-                                    if (action2.actionState == ActionState.Succeed)
-                                        continue;
-
-                                    action2.actionState = ActionState.Suspended;
-                                }
-                            }
-                            break;
-                    }
+                    ApplyActionStateSideEffects(actions, i);
                 }
             }
 
-            foreach (KeyValuePair<AxisLayoutFlags, IActions> axisLayout in currentLayout.GyroLayout)
+            // process gyro-based map
+            for (int g = 0; g < _plannedGyroAxes.Length; g++)
             {
-                AxisLayoutFlags flags = axisLayout.Key;
+                var inFlag = _plannedGyroAxes[g];
+                var action = _gyroPlan[inFlag];
+                if (action is null) continue;
 
-                // read origin values
-                AxisLayout InLayout = AxisLayout.Layouts[flags];
-                AxisFlags InAxisX = InLayout.GetAxisFlags('X');
-                AxisFlags InAxisY = InLayout.GetAxisFlags('Y');
-
-                InLayout.vector.X = controllerState.AxisState[InAxisX];
-                InLayout.vector.Y = controllerState.AxisState[InAxisY];
-
-                // pull action
-                IActions action = axisLayout.Value;
-
-                if (action is null)
-                    continue;
+                var xyIn = _axisXY[inFlag];
+                var inLayout = AxisLayout.Layouts[inFlag];
+                inLayout.vector.X = controllerState.AxisState[xyIn.X];
+                inLayout.vector.Y = controllerState.AxisState[xyIn.Y];
 
                 switch (action.actionType)
                 {
                     case ActionType.Joystick:
                         {
-                            AxisActions aAction = action as AxisActions;
-                            aAction.Execute(InLayout, shiftSlot);
+                            var a = (AxisActions)action;
+                            a.Execute(inLayout, shiftSlot, delta);
 
-                            // Read output axis
-                            AxisLayout OutLayout = AxisLayout.Layouts[aAction.Axis];
-                            AxisFlags OutAxisX = OutLayout.GetAxisFlags('X');
-                            AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
+                            // blend with stick using gyro weight logic
+                            var xyOut = _axisXY[a.Axis];
+                            var current = new Vector2(outputState.AxisState[xyOut.X], outputState.AxisState[xyOut.Y]);
 
-                            Vector2 joystick = new Vector2(outputState.AxisState[OutAxisX], outputState.AxisState[OutAxisY]);
+                            float len = Math.Clamp(current.Length() / short.MaxValue, 0f, 1f);
+                            float weightFactor = a.gyroWeight - len;
+                            var result = current + a.GetValue() * weightFactor;
 
-                            // Reduce motion weight based on joystick position
-                            // Get the distance of the joystick from the center
-                            float joystickLength = Math.Clamp(joystick.Length() / short.MaxValue, 0, 1);
-                            float weightFactor = aAction.gyroWeight - joystickLength;
-                            Vector2 result = joystick + aAction.GetValue() * weightFactor;
-
-                            // Apply clamping to the result to stay in range of joystick
-                            outputState.AxisState[OutAxisX] = (short)Math.Clamp(result.X, short.MinValue, short.MaxValue);
-                            outputState.AxisState[OutAxisY] = (short)Math.Clamp(result.Y, short.MinValue, short.MaxValue);
+                            outputState.AxisState[xyOut.X] = (short)Math.Clamp(result.X, short.MinValue, short.MaxValue);
+                            outputState.AxisState[xyOut.Y] = (short)Math.Clamp(result.Y, short.MinValue, short.MaxValue);
+                            break;
                         }
-                        break;
-
                     case ActionType.Mouse:
                         {
-                            MouseActions mAction = action as MouseActions;
-
-                            // This buttonState check won't work here if UpdateInputs is event based, might need a rework in the future
+                            var m = (MouseActions)action;
                             bool touched = false;
-                            if (ControllerState.AxisTouchButtons.TryGetValue(InLayout.flags, out ButtonFlags touchButton))
+                            if (ControllerState.AxisTouchButtons.TryGetValue(inLayout.flags, out var touchButton))
                                 touched = controllerState.ButtonState[touchButton];
 
-                            mAction.Execute(InLayout, touched, shiftSlot);
+                            m.Execute(inLayout, touched, shiftSlot, delta);
+                            break;
                         }
-                        break;
                 }
             }
 
@@ -814,7 +747,61 @@ public class LayoutManager : IManager
         }
     }
 
+    private static void ApplyActionStateSideEffects(IActions[] actions, int currentIndex)
+    {
+        var action = actions[currentIndex];
+        var slot = action.ShiftSlot;
+
+        if (action.actionState == ActionState.Aborted || action.actionState == ActionState.Stopped)
+        {
+            // Stop/sanitize siblings with same ShiftSlot
+            for (int j = 0; j < actions.Length; j++)
+            {
+                if (j == currentIndex) continue;
+                var a2 = actions[j];
+                if (a2.ShiftSlot != slot) continue;
+                if (!a2.Interruptable) continue;
+                if (a2.actionState == ActionState.Succeed) continue;
+
+                var st = a2.actionState;
+                if (st != ActionState.Stopped && st != ActionState.Aborted)
+                    a2.actionState = ActionState.Stopped;
+            }
+
+            // On Aborted, force the next interruptable action with same ShiftSlot
+            if (action.actionState == ActionState.Aborted)
+            {
+                for (int j = currentIndex + 1; j < actions.Length; j++)
+                {
+                    var next = actions[j];
+                    if (next.ShiftSlot == slot && next.Interruptable)
+                    {
+                        next.actionState = ActionState.Forced;
+                        break;
+                    }
+                }
+            }
+        }
+        else if (action.actionState == ActionState.Running)
+        {
+            // Suspend siblings (same ShiftSlot), except Succeed
+            for (int j = 0; j < actions.Length; j++)
+            {
+                if (j == currentIndex) continue;
+                var a2 = actions[j];
+                if (a2.ShiftSlot != slot) continue;
+                if (!a2.Interruptable) continue;
+                if (a2.actionState == ActionState.Succeed) continue;
+
+                a2.actionState = ActionState.Suspended;
+            }
+        }
+    }
+
     #region events
+
+    public event LayoutChangedEventHandler LayoutChanged;
+    public delegate void LayoutChangedEventHandler(Layout layout);
 
     public event UpdatedEventHandler Updated;
     public delegate void UpdatedEventHandler(LayoutTemplate layoutTemplate);

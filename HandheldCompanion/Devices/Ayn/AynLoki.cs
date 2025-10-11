@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Inputs;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -46,6 +47,8 @@ public class AynLoki : IDevice
         // device specific capacities        
         Capabilities |= DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.DynamicLighting;
+
+        // dynamic lighting capacities
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
 
         OEMChords.Add(new KeyboardChord("Guide",
@@ -59,6 +62,10 @@ public class AynLoki : IDevice
             [KeyCode.T, KeyCode.LMenu, KeyCode.LShift, KeyCode.LControl],
             false, ButtonFlags.OEM2
         ));
+
+        // prepare hotkeys
+        DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
+        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
     }
 
     public override void SetFanControl(bool enable, int mode)

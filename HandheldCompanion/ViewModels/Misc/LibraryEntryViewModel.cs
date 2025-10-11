@@ -50,7 +50,9 @@ namespace HandheldCompanion.ViewModels
             }
             else if (LibEntry is IGDBEntry IGDB)
             {
-                LibraryCovers.Add(new(this, IGDB.Cover.Id.Value, Path.GetExtension(IGDB.Cover.Url)));
+                if (IGDB.Cover is not null)
+                    LibraryCovers.Add(new(this, IGDB.Cover.Id.HasValue ? IGDB.Cover.Id.Value : 0, Path.GetExtension(IGDB.Cover.Url)));
+
                 foreach (Artwork artwork in IGDB.Artworks)
                     LibraryArtworks.Add(new(this, artwork.Id.Value, Path.GetExtension(artwork.Url)));
             }

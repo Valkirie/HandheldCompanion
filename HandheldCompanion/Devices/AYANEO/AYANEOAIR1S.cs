@@ -7,7 +7,7 @@ public class AYANEOAIR1S : AYANEOAIR
 {
     public AYANEOAIR1S()
     {
-        // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
+        // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html
         this.nTDP = new double[] { 15, 15, 20 };
         this.cTDP = new double[] { 4, 28 };
         this.GfxClock = new double[] { 100, 2700 };

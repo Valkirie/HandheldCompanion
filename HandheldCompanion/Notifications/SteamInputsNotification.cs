@@ -16,6 +16,9 @@ namespace HandheldCompanion.Notifications
 
         public override void Execute()
         {
+            if (!ManagerFactory.platformManager.IsReady)
+                return;
+
             Task.Run(async () =>
             {
                 // halt steam and wait

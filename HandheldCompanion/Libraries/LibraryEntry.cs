@@ -5,10 +5,12 @@ namespace HandheldCompanion.Libraries
     [Serializable]
     public class LibraryEntry
     {
+        [Flags]
         public enum LibraryFamily
         {
-            IGDB,
-            SteamGrid
+            None = 0,
+            IGDB = 1,
+            SteamGrid = 2,
         }
 
         public LibraryFamily Family;

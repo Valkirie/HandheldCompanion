@@ -26,9 +26,6 @@ namespace HandheldCompanion.Controllers
 
         public event VisibilityChangedEventHandler VisibilityChanged;
         public delegate void VisibilityChangedEventHandler(bool status);
-
-        public event InputsUpdatedEventHandler InputsUpdated;
-        public delegate void InputsUpdatedEventHandler(ControllerState Inputs, Dictionary<byte, GamepadMotion> gamepadMotions, float delta, byte gamepadIndex);
         #endregion
 
         // Buttons and axes we should be able to map to.
@@ -78,13 +75,16 @@ namespace HandheldCompanion.Controllers
         protected SortedDictionary<AxisLayoutFlags, Color> ColoredAxis = [];
         protected SortedDictionary<ButtonFlags, Color> ColoredButtons = [];
 
-        protected PnPDetails? Details;
+        public PnPDetails? Details;
 
         public ButtonState InjectedButtons = new();
         public ControllerState Inputs = new();
 
-        protected byte gamepadIndex = 0;
-        protected Dictionary<byte, GamepadMotion> gamepadMotions = new();
+        // motion variables
+        public byte gamepadIndex = 0;
+        public Dictionary<byte, GamepadMotion> gamepadMotions = new();
+        protected float aX = 0.0f, aZ = 0.0f, aY = 0.0f;
+        protected float gX = 0.0f, gZ = 0.0f, gY = 0.0f;
 
         protected double VibrationStrength = 1.0d;
         private Task rumbleTask;
@@ -95,8 +95,7 @@ namespace HandheldCompanion.Controllers
         public volatile bool IsDisposing = false;
 
         public virtual bool IsReady => true;
-
-        public bool isPlaceholder;
+        public bool IsPlugged => ControllerManager.IsTargetController(GetInstanceId());
 
         private bool _IsBusy;
         public bool IsBusy
@@ -117,7 +116,7 @@ namespace HandheldCompanion.Controllers
         }
 
         private byte _UserIndex = 255;
-        protected byte UserIndex
+        public virtual byte UserIndex
         {
             get
             {
@@ -138,15 +137,38 @@ namespace HandheldCompanion.Controllers
         {
             gamepadMotions[gamepadIndex] = new(string.Empty, CalibrationMode.Manual);
             InitializeInputOutput();
+
+            // raise events
+            switch (ManagerFactory.settingsManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QuerySettings();
+                    break;
+            }
+        }
+
+        protected virtual void QuerySettings()
+        {
+            // manage events
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        }
+
+        protected virtual void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+        { }
+
+        protected virtual void SettingsManager_Initialized()
+        {
+            QuerySettings();
         }
 
         ~IController()
         {
             Dispose(false);
         }
-
-        protected virtual void UpdateSettings()
-        { }
 
         protected virtual void InitializeInputOutput()
         { }
@@ -161,9 +183,10 @@ namespace HandheldCompanion.Controllers
 
             // manage gamepad motion
             gamepadMotions[gamepadIndex] = new(details.baseContainerDeviceInstanceId);
+            InitializeInputOutput();
         }
 
-        public virtual void UpdateInputs(long ticks, float delta)
+        public virtual void Tick(long ticks, float delta, bool commit = false)
         {
             if (IsBusy)
                 return;
@@ -177,8 +200,6 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.RightStickRight] = Inputs.AxisState[AxisFlags.RightStickX] > Gamepad.RightThumbDeadZone;
             Inputs.ButtonState[ButtonFlags.RightStickDown] = Inputs.AxisState[AxisFlags.RightStickY] < -Gamepad.RightThumbDeadZone;
             Inputs.ButtonState[ButtonFlags.RightStickUp] = Inputs.AxisState[AxisFlags.RightStickY] > Gamepad.RightThumbDeadZone;
-
-            InputsUpdated?.Invoke(Inputs, gamepadMotions, delta, gamepadIndex);
         }
 
         public bool HasMotionSensor()
@@ -226,6 +247,11 @@ namespace HandheldCompanion.Controllers
         {
             if (Details is not null)
                 return Details.isGaming;
+            return false;
+        }
+
+        public virtual bool IsDummy()
+        {
             return false;
         }
 
@@ -309,7 +335,7 @@ namespace HandheldCompanion.Controllers
             return new();
         }
 
-        public void InjectState(ButtonState State, bool IsKeyDown, bool IsKeyUp)
+        public virtual void InjectState(ButtonState State, bool IsKeyDown, bool IsKeyUp)
         {
             if (State.IsEmpty())
                 return;
@@ -321,7 +347,7 @@ namespace HandheldCompanion.Controllers
                 IsKeyDown, IsKeyUp, ToString());
         }
 
-        public void InjectButton(ButtonFlags button, bool IsKeyDown, bool IsKeyUp)
+        public virtual void InjectButton(ButtonFlags button, bool IsKeyDown, bool IsKeyUp)
         {
             if (button == ButtonFlags.None)
                 return;
@@ -400,22 +426,15 @@ namespace HandheldCompanion.Controllers
             });
         }
 
-        public bool IsPlugged => ControllerManager.IsTargetController(GetInstanceId());
         public virtual void Plug()
         {
-            if (isPlaceholder)
-                return;
-
             SetVibrationStrength(ManagerFactory.settingsManager.GetUInt("VibrationStrength"));
 
             InjectedButtons.Clear();
         }
 
         public virtual void Unplug()
-        {
-            if (isPlaceholder)
-                return;
-        }
+        { }
 
         public bool IsHidden()
         {
@@ -426,9 +445,6 @@ namespace HandheldCompanion.Controllers
 
         public virtual void Hide(bool powerCycle = true)
         {
-            if (isPlaceholder)
-                return;
-
             HideHID();
 
             if (powerCycle)
@@ -440,9 +456,6 @@ namespace HandheldCompanion.Controllers
 
         public virtual void Unhide(bool powerCycle = true)
         {
-            if (isPlaceholder)
-                return;
-
             UnhideHID();
 
             if (powerCycle)
@@ -476,23 +489,6 @@ namespace HandheldCompanion.Controllers
                         if (Details.Uninstall(false))
                             Task.Delay(3000).Wait();
                         success = Devcon.Refresh();
-
-                        /*
-                        if (HostRadio.IsEnabled && HostRadio.IsAvailable)
-                        {
-                            try
-                            {
-                                using (HostRadio hostRadio = new())
-                                {
-                                    hostRadio.DisableRadio();
-                                    Task.Delay(3000).Wait();
-                                    hostRadio.EnableRadio();
-                                    success = true;
-                                }
-                            }
-                            catch { }
-                        }
-                        */
                     }
                     break;
                 case "USB":
@@ -512,13 +508,21 @@ namespace HandheldCompanion.Controllers
         }
 
         public virtual void SetLightColor(byte R, byte G, byte B)
-        {
-        }
+        { }
 
         protected void HideHID()
         {
             if (Details is null)
                 return;
+
+            /*
+            PnPDevice? baseDevice = Details.GetBasePnPDevice();
+            if (baseDevice is not null)
+            {
+                foreach (string instanceId in EnumerateDeviceAndChildren(baseDevice))
+                    HidHide.HidePath(instanceId);
+            }
+            */
 
             HidHide.HidePath(Details.baseContainerDeviceInstanceId);
             HidHide.HidePath(Details.deviceInstanceId);
@@ -529,8 +533,33 @@ namespace HandheldCompanion.Controllers
             if (Details is null)
                 return;
 
+            /*
+            PnPDevice? baseDevice = Details.GetBasePnPDevice();
+            if (baseDevice is not null)
+            {
+                foreach (string instanceId in EnumerateDeviceAndChildren(baseDevice))
+                    HidHide.UnhidePath(instanceId);
+            }
+            */
+
             HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
             HidHide.UnhidePath(Details.deviceInstanceId);
+        }
+
+        private IEnumerable<string> EnumerateDeviceAndChildren(IPnPDevice device)
+        {
+            // Yield this device
+            yield return device.InstanceId;
+
+            // Then recurse into all children
+            if (device.Children is { } children)
+            {
+                foreach (var child in children)
+                {
+                    foreach (var id in EnumerateDeviceAndChildren(child))
+                        yield return id;
+                }
+            }
         }
 
         public virtual bool RestoreDrivers()
@@ -766,12 +795,30 @@ namespace HandheldCompanion.Controllers
 
         public string GetButtonName(ButtonFlags button)
         {
-            return EnumUtils.GetDescriptionFromEnumValue(button, GetType().Name);
+            return GetLocalizedName(button);
         }
 
         public string GetAxisName(AxisLayoutFlags axis)
         {
-            return EnumUtils.GetDescriptionFromEnumValue(axis, GetType().Name);
+            return GetLocalizedName(axis);
+        }
+
+        private string GetLocalizedName<T>(T value) where T : Enum
+        {
+            Type? currentType = GetType();
+            string defaultString = value.ToString();
+
+            while (currentType is not null)
+            {
+                string result = EnumUtils.GetDescriptionFromEnumValue(value, currentType.Name);
+
+                if (!string.Equals(result, defaultString, StringComparison.Ordinal))
+                    return result;
+
+                currentType = currentType.BaseType;
+            }
+
+            return defaultString;
         }
 
         public override string ToString()
@@ -791,6 +838,10 @@ namespace HandheldCompanion.Controllers
         {
             if (IsDisposed) return;
 
+            // manage events
+            ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
             if (disposing)
             {
                 // Free managed resources
@@ -809,7 +860,6 @@ namespace HandheldCompanion.Controllers
                 UserIndexChanged = null;
                 StateChanged = null;
                 VisibilityChanged = null;
-                InputsUpdated = null;
 
                 // Dispose rumble task properly
                 if (rumbleTask is { Status: TaskStatus.Running })

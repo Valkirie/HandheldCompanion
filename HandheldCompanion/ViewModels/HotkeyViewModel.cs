@@ -464,6 +464,46 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public ObservableCollection<MappingTargetViewModel> ButtonCommandsValues { get; } = new();
+
+        public MappingTargetViewModel ButtonCommandsButton
+        {
+            get
+            {
+                if (Hotkey.command is ButtonCommands bc)
+                    return ButtonCommandsValues.FirstOrDefault(vm => (ButtonFlags)vm.Tag == bc.ButtonFlags);
+                return ButtonCommandsValues.FirstOrDefault();
+            }
+            set
+            {
+                if (Hotkey.command is ButtonCommands bc && bc.ButtonFlags != (ButtonFlags)value.Tag)
+                {
+                    bc.ButtonFlags = (ButtonFlags)value.Tag;
+                    ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    OnPropertyChanged(nameof(ButtonCommandsButton));
+                }
+            }
+        }
+
+        public short ButtonCommandsDelay
+        {
+            get
+            {
+                if (Hotkey.command is ButtonCommands bc)
+                    return bc.KeyPressDelay;
+                return 250; // ms
+            }
+            set
+            {
+                if (Hotkey.command is ButtonCommands bc && bc.KeyPressDelay != value)
+                {
+                    bc.KeyPressDelay = value;
+                    ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    OnPropertyChanged(nameof(ButtonCommandsDelay));
+                }
+            }
+        }
+
         public bool IsToggled => Hotkey.command.IsToggled;
         public bool IsEnabled => Hotkey.command.IsEnabled;
         public bool CanCustom => Hotkey.command.CanCustom;
@@ -584,6 +624,35 @@ namespace HandheldCompanion.ViewModels
                     keyboardCommands.outputChord = new();
                     ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
                 }
+            });
+
+            // manage events
+            ControllerManager.ControllerSelected += UpdateController;
+
+            // send events
+            if (ControllerManager.HasTargetController)
+                UpdateController(ControllerManager.GetTarget());
+        }
+
+        protected void UpdateController(IController controller)
+        {
+            // UI thread
+            UIHelper.TryInvoke(() =>
+            {
+                ButtonCommandsValues.Clear();
+
+                if (controller is null) return;
+
+                foreach (var button in controller.GetTargetButtons())
+                {
+                    ButtonCommandsValues.Add(new MappingTargetViewModel
+                    {
+                        Tag = button,
+                        Content = controller.GetButtonName(button)
+                    });
+                }
+
+                OnPropertyChanged(nameof(ButtonCommandsValues));
             });
         }
 

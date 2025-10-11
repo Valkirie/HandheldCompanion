@@ -51,6 +51,40 @@ namespace HandheldCompanion.ViewModels
         }
 
         public string Executable => Process.Executable;
+        public string Path => Process.Path;
+
+        public string ProductName
+        {
+            get
+            {
+                string FileDescription = Process.AppProperties.TryGetValue("FileDescription", out var property) ? property : string.Empty;
+                if (!string.IsNullOrEmpty(FileDescription))
+                    return FileDescription;
+
+                string pName = Process.Process.MainModule?.FileVersionInfo?.ProductName ?? string.Empty;
+                if (!string.IsNullOrEmpty(pName))
+                    return pName;
+
+                return Executable;
+            }
+        }
+
+        public string CompanyName
+        {
+            get
+            {
+                string Copyright = Process.AppProperties.TryGetValue("Copyright", out var property) ? property : string.Empty;
+                if (!string.IsNullOrEmpty(Copyright))
+                    return Copyright;
+
+                string cName = Process.Process.MainModule?.FileVersionInfo?.CompanyName ?? string.Empty;
+                if (!string.IsNullOrEmpty(cName))
+                    return cName;
+
+                return Path;
+            }
+        }
+
         public bool FullScreenOptimization => !Process.FullScreenOptimization;
         public bool HighDPIAware => !Process.HighDPIAware;
 
@@ -151,17 +185,20 @@ namespace HandheldCompanion.ViewModels
                 _process.WindowDetached -= Process_WindowDetached;
             }
 
-            // Dispose all ProcessWindows
+            // Take a snapshot of the children and clear the live collection
+            ProcessWindowViewModel[] windowsSnapshot;
             lock (_processWindowsSyncLock)
             {
-                foreach (ProcessWindowViewModel processWindow in ProcessWindows)
-                    processWindow.Dispose();
-                ProcessWindows.SafeClear();
+                windowsSnapshot = ProcessWindows.ToArray();
+                ProcessWindows.SafeClear();    // direct Clear, not SafeClear
             }
+
+            // Dispose each window from the snapshot (outside the lock)
+            foreach (ProcessWindowViewModel processWindow in windowsSnapshot)
+                processWindow.Dispose();
 
             // dispose commands
             KillProcessCommand = null;
-
             PageViewModel = null;
             _process = null;
 

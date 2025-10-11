@@ -12,7 +12,7 @@ public class GPDWin4_2024_8840U : IDevice
         // device specific settings
         ProductIllustration = "device_gpd4";
 
-        // https://www.amd.com/en/products/apu/amd-ryzen-7-8840u
+        // https://www.amd.com/fr/products/processors/laptop/ryzen/8000-series/amd-ryzen-7-8840u.html
         nTDP = new double[] { 15, 15, 28 };
         cTDP = new double[] { 5, 30 };
         GfxClock = new double[] { 200, 2700 };

@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
 using System.Numerics;
 using WindowsInput.Events;
@@ -56,6 +57,11 @@ namespace HandheldCompanion.Devices
                 [KeyCode.LWin, KeyCode.LMenu, KeyCode.LControl],
                 false, ButtonFlags.OEM2
                 ));
+
+            // prepare hotkeys
+            DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.Special] = true;
+            DeviceHotkeys[typeof(MainWindowCommands)].InputsChordType = InputsChordType.Long;
+            DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.Special] = true;
         }
 
         public override string GetGlyph(ButtonFlags button)
@@ -80,7 +86,7 @@ namespace HandheldCompanion.Devices
 
             ECRamDirectWrite(0x4EB, ECDetails, 0xEB);
 
-            return ECRamReadByte(0x4EB, ECDetails) == 0xEB;
+            return ECRamDirectReadByte(0x4EB, ECDetails) == 0xEB;
         }
 
         public override void Close()

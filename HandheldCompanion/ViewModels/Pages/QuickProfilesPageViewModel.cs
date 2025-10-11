@@ -174,9 +174,9 @@ namespace HandheldCompanion.ViewModels
                 {
                     _profilePickerItems.Remove(foundPreset);
 
-                    if (SelectedPresetAC.Guid == foundPreset.LinkedPresetId)
+                    if (SelectedPresetAC?.Guid == foundPreset.LinkedPresetId)
                         SelectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
-                    if (SelectedPresetDC.Guid == foundPreset.LinkedPresetId)
+                    if (SelectedPresetDC?.Guid == foundPreset.LinkedPresetId)
                         SelectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
                 }
             }

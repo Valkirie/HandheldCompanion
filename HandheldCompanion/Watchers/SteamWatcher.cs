@@ -21,7 +21,6 @@ namespace HandheldCompanion.Watchers
         {
             PlatformManager.Steam.Updated += Steam_Updated;
             PlatformManager.Steam.SettingValueChanged += Steam_SettingValueChanged;
-            PlatformManager.Initialized += PlatformManager_Initialized;
             base.Start();
         }
 
@@ -29,7 +28,6 @@ namespace HandheldCompanion.Watchers
         {
             PlatformManager.Steam.Updated -= Steam_Updated;
             PlatformManager.Steam.SettingValueChanged -= Steam_SettingValueChanged;
-            PlatformManager.Initialized -= PlatformManager_Initialized;
 
             base.Stop();
         }
@@ -55,11 +53,6 @@ namespace HandheldCompanion.Watchers
                         break;
                 }
             }
-        }
-
-        private void PlatformManager_Initialized()
-        {
-            CheckDrivers();
         }
 
         private void CheckDrivers()

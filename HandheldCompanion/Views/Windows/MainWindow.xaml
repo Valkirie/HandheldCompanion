@@ -27,7 +27,9 @@
     Loaded="Window_Loaded"
     PreviewGotKeyboardFocus="GamepadWindow_PreviewGotKeyboardFocus"
     PreviewLostKeyboardFocus="GamepadWindow_PreviewLostKeyboardFocus"
+    SnapsToDevicePixels="True"
     StateChanged="Window_StateChanged"
+    UseLayoutRounding="True"
     Visibility="Collapsed"
     WindowState="Minimized"
     mc:Ignorable="d">
@@ -254,11 +256,20 @@
                         x:Name="scrollViewer"
                         VerticalAlignment="Stretch"
                         PanningMode="VerticalFirst">
-                        <ui:Frame
-                            Name="ContentFrame"
-                            Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
-                            MaxWidth="2000"
-                            HorizontalAlignment="Left" />
+                        <Grid>
+                            <ui:Frame
+                                Name="ContentFrame"
+                                Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
+                                MaxWidth="2000"
+                                HorizontalAlignment="Left" />
+                            <Frame
+                                Name="PreloadFrame"
+                                Width="1"
+                                Height="1"
+                                IsHitTestVisible="False"
+                                NavigationUIVisibility="Hidden"
+                                Visibility="Hidden" />
+                        </Grid>
                     </ui:ScrollViewerEx>
                 </Grid>
 

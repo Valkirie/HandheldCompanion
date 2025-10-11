@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using static HandheldCompanion.ADLX.ADLXBackend;
 using Timer = System.Timers.Timer;
@@ -419,11 +420,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             base.Stop();
         }
 
-        private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        protected override void UpdateSettings()
         {
-            if (halting)
-                return;
-
             if (Monitor.TryEnter(updateLock))
             {
                 try
@@ -458,8 +456,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                         bool RSR = false;
                         int RSRSharpness = GetRSRSharpness();
 
-                        DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(2));
-                        while (DateTime.Now < timeout && !RSRSupport)
+                        Task timeout = Task.Delay(TimeSpan.FromSeconds(2));
+                        while (!timeout.IsCompleted && !RSRSupport)
                         {
                             RSRSupport = HasRSRSupport();
                             if (!RSRSupport) Thread.Sleep(1000);
@@ -484,8 +482,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                         bool AFMFSupport = false;
                         bool AFMF = false;
 
-                        DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(2));
-                        while (DateTime.Now < timeout && !AFMFSupport)
+                        Task timeout = Task.Delay(TimeSpan.FromSeconds(2));
+                        while (!timeout.IsCompleted && !AFMFSupport)
                         {
                             AFMFSupport = HasAFMFSupport();
                             if (!AFMFSupport) Thread.Sleep(1000);
@@ -509,8 +507,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                         bool IntegerScalingSupport = false;
                         bool IntegerScaling = false;
 
-                        DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(2));
-                        while (DateTime.Now < timeout && !IntegerScalingSupport && GPUScaling)
+                        Task timeout = Task.Delay(TimeSpan.FromSeconds(2));
+                        while (!timeout.IsCompleted && !IntegerScalingSupport && GPUScaling)
                         {
                             IntegerScalingSupport = HasIntegerScalingSupport();
                             if (!IntegerScalingSupport) Thread.Sleep(1000);
@@ -540,6 +538,14 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                     Monitor.Exit(updateLock);
                 }
             }
+        }
+
+        private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            if (halting)
+                return;
+
+            UpdateSettings();
         }
 
         protected override void BusyTimer_Elapsed(object sender, ElapsedEventArgs e)

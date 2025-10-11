@@ -166,7 +166,7 @@ namespace HandheldCompanion.ViewModels
         public ObservableCollection<HotkeyViewModel> HotkeysList { get; set; } = [];
 
         private const ButtonFlags gyroButtonFlags = ButtonFlags.HOTKEY_GYRO_ACTIVATION;
-        private Hotkey GyroHotkey = new(gyroButtonFlags) { IsInternal = true };
+        private Hotkey GyroHotkey = new(gyroButtonFlags) { IsInternal = true, Name = "HOTKEY_GYRO_ACTIVATION" };
 
         public GyroMappingViewModel(AxisLayoutFlags layoutFlag) : base(layoutFlag)
         {

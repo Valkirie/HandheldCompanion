@@ -196,7 +196,21 @@
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_Priority_High}" />
                     </ComboBox>
                 </ui:SettingsCard>
+            </ikw:SimpleStackPanel>
 
+            <!--  Advanced options  -->
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Advanced options" />
+            <ikw:SimpleStackPanel Spacing="3">
+                <!--  Toast notification  -->
+                <ui:SettingsCard
+                    Description="Monitor external changes to GPU settings and automatically restore preferred configuration"
+                    Header="GPU-Settings monitoring"
+                    IsEnabled="False">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.History}" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="Toggle_GPUMonitor" Toggled="Toggle_GPUMonitor_Toggled" />
+                </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 
             <!--  Quicktools options  -->
@@ -213,6 +227,7 @@
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationMaximized}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationBottomLeft}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationBottomRight}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_QuickToolsWindowLocationBottomCenter}" />
                     </ComboBox>
                 </ui:SettingsCard>
 
@@ -222,30 +237,35 @@
                     Description="{l:Static resx:Resources.SettingsPage_QuickToolsDevicePathDesc}"
                     Header="{l:Static resx:Resources.SettingsPage_QuickToolsDevicePath}">
                     <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE78B;" />
                     </ui:SettingsCard.HeaderIcon>
                     <ComboBox Name="cB_QuickToolsDevicePath" SelectionChanged="cB_QuickToolsDevicePath_SelectionChanged" />
                 </ui:SettingsCard>
 
                 <!--  Quicktools backdrop  -->
-                <ui:SettingsCard
+                <ui:SettingsExpander
                     d:Visibility="Visible"
                     Description="{l:Static resx:Resources.SettingsPage_QuickToolsBackdrop}"
                     Header="{l:Static resx:Resources.SettingsPage_QuickToolsBackdropHeader}">
-                    <ui:SettingsCard.HeaderIcon>
+                    <ui:SettingsExpander.HeaderIcon>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
-                    </ui:SettingsCard.HeaderIcon>
+                    </ui:SettingsExpander.HeaderIcon>
                     <ComboBox Name="cB_QuickToolsBackdrop" SelectionChanged="cB_QuickToolsBackdrop_SelectionChanged">
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropNone}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropMica}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropTabbed}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropAcrylic}" />
                     </ComboBox>
-                </ui:SettingsCard>
+
+                    <ui:SettingsExpander.Items>
+                        <ui:SettingsCard Header="Apply noise to window's background">
+                            <ui:ToggleSwitch Name="QuickToolsNoiseToggle" Toggled="QuickToolsNoiseToggle_Toggled" />
+                        </ui:SettingsCard>
+                    </ui:SettingsExpander.Items>
+                </ui:SettingsExpander>
 
                 <!--  Virtual keyboard  -->
                 <ui:SettingsCard
-                    d:Visibility="Visible"
                     Description="{l:Static resx:Resources.SettingsPage_VirtualKeyboardDesc}"
                     Header="{l:Static resx:Resources.SettingsPage_VirtualKeyboard}"
                     Visibility="Collapsed">
@@ -257,7 +277,6 @@
 
                 <!--  Virtual trackpad  -->
                 <ui:SettingsCard
-                    d:Visibility="Visible"
                     Description="{l:Static resx:Resources.SettingsPage_VirtualTrackpadDesc}"
                     Header="{l:Static resx:Resources.SettingsPage_VirtualTrackpad}"
                     Visibility="Collapsed">
@@ -267,11 +286,16 @@
                     <ui:ToggleSwitch Name="VirtualTrackpadToggle" Toggled="VirtualTrackpadToggle_Toggled" />
                 </ui:SettingsCard>
 
+                <!--  Slide Animation  -->
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_QuicktoolsSlideAnimationDesc}" Header="{l:Static resx:Resources.SettingsPage_QuicktoolsSlideAnimation}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE8B2;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="QuicktoolsSlideAnimationToggle" Toggled="QuicktoolsSlideAnimationToggle_Toggled" />
+                </ui:SettingsCard>
+
                 <!--  Quicktools autohide  -->
-                <ui:SettingsCard
-                    Description="{l:Static resx:Resources.SettingsPage_HideWhenLoseFocusDesc}"
-                    Header="{l:Static resx:Resources.SettingsPage_HideWhenLoseFocus}"
-                    Visibility="Collapsed">
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_HideWhenLoseFocusDesc}" Header="{l:Static resx:Resources.SettingsPage_HideWhenLoseFocus}">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xED1A;" />
                     </ui:SettingsCard.HeaderIcon>

@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Inputs;
 using System.Collections.Generic;
 using System.Numerics;
 using WindowsInput.Events;
@@ -9,7 +10,7 @@ public class GPDWinMini_7840U : IDevice
 {
     public GPDWinMini_7840U()
     {
-        // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
+        // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html
         nTDP = new double[] { 15, 15, 18 };
         cTDP = new double[] { 5, 18 };
         GfxClock = new double[] { 200, 2700 };
@@ -67,6 +68,11 @@ public class GPDWinMini_7840U : IDevice
             [KeyCode.F12, KeyCode.R],
             false, ButtonFlags.OEM3
         ));
+
+        // prepare hotkeys
+        DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.Special] = true;
+        DeviceHotkeys[typeof(MainWindowCommands)].InputsChordType = InputsChordType.Long;
+        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.Special] = true;
     }
 
     public override string GetGlyph(ButtonFlags button)

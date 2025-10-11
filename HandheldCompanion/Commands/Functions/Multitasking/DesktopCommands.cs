@@ -1,12 +1,14 @@
-﻿using GregsStack.InputSimulatorStandard.Native;
-using HandheldCompanion.Simulators;
-using System;
+﻿using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace HandheldCompanion.Commands.Functions.Multitasking
 {
     [Serializable]
     public class DesktopCommands : FunctionCommands
     {
+        private Guid ShellGuid = new("3080F90D-D7AD-11D9-BD98-0000947B0257");
+
         public DesktopCommands()
         {
             Name = Properties.Resources.Hotkey_Desktop;
@@ -17,7 +19,14 @@ namespace HandheldCompanion.Commands.Functions.Multitasking
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            KeyboardSimulator.KeyPress(new[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
+            Task.Run(() =>
+            {
+                Process.Start(new ProcessStartInfo("explorer.exe")
+                {
+                    UseShellExecute = true,
+                    Arguments = $"shell:::{ShellGuid:B}"
+                });
+            });
 
             base.Execute(IsKeyDown, IsKeyUp, false);
         }

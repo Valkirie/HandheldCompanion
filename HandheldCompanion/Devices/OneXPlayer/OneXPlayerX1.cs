@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc.Threading.Tasks;
 using HandheldCompanion.Models;
@@ -74,6 +75,8 @@ public class OneXPlayerX1 : IDevice
         Capabilities |= DeviceCapabilities.DynamicLighting;
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
         Capabilities |= DeviceCapabilities.DynamicLightingSecondLEDColor;
+
+        // dynamic lighting capacities
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
         DynamicLightingCapabilities |= LEDLevel.LEDPreset;
 
@@ -121,6 +124,11 @@ public class OneXPlayerX1 : IDevice
             [KeyCode.LMenu, KeyCode.LWin, KeyCode.RControlKey],
             false, ButtonFlags.OEM1
             ));
+
+        // prepare hotkeys
+        DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
+        DeviceHotkeys[typeof(MainWindowCommands)].InputsChordType = InputsChordType.Long;
+        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
     }
 
     public override string GetGlyph(ButtonFlags button)
@@ -168,7 +176,7 @@ public class OneXPlayerX1 : IDevice
 
         // allow OneX button to pass key inputs
         ECRamDirectWrite(0x4EB, ECDetails, 0x40);
-        if (ECRamReadByte(0x4EB, ECDetails) == 0x40)
+        if (ECRamDirectReadByte(0x4EB, ECDetails) == 0x40)
             LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
 
         return true;
@@ -201,7 +209,7 @@ public class OneXPlayerX1 : IDevice
         }
 
         ECRamDirectWrite(0x4EB, ECDetails, 0x00);
-        if (ECRamReadByte(0x4EB, ECDetails) == 0x00)
+        if (ECRamDirectReadByte(0x4EB, ECDetails) == 0x00)
             LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
 
         base.Close();

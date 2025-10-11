@@ -231,6 +231,10 @@ public static class InputsManager
 
     private static void M_GlobalHook_KeyEvent(object? sender, KeyEventArgs e)
     {
+        // don't catch keyboard inputs until user is logged-in
+        if (SystemManager.IsSessionLocked)
+            return;
+
         KeyEventArgsExt args = (KeyEventArgsExt)e;
 
         bool Injected = (args.Flags & LLKHF_INJECTED) > 0;
@@ -253,7 +257,24 @@ public static class InputsManager
             if (IsListening)
             {
                 if (currentChord.chordTarget != InputsChordTarget.Output)
-                    CheckForSequence(args.IsKeyDown, args.IsKeyUp);
+                {
+                    // check if key is used by OEM chords
+                    bool silenced = false;
+                    foreach (KeyboardChord? pair in IDevice.GetCurrent().OEMChords)
+                    {
+                        List<KeyCode> chord = pair.chords[args.IsKeyDown];
+                        KeyCode chordKey = chord.FirstOrDefault();
+                        if (chordKey == hookKey && pair.silenced)
+                        {
+                            silenced = true;
+                            args.SuppressKeyPress = true;
+                            break;
+                        }
+                    }
+
+                    if (!silenced)
+                        CheckForSequence(args.IsKeyDown, args.IsKeyUp);
+                }
             }
 
             foreach (KeyboardChord? chord in successkeyChords.ToList())
@@ -379,7 +400,11 @@ public static class InputsManager
                         // compare ordered enumerable
                         List<KeyCode> chord_keys = chord.GetChord(args.IsKeyDown);
                         if (chord_keys.Count == 0 || chord.silenced)
+                        {
+                            if (chord.silenced)
+                                args.SuppressKeyPress = true;
                             continue;
+                        }
 
                         bool existsCheck = chord_keys.All(x => buffer_keys.Any(y => x == y));
                         if (existsCheck)
@@ -563,12 +588,19 @@ public static class InputsManager
         m_GlobalHook = null;
     }
 
-    private static void UpdateInputs(ControllerState controllerState)
+    private static void UpdateInputs(ControllerState controllerState, bool IsMapped)
     {
+        // skip if inputs were remapped
+        if (IsMapped)
+            return;
+
         // prepare button state
         ButtonState.Overwrite(controllerState.ButtonState, buttonState);
+        // update previous state
         if (prevState.Equals(buttonState))
             return;
+        else
+            ButtonState.Overwrite(buttonState, prevState);
 
         // half-press should be removed if full-press is also present
         RemoveHalfPressIfFullPress(ButtonFlags.L2Full, ButtonFlags.L2Soft);
@@ -638,9 +670,6 @@ public static class InputsManager
             bufferChord.ButtonState.Clear();
             successChord.ButtonState.Clear();
         }
-
-        // update previous state
-        ButtonState.Overwrite(buttonState, prevState);
     }
 
     private static void RemoveHalfPressIfFullPress(ButtonFlags fullPress, ButtonFlags halfPress)

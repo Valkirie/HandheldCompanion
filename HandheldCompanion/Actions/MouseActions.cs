@@ -1,9 +1,10 @@
-using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Simulators;
 using HandheldCompanion.Utils;
 using System;
 using System.ComponentModel;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Actions
@@ -30,11 +31,10 @@ namespace HandheldCompanion.Actions
     }
 
     [Serializable]
-    public class MouseActions : GyroActions
+    public sealed class MouseActions : GyroActions
     {
         public MouseActionsType MouseType;
 
-        // const settings
         private const int scrollAmountInClicks = 20;
         private const float FilterBeta = 0.5f;
 
@@ -50,55 +50,54 @@ namespace HandheldCompanion.Actions
 
         // settings axis
         public int Sensivity = 33;
-        public float Acceleration = 1.0f;
+        public float Acceleration = 1.0f;   // Acceleration <= 1.0 => off; > 1.0 => stronger memory/boost
         public int Deadzone = 15;           // stick only
         public bool Filtering = false;      // pad only
         public float FilterCutoff = 0.05f;  // pad only
 
+        // runtime variables
+        private float accelMemory = 0.0f;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static float Smooth01(float x)
+        {
+            x = Math.Clamp(x, 0f, 1f);
+            return x * x * (3f - 2f * x);
+        }
+
         public MouseActions()
         {
-            this.actionType = ActionType.Mouse;
-
-            this.Value = false;
-            this.prevValue = false;
-
+            actionType = ActionType.Mouse;
+            outBool = false;
+            prevBool = false;
             mouseFilter = new(FilterCutoff, FilterBeta);
         }
 
         public MouseActions(MouseActionsType type) : this()
         {
-            this.MouseType = type;
+            MouseType = type;
         }
 
-        public override void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot)
+        public override void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot, float delta)
         {
-            base.Execute(button, value, shiftSlot);
+            base.Execute(button, value, shiftSlot, delta);
 
-            switch (this.Value)
+            if (outBool)
             {
-                case true:
-                    {
-                        if (IsCursorDown)
-                            return;
-
-                        IsCursorDown = true;
-                        pressed = ModifierMap[Modifiers];
-                        KeyboardSimulator.KeyDown(pressed);
-                        MouseSimulator.MouseDown(MouseType, scrollAmountInClicks);
-                        SetHaptic(button, false);
-                    }
-                    break;
-                case false:
-                    {
-                        if (!IsCursorDown)
-                            return;
-
-                        IsCursorDown = false;
-                        MouseSimulator.MouseUp(MouseType);
-                        KeyboardSimulator.KeyUp(pressed);
-                        SetHaptic(button, true);
-                    }
-                    break;
+                if (IsCursorDown) return;
+                IsCursorDown = true;
+                pressed = ModifierMap[Modifiers];
+                KeyboardSimulator.KeyDown(pressed);
+                MouseSimulator.MouseDown(MouseType, scrollAmountInClicks);
+                SetHaptic(button, false);
+            }
+            else
+            {
+                if (!IsCursorDown) return;
+                IsCursorDown = false;
+                MouseSimulator.MouseUp(MouseType);
+                KeyboardSimulator.KeyUp(pressed);
+                SetHaptic(button, true);
             }
         }
 
@@ -106,90 +105,75 @@ namespace HandheldCompanion.Actions
         {
             if (value == IsTouched)
                 return false;
-            if (IsTouched = value)
-                return true;
-            return false;
+            IsTouched = value;
+            return IsTouched;
         }
 
-        private void ExecuteButton(AxisLayout layout, bool touched, ShiftSlot shiftSlot)
+        private void ExecuteButton(AxisLayout layout, bool touched, ShiftSlot shiftSlot, float delta)
         {
-            // update value
-            this.Vector = layout.vector;
+            outVector = layout.vector;
+            base.Execute(layout, shiftSlot, delta);
 
-            // call parent, check shiftSlot
-            base.Execute(layout, shiftSlot);
-
-            // skip if zero
-            if (this.Vector == Vector2.Zero && !IsCursorDown)
+            if (outVector == Vector2.Zero && !IsCursorDown)
                 return;
 
-            MotionDirection direction = InputUtils.GetMotionDirection(this.Vector, motionThreshold);
-            bool value = (direction.HasFlag(motionDirection) || motionDirection.HasFlag(direction)) && direction != MotionDirection.None;
+            var direction = InputUtils.GetMotionDirection(outVector, motionThreshold);
+            bool press = DirectionMatches(direction, motionDirection);
 
-            // transition to Button Execute()
-            Execute(ButtonFlags.None, value, shiftSlot);
+            Execute(ButtonFlags.None, press, shiftSlot, delta);
         }
 
-        private void ExecuteAxis(AxisLayout layout, bool touched, ShiftSlot shiftSlot)
+        private void ExecuteAxis(AxisLayout layout, bool touched, ShiftSlot shiftSlot, float delta)
         {
-            // this line needs to be before the next vector zero check
             bool newTouch = IsNewTouch(touched);
 
-            // update value
-            this.Vector = layout.vector;
+            outVector = layout.vector;
+            base.Execute(layout, shiftSlot, delta);
 
-            // call parent, check shiftSlot
-            base.Execute(layout, shiftSlot);
-
-            // skip if zero
-            if (this.Vector == Vector2.Zero)
+            if (outVector == Vector2.Zero)
                 return;
 
-            // invert axis
-            this.Vector.Y *= -1;
+            // invert Y
+            outVector.Y *= -1;
 
             Vector2 deltaVector;
             float sensitivityFinetune;
 
             switch (layout.flags)
             {
+                default:
                 case AxisLayoutFlags.LeftStick:
                 case AxisLayoutFlags.RightStick:
                 case AxisLayoutFlags.Gyroscope:
-                default:
                     {
-                        // convert to <0.0-1.0> values
-                        deltaVector = this.Vector / short.MaxValue;
-                        float deadzone = Deadzone / 100.0f;
+                        deltaVector = outVector / short.MaxValue;
+                        float dz = Deadzone / 100.0f;
 
-                        // apply deadzone
-                        if (deltaVector.Length() < deadzone)
+                        if (deltaVector.Length() < dz)
                             return;
 
-                        deltaVector *= (deltaVector.Length() - deadzone) / deltaVector.Length();  // shorten by deadzone
-                        deltaVector *= 1.0f / (1.0f - deadzone);                                  // rescale to 0.0 - 1.0
+                        deltaVector *= (deltaVector.Length() - dz) / deltaVector.Length();
+                        deltaVector *= 1.0f / (1.0f - dz);
 
                         sensitivityFinetune = (MouseType == MouseActionsType.Move ? 0.3f : 0.1f);
+                        break;
                     }
-                    break;
 
                 case AxisLayoutFlags.LeftPad:
                 case AxisLayoutFlags.RightPad:
                     {
-                        // touchpad was touched, update entry point for delta calculations
                         if (newTouch)
                         {
-                            prevVector = this.Vector;
+                            prevVector = outVector;
                             return;
                         }
 
-                        // calculate delta and convert to <0.0-1.0> values
-                        deltaVector = (this.Vector - prevVector) / short.MaxValue;
-                        prevVector = this.Vector;
+                        deltaVector = (outVector - prevVector) / short.MaxValue;
+                        prevVector = outVector;
 
                         sensitivityFinetune = (MouseType == MouseActionsType.Move ? 9.0f : 3.0f);
+                        break;
                     }
-                    break;
             }
 
             if (Filtering)
@@ -199,20 +183,33 @@ namespace HandheldCompanion.Actions
                 deltaVector.Y = (float)mouseFilter.axis2Filter.Filter(deltaVector.Y, 1);
             }
 
-            if (Acceleration != 1.0f)
+            float s = MathF.Max(0f, Acceleration - 1.0f);
+            if (s > 0f)
             {
-                deltaVector.X = (float)(Math.Sign(deltaVector.X) * Math.Pow(Math.Abs(deltaVector.X), Acceleration));
-                deltaVector.Y = (float)(Math.Sign(deltaVector.Y) * Math.Pow(Math.Abs(deltaVector.Y), Acceleration));
-                sensitivityFinetune = (float)Math.Pow(sensitivityFinetune, Acceleration);
+                // decay memory with a half-life that grows with 's'
+                // half-life ~ 24 ms when s→0, up to ~144 ms when s=1 (Acceleration=2.0)
+                float halfLifeMs = 24f + 120f * s;
+                float decay = (float)Math.Exp(-0.69314718056f * (delta / halfLifeMs));
+
+                float mag = deltaVector.Length();
+                if (mag > accelMemory)
+                    accelMemory = mag;
+                else
+                    accelMemory *= decay;
+
+                float t = Smooth01(MathF.Min(1f, accelMemory));
+                float gainMax = 1f + 2.6f * s; // 2.6f tweak me
+                float gain = 1f + (gainMax - 1f) * t;
+
+                deltaVector *= gain;
             }
 
-            // apply sensitivity and slider finetune
             deltaVector *= Sensivity * sensitivityFinetune;
 
-            // handle the fact that MoveBy()/*Scroll() are int only and we can have movement (0 < abs(delta) < 1)
-            deltaVector += remainder;                                               // add partial previous step
+            // accumulate fractional remainders to keep precision
+            deltaVector += remainder;
             Vector2 intVector = new((int)Math.Truncate(deltaVector.X), (int)Math.Truncate(deltaVector.Y));
-            remainder = deltaVector - intVector;                                    // and save the unused rest
+            remainder = deltaVector - intVector;
 
             if (MouseType == MouseActionsType.Move)
             {
@@ -225,16 +222,16 @@ namespace HandheldCompanion.Actions
             }
         }
 
-        public void Execute(AxisLayout layout, bool touched, ShiftSlot shiftSlot)
+        public void Execute(AxisLayout layout, bool touched, ShiftSlot shiftSlot, float delta)
         {
             switch (MouseType)
             {
                 case MouseActionsType.Move:
                 case MouseActionsType.Scroll:
-                    ExecuteAxis(layout, touched, shiftSlot);
+                    ExecuteAxis(layout, touched, shiftSlot, delta);
                     break;
                 default:
-                    ExecuteButton(layout, touched, shiftSlot);
+                    ExecuteButton(layout, touched, shiftSlot, delta);
                     break;
             }
         }

@@ -21,25 +21,25 @@ namespace HandheldCompanion.Actions
     }
 
     [Serializable]
-    public class ShiftActions : ButtonActions
+    public sealed class ShiftActions : ButtonActions
     {
         public ShiftSlot ShiftSlot;
 
         public ShiftActions()
         {
-            this.actionType = ActionType.Shift;
+            actionType = ActionType.Shift;
 
             // disable few options
-            this.HasInterruptable = false;
-            this.HasTurbo = false;
+            HasInterruptable = false;
+            HasTurbo = false;
 
-            this.Value = false;
-            this.prevValue = false;
+            outBool = false;
+            prevBool = false;
         }
 
         public ShiftActions(ShiftSlot slot) : this()
         {
-            this.ShiftSlot = slot;
+            ShiftSlot = slot;
         }
     }
 }

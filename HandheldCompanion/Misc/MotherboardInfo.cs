@@ -351,7 +351,7 @@ public static class MotherboardInfo
 
     private static string ConvertToDateTime(string unconvertedTime)
     {
-        var convertedTime = "";
+        var convertedTime = string.Empty;
         var year = int.Parse(unconvertedTime.Substring(0, 4));
         var month = int.Parse(unconvertedTime.Substring(4, 2));
         var date = int.Parse(unconvertedTime.Substring(6, 2));

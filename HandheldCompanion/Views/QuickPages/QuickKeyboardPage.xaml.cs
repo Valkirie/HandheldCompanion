@@ -286,8 +286,8 @@ namespace HandheldCompanion.Views.QuickPages
                 }
                 else if (b.Tag is ValueTuple<char, uint> ct)
                 {
-                    seq.Add(MakeScan((uint)ct.Item1, ct.Item2, false));                         // Key down
-                    seq.Add(MakeScan((uint)ct.Item1, ct.Item2, true));                          // Key up
+                    seq.Add(MakeScan(ct.Item1, ct.Item2, false));                         // Key down
+                    seq.Add(MakeScan(ct.Item1, ct.Item2, true));                          // Key up
                 }
             }
 

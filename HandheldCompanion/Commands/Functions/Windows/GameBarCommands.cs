@@ -1,12 +1,13 @@
-﻿using GregsStack.InputSimulatorStandard.Native;
-using HandheldCompanion.Simulators;
-using System;
+﻿using System;
+using System.Diagnostics;
 
 namespace HandheldCompanion.Commands.Functions.Windows
 {
     [Serializable]
     public class GameBarCommands : FunctionCommands
     {
+        private const string aumid = "Microsoft.XboxGamingOverlay_8wekyb3d8bbwe!App";
+
         public GameBarCommands()
         {
             Name = Properties.Resources.Hotkey_GameBar;
@@ -17,7 +18,12 @@ namespace HandheldCompanion.Commands.Functions.Windows
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            KeyboardSimulator.KeyPress(new[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_G });
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "explorer.exe",
+                Arguments = $"shell:AppsFolder\\{aumid}",
+                UseShellExecute = true
+            });
 
             base.Execute(IsKeyDown, IsKeyUp, false);
         }

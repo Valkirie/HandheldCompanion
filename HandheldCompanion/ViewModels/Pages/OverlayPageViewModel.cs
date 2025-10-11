@@ -6,6 +6,7 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using LiveCharts;
 using System;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Media;
 using static HandheldCompanion.Misc.ProcessEx;
@@ -14,9 +15,9 @@ namespace HandheldCompanion.ViewModels
 {
     public class OverlayPageViewModel : BaseViewModel
     {
-        public bool IsRunningRTSS => PlatformManager.RTSS.IsInstalled;
-
-        public bool IsRunningLHM => PlatformManager.LibreHardwareMonitor.IsInstalled;
+        // Platform Manager
+        public bool IsRunningRTSS => ManagerFactory.platformManager.IsReady && PlatformManager.RTSS.IsInstalled;
+        public bool IsRunningLHM => ManagerFactory.platformManager.IsReady && PlatformManager.LibreHardware.IsInstalled;
 
         private int _onScreenDisplayLevel;
         public int OnScreenDisplayLevel
@@ -400,30 +401,7 @@ namespace HandheldCompanion.ViewModels
             framerateTimer = new Timer(framerateInterval) { Enabled = true };
             framerateTimer.Elapsed += FramerateTimer_Elapsed;
 
-            _onScreenDisplayLevel = ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayLevel);
-            _onScreenDisplayTimeLevel = ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayTimeLevel);
-            _onScreenDisplayFPSLevel = ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayFPSLevel);
-            _onScreenDisplayCPULevel = ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayCPULevel);
-            _onScreenDisplayGPULevel = ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayGPULevel);
-            _onScreenDisplayRAMLevel = ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayRAMLevel);
-            _onScreenDisplayVRAMLevel = ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayVRAMLevel);
-            _onScreenDisplayBATTLevel = ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayBATTLevel);
-
             CPUName = IDevice.GetCurrent().Processor;
-
-            // manage events
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-            PlatformManager.RTSS.Updated += PlatformManager_RTSS_Updated;
-
-            if (IDevice.GetCurrent().CpuMonitor)
-            {
-                PlatformManager.LibreHardwareMonitor.CPUPowerChanged += LibreHardwareMonitor_CPUPowerChanged;
-                PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged += LibreHardwareMonitor_CPUTemperatureChanged;
-                PlatformManager.LibreHardwareMonitor.CPULoadChanged += LibreHardwareMonitor_CPULoadChanged;
-            }
-
-            ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
-            ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
 
             // raise events
             switch (ManagerFactory.processManager.Status)
@@ -447,10 +425,79 @@ namespace HandheldCompanion.ViewModels
                     QueryGPU();
                     break;
             }
+
+            switch (ManagerFactory.settingsManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QuerySettings();
+                    break;
+            }
+
+            switch (ManagerFactory.platformManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.platformManager.Initialized += PlatformManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryPlatforms();
+                    break;
+            }
+        }
+
+        private void QueryPlatforms()
+        {
+            // manage events
+            PlatformManager.RTSS.Updated += RTSS_Updated;
+
+            if (IDevice.GetCurrent().CpuMonitor)
+            {
+                PlatformManager.LibreHardware.CPUPowerChanged += LibreHardwareMonitor_CPUPowerChanged;
+                PlatformManager.LibreHardware.CPUTemperatureChanged += LibreHardwareMonitor_CPUTemperatureChanged;
+                PlatformManager.LibreHardware.CPULoadChanged += LibreHardwareMonitor_CPULoadChanged;
+            }
+
+            RTSS_Updated(PlatformManager.RTSS.Status);
+
+            OnPropertyChanged(nameof(IsRunningLHM));
+        }
+
+        private void PlatformManager_Initialized()
+        {
+            QueryPlatforms();
+        }
+
+        private void SettingsManager_Initialized()
+        {
+            QuerySettings();
+        }
+
+        private void QuerySettings()
+        {
+            // manage events
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            // raise events
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayRefreshRate, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayRefreshRate), false);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayLevel), false);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayTimeLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayTimeLevel), false);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayFPSLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayFPSLevel), false);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayCPULevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayCPULevel), false);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayGPULevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayGPULevel), false);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayRAMLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayRAMLevel), false);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayVRAMLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayVRAMLevel), false);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayBATTLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayBATTLevel), false);
         }
 
         private void QueryGPU()
         {
+            // manage events
+            ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
+
             GPU gpu = GPUManager.GetCurrent();
             if (gpu is not null)
                 GPUManager_Hooked(gpu);
@@ -463,6 +510,9 @@ namespace HandheldCompanion.ViewModels
 
         private void QueryForeground()
         {
+            // manage events
+            ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+
             ProcessEx processEx = ProcessManager.GetCurrent();
             if (processEx is null)
                 return;
@@ -522,6 +572,9 @@ namespace HandheldCompanion.ViewModels
 
         private void FramerateTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
+            if (!ManagerFactory.platformManager.IsReady)
+                return;
+
             if (PlatformManager.RTSS.HasHook())
             {
                 PlatformManager.RTSS.RefreshAppEntry();
@@ -549,7 +602,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private void GPUManager_Hooked(GPU GPU)
+        private async void GPUManager_Hooked(GPU GPU)
         {
             // localize me
             GPUName = GPU is not null ? GPU.adapterInformation.Details.Description : "No GPU detected";
@@ -560,9 +613,13 @@ namespace HandheldCompanion.ViewModels
 
             if (IDevice.GetCurrent().GpuMonitor)
             {
-                if (!HasGPUPower) PlatformManager.LibreHardwareMonitor.GPUPowerChanged += LibreHardwareMonitor_GPUPowerChanged;
-                if (!HasGPUTemperature) PlatformManager.LibreHardwareMonitor.GPUTemperatureChanged += LibreHardwareMonitor_GPUTemperatureChanged;
-                if (!HasGPULoad) PlatformManager.LibreHardwareMonitor.GPULoadChanged += LibreHardwareMonitor_GPULoadChanged;
+                // wait until Platform Manager (LibreHardware) is ready, not ideal ?
+                while (!ManagerFactory.platformManager.IsReady)
+                    await Task.Delay(250).ConfigureAwait(false);
+
+                if (!HasGPUPower) PlatformManager.LibreHardware.GPUPowerChanged += LibreHardwareMonitor_GPUPowerChanged;
+                if (!HasGPUTemperature) PlatformManager.LibreHardware.GPUTemperatureChanged += LibreHardwareMonitor_GPUTemperatureChanged;
+                if (!HasGPULoad) PlatformManager.LibreHardware.GPULoadChanged += LibreHardwareMonitor_GPULoadChanged;
             }
         }
 
@@ -628,59 +685,52 @@ namespace HandheldCompanion.ViewModels
 
         public override void Dispose()
         {
+            ManagerFactory.gpuManager.Hooked -= GPUManager_Hooked;
+            ManagerFactory.gpuManager.Initialized -= GpuManager_Initialized;
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-            PlatformManager.RTSS.Updated -= PlatformManager_RTSS_Updated;
+            ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+            ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
+            ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
+            PlatformManager.RTSS.Updated -= RTSS_Updated;
             base.Dispose();
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
         {
-            switch (name)
+            if (name == Settings.OnScreenDisplayRefreshRate)
             {
-                case "OnScreenDisplayRefreshRate":
-                    updateInterval = Convert.ToInt32(value);
-                    updateTimer.Interval = updateInterval;
+                updateInterval = Convert.ToInt32(value);
+                updateTimer.Interval = updateInterval;
 
-                    framerateInterval = Convert.ToInt32(value);
-                    framerateTimer.Interval = framerateInterval;
-                    return;
+                framerateInterval = Convert.ToInt32(value);
+                framerateTimer.Interval = framerateInterval;
             }
+            else if (name == Settings.OnScreenDisplayLevel)
+                _onScreenDisplayLevel = Convert.ToInt32(value);
+            else if (name == Settings.OnScreenDisplayTimeLevel)
+                _onScreenDisplayTimeLevel = Convert.ToInt32(value);
+            else if (name == Settings.OnScreenDisplayFPSLevel)
+                _onScreenDisplayFPSLevel = Convert.ToInt32(value);
+            else if (name == Settings.OnScreenDisplayCPULevel)
+                _onScreenDisplayCPULevel = Convert.ToInt32(value);
+            else if (name == Settings.OnScreenDisplayGPULevel)
+                _onScreenDisplayGPULevel = Convert.ToInt32(value);
+            else if (name == Settings.OnScreenDisplayRAMLevel)
+                _onScreenDisplayRAMLevel = Convert.ToInt32(value);
+            else if (name == Settings.OnScreenDisplayVRAMLevel)
+                _onScreenDisplayVRAMLevel = Convert.ToInt32(value);
+            else if (name == Settings.OnScreenDisplayBATTLevel)
+                _onScreenDisplayBATTLevel = Convert.ToInt32(value);
 
-            UpdateSettings(name, value);
             OnPropertyChanged(name); // setting names matches property name
         }
 
-        private void PlatformManager_RTSS_Updated(PlatformStatus status)
+        private void RTSS_Updated(PlatformStatus status)
         {
-            if (status == Platforms.PlatformStatus.Stalled)
+            if (status == PlatformStatus.Stalled)
                 OnScreenDisplayLevel = 0;
-        }
 
-        private void UpdateSettings(string name, object value)
-        {
-            if (name == Settings.OnScreenDisplayLevel)
-                _onScreenDisplayLevel = Convert.ToInt32(value);
-
-            else if (name == Settings.OnScreenDisplayTimeLevel)
-                _onScreenDisplayTimeLevel = Convert.ToInt32(value);
-
-            else if (name == Settings.OnScreenDisplayFPSLevel)
-                _onScreenDisplayFPSLevel = Convert.ToInt32(value);
-
-            else if (name == Settings.OnScreenDisplayCPULevel)
-                _onScreenDisplayCPULevel = Convert.ToInt32(value);
-
-            else if (name == Settings.OnScreenDisplayGPULevel)
-                _onScreenDisplayGPULevel = Convert.ToInt32(value);
-
-            else if (name == Settings.OnScreenDisplayRAMLevel)
-                _onScreenDisplayRAMLevel = Convert.ToInt32(value);
-
-            else if (name == Settings.OnScreenDisplayVRAMLevel)
-                _onScreenDisplayVRAMLevel = Convert.ToInt32(value);
-
-            else if (name == Settings.OnScreenDisplayBATTLevel)
-                _onScreenDisplayBATTLevel = Convert.ToInt32(value);
+            OnPropertyChanged(nameof(IsRunningRTSS));
         }
     }
 }

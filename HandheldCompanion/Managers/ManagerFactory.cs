@@ -18,6 +18,7 @@ namespace HandheldCompanion.Managers
         public static GPUManager gpuManager;
         public static NotificationManager notificationManager;
         public static LibraryManager libraryManager;
+        public static PlatformManager platformManager;
 
         public static List<IManager> Managers => new()
         {
@@ -31,7 +32,8 @@ namespace HandheldCompanion.Managers
             processManager,
             gpuManager,
             notificationManager,
-            libraryManager
+            libraryManager,
+            platformManager
         };
 
         static ManagerFactory()
@@ -53,6 +55,7 @@ namespace HandheldCompanion.Managers
             gpuManager = new() { SuspendWithOS = true };
             notificationManager = new();
             libraryManager = new();
+            platformManager = new();
         }
 
         public static void Resume()

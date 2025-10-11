@@ -8,7 +8,6 @@ namespace HandheldCompanion
 {
     public class CustomSettingsProvider : SettingsProvider
     {
-        // Define some constants for the XML elements and attributes
         private const string RootNodeName = "configuration";
         private const string SettingsNodeName = "settings";
         private const string SettingNodeName = "setting";
@@ -17,34 +16,31 @@ namespace HandheldCompanion
         private const string ValueAttribute = "value";
         private const string UserConfigFileName = "user.config";
 
-        // Define a property to store the location of the user.config file
-        public string UserConfigPath { get; set; }
+        private readonly object _sync = new();
 
-        // Override the ApplicationName property to return the name of the current assembly
+        public string UserConfigPath { get; set; } = string.Empty;
+
         public override string ApplicationName
         {
-            get { return Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetExecutingAssembly().Location); }
-            set { }
+            get => Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            set { /* noop */ }
         }
 
-        // Override the Initialize method to set the UserConfigPath property
         public override void Initialize(string name, NameValueCollection config)
         {
             base.Initialize(ApplicationName, config);
 
-            // Get the path from the config parameter, or use a default value
             string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             string applicationDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
-            string SettingsPath = Path.Combine(myDocumentsPath, "HandheldCompanion");
-            UserConfigPath = Path.Combine(myDocumentsPath, "HandheldCompanion", UserConfigFileName);
+            string settingsPath = Path.Combine(myDocumentsPath, "HandheldCompanion");
+            UserConfigPath = Path.Combine(settingsPath, UserConfigFileName);
 
-            if (!Directory.Exists(SettingsPath))
-                Directory.CreateDirectory(SettingsPath);
+            if (!Directory.Exists(settingsPath))
+                Directory.CreateDirectory(settingsPath);
 
-            // temporary, pull previous settings, if any
+            // one-time migration
             string previousPath = Path.Combine(applicationDataPath, ApplicationName, UserConfigFileName);
-
             if (File.Exists(previousPath))
             {
                 if (!File.Exists(UserConfigPath))
@@ -54,106 +50,191 @@ namespace HandheldCompanion
             }
         }
 
-        // Override the GetPropertyValues method to read the settings from the user.config file
         public override SettingsPropertyValueCollection GetPropertyValues(SettingsContext context, SettingsPropertyCollection collection)
         {
-            // Create a collection to store the values
-            SettingsPropertyValueCollection values = [];
+            var values = new SettingsPropertyValueCollection();
 
-            // Load the user.config file into an XmlDocument
-            XmlDocument document = new XmlDocument();
-            try
-            {
-                document.Load(UserConfigPath);
-            }
-            catch (Exception)
-            {
-                document.AppendChild(document.CreateXmlDeclaration("1.0", "utf-8", string.Empty));
-                document.AppendChild(document.CreateElement(RootNodeName));
-                document.DocumentElement.AppendChild(document.CreateElement(SettingsNodeName));
-            }
+            XmlDocument doc = LoadOrCreateDocument(quarantineOnFailure: true);
 
-            // Loop through each setting in the collection
             foreach (SettingsProperty setting in collection)
             {
-                // Create a value object for this setting
-                SettingsPropertyValue value = new SettingsPropertyValue(setting);
+                var spv = new SettingsPropertyValue(setting);
 
-                // Try to find a matching node in the user.config file
-                XmlNode node = document.SelectSingleNode(string.Format("/{0}/{1}/{2}[@{3}='{4}']", RootNodeName, SettingsNodeName, SettingNodeName, NameAttribute, setting.Name));
-
-                // If a node is found, get the value from it
-                if (node != null)
+                XmlNode? node = doc.SelectSingleNode($"/{RootNodeName}/{SettingsNodeName}/{SettingNodeName}[@{NameAttribute}='{setting.Name}']");
+                if (node is not null && node.Attributes?[ValueAttribute] is XmlAttribute valAttr)
                 {
-                    value.SerializedValue = node.Attributes[ValueAttribute].Value;
+                    spv.SerializedValue = valAttr.Value;
+                    // If you have non-string settings, deserialize here based on setting.SerializeAs
+                    // and assign spv.PropertyValue. For plain strings, SerializedValue is fine.
                 }
                 else
                 {
-                    // Otherwise, use the default value
-                    value.SerializedValue = setting.DefaultValue;
+                    spv.SerializedValue = setting.DefaultValue;
                 }
 
-                // Add the value object to the collection
-                values.Add(value);
+                // Mark clean: they just came from persisted storage (or defaults)
+                spv.IsDirty = false;
+                values.Add(spv);
             }
 
-            // Return the collection
             return values;
         }
 
-        // Override the SetPropertyValues method to write the settings to the user.config file
         public override void SetPropertyValues(SettingsContext context, SettingsPropertyValueCollection collection)
         {
-            // Load or create the user.config file into an XmlDocument
-            XmlDocument document = new XmlDocument();
+            lock (_sync)
+            {
+                XmlDocument doc = LoadOrCreateDocument(quarantineOnFailure: false);
+                EnsureSkeleton(doc);
+
+                XmlNode settingsNode = doc.DocumentElement!.SelectSingleNode(SettingsNodeName)!;
+
+                foreach (SettingsPropertyValue spv in collection)
+                {
+                    // Optionally skip unchanged props:
+                    // if (!spv.IsDirty) continue;
+
+                    XmlNode? node = doc.SelectSingleNode($"/{RootNodeName}/{SettingsNodeName}/{SettingNodeName}[@{NameAttribute}='{spv.Name}']");
+                    if (node is null)
+                    {
+                        node = doc.CreateElement(SettingNodeName);
+
+                        var nameAttr = doc.CreateAttribute(NameAttribute);
+                        nameAttr.Value = spv.Name;
+                        node.Attributes!.Append(nameAttr);
+
+                        var serializeAsAttr = doc.CreateAttribute(SerializeAsAttribute);
+                        serializeAsAttr.Value = spv.Property.SerializeAs.ToString();
+                        node.Attributes!.Append(serializeAsAttr);
+
+                        settingsNode.AppendChild(node);
+                    }
+
+                    var valueAttr = node.Attributes![ValueAttribute] ?? doc.CreateAttribute(ValueAttribute);
+                    valueAttr.Value = spv.SerializedValue?.ToString() ?? string.Empty;
+                    if (node.Attributes![ValueAttribute] is null)
+                        node.Attributes!.Append(valueAttr);
+                }
+
+                AtomicSave(doc, UserConfigPath);
+            }
+        }
+
+        private XmlDocument LoadOrCreateDocument(bool quarantineOnFailure)
+        {
+            var doc = new XmlDocument();
             try
             {
-                document.Load(UserConfigPath);
+                if (File.Exists(UserConfigPath))
+                {
+                    doc.Load(UserConfigPath);
+                }
+                else
+                {
+                    // brand-new file
+                    CreateSkeleton(doc);
+                }
             }
-            catch (Exception)
+            catch
             {
-                document.AppendChild(document.CreateXmlDeclaration("1.0", "utf-8", string.Empty));
-                document.AppendChild(document.CreateElement(RootNodeName));
-                document.DocumentElement.AppendChild(document.CreateElement(SettingsNodeName));
+                if (quarantineOnFailure)
+                {
+                    // Rename bad file one time so future loads work
+                    TryQuarantine(UserConfigPath);
+                    CreateSkeleton(doc);
+                }
+                else
+                {
+                    CreateSkeleton(doc);
+                }
             }
 
-            // Loop through each setting in the collection
-            foreach (SettingsPropertyValue value in collection)
+            EnsureSkeleton(doc);
+            return doc;
+        }
+
+        private static void CreateSkeleton(XmlDocument doc)
+        {
+            doc.RemoveAll();
+            doc.AppendChild(doc.CreateXmlDeclaration("1.0", "utf-8", null));
+            var root = doc.CreateElement(RootNodeName);
+            doc.AppendChild(root);
+            root.AppendChild(doc.CreateElement(SettingsNodeName));
+        }
+
+        private static void EnsureSkeleton(XmlDocument doc)
+        {
+            if (doc.DocumentElement?.Name != RootNodeName)
             {
+                CreateSkeleton(doc);
+                return;
+            }
+
+            var settings = doc.DocumentElement.SelectSingleNode(SettingsNodeName);
+            if (settings is null)
+            {
+                doc.DocumentElement.AppendChild(doc.CreateElement(SettingsNodeName));
+            }
+        }
+
+        private static void TryQuarantine(string path)
+        {
+            try
+            {
+                if (!File.Exists(path)) return;
+
+                string bak = path + ".bak";
+                // Avoid overwriting an older backup
+                if (File.Exists(bak))
+                {
+                    string ts = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                    bak = path + "." + ts + ".bak";
+                }
+                File.Move(path, bak);
+            }
+            catch
+            {
+                // Swallow: if we can't move it, we'll just overwrite later.
+            }
+        }
+
+        private static void AtomicSave(XmlDocument doc, string destinationPath)
+        {
+            string dir = Path.GetDirectoryName(destinationPath)!;
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            string tempPath = destinationPath + ".tmp";
+
+            // Write to temp
+            using (var writer = XmlWriter.Create(tempPath, new XmlWriterSettings { Indent = true }))
+            {
+                doc.Save(writer);
+            }
+
+            try
+            {
+                if (File.Exists(destinationPath))
+                {
+                    // Replace existing file, keep a short backup
+                    string backup = destinationPath + ".bak_last";
+                    File.Replace(tempPath, destinationPath, backup, ignoreMetadataErrors: true);
+                }
+                else
+                {
+                    File.Move(tempPath, destinationPath);
+                }
+            }
+            catch
+            {
+                // Fallback: best effort
                 try
                 {
-                    // Try to find a matching node in the user.config file
-                    XmlNode node = document.SelectSingleNode(string.Format("/{0}/{1}/{2}[@{3}='{4}']", RootNodeName, SettingsNodeName, SettingNodeName, NameAttribute, value.Name));
-
-                    // If a node is not found, create a new one and append it to the settings node
-                    if (node == null)
-                    {
-                        node = document.CreateElement(SettingNodeName);
-                        XmlAttribute nameAttribute = document.CreateAttribute(NameAttribute);
-                        nameAttribute.Value = value.Name;
-                        node.Attributes.Append(nameAttribute);
-                        XmlAttribute serializeAsAttribute = document.CreateAttribute(SerializeAsAttribute);
-                        serializeAsAttribute.Value = value.Property.SerializeAs.ToString();
-                        node.Attributes.Append(serializeAsAttribute);
-                        document.DocumentElement.SelectSingleNode(SettingsNodeName).AppendChild(node);
-                    }
-
-                    // Set or update the value attribute of the node
-                    XmlAttribute valueAttribute = node.Attributes[ValueAttribute];
-                    if (valueAttribute == null)
-                    {
-                        valueAttribute = document.CreateAttribute(ValueAttribute);
-                        node.Attributes.Append(valueAttribute);
-                    }
-
-                    if (value.SerializedValue is not null)
-                        valueAttribute.Value = value.SerializedValue.ToString();
+                    File.Copy(tempPath, destinationPath, overwrite: true);
+                    File.Delete(tempPath);
                 }
-                catch { }
+                catch { /* ignore */ }
             }
-
-            // Save the user.config file
-            document.Save(UserConfigPath);
         }
     }
 }

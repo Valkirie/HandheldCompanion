@@ -1,5 +1,6 @@
 ﻿using hidapi;
 using System;
+using System.Threading.Tasks;
 
 namespace controller_hidapi.net
 {
@@ -17,10 +18,19 @@ namespace controller_hidapi.net
         public event OnControllerInputReceivedEventHandler OnControllerInputReceived;
         public delegate void OnControllerInputReceivedEventHandler(byte[] Data);
 
-        public GenericController(ushort vid, ushort pid)
+        public GenericController(ushort vid, ushort pid, ushort inputBufferLen = 64, short mi = -1)
         {
             _vid = vid;
             _pid = pid;
+
+            _hidDevice = new HidDevice(_vid, _pid, inputBufferLen, mi)
+            {
+                OnInputReceived = input =>
+                {
+                    OnInputReceived(input);
+                    return Task.CompletedTask;
+                }
+            };
         }
 
         internal virtual void OnInputReceived(HidDeviceInputReceivedEventArgs e)
@@ -28,11 +38,14 @@ namespace controller_hidapi.net
             OnControllerInputReceived?.Invoke(e.Buffer);
         }
 
-        public virtual void Open()
+        public virtual bool Open()
         {
-            if (!_hidDevice.OpenDevice())
+            bool isOpen = _hidDevice.OpenDevice();
+            if (!isOpen)
                 throw new Exception("Could not open device!");
             _hidDevice.BeginRead();
+
+            return isOpen;
         }
 
         public virtual void Close()
@@ -45,6 +58,15 @@ namespace controller_hidapi.net
         {
             if (_hidDevice.IsDeviceValid)
                 _hidDevice.EndRead();
+        }
+
+        public void HidWrite(byte[] data)
+        {
+            try
+            {
+                _hidDevice.Write(data);
+            }
+            catch { }
         }
     }
 }

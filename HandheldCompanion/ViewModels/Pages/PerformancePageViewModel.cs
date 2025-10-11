@@ -1,4 +1,5 @@
-using HandheldCompanion.Devices;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
@@ -8,18 +9,18 @@ using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using LiveCharts;
-using LiveCharts.Definitions.Series;
-using LiveCharts.Helpers;
 using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using static HandheldCompanion.Processors.IntelProcessor;
 using Resources = HandheldCompanion.Properties.Resources;
 
 namespace HandheldCompanion.ViewModels
@@ -94,12 +95,15 @@ namespace HandheldCompanion.ViewModels
         public double CPUCoreMaximum => MotherboardInfo.NumberOfCores;
 
         public bool SupportsSoftwareFanMode => IDevice.GetCurrent().Capabilities.HasFlag(Devices.DeviceCapabilities.FanControl);
+        public bool SupportsIntelEnduranceGaming => GPUManager.GetCurrent() is IntelGPU intelGPU && intelGPU.HasEnduranceGaming(out _, out _, out _);
 
+        // Platform Manager
+        public bool IsRunningRTSS => ManagerFactory.platformManager.IsReady && PlatformManager.RTSS.IsInstalled;
         public bool SupportsAutoTDP
         {
             get
             {
-                if (!PlatformManager.RTSS.IsInstalled)
+                if (!IsRunningRTSS)
                     return false;
 
                 return PerformanceManager.GetProcessor()?.CanChangeTDP ?? false;
@@ -110,8 +114,8 @@ namespace HandheldCompanion.ViewModels
 
         public bool SupportsGPUFreq => PerformanceManager.GetProcessor()?.CanChangeGPU ?? false;
 
-        public bool CanChangePreset => !SelectedPreset.DeviceDefault;
-        public bool CanDeletePreset => !SelectedPreset.Default;
+        public bool CanChangePreset => true; // !SelectedPreset.DeviceDefault;
+        public bool CanDeletePreset => !SelectedPreset.Default && !SelectedPreset.DeviceDefault;
 
         public bool HasWarning => !string.IsNullOrEmpty(Warning);
 
@@ -119,7 +123,9 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                if (SelectedPreset.DeviceDefault) return Resources.ProfilesPage_DefaultDeviceProfile;
+                if (SelectedPreset.DeviceDefault)
+                    return Resources.ProfilesPage_DefaultDeviceProfile;
+
                 return string.Empty;
             }
         }
@@ -184,19 +190,78 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public double TDPOverrideValue
+        private bool _coerceGuard;
+        private double RequiredDelta
         {
             get
             {
-                var tdpValues = SelectedPreset?.TDPOverrideValues ?? IDevice.GetCurrent().nTDP;
-                return tdpValues[(int)PowerType.Slow];
+                if (PerformanceManager.GetProcessor() is IntelProcessor ip)
+                {
+                    // Official specification for Lunar Lake states that PL2 should always be at least 1 W higher than PL1
+                    if (ip.MicroArch == IntelMicroArch.LunarLake)
+                        return 1.0d;
+                }
+
+                return 0.0d;
+            }
+        }
+
+        // PL1 = Long/Sustained
+        // On AMD also = STAPM ?
+        public double PL1OverrideValue
+        {
+            get
+            {
+                double[] tdp = SelectedPreset?.TDPOverrideValues ?? IDevice.GetCurrent().nTDP;
+                return tdp[(int)PowerType.Slow];
             }
             set
             {
-                if (value != TDPOverrideValue)
+                if (Math.Abs(value - PL1OverrideValue) < double.Epsilon) return;
+
+                double clamped = Math.Max(ConfigurableTDPOverrideDown,
+                                  Math.Min(value, ConfigurableTDPOverrideUp));
+
+                SelectedPreset.TDPOverrideValues[(int)PowerType.Slow] = clamped;
+                SelectedPreset.TDPOverrideValues[(int)PowerType.Stapm] = clamped;
+
+                // If PL1 crosses PL2, bump PL2 up to maintain PL2 >= PL1 + Δ
+                double minPl2 = clamped + RequiredDelta;
+
+                if (!_coerceGuard && PL2OverrideValue < minPl2)
                 {
-                    SelectedPreset.TDPOverrideValues = [value, value, value];
-                    OnPropertyChanged(nameof(TDPOverrideValue));
+                    try
+                    {
+                        _coerceGuard = true;
+                        SelectedPreset.TDPOverrideValues[(int)PowerType.Fast] = Math.Min(ConfigurableTDPOverrideUp, minPl2);
+                        OnPropertyChanged(nameof(PL2OverrideValue));
+                    }
+                    finally { _coerceGuard = false; }
+                }
+
+                OnPropertyChanged(nameof(PL1OverrideValue));
+            }
+        }
+
+        // PL2 = Fast/Short
+        public double PL2OverrideValue
+        {
+            get
+            {
+                double[] tdp = SelectedPreset?.TDPOverrideValues ?? IDevice.GetCurrent().nTDP;
+                return tdp[(int)PowerType.Fast];
+            }
+            set
+            {
+                if (Math.Abs(value - PL2OverrideValue) < double.Epsilon) return;
+
+                double minPl2 = PL1OverrideValue + RequiredDelta;
+                double clamped = Math.Max(minPl2, Math.Min(value, ConfigurableTDPOverrideUp));
+
+                if (SelectedPreset.TDPOverrideValues[(int)PowerType.Fast] != clamped)
+                {
+                    SelectedPreset.TDPOverrideValues[(int)PowerType.Fast] = clamped;
+                    OnPropertyChanged(nameof(PL2OverrideValue));
                 }
             }
         }
@@ -383,6 +448,32 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public bool EnduranceGamingEnabled
+        {
+            get => SelectedPreset.IntelEnduranceGamingEnabled;
+            set
+            {
+                if (value != EnduranceGamingEnabled)
+                {
+                    SelectedPreset.IntelEnduranceGamingEnabled = value;
+                    OnPropertyChanged(nameof(EnduranceGamingEnabled));
+                }
+            }
+        }
+
+        public int IntelEnduranceGamingPreset
+        {
+            get => SelectedPreset.IntelEnduranceGamingPreset;
+            set
+            {
+                if (value != IntelEnduranceGamingPreset)
+                {
+                    SelectedPreset.IntelEnduranceGamingPreset = value;
+                    OnPropertyChanged(nameof(IntelEnduranceGamingPreset));
+                }
+            }
+        }
+
         public ICommand DeletePresetCommand { get; private set; }
 
         #endregion
@@ -390,6 +481,58 @@ namespace HandheldCompanion.ViewModels
         #region Main Window specific Bindings
 
         public Func<double, string> Formatter { get; private set; }
+        public Func<double, string> TempTickFormatter => v => $"{v * 10:N0} °C";    // bottom axis ticks: 0,10,...100
+        public Func<double, string> CpuXAxisFormatter => v => Math.Abs(v - CpuTempX) < 0.0001 ? $"{CpuTempX * 10:N2} °C" : string.Empty;    // top axis precise label
+
+        private int _dragIndex = -1;
+        private bool _isDragging;
+        private const double Epsilon = 0.05; // 0.05% fan speed granularity
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int ClampIndex(double x)
+        {
+            // index space (0..10)
+            int idx = (int)Math.Round(x);
+            if (idx < 0) return 0;
+            if (idx > 10) return 10;
+            return idx;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static double Clamp01_100(double y)
+        {
+            if (y < 0) return 0;
+            if (y > 100) return 100;
+            return y;
+        }
+
+        private double _cpuTempC = double.NaN;
+        public double CpuTempC
+        {
+            get => _cpuTempC;
+            private set
+            {
+                if (value != _cpuTempC)
+                {
+                    _cpuTempC = value;
+                    OnPropertyChanged(nameof(CpuTempC));
+                }
+            }
+        }
+
+        private double _cpuTempX = -5;
+        public double CpuTempX
+        {
+            get => _cpuTempX;
+            private set
+            {
+                if (value != _cpuTempX)
+                {
+                    _cpuTempX = value;
+                    OnPropertyChanged(nameof(CpuTempX));
+                }
+            }
+        }
 
         private double _xPointer = -5;
         public double XPointer
@@ -408,7 +551,7 @@ namespace HandheldCompanion.ViewModels
         private double _yPointer = -5;
         public double YPointer
         {
-            get => _xPointer;
+            get => _yPointer;
             set
             {
                 if (value != _yPointer)
@@ -486,11 +629,17 @@ namespace HandheldCompanion.ViewModels
 
         private static HashSet<string> _skipPropertyChangedUpdate =
         [
+            nameof(CpuTempC),
+            nameof(CpuTempX),
             nameof(XPointer),
             nameof(YPointer),
             nameof(SelectedPresetIndex),
             nameof(ProfilePickerCollectionView),
-            ""
+            nameof(SupportsGPUFreq),
+            nameof(SupportsIntelEnduranceGaming),
+            nameof(SupportsAutoTDP),
+            nameof(HasWarning),
+            string.Empty,
         ];
 
         private ContentDialog contentDialog;
@@ -513,7 +662,6 @@ namespace HandheldCompanion.ViewModels
             #region General Setup
 
             // manage events
-            ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
             PerformanceManager.Initialized += PerformanceManager_Initialized;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
 
@@ -551,6 +699,28 @@ namespace HandheldCompanion.ViewModels
                     break;
             }
 
+            switch (ManagerFactory.gpuManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.gpuManager.Initialized += GpuManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryGPU();
+                    break;
+            }
+
+            switch (ManagerFactory.platformManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.platformManager.Initialized += PlatformManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryPlatforms();
+                    break;
+            }
+
             PropertyChanged += (sender, e) =>
             {
                 if (SelectedPreset is null || SelectedPreset.Name is null)
@@ -565,29 +735,33 @@ namespace HandheldCompanion.ViewModels
                     case "ConfigurableTDPOverride":
                     case "ConfigurableTDPOverrideDown":
                     case "ConfigurableTDPOverrideUp":
+                    case "SupportsTDP":
                         return;
                 }
 
                 // TODO: Get rid of UI update here of fan graph UI dependency
                 if (IsMainPage)
                 {
-                    UIHelper.TryInvoke(() =>
+                    switch (e.PropertyName)
                     {
-                        _updatingFanCurveUI = true;
-
-                        // update charts
-                        for (int idx = 0; idx < _fanGraphLineSeries.ActualValues.Count; idx++)
-                            _fanGraphLineSeries.ActualValues[idx] = SelectedPreset.FanProfile.fanSpeeds[idx];
-
-                        _updatingFanCurveUI = false;
-                    });
-
-                    // No need to update 
-                    if (_skipPropertyChangedUpdate.Contains(e.PropertyName))
-                        return;
+                        case "":
+                            UIHelper.TryInvoke(() =>
+                            {
+                                _updatingFanCurveUI = true;
+                                for (int idx = 0; idx < _fanGraphLineSeries.ActualValues.Count; idx++)
+                                    _fanGraphLineSeries.ActualValues[idx] = SelectedPreset.FanProfile.fanSpeeds[idx];
+                                _updatingFanCurveUI = false;
+                            });
+                            break;
+                    }
                 }
 
-                // trigger power profile update
+                // No need to update 
+                if (_skipPropertyChangedUpdate.Contains(e.PropertyName))
+                    return;
+
+                // trigger power profile update but don't freeze UI
+                // todo: implement proper debounce
                 Task.Run(() =>
                 {
                     ManagerFactory.powerProfileManager.UpdateOrCreateProfile(SelectedPreset, IsQuickTools ? UpdateSource.QuickProfilesPage : UpdateSource.ProfilesPage);
@@ -695,10 +869,10 @@ namespace HandheldCompanion.ViewModels
                         // update charts
                         for (int idx = 0; idx < _fanGraphLineSeries.ActualValues.Count; idx++)
                             _fanGraphLineSeries.ActualValues[idx] = IDevice.GetCurrent().fanPresets[0][idx];
-
-                        // Temporary until view dependencies could be removed
-                        OnPropertyChanged("FanGraph");
                     });
+
+                    // Temporary until view dependencies could be removed
+                    OnPropertyChanged("FanGraphPreset");
                 });
 
                 FanPresetPerformanceCommand = new DelegateCommand(() =>
@@ -708,10 +882,10 @@ namespace HandheldCompanion.ViewModels
                         // update charts
                         for (int idx = 0; idx < _fanGraphLineSeries.ActualValues.Count; idx++)
                             _fanGraphLineSeries.ActualValues[idx] = IDevice.GetCurrent().fanPresets[1][idx];
-
-                        // Temporary until view dependencies could be removed
-                        OnPropertyChanged("FanGraph");
                     });
+
+                    // Temporary until view dependencies could be removed
+                    OnPropertyChanged("FanGraphPreset");
                 });
 
                 FanPresetTurboCommand = new DelegateCommand(() =>
@@ -721,13 +895,92 @@ namespace HandheldCompanion.ViewModels
                         // update charts
                         for (int idx = 0; idx < _fanGraphLineSeries.ActualValues.Count; idx++)
                             _fanGraphLineSeries.ActualValues[idx] = IDevice.GetCurrent().fanPresets[2][idx];
-
-                        // Temporary until view dependencies could be removed
-                        OnPropertyChanged("FanGraph");
                     });
+
+                    // Temporary until view dependencies could be removed
+                    OnPropertyChanged("FanGraphPreset");
                 });
             }
             #endregion
+        }
+
+        private void QueryPlatforms()
+        {
+            // manage events
+            PlatformManager.LibreHardware.CPUTemperatureChanged += LibreHardwareMonitor_CpuTemperatureChanged;
+
+            OnPropertyChanged(nameof(SupportsAutoTDP));
+        }
+
+        private void PlatformManager_Initialized()
+        {
+            QueryPlatforms();
+        }
+
+        private void LibreHardwareMonitor_CpuTemperatureChanged(float? value)
+        {
+            if (!value.HasValue) return;
+
+            // Clamp to your axis range and convert °C → X index (0..10)
+            double tempC = Math.Max(0, Math.Min(100, value.Value));
+            double x = tempC / 10.0;
+
+            CpuTempC = tempC;
+            CpuTempX = x;
+        }
+
+        private void QueryGPU()
+        {
+            // manage events
+            ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
+            ManagerFactory.gpuManager.Unhooked += GpuManager_Unhooked;
+
+            GPU gpu = GPUManager.GetCurrent();
+            if (gpu is not null)
+                GPUManager_Hooked(gpu);
+        }
+
+        private void GpuManager_Initialized()
+        {
+            QueryGPU();
+        }
+
+        private void GPUManager_Hooked(GPU GPU)
+        {
+            if (GPU is AMDGPU amdGPU)
+            {
+                // do something
+            }
+            else if (GPU is IntelGPU intelGPU)
+            {
+                intelGPU.EnduranceGamingState += IntelGPU_EnduranceGamingState;
+            }
+
+            UpdateGraphicsSettingsUI();
+        }
+
+        private void GpuManager_Unhooked(GPU GPU)
+        {
+            if (GPU is AMDGPU amdGPU)
+            {
+                // do something
+            }
+            else if (GPU is IntelGPU intelGPU)
+            {
+                intelGPU.EnduranceGamingState -= IntelGPU_EnduranceGamingState;
+            }
+
+            UpdateGraphicsSettingsUI();
+        }
+
+        private void IntelGPU_EnduranceGamingState(bool Supported, IGCL.IGCLBackend.ctl_3d_endurance_gaming_control_t Control, IGCL.IGCLBackend.ctl_3d_endurance_gaming_mode_t Mode)
+        {
+            UpdateGraphicsSettingsUI();
+        }
+
+        private void UpdateGraphicsSettingsUI()
+        {
+            OnPropertyChanged(nameof(SupportsIntelEnduranceGaming));
         }
 
         private void SettingsManager_Initialized()
@@ -752,6 +1005,7 @@ namespace HandheldCompanion.ViewModels
 
         private void QueryPowerProfile()
         {
+            // manage events
             ManagerFactory.powerProfileManager.Updated += PowerProfileManager_Updated;
             ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
 
@@ -777,6 +1031,9 @@ namespace HandheldCompanion.ViewModels
 
         private void QueryMedia()
         {
+            // manage events
+            ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
+
             MultimediaManager_PrimaryScreenChanged(ManagerFactory.multimediaManager.PrimaryDesktop);
         }
 
@@ -788,14 +1045,19 @@ namespace HandheldCompanion.ViewModels
         public override void Dispose()
         {
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
             ManagerFactory.multimediaManager.PrimaryScreenChanged -= MultimediaManager_PrimaryScreenChanged;
             ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
-            PerformanceManager.Initialized -= PerformanceManager_Initialized;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
+            PerformanceManager.Initialized -= PerformanceManager_Initialized;
             ManagerFactory.powerProfileManager.Updated -= PowerProfileManager_Updated;
             ManagerFactory.powerProfileManager.Deleted -= PowerProfileManager_Deleted;
             ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
-
+            ManagerFactory.gpuManager.Hooked -= GPUManager_Hooked;
+            ManagerFactory.gpuManager.Unhooked -= GpuManager_Unhooked;
+            ManagerFactory.gpuManager.Initialized -= GpuManager_Initialized;
+            PlatformManager.LibreHardware.CPUTemperatureChanged -= LibreHardwareMonitor_CpuTemperatureChanged;
+            ManagerFactory.platformManager.Initialized -= PlatformManager_Initialized;
 
             if (IsMainPage)
             {
@@ -909,6 +1171,13 @@ namespace HandheldCompanion.ViewModels
             _fanGraph.MouseMove += ChartMouseMove;
             _fanGraph.MouseUp += ChartMouseUp;
             _fanGraph.TouchMove += ChartTouchMove;
+            _fanGraph.PreviewTouchDown += _fanGraph_PreviewTouchDown;
+        }
+
+        private void _fanGraph_PreviewTouchDown(object? sender, TouchEventArgs e)
+        {
+            // used to prevent the page from scrolling during touch manipulation
+            e.Handled = true;
         }
 
         private void ActualValues_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -919,80 +1188,83 @@ namespace HandheldCompanion.ViewModels
                 SelectedPreset.FanProfile.fanSpeeds[idx] = (double)_fanGraphLineSeries.ActualValues[idx];
         }
 
-        private void ChartMovePoint(Point point)
+        private void ChartMovePoint(Point p)
         {
-            if (_storedChartPoint is not null)
+            int idx = ClampIndex(p.X);
+            XPointer = idx;
+            YPointer = Clamp01_100(p.Y);
+
+            if (!_isDragging || _dragIndex < 0) return;
+
+            double newY = Clamp01_100(p.Y);
+            double currentY = (double)_fanGraphLineSeries.ActualValues[_dragIndex];
+            if (Math.Abs(newY - currentY) < Epsilon) return;
+
+            // NO _updatingFanCurveUI here — we WANT CollectionChanged to sync into SelectedPreset
+            _fanGraphLineSeries.ActualValues[_dragIndex] = newY;
+
+            // keep monotonic shape (forward)
+            double carry = newY;
+            for (int i = _dragIndex + 1; i < _fanGraphLineSeries.ActualValues.Count; i++)
             {
-                double pointY = Math.Max(0, Math.Min(100, point.Y));
-
-                // update current poing value
-                _fanGraphLineSeries.ActualValues[_storedChartPoint.Key] = pointY;
-
-                // prevent higher values from having lower fan speed
-                for (int i = _storedChartPoint.Key; i < _fanGraphLineSeries.ActualValues.Count; i++)
-                {
-                    if ((double)_fanGraphLineSeries.ActualValues[i] < pointY)
-                        _fanGraphLineSeries.ActualValues[i] = pointY;
-                }
-
-                // prevent lower values from having higher fan speed
-                for (int i = _storedChartPoint.Key; i >= 0; i--)
-                {
-                    if ((double)_fanGraphLineSeries.ActualValues[i] > pointY)
-                        _fanGraphLineSeries.ActualValues[i] = pointY;
-                }
+                double yi = (double)_fanGraphLineSeries.ActualValues[i];
+                if (yi + Epsilon < carry) _fanGraphLineSeries.ActualValues[i] = carry;
+                else carry = yi;
             }
-
-            ISeriesView series = _fanGraph.Series.First();
-            ChartPoint closestPoint = series.ClosestPointTo(point.X, AxisOrientation.X);
-
-            YPointer = closestPoint.Y;
-            XPointer = closestPoint.X;
+            // backward
+            carry = newY;
+            for (int i = _dragIndex - 1; i >= 0; i--)
+            {
+                double yi = (double)_fanGraphLineSeries.ActualValues[i];
+                if (yi - Epsilon > carry) _fanGraphLineSeries.ActualValues[i] = carry;
+                else carry = yi;
+            }
         }
 
         private void ChartMouseMove(object sender, MouseEventArgs e)
         {
-            Point point = _fanGraph.ConvertToChartValues(e.GetPosition(_fanGraph));
-            ChartMovePoint(point);
-
+            ChartMovePoint(_fanGraph.ConvertToChartValues(e.GetPosition(_fanGraph)));
             e.Handled = true;
         }
 
         private void ChartTouchMove(object? sender, TouchEventArgs e)
         {
-            Point point = _fanGraph.ConvertToChartValues(e.GetTouchPoint(_fanGraph).Position);
-            ChartMovePoint(point);
-
+            ChartMovePoint(_fanGraph.ConvertToChartValues(e.GetTouchPoint(_fanGraph).Position));
             e.Handled = true;
         }
 
         private void ChartMouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (_storedChartPoint is null)
-                return;
-
-            _storedChartPoint = null;
-            // Temporary until view dependencies could be removed
-            OnPropertyChanged("FanGraph");
+            EndDrag();
         }
 
         private void ChartMouseLeave(object sender, MouseEventArgs e)
         {
-            if (_storedChartPoint is null)
-                return;
+            EndDrag();
+        }
 
-            _storedChartPoint = null;
-            // Temporary until view dependencies could be removed
+        private void EndDrag()
+        {
+            if (!_isDragging) return;
+
+            _isDragging = false;
+            _dragIndex = -1;
+
+            if (Mouse.Captured == _fanGraph)
+                _fanGraph.ReleaseMouseCapture();
+
             OnPropertyChanged("FanGraph");
         }
 
         private void ChartOnDataClick(object sender, ChartPoint chartPoint)
         {
-            if (chartPoint is null)
-                return;
+            if (chartPoint == null) return;
 
-            // store current point
-            _storedChartPoint = chartPoint;
+            // Convert the click position; cheaper than ClosestPointTo for your gridlike series
+            Point p = _fanGraph.ConvertToChartValues(Mouse.GetPosition(_fanGraph));
+            _dragIndex = ClampIndex(p.X);
+            _isDragging = true;
+            _fanGraph.CaptureMouse();
         }
     }
 }

@@ -1,6 +1,6 @@
 namespace HandheldCompanion.Managers.Overlay.Strategy;
 
-public class ExternalStrategy: IOverlayStrategy
+public class ExternalStrategy : IOverlayStrategy
 {
     public string? GetConfig()
     {

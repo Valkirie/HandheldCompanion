@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Inputs;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -59,12 +60,16 @@ namespace HandheldCompanion.Devices.AYANEO
                 [KeyCode.F16, KeyCode.LControl, KeyCode.LWin],
                 false, ButtonFlags.OEM4
             ));
+
+            // prepare hotkeys
+            DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
+            DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
         }
 
         public byte ECRamDirectRead(byte address, byte offset = 0xd1)
         {
             ushort address2 = BitConverter.ToUInt16(new byte[] { address, offset }, 0);
-            return base.ECRamReadByte(address2, this.ECDetails);
+            return base.ECRamDirectReadByte(address2, this.ECDetails);
         }
 
         public bool ECRamDirectWrite(byte address, byte data, byte offset = 0xd1)

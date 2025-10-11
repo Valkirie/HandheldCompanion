@@ -11,20 +11,15 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Pages.Profiles;
 using iNKORE.UI.WPF.Modern.Controls;
-using IWshRuntimeLibrary;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Xml;
 using static HandheldCompanion.GraphicsProcessingUnit.GPU;
 using static HandheldCompanion.Utils.XInputPlusUtils;
-using File = System.IO.File;
 using Page = System.Windows.Controls.Page;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 using Timer = System.Timers.Timer;
@@ -68,16 +63,46 @@ public partial class ProfilesPage : Page
         ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
         ManagerFactory.gpuManager.Unhooked += GPUManager_Unhooked;
-        PlatformManager.RTSS.Updated += RTSS_Updated;
+        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
+
+        // raise events
+        switch (ManagerFactory.platformManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.platformManager.Initialized += PlatformManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryPlatforms();
+                break;
+        }
 
         UpdateTimer = new Timer(UpdateInterval) { AutoReset = false };
         UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
 
         // auto-sort
         cB_Profiles.Items.SortDescriptions.Add(new SortDescription(string.Empty, ListSortDirection.Descending));
+    }
 
-        // force call
+    private void QueryPlatforms()
+    {
+        // manage events
+        PlatformManager.RTSS.Updated += RTSS_Updated;
+
         RTSS_Updated(PlatformManager.RTSS.Status);
+    }
+
+    private void PlatformManager_Initialized()
+    {
+        QueryPlatforms();
+    }
+
+    private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    {
+        UIHelper.TryInvoke(() =>
+        {
+            SelectedPowerProfileName.Text = profile.Name;
+        });
     }
 
     private void MultimediaManager_Initialized()
@@ -227,12 +252,11 @@ public partial class ProfilesPage : Page
             switch (status)
             {
                 case PlatformStatus.Ready:
-                    var Processor = PerformanceManager.GetProcessor();
+                case PlatformStatus.Started:
                     StackProfileFramerate.IsEnabled = true;
                     break;
-                case PlatformStatus.Stalled:
-                    // StackProfileFramerate.IsEnabled = false;
-                    // StackProfileAutoTDP.IsEnabled = false;
+                default:
+                    StackProfileFramerate.IsEnabled = false;
                     break;
             }
         });
@@ -242,17 +266,28 @@ public partial class ProfilesPage : Page
     {
         List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
 
-        // UI thread
-        UIHelper.TryInvoke(() =>
+        if (profileLock.TryEnter())
         {
-            cB_Framerate.Items.Clear();
+            try
+            {
+                // UI thread
+                UIHelper.TryInvoke(() =>
+                {
+                    cB_Framerate.Items.Clear();
 
-            foreach (ScreenFramelimit frameLimit in frameLimits)
-                cB_Framerate.Items.Add(frameLimit);
+                    foreach (ScreenFramelimit frameLimit in frameLimits)
+                        cB_Framerate.Items.Add(frameLimit);
 
-            if (selectedProfile is not null)
-                cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
-        });
+                    if (selectedProfile is not null)
+                        cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
+                });
+            }
+            catch { }
+            finally
+            {
+                profileLock.Exit();
+            }
+        }
     }
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -271,6 +306,7 @@ public partial class ProfilesPage : Page
         ManagerFactory.gpuManager.Hooked -= GPUManager_Hooked;
         ManagerFactory.gpuManager.Unhooked -= GPUManager_Unhooked;
         PlatformManager.RTSS.Updated -= RTSS_Updated;
+        ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
 
         UpdateTimer.Elapsed -= (sender, e) => SubmitProfile();
 
@@ -283,111 +319,13 @@ public partial class ProfilesPage : Page
         if (UpdateTimer.Enabled)
             UpdateTimer.Stop();
 
-        CommonOpenFileDialog openFileDialog = new CommonOpenFileDialog();
-        openFileDialog.Filters.Add(new CommonFileDialogFilter("Executable", "*.exe"));
-        openFileDialog.Filters.Add(new CommonFileDialogFilter("Shortcuts", "*.lnk"));
-        openFileDialog.Filters.Add(new CommonFileDialogFilter("UWP manifest", "*AppxManifest.xml"));
-        openFileDialog.NavigateToShortcut = false;
-
-        if (openFileDialog.ShowDialog() != CommonFileDialogResult.Ok)
-            return;
-
         try
         {
-            string path = openFileDialog.FileName;
-            if (string.IsNullOrEmpty(path))
-                return;
-
-            string folder = Path.GetDirectoryName(path);
-            string file = Path.GetFileName(path);
-            string ext = Path.GetExtension(file);
-
+            string path = string.Empty;
             string arguments = string.Empty;
-            string name = file.Replace(ext, string.Empty);
+            string name = string.Empty;
 
-            if (ext.Equals(".lnk"))
-            {
-                WshShell wsh = new WshShell();
-                IWshShortcut link = (IWshShortcut)wsh.CreateShortcut(path);
-
-                // get real path
-                path = link.TargetPath;
-
-                // get arguments
-                arguments = link.Arguments;
-
-                folder = Path.GetDirectoryName(path);
-                file = Path.GetFileName(link.TargetPath);
-                ext = Path.GetExtension(file);
-            }
-
-            switch (ext)
-            {
-                default:
-                case ".exe":
-                    break;
-                case ".xml":
-                    try
-                    {
-                        XmlDocument doc = new XmlDocument();
-                        string UWPpath = string.Empty;
-                        string UWPfile = string.Empty;
-
-                        // check if MicrosoftGame.config exists
-                        string configPath = Path.Combine(folder, "MicrosoftGame.config");
-                        if (File.Exists(configPath))
-                        {
-                            doc.Load(configPath);
-
-                            XmlNodeList ExecutableList = doc.GetElementsByTagName("ExecutableList");
-                            foreach (XmlNode node in ExecutableList)
-                                foreach (XmlNode child in node.ChildNodes)
-                                    if (child.Name.Equals("Executable"))
-                                        if (child.Attributes is not null)
-                                            foreach (XmlAttribute attribute in child.Attributes)
-                                                switch (attribute.Name)
-                                                {
-                                                    case "Name":
-                                                        UWPpath = Path.Combine(folder, attribute.InnerText);
-                                                        UWPfile = Path.GetFileName(path);
-                                                        break;
-                                                }
-                        }
-
-                        // either there was no config file, either we couldn't find an executable within it
-                        if (!File.Exists(UWPpath))
-                        {
-                            doc.Load(path);
-
-                            XmlNodeList Applications = doc.GetElementsByTagName("Applications");
-                            foreach (XmlNode node in Applications)
-                                foreach (XmlNode child in node.ChildNodes)
-                                    if (child.Name.Equals("Application"))
-                                        if (child.Attributes is not null)
-                                            foreach (XmlAttribute attribute in child.Attributes)
-                                                switch (attribute.Name)
-                                                {
-                                                    case "Executable":
-                                                        UWPpath = Path.Combine(folder, attribute.InnerText);
-                                                        UWPfile = Path.GetFileName(path);
-                                                        break;
-                                                }
-                        }
-
-                        // we're good to go
-                        if (File.Exists(UWPpath))
-                        {
-                            path = UWPpath;
-                            file = UWPfile;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        LogManager.LogError(ex.Message, true);
-                    }
-
-                    break;
-            }
+            FileUtils.CommonFileDialog(out path, out arguments, out name);
 
             // create profile
             Profile profile = new Profile(path);
@@ -416,8 +354,13 @@ public partial class ProfilesPage : Page
                         exists = false;
                         break;
                     case ContentDialogResult.Secondary:
-                        profile.IsSubProfile = true;
-                        exists = false;
+                        {
+                            Profile mainProfile = ManagerFactory.profileManager.GetProfileFromPath(path, true, true);
+                            profile.IsSubProfile = true;
+                            profile.ParentGuid = mainProfile.Guid;
+
+                            exists = false;
+                        }
                         break;
                     default:
                         exists = true;
@@ -458,6 +401,11 @@ public partial class ProfilesPage : Page
 
     private void PowerProfileOnBatteryMore_Click(object sender, RoutedEventArgs e)
     {
+        // If the click originated in the ComboBox (or any ComboBoxItem), ignore it
+        DependencyObject? src = e.Source as DependencyObject;
+        if (src is not SettingsCard)
+            return;
+
         PowerProfile powerProfile = ManagerFactory.powerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
         if (powerProfile is null)
             return;
@@ -468,6 +416,11 @@ public partial class ProfilesPage : Page
 
     private void PowerProfilePluggedMore_Click(object sender, RoutedEventArgs e)
     {
+        // If the click originated in the ComboBox (or any ComboBoxItem), ignore it
+        DependencyObject? src = e.Source as DependencyObject;
+        if (src is not SettingsCard)
+            return;
+
         PowerProfile powerProfile = ManagerFactory.powerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
         if (powerProfile is null)
             return;
@@ -492,11 +445,9 @@ public partial class ProfilesPage : Page
             {
                 case false:
                     selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline] = powerProfile.Guid;
-                    SelectedPowerProfileName.Text = powerProfile.Name;
                     break;
                 case true:
                     selectedProfile.PowerProfiles[(int)PowerLineStatus.Online] = powerProfile.Guid;
-                    SelectedPowerProfilePluggedName.Text = powerProfile.Name;
                     break;
             }
         });
@@ -565,6 +516,7 @@ public partial class ProfilesPage : Page
                     tB_ProfileName.Text = selectedMainProfile.Name;
                     tB_ProfilePath.Text = selectedProfile.Path;
                     tB_ProfileArguments.Text = selectedProfile.Arguments;
+                    tB_ProfileLaunchString.Text = selectedProfile.LaunchString;
                     Toggle_EnableProfile.IsOn = selectedProfile.Enabled;
 
                     // Global settings
@@ -637,8 +589,16 @@ public partial class ProfilesPage : Page
                     PowerProfile powerProfileDC = ManagerFactory.powerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
                     PowerProfile powerProfileAC = ManagerFactory.powerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
 
-                    SelectedPowerProfileName.Text = powerProfileDC?.Name;
-                    SelectedPowerProfilePluggedName.Text = powerProfileAC?.Name;
+                    switch (System.Windows.Forms.SystemInformation.PowerStatus.PowerLineStatus)
+                    {
+                        case System.Windows.Forms.PowerLineStatus.Unknown:
+                        case System.Windows.Forms.PowerLineStatus.Offline:
+                            SelectedPowerProfileName.Text = powerProfileDC?.Name;
+                            break;
+                        case System.Windows.Forms.PowerLineStatus.Online:
+                            SelectedPowerProfileName.Text = powerProfileAC?.Name;
+                            break;
+                    }
 
                     ((ProfilesPageViewModel)DataContext).PowerProfileChanged(powerProfileAC, powerProfileDC);
 
@@ -810,7 +770,7 @@ public partial class ProfilesPage : Page
     }
 
     private LayoutTemplate selectedTemplate;
-    private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
+    public void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
     {
         if (selectedTemplate is not null)
         {
@@ -1234,6 +1194,7 @@ public partial class ProfilesPage : Page
         newSubProfile.Name = Properties.Resources.ProfilesPage_NewSubProfile;
         newSubProfile.Guid = Guid.NewGuid();
         newSubProfile.IsSubProfile = true;
+        newSubProfile.ParentGuid = selectedMainProfile.Guid;
 
         ManagerFactory.profileManager.UpdateOrCreateProfile(newSubProfile);
     }
@@ -1261,7 +1222,7 @@ public partial class ProfilesPage : Page
         switch (dialogTask.Result)
         {
             case ContentDialogResult.Primary:
-                ManagerFactory.profileManager.DeleteSubProfile(subProfile);
+                ManagerFactory.profileManager.DeleteProfile(subProfile);
                 break;
         }
     }
@@ -1318,7 +1279,7 @@ public partial class ProfilesPage : Page
         if (profileLock.IsEntered())
             return;
 
-        if (cB_Framerate.SelectedItem is ScreenFramelimit screenFramelimit)
+        if (cB_Framerate.SelectedItem is ScreenFramelimit screenFramelimit && screenFramelimit.limit != selectedProfile.FramerateValue)
         {
             selectedProfile.FramerateValue = screenFramelimit.limit;
             UpdateProfile();
@@ -1476,6 +1437,19 @@ public partial class ProfilesPage : Page
             return;
 
         selectedProfile.SuspendOnQT = Toggle_SuspendOnQuicktools.IsOn;
+        UpdateProfile();
+    }
+
+    private void tB_ProfileLaunchString_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // prevent update loop
+        if (profileLock.IsEntered())
+            return;
+
+        selectedProfile.LaunchString = tB_ProfileLaunchString.Text;
         UpdateProfile();
     }
 }

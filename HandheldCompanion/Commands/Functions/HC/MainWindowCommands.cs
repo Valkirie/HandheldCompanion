@@ -46,7 +46,7 @@ namespace HandheldCompanion.Commands.Functions.HC
             MainWindow mainWindow = MainWindow.GetCurrent();
 
             // Toggle state
-            mainWindow.SwapWindowState();
+            mainWindow.ToggleState();
 
             // UI thread
             UIHelper.TryInvoke(() =>

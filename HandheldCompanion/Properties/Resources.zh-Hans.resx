@@ -277,10 +277,10 @@
   <data name="Hotkey_ExpandDesc" xml:space="preserve">
     <value>输出指令：Alt + Enter</value>
   </data>
-  <data name="Hotkey_Guide" xml:space="preserve">
+  <data name="Hotkey_ButtonCommands" xml:space="preserve">
     <value>XBOX/PS 按键</value>
   </data>
-  <data name="Hotkey_GuideDesc" xml:space="preserve">
+  <data name="Hotkey_ButtonCommandsDesc" xml:space="preserve">
     <value>模拟Xbox菜单键或者索尼PS键</value>
   </data>
   <data name="Hotkey_Keyboard" xml:space="preserve">
@@ -452,7 +452,7 @@
     <value>更改3D手柄模型的渲染设置</value>
   </data>
   <data name="OverlayPage_RenderSettingsFramerate" xml:space="preserve">
-    <value>刷效率</value>
+    <value>刷新率</value>
   </data>
   <data name="OverlayPage_RenderSettingsFramerateDesc" xml:space="preserve">
     <value>更改渲染刷新率（Hz）</value>
@@ -1389,64 +1389,64 @@
     <value>仅帧率</value>
   </data>
   <data name="OverlayPage_OverlayDisplayLevel_Custom" xml:space="preserve">
-    <value>Custom</value>
+    <value>自定义</value>
   </data>
   <data name="OverlayPage_OverlayDisplayLevel_External" xml:space="preserve">
-    <value>External</value>
+    <value>外部程序</value>
   </data>
   <data name="OverlayPage_OverlayDisplayCustomLevel_Disabled" xml:space="preserve">
-    <value>Disabled</value>
+    <value>停用</value>
   </data>
   <data name="OverlayPage_OverlayDisplayCustomLevel_Full" xml:space="preserve">
-    <value>Full</value>
+    <value>完整</value>
   </data>
   <data name="OverlayPage_OverlayDisplayCustomLevel_Minimal" xml:space="preserve">
-    <value>Minimal</value>
+    <value>基本</value>
   </data>
   <data name="OverlayPage_CustomSettings" xml:space="preserve">
     <value>Custom Settings</value>
   </data>
   <data name="OverlayPage_TimeLevel" xml:space="preserve">
-    <value>Time Level</value>
+    <value>时间</value>
   </data>
   <data name="OverlayPage_TimeLevelDesc" xml:space="preserve">
-    <value>The level of information for your time.</value>
+    <value>时间信息级别</value>
   </data>
   <data name="OverlayPage_FPSLevel" xml:space="preserve">
-    <value>FPS Level</value>
+    <value>帧率</value>
   </data>
   <data name="OverlayPage_FPSLevelDesc" xml:space="preserve">
-    <value>The level of information for your FPS.</value>
+    <value>帧率信息级别</value>
   </data>
   <data name="OverlayPage_CPULevel" xml:space="preserve">
-    <value>CPU Level</value>
+    <value>CPU</value>
   </data>
   <data name="OverlayPage_CPULevelDesc" xml:space="preserve">
-    <value>The level of information for your CPU.</value>
+    <value>CPU信息级别</value>
   </data>
   <data name="OverlayPage_RAMLevel" xml:space="preserve">
-    <value>RAM Level</value>
+    <value>内存</value>
   </data>
   <data name="OverlayPage_RAMLevelDesc" xml:space="preserve">
-    <value>The level of information for your RAM.</value>
+    <value>内存信息级别</value>
   </data>
   <data name="OverlayPage_GPULevel" xml:space="preserve">
-    <value>GPU Level</value>
+    <value>GPU</value>
   </data>
   <data name="OverlayPage_GPULevelDesc" xml:space="preserve">
-    <value>The level of information for your GPU.</value>
+    <value>GPU信息级别</value>
   </data>
   <data name="OverlayPage_VRAMLevel" xml:space="preserve">
-    <value>VRAM Level</value>
+    <value>显存</value>
   </data>
   <data name="OverlayPage_VRAMLevelDesc" xml:space="preserve">
-    <value>The level of information for your VRAM.</value>
+    <value>显存信息级别</value>
   </data>
   <data name="OverlayPage_BATTLevel" xml:space="preserve">
-    <value>Battery Level</value>
+    <value>电池</value>
   </data>
   <data name="OverlayPage_BATTLevelDesc" xml:space="preserve">
-    <value>The level of information for your battery.</value>
+    <value>电池信息级别</value>
   </data>
   <data name="ProfilesPage_ControllerLayoutDesc" xml:space="preserve">
     <value>更改虚拟手柄的布局</value>
@@ -1600,27 +1600,6 @@
   </data>
   <data name="Enum_AYANEOAIRPro_ButtonFlags_OEM4" xml:space="preserve">
     <value>LC</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_B1" xml:space="preserve">
-    <value>叉</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_B2" xml:space="preserve">
-    <value>圈</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_B3" xml:space="preserve">
-    <value>方</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_B4" xml:space="preserve">
-    <value>三角</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_Back" xml:space="preserve">
-    <value>Share</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_Special" xml:space="preserve">
-    <value>Sony</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_Start" xml:space="preserve">
-    <value>Options</value>
   </data>
   <data name="Enum_HIDmode_DualShock4Controller" xml:space="preserve">
     <value>模拟 DualShock4 手柄</value>
@@ -1961,99 +1940,6 @@
   <data name="Enum_ProfileErrorCode_IsRunning" xml:space="preserve">
     <value>这个配置正在运行。一些选项可能被禁用。</value>
   </data>
-  <data name="Enum_ProController_AxisLayoutFlags_L2" xml:space="preserve">
-    <value>ZL</value>
-  </data>
-  <data name="Enum_ProController_AxisLayoutFlags_R2" xml:space="preserve">
-    <value>ZR</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_B1" xml:space="preserve">
-    <value>B</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_B2" xml:space="preserve">
-    <value>A</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_B3" xml:space="preserve">
-    <value>Y</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_B4" xml:space="preserve">
-    <value>X</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_Back" xml:space="preserve">
-    <value>Minus</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_L1" xml:space="preserve">
-    <value>L</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_R1" xml:space="preserve">
-    <value>R</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_Special" xml:space="preserve">
-    <value>Home</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_Special2" xml:space="preserve">
-    <value>Capture</value>
-  </data>
-  <data name="Enum_ProController_ButtonFlags_Start" xml:space="preserve">
-    <value>Plus</value>
-  </data>
-  <data name="Enum_DS4Controller_AxisLayoutFlags_LeftPad" xml:space="preserve">
-    <value>Left-finger swipe</value>
-  </data>
-  <data name="Enum_DS4Controller_AxisLayoutFlags_RightPad" xml:space="preserve">
-    <value>Right-finger swipe</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_LeftPadClick" xml:space="preserve">
-    <value>Left-finger click</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_LeftPadTouch" xml:space="preserve">
-    <value>Left-finger touch</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_RightPadClick" xml:space="preserve">
-    <value>Right-finger click</value>
-  </data>
-  <data name="Enum_DS4Controller_ButtonFlags_RightPadTouch" xml:space="preserve">
-    <value>Right-finger touch</value>
-  </data>
-  <data name="Enum_DualSenseController_AxisLayoutFlags_LeftPad" xml:space="preserve">
-    <value>Left-finger swipe</value>
-  </data>
-  <data name="Enum_DualSenseController_AxisLayoutFlags_RightPad" xml:space="preserve">
-    <value>Right-finger swipe</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_B1" xml:space="preserve">
-    <value>Cross</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_B2" xml:space="preserve">
-    <value>Circle</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_B3" xml:space="preserve">
-    <value>Square</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_B4" xml:space="preserve">
-    <value>Triangle</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_Back" xml:space="preserve">
-    <value>Share</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_LeftPadClick" xml:space="preserve">
-    <value>Left-finger click</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_LeftPadTouch" xml:space="preserve">
-    <value>Left-finger touch</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_RightPadClick" xml:space="preserve">
-    <value>Right-finger click</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_RightPadTouch" xml:space="preserve">
-    <value>Right-finger touch</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_Special" xml:space="preserve">
-    <value>Sony</value>
-  </data>
-  <data name="Enum_DualSenseController_ButtonFlags_Start" xml:space="preserve">
-    <value>Options</value>
-  </data>
   <data name="ProfilesPage_AreYouSureApplyTemplate1" xml:space="preserve">
     <value>你确定要应用此模板吗？所有的布局设置都将被覆盖。</value>
   </data>
@@ -2247,10 +2133,10 @@
     <value>ScrollWheel</value>
   </data>
   <data name="Enum_XInputController_AxisLayoutFlags_LeftStick" xml:space="preserve">
-    <value>LeftStick</value>
+    <value>Left Stick</value>
   </data>
   <data name="Enum_XInputController_AxisLayoutFlags_RightStick" xml:space="preserve">
-    <value>RightStick</value>
+    <value>Right Stick</value>
   </data>
   <data name="Controller_Connect" xml:space="preserve">
     <value>Connect</value>
@@ -2460,10 +2346,10 @@
     <value>更改风扇设置</value>
   </data>
   <data name="ProfilesPage_CreatePowerProfile" xml:space="preserve">
-    <value>Create a new power preset</value>
+    <value>创建新的电源预设</value>
   </data>
   <data name="ProfilesPage_CreatePowerProfileButton" xml:space="preserve">
-    <value>Create power preset</value>
+    <value>创建电源预设</value>
   </data>
   <data name="ProfilesPage_DeletePowerProfileButton" xml:space="preserve">
     <value>Delete power preset</value>
@@ -2600,8 +2486,8 @@
   <data name="ProfilesPage_SubProfilesDesc" xml:space="preserve">
     <value>为同一游戏添加不同的配置</value>
   </data>
-  <data name="QuickProfilesPage_SubProfilesDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="QuickProfilesPage_SubProfilesDesc" xml:space="preserve">
+    <value>选择以应用子配置</value>
   </data>
   <data name="Hotkey_CycleSubProfile" xml:space="preserve">
     <value>循环切换子配置</value>
@@ -2634,7 +2520,7 @@
     <value>覆盖</value>
   </data>
   <data name="ProfilesPage_DefaultDeviceProfile" xml:space="preserve">
-    <value>This is a default device preset and cannot be edited. These are comparable to the presets provided by the devices original software.</value>
+    <value>This is a default preset for the device, comparable to the one provided by the manufacturer. Please modify with caution.</value>
   </data>
   <data name="PowerProfileLegionGoBetterBattery" xml:space="preserve">
     <value>Legion Go - Quiet</value>
@@ -2831,6 +2717,12 @@
   <data name="OverlayPage_SteamDeck" xml:space="preserve">
     <value>Steam Deck</value>
   </data>
+  <data name="OverlayPage_Xbox360Controller" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="ProfilesPage_RollYawAuto" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
   <data name="Hint_MSIClawCenterCheck" xml:space="preserve">
     <value>MSI Center 正在运行</value>
   </data>
@@ -2933,11 +2825,17 @@
   <data name="ProfilesPage_GraphicsSetting_Title" xml:space="preserve">
     <value>图形设置</value>
   </data>
+  <data name="ProfilesPage_Layout_Desc" xml:space="preserve">
+    <value>你已为此程序修改的布局。</value>
+  </data>
   <data name="ProfilesPage_NewSubProfile" xml:space="preserve">
     <value>（新配置）</value>
   </data>
-  <data name="ProfilesPage_SubProfileRenamingDialogue_Name" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="ProfilesPage_ProfileRenamingDialogue_Name" xml:space="preserve">
+    <value>配置名称</value>
+  </data>
+  <data name="ProfilesPage_SubProfileRenamingDialogue_Name" xml:space="preserve">
+    <value>子配置名称</value>
   </data>
   <data name="DevicePage_DynamicLighting_Presets" xml:space="preserve">
     <value>预设效果</value>
@@ -3056,9 +2954,6 @@
   <data name="Hotkey_OnScreenDisplay" xml:space="preserve">
     <value>悬浮窗</value>
   </data>
-  <data name="ProfilesPage_PowerPresetPlugged" xml:space="preserve">
-    <value>电源预设（插入电源）</value>
-  </data>
   <data name="ProfilesPage_PowerSettingsPlugged" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
@@ -3107,6 +3002,9 @@
   <data name="Hotkey_XGMobileDesc" xml:space="preserve">
     <value>切换 ROG XG Mobile 状态</value>
   </data>
+  <data name="ProfilesPage_SuspendOnSleep" xml:space="preserve">
+    <value />
+  </data>
   <data name="OverlayPage_OnScreenDisplayOptions" xml:space="preserve">
     <value>显示选项</value>
   </data>
@@ -3125,8 +3023,8 @@
   <data name="PerformancePage_CPUParkingMode" xml:space="preserve">
     <value>CPU核心调度</value>
   </data>
-  <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
-    <value>设置CPU核心调度模式</value>
+  <data name="PerformancePage_EnduranceGaming_Desc" xml:space="preserve">
+    <value>GPU Auto TDP based on desired FPS target</value>
   </data>
   <data name="SettingsPage_Priority" xml:space="preserve">
     <value>进程优先级</value>
@@ -3378,6 +3276,456 @@
     <value />
   </data>
   <data name="SettingsPage_VirtualKeyboardDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_Profile" xml:space="preserve">
+    <value>配置文件</value>
+  </data>
+  <data name="LayoutPage_LaytouDesktop" xml:space="preserve">
+    <value>桌面布局</value>
+  </data>
+  <data name="LayoutTemplate_Desktop" xml:space="preserve">
+    <value>桌面</value>
+  </data>
+  <data name="LayoutTemplate_DesktopDesc" xml:space="preserve">
+    <value>用于桌面浏览的布局</value>
+  </data>
+  <data name="LayoutTemplate_Default" xml:space="preserve">
+    <value>游戏手柄（XBOX）</value>
+  </data>
+  <data name="LayoutTemplate_DefaultDesc" xml:space="preserve">
+    <value>该模板适用于已内置手柄支持的游戏。针对双杆游戏，如双摇杆射击游戏、横板过关游戏等设计。</value>
+  </data>
+  <data name="LayoutTemplate_Nintendo" xml:space="preserve">
+    <value>游戏手柄（任天堂）</value>
+  </data>
+  <data name="LayoutTemplate_NintendoDesc" xml:space="preserve">
+    <value>该模板适用于为任天堂游戏手柄设计的游戏。</value>
+  </data>
+  <data name="LayoutTemplate_Keyboard" xml:space="preserve">
+    <value>键盘（WASD）和鼠标</value>
+  </data>
+  <data name="LayoutTemplate_KeyboardDesc" xml:space="preserve">
+    <value>该模板非常适合原生支持键鼠却不真正支持手柄的游戏。控制器会通过按键来驱动游戏基于键盘的事件，而且会假定您用哪些按键移动（WSAD 键移动、空格键跳跃等）。右触板会模拟鼠标移动。</value>
+  </data>
+  <data name="LayoutTemplate_GamepadMouse" xml:space="preserve">
+    <value>带鼠标触摸板的游戏手柄</value>
+  </data>
+  <data name="LayoutTemplate_GamepadMouseDesc" xml:space="preserve">
+    <value>该模板适用于已内置手柄支持的游戏。右侧触摸板将被绑定到鼠标模拟，该功能可能并非在所有游戏中都有效。</value>
+  </data>
+  <data name="LayoutTemplate_GamepadJoystick" xml:space="preserve">
+    <value>带摇杆触摸板的游戏手柄</value>
+  </data>
+  <data name="LayoutTemplate_GamepadJoystickDesc" xml:space="preserve">
+    <value>该模板适用于已内置手柄支持并带有控制摄像头的游戏。如第一人称射击游戏或第三人称冒险游戏等。</value>
+  </data>
+  <data name="ProfilesPage_WindowsSettings" xml:space="preserve">
+    <value>窗口设置</value>
+  </data>
+  <data name="ProfilesPage_SuspendOnOverlay" xml:space="preserve">
+    <value>使用悬浮窗时暂停</value>
+  </data>
+  <data name="ProfilesPage_SuspendOnOverlayDesc" xml:space="preserve">
+    <value>在显示快捷工具窗口时暂停前台的游戏和程序</value>
+  </data>
+  <data name="ProfilesPage_WindowsSettingsDesc" xml:space="preserve">
+    <value>管理与配置相关的窗口</value>
+  </data>
+  <data name="LayoutPage_ActionType_Disabled" xml:space="preserve">
+    <value>无操作</value>
+  </data>
+  <data name="LayoutPage_ActionType_Button" xml:space="preserve">
+    <value>按钮</value>
+  </data>
+  <data name="LayoutPage_ActionType_Joystick" xml:space="preserve">
+    <value>摇杆</value>
+  </data>
+  <data name="LayoutPage_ActionType_Keyboard" xml:space="preserve">
+    <value>键盘</value>
+  </data>
+  <data name="LayoutPage_ActionType_Mouse" xml:space="preserve">
+    <value>鼠标</value>
+  </data>
+  <data name="LayoutPage_ActionType_Trigger" xml:space="preserve">
+    <value>扳机</value>
+  </data>
+  <data name="LayoutPage_ActionType_Shift" xml:space="preserve">
+    <value>功能组</value>
+  </data>
+  <data name="LayoutPage_ActionType_Inherit" xml:space="preserve">
+    <value>不修改</value>
+  </data>
+  <data name="LayoutPage_HoldToRepeat" xml:space="preserve">
+    <value>连发</value>
+  </data>
+  <data name="LayoutPage_Interruptable" xml:space="preserve">
+    <value>可中断</value>
+  </data>
+  <data name="LayoutPage_PressToToggle" xml:space="preserve">
+    <value>点按切换</value>
+  </data>
+  <data name="LayoutPage_HapticFeedback" xml:space="preserve">
+    <value>触感反馈</value>
+  </data>
+  <data name="LayoutPage_InputShift" xml:space="preserve">
+    <value>功能组</value>
+  </data>
+  <data name="QuickApplicationsPage_QuickStart" xml:space="preserve">
+    <value>快速启动</value>
+  </data>
+  <data name="QuickApplicationsPage_Processes" xml:space="preserve">
+    <value>进程</value>
+  </data>
+  <data name="QuickApplicationsPage_SuspendApplication" xml:space="preserve">
+    <value>暂停程序</value>
+  </data>
+  <data name="QuickApplicationsPage_ResumeApplication" xml:space="preserve">
+    <value>继续程序</value>
+  </data>
+  <data name="PerformancePage_EnduranceGaming_Title" xml:space="preserve">
+    <value>Intel Endurance Gaming</value>
+  </data>
+  <data name="PerformancePage_CPUParkingModeDesc" xml:space="preserve">
+    <value>设置CPU核心调度模式</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingPresetDesc" xml:space="preserve">
+    <value>Preset</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingPerformancePreset" xml:space="preserve">
+    <value>Performance - 60 FPS</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingBalancedPreset" xml:space="preserve">
+    <value>Balanced - 40 FPS</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingEfficiencyPreset" xml:space="preserve">
+    <value>Efficiency - 30 FPS</value>
+  </data>
+  <data name="QuickPerformancePage_EnduranceGamingPreset" xml:space="preserve">
+    <value>Endurance Gaming presets</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_B1" xml:space="preserve">
+    <value>叉</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_B2" xml:space="preserve">
+    <value>圈</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_B3" xml:space="preserve">
+    <value>方</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_B4" xml:space="preserve">
+    <value>三角</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_Back" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_Special" xml:space="preserve">
+    <value>Sony</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_Start" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="Enum_DualShock4Controller_AxisLayoutFlags_LeftPad" xml:space="preserve">
+    <value>Left-finger swipe</value>
+  </data>
+  <data name="Enum_DualShock4Controller_AxisLayoutFlags_RightPad" xml:space="preserve">
+    <value>Right-finger swipe</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_LeftPadClick" xml:space="preserve">
+    <value>Left-finger click</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_LeftPadTouch" xml:space="preserve">
+    <value>Left-finger touch</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_RightPadClick" xml:space="preserve">
+    <value>Right-finger click</value>
+  </data>
+  <data name="Enum_DualShock4Controller_ButtonFlags_RightPadTouch" xml:space="preserve">
+    <value>Right-finger touch</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_AxisLayoutFlags_L2" xml:space="preserve">
+    <value>ZL</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_AxisLayoutFlags_R2" xml:space="preserve">
+    <value>ZR</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_B1" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_B2" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_B3" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_B4" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_Back" xml:space="preserve">
+    <value>Minus</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_L1" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_R1" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_Special" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_Special2" xml:space="preserve">
+    <value>Capture</value>
+  </data>
+  <data name="Enum_NintendoSwitchProController_ButtonFlags_Start" xml:space="preserve">
+    <value>Plus</value>
+  </data>
+  <data name="Enum_DClawController_OEM3" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enum_DClawController_OEM4" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_L2" xml:space="preserve">
+    <value>L2</value>
+  </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_LeftStick" xml:space="preserve">
+    <value>Left Stick</value>
+  </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_LeftThumb" xml:space="preserve">
+    <value>左摇杆</value>
+  </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_R2" xml:space="preserve">
+    <value>R2</value>
+  </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_RightStick" xml:space="preserve">
+    <value>Right Stick</value>
+  </data>
+  <data name="Enum_Xbox360Controller_AxisLayoutFlags_RightThumb" xml:space="preserve">
+    <value>右摇杆</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B1" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B2" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B3" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B4" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B5" xml:space="preserve">
+    <value>B5</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B6" xml:space="preserve">
+    <value>B6</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B7" xml:space="preserve">
+    <value>B7</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_B8" xml:space="preserve">
+    <value>B8</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_Back" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_DPadDown" xml:space="preserve">
+    <value>下方向键</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_DPadLeft" xml:space="preserve">
+    <value>左方向键</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_DPadRight" xml:space="preserve">
+    <value>右方向键</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_DPadUp" xml:space="preserve">
+    <value>上方向键</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_L1" xml:space="preserve">
+    <value>LB</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_L2" xml:space="preserve">
+    <value>LT</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_L3" xml:space="preserve">
+    <value>L3</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_L4" xml:space="preserve">
+    <value>L4</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_L5" xml:space="preserve">
+    <value>L5</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumb" xml:space="preserve">
+    <value>左摇杆</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumbDown" xml:space="preserve">
+    <value>左摇杆下推</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumbLeft" xml:space="preserve">
+    <value>左摇杆左推</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumbRight" xml:space="preserve">
+    <value>左摇杆右推</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_LeftThumbUp" xml:space="preserve">
+    <value>左摇杆上推</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_OEM1" xml:space="preserve">
+    <value>OEM1</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_OEM2" xml:space="preserve">
+    <value>OEM2</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_OEM3" xml:space="preserve">
+    <value>OEM3</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_R1" xml:space="preserve">
+    <value>RB</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_R2" xml:space="preserve">
+    <value>RT</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_R3" xml:space="preserve">
+    <value>R3</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_R4" xml:space="preserve">
+    <value>R4</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_R5" xml:space="preserve">
+    <value>R5</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumb" xml:space="preserve">
+    <value>左摇杆</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumbDown" xml:space="preserve">
+    <value>左摇杆下推</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumbLeft" xml:space="preserve">
+    <value>左摇杆左推</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumbRight" xml:space="preserve">
+    <value>左摇杆右推</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_RightThumbUp" xml:space="preserve">
+    <value>左摇杆上推</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_Special" xml:space="preserve">
+    <value>导航键</value>
+  </data>
+  <data name="Enum_Xbox360Controller_ButtonFlags_Start" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM2" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM3" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM4" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enum_GamingZone_ButtonFlags_OEM5" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hint_GamingZoneServices" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Hint_GamingZoneServicesDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PowerProfileGamingZoneBestPerformance" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PowerProfileGamingZoneBetterBattery" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PowerProfileGamingZoneBetterPerformance" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PowerProfileGamingZoneBestPerformanceDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PowerProfileGamingZoneBetterBatteryDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PowerProfileGamingZoneBetterPerformanceDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_LegionGoControllerSwap" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_LegionGoControllerSwapDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DevicePage_GamingZone_VRAM" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DevicePage_GamingZone_VRAMDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_Run" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_RunAs" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_ProfileLaunchString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_ProfileExecutables" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_InputsSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationBottomCenter" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LibraryScanTitle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LibraryScanContent" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_OpenProfilePage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_OpenLayoutPage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_QuicktoolsSlideAnimation" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPage_QuicktoolsSlideAnimationDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PerformancePage_PL1PL2Warning" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_RelatedSupport" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_PressType" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_PressTypeTooltip0" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_PressTypeTooltip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_PressTypeTooltip2" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_PressTypeTooltip3" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LayoutPage_InputShiftDesc" xml:space="preserve">
     <value />
   </data>
 </root>

@@ -1,6 +1,6 @@
 namespace HandheldCompanion.Managers.Overlay.Widget;
 
-public class CpuWidget: IWidget
+public class CpuWidget : IWidget
 {
     public void Build(OverlayEntry entry, short? level = null)
     {
@@ -8,13 +8,13 @@ public class CpuWidget: IWidget
         switch (_level)
         {
             case WidgetLevel.MINIMAL:
-                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetCPULoad(), "%");
-                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetCPUPower(), "W");
+                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardware.GetCPULoad(), "%");
+                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardware.GetCPUPower(), "W");
                 break;
             case WidgetLevel.FULL:
-                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetCPULoad(), "%");
-                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetCPUPower(), "W");
-                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.GetCPUTemperature(), "C");
+                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardware.GetCPULoad(), "%");
+                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardware.GetCPUPower(), "W");
+                OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardware.GetCPUTemperature(), "C");
                 break;
         }
     }

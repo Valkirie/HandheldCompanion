@@ -23,7 +23,7 @@ public partial class SettingsMode0 : Page
     private CrossThreadLock updateLock = new();
 
     private const ButtonFlags gyroButtonFlags = ButtonFlags.HOTKEY_GYRO_AIMING;
-    private Hotkey GyroHotkey = new(gyroButtonFlags) { IsInternal = true };
+    private Hotkey GyroHotkey = new(gyroButtonFlags) { IsInternal = true, Name = "HOTKEY_GYRO_AIMING" };
 
     public SettingsMode0()
     {

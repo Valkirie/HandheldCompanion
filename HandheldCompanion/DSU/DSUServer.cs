@@ -15,7 +15,6 @@ using System.Net.Sockets;
 using System.Numerics;
 using System.Threading;
 using System.Windows.Forms;
-using static HandheldCompanion.Inputs.GyroState;
 
 namespace HandheldCompanion;
 
@@ -435,11 +434,10 @@ public static class DSUServer
         }
         catch (Exception /*ex*/) { }
 
+        // get server Id
         var randomBuf = new byte[4];
         new Random().NextBytes(randomBuf);
         serverId = BitConverter.ToUInt32(randomBuf, 0);
-
-        TimerManager.Tick += Tick;
 
         IsInitialized = true;
 
@@ -468,8 +466,6 @@ public static class DSUServer
 
         IsInitialized = false;
 
-        TimerManager.Tick -= Tick;
-
         LogManager.LogInformation("DSUServer has stopped");
         Stopped?.Invoke();
 
@@ -479,9 +475,9 @@ public static class DSUServer
     private static ControllerState Inputs = new();
     private static Dictionary<byte, GamepadMotion> GamepadMotions = new();
 
-    public static void UpdateInputs(ControllerState inputs, Dictionary<byte, GamepadMotion> gamepadMotions)
+    public static void UpdateInputs(ControllerState controllerState, Dictionary<byte, GamepadMotion> gamepadMotions)
     {
-        Inputs = inputs;
+        Inputs = controllerState;
         GamepadMotions = gamepadMotions;
     }
 
@@ -568,19 +564,17 @@ public static class DSUServer
             {
                 default:
                     {
-                        if (Inputs.GyroState.Gyroscope.TryGetValue(SensorState.DSU, out Vector3 gyrometer))
-                        {
-                            gyroX = gyrometer.X;
-                            gyroY = gyrometer.Y;
-                            gyroZ = gyrometer.Z;
-                        }
+                        // Gyro (DSU)
+                        Vector3 g = Inputs.GyroState.GetGyroscope(GyroState.SensorState.DSU);
+                        gyroX = g.X;
+                        gyroY = g.Y;
+                        gyroZ = g.Z;
 
-                        if (Inputs.GyroState.Accelerometer.TryGetValue(SensorState.DSU, out Vector3 accelerometer))
-                        {
-                            accelX = accelerometer.X;
-                            accelY = accelerometer.Y;
-                            accelZ = accelerometer.Z;
-                        }
+                        // Accel (DSU)
+                        Vector3 a = Inputs.GyroState.GetAccelerometer(GyroState.SensorState.DSU);
+                        accelX = a.X;
+                        accelY = a.Y;
+                        accelZ = a.Z;
                     }
                     break;
 

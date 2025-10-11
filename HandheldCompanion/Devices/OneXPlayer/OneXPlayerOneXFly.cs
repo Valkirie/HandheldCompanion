@@ -1,4 +1,6 @@
+using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HidLibrary;
 using System;
@@ -23,7 +25,7 @@ public class OneXPlayerOneXFly : IDevice
 
         // https://www.amd.com/en/products/apu/amd-ryzen-z1
         // https://www.amd.com/en/products/apu/amd-ryzen-z1-extreme
-        // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
+        // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 5, 30 };
         GfxClock = new double[] { 100, 2700 };
@@ -49,6 +51,8 @@ public class OneXPlayerOneXFly : IDevice
         Capabilities = DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.DynamicLighting;
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
+
+        // dynamic lighting capacities
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
         DynamicLightingCapabilities |= LEDLevel.Rainbow;
 
@@ -83,6 +87,11 @@ public class OneXPlayerOneXFly : IDevice
             [KeyCode.LWin, KeyCode.D],
             false, ButtonFlags.OEM3
         ));
+
+        // prepare hotkeys
+        DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM3] = true;
+        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
+        DeviceHotkeys[typeof(OnScreenKeyboard)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
 
         /*
         OEMChords.Add(new DeviceChord("M1",
@@ -129,7 +138,7 @@ public class OneXPlayerOneXFly : IDevice
 
         ECRamDirectWrite(0x4F1, ECDetails, 0x40);
 
-        return (ECRamReadByte(0x4F1, ECDetails) == 0x40);
+        return (ECRamDirectReadByte(0x4F1, ECDetails) == 0x40);
     }
 
     public override void Close()

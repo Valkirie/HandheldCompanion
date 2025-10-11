@@ -24,6 +24,7 @@ namespace HandheldCompanion.Commands
             typeof(DesktopLayoutCommands),
             typeof(CycleSubProfileCommands),
             typeof(QuickOverlayCommands),
+            typeof(ButtonCommands),
             Resources.Hotkey_FunctionCategory_PowerAndBattery,
             typeof(TDPIncrease),
             typeof(TDPDecrease),

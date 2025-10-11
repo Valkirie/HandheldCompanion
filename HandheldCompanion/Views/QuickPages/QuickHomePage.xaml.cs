@@ -113,7 +113,7 @@ public partial class QuickHomePage : Page
                     UpdateVolumeIcon(value);
 
                     if (SliderVolume.Value != value)
-                        SliderVolume.Value = value;
+                        SliderVolume.Value = Math.Round(value);
                 });
             }
             catch { }

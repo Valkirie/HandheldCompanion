@@ -5,8 +5,12 @@ using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Pages;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 namespace HandheldCompanion.ViewModels
@@ -51,6 +55,23 @@ namespace HandheldCompanion.ViewModels
 
         public ObservableCollection<ControllerViewModel> PhysicalControllers { get; set; } = [];
         public ObservableCollection<ControllerViewModel> VirtualControllers { get; set; } = [];
+        public ICommand ScanHardwareCommand { get; private set; }
+        public ICommand OpenWindowsControl { get; private set; }
+        public ICommand NavigateSettings { get; private set; }
+
+        private Visibility _ScanHardwareVisibility = Visibility.Collapsed;
+        public Visibility ScanHardwareVisibility
+        {
+            get => _ScanHardwareVisibility;
+            set
+            {
+                if (value != _ScanHardwareVisibility)
+                {
+                    _ScanHardwareVisibility = value;
+                    OnPropertyChanged(nameof(ScanHardwareVisibility));
+                }
+            }
+        }
 
         public ControllerPageViewModel(ControllerPage controllerPage)
         {
@@ -81,6 +102,41 @@ namespace HandheldCompanion.ViewModels
             // send events
             if (ControllerManager.HasTargetController)
                 ControllerManager_ControllerSelected(ControllerManager.GetTarget());
+
+            ScanHardwareCommand = new DelegateCommand(async () =>
+            {
+                // set flag
+                ScanHardwareVisibility = Visibility.Visible;
+
+                // get all physical controllers
+                foreach (IController controller in ControllerManager.GetPhysicalControllers<IController>())
+                {
+                    // force unplug
+                    string devicePath = controller.GetInstanceId();
+                    if (ManagerFactory.deviceManager.FindDevice(devicePath) is not null)
+                        ControllerManager.Unplug(controller);
+                }
+
+                await Task.Delay(2000).ConfigureAwait(false);
+
+                // force (re)scan
+                ControllerManager.Rescan();
+
+                // set flag
+                ScanHardwareVisibility = Visibility.Collapsed;
+            });
+
+            OpenWindowsControl = new DelegateCommand<string>(async (target) =>
+            {
+                // Full-trust (Win32) component
+                Process.Start(new ProcessStartInfo("control.exe", target) { UseShellExecute = true });
+            });
+
+            NavigateSettings = new DelegateCommand<string>(async (target) =>
+            {
+                // Needed on .NET/WPF to invoke URI protocols
+                Process.Start(new ProcessStartInfo(target) { UseShellExecute = true });
+            });
         }
 
         private void VirtualManager_ControllerSelected(HIDmode mode)

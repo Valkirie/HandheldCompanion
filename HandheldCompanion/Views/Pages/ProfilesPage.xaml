@@ -374,7 +374,7 @@
                                     <!--  Path  -->
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition MinWidth="110" />
+                                            <ColumnDefinition MinWidth="140" />
                                             <ColumnDefinition Width="10*" MinWidth="200" />
                                         </Grid.ColumnDefinitions>
 
@@ -406,7 +406,7 @@
                                     <!--  Arguments  -->
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition MinWidth="110" />
+                                            <ColumnDefinition MinWidth="140" />
                                             <ColumnDefinition Width="10*" MinWidth="200" />
                                         </Grid.ColumnDefinitions>
 
@@ -434,10 +434,41 @@
                                         </DockPanel>
                                     </Grid>
 
+                                    <!--  Launch string  -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition MinWidth="140" />
+                                            <ColumnDefinition Width="10*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <DockPanel>
+                                            <ui:FontIcon
+                                                Height="40"
+                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                                Glyph="&#xedb5;" />
+                                            <TextBlock
+                                                Margin="12,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                                Style="{StaticResource BodyTextBlockStyle}"
+                                                Text="{l:Static resx:Resources.ProfilesPage_ProfileLaunchString}" />
+                                        </DockPanel>
+
+                                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                            <TextBox
+                                                Name="tB_ProfileLaunchString"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                BorderThickness="1"
+                                                TextChanged="tB_ProfileLaunchString_TextChanged" />
+                                        </DockPanel>
+                                    </Grid>
+
                                     <!--  Sub Profiles  -->
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition MinWidth="110" />
+                                            <ColumnDefinition MinWidth="140" />
                                             <ColumnDefinition Width="10*" MinWidth="200" />
                                         </Grid.ColumnDefinitions>
 
@@ -454,8 +485,9 @@
                                                 Style="{StaticResource BodyTextBlockStyle}"
                                                 Text="{l:Static resx:Resources.ProfilesPage_SubProfiles}" />
                                         </DockPanel>
-                                        <DockPanel Grid.Column="1">
-                                            <Grid Margin="12,0,0,0">
+
+                                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                            <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="8*" MinWidth="200" />
                                                     <ColumnDefinition Width="Auto" />
@@ -497,6 +529,63 @@
                                                     VerticalAlignment="Center"
                                                     Click="b_SubProfileRename_Click">
                                                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe712;" />
+                                                </Button>
+                                            </Grid>
+                                        </DockPanel>
+                                    </Grid>
+
+                                    <!--  Executables  -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition MinWidth="140" />
+                                            <ColumnDefinition Width="10*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <DockPanel>
+                                            <ui:FontIcon
+                                                Height="40"
+                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                                Glyph="&#xe8a5;" />
+                                            <TextBlock
+                                                Margin="12,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                                Style="{StaticResource BodyTextBlockStyle}"
+                                                Text="{l:Static resx:Resources.ProfilesPage_ProfileExecutables}" />
+                                        </DockPanel>
+
+                                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="8*" MinWidth="200" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <ComboBox
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Center"
+                                                    IsEnabled="{Binding HasProfileExecutables, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    ItemsSource="{Binding ProfileExecutables, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    SelectedIndex="{Binding ProfileExecutablesIdx, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                                <Button
+                                                    Grid.Column="1"
+                                                    Margin="6,0,0,0"
+                                                    VerticalAlignment="Center"
+                                                    Command="{Binding AddProfileExecutable}"
+                                                    Style="{DynamicResource AccentButtonStyle}">
+                                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe710;" />
+                                                </Button>
+
+                                                <Button
+                                                    Grid.Column="2"
+                                                    Margin="6,0,0,0"
+                                                    VerticalAlignment="Center"
+                                                    Command="{Binding RemoveProfileExecutable}"
+                                                    IsEnabled="{Binding HasProfileExecutables, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe738;" />
                                                 </Button>
                                             </Grid>
                                         </DockPanel>
@@ -1039,7 +1128,7 @@
                             Description="{l:Static resx:Resources.ProfilesPage_PowerPresetDesc}"
                             Header="{l:Static resx:Resources.ProfilesPage_PowerPreset}">
                             <ui:SettingsExpander.HeaderIcon>
-                                <ui:FontIcon Glyph="&#xf5f7;" />
+                                <ui:FontIcon Glyph="&#xec4a;" />
                             </ui:SettingsExpander.HeaderIcon>
 
                             <TextBlock
@@ -1049,111 +1138,58 @@
                                 Text="{l:Static resx:Resources.PowerProfileDefaultName}" />
 
                             <ui:SettingsExpander.Items>
-                                <ui:SettingsCard>
-                                    <!--  Bit hacky, improve me  -->
-                                    <Grid Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="46" />
-                                            <ColumnDefinition Width="102" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <ComboBox
-                                            Name="PowerProfileOnBattery"
-                                            HorizontalAlignment="Stretch"
-                                            DisplayMemberPath="Text"
-                                            ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
-                                            ItemsSource="{Binding ProfilePickerCollectionViewDC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                            SelectedIndex="{Binding SelectedPresetIndexDC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                            SelectedValuePath="Text">
-                                            <ComboBox.GroupStyle>
-                                                <GroupStyle>
-                                                    <GroupStyle.HeaderTemplate>
-                                                        <DataTemplate>
-                                                            <TextBlock
-                                                                Margin="4,0,0,0"
-                                                                Style="{StaticResource BaseTextBlockStyle}"
-                                                                Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                        </DataTemplate>
-                                                    </GroupStyle.HeaderTemplate>
-                                                </GroupStyle>
-                                            </ComboBox.GroupStyle>
-                                        </ComboBox>
-
-                                        <Button
-                                            Name="PowerProfileOnBatteryMore"
-                                            Grid.Column="1"
-                                            Width="40"
-                                            Height="31"
-                                            Margin="6,0,0,0"
-                                            Click="PowerProfileOnBatteryMore_Click"
-                                            Style="{DynamicResource AccentButtonStyle}"
-                                            Tag="Navigation">
-                                            <ui:FontIcon HorizontalAlignment="Center" Glyph="&#xE712;" />
-                                        </Button>
-                                    </Grid>
+                                <ui:SettingsCard
+                                    Click="PowerProfileOnBatteryMore_Click"
+                                    Header="On battery"
+                                    IsClickEnabled="True"
+                                    Tag="Navigation">
+                                    <ComboBox
+                                        Name="PowerProfileOnBattery"
+                                        DisplayMemberPath="Text"
+                                        ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
+                                        ItemsSource="{Binding ProfilePickerCollectionViewDC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        SelectedIndex="{Binding SelectedPresetIndexDC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        SelectedValuePath="Text">
+                                        <ComboBox.GroupStyle>
+                                            <GroupStyle>
+                                                <GroupStyle.HeaderTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock
+                                                            Margin="4,0,0,0"
+                                                            Style="{StaticResource BaseTextBlockStyle}"
+                                                            Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                    </DataTemplate>
+                                                </GroupStyle.HeaderTemplate>
+                                            </GroupStyle>
+                                        </ComboBox.GroupStyle>
+                                    </ComboBox>
                                 </ui:SettingsCard>
-                            </ui:SettingsExpander.Items>
-                        </ui:SettingsExpander>
 
-                        <ui:SettingsExpander
-                            d:IsExpanded="True"
-                            Description="{l:Static resx:Resources.ProfilesPage_PowerPresetDesc}"
-                            Header="{l:Static resx:Resources.ProfilesPage_PowerPresetPlugged}">
-
-                            <ui:SettingsExpander.HeaderIcon>
-                                <ui:FontIcon Glyph="&#xf602;" />
-                            </ui:SettingsExpander.HeaderIcon>
-
-                            <TextBlock
-                                Name="SelectedPowerProfilePluggedName"
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="{l:Static resx:Resources.PowerProfileDefaultName}" />
-
-                            <ui:SettingsExpander.Items>
-                                <ui:SettingsCard>
-                                    <Grid Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="46" />
-                                            <ColumnDefinition Width="102" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <ComboBox
-                                            Name="PowerProfilePlugged"
-                                            HorizontalAlignment="Stretch"
-                                            DisplayMemberPath="Text"
-                                            ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
-                                            ItemsSource="{Binding ProfilePickerCollectionViewAC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                            SelectedIndex="{Binding SelectedPresetIndexAC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                            SelectedValuePath="Text">
-                                            <ComboBox.GroupStyle>
-                                                <GroupStyle>
-                                                    <GroupStyle.HeaderTemplate>
-                                                        <DataTemplate>
-                                                            <TextBlock
-                                                                Margin="4,0,0,0"
-                                                                Style="{StaticResource BaseTextBlockStyle}"
-                                                                Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                        </DataTemplate>
-                                                    </GroupStyle.HeaderTemplate>
-                                                </GroupStyle>
-                                            </ComboBox.GroupStyle>
-                                        </ComboBox>
-
-                                        <Button
-                                            Name="PowerProfilePluggedMore"
-                                            Grid.Column="1"
-                                            Width="40"
-                                            Height="31"
-                                            HorizontalAlignment="Right"
-                                            Click="PowerProfilePluggedMore_Click"
-                                            Style="{DynamicResource AccentButtonStyle}"
-                                            Tag="Navigation">
-                                            <ui:FontIcon HorizontalAlignment="Center" Glyph="&#xE712;" />
-                                        </Button>
-                                    </Grid>
+                                <ui:SettingsCard
+                                    Click="PowerProfilePluggedMore_Click"
+                                    Header="Plugged in"
+                                    IsClickEnabled="True"
+                                    Tag="Navigation">
+                                    <ComboBox
+                                        Name="PowerProfilePlugged"
+                                        DisplayMemberPath="Text"
+                                        ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
+                                        ItemsSource="{Binding ProfilePickerCollectionViewAC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        SelectedIndex="{Binding SelectedPresetIndexAC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        SelectedValuePath="Text">
+                                        <ComboBox.GroupStyle>
+                                            <GroupStyle>
+                                                <GroupStyle.HeaderTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock
+                                                            Margin="4,0,0,0"
+                                                            Style="{StaticResource BaseTextBlockStyle}"
+                                                            Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                    </DataTemplate>
+                                                </GroupStyle.HeaderTemplate>
+                                            </GroupStyle>
+                                        </ComboBox.GroupStyle>
+                                    </ComboBox>
                                 </ui:SettingsCard>
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>
@@ -1368,9 +1404,9 @@
                     </ikw:SimpleStackPanel>
 
                     <!--  Window settings  -->
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Windows settings" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_WindowsSettings}" />
                     <ikw:SimpleStackPanel Spacing="3">
-                        <ui:SettingsCard Description="Pauses the active game or foreground application whenever the QuickTools sidebar is displayed." Header="Suspend on overlay">
+                        <ui:SettingsCard Description="{l:Static resx:Resources.ProfilesPage_SuspendOnOverlayDesc}" Header="{l:Static resx:Resources.ProfilesPage_SuspendOnOverlay}">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xe769;" />
                             </ui:SettingsCard.HeaderIcon>
@@ -1379,8 +1415,8 @@
                         </ui:SettingsCard>
 
                         <ui:SettingsExpander
-                            Description="Manage windows associated with profile"
-                            Header="Windows settings"
+                            Description="{l:Static resx:Resources.ProfilesPage_WindowsSettingsDesc}"
+                            Header="{l:Static resx:Resources.ProfilesPage_WindowsSettings}"
                             IsEnabled="{Binding HasWindows, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             IsExpanded="{Binding HasWindows, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             ItemsSource="{Binding ProfileWindows}">

@@ -98,7 +98,7 @@ namespace HandheldCompanion.Views.Classes
 
         private void OnLayoutUpdated(object? sender, EventArgs e)
         {
-            if (this.Visibility != Visibility.Visible)
+            if (this.Visibility != Visibility.Visible || this.WindowState == WindowState.Minimized)
                 return;
 
             // check if a content dialog is open

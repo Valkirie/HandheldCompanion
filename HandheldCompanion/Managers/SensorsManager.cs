@@ -144,7 +144,7 @@ namespace HandheldCompanion.Managers
         private static void PickNextSensor()
         {
             // get current controller
-            IController controller = ControllerManager.GetTarget();
+            IController? controller = ControllerManager.GetTarget();
 
             if (controller is not null && controller.HasMotionSensor())
                 ManagerFactory.settingsManager.SetProperty("SensorSelection", (int)SensorFamily.Controller);
@@ -256,26 +256,10 @@ namespace HandheldCompanion.Managers
             Accelerometer?.StopListening();
         }
 
-        private static double prevTimestamp = 0.0d;
         public static void UpdateReport(ControllerState controllerState, GamepadMotion gamepadMotion, ref float delta)
         {
             Vector3 accel = Accelerometer is not null ? Accelerometer.GetCurrentReading().reading : Vector3.Zero;
             Vector3 gyro = Gyrometer is not null ? Gyrometer.GetCurrentReading().reading : Vector3.Zero;
-
-            /*
-            double timestamp = Gyrometer is not null ? Gyrometer.GetCurrentReading().timestamp : 0.0d;
-            if (timestamp != prevTimestamp)
-            {
-                double TotalMilliseconds = Gyrometer is not null ? timestamp : 0.0d;
-                double DeltaSeconds = (TotalMilliseconds - prevTimestamp) / 1000.0d;
-
-                // replace delta with sensor value
-                delta = (float)DeltaSeconds;
-
-                // update previous timestamp
-                prevTimestamp = TotalMilliseconds;
-            }
-            */
 
             // store motion
             controllerState.GyroState.SetGyroscope(gyro.X, gyro.Y, gyro.Z);
@@ -329,10 +313,10 @@ namespace HandheldCompanion.Managers
                 gamepadMotion.SetCalibrationMode(CalibrationMode.Stillness | CalibrationMode.SensorFusion);
 
                 // wait until device is steady
-                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(5));
                 float confidence = 0.0f;
 
-                while (DateTime.Now < timeout)
+                Task timeout = Task.Delay(TimeSpan.FromSeconds(5));
+                while (!timeout.IsCompleted)
                 {
                     confidence = gamepadMotion.GetAutoCalibrationConfidence();
                     if (confidence == 1.0f)

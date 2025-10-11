@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Devices.MSI;
+﻿using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Devices.MSI;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -19,6 +20,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media;
 using WindowsInput.Events;
+using static HandheldCompanion.IGCL.IGCLBackend;
+using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices;
 
@@ -115,29 +118,6 @@ public class ClawA1M : IDevice
 
     [DllImport("UEFIVaribleDll.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern bool SetUEFIVariableEx(string name, string guid, byte[] box, int len);
-
-    [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int getEGmode();
-
-    [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int setEGmode(int setMode);
-
-    [DllImport("intelGEDll.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int setEGControlMode(EnduranceGamingControl control, EnduranceGamingMode mode);
-
-    public enum EnduranceGamingControl
-    {
-        Off = 0,    // Endurance Gaming disable
-        On = 1,     // Endurance Gaming enable
-        Auto = 2,   // Endurance Gaming auto
-    }
-
-    public enum EnduranceGamingMode
-    {
-        Performance = 0,        // Endurance Gaming better performance mode
-        Balanced = 1,           // Endurance Gaming balanced mode
-        MaximumBattery = 2,     // Endurance Gaming maximum battery mode
-    }
     #endregion
 
     private ManagementEventWatcher? specialKeyWatcher;
@@ -168,15 +148,20 @@ public class ClawA1M : IDevice
         // Claw 1
         new DeviceVersion() { Firmware = 0x163, RGB = [0x01, 0xFA], M1 = [0x00, 0x7A], M2 = [0x01, 0x1F] },
         new DeviceVersion() { Firmware = 0x166, RGB = [0x02, 0x4A], M1 = [0x00, 0xBA], M2 = [0x01, 0x63] },
+        new DeviceVersion() { Firmware = 0x167, RGB = [0x02, 0x4A], M1 = [0x00, 0xBA], M2 = [0x01, 0x63] },
 
         // Claw 8
         new DeviceVersion() { Firmware = 0x211, RGB = [0x01, 0xFA], M1 = [0x00, 0x7A], M2 = [0x01, 0x1F] },
         new DeviceVersion() { Firmware = 0x217, RGB = [0x02, 0x4A], M1 = [0x00, 0xBA], M2 = [0x01, 0x63] },
+        new DeviceVersion() { Firmware = 0x219, RGB = [0x02, 0x4A], M1 = [0x00, 0xBA], M2 = [0x01, 0x63] },
+
+        // Claw A8
+        new DeviceVersion() { Firmware = 0x308, RGB = [0x02, 0x4A], M1 = [0x00, 0xBA], M2 = [0x01, 0x63] },
     };
 
     protected int Firmware;
-    public DeviceVersion? SupportedDevice => deviceVersions.FirstOrDefault(version => version.IsSupported(Firmware));
-    public override bool IsSupported => SupportedDevice is not null && SupportedDevice?.Firmware != 0;
+    public DeviceVersion? FirmwareDevice => deviceVersions.MinBy(version => Math.Abs(version.Firmware - Firmware));
+    public override bool IsSupported => FirmwareDevice?.Firmware == Firmware;
 
     public ClawA1M()
     {
@@ -186,10 +171,15 @@ public class ClawA1M : IDevice
         // used to monitor OEM specific inputs
         vendorId = 0x0DB0;
         productIds = [PID_XINPUT, PID_DINPUT, PID_TESTING];
+        hidFilters = new()
+        {
+            { PID_XINPUT, new HidFilter(unchecked((short)0xFFA0), unchecked(0x0001)) },
+            { PID_DINPUT, new HidFilter(unchecked((short)0xFFF0), unchecked(0x0040)) },
+        };
 
         // https://www.intel.com/content/www/us/en/products/sku/236847/intel-core-ultra-7-processor-155h-24m-cache-up-to-4-80-ghz/specifications.html
-        nTDP = new double[] { 28, 28, 65 };
-        cTDP = new double[] { 20, 65 };
+        nTDP = new double[] { 30, 30, 35 };
+        cTDP = new double[] { 20, 45 };
         GfxClock = new double[] { 100, 2250 };
         CpuClock = 4800;
 
@@ -218,6 +208,10 @@ public class ClawA1M : IDevice
         Capabilities |= DeviceCapabilities.BatteryChargeLimit;
         Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
 
+        // dynamic lighting capacities
+        DynamicLightingCapabilities |= LEDLevel.SolidColor;
+        DynamicLightingCapabilities |= LEDLevel.Ambilight;
+
         // battery bypass settings
         BatteryBypassMin = 60;
         BatteryBypassMax = 100;
@@ -231,7 +225,9 @@ public class ClawA1M : IDevice
             CPUBoostLevel = CPUBoostLevel.Disabled,
             Guid = BetterBatteryGuid,
             TDPOverrideEnabled = true,
-            TDPOverrideValues = new[] { 20.0d, 20.0d, 20.0d }
+            TDPOverrideValues = new[] { 20.0d, 20.0d, 20.0d },
+            IntelEnduranceGamingEnabled = true,
+            IntelEnduranceGamingPreset = (int)ctl_3d_endurance_gaming_mode_t.MAX // 30fps
         });
 
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileMSIClawBetterPerformance, Properties.Resources.PowerProfileMSIClawBetterPerformanceDesc)
@@ -241,7 +237,9 @@ public class ClawA1M : IDevice
             OSPowerMode = OSPowerMode.BetterPerformance,
             Guid = BetterPerformanceGuid,
             TDPOverrideEnabled = true,
-            TDPOverrideValues = new[] { 30.0d, 30.0d, 30.0d }
+            TDPOverrideValues = new[] { 30.0d, 30.0d, 30.0d },
+            IntelEnduranceGamingEnabled = true,
+            IntelEnduranceGamingPreset = (int)ctl_3d_endurance_gaming_mode_t.PERFORMANCE // 60fps
         });
 
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileMSIClawBestPerformance, Properties.Resources.PowerProfileMSIClawBestPerformanceDesc)
@@ -251,7 +249,9 @@ public class ClawA1M : IDevice
             OSPowerMode = OSPowerMode.BestPerformance,
             Guid = BestPerformanceGuid,
             TDPOverrideEnabled = true,
-            TDPOverrideValues = new[] { 35.0d, 35.0d, 35.0d }
+            TDPOverrideValues = new[] { 35.0d, 35.0d, 35.0d },
+            IntelEnduranceGamingEnabled = false,
+            IntelEnduranceGamingPreset = (int)ctl_3d_endurance_gaming_mode_t.PERFORMANCE // GPU Auto TDP is Off, FPS depends on the game, and it can be up to 120
         });
 
         OEMChords.Add(new KeyboardChord("CLAW",
@@ -279,6 +279,10 @@ public class ClawA1M : IDevice
             [KeyCode.LButton | KeyCode.OemClear],
             true, ButtonFlags.OEM5
         ));
+
+        // prepare hotkeys
+        DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
+        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
     }
 
     public override bool Open()
@@ -287,7 +291,7 @@ public class ClawA1M : IDevice
         if (!success)
             return false;
 
-        LogManager.LogInformation("Device Firmware: {0}", Firmware.ToString("X4"));
+        LogManager.LogInformation("Device Firmware: {0:X4}, {1}", Firmware, IsSupported ? "Supported" : "Unsupported");
 
         SetShiftMode(ShiftModeCalcType.Deactive);
 
@@ -296,10 +300,10 @@ public class ClawA1M : IDevice
         byte[] box = GetMsiDCVarData(ref uefiVariableEx);
         if (uefiVariableEx != 0)
         {
-            if (box[1] == (byte)0)
+            if (box[1] == 0)
             {
                 InitOverBoost(true);
-                SpinWait.SpinUntil(() => false, 600);
+                Thread.Sleep(600);
             }
 
             /*
@@ -320,12 +324,13 @@ public class ClawA1M : IDevice
         // make sure M1/M2 are recognized as buttons
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
+            Thread.Sleep(300);
             device.Write(GetM12(true), 0, 64);
-            Thread.Sleep(300);
+            Thread.Sleep(500);
             device.Write(GetM12(false), 0, 64);
-            Thread.Sleep(300);
+            Thread.Sleep(500);
             SyncToROM();
-            Thread.Sleep(300);
+            Thread.Sleep(500);
             SwitchMode(gamepadMode);
             Thread.Sleep(2000);
         }
@@ -337,7 +342,7 @@ public class ClawA1M : IDevice
         GetWMI();
 
         // unlock TDP
-        set_long_limit(30);
+        set_long_limit(35);
         set_short_limit(35);
 
         // start WMI event monitor
@@ -354,75 +359,53 @@ public class ClawA1M : IDevice
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
 
-        // raise events
-        switch (ManagerFactory.powerProfileManager.Status)
-        {
-            default:
-            case ManagerStatus.Initializing:
-                ManagerFactory.powerProfileManager.Initialized += PowerProfileManager_Initialized;
-                break;
-            case ManagerStatus.Initialized:
-                QueryPowerProfile();
-                break;
-        }
-
         Device_Inserted();
     }
 
-    private void QueryPowerProfile()
+    protected override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
-        // manage events
-        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
-
-        PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
-    }
-
-    private void PowerProfileManager_Initialized()
-    {
-        QueryPowerProfile();
-    }
-
-    private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
-    {
-        if (profile.FanProfile.fanMode != FanMode.Hardware)
+        byte[] fanTable = new byte[8];
+        if (profile.FanProfile.fanMode == FanMode.Software)
         {
-            byte[] fanTable = new byte[7];
-            fanTable[0] = (byte)profile.FanProfile.fanSpeeds[4];
-            fanTable[1] = (byte)profile.FanProfile.fanSpeeds[1];
-            fanTable[2] = (byte)profile.FanProfile.fanSpeeds[2];
-            fanTable[3] = (byte)profile.FanProfile.fanSpeeds[4];
-            fanTable[4] = (byte)profile.FanProfile.fanSpeeds[6];
-            fanTable[5] = (byte)profile.FanProfile.fanSpeeds[8];
-            fanTable[6] = (byte)profile.FanProfile.fanSpeeds[10];
-
-            // update fan table
-            SetFanTable(fanTable);
+            fanTable[0] = (byte)profile.FanProfile.fanSpeeds[4]; // ?
+            fanTable[1] = (byte)profile.FanProfile.fanSpeeds[0]; // 0%
+            fanTable[2] = (byte)profile.FanProfile.fanSpeeds[2]; // 20%
+            fanTable[3] = (byte)profile.FanProfile.fanSpeeds[5]; // 50%
+            fanTable[4] = (byte)profile.FanProfile.fanSpeeds[6]; // 60%
+            fanTable[5] = (byte)profile.FanProfile.fanSpeeds[8]; // 80%
+            fanTable[6] = (byte)profile.FanProfile.fanSpeeds[9]; // 90%
+            fanTable[7] = (byte)profile.FanProfile.fanSpeeds[10]; // 100%
         }
+        else
+        {
+            // restore default fan table
+            fanTable = new byte[8] { 49, 0, 40, 49, 58, 67, 75, 75 };
+        }
+
+        // update fan table
+        SetFanTable(fanTable);
+
+        // update fan mode
+        SetFanControl(profile.FanProfile.fanMode != FanMode.Hardware);
 
         // MSI Center, API_UserScenario
         bool IsDcMode = SystemInformation.PowerStatus.PowerLineStatus == PowerLineStatus.Offline;
         if (profile.Guid == BetterBatteryGuid)
         {
             SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.ECO);
-            setEGControlMode(EnduranceGamingControl.Auto, EnduranceGamingMode.MaximumBattery);
         }
         else if (profile.Guid == BetterPerformanceGuid)
         {
             SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.GreenMode);
-            setEGControlMode(EnduranceGamingControl.Off, EnduranceGamingMode.MaximumBattery);
         }
         else if (profile.Guid == BestPerformanceGuid)
         {
             SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.SportMode);
-            setEGControlMode(EnduranceGamingControl.Off, EnduranceGamingMode.MaximumBattery);
         }
         else
         {
             SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.SportMode);
-            setEGControlMode(EnduranceGamingControl.Off, EnduranceGamingMode.Performance);
         }
-
-        SetFanControl(profile.FanProfile.fanMode != FanMode.Hardware);
     }
 
     private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
@@ -433,23 +416,13 @@ public class ClawA1M : IDevice
 
     private void ControllerManager_ControllerUnplugged(Controllers.IController Controller, bool IsPowerCycling, bool WasTarget)
     {
-        // hack, force rescan
-        // controller is not properly rescanned sometime, maybe due to tight interval
         if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
-        {
             Device_Removed();
-
-            switch (Controller.GetProductID())
-            {
-                case PID_XINPUT:
-                    ManagerFactory.deviceManager.RefreshXInput();
-                    break;
-                case PID_DINPUT:
-                    ManagerFactory.deviceManager.RefreshDInput();
-                    break;
-            }
-        }
     }
+
+    private int LEDBrightness = 100;
+    private Color LEDMainColor = Colors.Black;
+    private Color LEDSecondColor = Colors.Black;
 
     protected override void QuerySettings()
     {
@@ -505,8 +478,6 @@ public class ClawA1M : IDevice
         // manage events
         ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
-        ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
-        ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
 
         base.Close();
     }
@@ -522,24 +493,24 @@ public class ClawA1M : IDevice
     {
         int uefiVariableEx = 0;
         byte[] box = GetMsiDCVarData(ref uefiVariableEx);
-        SpinWait.SpinUntil(() => false, 600);
+        Thread.Sleep(600);
 
         // set value
         box[1] = (byte)(enabled ? 1 : 0);
         SetUEFIVariableEx("MsiDCVarData", MsIDCVarData, box, uefiVariableEx);
-        SpinWait.SpinUntil(() => false, 600);
+        Thread.Sleep(600);
     }
 
     public async void SetOverBoost(bool enabled)
     {
         int uefiVariableEx = 0;
         byte[] box = GetMsiDCVarData(ref uefiVariableEx);
-        SpinWait.SpinUntil(() => false, 600);
+        Thread.Sleep(600);
 
         // set value
         box[6] = (byte)(enabled ? 1 : 0);
         SetUEFIVariableEx("MsiDCVarData", MsIDCVarData, box, uefiVariableEx);
-        SpinWait.SpinUntil(() => false, 600);
+        Thread.Sleep(600);
 
         Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
         {
@@ -594,10 +565,10 @@ public class ClawA1M : IDevice
         byte iDataBlockIndex = 1;
 
         byte[] dataWMI = WMI.Get(Scope, Path, "Get_WMI", iDataBlockIndex, 32, out bool readWMI);
-        if (dataWMI.Length > 2 && dataWMI[1] >= (byte)2)
+        if (dataWMI.Length > 2 && dataWMI[1] >= 2)
         {
-            this.WmiMajorVersion = (int)dataWMI[1];
-            this.WmiMinorVersion = (int)dataWMI[2];
+            this.WmiMajorVersion = dataWMI[1];
+            this.WmiMinorVersion = dataWMI[2];
         }
     }
 
@@ -669,8 +640,10 @@ public class ClawA1M : IDevice
             if (!device.IsConnected)
                 continue;
 
-            // improve detection maybe using if device.ReadFeatureData() ?
-            if (device.Capabilities.InputReportByteLength != 64 || device.Capabilities.OutputReportByteLength != 64)
+            if (!hidFilters.TryGetValue(device.Attributes.ProductId, out HidFilter hidFilter))
+                continue;
+
+            if (device.Capabilities.UsagePage != hidFilter.UsagePage || device.Capabilities.Usage != hidFilter.Usage)
                 continue;
 
             hidDevices[INPUT_HID_ID] = device;
@@ -686,28 +659,39 @@ public class ClawA1M : IDevice
 
     public override bool SetLedBrightness(int brightness)
     {
-        Color LEDMainColor = ManagerFactory.settingsManager.GetColor("LEDMainColor");
+        // store value
+        LEDBrightness = brightness;
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-            return device.Write(GetRGB(brightness, LEDMainColor.R, LEDMainColor.G, LEDMainColor.B), 0, 64);
+            return device.Write(GetRGB(brightness, LEDMainColor, LEDSecondColor), 0, 64);
 
         return false;
     }
 
-    public override bool SetLedColor(Color MainColor, Color SecondaryColor, DeviceUtils.LEDLevel level, int speed = 100)
+    public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed = 100)
     {
-        int LEDBrightness = ManagerFactory.settingsManager.GetInt("LEDBrightness");
+        // store values
+        LEDMainColor = MainColor;
+        LEDSecondColor = SecondaryColor;
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
-            return device.Write(GetRGB(LEDBrightness, MainColor.R, MainColor.G, MainColor.B), 0, 64);
+        {
+            switch (level)
+            {
+                case LEDLevel.SolidColor:
+                    return device.Write(GetRGB(LEDBrightness, MainColor, MainColor), 0, 64);
+                case LEDLevel.Ambilight:
+                    return device.Write(GetRGB(LEDBrightness, MainColor, SecondaryColor), 0, 64);
+            }
+        }
 
         return false;
     }
 
-    private byte[] GetRGB(double brightness, byte red, byte green, byte blue)
+    private byte[] GetRGB(double brightness, Color MainColor, Color SecondaryColor)
     {
         // grab the right array (or null if no device)
-        byte[]? RGBdata = SupportedDevice?.RGB;
+        byte[]? RGBdata = FirmwareDevice?.RGB;
 
         // pick actual values
         byte add1 = RGBdata != null ? RGBdata[0] : (byte)0x01;
@@ -733,11 +717,15 @@ public class ClawA1M : IDevice
         };
 
         // Append [red, green, blue] * 9
+        // right is 0, 1, 2, 3
+        // left is 4, 5, 6, 7
+        // buttons is 8
+
         for (int i = 0; i < 9; i++)
         {
-            data.Add(red);
-            data.Add(green);
-            data.Add(blue);
+            data.Add(i < 4 ? SecondaryColor.R : MainColor.R);
+            data.Add(i < 4 ? SecondaryColor.G : MainColor.G);
+            data.Add(i < 4 ? SecondaryColor.B : MainColor.B);
         }
 
         return data.ToArray();
@@ -747,8 +735,8 @@ public class ClawA1M : IDevice
     {
         // grab the right array (or null if no device)
         byte[]? data = useM1
-            ? SupportedDevice?.M1
-            : SupportedDevice?.M2;
+            ? FirmwareDevice?.M1
+            : FirmwareDevice?.M2;
 
         // choose your two fallback bytes
         byte defaultAdd1 = useM1 ? (byte)0x00 : (byte)0x01;
@@ -774,9 +762,9 @@ public class ClawA1M : IDevice
         // close device
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
+            device.MonitorDeviceEvents = false;
             device.Removed -= Device_Removed;
 
-            device.MonitorDeviceEvents = false;
             try { device.Dispose(); } catch { }
         }
     }
@@ -785,14 +773,13 @@ public class ClawA1M : IDevice
     {
         // if you still want to automatically re-attach:
         if (reScan)
-            await WaitUntilReadyAndReattachAsync();
+            await WaitUntilReady();
 
         // listen for events
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice device))
         {
-            device.Removed += Device_Removed;
-
             device.MonitorDeviceEvents = true;
+            device.Removed += Device_Removed;
             device.OpenDevice();
 
             SwitchMode(gamepadMode);
@@ -906,7 +893,7 @@ public class ClawA1M : IDevice
         GetBatteryChargeLimit(ref currentValue);
 
         // Update mask
-        byte mask = (byte)((uint)currentValue & (uint)sbyte.MaxValue);
+        byte mask = (byte)(currentValue & (uint)sbyte.MaxValue);
 
         // Build the complete 32-byte package
         byte[] fullPackage = new byte[32];
@@ -924,7 +911,7 @@ public class ClawA1M : IDevice
          * iDataBlockIndex = 2; // GPU
          */
 
-        for (byte iDataBlockIndex = 1; iDataBlockIndex < 3; iDataBlockIndex++)
+        for (byte iDataBlockIndex = 1; iDataBlockIndex <= 2; iDataBlockIndex++)
         {
             // default: 49, 0, 40, 49, 58, 67, 75, 75
             byte[] data = WMI.Get(Scope, Path, "Get_Fan", iDataBlockIndex, 32, out bool readFan);
@@ -940,19 +927,20 @@ public class ClawA1M : IDevice
 
     public override void set_long_limit(int limit)
     {
-        SetCPUPowerLimit(81, limit);
+        SetCPUPowerLimit(80, limit);
     }
 
     public override void set_short_limit(int limit)
     {
-        SetCPUPowerLimit(80, limit);
+        SetCPUPowerLimit(81, limit);
     }
 
-    private void SetCPUPowerLimit(int iDataBlockIndex, int limit)
+    protected void SetCPUPowerLimit(int iDataBlockIndex, int limit)
     {
         /*
-         * iDataBlockIndex = 80; // Short
-         * iDataBlockIndex = 81; // Long
+         * iDataBlockIndex = 80; // Long (SPL | PL1)
+         * iDataBlockIndex = 81; // Short (sPPT | PL2)
+         * iDataBlockIndex = 82; // Very short (fPPT AMD only)
          */
 
         // Build the complete 32-byte package:

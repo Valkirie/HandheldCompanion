@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using static HandheldCompanion.Processors.IntelProcessor;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
@@ -80,7 +81,7 @@ public static class PerformanceManager
     private static bool autotdpWatchdogPendingStop;
 
     // powercfg
-    private static Guid currentPowerMode = new("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
+    private static Guid currentPowerMode = Guid.Empty;
 
     // GPU limits
     private static double FallbackGfxClock;
@@ -278,7 +279,6 @@ public static class PerformanceManager
             // and max limit for AutoTDP
             if (profile.TDPOverrideValues is not null)
                 AutoTDP = AutoTDPMax = profile.TDPOverrideValues[0];
-
         }
         else
         {
@@ -353,22 +353,14 @@ public static class PerformanceManager
 
         // apply profile Power mode
         RequestPowerMode(profile.OSPowerMode);
-
-        // apply profile Fan mode
-        switch (profile.FanProfile.fanMode)
-        {
-            default:
-            case FanMode.Hardware:
-                IDevice.GetCurrent().SetFanControl(false, profile.OEMPowerMode);
-                break;
-            case FanMode.Software:
-                IDevice.GetCurrent().SetFanControl(true);
-                break;
-        }
     }
 
-    private static void PowerProfileManager_Discarded(PowerProfile profile)
+    private static void PowerProfileManager_Discarded(PowerProfile profile, bool swapped)
     {
+        // don't bother discarding settings, new one will be enforce shortly
+        if (swapped)
+            return;
+
         currentProfile = null;
 
         // restore default TDP
@@ -412,9 +404,6 @@ public static class PerformanceManager
 
         // restore OSPowerMode.BetterPerformance 
         RequestPowerMode(OSPowerMode.BetterPerformance);
-
-        // restore default Fan mode
-        IDevice.GetCurrent().SetFanControl(false, profile.OEMPowerMode);
     }
 
     private static void RestoreTDP(bool immediate)
@@ -442,7 +431,12 @@ public static class PerformanceManager
         if (processor is null || !processor.IsInitialized)
             return;
 
-        if (!PlatformManager.RTSS.HasHook())
+        // we're not ready yet
+        if (!ManagerFactory.platformManager.IsReady)
+            return;
+
+        bool hasHook = PlatformManager.RTSS?.HasHook() ?? false;
+        if (!hasHook)
         {
             autotdpWatchdog.Interval = INTERVAL_DEGRADED;
             RestoreTDP(true);
@@ -462,7 +456,8 @@ public static class PerformanceManager
                 double unclampedProcessValueFPS = 0.0;
 
                 // todo: Store fps for data gathering from multiple points (OSD, Performance)
-                double processValueFPS = unclampedProcessValueFPS = PlatformManager.RTSS.GetFramerate(true);
+                double framerate = PlatformManager.RTSS?.GetFramerate(true) ?? 0.0d;
+                double processValueFPS = unclampedProcessValueFPS = framerate;
 
                 // Ensure realistic process values, prevent divide by 0
                 processValueFPS = Math.Clamp(processValueFPS, 5, 500);
@@ -492,7 +487,20 @@ public static class PerformanceManager
                 // Only update if we have a different TDP value to set
                 if (AutoTDP != AutoTDPPrev)
                 {
-                    double[] values = new double[3] { AutoTDP, AutoTDP, AutoTDP };
+                    int TDPBump = 0;
+
+                    if (GetProcessor() is IntelProcessor intelProcessor)
+                    {
+                        switch (intelProcessor.MicroArch)
+                        {
+                            // Official specification for Lunar Lake states that PL2 should always be at least 1 W higher than PL1
+                            case IntelMicroArch.LunarLake:
+                                TDPBump = 1;
+                                break;
+                        }
+                    }
+
+                    double[] values = new double[3] { AutoTDP, AutoTDP, AutoTDP + TDPBump };
                     RequestTDP(values, true);
                     AutoTDPPrev = AutoTDP;
 
@@ -903,10 +911,8 @@ public static class PerformanceManager
 
     private static void RequestPowerMode(Guid guid)
     {
-        currentPowerMode = guid;
-
         if (PowerGetEffectiveOverlayScheme(out Guid activeScheme) == 0)
-            if (activeScheme == currentPowerMode)
+            if (activeScheme == guid)
                 return;
 
         LogManager.LogDebug("User requested power scheme: {0}", currentPowerMode);
@@ -915,6 +921,8 @@ public static class PerformanceManager
             LogManager.LogWarning("Failed to set requested power scheme: {0}", currentPowerMode);
         else
         {
+            currentPowerMode = guid;
+
             int idx = Array.IndexOf(PowerModes, currentPowerMode);
             if (idx != -1)
                 PowerModeChanged?.Invoke(idx);
