@@ -32,8 +32,6 @@ public partial class QuickDevicePage : Page
         InitializeComponent();
 
         // manage events
-        ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
-        ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ManagerFactory.profileManager.Applied += ProfileManager_Applied;
         ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
@@ -60,6 +58,7 @@ public partial class QuickDevicePage : Page
     public void Close()
     {
         // manage events
+        ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
         ManagerFactory.multimediaManager.PrimaryScreenChanged -= MultimediaManager_PrimaryScreenChanged;
         ManagerFactory.multimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
@@ -73,6 +72,45 @@ public partial class QuickDevicePage : Page
     public QuickDevicePage(string Tag) : this()
     {
         this.Tag = Tag;
+    }
+
+    private bool _loadedOnce;
+    private void QuickDevice_Loaded(object sender, RoutedEventArgs e)
+    {
+        // one-time setup
+        if (_loadedOnce) return;
+        _loadedOnce = true;
+
+        // raise events
+        switch (ManagerFactory.multimediaManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryMedia();
+                break;
+        }
+    }
+
+    private void QueryMedia()
+    {
+        // manage events
+        ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
+        ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
+
+        // raise events
+        if (ManagerFactory.multimediaManager.PrimaryDesktop is not null)
+        {
+            MultimediaManager_PrimaryScreenChanged(ManagerFactory.multimediaManager.PrimaryDesktop);
+            MultimediaManager_DisplaySettingsChanged(ManagerFactory.multimediaManager.PrimaryDesktop, ManagerFactory.multimediaManager.PrimaryDesktop.GetResolution());
+        }
+    }
+
+    private void MultimediaManager_Initialized()
+    {
+        QueryMedia();
     }
 
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
@@ -109,11 +147,11 @@ public partial class QuickDevicePage : Page
             {
                 DisplayStack.IsEnabled = true;
                 ResolutionOverrideStack.Visibility = Visibility.Collapsed;
-
-                // restore default resolution
-                if (profile.IntegerScalingDivider != 1)
-                    SetResolution();
             });
+
+            // restore default resolution
+            if (profile.IntegerScalingDivider != 1)
+                SetResolution();
         }
     }
 

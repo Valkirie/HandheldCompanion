@@ -497,6 +497,22 @@ public partial class QuickProfilesPage : Page
                 // update profile
                 selectedProfile = profile;
 
+                // get self or main profile
+                Profile mainProfile = ManagerFactory.profileManager.GetParent(selectedProfile);
+                // get subprofiles
+                IEnumerable<Profile> subProfiles = ManagerFactory.profileManager.GetSubProfilesFromProfile(mainProfile, true);
+
+                // get screen frame limit
+                DesktopScreen? desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
+                ScreenFramelimit? screenFramelimit = desktopScreen?.GetClosest(selectedProfile.FramerateValue);
+
+                // get power profiles
+                PowerProfile powerProfileDC = ManagerFactory.powerProfileManager.GetProfile(profile.PowerProfiles[(int)PowerLineStatus.Offline]);
+                PowerProfile powerProfileAC = ManagerFactory.powerProfileManager.GetProfile(profile.PowerProfiles[(int)PowerLineStatus.Online]);
+
+                // get gyro layout
+                selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions? currentAction);
+
                 // UI thread
                 UIHelper.TryInvoke(() =>
                 {
@@ -507,11 +523,7 @@ public partial class QuickProfilesPage : Page
                     cb_SubProfiles.Items.Clear();
                     int selectedIndex = 0;
 
-                    // get self or main profile
-                    Profile mainProfile = ManagerFactory.profileManager.GetParent(selectedProfile);
-
-                    IEnumerable<Profile> profiles = ManagerFactory.profileManager.GetSubProfilesFromProfile(mainProfile, true);
-                    foreach (Profile profile in profiles)
+                    foreach (Profile profile in subProfiles)
                     {
                         int idx = cb_SubProfiles.Items.Add(profile);
                         if (profile.Guid == selectedProfile.Guid)
@@ -520,14 +532,10 @@ public partial class QuickProfilesPage : Page
 
                     cb_SubProfiles.SelectedIndex = selectedIndex;
 
-                    // power profile
-                    PowerProfile powerProfileDC = ManagerFactory.powerProfileManager.GetProfile(profile.PowerProfiles[(int)PowerLineStatus.Offline]);
-                    PowerProfile powerProfileAC = ManagerFactory.powerProfileManager.GetProfile(profile.PowerProfiles[(int)PowerLineStatus.Online]);
-
                     ((QuickProfilesPageViewModel)DataContext).PowerProfileChanged(powerProfileAC, powerProfileDC);
 
                     // gyro layout
-                    if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+                    if (currentAction is null)
                     {
                         // no gyro layout available, mark as disabled
                         cB_Output.SelectedIndex = (int)MotionOutput.Disabled;
@@ -556,15 +564,10 @@ public partial class QuickProfilesPage : Page
                         // todo: move me to layout ?
                         SliderSensitivityX.Value = selectedProfile.MotionSensivityX;
                         SliderSensitivityY.Value = selectedProfile.MotionSensivityY;
-
-                        GyroHotkey.inputsChord.ButtonState = ((GyroActions)currentAction).MotionTrigger.Clone() as ButtonState;
-                        ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
                     }
 
                     // Framerate limit
-                    DesktopScreen? desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
-                    if (desktopScreen is not null)
-                        cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
+                    cB_Framerate.SelectedItem = screenFramelimit;
 
                     // GPU Scaling
                     GPUScalingToggle.IsOn = selectedProfile.GPUScaling;
@@ -588,6 +591,12 @@ public partial class QuickProfilesPage : Page
                     RISToggle.IsOn = selectedProfile.RISEnabled;
                     RISSlider.Value = selectedProfile.RISSharpness;
                 });
+
+                if (currentAction is not null)
+                {
+                    GyroHotkey.inputsChord.ButtonState = ((GyroActions)currentAction).MotionTrigger.Clone() as ButtonState;
+                    ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
+                }
             }
             catch { }
             finally
