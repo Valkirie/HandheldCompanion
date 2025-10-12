@@ -7,7 +7,7 @@ namespace HandheldCompanion.Helpers
 {
     public static class UIHelper
     {
-        public static void TryInvoke(Action callback, DispatcherPriority dispatcherPriority = DispatcherPriority.Background)
+        public static void TryInvoke(Action callback, DispatcherPriority dispatcherPriority = DispatcherPriority.Normal)
         {
             if (Application.Current?.Dispatcher is Dispatcher dispatcher && !dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished)
             {
@@ -30,7 +30,7 @@ namespace HandheldCompanion.Helpers
             }
         }
 
-        public static void TryBeginInvoke(Action callback, DispatcherPriority dispatcherPriority = DispatcherPriority.Background)
+        public static void TryBeginInvoke(Action callback, DispatcherPriority dispatcherPriority = DispatcherPriority.Normal)
         {
             if (Application.Current?.Dispatcher is Dispatcher dispatcher && !dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished)
             {
@@ -53,7 +53,7 @@ namespace HandheldCompanion.Helpers
             }
         }
 
-        public static TResult TryInvoke<TResult>(Func<TResult> func, TResult defaultValue = default, DispatcherPriority dispatcherPriority = DispatcherPriority.Background)
+        public static TResult TryInvoke<TResult>(Func<TResult> func, TResult defaultValue = default, DispatcherPriority dispatcherPriority = DispatcherPriority.Normal)
         {
             if (Application.Current?.Dispatcher is Dispatcher dispatcher && !dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished)
             {
