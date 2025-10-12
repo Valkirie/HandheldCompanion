@@ -67,6 +67,16 @@ public class ProcessManager : IManager
         // hook: on window opened
         _windowOpenedHandler = OnWindowOpened;
 
+        Automation.AddAutomationEventHandler(
+            WindowPattern.WindowOpenedEvent,
+            AutomationElement.RootElement,
+            TreeScope.Children,
+            _windowOpenedHandler);
+
+        // Set up the WinEvent hook
+        winDelegate = new WinEventDelegate(WinEventProc);
+        m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, winDelegate, 0, 0, WINEVENT_OUTOFCONTEXT);
+
         ForegroundTimer = new Timer(2000);
         ForegroundTimer.Elapsed += (sender, e) => ForegroundCallback(false);
 
@@ -80,16 +90,6 @@ public class ProcessManager : IManager
             return;
 
         base.PrepareStart();
-
-        Automation.AddAutomationEventHandler(
-            WindowPattern.WindowOpenedEvent,
-            AutomationElement.RootElement,
-            TreeScope.Children,
-            _windowOpenedHandler);
-
-        // Set up the WinEvent hook
-        winDelegate = new WinEventDelegate(WinEventProc);
-        m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, winDelegate, 0, 0, WINEVENT_OUTOFCONTEXT);
 
         // list all current windows
         EnumWindows(OnWindowDiscovered, 0);
