@@ -30,6 +30,11 @@ public class BatteryWidget : IWidget
             return;
         }
 
+        if (!TimeLeftInMinutes.HasValue)
+        {
+            return;
+        }
+
         OSDManager.AddElementIfNotNull(entry, TimeBatteryHours(), "h");
         OSDManager.AddElementIfNotNull(entry, TimeBatteryMinutes(), "min");
     }
