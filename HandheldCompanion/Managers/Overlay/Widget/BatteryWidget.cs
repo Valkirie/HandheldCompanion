@@ -8,50 +8,40 @@ public class BatteryWidget : IWidget
 
     public void Build(OverlayEntry entry, short? level = null)
     {
-        var overlayBattLevel = level ?? OSDManager.OverlayBATTLevel;
-        switch (overlayBattLevel)
+        var _level = level ?? OSDManager.OverlayBATTLevel;
+        if (_level == null)
+        {
+            return;
+        }
+
+        switch (_level)
         {
             case WidgetLevel.FULL:
                 OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardware.GetBatteryLevel(), "%");
                 OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardware.GetBatteryPower(), "W");
-                if (!IsBatteryCharging() && null != TimeLeftInMinutes)
-                {
-                    OSDManager.AddElementIfNotNull(entry, TimeBatteryHours(), "h");
-                    OSDManager.AddElementIfNotNull(entry, TimeBatteryMinutes(), "min");
-                }
-
                 break;
             case WidgetLevel.MINIMAL:
                 OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardware.GetBatteryLevel(), "%");
-                if (!IsBatteryCharging() && null != TimeLeftInMinutes)
-                {
-                    OSDManager.AddElementIfNotNull(entry, TimeBatteryHours(), "h");
-                    OSDManager.AddElementIfNotNull(entry, TimeBatteryMinutes(), "min");
-                }
                 break;
         }
+
+        if (IsBatteryCharging())
+        {
+            return;
+        }
+
+        OSDManager.AddElementIfNotNull(entry, TimeBatteryHours(), "h");
+        OSDManager.AddElementIfNotNull(entry, TimeBatteryMinutes(), "min");
     }
 
     private static bool IsBatteryCharging()
     {
-        var wmi = new ManagementObjectSearcher("SELECT * FROM Win32_Battery");
-        var resultCollection = wmi.Get();
-        foreach (var resultRow in resultCollection)
+        using var searcher = new ManagementObjectSearcher("SELECT BatteryStatus FROM Win32_Battery");
+        foreach (var o in searcher.Get())
         {
-            foreach (var property in resultRow.Properties)
-            {
-                if (property.Name != "BatteryStatus") continue;
-
-                var value = property.Value.ToString();
-                if (null == value)
-                {
-                    return false;
-                }
-
-                var status= ushort.Parse(value);
-
-                return (status & 2) == 2 || (status & 3) == 3;
-            }
+            var result = (ManagementObject)o;
+            if (result["BatteryStatus"] is ushort status)
+                return status is 6 or 7 or 8 or 9;
         }
 
         return false;
@@ -59,21 +49,17 @@ public class BatteryWidget : IWidget
 
     private int TimeBatteryHours()
     {
-        if (TimeLeftInMinutes != null)
-        {
-            return (int) (TimeLeftInMinutes / 60);
-        }
+        if (TimeLeftInMinutes is not float minutes)
+            return 0;
 
-        return 0;
+        return (int)(minutes / 60f);
     }
 
     private int TimeBatteryMinutes()
     {
-        if (TimeLeftInMinutes != null)
-        {
-            return (int) (TimeLeftInMinutes - TimeLeftInMinutes / 60 * 60);
-        }
+        if (TimeLeftInMinutes is not float minutes)
+            return 0;
 
-        return 0;
+        return (int)(minutes % 60f);
     }
 }
