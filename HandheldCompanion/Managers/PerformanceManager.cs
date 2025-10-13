@@ -1090,7 +1090,7 @@ public static class PerformanceManager
         }
     }
 
-    public static Processor GetProcessor() => processor;
+    public static Processor? GetProcessor() => processor;
 
     #region imports
 

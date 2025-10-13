@@ -40,7 +40,7 @@ public class Processor
         Manufacturer = MotherboardInfo.ProcessorManufacturer;
     }
 
-    public static Processor GetCurrent()
+    public static Processor? GetCurrent()
     {
         if (processor is not null)
             return processor;
@@ -57,6 +57,9 @@ public class Processor
                 LogManager.LogError("Failed to retrieve processor family: {0}", Manufacturer);
                 break;
         }
+
+        if (processor is not null && !processor.IsInitialized)
+            LogManager.LogError("Failed to initialize {0} processor", Manufacturer);
 
         return processor;
     }
