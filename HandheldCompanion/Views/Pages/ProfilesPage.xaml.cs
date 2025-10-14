@@ -335,12 +335,13 @@ public partial class ProfilesPage : Page
 
             // check on path rather than profile
             bool exists = false;
-            if (ManagerFactory.profileManager.Contains(path))
+            Profile parentProfile = ManagerFactory.profileManager.GetProfileFromPath(path, true, true);
+            if (parentProfile is not null)
             {
                 Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
                 {
-                    Title = string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, profile.Name),
-                    Content = string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite2, profile.Name),
+                    Title = string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, parentProfile.Name),
+                    Content = string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite2, parentProfile.Name),
                     CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
                     PrimaryButtonText = Properties.Resources.ProfilesPage_Yes,
                     SecondaryButtonText = Properties.Resources.ProfilesPage_AreYouSureOverwriteSecondary,
