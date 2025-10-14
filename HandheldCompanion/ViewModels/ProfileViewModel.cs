@@ -57,6 +57,7 @@ namespace HandheldCompanion.ViewModels
         public DateTime DateCreated => _Profile.DateCreated;
         public DateTime DateModified => _Profile.DateModified;
         public DateTime LastUsed => _Profile.LastUsed;
+        public bool IsLiked => _Profile.IsLiked;
 
         public GamePlatform PlatformType => _Profile.PlatformType;
 

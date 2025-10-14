@@ -264,6 +264,7 @@
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
 
                                     <ComboBox
@@ -303,6 +304,16 @@
                                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe712;" />
                                     </Button>
 
+                                    <ToggleButton
+                                        Name="b_ProfileLike"
+                                        Grid.Column="4"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Click="b_ProfileLike_Click">
+                                        <Grid>
+                                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEB52;" />
+                                        </Grid>
+                                    </ToggleButton>
                                 </Grid>
                             </Grid>
                         </Border>
@@ -327,7 +338,7 @@
 
                             <ikw:SimpleStackPanel Spacing="3">
                                 <Border
-                                    Height="225"
+                                    Height="237"
                                     Padding="15,12,12,12"
                                     BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
                                     CornerRadius="{DynamicResource ControlCornerRadius}">
@@ -655,13 +666,6 @@
                                         Checked="cB_Whitelist_Checked"
                                         Content="{l:Static resx:Resources.ProfilesPage_Whitelist}"
                                         Unchecked="cB_Whitelist_Checked" />
-                                </ui:SettingsCard>
-                                <ui:SettingsCard ContentAlignment="Left">
-                                    <CheckBox
-                                        Name="cB_Pinned"
-                                        Checked="cB_Pinned_Checked"
-                                        Content="{l:Static resx:Resources.ProfilesPage_Pinned}"
-                                        Unchecked="cB_Pinned_Checked" />
                                 </ui:SettingsCard>
                                 <ui:SettingsCard ContentAlignment="Left">
                                     <CheckBox

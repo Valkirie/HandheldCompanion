@@ -177,12 +177,12 @@ namespace HandheldCompanion.ViewModels
             ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
             if (foundProfile is null)
             {
-                if (profile.IsPinned)
+                if (profile.IsLiked)
                     Profiles.SafeAdd(new ProfileViewModel(profile, true));
             }
             else
             {
-                if (profile.IsPinned)
+                if (profile.IsLiked)
                     foundProfile.Profile = profile;
                 else
                     ProfileManager_Deleted(profile);
