@@ -1115,6 +1115,16 @@ public abstract class IDevice
         KeyReleased?.Invoke(button);
     }
 
+    protected void KeyPressAndRelease(ButtonFlags button, short delay)
+    {
+        Task.Run(async () =>
+        {
+            KeyPress(button);
+            await Task.Delay(delay).ConfigureAwait(false); // Avoid blocking the synchronization context
+            KeyRelease(button);
+        });
+    }
+
     public bool HasKey()
     {
         foreach (KeyboardChord pair in OEMChords.Where(a => !a.silenced))

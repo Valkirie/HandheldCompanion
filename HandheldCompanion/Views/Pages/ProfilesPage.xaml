@@ -104,16 +104,23 @@
                                             <TextBlock
                                                 HorizontalAlignment="Left"
                                                 Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="{Binding Name}" />
+                                                Text="{Binding Name}"
+                                                TextWrapping="Wrap" />
 
-                                            <TextBlock
-                                                HorizontalAlignment="Right"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="{Binding ReleaseDateYear}" />
+                                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{Binding Family}" />
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text=" - " />
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{Binding ReleaseDateYear}" />
+                                            </StackPanel>
                                         </Grid>
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
+
+                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding QuerySteamGrid}">SteamGrid</CheckBox>
+                                <CheckBox IsChecked="{Binding QueryIGDB}">IGDB</CheckBox>
+                            </StackPanel>
 
                             <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding HasLibraryEntry, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Preview" />

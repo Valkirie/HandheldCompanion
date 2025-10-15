@@ -630,11 +630,11 @@ namespace HandheldCompanion.Managers
 
                             if (button.IsEnabled)
                             {
-                                // raise event
-                                button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-
                                 // execute command
                                 button.Command?.Execute(button.CommandParameter);
+
+                                // raise event
+                                button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
                             }
                         }
                         else if (focusedElement is RepeatButton repeatButton)
@@ -643,43 +643,43 @@ namespace HandheldCompanion.Managers
 
                             if (repeatButton.IsEnabled)
                             {
-                                // raise event
-                                repeatButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-
                                 // execute command
                                 repeatButton.Command?.Execute(repeatButton.CommandParameter);
+
+                                // raise event
+                                repeatButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
                             }
                         }
                         else if (focusedElement is ToggleButton toggleButton)
                         {
-                            // raise event
-                            toggleButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-
-                            // execute command
-                            toggleButton.Command?.Execute(toggleButton.CommandParameter);
                             Focus(toggleButton);
 
-                            // specific scenario
-                            if (toggleButton.Name.Equals("ExpanderHeader"))
+                            if (toggleButton.IsEnabled)
                             {
-                                Expander Expander = WPFUtils.FindParent<Expander>(toggleButton);
-                                if (Expander is not null)
+                                // execute command
+                                toggleButton.Command?.Execute(toggleButton.CommandParameter);
+
+                                // specific scenario
+                                if (toggleButton.Name.Equals("ExpanderHeader"))
                                 {
-                                    // set state
-                                    Expander.IsExpanded = !Expander.IsExpanded;
+                                    Expander Expander = WPFUtils.FindParent<Expander>(toggleButton);
+                                    if (Expander is not null)
+                                    {
+                                        // set state
+                                        Expander.IsExpanded = !Expander.IsExpanded;
+                                    }
                                 }
-                            }
-                            else if (toggleButton is RadioButton radioButton)
-                            {
-                                toggleButton.IsChecked = !toggleButton.IsChecked;
-                            }
-                            else if (toggleButton.Command is not null)
-                            {
-                                // toggle state is managed by the command
-                            }
-                            else
-                            {
-                                toggleButton.IsChecked = !toggleButton.IsChecked;
+                                else if (toggleButton is RadioButton radioButton)
+                                {
+                                    toggleButton.IsChecked = !toggleButton.IsChecked;
+                                }
+                                else
+                                {
+                                    toggleButton.IsChecked = !toggleButton.IsChecked;
+                                }
+
+                                // raise event
+                                toggleButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
                             }
                         }
                         else if (focusedElement is SettingsCard settingsCard)
@@ -688,11 +688,11 @@ namespace HandheldCompanion.Managers
                             {
                                 Focus(settingsCard);
 
-                                // raise event
-                                settingsCard.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-
                                 // execute command
                                 settingsCard.Command?.Execute(settingsCard.CommandParameter);
+
+                                // raise event
+                                settingsCard.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
 
                                 switch (focusedElement.Tag)
                                 {

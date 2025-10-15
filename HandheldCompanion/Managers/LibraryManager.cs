@@ -35,6 +35,7 @@ namespace HandheldCompanion.Managers
             cover = 1,
             artwork = 2,
             thumbnails = 4,
+            logo = 8,
         }
 
         [Flags]
@@ -95,7 +96,16 @@ namespace HandheldCompanion.Managers
         {
             string fileName = GetGameArtPath(gameId, libraryType, imageId, extension);
             if (!File.Exists(fileName))
-                return libraryType.HasFlag(LibraryType.cover) ? LibraryResources.MissingCover : LibraryResources.MissingCover;
+            {
+                if (libraryType.HasFlag(LibraryType.cover))
+                    return LibraryResources.MissingCover;
+                else if (libraryType.HasFlag(LibraryType.artwork))
+                    return LibraryResources.MissingCover;
+                else if (libraryType.HasFlag(LibraryType.thumbnails))
+                    return LibraryResources.MissingCover;
+                else if (libraryType.HasFlag(LibraryType.logo))
+                    return null;
+            }
 
             return new BitmapImage(new Uri(fileName));
         }
@@ -202,9 +212,6 @@ namespace HandheldCompanion.Managers
                                 dimensions: SteamGridDbDimensions.W600H900,
                                 formats: SteamGridDbFormats.Png | SteamGridDbFormats.Jpeg);
 
-                            grids = grids.Where(game => !game.IsLocked).ToArray();
-                            grids = grids.OrderByDescending(grid => grid.Upvotes).ToArray();
-
                             SteamGridDbHero[]? heroes = await steamGridDb.GetHeroesByGameIdAsync(
                                 gameId: game.Id,
                                 types: SteamGridDbTypes.Static,
@@ -212,8 +219,9 @@ namespace HandheldCompanion.Managers
                                 dimensions: SteamGridDbDimensions.W1920H620,
                                 formats: SteamGridDbFormats.Png | SteamGridDbFormats.Jpeg);
 
-                            heroes = heroes.Where(game => !game.IsLocked).ToArray();
-                            heroes = heroes.OrderByDescending(hero => hero.Upvotes).ToArray();
+                            SteamGridDbLogo[]? logos = await steamGridDb.GetLogosByGameIdAsync(
+                                gameId: game.Id,
+                                formats: SteamGridDbFormats.Png);
 
                             // Skip if no visuals are available
                             if (grids.Length == 0 && heroes.Length == 0)
@@ -223,8 +231,10 @@ namespace HandheldCompanion.Managers
                             {
                                 Heroes = heroes,
                                 Grids = grids,
+                                Logos = logos,
                                 Hero = heroes.FirstOrDefault(),
                                 Grid = grids.FirstOrDefault(),
+                                Logo = logos.FirstOrDefault(),
                             };
 
                             lock (entries)
@@ -320,6 +330,9 @@ namespace HandheldCompanion.Managers
                 // download hero
                 foreach (SteamGridDbHero hero in entry.Heroes)
                     await DownloadGameArt(entry.Id, hero, LibraryType.artwork | LibraryType.thumbnails);
+                // download logo
+                foreach (SteamGridDbLogo logo in entry.Logos)
+                    await DownloadGameArt(entry.Id, logo, LibraryType.logo | LibraryType.thumbnails);
             }
             else
             {
@@ -329,6 +342,9 @@ namespace HandheldCompanion.Managers
                 // download hero
                 if (entry.Hero != null)
                     await DownloadGameArt(entry.Id, entry.Hero, LibraryType.artwork);
+                // download logo
+                if (entry.Logo != null)
+                    await DownloadGameArt(entry.Id, entry.Logo, LibraryType.logo);
             }
 
             return true;

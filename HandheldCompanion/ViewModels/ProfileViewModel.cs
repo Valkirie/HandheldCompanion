@@ -158,6 +158,21 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public BitmapImage Logo
+        {
+            get
+            {
+                if (Profile.LibraryEntry is null)
+                    return null;
+
+                long id = Profile.LibraryEntry.Id;
+                long imageId = Profile.LibraryEntry.GetLogoId();
+                string imageExtension = Profile.LibraryEntry.GetLogoExtension(false);
+
+                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.logo, imageId, imageExtension);
+            }
+        }
+
         public ProfileViewModel(Profile profile, bool isQuickTools)
         {
             Profile = profile;

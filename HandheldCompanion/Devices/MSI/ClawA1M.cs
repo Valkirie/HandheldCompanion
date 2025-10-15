@@ -11,6 +11,7 @@ using HidLibrary;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Management;
 using System.Numerics;
@@ -126,14 +127,16 @@ public class ClawA1M : IDevice
     private const byte INPUT_HID_ID = 0x01;
     protected GamepadMode gamepadMode = GamepadMode.MSI;
 
-    protected string Scope { get; set; } = "root\\WMI";
-    protected string Path { get; set; } = "MSI_ACPI.InstanceName='ACPI\\PNP0C14\\0_0'";
+    protected string WmiScope { get; set; } = "root\\WMI";
+    protected string WmiPath { get; set; } = "MSI_ACPI.InstanceName='ACPI\\PNP0C14\\0_0'";
 
     protected const int PID_XINPUT = 0x1901;
     protected const int PID_DINPUT = 0x1902;
     protected const int PID_TESTING = 0x1903;
 
     protected string MsIDCVarData = "DD96BAAF-145E-4F56-B1CF-193256298E99";
+    private const string WmiAcpiRegKey = @"SYSTEM\CurrentControlSet\Services\WmiAcpi";
+    private const string WmiAcpiRegValue = "MofImagePath";
 
     protected int WmiMajorVersion;
     protected int WmiMinorVersion;
@@ -553,7 +556,7 @@ public class ClawA1M : IDevice
     {
         byte iDataBlockIndex = 1;
 
-        byte[] dataWMI = WMI.Get(Scope, Path, "Get_WMI", iDataBlockIndex, 32, out bool readWMI);
+        byte[] dataWMI = WMI.Get(WmiScope, WmiPath, "Get_WMI", iDataBlockIndex, 32, out bool readWMI);
         if (dataWMI.Length > 2 && dataWMI[1] >= 2)
         {
             this.WmiMajorVersion = dataWMI[1];
@@ -644,6 +647,119 @@ public class ClawA1M : IDevice
         }
 
         return false;
+    }
+
+    private static string GetMsiApCfgTargetPath()
+    {
+        var win = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+        return Path.Combine(win, "SysWOW64", "msiapcfg.dll");
+    }
+
+    private static bool CheckAndDeployWmiAcpi()
+    {
+        try
+        {
+            string target = GetMsiApCfgTargetPath();
+            if (File.Exists(target))
+                return true;
+
+            var uri = new Uri("pack://application:,,,/Resources/msiapcfg.dll", UriKind.Absolute);
+            using var s = System.Windows.Application.GetResourceStream(uri).Stream;
+            using var ms = new MemoryStream();
+            s.CopyTo(ms);
+            byte[] payload = ms.ToArray();
+            if (payload is null || payload.Length == 0)
+            {
+                LogManager.LogWarning("msiapcfg.dll resource not found.");
+                return false;
+            }
+
+            Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+            File.WriteAllBytes(target, payload);
+            LogManager.LogInformation("Deployed {0}", target);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogWarning("Failed to deploy msiapcfg.dll: {0}", ex.Message);
+            return false;
+        }
+    }
+
+    private static bool CheckAndFixRegistry()
+    {
+        try
+        {
+            // Ensure the key exists
+            RegistryUtils.CreateKey(WmiAcpiRegKey); // returns true/false, safe to ignore
+            string want = GetMsiApCfgTargetPath();
+
+            // Check current value
+            var current = RegistryUtils.GetString(WmiAcpiRegKey, WmiAcpiRegValue);
+            if (!string.Equals(current, want, StringComparison.OrdinalIgnoreCase))
+            {
+                RegistryUtils.SetValue(WmiAcpiRegKey, WmiAcpiRegValue, want);
+                LogManager.LogInformation(@"Set {0}\{1} = {2}", WmiAcpiRegKey, WmiAcpiRegValue, want);
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogWarning("Failed to ensure WmiAcpi registry: {0}", ex.Message);
+            return false;
+        }
+    }
+
+    private static bool MsiEventClassExists()
+    {
+        try
+        {
+            var scope = new ManagementScope(@"\\.\root\WMI");
+            scope.Connect();
+            using var searcher = new ManagementObjectSearcher(
+                scope, new WqlObjectQuery("SELECT * FROM meta_class WHERE __class = 'MSI_Event'"));
+            using var results = searcher.Get();
+            return results != null && results.Count > 0;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static bool RestartAcpiPnpDevice()
+    {
+        try
+        {
+            // Find ACPI\PNP0C14* instances
+            var scope = new ManagementScope(@"\\.\root\CIMV2");
+            scope.Connect();
+            using var searcher = new ManagementObjectSearcher(scope,
+                new ObjectQuery("SELECT PNPDeviceID FROM Win32_PnPEntity WHERE PNPDeviceID LIKE 'ACPI\\\\PNP0C14%'"));
+
+            foreach (ManagementObject mo in searcher.Get())
+            {
+                string? id = mo["PNPDeviceID"] as string;
+                if (string.IsNullOrWhiteSpace(id))
+                    continue;
+
+                // Prefer a dedicated Restart if you add it; otherwise Disable->Enable
+                if (PnPUtil.RestartDevice(id))
+                {
+                    LogManager.LogInformation("Restarted device: {0}", id);
+                    return true;
+                }
+            }
+
+            LogManager.LogWarning("No ACPI\\PNP0C14 instance found.");
+            return false;
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogWarning("Failed to restart ACPI\\PNP0C14: {0}", ex.Message);
+            return false;
+        }
     }
 
     public override bool SetLedBrightness(int brightness)
@@ -775,11 +891,35 @@ public class ClawA1M : IDevice
         }
     }
 
-    protected void StartWatching()
+    protected async void StartWatching()
     {
         try
         {
-            var scope = new ManagementScope("\\\\.\\root\\WMI");
+            // Ensure DLL is present
+            CheckAndDeployWmiAcpi();
+
+            // Ensure registry points WmiAcpi to the DLL
+            CheckAndFixRegistry();
+
+            // Ensure MSI_Event exists; if not, restart ACPI\PNP0C14 and wait a bit
+            if (!MsiEventClassExists())
+            {
+                RestartAcpiPnpDevice();
+
+                // small wait-loop
+                Task timeout = Task.Delay(TimeSpan.FromSeconds(5));
+                while (!timeout.IsCompleted && !MsiEventClassExists())
+                    await Task.Delay(250).ConfigureAwait(false);
+            }
+
+            // Start watcher if available
+            if (!MsiEventClassExists())
+            {
+                LogManager.LogWarning("Failed to hook into MSI_Event");
+                return;
+            }
+
+            ManagementScope scope = new ManagementScope("\\\\.\\root\\WMI");
             specialKeyWatcher = new ManagementEventWatcher(scope, new WqlEventQuery("SELECT * FROM MSI_Event"));
             specialKeyWatcher.EventArrived += onWMIEvent;
             specialKeyWatcher.Start();
@@ -792,23 +932,20 @@ public class ClawA1M : IDevice
 
     protected void StopWatching()
     {
-        if (specialKeyWatcher == null)
-        {
-            return;
-        }
-
         try
         {
-            specialKeyWatcher.EventArrived -= onWMIEvent;
-            specialKeyWatcher.Stop();
-            specialKeyWatcher.Dispose();
+            if (specialKeyWatcher is not null)
+            {
+                specialKeyWatcher.EventArrived -= onWMIEvent;
+                specialKeyWatcher.Stop();
+                specialKeyWatcher.Dispose();
+                specialKeyWatcher = null;
+            }
         }
         catch (Exception ex)
         {
             LogManager.LogError("Exception unconfiguring MSI_Event monitor: {0}", ex.Message);
         }
-
-        specialKeyWatcher = null;
     }
 
     private void onWMIEvent(object sender, EventArrivedEventArgs e)
@@ -816,7 +953,7 @@ public class ClawA1M : IDevice
         int WMIEvent = Convert.ToInt32(e.NewEvent.Properties["MSIEvt"].Value);
         WMIEventCode key = (WMIEventCode)(WMIEvent & byte.MaxValue);
 
-        // LogManager.LogInformation("Received MSI WMI Event Code {0}", (int)key);
+        // LogManager.LogDebug("Received MSI WMI Event Code {0}", (int)key);
 
         if (!keyMapping.ContainsKey(key))
             return;
@@ -828,14 +965,7 @@ public class ClawA1M : IDevice
             default:
             case WMIEventCode.LaunchMcxMainUI:  // MSI Claw: Click
             case WMIEventCode.LaunchMcxOSD:     // Quick Settings: Click
-                {
-                    Task.Run(async () =>
-                    {
-                        KeyPress(button);
-                        await Task.Delay(KeyPressDelay).ConfigureAwait(false); // Avoid blocking the synchronization context
-                        KeyRelease(button);
-                    });
-                }
+                KeyPressAndRelease(button, KeyPressDelay);
                 break;
         }
     }
@@ -846,7 +976,7 @@ public class ClawA1M : IDevice
         byte dataBlockIndex = 215;
 
         // Get the current battery data (1 byte) from the device
-        byte[] data = WMI.Get(Scope, Path, "Get_Data", dataBlockIndex, 1, out bool readSuccess);
+        byte[] data = WMI.Get(WmiScope, WmiPath, "Get_Data", dataBlockIndex, 1, out bool readSuccess);
         if (readSuccess)
             data[0] = data[0].SetBit(7, enable);
 
@@ -856,7 +986,7 @@ public class ClawA1M : IDevice
         fullPackage[1] = data[0];
 
         // Set the battery mode using the package.
-        WMI.Set(Scope, Path, "Set_Data", fullPackage);
+        WMI.Set(WmiScope, WmiPath, "Set_Data", fullPackage);
     }
 
     private bool GetBatteryChargeLimit(ref byte currentValue)
@@ -865,7 +995,7 @@ public class ClawA1M : IDevice
         byte dataBlockIndex = 215;
 
         // Get the current battery data (1 byte) from the device
-        byte[] data = WMI.Get(Scope, Path, "Get_Data", dataBlockIndex, 1, out bool readSuccess);
+        byte[] data = WMI.Get(WmiScope, WmiPath, "Get_Data", dataBlockIndex, 1, out bool readSuccess);
         if (readSuccess)
             currentValue = data[0];
 
@@ -890,7 +1020,7 @@ public class ClawA1M : IDevice
         fullPackage[1] = (byte)(currentValue - mask + chargeLimit);
 
         // Set the battery mode using the package.
-        WMI.Set(Scope, Path, "Set_Data", fullPackage);
+        WMI.Set(WmiScope, WmiPath, "Set_Data", fullPackage);
     }
 
     private void SetFanTable(byte[] fanTable)
@@ -903,14 +1033,14 @@ public class ClawA1M : IDevice
         for (byte iDataBlockIndex = 1; iDataBlockIndex <= 2; iDataBlockIndex++)
         {
             // default: 49, 0, 40, 49, 58, 67, 75, 75
-            byte[] data = WMI.Get(Scope, Path, "Get_Fan", iDataBlockIndex, 32, out bool readFan);
+            byte[] data = WMI.Get(WmiScope, WmiPath, "Get_Fan", iDataBlockIndex, 32, out bool readFan);
 
             // Build the complete 32-byte package:
             byte[] fullPackage = new byte[32];
             fullPackage[0] = iDataBlockIndex;
             Array.Copy(fanTable, 0, fullPackage, 1, fanTable.Length);
 
-            WMI.Set(Scope, Path, "Set_Fan", fullPackage);
+            WMI.Set(WmiScope, WmiPath, "Set_Fan", fullPackage);
         }
     }
 
@@ -937,14 +1067,14 @@ public class ClawA1M : IDevice
         fullPackage[0] = (byte)iDataBlockIndex;
         fullPackage[1] = (byte)limit;
 
-        WMI.Set(Scope, Path, "Set_Data", fullPackage);
+        WMI.Set(WmiScope, WmiPath, "Set_Data", fullPackage);
     }
 
     public override void SetFanControl(bool enable, int mode = 0)
     {
         byte iDataBlockIndex = 1;
 
-        byte[] data = WMI.Get(Scope, Path, "Get_AP", iDataBlockIndex, WMI.GetAPLength(iDataBlockIndex), out bool readSuccess);
+        byte[] data = WMI.Get(WmiScope, WmiPath, "Get_AP", iDataBlockIndex, WMI.GetAPLength(iDataBlockIndex), out bool readSuccess);
         if (readSuccess)
             data[0] = data[0].SetBit(7, enable);
 
@@ -956,14 +1086,14 @@ public class ClawA1M : IDevice
         fullPackage[0] = iDataBlockIndex;
         fullPackage[1] = data[0];
 
-        WMI.Set(Scope, Path, "Set_Data", fullPackage);
+        WMI.Set(WmiScope, WmiPath, "Set_Data", fullPackage);
     }
 
     public void SetFanFullSpeed(bool enable)
     {
         byte iDataBlockIndex = 152;
 
-        byte[] data = WMI.Get(Scope, Path, "Get_Data", iDataBlockIndex, 1, out bool readSuccess);
+        byte[] data = WMI.Get(WmiScope, WmiPath, "Get_Data", iDataBlockIndex, 1, out bool readSuccess);
         if (readSuccess)
             data[0] = data[0].SetBit(7, enable);
 
@@ -972,7 +1102,7 @@ public class ClawA1M : IDevice
         fullPackage[0] = iDataBlockIndex;
         fullPackage[1] = data[0];
 
-        WMI.Set(Scope, Path, "Set_Data", fullPackage);
+        WMI.Set(WmiScope, WmiPath, "Set_Data", fullPackage);
     }
 
     public int GetShiftValue()
@@ -983,7 +1113,7 @@ public class ClawA1M : IDevice
         // bool isSupported = (shiftValue & 128) != 0;
         // bool isActive = (shiftValue & 64) != 0;
         // int modeValue = shiftValue & 0x3F; // lower 6 bits
-        byte[] data = WMI.Get(Scope, Path, "Get_AP", iDataBlockIndex, WMI.GetAPLength(iDataBlockIndex), out bool readSuccess);
+        byte[] data = WMI.Get(WmiScope, WmiPath, "Get_AP", iDataBlockIndex, WMI.GetAPLength(iDataBlockIndex), out bool readSuccess);
         if (readSuccess)
             return data[2];
 
@@ -999,7 +1129,7 @@ public class ClawA1M : IDevice
         fullPackage[1] = (byte)newShiftValue;
 
         // Write the package back to the EC.
-        WMI.Set(Scope, Path, "Set_Data", fullPackage);
+        WMI.Set(WmiScope, WmiPath, "Set_Data", fullPackage);
     }
 
     public bool IsShiftSupported()

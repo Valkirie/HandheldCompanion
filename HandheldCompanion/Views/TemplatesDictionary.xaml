@@ -417,6 +417,188 @@
         </ui:SettingsExpander>
     </DataTemplate>
 
+    <DataTemplate x:Key="LibraryTemplateWide" DataType="{x:Type viewmodels:ProfileViewModel}">
+        <Button
+            x:Name="ImageContainer"
+            Padding="0"
+            BorderThickness="0"
+            CacheMode="BitmapCache"
+            Command="{Binding Navigate}"
+            IsEnabled="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+            Tag="{Binding}">
+
+            <Button.Style>
+                <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+                    <Style.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.20" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        x:Name="Root"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        SnapsToDevicePixels="True">
+                        <Grid x:Name="RootGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="60" />
+                            </Grid.RowDefinitions>
+
+                            <ui:ProgressRing
+                                Grid.Row="0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Panel.ZIndex="999"
+                                IsIndeterminate="True"
+                                Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                            <Border Grid.Row="0" ClipToBounds="True">
+                                <Grid>
+                                    <Image
+                                        x:Name="MainImage"
+                                        RenderTransformOrigin="0.5,0.5"
+                                        Source="{Binding Artwork}"
+                                        Stretch="UniformToFill">
+                                        <Image.RenderTransform>
+                                            <ScaleTransform ScaleX="1" ScaleY="1" />
+                                        </Image.RenderTransform>
+                                        <Image.Effect>
+                                            <effects:BloomEffect BloomIntensity="0" BloomSaturation="0.2" />
+                                        </Image.Effect>
+                                    </Image>
+
+                                    <Image
+                                        x:Name="LogoImage"
+                                        Margin="40"
+                                        RenderTransformOrigin="0.5,0.5"
+                                        Source="{Binding Logo}"
+                                        Stretch="Uniform">
+                                        <Image.Effect>
+                                            <DropShadowEffect
+                                                BlurRadius="4"
+                                                Direction="330"
+                                                Opacity="0.5"
+                                                ShadowDepth="2"
+                                                Color="Black" />
+                                        </Image.Effect>
+                                    </Image>
+                                </Grid>
+                            </Border>
+
+                            <Grid Grid.Row="1" Margin="12">
+                                <StackPanel>
+                                    <TextBlock
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource BaseTextBlockStyle}"
+                                        Text="{Binding Name}"
+                                        TextWrapping="NoWrap" />
+                                    <TextBlock
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="{Binding Description}"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Grid>
+
+                            <Image
+                                Width="32"
+                                Height="32"
+                                Margin="4"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Source="{Binding Platform, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DrawingImageToImageSourceConverter}}"
+                                Stretch="Uniform">
+                                <Image.Effect>
+                                    <DropShadowEffect
+                                        BlurRadius="4"
+                                        Direction="330"
+                                        Opacity="0.5"
+                                        ShadowDepth="2"
+                                        Color="Black" />
+                                </Image.Effect>
+                            </Image>
+                        </Grid>
+
+                        <!--  Visual states MUST live on the template root  -->
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="MainImage"
+                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                            To="1.0"
+                                            Duration="0:0:0.1" />
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="MainImage"
+                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                            To="1.0"
+                                            Duration="0:0:0.1" />
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="MainImage"
+                                            Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                            To="0"
+                                            Duration="0:0:0.1" />
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="MainImage"
+                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                            To="1.05"
+                                            Duration="0:0:0.1" />
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="MainImage"
+                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                            To="1.05"
+                                            Duration="0:0:0.1" />
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="MainImage"
+                                            Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                            To="0.4"
+                                            Duration="0:0:0.1" />
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="Focused">
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="MainImage"
+                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                            To="1.05"
+                                            Duration="0:0:0.1" />
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="MainImage"
+                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                            To="1.05"
+                                            Duration="0:0:0.1" />
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="MainImage"
+                                            Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                            To="0.4"
+                                            Duration="0:0:0.1" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+    </DataTemplate>
+
     <DataTemplate x:Key="LibraryTemplate" DataType="{x:Type viewmodels:ProfileViewModel}">
         <Button
             x:Name="ImageContainer"
@@ -499,7 +681,16 @@
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
                                 Source="{Binding Platform, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DrawingImageToImageSourceConverter}}"
-                                Stretch="Uniform" />
+                                Stretch="Uniform">
+                                <Image.Effect>
+                                    <DropShadowEffect
+                                        BlurRadius="4"
+                                        Direction="330"
+                                        Opacity="0.5"
+                                        ShadowDepth="2"
+                                        Color="Black" />
+                                </Image.Effect>
+                            </Image>
                         </Grid>
 
                         <!--  Visual states MUST live on the template root  -->
