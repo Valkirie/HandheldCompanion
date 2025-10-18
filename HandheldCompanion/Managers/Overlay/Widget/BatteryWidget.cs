@@ -1,4 +1,5 @@
 using System.Management;
+using System.Windows.Forms;
 
 namespace HandheldCompanion.Managers.Overlay.Widget;
 
@@ -8,12 +9,7 @@ public class BatteryWidget : IWidget
 
     public void Build(OverlayEntry entry, short? level = null)
     {
-        var _level = level ?? OSDManager.OverlayBATTLevel;
-        if (_level == null)
-        {
-            return;
-        }
-
+        short _level = level ?? OSDManager.OverlayBATTLevel;
         switch (_level)
         {
             case WidgetLevel.FULL:
@@ -23,34 +19,21 @@ public class BatteryWidget : IWidget
             case WidgetLevel.MINIMAL:
                 OSDManager.AddElementIfNotNull(entry, PlatformManager.LibreHardware.GetBatteryLevel(), "%");
                 break;
+            default:
+                return;
         }
 
         if (IsBatteryCharging())
-        {
             return;
-        }
 
         if (!TimeLeftInMinutes.HasValue)
-        {
             return;
-        }
 
         OSDManager.AddElementIfNotNull(entry, TimeBatteryHours(), "h");
         OSDManager.AddElementIfNotNull(entry, TimeBatteryMinutes(), "min");
     }
 
-    private static bool IsBatteryCharging()
-    {
-        using var searcher = new ManagementObjectSearcher("SELECT BatteryStatus FROM Win32_Battery");
-        foreach (var o in searcher.Get())
-        {
-            var result = (ManagementObject)o;
-            if (result["BatteryStatus"] is ushort status)
-                return status is 6 or 7 or 8 or 9;
-        }
-
-        return false;
-    }
+    private static bool IsBatteryCharging() => SystemInformation.PowerStatus.PowerLineStatus == PowerLineStatus.Online;
 
     private int TimeBatteryHours()
     {
