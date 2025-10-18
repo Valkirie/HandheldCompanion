@@ -55,7 +55,7 @@ namespace HandheldCompanion.Platforms.Misc
                 IsCpuEnabled = IDevice.GetCurrent().CpuMonitor,
                 IsGpuEnabled = IDevice.GetCurrent().GpuMonitor,
                 IsMemoryEnabled = IDevice.GetCurrent().MemoryMonitor,
-                IsBatteryEnabled = IDevice.GetCurrent().BatteryMonitor,
+                IsBatteryEnabled = false, // IDevice.GetCurrent().BatteryMonitor,
             };
         }
 
