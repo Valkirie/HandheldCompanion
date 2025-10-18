@@ -720,6 +720,7 @@ public static class ControllerManager
                                 {
                                     switch (details.GetProductID())
                                     {
+                                        case "0x1ABE": // ASUS Xbox Adaptive Controller
                                         case "0x1B4C": // ASUS Xbox Adaptive Controller
                                             try { controller = new XboxAdaptiveController(details); } catch { }
                                             break;

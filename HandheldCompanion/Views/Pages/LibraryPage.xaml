@@ -140,7 +140,7 @@
                             ItemsStretch="Uniform"
                             MaximumRowsOrColumns="8"
                             MinColumnSpacing="6"
-                            MinItemHeight="180"
+                            MinItemHeight="220"
                             MinItemWidth="300"
                             MinRowSpacing="6"
                             Orientation="Horizontal" />

@@ -75,7 +75,7 @@ public class ROGAlly : IDevice
 
         // used to monitor OEM specific inputs
         vendorId = 0x0B05;
-        productIds = [0x1ABE];
+        productIds = [0x1ABE, 0x1B4C];
 
         // https://www.amd.com/en/products/processors/handhelds/ryzen-z-series/z1-series/z1-extreme.html
         // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html

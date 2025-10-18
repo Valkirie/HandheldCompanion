@@ -6,12 +6,18 @@ using System.Numerics;
 
 namespace HandheldCompanion.Devices;
 
-public class ROGAllyX : ROGAlly
+public class XboxROGAlly : ROGAlly
 {
-    public ROGAllyX()
+    public XboxROGAlly()
     {
         // device specific settings
-        ProductIllustration = "device_rog_ally_x";
+        ProductIllustration = "device_xbox_rog_ally";
+
+        // https://www.amd.com/en/products/processors/handhelds/ryzen-z-series/z2-series/z2-a.html
+        nTDP = new double[] { 20, 20, 33 };
+        cTDP = new double[] { 15, 35 };
+        GfxClock = new double[] { 100, 1800 };
+        CpuClock = 3800;
 
         // overwrite ROGAlly default gyrometer axis settings
         GyrometerAxis = new Vector3(1.0f, 1.0f, -1.0f);

@@ -742,12 +742,17 @@ public abstract class IDevice
                 {
                     switch (ProductName)
                     {
-                        // Todo, figure out if theres a diff between Z1 and Z1 extreme versions
                         case "RC71L":
                             device = new ROGAlly();
                             break;
                         case "RC72LA":
                             device = new ROGAllyX();
+                            break;
+                        case "RC73YA":
+                            device = new XboxROGAlly();
+                            break;
+                        case "RC73XA":
+                            device = new XboxROGAllyX();
                             break;
                     }
                 }

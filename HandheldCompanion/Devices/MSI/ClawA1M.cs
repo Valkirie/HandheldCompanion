@@ -359,19 +359,20 @@ public class ClawA1M : IDevice
         byte[] fanTable = new byte[8];
         if (profile.FanProfile.fanMode == FanMode.Software)
         {
-            fanTable[0] = (byte)profile.FanProfile.fanSpeeds[4]; // ?
-            fanTable[1] = (byte)profile.FanProfile.fanSpeeds[0]; // 0%
-            fanTable[2] = (byte)profile.FanProfile.fanSpeeds[2]; // 20%
-            fanTable[3] = (byte)profile.FanProfile.fanSpeeds[5]; // 50%
-            fanTable[4] = (byte)profile.FanProfile.fanSpeeds[6]; // 60%
-            fanTable[5] = (byte)profile.FanProfile.fanSpeeds[8]; // 80%
-            fanTable[6] = (byte)profile.FanProfile.fanSpeeds[9]; // 90%
-            fanTable[7] = (byte)profile.FanProfile.fanSpeeds[10]; // 100%
+            // MSI Claw goes from 0% to 150%
+            fanTable[0] = (byte)(profile.FanProfile.fanSpeeds[4] / 100.0d * 150.0d);    // 20% (backup ?)
+            fanTable[1] = (byte)(profile.FanProfile.fanSpeeds[0] / 100.0d * 150.0d);    // 0%
+            fanTable[2] = (byte)(profile.FanProfile.fanSpeeds[2] / 100.0d * 150.0d);    // 20%
+            fanTable[3] = (byte)(profile.FanProfile.fanSpeeds[5] / 100.0d * 150.0d);    // 50%
+            fanTable[4] = (byte)(profile.FanProfile.fanSpeeds[6] / 100.0d * 150.0d);    // 60%
+            fanTable[5] = (byte)(profile.FanProfile.fanSpeeds[8] / 100.0d * 150.0d);    // 80%
+            fanTable[6] = (byte)(profile.FanProfile.fanSpeeds[9] / 100.0d * 150.0d);    // 90%
+            fanTable[7] = (byte)(profile.FanProfile.fanSpeeds[10] / 100.0d * 150.0d);   // 100%
         }
         else
         {
             // restore default fan table
-            fanTable = new byte[8] { 49, 0, 40, 49, 58, 67, 75, 75 };
+            fanTable = new byte[8] { 40, 0, 40, 49, 58, 67, 75, 75 };
         }
 
         // update fan table

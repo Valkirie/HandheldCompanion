@@ -88,6 +88,12 @@ public class ProfileManager : IManager
                 LayoutTitle = LayoutTemplate.DefaultLayout.Name,
             };
 
+            // get default power profiles
+            PowerProfile? betterPeformanceProfile = IDevice.GetCurrent().DevicePowerProfiles.FirstOrDefault(p => p.Guid == IDevice.BetterPerformanceGuid);
+            PowerProfile? bestPeformanceProfile = IDevice.GetCurrent().DevicePowerProfiles.FirstOrDefault(p => p.Guid == IDevice.BestPerformanceGuid);
+            defaultProfile.PowerProfiles[(int)PowerLineStatus.Offline] = betterPeformanceProfile?.Guid ?? Guid.Empty;
+            defaultProfile.PowerProfiles[(int)PowerLineStatus.Online] = bestPeformanceProfile?.Guid ?? Guid.Empty;
+
             UpdateOrCreateProfile(defaultProfile, UpdateSource.Creation);
         }
 
