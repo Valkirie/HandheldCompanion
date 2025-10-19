@@ -144,7 +144,7 @@ public class AOKZOEA1 : IDevice
 
     public override void Close()
     {
-        if (!IsOpen)
+        if (!UseOpenLib || !IsOpen)
             return;
 
         LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM3);
@@ -155,7 +155,7 @@ public class AOKZOEA1 : IDevice
 
     public override void SetFanControl(bool enable, int mode)
     {
-        if (!IsOpen)
+        if (!UseOpenLib || !IsOpen)
             return;
 
         // Determine the fan control mode based enable
@@ -169,7 +169,7 @@ public class AOKZOEA1 : IDevice
 
     public override void SetFanDuty(double percent)
     {
-        if (!IsOpen)
+        if (!UseOpenLib || !IsOpen)
             return;
 
         // Convert 0-100 percentage to range

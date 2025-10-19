@@ -32,7 +32,7 @@ public class AOKZOEA1Pro : AOKZOEA1
         if (ECDetails.AddressFanDuty == 0)
             return;
 
-        if (!IsOpen)
+        if (!UseOpenLib || !IsOpen)
             return;
 
         var duty = percent * (ECDetails.FanValueMax - ECDetails.FanValueMin) / 100 + ECDetails.FanValueMin;
@@ -46,7 +46,7 @@ public class AOKZOEA1Pro : AOKZOEA1
         if (ECDetails.AddressFanControl == 0)
             return;
 
-        if (!IsOpen)
+        if (!UseOpenLib || !IsOpen)
             return;
 
         var data = Convert.ToByte(enable);

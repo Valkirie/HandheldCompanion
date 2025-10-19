@@ -53,24 +53,10 @@ public enum TDPMethod
 
 public struct ECDetails
 {
-    // Todo, remove comments
-    // ADDR_PORT="0x4e" <-- AddressStatusCommandPort should be called address port??
-    // DATA_PORT="0x4f" <-- AddressDataPort should be called data port??
-
-    // Ayaneo LED control calls them EC_Data and EC_SC
-    //private const uint EC_DATA = 0x62; // Data Port
-    //private const uint EC_SC = 0x66;   // Status/Command Port
-
-    public ushort AddressStatusCommandPort;  // Address of the register, In EC communication, the registry address specifies the type of data or command you want to access.
-    public ushort AddressDataPort;      // Address where the data needs to go to, When interacting with the EC, the data address is where you send or receive the actual data or commands you want to communicate with the EC.
-    public ushort AddressFanControl;   // Never used?
-    public ushort AddressFanDuty;      // Never used?
-
-    // https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/12_ACPI_Embedded_Controller_Interface_Specification/embedded-controller-register-descriptions.html
-    // The embedded controller contains three registers at two address locations: EC_SC and EC_DATA.
-    // EC_SC Status Command Register
-    // EC_DATA Data register
-
+    public ushort AddressStatusCommandPort; // Address of the register, In EC communication, the registry address specifies the type of data or command you want to access.
+    public ushort AddressDataPort;          // Address where the data needs to go to, When interacting with the EC, the data address is where you send or receive the actual data or commands you want to communicate with the EC.
+    public ushort AddressFanControl;
+    public ushort AddressFanDuty;
     public short FanValueMin;
     public short FanValueMax;
 }
@@ -225,6 +211,7 @@ public abstract class IDevice
         if (IsOpen)
             return true;
 
+        LogManager.LogInformation("OpenLibSys initialization: {0}", UseOpenLib);
         if (UseOpenLib)
         {
             bool success = OpenLibSys();
@@ -255,8 +242,6 @@ public abstract class IDevice
             Close();
             return false;
         }
-
-        return true;
     }
 
     public virtual void OpenEvents()
@@ -918,7 +903,7 @@ public abstract class IDevice
         if (ECDetails.AddressFanDuty == 0)
             return;
 
-        if (!IsOpen)
+        if (!UseOpenLib || !IsOpen)
             return;
 
         var duty = percent * (ECDetails.FanValueMax - ECDetails.FanValueMin) / 100 + ECDetails.FanValueMin;
@@ -932,7 +917,7 @@ public abstract class IDevice
         if (ECDetails.AddressFanControl == 0)
             return;
 
-        if (!IsOpen)
+        if (!UseOpenLib || !IsOpen)
             return;
 
         var data = Convert.ToByte(enable);
@@ -970,7 +955,7 @@ public abstract class IDevice
 
     public virtual byte ECRamReadByte(ushort register)
     {
-        if (!IsOpen)
+        if (!UseOpenLib || !IsOpen)
             return 0;
 
         try
@@ -986,7 +971,7 @@ public abstract class IDevice
 
     public virtual bool ECRamWriteByte(ushort register, byte data)
     {
-        if (!IsOpen)
+        if (!UseOpenLib || !IsOpen)
             return false;
 
         try
@@ -1003,7 +988,7 @@ public abstract class IDevice
 
     public virtual byte ECRamDirectReadByte(ushort register, ECDetails details)
     {
-        if (!IsOpen)
+        if (!UseOpenLib || !IsOpen)
             return 0;
 
         var addr_upper = (byte)((register >> 8) & byte.MaxValue);
@@ -1042,7 +1027,7 @@ public abstract class IDevice
 
     public virtual bool ECRamDirectWriteByte(ushort register, ECDetails details, byte data)
     {
-        if (!IsOpen)
+        if (!UseOpenLib || !IsOpen)
             return false;
 
         byte addr_upper = (byte)((register >> 8) & byte.MaxValue);
