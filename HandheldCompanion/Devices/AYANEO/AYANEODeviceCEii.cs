@@ -83,7 +83,7 @@ namespace HandheldCompanion.Devices.AYANEO
             if (ECDetails.AddressFanDuty == 0)
                 return;
 
-            if (!IsOpen)
+            if (!UseOpenLib || !IsOpen)
                 return;
 
             var duty = percent * (ECDetails.FanValueMax - ECDetails.FanValueMin) / 100 + ECDetails.FanValueMin;
@@ -97,7 +97,7 @@ namespace HandheldCompanion.Devices.AYANEO
             if (this.ECDetails.AddressFanControl == 0)
                 return;
 
-            if (!this.IsOpen)
+            if (!UseOpenLib || !IsOpen)
                 return;
 
             byte data = enable ? (byte)0xa5 : (byte)0x00;

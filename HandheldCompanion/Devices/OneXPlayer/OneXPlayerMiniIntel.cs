@@ -38,7 +38,7 @@ public class OneXPlayerMiniIntel : OneXPlayerMini
 
     public override void SetFanControl(bool enable, int mode)
     {
-        if (!IsOpen)
+        if (!UseOpenLib || !IsOpen)
             return;
 
         // Determine the fan control mode based enable
@@ -52,7 +52,7 @@ public class OneXPlayerMiniIntel : OneXPlayerMini
 
     public override void SetFanDuty(double percent)
     {
-        if (!IsOpen)
+        if (!UseOpenLib || !IsOpen)
             return;
 
         // Convert 0-100 percentage to range

@@ -452,7 +452,7 @@ public class OneXPlayerX1 : IDevice
 
     public void SetBatteryChargeLimit(int chargeLimit)
     {
-        if (!IsOpen)
+        if (!UseOpenLib || !IsOpen)
             return;
 
         if (chargeLimit < 0 || chargeLimit > 100)
@@ -463,7 +463,7 @@ public class OneXPlayerX1 : IDevice
 
     public void SetBatteryBypassChargingMode(int modeIndex)
     {
-        if (!IsOpen)
+        if (!UseOpenLib || !IsOpen)
             return;
 
         if (modeIndex < 0 || modeIndex > 4)

@@ -17,6 +17,7 @@ public class GPDWin4_2024_8840U : IDevice
         cTDP = new double[] { 5, 30 };
         GfxClock = new double[] { 200, 2700 };
         CpuClock = 5100;
+        UseOpenLib = true;
 
         // device specific capacities
         Capabilities = DeviceCapabilities.FanControl;

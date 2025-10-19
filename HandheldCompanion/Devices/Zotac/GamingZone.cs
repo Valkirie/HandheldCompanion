@@ -698,7 +698,7 @@ namespace HandheldCompanion.Devices.Zotac
 
         public override void SetFanControl(bool enable, int mode)
         {
-            if (!IsOpen)
+            if (!UseOpenLib || !IsOpen)
                 return;
 
             ECRamDirectWriteByte(ECDetails.AddressFanControl, ECDetails, Convert.ToByte(enable));
@@ -706,7 +706,7 @@ namespace HandheldCompanion.Devices.Zotac
 
         public override void SetFanDuty(double percent)
         {
-            if (!IsOpen)
+            if (!UseOpenLib || !IsOpen)
                 return;
 
             byte fanValue = (byte)InputUtils.MapRange((float)percent, 0.0f, 100.0f, byte.MinValue, byte.MaxValue);
