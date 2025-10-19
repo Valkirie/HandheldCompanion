@@ -5677,7 +5677,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open Task Manager.
+        ///   Looks up a localized string similar to Open Task manager.
         /// </summary>
         public static string Hotkey_TaskManager {
             get {

@@ -317,7 +317,7 @@
     <value>Change hotkey by pressing a button or a special key</value>
   </data>
   <data name="Hotkey_TaskManager" xml:space="preserve">
-    <value>Open Task Manager</value>
+    <value>Open Task manager</value>
   </data>
   <data name="Hotkey_TaskManagerDesc" xml:space="preserve">
     <value>Press this key: Ctrl + Shift + Esc</value>
