@@ -39,6 +39,7 @@ namespace HandheldCompanion.Commands
             Resources.Hotkey_FunctionCategory_Multitasking,
             typeof(KillForegroundCommands),
             typeof(TaskManagerCommands),
+            typeof(TaskViewCommands),
             typeof(SwapScreenCommands),
             typeof(DesktopCommands),
             Resources.Hotkey_FunctionCategory_Display,
