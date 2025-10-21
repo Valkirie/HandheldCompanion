@@ -432,6 +432,9 @@ public class ProfileManager : IManager
 
         try
         {
+            if (processEx is null)
+                return;
+
             Profile? profile = GetProfileFromPath(processEx.Path, false);
 
             if (profile is null)
