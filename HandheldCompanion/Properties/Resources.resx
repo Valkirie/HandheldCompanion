@@ -3996,4 +3996,22 @@ Thank you for using HC and helping us make it better.</value>
   <data name="ControllerPage_TroobleshootingBluetoothControllersConnectionIssues" xml:space="preserve">
     <value>Troobleshooting bluetooth controllers connection issues</value>
   </data>
+  <data name="PowerProfileAYANEOBestPerformance" xml:space="preserve">
+    <value>Extreme</value>
+  </data>
+  <data name="PowerProfileAYANEOBetterPerformance" xml:space="preserve">
+    <value>Balanced</value>
+  </data>
+  <data name="PowerProfileAYANEOBetterBattery" xml:space="preserve">
+    <value>Saving power</value>
+  </data>
+  <data name="PowerProfileAYANEOBestPerformanceDesc" xml:space="preserve">
+    <value>28W TDP</value>
+  </data>
+  <data name="PowerProfileAYANEOBetterBatteryDesc" xml:space="preserve">
+    <value>8W TDP</value>
+  </data>
+  <data name="PowerProfileAYANEOBetterPerformanceDesc" xml:space="preserve">
+    <value>15W TDP</value>
+  </data>
 </root>
