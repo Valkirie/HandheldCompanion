@@ -70,7 +70,7 @@
 #endif
 
 ; Windows 10
-#define WindowsVersion         "10.0.19041"
+#define WindowsVersion         "10.0.22621"
 
 AllowNoIcons=yes
 AppName={#MyAppSetupName}
