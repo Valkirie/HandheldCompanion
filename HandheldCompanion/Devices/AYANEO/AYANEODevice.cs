@@ -26,7 +26,7 @@ namespace HandheldCompanion.Devices.AYANEO
                 CPUBoostLevel = CPUBoostLevel.Disabled,
                 Guid = BetterBatteryGuid,
                 TDPOverrideEnabled = true,
-                TDPOverrideValues = new[] { 10.0d, 10.0d, 10.0d }
+                TDPOverrideValues = new[] { 8.0d, 8.0d, 8.0d }
             });
 
             DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileAYANEOBetterPerformance, Properties.Resources.PowerProfileAYANEOBetterPerformanceDesc)
@@ -46,7 +46,7 @@ namespace HandheldCompanion.Devices.AYANEO
                 OSPowerMode = OSPowerMode.BestPerformance,
                 Guid = BestPerformanceGuid,
                 TDPOverrideEnabled = true,
-                TDPOverrideValues = new[] { 25.0d, 25.0d, 25.0d }
+                TDPOverrideValues = new[] { 28.0d, 28.0d, 28.0d }
             });
         }
 
