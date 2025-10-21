@@ -7725,6 +7725,60 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Extreme.
+        /// </summary>
+        public static string PowerProfileAYANEOBestPerformance {
+            get {
+                return ResourceManager.GetString("PowerProfileAYANEOBestPerformance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 28W TDP.
+        /// </summary>
+        public static string PowerProfileAYANEOBestPerformanceDesc {
+            get {
+                return ResourceManager.GetString("PowerProfileAYANEOBestPerformanceDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Saving power.
+        /// </summary>
+        public static string PowerProfileAYANEOBetterBattery {
+            get {
+                return ResourceManager.GetString("PowerProfileAYANEOBetterBattery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 8W TDP.
+        /// </summary>
+        public static string PowerProfileAYANEOBetterBatteryDesc {
+            get {
+                return ResourceManager.GetString("PowerProfileAYANEOBetterBatteryDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Balanced.
+        /// </summary>
+        public static string PowerProfileAYANEOBetterPerformance {
+            get {
+                return ResourceManager.GetString("PowerProfileAYANEOBetterPerformance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 15W TDP.
+        /// </summary>
+        public static string PowerProfileAYANEOBetterPerformanceDesc {
+            get {
+                return ResourceManager.GetString("PowerProfileAYANEOBetterPerformanceDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Default power and fan speed for optimal performance, temperature, noise, and battery life..
         /// </summary>
         public static string PowerProfileDefaultDescription {
