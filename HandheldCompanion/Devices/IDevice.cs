@@ -540,6 +540,9 @@ public abstract class IDevice
                         case "FLIP 1S DS":
                             device = new AYANEOFlip1SDS();
                             break;
+                        case "FLIP 1S KB":
+                            device = new AYANEOFlip1SKB();
+                            break;
                     }
                 }
                 break;
