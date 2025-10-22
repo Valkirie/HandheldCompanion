@@ -336,7 +336,7 @@ public partial class ProfilesPage : Page
             // check on path rather than profile
             bool exists = false;
             Profile parentProfile = ManagerFactory.profileManager.GetProfileFromPath(path, true, true);
-            if (parentProfile is not null)
+            if (parentProfile is not null && !parentProfile.Default)
             {
                 Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
                 {
