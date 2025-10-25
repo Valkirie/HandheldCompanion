@@ -536,7 +536,12 @@ public static class InputsManager
 
     private static List<KeyCode> GetChord(List<KeyEventArgsExt> args)
     {
-        return args.Select(a => (KeyCode)a.KeyValue).OrderBy(key => key).ToList();
+        if (args is null) return new List<KeyCode>();
+        return args
+            .Where(a => a is not null)
+            .Select(a => (KeyCode)a.KeyValue)
+            .OrderBy(key => key)
+            .ToList();
     }
 
     public static void Start()
