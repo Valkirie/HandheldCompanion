@@ -319,7 +319,7 @@ namespace HandheldCompanion.Managers
             GPU.Stop();
         }
 
-        private async void DeviceManager_DisplayAdapterArrived(AdapterInformation adapterInformation)
+        private void DeviceManager_DisplayAdapterArrived(AdapterInformation adapterInformation)
         {
             // GPU is already part of the dictionary
             if (DisplayGPU.ContainsKey(adapterInformation))

@@ -147,8 +147,6 @@ namespace HandheldCompanion.ViewModels
 
         public bool HasDuration => PressTypeIndex != (int)PressType.Short;
 
-        public bool HasDuration => PressTypeIndex != (int)PressType.Short;
-
         #endregion
 
         private ButtonStackViewModel _parentStack;
