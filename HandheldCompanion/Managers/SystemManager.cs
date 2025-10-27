@@ -207,8 +207,6 @@ public static class SystemManager
         }
 
         LogManager.LogDebug("Session switched to {0}", e.Reason);
-
-        PerformSystemRoutine();
     }
 
     private static void PerformSystemRoutine()

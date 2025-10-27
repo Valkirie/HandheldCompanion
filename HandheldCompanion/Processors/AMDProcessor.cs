@@ -93,6 +93,9 @@ public class AMDProcessor : Processor
             }
             else
             {
+                // RyzenAdj use mW
+                limit *= 1000.0d;
+
                 if (ry != IntPtr.Zero)
                 {
                     // RyzenAdj use mW

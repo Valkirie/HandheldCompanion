@@ -651,6 +651,11 @@ public partial class OverlayQuickTools : GamepadWindow
         WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
     }
 
+    public void UpdateStyle()
+    {
+        WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
+    }
+
     private void Window_Closing(object sender, CancelEventArgs e)
     {
         // position and size settings
