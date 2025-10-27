@@ -2505,19 +2505,19 @@
     <value>이것은 기본 장치 사전 설정이며 편집할 수 없습니다. 이는 디바이스의 원래 소프트웨어에서 제공하는 사전 설정과 비슷합니다.</value>
   </data>
   <data name="PowerProfileLegionGoBetterBattery" xml:space="preserve">
-    <value>Legion Go - Quiet</value>
+    <value>Quiet</value>
   </data>
   <data name="PowerProfileLegionGoBetterBatteryDesc" xml:space="preserve">
     <value>LS의 저소음 모드와 유사한 프리셋. TDP 제한: 8W</value>
   </data>
   <data name="PowerProfileLegionGoBetterPerformance" xml:space="preserve">
-    <value>Legion Go - Balanced</value>
+    <value>Balanced</value>
   </data>
   <data name="PowerProfileLegionGoBetterPerformanceDesc" xml:space="preserve">
     <value>LS의 균형 모드와 유사한 프리셋. TDP 제한: 15W</value>
   </data>
   <data name="PowerProfileLegionGoBestPerformance" xml:space="preserve">
-    <value>Legion Go - Performance</value>
+    <value>Performance</value>
   </data>
   <data name="PowerProfileLegionGoBestPerformanceDesc" xml:space="preserve">
     <value>LS의 성능 모드와 유사한 프리셋. TDP 제한: 20W</value>
@@ -3386,18 +3386,6 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   <data name="ControllerPage_RelatedSupport" xml:space="preserve">
     <value />
   </data>
-  <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
-    <value>컨트롤러의 진동의 세기를 변경</value>
-  </data>
-  <data name="SettingsMode0_StickSensitivity" xml:space="preserve">
-    <value>스틱 감도</value>
-  </data>
-  <data name="SettingsMode0_StickSensitivityDesc" xml:space="preserve">
-    <value>회전 속도를 변경합니다.</value>
-  </data>
-  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
-    <value>아직 장치가 지원되지 않는 것 같습니다. 소프트웨어가 예상대로 실행되지 않을 수 있습니다.</value>
-  </data>
   <data name="LayoutPage_PressType" xml:space="preserve">
     <value />
   </data>
@@ -3414,6 +3402,45 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
     <value />
   </data>
   <data name="LayoutPage_InputShiftDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_UncloakOnDisconnect" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="ControllerPage_UncloakOnDisconnectDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
+    <value>컨트롤러의 진동의 세기를 변경</value>
+  </data>
+  <data name="SettingsMode0_StickSensitivity" xml:space="preserve">
+    <value>스틱 감도</value>
+  </data>
+  <data name="SettingsMode0_StickSensitivityDesc" xml:space="preserve">
+    <value>회전 속도를 변경합니다.</value>
+  </data>
+  <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
+    <value>아직 장치가 지원되지 않는 것 같습니다. 소프트웨어가 예상대로 실행되지 않을 수 있습니다.</value>
+  </data>
+  <data name="ControllerPage_ConnectWhenPlugged" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_ConnectWhenPluggedDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_ScanForHardwareChanges" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_HelpWithControllerSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_TestControllerInputs" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_ConfiguringControllersSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_TroobleshootingBluetoothControllersConnectionIssues" xml:space="preserve">
     <value />
   </data>
 </root>

@@ -1,24 +1,29 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using HandheldCompanion.Controllers;
+using System;
+using System.Threading;
+using static HandheldCompanion.Managers.ControllerManager;
 
 namespace HandheldCompanion.Helpers
 {
     public static class EventHelper
     {
-        public static void RaiseAsync<TDelegate>(TDelegate? eventDelegate, params object[] args)
-            where TDelegate : Delegate
+        public static void RaiseInputsUpdatedAsync(InputsUpdatedEventHandler? handlers, ControllerState state, bool isMapped)
         {
-            Delegate[]? handlers = eventDelegate?.GetInvocationList();
-            if (handlers == null) return;
+            if (handlers is null) return;
 
-            foreach (TDelegate handler in handlers)
+            Delegate[] invocation = handlers.GetInvocationList();
+
+            // Single thread-pool hop; iterate all handlers on that worker.
+            ThreadPool.UnsafeQueueUserWorkItem(static s =>
             {
-                Task.Run(() =>
+                var (inv, st, mapped) = ((Delegate[], ControllerState, bool))s!;
+                for (int i = 0; i < inv.Length; i++)
                 {
-                    try { handler.DynamicInvoke(args); }
-                    catch { /* swallow or count errors as discussed */ }
-                });
-            }
+                    var h = (InputsUpdatedEventHandler)inv[i];
+                    try { h(st, mapped); } catch { /* swallow or metric */ }
+                }
+            }, (invocation, state, isMapped), preferLocal: true);
         }
     }
+
 }

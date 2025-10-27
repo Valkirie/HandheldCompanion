@@ -233,7 +233,7 @@ namespace HandheldCompanion.Controllers
         {
             if (Details is not null)
                 return Details.isExternal;
-            return true;
+            return false;
         }
 
         public virtual bool IsXInput()
@@ -472,6 +472,10 @@ namespace HandheldCompanion.Controllers
         {
             if (Details is null)
                 return false;
+
+            // wait until any rumble task is complete
+            while (rumbleTask != null && !rumbleTask.IsCompleted)
+                Task.Delay(100).Wait();
 
             // set flag
             bool success = false;

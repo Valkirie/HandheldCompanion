@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Extensions;
 using HandheldCompanion.Misc;
+using HandheldCompanion.ViewModels.Misc;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
@@ -17,7 +18,7 @@ namespace HandheldCompanion.ViewModels
         public QuickApplicationsPageViewModel PageViewModel;
 
         private readonly object _processWindowsSyncLock = new object();
-        public ObservableCollection<ProcessWindowViewModel> ProcessWindows { get; set; } = [];
+        public ObservableCollection<WindowListItemViewModel> ProcessWindows { get; set; } = [];
 
         private ProcessEx _process;
         public ProcessEx Process
@@ -137,10 +138,10 @@ namespace HandheldCompanion.ViewModels
 
         private void Process_WindowAttached(ProcessWindow processWindow)
         {
-            ProcessWindowViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow.Hwnd == processWindow.Hwnd);
+            WindowListItemViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow.Hwnd == processWindow.Hwnd);
             if (foundWindow is null)
             {
-                ProcessWindows.SafeAdd(new ProcessWindowViewModel(processWindow));
+                ProcessWindows.SafeAdd(new WindowListItemViewModel(processWindow));
             }
             else
             {
@@ -150,7 +151,7 @@ namespace HandheldCompanion.ViewModels
 
         private void Process_WindowDetached(ProcessWindow processWindow)
         {
-            ProcessWindowViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow.Hwnd == processWindow.Hwnd);
+            WindowListItemViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow.Hwnd == processWindow.Hwnd);
             if (foundWindow is not null)
             {
                 ProcessWindows.SafeRemove(foundWindow);
@@ -186,7 +187,7 @@ namespace HandheldCompanion.ViewModels
             }
 
             // Take a snapshot of the children and clear the live collection
-            ProcessWindowViewModel[] windowsSnapshot;
+            WindowListItemViewModel[] windowsSnapshot;
             lock (_processWindowsSyncLock)
             {
                 windowsSnapshot = ProcessWindows.ToArray();
@@ -194,7 +195,7 @@ namespace HandheldCompanion.ViewModels
             }
 
             // Dispose each window from the snapshot (outside the lock)
-            foreach (ProcessWindowViewModel processWindow in windowsSnapshot)
+            foreach (WindowListItemViewModel processWindow in windowsSnapshot)
                 processWindow.Dispose();
 
             // dispose commands

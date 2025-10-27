@@ -76,7 +76,7 @@ namespace HandheldCompanion.ViewModels
                         case GamepadType.PS4:
                             return "\u2440";    // DualShock4 icon
                         case GamepadType.PS5:
-                            return "\u24410";    // DualSense icon
+                            return "\u2441";    // DualSense icon
                     }
                 }
 

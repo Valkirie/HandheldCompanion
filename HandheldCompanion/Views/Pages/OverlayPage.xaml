@@ -68,9 +68,9 @@
                                 VerticalAlignment="Center"
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
-                                LargeChange="200"
-                                Maximum="2000"
-                                Minimum="100"
+                                LargeChange="1000"
+                                Maximum="4000"
+                                Minimum="500"
                                 SmallChange="100"
                                 TickFrequency="100"
                                 TickPlacement="BottomRight"
@@ -115,7 +115,7 @@
                             Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
-                            IsEnabled="False"
+                            IsEnabled="{Binding IsRunningRTSS, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             SelectionChanged="OnScreenDisplayLevel_SelectionChanged">
                             <Label Content="{l:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Disabled}" />
                             <Label Content="{l:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Minimal}" />
@@ -879,7 +879,7 @@
                     </Expander.Header>
 
                     <Expander.Content>
-                        <ikw:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
+                        <ikw:SimpleStackPanel Spacing="12">
 
                             <!--  Framerate  -->
                             <Grid>

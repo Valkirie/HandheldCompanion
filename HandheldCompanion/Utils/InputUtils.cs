@@ -42,7 +42,7 @@ namespace HandheldCompanion.Utils
     public enum MotionMode { Off, On, Toggle }
 
     [Flags]
-    public enum MotionDirection
+    public enum DeflectionDirection
     {
         None = 0,
         Left = 1,
@@ -411,17 +411,35 @@ namespace HandheldCompanion.Utils
         // ---------- Direction helpers ----------
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static MotionDirection GetMotionDirection(Vector2 vector, float threshold)
+        public static DeflectionDirection GetDeflectionDirection(Vector2 vector, float threshold)
         {
-            MotionDirection direction = 0;
+            if (vector.LengthSquared() < threshold * threshold)
+            {
+                return 0;
+            }
 
-            if (vector.X > threshold) direction |= MotionDirection.Right;
-            else if (vector.X < -threshold) direction |= MotionDirection.Left;
+            double angle = Math.Atan2(vector.Y, vector.X) * (180.0 / Math.PI);
+            double shiftedAngle = angle + 22.5;
+            if (shiftedAngle < 0)
+            {
+                shiftedAngle += 360;
+            }
 
-            if (vector.Y > threshold) direction |= MotionDirection.Up;
-            else if (vector.Y < -threshold) direction |= MotionDirection.Down;
+            int sector = (int)(shiftedAngle / 45.0);
 
-            return direction;
+            var directions = new[]
+            {
+                DeflectionDirection.Right,
+                DeflectionDirection.Up | DeflectionDirection.Right,
+                DeflectionDirection.Up,
+                DeflectionDirection.Up | DeflectionDirection.Left,
+                DeflectionDirection.Left,
+                DeflectionDirection.Down | DeflectionDirection.Left,
+                DeflectionDirection.Down,
+                DeflectionDirection.Down | DeflectionDirection.Right
+            };
+
+            return directions[sector];
         }
     }
 }

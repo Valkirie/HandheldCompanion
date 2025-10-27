@@ -254,31 +254,20 @@ public class ClawA1M : IDevice
             IntelEnduranceGamingPreset = (int)ctl_3d_endurance_gaming_mode_t.PERFORMANCE // GPU Auto TDP is Off, FPS depends on the game, and it can be up to 120
         });
 
-        OEMChords.Add(new KeyboardChord("CLAW",
-            [], [],
-            false, ButtonFlags.OEM1
-        ));
-
-        OEMChords.Add(new KeyboardChord("QS",
-            [], [],
-            false, ButtonFlags.OEM2
-        ));
-
-        OEMChords.Add(new KeyboardChord("M1",
-            [], [],
-            false, ButtonFlags.OEM3
-        ));
-
-        OEMChords.Add(new KeyboardChord("M2",
-            [], [],
-            false, ButtonFlags.OEM4
-        ));
+        OEMChords.Add(new KeyboardChord(name: "CLAW", button: ButtonFlags.OEM1));
+        OEMChords.Add(new KeyboardChord(name: "QS", button: ButtonFlags.OEM2));
+        OEMChords.Add(new KeyboardChord(name: "M1", button: ButtonFlags.OEM3));
+        OEMChords.Add(new KeyboardChord(name: "M2", button: ButtonFlags.OEM4));
 
         OEMChords.Add(new KeyboardChord("LButton",
             [KeyCode.LButton | KeyCode.OemClear],
             [KeyCode.LButton | KeyCode.OemClear],
-            true, ButtonFlags.OEM5
+            true, ButtonFlags.None
         ));
+
+        // Hacky, BIOS 10F
+        OEMChords.Add(new KeyboardChord("QS", [KeyCode.LWin, KeyCode.G], [KeyCode.G, KeyCode.LWin], false, ButtonFlags.None));
+        OEMChords.Add(new KeyboardChord("QS, Long-press", [KeyCode.LWin, KeyCode.Tab], [KeyCode.Tab, KeyCode.LWin], false, ButtonFlags.OEM2));
 
         // prepare hotkeys
         DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;

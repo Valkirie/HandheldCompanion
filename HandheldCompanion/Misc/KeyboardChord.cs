@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Inputs;
 using System.Collections.Generic;
-using System.Linq;
 
 using WindowsInput.Events;
 
@@ -18,19 +17,20 @@ public class KeyboardChord
     public bool silenced;
     public ButtonState state = new();
 
-    public KeyboardChord(string name, List<KeyCode> chordDown, List<KeyCode> chordUP, bool silenced = false,
-        ButtonFlags button = ButtonFlags.None)
+    public KeyboardChord(string name, List<KeyCode> chordDown = null, List<KeyCode> chordUP = null, bool silenced = false, ButtonFlags button = ButtonFlags.None)
     {
         this.name = name;
         this.silenced = silenced;
         state[button] = true;
 
-        chords[true].AddRange(chordDown);
-        chords[false].AddRange(chordUP);
+        if (chordDown is not null)
+            chords[true].AddRange(chordDown);
+        if (chordUP is not null)
+            chords[false].AddRange(chordUP);
     }
 
     public List<KeyCode> GetChord(bool IsKeyDown)
     {
-        return chords[IsKeyDown].OrderBy(key => key).OrderBy(key => key).ToList();
+        return chords[IsKeyDown];
     }
 }

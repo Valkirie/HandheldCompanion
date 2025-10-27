@@ -8,7 +8,7 @@ namespace HandheldCompanion.Converters
 {
     public class ColorToBrushConverter : IValueConverter
     {
-        // Color (or SolidColorBrush) → Brush
+        // Color (or SolidColorBrush) -> Brush
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is Color color)
@@ -22,7 +22,7 @@ namespace HandheldCompanion.Converters
             return DependencyProperty.UnsetValue;
         }
 
-        // Brush → Color
+        // Brush -> Color
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is SolidColorBrush brush)

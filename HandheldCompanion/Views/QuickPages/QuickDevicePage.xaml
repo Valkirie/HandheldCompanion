@@ -15,6 +15,7 @@
     d:DesignHeight="1200"
     d:DesignWidth="640"
     KeepAlive="True"
+    Loaded="QuickDevice_Loaded"
     mc:Ignorable="d">
 
     <ikw:SimpleStackPanel Spacing="8">

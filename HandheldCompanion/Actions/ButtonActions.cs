@@ -48,10 +48,13 @@ namespace HandheldCompanion.Actions
             outVector = layout.vector;
             base.Execute(layout, shiftSlot, delta);
 
-            if (outVector == Vector2.Zero && !outBool)
+            if (outVector == Vector2.Zero)
+            {
+                Execute(Button, false, shiftSlot, delta);
                 return;
+            }
 
-            var direction = InputUtils.GetMotionDirection(outVector, motionThreshold);
+            var direction = InputUtils.GetDeflectionDirection(outVector, motionThreshold);
             bool press = DirectionMatches(direction, motionDirection);
 
             // transition to Button Execute()

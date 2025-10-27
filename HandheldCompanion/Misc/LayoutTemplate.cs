@@ -77,7 +77,7 @@ namespace HandheldCompanion.Misc
                                     new MouseActions
                                     {
                                         motionThreshold = Gamepad.TriggerThreshold,
-                                        motionDirection = Utils.MotionDirection.Up,
+                                        motionDirection = Utils.DeflectionDirection.Up,
                                         MouseType = MouseActionsType.RightButton
                                     }
                                 }
@@ -88,7 +88,7 @@ namespace HandheldCompanion.Misc
                                     new MouseActions
                                     {
                                         motionThreshold = Gamepad.TriggerThreshold,
-                                        motionDirection = Utils.MotionDirection.Up,
+                                        motionDirection = Utils.DeflectionDirection.Up,
                                         MouseType = MouseActionsType.LeftButton
                                     }
                                 }
@@ -140,25 +140,25 @@ namespace HandheldCompanion.Misc
                                     new KeyboardActions
                                     {
                                         motionThreshold = Gamepad.LeftThumbDeadZone,
-                                        motionDirection = Utils.MotionDirection.Left,
+                                        motionDirection = Utils.DeflectionDirection.Left,
                                         Key = VirtualKeyCode.VK_A
                                     },
                                     new KeyboardActions
                                     {
                                         motionThreshold = Gamepad.LeftThumbDeadZone,
-                                        motionDirection = Utils.MotionDirection.Right,
+                                        motionDirection = Utils.DeflectionDirection.Right,
                                         Key = VirtualKeyCode.VK_D
                                     },
                                     new KeyboardActions
                                     {
                                         motionThreshold = Gamepad.LeftThumbDeadZone,
-                                        motionDirection = Utils.MotionDirection.Up,
+                                        motionDirection = Utils.DeflectionDirection.Up,
                                         Key = VirtualKeyCode.VK_W
                                     },
                                     new KeyboardActions
                                     {
                                         motionThreshold = Gamepad.LeftThumbDeadZone,
-                                        motionDirection = Utils.MotionDirection.Down,
+                                        motionDirection = Utils.DeflectionDirection.Down,
                                         Key = VirtualKeyCode.VK_S
                                     }
                                 }
@@ -169,7 +169,7 @@ namespace HandheldCompanion.Misc
                                     new MouseActions
                                     {
                                         motionThreshold = Gamepad.TriggerThreshold,
-                                        motionDirection = Utils.MotionDirection.Up,
+                                        motionDirection = Utils.DeflectionDirection.Up,
                                         MouseType = MouseActionsType.RightButton
                                     }
                                 }
@@ -180,7 +180,7 @@ namespace HandheldCompanion.Misc
                                     new MouseActions
                                     {
                                         motionThreshold = Gamepad.TriggerThreshold,
-                                        motionDirection = Utils.MotionDirection.Up,
+                                        motionDirection = Utils.DeflectionDirection.Up,
                                         MouseType = MouseActionsType.LeftButton
                                     }
                                 }

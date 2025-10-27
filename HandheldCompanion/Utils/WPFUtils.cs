@@ -246,7 +246,7 @@ public static class WPFUtils
         switch (direction)
         {
             case Direction.Left:
-                // from c1's left-edge center → c2's right-edge center
+                // from c1's left-edge center -> c2's right-edge center
                 return Measure(
                   r1, r2,
                   r => new Point(r.Left, r.Top + r.Height / 2),
@@ -254,7 +254,7 @@ public static class WPFUtils
                 );
 
             case Direction.Right:
-                // from c1's right center → c2's left center
+                // from c1's right center -> c2's left center
                 return Measure(
                   r1, r2,
                   r => new Point(r.Right, r.Top + r.Height / 2),
@@ -262,7 +262,7 @@ public static class WPFUtils
                 );
 
             case Direction.Up:
-                // from c1's top center → c2's bottom center
+                // from c1's top center -> c2's bottom center
                 return Measure(
                   r1, r2,
                   r => new Point(r.Left + r.Width / 2, r.Top),
@@ -270,7 +270,7 @@ public static class WPFUtils
                 );
 
             case Direction.Down:
-                // from c1's bottom center → c2's top center
+                // from c1's bottom center -> c2's top center
                 return Measure(
                   r1, r2,
                   r => new Point(r.Left + r.Width / 2, r.Bottom),
@@ -355,6 +355,7 @@ public static class WPFUtils
                 case "ToggleButton":
                 case "CheckBox":
                 case "RadioButton":
+                case "HyperlinkButton":
                     {
                         FrameworkElement asType = (FrameworkElement)current;
                         if (asType.IsEnabled && asType.Focusable && asType.IsVisible)

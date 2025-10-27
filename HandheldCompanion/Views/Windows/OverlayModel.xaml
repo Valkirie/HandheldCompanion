@@ -14,7 +14,9 @@
     <!--  The HelixViewport3D supports camera manipulation, and can be used just like the Viewport3D  -->
     <HelixToolkit:HelixViewport3D
         Name="ModelViewPort"
+        AutomationProperties.LiveSetting="Off"
         ClipToBounds="False"
+        Focusable="False"
         IsHitTestVisible="False"
         IsMoveEnabled="False"
         IsPanEnabled="False"

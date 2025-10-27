@@ -325,7 +325,7 @@ namespace HandheldCompanion.Views.QuickPages
             foreach (Timeline tl in sb.Children)
                 Storyboard.SetTarget(tl, el);
 
-            // start the full shrink→grow on this key
+            // start the full shrink->grow on this key
             sb.Begin(el, true);
         }
     }

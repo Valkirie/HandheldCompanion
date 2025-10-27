@@ -23,8 +23,7 @@ public class OneXPlayerOneXFly : IDevice
         ProductModel = "ONEXPLAYEROneXFly";
         UseOpenLib = true;
 
-        // https://www.amd.com/en/products/apu/amd-ryzen-z1
-        // https://www.amd.com/en/products/apu/amd-ryzen-z1-extreme
+        // https://www.amd.com/en/products/processors/handhelds/ryzen-z-series/z1-series/z1-extreme.html
         // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 5, 30 };
@@ -136,7 +135,7 @@ public class OneXPlayerOneXFly : IDevice
         // allow OneX turbo button to pass key inputs
         LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
 
-        ECRamDirectWrite(0x4F1, ECDetails, 0x40);
+        ECRamDirectWriteByte(0x4F1, ECDetails, 0x40);
 
         return (ECRamDirectReadByte(0x4F1, ECDetails) == 0x40);
     }
@@ -144,17 +143,15 @@ public class OneXPlayerOneXFly : IDevice
     public override void Close()
     {
         LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
-        ECRamDirectWrite(0x4F1, ECDetails, 0x00);
+        ECRamDirectWriteByte(0x4F1, ECDetails, 0x00);
         base.Close();
     }
 
     public override bool IsReady()
     {
         // Prepare list for all HID devices
-        HidDevice[] HidDeviceList = HidDevices.Enumerate(vendorId, productIds).ToArray();
-
-        // Check every HID device to find LED device
-        foreach (HidDevice device in HidDeviceList)
+        IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds);
+        foreach (HidDevice device in devices)
         {
             // OneXFly device for LED control does not support a FeatureReport, hardcoded to match the Interface Number
             if (device.IsConnected && device.DevicePath.Contains("&mi_00"))

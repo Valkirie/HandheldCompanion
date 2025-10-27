@@ -212,7 +212,7 @@ public static class SystemManager
     private static void PerformSystemRoutine()
     {
         // update status
-        currentSystemStatus = IsPowerSuspended ? SystemStatus.SystemPending : SystemStatus.SystemReady;
+        currentSystemStatus = IsPowerSuspended || IsSessionLocked ? SystemStatus.SystemPending : SystemStatus.SystemReady;
 
         // only raise event is system status has changed
         if (previousSystemStatus == currentSystemStatus)

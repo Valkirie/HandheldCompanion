@@ -21,11 +21,12 @@
 #define UseViGem
 #define UseHideHide
 #define UseRTSS
+#define UsePawnIO
 
 #define InstallerVersion        "0.2"
 #define MyAppSetupName         "Handheld Companion"
 #define MyBuildId              "HandheldCompanion"
-#define MyAppVersion           "0.28.0.0"
+#define MyAppVersion           "0.28.1.4"
 #define MyAppPublisher         "BenjaminLSR"
 #define MyAppCopyright         "Copyright © BenjaminLSR"
 #define MyAppURL               "https://github.com/Valkirie/HandheldCompanion"
@@ -43,18 +44,20 @@
 #define ViGemName              "ViGEmBus Setup"
 #define HidHideName            "HidHide Drivers"
 #define RtssName               "RTSS Setup"
+#define PawnIOName             "PawnIO"
 
 #define NewDotNetVersion       "9.0.0"
 #define NewDirectXVersion      "9.29.1974"
 #define NewViGemVersion        "1.22.0.0"
 #define NewHidHideVersion      "1.5.230"
-; RTSS 7.3.6
 #define NewRtssVersion         "7.3.5.28010"
+#define NewPawnIOVersion       "2.0.1.0"
 
 #define DirectXDownloadLink    "https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe"
 #define HidHideDownloadLink    "https://github.com/nefarius/HidHide/releases/download/v1.5.230.0/HidHide_1.5.230_x64.exe"
 #define ViGemDownloadLink      "https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe"
 #define RtssDownloadLink       "https://github.com/Valkirie/HandheldCompanion/raw/main/redist/RTSSSetup736.exe"
+#define PawnIODownloadLink     "https://github.com/namazso/PawnIO.Setup/releases/latest/download/PawnIO_setup.exe"
 
 ; Registry  
 #define RegAppsPath            "SOFTWARE\" + MyAppSetupName + "\"
@@ -105,8 +108,8 @@ Name: en; MessagesFile: "compiler:Default.isl"
 ; download netcorecheck_x64.exe: https://go.microsoft.com/fwlink/?linkid=2135504
 Source: "{#SourcePath}\redist\netcorecheck.exe"; Flags: dontcopy noencryption
 Source: "{#SourcePath}\redist\netcorecheck_x64.exe"; Flags: dontcopy noencryption
-#endif                   
-Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\WinRing0x64.dll"; DestDir: "{app}"; Flags: onlyifdoesntexist
+#endif
+Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\WinRing0x64.dll"; DestDir: "{app}"; Flags: onlyifdoesntexist																																				   
 Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\WinRing0x64.sys"; DestDir: "{app}"; Flags: onlyifdoesntexist
 Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\*"; Excludes: "*WinRing0x64.*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#SourcePath}\Certificate.pfx"; DestDir: "{tmp}"; Flags: deleteafterinstall
@@ -138,7 +141,7 @@ Type: filesandordirs; Name: "{app}"
 [Registry]
 ; Add LocalDumps keys
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps"; Flags: uninsdeletekeyifempty
-Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\HandheldCompanion.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{userdocs}\HandheldCompanion\dumps"; Flags: uninsdeletekey
+Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\HandheldCompanion.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{localappdata}\CrashDumps"; Flags: uninsdeletekey
 
 ; Add the compatibility flag to force HandheldCompanion.exe to run as administrator
 Root: HKLM; Subkey: "Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"; ValueType: string; ValueName: "{app}\{#MyAppExeName}"; ValueData: "~ RUNASADMIN"; Flags: uninsdeletevalue
@@ -177,6 +180,7 @@ procedure Dependency_AddDirectX; forward;
 procedure Dependency_AddHideHide; forward;
 procedure Dependency_AddViGem; forward;
 procedure Dependency_AddRTSS; forward;
+procedure Dependency_AddPawnIO; forward;
 function BoolToStr(Value: Boolean): String; forward;
 
 #include "./utils/CompareVersions.iss"
@@ -323,25 +327,25 @@ begin
   begin
     if not(checkListBox.checked[keepAllCheck]) then
     begin
-      if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\profiles')) then
-        DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\profiles'), True, True, True);
-      if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys')) then
-        DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'), True, True, True);
-      DelTree(ExpandConstant('{localappdata}\HandheldCompanion'), True, True, True);
+      if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}\profiles')) then
+        DelTree(ExpandConstant('{localappdata}\{#MyBuildId}\profiles'), True, True, True);
+      if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}\hotkeys')) then
+        DelTree(ExpandConstant('{localappdata}\{#MyBuildId}\hotkeys'), True, True, True);
+      DelTree(ExpandConstant('{localappdata}\{#MyBuildId}'), True, True, True);
       Exit;
     end
     else
     begin
       if not(checkListBox.checked[profilesCheck]) then
-        if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\profiles')) then
-          DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\profiles'), True, True, True);
+        if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}\profiles')) then
+          DelTree(ExpandConstant('{localappdata}\{#MyBuildId}\profiles'), True, True, True);
 
       if not(checkListBox.checked[hotkeysCheck]) then
-        if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys')) then
-          DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'), True, True, True);
+        if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}\hotkeys')) then
+          DelTree(ExpandConstant('{localappdata}\{#MyBuildId}\hotkeys'), True, True, True);
 
       if not(checkListBox.checked[applicationSettingsCheck]) then
-        DelTree(ExpandConstant('{localappdata}\HandheldCompanion'), True, True, True);
+        DelTree(ExpandConstant('{localappdata}\{#MyBuildId}'), True, True, True);
     end;
 
     if not(keepHidhideCheckbox.Checked) then
@@ -450,6 +454,20 @@ begin
     begin
       Log('{#RtssName} {#NewRtssVersion} needs update.');
       Dependency_AddRTSS;
+    end;
+  end;
+#endif
+
+#ifdef UsePawnIO
+  if not IsPawnIOInstalled() then
+    Dependency_AddPawnIO
+  else
+  begin
+    installedVersion := GetInstalledPawnIOVersion();
+    if compareVersions('{#NewPawnIOVersion}', installedVersion, '.', '-') > 0 then
+    begin
+      Log('{#PawnIOName} {#NewPawnIOVersion} needs update.');
+      Dependency_AddPawnIO;
     end;
   end;
 #endif
@@ -770,6 +788,15 @@ begin
   StopProcess('{#RTSSHooksLoaderExe}');
   if IsProcessRunning('{#RtssExe}') then
     StopProcess('{#RtssExe}');
+end;
+
+procedure Dependency_AddPawnIO;
+begin
+  Dependency_Add_With_Version('PawnIO_setup.exe', '{#NewPawnIOVersion}', RegGetInstalledVersion('{#PawnIOName}'),
+    '-install -silent',
+    '{#PawnIOName}',
+    '{#PawnIODownloadLink}',
+    '', True, True);
 end;
 
 function BoolToStr(Value: Boolean): String;

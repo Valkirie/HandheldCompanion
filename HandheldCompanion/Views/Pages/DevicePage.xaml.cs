@@ -67,7 +67,8 @@ namespace HandheldCompanion.Views.Pages
                 // Show LegionGoPanel
                 LegionGoPanel.Visibility = Visibility.Visible;
 
-                if (device.GetType() == typeof(LegionGoTablet))
+                if (device.GetType() == typeof(LegionGoTablet) ||
+                    device.GetType() == typeof(LegionGoTablet2))
                 {
                     LegionGoSensorSelection.Visibility = Visibility.Visible;
                     LegionGoLeftController.Visibility = Visibility.Visible;

@@ -192,7 +192,7 @@ namespace HandheldCompanion.ViewModels
         public DevicePageViewModel()
         {
             // settings watcher
-            if (Processor.GetCurrent() is IntelProcessor)
+            if (PerformanceManager.GetProcessor() is IntelProcessor)
             {
                 coreIsolationWatcher.StatusChanged += CoreIsolationWatcher_StatusChanged;
                 coreIsolationWatcher.Start();

@@ -7,54 +7,59 @@ namespace HandheldCompanion.Processors;
 public class AMDProcessor : Processor
 {
     public readonly RyzenFamily family;
-    public readonly IntPtr ry;
+    public readonly IntPtr ry = IntPtr.Zero;
 
     public AMDProcessor()
     {
-        ry = RyzenAdj.init_ryzenadj();
-        if (ry != IntPtr.Zero)
+        try
         {
-            family = RyzenAdj.get_cpu_family(ry);
-            switch (family)
-            {
-                case RyzenFamily.FAM_RENOIR:
-                case RyzenFamily.FAM_LUCIENNE:
-                case RyzenFamily.FAM_CEZANNE:
-                case RyzenFamily.FAM_VANGOGH:
-                case RyzenFamily.FAM_REMBRANDT:
-                case RyzenFamily.FAM_MENDOCINO:
-                case RyzenFamily.FAM_PHOENIX:
-                case RyzenFamily.FAM_HAWKPOINT:
-                case RyzenFamily.FAM_KRACKANPOINT: /* Added to debug on KRK, STX, & STXH */
-                case RyzenFamily.FAM_STRIXPOINT:
-                case RyzenFamily.FAM_STRIXHALO:
-                    CanChangeGPU = true;
-                    break;
-            }
+            ry = RyzenAdj.init_ryzenadj();
+        }
+        catch { /* ignore */ }
 
-            switch (family)
-            {
-                default:
-                    CanChangeTDP = false;
-                    break;
+        if (ry == IntPtr.Zero)
+            return;
 
-                case RyzenFamily.FAM_RAVEN:
-                case RyzenFamily.FAM_PICASSO:
-                case RyzenFamily.FAM_DALI:
-                case RyzenFamily.FAM_RENOIR:
-                case RyzenFamily.FAM_LUCIENNE:
-                case RyzenFamily.FAM_CEZANNE:
-                case RyzenFamily.FAM_VANGOGH:
-                case RyzenFamily.FAM_REMBRANDT:
-                case RyzenFamily.FAM_MENDOCINO:
-                case RyzenFamily.FAM_PHOENIX:
-                case RyzenFamily.FAM_HAWKPOINT:
-                case RyzenFamily.FAM_KRACKANPOINT:
-                case RyzenFamily.FAM_STRIXPOINT:
-                case RyzenFamily.FAM_STRIXHALO:
-                    CanChangeTDP = true;
-                    break;
-            }
+        family = RyzenAdj.get_cpu_family(ry);
+        switch (family)
+        {
+            case RyzenFamily.FAM_RENOIR:
+            case RyzenFamily.FAM_LUCIENNE:
+            case RyzenFamily.FAM_CEZANNE:
+            case RyzenFamily.FAM_VANGOGH:
+            case RyzenFamily.FAM_REMBRANDT:
+            case RyzenFamily.FAM_MENDOCINO:
+            case RyzenFamily.FAM_PHOENIX:
+            case RyzenFamily.FAM_HAWKPOINT:
+            case RyzenFamily.FAM_KRACKANPOINT: /* Added to debug on KRK, STX, & STXH */
+            case RyzenFamily.FAM_STRIXPOINT:
+            case RyzenFamily.FAM_STRIXHALO:
+                CanChangeGPU = true;
+                break;
+        }
+
+        switch (family)
+        {
+            default:
+                CanChangeTDP = false;
+                break;
+
+            case RyzenFamily.FAM_RAVEN:
+            case RyzenFamily.FAM_PICASSO:
+            case RyzenFamily.FAM_DALI:
+            case RyzenFamily.FAM_RENOIR:
+            case RyzenFamily.FAM_LUCIENNE:
+            case RyzenFamily.FAM_CEZANNE:
+            case RyzenFamily.FAM_VANGOGH:
+            case RyzenFamily.FAM_REMBRANDT:
+            case RyzenFamily.FAM_MENDOCINO:
+            case RyzenFamily.FAM_PHOENIX:
+            case RyzenFamily.FAM_HAWKPOINT:
+            case RyzenFamily.FAM_KRACKANPOINT:
+            case RyzenFamily.FAM_STRIXPOINT:
+            case RyzenFamily.FAM_STRIXHALO:
+                CanChangeTDP = true;
+                break;
         }
 
         // check capabilities
@@ -93,16 +98,17 @@ public class AMDProcessor : Processor
 
                 if (ry != IntPtr.Zero)
                 {
+                    // RyzenAdj use mW
                     switch (type)
                     {
                         case PowerType.Fast:
-                            result = RyzenAdj.set_fast_limit(ry, (uint)limit);
+                            result = RyzenAdj.set_fast_limit(ry, (uint)(limit * 1000.0d));
                             break;
                         case PowerType.Slow:
-                            result = RyzenAdj.set_slow_limit(ry, (uint)limit);
+                            result = RyzenAdj.set_slow_limit(ry, (uint)(limit * 1000.0d));
                             break;
                         case PowerType.Stapm:
-                            result = RyzenAdj.set_stapm_limit(ry, (uint)limit);
+                            result = RyzenAdj.set_stapm_limit(ry, (uint)(limit * 1000.0d));
                             break;
                     }
                 }

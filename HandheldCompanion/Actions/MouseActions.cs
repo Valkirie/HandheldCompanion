@@ -117,7 +117,7 @@ namespace HandheldCompanion.Actions
             if (outVector == Vector2.Zero && !IsCursorDown)
                 return;
 
-            var direction = InputUtils.GetMotionDirection(outVector, motionThreshold);
+            var direction = InputUtils.GetDeflectionDirection(outVector, motionThreshold);
             bool press = DirectionMatches(direction, motionDirection);
 
             Execute(ButtonFlags.None, press, shiftSlot, delta);
@@ -187,7 +187,7 @@ namespace HandheldCompanion.Actions
             if (s > 0f)
             {
                 // decay memory with a half-life that grows with 's'
-                // half-life ~ 24 ms when s→0, up to ~144 ms when s=1 (Acceleration=2.0)
+                // half-life ~ 24 ms when s->0, up to ~144 ms when s=1 (Acceleration=2.0)
                 float halfLifeMs = 24f + 120f * s;
                 float decay = (float)Math.Exp(-0.69314718056f * (delta / halfLifeMs));
 

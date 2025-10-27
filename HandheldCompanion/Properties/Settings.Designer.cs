@@ -1413,5 +1413,17 @@ namespace HandheldCompanion.Properties
                 this["QuickToolsApplyNoise"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HIDuncloakondisconnect {
+            get {
+                return ((bool)(this["HIDuncloakondisconnect"]));
+            }
+            set {
+                this["HIDuncloakondisconnect"] = value;
+            }
+        }
     }
 }

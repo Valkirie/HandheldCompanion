@@ -2523,19 +2523,19 @@
     <value>This is a default preset for the device, comparable to the one provided by the manufacturer. Please modify with caution.</value>
   </data>
   <data name="PowerProfileLegionGoBetterBattery" xml:space="preserve">
-    <value>Legion Go - Quiet</value>
+    <value>Quiet</value>
   </data>
   <data name="PowerProfileLegionGoBetterBatteryDesc" xml:space="preserve">
     <value>Preset similar to Quiet Mode in LS. TDP Limit: 8W</value>
   </data>
   <data name="PowerProfileLegionGoBetterPerformance" xml:space="preserve">
-    <value>Legion Go - Balanced</value>
+    <value>Balanced</value>
   </data>
   <data name="PowerProfileLegionGoBetterPerformanceDesc" xml:space="preserve">
     <value>Preset similar to Balanced Mode in LS. TDP Limit: 15W</value>
   </data>
   <data name="PowerProfileLegionGoBestPerformance" xml:space="preserve">
-    <value>Legion Go - Performance</value>
+    <value>Performance</value>
   </data>
   <data name="PowerProfileLegionGoBestPerformanceDesc" xml:space="preserve">
     <value>Preset similar to Performance Mode in LS. TDP Limit: 20W</value>
@@ -3708,7 +3708,7 @@
     <value />
   </data>
   <data name="ControllerPage_RelatedSupport" xml:space="preserve">
-    <value />
+    <value>相关支持</value>
   </data>
   <data name="LayoutPage_PressType" xml:space="preserve">
     <value />
@@ -3727,5 +3727,32 @@
   </data>
   <data name="LayoutPage_InputShiftDesc" xml:space="preserve">
     <value />
+  </data>
+  <data name="ControllerPage_UncloakOnDisconnect" xml:space="preserve">
+    <value>断开时取消隐藏控制器</value>
+  </data>
+  <data name="ControllerPage_UncloakOnDisconnectDesc" xml:space="preserve">
+    <value>断开连接时恢复控制器可见性</value>
+  </data>
+  <data name="ControllerPage_ConnectWhenPlugged" xml:space="preserve">
+    <value>插入时连接</value>
+  </data>
+  <data name="ControllerPage_ConnectWhenPluggedDesc" xml:space="preserve">
+    <value>自动连接上一个插入的控制器</value>
+  </data>
+  <data name="ControllerPage_ScanForHardwareChanges" xml:space="preserve">
+    <value>扫描硬件更改</value>
+  </data>
+  <data name="ControllerPage_HelpWithControllerSettings" xml:space="preserve">
+    <value>控制器设置帮助</value>
+  </data>
+  <data name="ControllerPage_TestControllerInputs" xml:space="preserve">
+    <value>测试手柄输入</value>
+  </data>
+  <data name="ControllerPage_ConfiguringControllersSettings" xml:space="preserve">
+    <value>配置游戏控制器</value>
+  </data>
+  <data name="ControllerPage_TroobleshootingBluetoothControllersConnectionIssues" xml:space="preserve">
+    <value>解决蓝牙手柄的连接问题</value>
   </data>
 </root>

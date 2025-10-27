@@ -25,7 +25,6 @@
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:WindowHelper.UseModernWindowStyle="True"
     Closing="Window_Closing"
-    IsVisibleChanged="GamepadWindow_IsVisibleChanged"
     Loaded="Window_Loaded"
     ResizeMode="NoResize"
     ShowActivated="False"

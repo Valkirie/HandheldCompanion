@@ -2545,19 +2545,19 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
     <value>Este é um modo padrão do dispositivo e não pode ser editado. Estes são comparáveis aos modos padrão fornecidos pelo software original dos dispositivos.</value>
   </data>
   <data name="PowerProfileLegionGoBetterBattery" xml:space="preserve">
-    <value>Legion Go - Quieto</value>
+    <value>Quieto</value>
   </data>
   <data name="PowerProfileLegionGoBetterBatteryDesc" xml:space="preserve">
     <value>Modo similar ao Quiet Mode no software Legion Space. TDP Limite: 8W</value>
   </data>
   <data name="PowerProfileLegionGoBetterPerformance" xml:space="preserve">
-    <value>Legion Go - Balanceado</value>
+    <value>Balanceado</value>
   </data>
   <data name="PowerProfileLegionGoBetterPerformanceDesc" xml:space="preserve">
     <value>Modo similar ao Balanced Mode no software Legion Space. TDP Limite: 15W</value>
   </data>
   <data name="PowerProfileLegionGoBestPerformance" xml:space="preserve">
-    <value>Legion Go - Desempenho</value>
+    <value>Desempenho</value>
   </data>
   <data name="PowerProfileLegionGoBestPerformanceDesc" xml:space="preserve">
     <value>Modo similar ao Performance Mode no software Legion Space. TDP Limite: 20W</value>
@@ -3877,6 +3877,33 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
     <value />
   </data>
   <data name="LayoutPage_InputShiftDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_UncloakOnDisconnect" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="ControllerPage_UncloakOnDisconnectDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="ControllerPage_ConnectWhenPlugged" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_ConnectWhenPluggedDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_ScanForHardwareChanges" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_HelpWithControllerSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_TestControllerInputs" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_ConfiguringControllersSettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ControllerPage_TroobleshootingBluetoothControllersConnectionIssues" xml:space="preserve">
     <value />
   </data>
 </root>

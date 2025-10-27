@@ -47,6 +47,58 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public bool HasTurbo
+        {
+            get => Action is not null && Action.HasTurbo;
+            set
+            {
+                if (Action is not null && value != HasTurbo)
+                {
+                    Action.HasTurbo = value;
+                    OnPropertyChanged(nameof(HasTurbo));
+                }
+            }
+        }
+
+        public bool HasInterruptable
+        {
+            get => Action is not null && Action.HasInterruptable;
+            set
+            {
+                if (Action is not null && value != HasInterruptable)
+                {
+                    Action.HasInterruptable = value;
+                    OnPropertyChanged(nameof(HasInterruptable));
+                }
+            }
+        }
+
+        public bool HasToggle
+        {
+            get => Action is not null && Action.HasToggle;
+            set
+            {
+                if (Action is not null && value != HasToggle)
+                {
+                    Action.HasToggle = value;
+                    OnPropertyChanged(nameof(HasToggle));
+                }
+            }
+        }
+
+        public float TurboDelay
+        {
+            get => Action is not null ? Action.TurboDelay : 0;
+            set
+            {
+                if (Action is not null && value != TurboDelay)
+                {
+                    Action.TurboDelay = value;
+                    OnPropertyChanged(nameof(TurboDelay));
+                }
+            }
+        }
+
         public ObservableCollection<MappingTargetViewModel> Targets { get; set; } = [];
 
         private MappingTargetViewModel? _selectedTarget;

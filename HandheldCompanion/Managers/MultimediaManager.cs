@@ -173,19 +173,100 @@ public class MultimediaManager : IManager
         return string.Empty; // Or handle this case as needed
     }
 
-    public static string GetDisplayFriendlyName(string DeviceName)
+    public static string GetDisplayFriendlyName(string deviceName)
     {
-        string friendlyName = GetDisplayName(DeviceName);
+        // default fallback: \\.\DISPLAYx
+        string friendlyName = GetDisplayName(deviceName);
 
         try
         {
-            Display? PrimaryDisplay = Display.GetDisplays().Where(display => display.DisplayName.Equals(DeviceName)).FirstOrDefault();
-            if (PrimaryDisplay is not null && !string.IsNullOrEmpty(PrimaryDisplay.DeviceName))
-                friendlyName = PrimaryDisplay.DeviceName;
+            // Find the Display/Path for this screen (you already use WindowsDisplayAPI)
+            var display = Display.GetDisplays()
+                .FirstOrDefault(d => string.Equals(d.DisplayName, deviceName, StringComparison.OrdinalIgnoreCase));
+
+            if (display != null)
+            {
+                // 1) EDID monitor name (preferred)
+                // Extract the instance id from DevicePath: \\?\DISPLAY#<hwid>#<instance>#...
+                var m = Regex.Match(display.DevicePath,
+                    @"^\\\\\?\\DISPLAY#[^#]+#(?<instance>[^#]+)(?=[#\{])",
+                    RegexOptions.IgnoreCase);
+
+                if (m.Success && TryGetEdidMonitorName(m.Groups["instance"].Value, out var edidName))
+                    return edidName;
+
+                // 2) DisplayConfig target friendly name (often "Generic PnP Monitor", but keep as fallback)
+                var target = PathDisplayTarget.GetDisplayTargets()
+                    .FirstOrDefault(t => string.Equals(t.DevicePath, display.DevicePath, StringComparison.OrdinalIgnoreCase));
+                if (target != null && !string.IsNullOrWhiteSpace(target.FriendlyName))
+                    return target.FriendlyName.Trim();
+
+                // 3) WindowsDisplayAPI device name
+                if (!string.IsNullOrWhiteSpace(display.DeviceName))
+                    return display.DeviceName.Trim();
+            }
         }
-        catch { }
+        catch
+        {
+            // ignore and use fallback
+        }
 
         return friendlyName;
+    }
+
+    /// <summary>
+    /// Reads the EDID and returns the Monitor Name (descriptor 0xFC), e.g. "AYANEOQHD".
+    /// </summary>
+    private static bool TryGetEdidMonitorName(string lookupInstanceKeyName, out string monitorName)
+    {
+        monitorName = null;
+
+        using var displayKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Enum\DISPLAY");
+        if (displayKey == null) return false;
+
+        foreach (var monitorKeyName in displayKey.GetSubKeyNames())
+            using (var monitorKey = displayKey.OpenSubKey(monitorKeyName))
+            {
+                if (monitorKey == null) continue;
+
+                foreach (var instanceKeyName in monitorKey.GetSubKeyNames())
+                {
+                    if (!string.Equals(instanceKeyName, lookupInstanceKeyName, StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    using var deviceParams = monitorKey.OpenSubKey(instanceKeyName + @"\Device Parameters");
+                    if (deviceParams == null) continue;
+
+                    if (deviceParams.GetValue("EDID") is not byte[] edid || edid.Length < 128)
+                        continue;
+
+                    // Four 18-byte descriptors starting at offset 54
+                    const int dtdStart = 54;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        int off = dtdStart + i * 18;
+
+                        // If pixel clock bytes are 00 00, this is a descriptor (not a detailed timing)
+                        bool isDescriptor = edid[off] == 0x00 && edid[off + 1] == 0x00;
+                        if (!isDescriptor) continue;
+
+                        byte tag = edid[off + 3];
+                        if (tag == 0xFC) // Monitor Name
+                        {
+                            // 13 bytes of ASCII text starting at off+5, terminated by 0x0A or padded with spaces
+                            string raw = System.Text.Encoding.ASCII.GetString(edid, off + 5, 13);
+                            string name = raw.Replace("\0", "").Replace("\r", "").Replace("\n", "").Trim();
+                            if (!string.IsNullOrWhiteSpace(name))
+                            {
+                                monitorName = name;
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+        return false;
     }
 
     public string GetAdapterFriendlyName(string DeviceName)

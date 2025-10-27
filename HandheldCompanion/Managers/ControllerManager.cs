@@ -76,6 +76,11 @@ public static class ControllerManager
     private static Timer scenarioTimer = new(100) { AutoReset = false };
     private static Timer pickTimer = new(500) { AutoReset = false };
 
+    #region settings
+    private static bool HIDuncloakonclose => ManagerFactory.settingsManager.GetBoolean("HIDuncloakonclose");
+    private static bool HIDuncloakondisconnect => ManagerFactory.settingsManager.GetBoolean("HIDuncloakondisconnect");
+    #endregion
+
     public static bool IsInitialized;
 
     public enum ControllerManagerStatus
@@ -115,15 +120,6 @@ public static class ControllerManager
         // gamepad pipeline used by SDLController.PumpEvent()
         SDL.SetEventEnabled((uint)SDL.EventType.GamepadAdded, true);
         SDL.SetEventEnabled((uint)SDL.EventType.GamepadRemoved, true);
-
-        // input pipeline used by SDLController.PumpEvent()
-        SDL.SetEventEnabled((uint)SDL.EventType.GamepadAxisMotion, true);
-        SDL.SetEventEnabled((uint)SDL.EventType.GamepadButtonDown, true);
-        SDL.SetEventEnabled((uint)SDL.EventType.GamepadButtonUp, true);
-        SDL.SetEventEnabled((uint)SDL.EventType.GamepadSensorUpdate, true);
-        SDL.SetEventEnabled((uint)SDL.EventType.GamepadTouchpadDown, true);
-        SDL.SetEventEnabled((uint)SDL.EventType.GamepadTouchpadUp, true);
-        SDL.SetEventEnabled((uint)SDL.EventType.GamepadTouchpadMotion, true);
 
         // manage pump thread
         pumpThreadRunning = true;
@@ -221,7 +217,7 @@ public static class ControllerManager
             return;
 
         // raise event, before layout mapping
-        EventHelper.RaiseAsync(InputsUpdated, controllerState, false);
+        EventHelper.RaiseInputsUpdatedAsync(InputsUpdated, controllerState, false);
 
         // get main motion safely
         byte gamepadIndex = tc.gamepadIndex;
@@ -251,7 +247,7 @@ public static class ControllerManager
 
         // compute layout (null-safe mapping)
         ControllerState mapped = ManagerFactory.layoutManager?.MapController(controllerState, delta) ?? controllerState;
-        EventHelper.RaiseAsync(InputsUpdated, mapped, true);
+        EventHelper.RaiseInputsUpdatedAsync(InputsUpdated, mapped, true);
 
         // controller is muted
         if (ControllerMuted)
@@ -281,22 +277,6 @@ public static class ControllerManager
 
                     case SDL.EventType.GamepadRemoved:
                         SDL_GamepadRemoved(e.GDevice.Which);
-                        break;
-
-                    case SDL.EventType.GamepadAxisMotion:
-                    case SDL.EventType.GamepadButtonDown:
-                    case SDL.EventType.GamepadButtonUp:
-                    case SDL.EventType.GamepadSensorUpdate:
-                    case SDL.EventType.GamepadTouchpadDown:
-                    case SDL.EventType.GamepadTouchpadUp:
-                    case SDL.EventType.GamepadTouchpadMotion:
-                        if (SDLControllers.TryGetValue(e.GDevice.Which, out SDLController controller))
-                            controller.PumpEvent(e);
-                        break;
-
-                    // implement me
-                    case SDL.EventType.GamepadUpdateComplete:
-                    case SDL.EventType.Quit:
                         break;
                 }
             }
@@ -369,8 +349,10 @@ public static class ControllerManager
 
                             if (controller.GetInstanceId() != details.deviceInstanceId)
                             {
-                                if (controller.IsHidden()) controller.Hide(false);
-                                else controller.Unhide(false);
+                                if (controller.IsHidden())
+                                    controller.Hide(false);
+                                else
+                                    controller.Unhide(false);
                             }
                         }
                         else
@@ -466,7 +448,7 @@ public static class ControllerManager
                         {
                             controller.Gone();
 
-                            if (controller.IsPhysical())
+                            if (controller.IsPhysical() && HIDuncloakondisconnect)
                                 controller.Unhide(false);
 
                             if (WasTarget)
@@ -662,7 +644,7 @@ public static class ControllerManager
                     {
                         controller.Gone();
 
-                        if (controller.IsPhysical())
+                        if (controller.IsPhysical() && HIDuncloakondisconnect)
                             controller.Unhide(false);
 
                         if (WasTarget)
@@ -716,8 +698,10 @@ public static class ControllerManager
 
                         if (controller.GetInstanceId() != details.deviceInstanceId)
                         {
-                            if (controller.IsHidden()) controller.Hide(false);
-                            else controller.Unhide(false);
+                            if (controller.IsHidden())
+                                controller.Hide(false);
+                            else
+                                controller.Unhide(false);
                         }
 
                         IsPowerCycling = true;
@@ -870,7 +854,7 @@ public static class ControllerManager
                     {
                         controller.Gone();
 
-                        if (controller.IsPhysical())
+                        if (controller.IsPhysical() && HIDuncloakondisconnect)
                             controller.Unhide(false);
 
                         if (WasTarget)
@@ -947,12 +931,11 @@ public static class ControllerManager
         scenarioTimer.Elapsed -= ScenarioTimer_Elapsed;
         scenarioTimer.Stop();
 
-        bool HIDuncloakonclose = ManagerFactory.settingsManager.GetBoolean("HIDuncloakonclose");
         foreach (IController controller in GetPhysicalControllers<IController>())
         {
             // uncloak on close, if requested
             if (HIDuncloakonclose)
-                controller.Unhide(false);
+                controller.Unhide(!controller.IsBluetooth());
 
             // dispose controller
             // controller.Dispose();
@@ -1222,7 +1205,7 @@ public static class ControllerManager
 
             controller.Gone();
 
-            if (controller.IsPhysical())
+            if (controller.IsPhysical() && HIDuncloakondisconnect)
                 controller.Unhide(false);
 
             if (WasTarget)
@@ -1457,10 +1440,10 @@ public static class ControllerManager
                 .FirstOrDefault();
 
             // Pick the internal controller (built-in, non-removable)
-            IController? internalController = controllers
-                .FirstOrDefault(c => c.IsInternal());
+            IController? internalController = controllers.FirstOrDefault(c => c.IsInternal());
 
-            string deviceInstanceId = string.Empty;
+            // Default, use current target
+            string deviceInstanceId = targetController?.GetContainerInstanceId() ?? string.Empty;
 
             // If user has disabled auto-connect and we already have a real controller, keep it
             if (!ConnectOnPlug && targetController is not null && !targetController.IsDummy())
@@ -1470,15 +1453,11 @@ public static class ControllerManager
             // If we have an external controller plugged-in and user wants controller to connect when plugged
             else if (latestExternalController is not null && ConnectOnPlug)
             {
-                if (targetController is null || targetController.IsDummy())
-                {
-                    // If no previous controller or dummy, pick external
-                    deviceInstanceId = latestExternalController.GetContainerInstanceId();
-                }
-                else if (targetController.IsWireless() || targetController.IsExternal())
-                {
+                // If current target is already external, keep it
+                if (targetController is not null && (targetController.IsWireless() || targetController.IsExternal()))
                     deviceInstanceId = targetController.GetContainerInstanceId();
-                }
+                else
+                    deviceInstanceId = latestExternalController.GetContainerInstanceId();
             }
             else if (internalController is not null)
             {

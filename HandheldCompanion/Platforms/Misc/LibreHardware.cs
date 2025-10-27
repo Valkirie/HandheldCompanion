@@ -208,30 +208,48 @@ namespace HandheldCompanion.Platforms.Misc
         {
             if (sensor.Name == "GPU Memory Used")
             {
-                GPUMemory = (float)sensor.Value / 1024.0f; // MB to GB
-                GPUMemoryChanged?.Invoke(GPUMemory);
+                float value = (float)sensor.Value / 1024.0f; // MB to GB
+                if (GPUMemory != value)
+                {
+                    GPUMemory = value;
+                    GPUMemoryChanged?.Invoke(GPUMemory);
+                }
             }
             else if (sensor.Name == "D3D Dedicated Memory Used")
             {
-                GPUMemoryDedicated = (float)sensor.Value / 1024.0f; // MB to GB
-                GPUMemoryDedicatedChanged?.Invoke(GPUMemoryDedicated);
+                float value = (float)sensor.Value / 1024.0f; // MB to GB
+                if (GPUMemoryDedicated != value)
+                {
+                    GPUMemoryDedicated = value;
+                    GPUMemoryDedicatedChanged?.Invoke(GPUMemoryDedicated);
+                }
             }
             else if (sensor.Name == "D3D Dedicated Memory Shared")
             {
-                GPUMemoryShared = (float)sensor.Value / 1024.0f; // MB to GB
-                GPUMemorySharedChanged?.Invoke(GPUMemoryShared);
+                float value = (float)sensor.Value / 1024.0f; // MB to GB
+                if (GPUMemoryShared != value)
+                {
+                    GPUMemoryShared = value;
+                    GPUMemorySharedChanged?.Invoke(GPUMemoryShared);
+                }
             }
             else if (sensor.Name == "GPU Memory Total")
             {
-                GPUMemoryTotal = (float)sensor.Value / 1024.0f; // MB to GB
+                float value = (float)sensor.Value / 1024.0f; // MB to GB
+                if (GPUMemoryTotal != value)
+                    GPUMemoryTotal = value;
             }
             else if (sensor.Name == "D3D Dedicated Memory Total")
             {
-                GPUMemoryDedicatedTotal = (float)sensor.Value / 1024.0f; // MB to GB
+                float value = (float)sensor.Value / 1024.0f; // MB to GB
+                if (GPUMemoryDedicatedTotal != value)
+                    GPUMemoryDedicatedTotal = value;
             }
             else if (sensor.Name == "D3D Dedicated Memory Total")
             {
-                GPUMemorySharedTotal = (float)sensor.Value / 1024.0f; // MB to GB
+                float value = (float)sensor.Value / 1024.0f; // MB to GB
+                if (GPUMemorySharedTotal != value)
+                    GPUMemorySharedTotal = value;
             }
         }
 
@@ -239,8 +257,12 @@ namespace HandheldCompanion.Platforms.Misc
         {
             if (sensor.Name == "D3D 3D")
             {
-                GPULoad = (float)sensor.Value;
-                GPULoadChanged?.Invoke(GPULoad);
+                float value = (float)sensor.Value;
+                if (GPULoad != value)
+                {
+                    GPULoad = value;
+                    GPULoadChanged?.Invoke(GPULoad);
+                }
             }
         }
 
@@ -248,12 +270,15 @@ namespace HandheldCompanion.Platforms.Misc
         {
             if (sensor.Name == "GPU Core")
             {
-                var value = (float)sensor.Value;
+                float value = (float)sensor.Value;
                 if (value > currentHighest)
                 {
-                    GPUClock = (float)sensor.Value;
-                    GPUClockChanged?.Invoke(GPUClock);
-                    return value;
+                    if (GPUClock != value)
+                    {
+                        GPUClock = value;
+                        GPUClockChanged?.Invoke(GPUClock);
+                        return value;
+                    }
                 }
             }
             return currentHighest;
@@ -265,8 +290,14 @@ namespace HandheldCompanion.Platforms.Misc
             {
                 case "GPU SoC":
                     //case "GPU Package":
-                    GPUPower = (float)sensor.Value;
-                    GPUPowerChanged?.Invoke(GPUPower);
+                    {
+                        float value = (float)sensor.Value;
+                        if (GPUPower != value)
+                        {
+                            GPUPower = value;
+                            GPUPowerChanged?.Invoke(GPUPower);
+                        }
+                    }
                     break;
             }
         }
@@ -275,8 +306,12 @@ namespace HandheldCompanion.Platforms.Misc
         {
             if (sensor.Name == "GPU Core")
             {
-                GPUTemperature = (float)sensor.Value;
-                GPUTemperatureChanged?.Invoke(GPUTemperature);
+                float value = (float)sensor.Value;
+                if (GPUTemperature != value)
+                {
+                    GPUTemperature = value;
+                    GPUTemperatureChanged?.Invoke(GPUTemperature);
+                }
             }
         }
         #endregion
@@ -292,7 +327,7 @@ namespace HandheldCompanion.Platforms.Misc
             foreach (var sensor in cpu.Sensors)
             {
                 // May crash the app when Value is null, better to check first
-                if (sensor.Value is null)
+                if (!sensor.Value.HasValue || sensor.Value == 0)
                     continue;
 
                 switch (sensor.SensorType)
@@ -317,8 +352,12 @@ namespace HandheldCompanion.Platforms.Misc
         {
             if (sensor.Name == "CPU Total")
             {
-                CPULoad = (float)sensor.Value;
-                CPULoadChanged?.Invoke(CPULoad);
+                float value = (float)sensor.Value;
+                if (CPULoad != value)
+                {
+                    CPULoad = value;
+                    CPULoadChanged?.Invoke(CPULoad);
+                }
             }
         }
 
@@ -326,11 +365,14 @@ namespace HandheldCompanion.Platforms.Misc
         {
             if (sensor.Name.StartsWith("CPU Core #") || sensor.Name.StartsWith("Core #"))
             {
-                var value = (float)sensor.Value;
+                float value = (float)sensor.Value;
                 if (value > currentHighest)
                 {
-                    CPUClock = (float)sensor.Value;
-                    CPUClockChanged?.Invoke(CPUClock);
+                    if (CPUClock != value)
+                    {
+                        CPUClock = (float)sensor.Value;
+                        CPUClockChanged?.Invoke(CPUClock);
+                    }
                     return value;
                 }
             }
@@ -343,8 +385,14 @@ namespace HandheldCompanion.Platforms.Misc
             {
                 case "Package":
                 case "CPU Package":
-                    CPUPower = (float)sensor.Value;
-                    CPUPowerChanged?.Invoke(CPUPower);
+                    {
+                        float value = (float)sensor.Value;
+                        if (CPUPower != value)
+                        {
+                            CPUPower = value;
+                            CPUPowerChanged?.Invoke(CPUPower);
+                        }
+                    }
                     break;
             }
         }
@@ -353,8 +401,12 @@ namespace HandheldCompanion.Platforms.Misc
         {
             if (sensor.Name == "CPU Package" || sensor.Name == "Core (Tctl/Tdie)")
             {
-                CPUTemperature = (float)sensor.Value;
-                CPUTemperatureChanged?.Invoke(CPUTemperature);
+                float value = (float)sensor.Value;
+                if (CPUTemperature != value)
+                {
+                    CPUTemperature = value;
+                    CPUTemperatureChanged?.Invoke(CPUTemperature);
+                }
             }
         }
         #endregion
@@ -368,6 +420,10 @@ namespace HandheldCompanion.Platforms.Misc
         {
             foreach (var sensor in cpu.Sensors)
             {
+                // May crash the app when Value is null, better to check first
+                if (!sensor.Value.HasValue || sensor.Value == 0)
+                    continue;
+
                 switch (sensor.SensorType)
                 {
                     case SensorType.Data:
@@ -382,13 +438,21 @@ namespace HandheldCompanion.Platforms.Misc
         {
             if (sensor.Name == "Memory Used")
             {
-                MemoryUsage = (float)sensor.Value;
-                MemoryUsageChanged?.Invoke(MemoryUsage);
+                float value = (float)sensor.Value;
+                if (MemoryUsage != value)
+                {
+                    MemoryUsage = value;
+                    MemoryUsageChanged?.Invoke(MemoryUsage);
+                }
             }
             else if (sensor.Name == "Memory Available")
             {
-                MemoryAvailable = (float)sensor.Value;
-                MemoryAvailableChanged?.Invoke(MemoryAvailable);
+                float value = (float)sensor.Value;
+                if (MemoryAvailable != value)
+                {
+                    MemoryAvailable = value;
+                    MemoryAvailableChanged?.Invoke(MemoryAvailable);
+                }
             }
         }
         #endregion
@@ -402,6 +466,10 @@ namespace HandheldCompanion.Platforms.Misc
         {
             foreach (var sensor in cpu.Sensors)
             {
+                // May crash the app when Value is null, better to check first
+                if (!sensor.Value.HasValue || sensor.Value == 0)
+                    continue;
+
                 switch (sensor.SensorType)
                 {
                     case SensorType.Level:
@@ -421,8 +489,12 @@ namespace HandheldCompanion.Platforms.Misc
         {
             if (sensor.Name == "Charge Level")
             {
-                BatteryLevel = (float)sensor.Value;
-                BatteryLevelChanged?.Invoke(BatteryLevel);
+                float value = (float)sensor.Value;
+                if (BatteryLevel != value)
+                {
+                    BatteryLevel = value;
+                    BatteryLevelChanged?.Invoke(BatteryLevel);
+                }
             }
         }
 
@@ -430,13 +502,21 @@ namespace HandheldCompanion.Platforms.Misc
         {
             if (sensor.Name == "Charge Rate")
             {
-                BatteryPower = (float)sensor.Value;
-                BatteryPowerChanged?.Invoke(BatteryPower);
+                float value = (float)sensor.Value;
+                if (BatteryPower != value)
+                {
+                    BatteryPower = value;
+                    BatteryPowerChanged?.Invoke(BatteryPower);
+                }
             }
             if (sensor.Name == "Discharge Rate")
             {
-                BatteryPower = -(float)sensor.Value;
-                BatteryPowerChanged?.Invoke(BatteryPower);
+                float value = -(float)sensor.Value;
+                if (BatteryPower != value)
+                {
+                    BatteryPower = value;
+                    BatteryPowerChanged?.Invoke(BatteryPower);
+                }
             }
         }
 
@@ -444,8 +524,12 @@ namespace HandheldCompanion.Platforms.Misc
         {
             if (sensor.Name == "Remaining Time (Estimated)")
             {
-                BatteryTimeSpan = (float)sensor.Value / 60;
-                BatteryTimeSpanChanged?.Invoke(BatteryTimeSpan);
+                float value = (float)sensor.Value / 60.0f;
+                if (BatteryTimeSpan != value)
+                {
+                    BatteryTimeSpan = value;
+                    BatteryTimeSpanChanged?.Invoke(BatteryTimeSpan);
+                }
             }
         }
         #endregion

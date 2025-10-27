@@ -353,15 +353,18 @@ namespace HandheldCompanion.Managers
             DisplayGPU.TryAdd(adapterInformation, newGPU);
 
             // Wait until manager is ready
-            if (ManagerFactory.multimediaManager.IsRunning)
+            Task.Run(async () =>
             {
-                while (ManagerFactory.multimediaManager.IsBusy)
-                    await Task.Delay(1000).ConfigureAwait(false);
+                if (ManagerFactory.multimediaManager.IsRunning)
+                {
+                    while (ManagerFactory.multimediaManager.IsBusy)
+                        await Task.Delay(1000).ConfigureAwait(false);
 
-                // Force send an update
-                if (ManagerFactory.multimediaManager.PrimaryDesktop != null)
-                    MultimediaManager_PrimaryScreenChanged(ManagerFactory.multimediaManager.PrimaryDesktop);
-            }
+                    // Force send an update
+                    if (ManagerFactory.multimediaManager.PrimaryDesktop != null)
+                        MultimediaManager_PrimaryScreenChanged(ManagerFactory.multimediaManager.PrimaryDesktop);
+                }
+            });
         }
 
         private void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)

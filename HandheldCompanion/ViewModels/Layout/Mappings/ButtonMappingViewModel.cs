@@ -106,71 +106,6 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool HasTurbo
-        {
-            get => Action is not null && Action.HasTurbo;
-            set
-            {
-                if (Action is not null && value != HasTurbo)
-                {
-                    Action.HasTurbo = value;
-                    OnPropertyChanged(nameof(HasTurbo));
-                }
-            }
-        }
-
-        public bool HasInterruptable
-        {
-            get => Action is not null && Action.HasInterruptable;
-            set
-            {
-                if (Action is not null && value != HasInterruptable)
-                {
-                    Action.HasInterruptable = value;
-                    OnPropertyChanged(nameof(HasInterruptable));
-                }
-            }
-        }
-
-        public bool HasToggle
-        {
-            get => Action is not null && Action.HasToggle;
-            set
-            {
-                if (Action is not null && value != HasToggle)
-                {
-                    Action.HasToggle = value;
-                    OnPropertyChanged(nameof(HasToggle));
-                }
-            }
-        }
-
-        public bool Turbo
-        {
-            get => Action is not null && Action.IsTurbo;
-            set
-            {
-                if (Action is not null && value != Turbo)
-                {
-                    Action.IsTurbo = value;
-                    OnPropertyChanged(nameof(Turbo));
-                }
-            }
-        }
-
-        public float TurboDelay
-        {
-            get => Action is not null ? Action.TurboDelay : 0;
-            set
-            {
-                if (Action is not null && value != TurboDelay)
-                {
-                    Action.TurboDelay = value;
-                    OnPropertyChanged(nameof(TurboDelay));
-                }
-            }
-        }
-
         public float TriggerOutput
         {
             get => Action is not null ? Action.motionThreshold : 0;
@@ -180,19 +115,6 @@ namespace HandheldCompanion.ViewModels
                 {
                     Action.motionThreshold = value;
                     OnPropertyChanged(nameof(TriggerOutput));
-                }
-            }
-        }
-
-        public bool Toggle
-        {
-            get => Action is not null && Action.IsToggle;
-            set
-            {
-                if (Action is not null && value != Toggle)
-                {
-                    Action.IsToggle = value;
-                    OnPropertyChanged(nameof(Toggle));
                 }
             }
         }
@@ -223,18 +145,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool Interruptable
-        {
-            get => Action is not null && Action.Interruptable;
-            set
-            {
-                if (Action is not null && value != Interruptable)
-                {
-                    Action.Interruptable = value;
-                    OnPropertyChanged(nameof(Interruptable));
-                }
-            }
-        }
+        public bool HasDuration => PressTypeIndex != (int)PressType.Short;
 
         public bool HasDuration => PressTypeIndex != (int)PressType.Short;
 

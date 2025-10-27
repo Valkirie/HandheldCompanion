@@ -3,7 +3,6 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
-using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Classes;
@@ -17,7 +16,6 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using System.Windows.Threading;
@@ -29,7 +27,6 @@ using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 using Screen = WpfScreenHelper.Screen;
 using SystemManager = HandheldCompanion.Managers.SystemManager;
 using SystemPowerManager = Windows.System.Power.PowerManager;
-using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Views.Windows;
 
@@ -125,8 +122,6 @@ public partial class OverlayQuickTools : GamepadWindow
             Interval = TimeSpan.FromMilliseconds(500)
         };
         clockUpdateTimer.Tick += UpdateTime;
-
-        WMPaintTimer.Elapsed += WMPaintTimer_Elapsed;
 
         // manage events
         SystemManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
@@ -284,7 +279,7 @@ public partial class OverlayQuickTools : GamepadWindow
         DesktopScreen friendlyScreen = null;
         foreach (KeyValuePair<string, DesktopScreen> screen in ManagerFactory.multimediaManager.AllScreens)
         {
-            if (screen.Value.DevicePath.Equals(DevicePath) || screen.Value.ToString().Equals(DeviceName))
+            if (screen.Value.DevicePath.Equals(DevicePath) || screen.Value.FriendlyName.Equals(DeviceName))
             {
                 friendlyScreen = screen.Value;
                 break;
@@ -409,8 +404,6 @@ public partial class OverlayQuickTools : GamepadWindow
         _animActive = true;
         _animWatch.Restart();
 
-        BeginAnimationBypassWmPaint(true); // keep HW path during anim
-
         _renderTick ??= OnRenderTick;
         CompositionTarget.Rendering += _renderTick;
     }
@@ -422,8 +415,6 @@ public partial class OverlayQuickTools : GamepadWindow
         CompositionTarget.Rendering -= _renderTick;
         _animActive = false;
         _animWatch.Stop();
-
-        BeginAnimationBypassWmPaint(false);
 
         // fire completion exactly once
         var cb = _animOnComplete;
@@ -504,100 +495,6 @@ public partial class OverlayQuickTools : GamepadWindow
         });
     }
 
-    /*
-    private static readonly Duration ShowDuration = TimeSpan.FromMilliseconds(220);
-    private static readonly Duration HideDuration = TimeSpan.FromMilliseconds(180);
-
-    private void AnimateTop(double from, double to, bool isShowing, Action? onCompleted = null)
-    {
-        _isAnimating = true;
-
-        // Strong easing like Start menu
-        IEasingFunction ease =
-            isShowing
-            ? new ExponentialEase { EasingMode = EasingMode.EaseOut, Exponent = 6.0 } // snappy settle
-            : new ExponentialEase { EasingMode = EasingMode.EaseIn, Exponent = 5.0 }; // quick drop
-
-        var anim = new DoubleAnimation
-        {
-            From = from,
-            To = to,
-            Duration = isShowing ? ShowDuration : HideDuration,
-            EasingFunction = ease,
-            FillBehavior = FillBehavior.Stop
-        };
-
-        // Target 60fps (helps on some rigs)
-        Timeline.SetDesiredFrameRate(anim, 60);
-
-        anim.Completed += (_, __) =>
-        {
-            Top = Math.Round(to);   // snap to pixel to avoid subpixel shimmer
-            _isAnimating = false;
-            onCompleted?.Invoke();
-        };
-
-        BeginAnimation(Window.TopProperty, anim, HandoffBehavior.SnapshotAndReplace);
-    }
-
-    public void SlideShow()
-    {
-        if (_isAnimating) return;
-        UpdateLocation();
-        Left = _Left;
-
-        if (!IsVisible)
-            try { Show(); } catch { }
-
-        // start off-screen, then ease-out up
-        Top = _hiddenTop;
-        BeginAnimationBypassWmPaint(true);
-        AnimateTop(_hiddenTop, _targetTop, isShowing: true, onCompleted: () => BeginAnimationBypassWmPaint(false));
-    }
-
-    public void SlideHide()
-    {
-        if (_isAnimating) return;
-
-        BeginAnimationBypassWmPaint(true);
-        AnimateTop(Top, _hiddenTop, isShowing: false, onCompleted: () =>
-        {
-            try { Hide(); } catch { }
-            Top = _targetTop; // reset resting Y
-            BeginAnimationBypassWmPaint(false);
-        });
-    }
-
-    // stop any running animation; optionally snap to resting Y
-    private void StopAnyAnimation(bool snapToRest)
-    {
-        // if you kept the storyboard path, stop it here as well
-        if (_animActive)
-        {
-            CompositionTarget.Rendering -= _renderTick;
-            _animActive = false;
-            _animWatch.Stop();
-            BeginAnimationBypassWmPaint(false);
-            _animOnComplete = null;
-        }
-
-        if (snapToRest)
-        {
-            // If visible, ensure we're at the on-screen resting Y; if hidden, off-screen
-            Top = (IsVisible && Visibility == Visibility.Visible) ? _targetTop : _hiddenTop;
-        }
-    }
-    */
-
-    private bool _bypassWmPaintThrottle;
-
-    private void BeginAnimationBypassWmPaint(bool on)
-    {
-        _bypassWmPaintThrottle = on;
-        if (on)
-            RenderOptions.ProcessRenderMode = RenderMode.Default; // ensure HW path during anim
-    }
-
     private void PowerManager_PowerStatusChanged(PowerStatus status)
     {
         // UI thread
@@ -661,11 +558,6 @@ public partial class OverlayQuickTools : GamepadWindow
         gamepadFocusManager.Loaded();
     }
 
-    // hack variables
-    private Timer WMPaintTimer = new(100) { AutoReset = false };
-    private bool WMPaintPending = false;
-    private DateTime prevDraw = DateTime.MinValue;
-
     protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         // prevent activation on mouse click
@@ -694,56 +586,9 @@ public partial class OverlayQuickTools : GamepadWindow
                     UpdateStyle();
                 }
                 break;
-
-            case WM_PAINT:
-                {
-                    if (_bypassWmPaintThrottle)
-                        break; // ignore throttling logic while animating
-
-                    DateTime drawTime = DateTime.Now;
-
-                    double drawDiff = Math.Abs((prevDraw - drawTime).TotalMilliseconds);
-                    if (drawDiff < 200)
-                    {
-                        if (!WMPaintPending)
-                        {
-                            // disable GPU acceleration
-                            RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
-
-                            // set flag
-                            WMPaintPending = true;
-
-                            LogManager.LogError("ProcessRenderMode set to {0}", RenderOptions.ProcessRenderMode);
-                        }
-                    }
-
-                    // update previous drawing time
-                    prevDraw = drawTime;
-
-                    if (WMPaintPending)
-                    {
-                        WMPaintTimer.Stop();
-                        WMPaintTimer.Start();
-                    }
-                }
-                break;
         }
 
-        return IntPtr.Zero;
-    }
-
-    private void WMPaintTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
-    {
-        if (WMPaintPending)
-        {
-            // enable GPU acceleration
-            RenderOptions.ProcessRenderMode = RenderMode.Default;
-
-            // reset flag
-            WMPaintPending = false;
-
-            LogManager.LogError("ProcessRenderMode set to {0}", RenderOptions.ProcessRenderMode);
-        }
+        return base.WndProc(hwnd, msg, wParam, lParam, ref handled);
     }
 
     public void SetVisibility(Visibility visibility)
@@ -774,7 +619,7 @@ public partial class OverlayQuickTools : GamepadWindow
         });
     }
 
-    private void GamepadWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+    protected override void Window_VisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
         switch (Visibility)
         {
@@ -797,6 +642,13 @@ public partial class OverlayQuickTools : GamepadWindow
                 clockUpdateTimer.Start();
                 break;
         }
+
+        base.Window_VisibleChanged(sender, e);
+    }
+
+    public void UpdateStyle()
+    {
+        WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
     }
 
     public void UpdateStyle()

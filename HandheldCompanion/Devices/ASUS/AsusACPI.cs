@@ -114,25 +114,6 @@ namespace HandheldCompanion.Devices.ASUS
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool WaitForSingleObject(IntPtr hHandle, int dwMilliseconds);
 
-        static AsusACPI()
-        {
-            handle = CreateFile(
-                FILE_NAME,
-                GENERIC_READ | GENERIC_WRITE,
-                FILE_SHARE_READ | FILE_SHARE_WRITE,
-                IntPtr.Zero,
-                OPEN_EXISTING,
-                FILE_ATTRIBUTE_NORMAL,
-                IntPtr.Zero
-            );
-
-            if (!IsOpen)
-            {
-                LogManager.LogError("Can't connect to Asus ACPI");
-                return;
-            }
-        }
-
         public static bool IsOpen => handle != new IntPtr(-1);
 
         private static void Control(uint dwIoControlCode, byte[] lpInBuffer, byte[] lpOutBuffer)
@@ -148,6 +129,27 @@ namespace HandheldCompanion.Devices.ASUS
                 ref lpBytesReturned,
                 IntPtr.Zero
             );
+        }
+
+        public static bool Open()
+        {
+            handle = CreateFile(
+                FILE_NAME,
+                GENERIC_READ | GENERIC_WRITE,
+                FILE_SHARE_READ | FILE_SHARE_WRITE,
+                IntPtr.Zero,
+                OPEN_EXISTING,
+                FILE_ATTRIBUTE_NORMAL,
+                IntPtr.Zero
+            );
+
+            if (!IsOpen)
+            {
+                LogManager.LogError("Can't connect to Asus ACPI");
+                return false;
+            }
+
+            return true;
         }
 
         public static void Close()

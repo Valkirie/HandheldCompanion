@@ -1,7 +1,6 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
 using System;
 using System.Windows;
@@ -40,18 +39,8 @@ public class AYANEOFlipDS : AYANEOFlipKB
             // set Quicktools to Maximize on bottom screen
             ManagerFactory.settingsManager.SetProperty("QuickToolsLocation", 2);
             ManagerFactory.settingsManager.SetProperty("QuickToolsDeviceName", "AYANEOQHD");
-        }
-
-        if (NewUpdate)
-        {
-            string currentVersion = MainWindow.CurrentVersion.ToString();
-            switch (currentVersion)
-            {
-                case "0.24.0.13":
-                    ManagerFactory.settingsManager.SetProperty("QuickKeyboardVisibility", "True");
-                    ManagerFactory.settingsManager.SetProperty("QuickTrackpadVisibility", "True");
-                    break;
-            }
+            ManagerFactory.settingsManager.SetProperty("QuickKeyboardVisibility", "True");
+            ManagerFactory.settingsManager.SetProperty("QuickTrackpadVisibility", "True");
         }
     }
 
@@ -68,6 +57,7 @@ public class AYANEOFlipDS : AYANEOFlipKB
     {
         if (prevState.Equals(Inputs.ButtonState))
             return;
+        ButtonState.Overwrite(Inputs.ButtonState, prevState);
 
         // skip if inputs were remapped
         if (IsMapped)
@@ -140,6 +130,18 @@ public class AYANEOFlipDS : AYANEOFlipKB
 
     public void CEcControl_SetSecDispBrightness(short brightness)
     {
-        this.ECRAMWrite(0x4e, (byte)((brightness * 0xff) / 100));
+        byte value = CEcControl_GetSecDispBrightnessRaw();
+
+        // clamp to [0,100] and scale to [0,255]
+        int clamped = Math.Clamp(brightness, (short)0, (short)100);
+        byte scaled = (byte)((clamped * 0xFF) / 100);
+
+        this.EcWriteByte(0x4F, 0x00);    // reset/latch at 0x4F
+        this.EcWriteByte(0x4E, scaled);  // write brightness at 0x4E
+    }
+
+    public byte CEcControl_GetSecDispBrightnessRaw()
+    {
+        return this.EcReadByte(0x4E);
     }
 }

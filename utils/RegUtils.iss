@@ -131,7 +131,46 @@ begin
       break;
     end; 
   end;  
+end;     
+
+// Returns true if HKLM\SOFTWARE\...\Uninstall\<AppKeyName> exists
+function regUninstallKeyExists(appKeyName: string): boolean;
+var
+  keyPath: string;
+begin
+  keyPath := '{#SoftwareUninstallKey}\' + appKeyName;
+
+  // Prefer 64-bit view when available
+  if IsWin64 then
+  begin
+    if RegKeyExists(HKLM64, keyPath) then
+    begin
+      Result := True;
+      Exit;
+    end;
+  end;
+
+  Result := RegKeyExists(HKLM, keyPath);
 end;
-     
 
+// Reads a string value from HKLM\SOFTWARE\...\Uninstall\<AppKeyName>\ValueName
+// Tries 64-bit view first (when applicable), then 32-bit view.
+// Uses your existing getStringValueFromReg() for consistent logging.
+function regGetUninstallValue(appKeyName, valueName: string): string;
+var
+  keyPath, v: string;
+begin
+  keyPath := '{#SoftwareUninstallKey}\' + appKeyName;
 
+  if IsWin64 then
+  begin
+    v := getStringValueFromReg(HKLM64, keyPath, valueName);
+    if v <> '' then
+    begin
+      Result := v;
+      Exit;
+    end;
+  end;
+
+  Result := getStringValueFromReg(HKLM, keyPath, valueName);
+end;

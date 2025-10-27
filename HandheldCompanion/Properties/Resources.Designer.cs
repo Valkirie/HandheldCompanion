@@ -430,11 +430,38 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configuring your game controllers settings.
+        /// </summary>
+        public static string ControllerPage_ConfiguringControllersSettings {
+            get {
+                return ResourceManager.GetString("ControllerPage_ConfiguringControllersSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Connect.
         /// </summary>
         public static string ControllerPage_Connect {
             get {
                 return ResourceManager.GetString("ControllerPage_Connect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connect when plugged.
+        /// </summary>
+        public static string ControllerPage_ConnectWhenPlugged {
+            get {
+                return ResourceManager.GetString("ControllerPage_ConnectWhenPlugged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automatically connect the last plugged controller.
+        /// </summary>
+        public static string ControllerPage_ConnectWhenPluggedDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_ConnectWhenPluggedDesc", resourceCulture);
             }
         }
         
@@ -597,6 +624,15 @@ namespace HandheldCompanion.Properties {
         public static string ControllerPage_Disconnect {
             get {
                 return ResourceManager.GetString("ControllerPage_Disconnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Help with controller settings.
+        /// </summary>
+        public static string ControllerPage_HelpWithControllerSettings {
+            get {
+                return ResourceManager.GetString("ControllerPage_HelpWithControllerSettings", resourceCulture);
             }
         }
         
@@ -835,6 +871,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Scan for hardware changes.
+        /// </summary>
+        public static string ControllerPage_ScanForHardwareChanges {
+            get {
+                return ResourceManager.GetString("ControllerPage_ScanForHardwareChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to HD rumble.
         /// </summary>
         public static string ControllerPage_SteamControllerHDRumble {
@@ -889,6 +934,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Testing your game controller inputs.
+        /// </summary>
+        public static string ControllerPage_TestControllerInputs {
+            get {
+                return ResourceManager.GetString("ControllerPage_TestControllerInputs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Troobleshooting bluetooth controllers connection issues.
+        /// </summary>
+        public static string ControllerPage_TroobleshootingBluetoothControllersConnectionIssues {
+            get {
+                return ResourceManager.GetString("ControllerPage_TroobleshootingBluetoothControllersConnectionIssues", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Try again.
         /// </summary>
         public static string ControllerPage_TryAgain {
@@ -912,6 +975,24 @@ namespace HandheldCompanion.Properties {
         public static string ControllerPage_UncloakOnCloseDesc {
             get {
                 return ResourceManager.GetString("ControllerPage_UncloakOnCloseDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unhide controller on disconnect.
+        /// </summary>
+        public static string ControllerPage_UncloakOnDisconnect {
+            get {
+                return ResourceManager.GetString("ControllerPage_UncloakOnDisconnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore controller visibility when disconnected.
+        /// </summary>
+        public static string ControllerPage_UncloakOnDisconnectDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_UncloakOnDisconnectDesc", resourceCulture);
             }
         }
         

@@ -199,7 +199,7 @@ namespace HandheldCompanion.ViewModels
                 try
                 {
                     // set profile as favorite
-                    ManagerFactory.profileManager.SetSubProfileAsFavorite(Profile);
+                    ManagerFactory.profileManager.SetFavorite(Profile);
 
                     await Task.Run(async () =>
                     {

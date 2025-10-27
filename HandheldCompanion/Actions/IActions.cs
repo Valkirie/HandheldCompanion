@@ -2,6 +2,7 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -93,7 +94,7 @@ namespace HandheldCompanion.Actions
         public ActionState actionState = ActionState.Stopped;
 
         // Replaces boxed Value/prevValue
-        protected bool outBool;      // “current output” for button-like actions
+        protected bool outBool;      // current output for button-like actions
         protected bool prevBool;     // last input state for edge detection
 
         protected Vector2 outVector = new();
@@ -101,25 +102,37 @@ namespace HandheldCompanion.Actions
 
         public float ActionTimer = 200.0f;   // default value for steam
         public float PressTimer = -1.0f;     // -1 inactive, >= 0 active
-        private int PressCount = 0;     // used for double tap
 
-        public bool HasTurbo = true;
-        public bool HasToggle = true;
+        [JsonProperty("HasTurbo")]
+        public bool HasTurbo = false;
+        [JsonProperty("HasToggle")]
+        public bool HasToggle = false;
+        [JsonProperty("HasInterruptable")]
         public bool HasInterruptable = true;
-
-        public bool IsToggle = false;
-        public bool IsTurbo = false;
-
         public float TurboDelay = 30.0f;
+
+        [JsonIgnore]
+        private bool IsToggled = false;
+        [JsonIgnore]
+        private bool IsTurboed = false;
         private float TurboCountdown = 0.0f;     // countdown (ms) before flipping
 
-        public bool Interruptable = true;
+        #region legacy
+        // legacy aliases: read old saves, map to new fields
+        [JsonProperty("IsTurbo")]
+        private bool Legacy_IsTurbo { set { HasTurbo = value; } }
+        [JsonProperty("IsToggle")]
+        private bool Legacy_IsToggle { set { HasToggle = value; } }
+        #endregion
+
+        private int PressCount = 0;     // used for double tap
+
         public ShiftSlot ShiftSlot = ShiftSlot.Any;
 
         public HapticMode HapticMode = HapticMode.Off;
         public HapticStrength HapticStrength = HapticStrength.Low;
 
-        public MotionDirection motionDirection = MotionDirection.None;
+        public DeflectionDirection motionDirection = DeflectionDirection.None;
         public float motionThreshold = 4000;
 
         // Axis-only shift mask flag to avoid sentinel assignments
@@ -287,42 +300,42 @@ namespace HandheldCompanion.Actions
             }
 
             // Toggle
-            if (IsToggle)
+            if (HasToggle)
             {
-                if (prevBool != value && value) HasToggle = !HasToggle;
+                if (prevBool != value && value) IsToggled = !IsToggled;
             }
             else
             {
-                HasToggle = false;
+                IsToggled = false;
             }
 
             // Turbo (countdown, no modulo)
-            if (IsTurbo)
+            if (HasTurbo)
             {
-                if (value || HasToggle)
+                if (value || IsToggled)
                 {
                     TurboCountdown -= delta;
                     if (TurboCountdown <= 0)
                     {
-                        HasTurbo = !HasTurbo;
+                        IsTurboed = !IsTurboed;
                         TurboCountdown += Math.Max(1, TurboDelay);
                     }
                 }
                 else
                 {
-                    HasTurbo = false;
+                    IsTurboed = false;
                     TurboCountdown = TurboDelay;
                 }
             }
             else
             {
-                HasTurbo = false;
+                IsTurboed = false;
             }
 
             // final outBool
-            if (IsToggle && IsTurbo) outBool = HasToggle && HasTurbo;
-            else if (IsToggle) outBool = HasToggle;
-            else if (IsTurbo) outBool = HasTurbo;
+            if (HasToggle && HasTurbo) outBool = IsToggled && IsTurboed;
+            else if (HasToggle) outBool = IsToggled;
+            else if (HasTurbo) outBool = IsTurboed;
             else outBool = value;
 
             prevBool = value;
@@ -340,9 +353,9 @@ namespace HandheldCompanion.Actions
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected static bool DirectionMatches(MotionDirection direction, MotionDirection mask)
+        protected static bool DirectionMatches(DeflectionDirection direction, DeflectionDirection mask)
         {
-            return direction != MotionDirection.None && ((direction & mask) != 0);
+            return direction != DeflectionDirection.None && ((direction & mask) != 0);
         }
 
         public object Clone() => CloningHelper.DeepClone(this);

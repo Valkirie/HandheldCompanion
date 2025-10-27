@@ -128,7 +128,7 @@
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
-                <ui:SettingsCard Name="ScanHardwareCard" Header="Scan for hardware changes">
+                <ui:SettingsCard Name="ScanHardwareCard" Header="{l:Static resx:Resources.ControllerPage_ScanForHardwareChanges}">
                     <Button Command="{Binding ScanHardwareCommand}" Style="{DynamicResource AccentButtonStyle}">Scan</Button>
                 </ui:SettingsCard>
 
@@ -255,7 +255,7 @@
             <ikw:SimpleStackPanel Name="DeviceSpecificPanel" Spacing="3">
 
                 <!--  Connect on plug  -->
-                <ui:SettingsCard Description="Automatically connect the last plugged controller" Header="Connect when plugged">
+                <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_ConnectWhenPluggedDesc}" Header="{l:Static resx:Resources.ControllerPage_ConnectWhenPlugged}">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Glyph="&#xE95F;" />
                     </ui:SettingsCard.HeaderIcon>
@@ -281,13 +281,22 @@
                     <ui:ToggleSwitch Name="Toggle_Cloaked" Toggled="Toggle_Cloaked_Toggled" />
                 </ui:SettingsCard>
 
+                <!--  Uncloak on disconnect  -->
+                <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_UncloakOnDisconnectDesc}" Header="{l:Static resx:Resources.ControllerPage_UncloakOnDisconnect}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE7B3;" />
+                    </ui:SettingsCard.HeaderIcon>
+
+                    <ui:ToggleSwitch Name="Toggle_UncloakOnDisconnect" Toggled="Toggle_UncloakOnDisconnect_Toggled" />
+                </ui:SettingsCard>
+
                 <!--  Uncloak on close  -->
                 <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_UncloakOnCloseDesc}" Header="{l:Static resx:Resources.ControllerPage_UncloakOnClose}">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Glyph="&#xE7B3;" />
                     </ui:SettingsCard.HeaderIcon>
 
-                    <ui:ToggleSwitch Name="Toggle_Uncloak" Toggled="Toggle_Uncloak_Toggled" />
+                    <ui:ToggleSwitch Name="Toggle_UncloakOnClose" Toggled="Toggle_UncloakOnClose_Toggled" />
                 </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 
@@ -311,7 +320,7 @@
             <!--  Related support  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_RelatedSupport}" />
             <ikw:SimpleStackPanel Spacing="3">
-                <ui:SettingsExpander Header="Help with controller settings">
+                <ui:SettingsExpander Header="{l:Static resx:Resources.ControllerPage_HelpWithControllerSettings}">
                     <ui:SettingsExpander.HeaderIcon>
                         <ui:FontIcon Glyph="&#xf6fa;" />
                     </ui:SettingsExpander.HeaderIcon>
@@ -319,15 +328,15 @@
                     <ui:SettingsExpander.Items>
                         <ui:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
                             <StackPanel Margin="-12,0,0,0" Orientation="Vertical">
-                                <ui:HyperlinkButton Content="Testing your game controller inputs" NavigateUri="https://hardwaretester.com/gamepad" />
+                                <ui:HyperlinkButton Content="{l:Static resx:Resources.ControllerPage_TestControllerInputs}" NavigateUri="https://hardwaretester.com/gamepad" />
                                 <ui:HyperlinkButton
                                     Command="{Binding OpenWindowsControl}"
                                     CommandParameter="joy.cpl"
-                                    Content="Configuring your game controllers settings" />
+                                    Content="{l:Static resx:Resources.ControllerPage_ConfiguringControllersSettings}" />
                                 <ui:HyperlinkButton
                                     Command="{Binding NavigateSettings}"
                                     CommandParameter="ms-settings:connecteddevices"
-                                    Content="Troobleshooting bluetooth controllers connection issues" />
+                                    Content="{l:Static resx:Resources.ControllerPage_TroobleshootingBluetoothControllersConnectionIssues}" />
                             </StackPanel>
                         </ui:SettingsCard>
                     </ui:SettingsExpander.Items>
