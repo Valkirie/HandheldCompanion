@@ -270,21 +270,23 @@ public class DeviceManager : IManager
         DN_REMOVABLE = 0x00004000
     }
 
-    private PnPDetails GetDetails(string path)
+    private PnPDetails? GetDetails(string path)
     {
         try
         {
-            PnPDevice children = PnPDevice.GetDeviceByInterfaceId(path);
+            PnPDevice? children = PnPDevice.GetDeviceByInterfaceId(path);
+            if (children is null)
+                return null;
 
             // get attributes
             Attributes? attributes = GetHidAttributes(path);
             Capabilities? capabilities = GetHidCapabilities(path);
 
-            if (attributes is null || capabilities is null)
+            if (!attributes.HasValue || !capabilities.HasValue)
                 return null;
 
-            string ProductID = ((Attributes)attributes).ProductID.ToString("X4");
-            string VendorID = ((Attributes)attributes).VendorID.ToString("X4");
+            string ProductID = attributes.Value.ProductID.ToString("X4");
+            string VendorID = attributes.Value.VendorID.ToString("X4");
 
             IPnPDevice? parent = children;
             string parentId = parent.InstanceId;
@@ -338,7 +340,7 @@ public class DeviceManager : IManager
                 // update root
                 root = PnPDevice.GetDeviceByInstanceId(rootId);
 
-                string Name = root.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc);
+                string? Name = root.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc);
                 if (!string.IsNullOrEmpty(Name) && Name.Contains(@"USB Hub", StringComparison.InvariantCultureIgnoreCase))
                     break;
 
@@ -360,10 +362,10 @@ public class DeviceManager : IManager
                 EnumeratorName = parent.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName),
                 deviceInstanceId = children.InstanceId.ToUpper(),
                 baseContainerDeviceInstanceId = parent.InstanceId.ToUpper(),
-                isVirtual = parent.IsVirtual() || children.IsVirtual(),
-                isGaming = IsGaming((Attributes)attributes, (Capabilities)capabilities),
-                ProductID = ((Attributes)attributes).ProductID,
-                VendorID = ((Attributes)attributes).VendorID,
+                isVirtual = (parent.IsVirtual() || children.IsVirtual()) && !IsMoonlight(attributes.Value),
+                isGaming = IsGaming(attributes.Value, capabilities.Value),
+                ProductID = attributes.Value.ProductID,
+                VendorID = attributes.Value.VendorID,
                 isXInput = children.InstanceId.Contains("IG_", StringComparison.InvariantCultureIgnoreCase),
             };
             details.isExternal = IsDisableable || IsRemovable || details.isBluetooth;
@@ -389,6 +391,13 @@ public class DeviceManager : IManager
 
         return null;
     }
+
+    /// <summary>
+    /// Check if controller is Moolight's virtual DS4
+    /// </summary>
+    /// <param name="attributes"></param>
+    /// <returns></returns>
+    private static bool IsMoonlight(Attributes attributes) => attributes.VendorID == 1356 && attributes.ProductID == 1476;
 
     public List<PnPDetails> GetDetails(ushort VendorId = 0, ushort ProductId = 0)
     {
