@@ -274,8 +274,8 @@ public class DeviceManager : IManager
     {
         try
         {
-            PnPDevice? children = PnPDevice.GetDeviceByInterfaceId(path);
-            if (children is null)
+            PnPDevice? hidDevice = PnPDevice.GetDeviceByInterfaceId(path);
+            if (hidDevice is null)
                 return null;
 
             // get attributes
@@ -288,13 +288,13 @@ public class DeviceManager : IManager
             string ProductID = attributes.Value.ProductID.ToString("X4");
             string VendorID = attributes.Value.VendorID.ToString("X4");
 
-            IPnPDevice? parent = children;
-            string parentId = parent.InstanceId;
+            IPnPDevice? usbDevice = hidDevice;
+            string parentId = usbDevice.InstanceId;
 
-            while (parent.Parent is not null)
+            while (usbDevice.Parent is not null)
             {
                 // update parent InstanceId
-                parentId = parent.Parent.InstanceId;
+                parentId = usbDevice.Parent.InstanceId;
 
                 if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.InvariantCultureIgnoreCase))
                     break;
@@ -323,11 +323,11 @@ public class DeviceManager : IManager
                 }
 
                 // update parent
-                parent = check;
+                usbDevice = check;
             }
 
             // get root
-            IPnPDevice? root = parent;
+            IPnPDevice? root = usbDevice;
             string rootId = root.InstanceId;
             while (root.Parent is not null)
             {
@@ -358,21 +358,21 @@ public class DeviceManager : IManager
             {
                 devicePath = path,
                 SymLink = SymLinkToInstanceId(path, DeviceInterfaceIds.HidDevice.ToString()),
-                Name = parent.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),
-                EnumeratorName = parent.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName),
-                deviceInstanceId = children.InstanceId.ToUpper(),
-                baseContainerDeviceInstanceId = parent.InstanceId.ToUpper(),
-                isVirtual = (parent.IsVirtual() || children.IsVirtual()) && !IsMoonlight(attributes.Value),
+                Name = usbDevice.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc) ?? string.Empty,
+                EnumeratorName = usbDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName) ?? string.Empty,
+                deviceInstanceId = hidDevice.InstanceId.ToUpper(),
+                baseContainerDeviceInstanceId = usbDevice.InstanceId.ToUpper(),
+                isVirtual = (usbDevice.IsVirtual() || hidDevice.IsVirtual()) && !IsMoonlight(attributes.Value),
                 isGaming = IsGaming(attributes.Value, capabilities.Value),
                 ProductID = attributes.Value.ProductID,
                 VendorID = attributes.Value.VendorID,
-                isXInput = children.InstanceId.Contains("IG_", StringComparison.InvariantCultureIgnoreCase),
+                isXInput = hidDevice.InstanceId.Contains("IG_", StringComparison.InvariantCultureIgnoreCase),
             };
             details.isExternal = IsDisableable || IsRemovable || details.isBluetooth;
 
             // get name
-            string DeviceDesc = parent.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc);
-            string FriendlyName = parent.GetProperty<string>(DevicePropertyKey.Device_FriendlyName);
+            string DeviceDesc = usbDevice.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc) ?? string.Empty;
+            string FriendlyName = usbDevice.GetProperty<string>(DevicePropertyKey.Device_FriendlyName) ?? string.Empty;
 
             if (!string.IsNullOrEmpty(FriendlyName))
                 details.Name = FriendlyName;
