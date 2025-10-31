@@ -438,6 +438,10 @@ namespace HandheldCompanion.ViewModels
 
                 FileUtils.CommonFileDialog(out path, out _, out _, ProfilesPage.selectedProfile.Path);
 
+                // skip if no path was provided
+                if (string.IsNullOrEmpty(path))
+                    return;
+
                 ProfilesPage.selectedProfile.Executables.Add(path);
                 ManagerFactory.profileManager.UpdateOrCreateProfile(ProfilesPage.selectedProfile, UpdateSource.ProfilesPage);
             });
