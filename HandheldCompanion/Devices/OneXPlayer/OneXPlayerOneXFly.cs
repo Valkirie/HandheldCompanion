@@ -1,7 +1,6 @@
 using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Shared;
 using HidLibrary;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices;
-public class OneXPlayerOneXFly : IDevice
+public class OneXPlayerOneXFly : OneXAOKZOE
 {
     protected HidDevice hidDevice;
 
@@ -124,27 +123,6 @@ public class OneXPlayerOneXFly : IDevice
         }
 
         return defaultGlyph;
-    }
-
-    public override bool Open()
-    {
-        bool success = base.Open();
-        if (!success)
-            return false;
-
-        // allow OneX turbo button to pass key inputs
-        LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
-
-        ECRamDirectWriteByte(0x4F1, ECDetails, 0x40);
-
-        return (ECRamDirectReadByte(0x4F1, ECDetails) == 0x40);
-    }
-
-    public override void Close()
-    {
-        LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
-        ECRamDirectWriteByte(0x4F1, ECDetails, 0x00);
-        base.Close();
     }
 
     public override bool IsReady()

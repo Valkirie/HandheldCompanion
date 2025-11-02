@@ -6,7 +6,7 @@ using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices
 {
-    public class OneXPlayer2 : IDevice
+    public class OneXPlayer2 : OneXAOKZOE
     {
         public OneXPlayer2() : base()
         {
@@ -82,17 +82,19 @@ namespace HandheldCompanion.Devices
                 return false;
 
             // allow OneX button to pass key inputs
-            LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM2);
+            ECRamDirectWriteByte(0xEB, ECDetails, 0xEB);
+            if (ECRamDirectReadByte(0xEB, ECDetails) == 0xEB)
+                LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM2);
 
-            ECRamDirectWriteByte(0x4EB, ECDetails, 0xEB);
-
-            return ECRamDirectReadByte(0x4EB, ECDetails) == 0xEB;
+            return true;
         }
 
         public override void Close()
         {
-            LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM2);
-            ECRamDirectWriteByte(0x4EB, ECDetails, 0x00);
+            ECRamDirectWriteByte(0xEB, ECDetails, 0x00);
+            if (ECRamDirectReadByte(0xEB, ECDetails) == 0x00)
+                LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM2);
+
             base.Close();
         }
     }

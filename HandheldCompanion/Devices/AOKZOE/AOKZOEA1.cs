@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Shared;
 using HidLibrary;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices;
 
-public class AOKZOEA1 : IDevice
+public class AOKZOEA1 : OneXAOKZOE
 {
     private enum FanControlMode
     {
@@ -125,32 +124,6 @@ public class AOKZOEA1 : IDevice
         // prepare hotkeys
         DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
         DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM3] = true;
-    }
-
-    public override bool Open()
-    {
-        bool success = base.Open();
-        if (!success)
-            return false;
-
-        // allow OneX button to pass key inputs
-        LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM3);
-
-        ECRamDirectWriteByte(0x4F1, ECDetails, 0x40);
-        ECRamDirectWriteByte(0x4F2, ECDetails, 0x02);
-
-        return (ECRamDirectReadByte(0x4F1, ECDetails) == 0x40 && ECRamDirectReadByte(0x4F2, ECDetails) == 0x02);
-    }
-
-    public override void Close()
-    {
-        if (!UseOpenLib || !IsOpen)
-            return;
-
-        LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM3);
-        ECRamDirectWriteByte(0x4F1, ECDetails, 0x00);
-        ECRamDirectWriteByte(0x4F2, ECDetails, 0x00);
-        base.Close();
     }
 
     public override void SetFanControl(bool enable, int mode)
