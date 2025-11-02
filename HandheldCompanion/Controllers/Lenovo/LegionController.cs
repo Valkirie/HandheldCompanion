@@ -5,7 +5,6 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
-using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace HandheldCompanion.Controllers.Lenovo
@@ -64,17 +63,16 @@ namespace HandheldCompanion.Controllers.Lenovo
         private bool touchpadTouched = false;
         private DateTime touchStartTime;
         private DateTime lastTapTime = DateTime.MinValue;
-        private Vector2 lastTapPosition;
-        private Vector2 touchStartPosition;
-        private const int doubleTapMaxDistance = 100; // Example threshold distance
-        private const int doubleTapMaxTime = 300; // Maximum time between taps in milliseconds
-        private uint longTapDuration = 500; // Threshold for a long tap in milliseconds
-        private const int longTapMaxMovement = 50; // Maximum movement allowed for a long tap
+        private const int doubleTapMaxDistance = 240;   // Example threshold distance
+        private uint doubleTapMaxTime = 500;            // Maximum time between taps in milliseconds
+        private uint longTapDuration = 500;             // Threshold for a long tap in milliseconds
+        private const int longTapMaxMovement = 50;      // Maximum movement allowed for a long tap
         private bool longTapTriggered = false;
-        private bool validTapPosition = false;
         private bool doubleTapPending = false;
         private bool doubleTapped = false;
-        private Vector2 lastKnownPosition;
+        private int touchStartX, touchStartY;
+        private int lastTapX, lastTapY;
+        private int lastKnownX, lastKnownY;
         #endregion
 
         public override bool IsReady => IsWireless() || IsWired();
@@ -89,7 +87,7 @@ namespace HandheldCompanion.Controllers.Lenovo
 
             // get long press time from system settings
             SystemParametersInfo(0x006A, 0, ref longTapDuration, 0);
-
+            SystemParametersInfo(0x006A, 0, ref doubleTapMaxTime, 0);
         }
 
         public override string ToString() => "Legion Controller";
@@ -354,106 +352,149 @@ namespace HandheldCompanion.Controllers.Lenovo
 
         public void HandleTouchpadInput(bool touched, ushort TouchpadX, ushort TouchpadY)
         {
-            // Convert the ushort values to Vector2
-            Vector2 position = new Vector2(TouchpadX, TouchpadY);
+            if (ControllerPassthrough)
+                return;
+
+            DateTime now = DateTime.UtcNow;
+            int x = TouchpadX;
+            int y = TouchpadY;
 
             if (touched)
             {
-                lastKnownPosition = position;
+                lastKnownX = x; lastKnownY = y;
+                Inputs.AxisState[AxisFlags.RightPadX] =
+                    (short)InputUtils.MapRange((short)x, 0, 1000, short.MinValue, short.MaxValue);
+                Inputs.AxisState[AxisFlags.RightPadY] =
+                    (short)InputUtils.MapRange((short)-y, 0, 1000, short.MinValue, short.MaxValue);
             }
-
-            Inputs.ButtonState[ButtonFlags.RightPadTouch] = touched;
-
-            // If the touchpad is touched
-            if (touched)
-            {
-                Inputs.AxisState[AxisFlags.RightPadX] = (short)InputUtils.MapRange((short)TouchpadX, 0, 1000, short.MinValue, short.MaxValue);
-                Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange((short)-TouchpadY, 0, 1000, short.MinValue, short.MaxValue);
-
-                // If the touchpad was not touched before
-                if (!touchpadTouched)
-                {
-                    touchpadTouched = true;
-                    touchStartTime = DateTime.Now;
-                    touchStartPosition = position;
-                    longTapTriggered = false;
-                    validTapPosition = true;
-
-                    // Trigger double tap if pending
-                    if (doubleTapPending && (DateTime.Now - lastTapTime).TotalMilliseconds <= doubleTapMaxTime &&
-                        Vector2.Distance(lastTapPosition, lastKnownPosition) <= doubleTapMaxDistance)
-                    {
-                        HandleDoubleTap(lastKnownPosition);
-                        doubleTapPending = false;
-                        doubleTapped = true;
-                        lastTapTime = DateTime.MinValue; // Reset lastTapTime after double tap
-                    }
-                }
-                else if (!longTapTriggered && !doubleTapped && (DateTime.Now - touchStartTime).TotalMilliseconds >= longTapDuration)
-                {
-                    // Check if the touch moved too much for a long tap
-                    if (Vector2.Distance(touchStartPosition, position) <= longTapMaxMovement)
-                    {
-                        // Trigger long tap while the touch is held
-                        HandleLongTap(position);
-                        longTapTriggered = true;
-                    }
-                }
-                else if (Vector2.Distance(touchStartPosition, position) > longTapMaxMovement)
-                {
-                    validTapPosition = false;
-                }
-            }
-            // If the touchpad is not touched
             else
             {
                 Inputs.AxisState[AxisFlags.RightPadX] = 0;
                 Inputs.AxisState[AxisFlags.RightPadY] = 0;
-                Inputs.ButtonState[ButtonFlags.RightPadClick] = false;
-                Inputs.ButtonState[ButtonFlags.RightPadClickDown] = false;
+            }
 
-                // If the touchpad was touched before
-                if (touchpadTouched)
+            // One-frame left-click pulse (single tap only)
+            bool pulseLeftClick = false;
+
+            // Held left-click via double-tap (latched while finger stays down)
+            bool holdLeftClick = doubleTapped && touched;
+
+            // ---------- DOWN edge ----------
+            if (touched && !touchpadTouched)
+            {
+                touchpadTouched = true;
+                touchStartTime = now;
+                touchStartX = x; touchStartY = y;
+                longTapTriggered = false;
+
+                // Second tap?
+                bool inTime = (now - lastTapTime).TotalMilliseconds <= (doubleTapMaxTime > 0 ? doubleTapMaxTime : 300);
+                int dx = x - lastTapX, dy = y - lastTapY;
+                int dist2 = dx * dx + dy * dy;
+                int dt = (doubleTapMaxDistance > 0 ? doubleTapMaxDistance : 240);
+                int dt2 = dt * dt;
+
+                if (doubleTapPending && inTime && dist2 <= dt2)
                 {
-                    touchpadTouched = false;
+                    // Confirm double-tap: start held LEFT (no pulse)
+                    doubleTapPending = false;
+                    doubleTapped = true;
+                    holdLeftClick = true;
+                }
+                else
+                {
+                    // Fresh first tap candidate
+                    doubleTapPending = false;
                     doubleTapped = false;
-                    DateTime touchEndTime = DateTime.Now;
-                    double touchDuration = (touchEndTime - touchStartTime).TotalMilliseconds;
-
-                    // Handle short tap
-                    if (touchDuration < longTapDuration && !longTapTriggered && validTapPosition &&
-                        Vector2.Distance(touchStartPosition, lastKnownPosition) <= doubleTapMaxDistance)
-                    {
-                        // Single short tap detected
-                        HandleShortTap(lastKnownPosition);
-                        lastTapTime = touchEndTime;
-                        lastTapPosition = lastKnownPosition;
-                        doubleTapPending = true;
-                    }
                 }
             }
-        }
 
-        private void HandleShortTap(Vector2 position)
-        {
-            // Handle short tap action here
-            Inputs.ButtonState[ButtonFlags.RightPadTouch] = true;
-            Inputs.ButtonState[ButtonFlags.RightPadClick] = true;
-        }
+            // ---------- HELD (finger down) ----------
+            if (touched && touchpadTouched)
+            {
+                // Long press allowed only if NOT arming/executing double-tap
+                bool longPressAllowed = !doubleTapped && !doubleTapPending;
 
-        private void HandleDoubleTap(Vector2 position)
-        {
-            // Handle double tap action here
-            Inputs.ButtonState[ButtonFlags.RightPadTouch] = true;
-            Inputs.ButtonState[ButtonFlags.RightPadClick] = true;
-        }
+                if (longPressAllowed && !longTapTriggered)
+                {
+                    double heldMs = (now - touchStartTime).TotalMilliseconds;
+                    int mdx = x - touchStartX, mdy = y - touchStartY;
+                    int move2 = mdx * mdx + mdy * mdy;
+                    int lt = (longTapMaxMovement > 0 ? longTapMaxMovement : 50);
+                    int lt2 = lt * lt;
 
-        private void HandleLongTap(Vector2 position)
-        {
-            // Handle long tap action here
-            Inputs.ButtonState[ButtonFlags.RightPadTouch] = true;
-            Inputs.ButtonState[ButtonFlags.RightPadClick] = true;
-            Inputs.ButtonState[ButtonFlags.RightPadClickDown] = true;
+                    if (heldMs >= (longTapDuration > 0 ? longTapDuration : 500) && move2 <= lt2)
+                    {
+                        longTapTriggered = true;
+                        Inputs.ButtonState[ButtonFlags.RightPadClickDown] = true; // right-click hold
+                        doubleTapPending = false; // no single tap anymore
+                    }
+                }
+
+                // If not long-pressing, ensure right-click hold isn't stuck
+                if (!longTapTriggered)
+                    Inputs.ButtonState[ButtonFlags.RightPadClickDown] = false;
+            }
+
+            // ---------- UP edge ----------
+            if (!touched && touchpadTouched)
+            {
+                Inputs.ButtonState[ButtonFlags.RightPadClickDown] = false; // end any hold
+
+                if (doubleTapped)
+                {
+                    // Finish double-tap contact: stop held left
+                    doubleTapped = false;
+                    doubleTapPending = false;
+                    holdLeftClick = false;
+                }
+                else if (!longTapTriggered)
+                {
+                    // Candidate single tap: start double-tap window
+                    lastTapTime = now;
+                    lastTapX = lastKnownX; lastTapY = lastKnownY;
+                    doubleTapPending = true;
+                }
+                else
+                {
+                    // Long press ended
+                    longTapTriggered = false;
+                    doubleTapPending = false;
+                }
+
+                touchpadTouched = false;
+            }
+
+            // ---------- Deferred single tap (no 2nd tap arrived) ----------
+            if (!touched && doubleTapPending)
+            {
+                if ((now - lastTapTime).TotalMilliseconds > (doubleTapMaxTime > 0 ? doubleTapMaxTime : 300))
+                {
+                    pulseLeftClick = true;     // single-tap left click
+                    doubleTapPending = false;
+                }
+            }
+
+            // --- Outputs this frame ---
+            // Left click: either a held click (double-tap) or a one-frame pulse (single tap)
+            Inputs.ButtonState[ButtonFlags.RightPadClick] = holdLeftClick || pulseLeftClick;
+
+            // Right-click (tap-and-hold)
+            // (already set/cleared above via RightPadClickDown)
+
+            // Touch flag:
+            // - True whenever the pad is touched and NO click this frame,
+            // - OR during a double-tap hold (you asked for Touch + Click both true then).
+            bool anyClickThisFrame = Inputs.ButtonState[ButtonFlags.RightPadClickDown]
+                                   || holdLeftClick
+                                   || pulseLeftClick;
+
+            Inputs.ButtonState[ButtonFlags.RightPadTouch] =
+                touched && (doubleTapped || !anyClickThisFrame);
+
+            // Safety: avoid stuck holds when idle
+            if (!touched && !longTapTriggered)
+                Inputs.ButtonState[ButtonFlags.RightPadClickDown] = false;
         }
 
         public void SetGyroIndex(int idx)
