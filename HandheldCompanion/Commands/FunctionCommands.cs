@@ -36,6 +36,7 @@ namespace HandheldCompanion.Commands
             typeof(SettingsCommands),
             typeof(ScreenshotCommands),
             typeof(GameBarCommands),
+            typeof(CopilotVoiceCommands),
             Resources.Hotkey_FunctionCategory_Multitasking,
             typeof(KillForegroundCommands),
             typeof(TaskManagerCommands),
