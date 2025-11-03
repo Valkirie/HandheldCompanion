@@ -53,6 +53,8 @@ public static class ControllerManager
 
     private static Thread watchdogThread;
     private static bool watchdogThreadRunning;
+    private static readonly object watchdogLock = new();
+    private static int watchdogStarted;
     private static Thread pumpThread;
     private static bool pumpThreadRunning;
 
@@ -1167,25 +1169,27 @@ public static class ControllerManager
 
         ClearTargetController();
     }
-
+    
     public static void StartWatchdog()
     {
-        if (watchdogThreadRunning)
-            return;
+        if (Interlocked.Exchange(ref watchdogStarted, 1) == 1) return;
 
-        watchdogThreadRunning = true;
-        watchdogThread = new Thread(watchdogThreadLoop) { IsBackground = true };
-        watchdogThread.Start();
+        lock (watchdogLock)
+        {
+            watchdogThreadRunning = true;
+            watchdogThread = new Thread(_ => WatchdogLoop().GetAwaiter().GetResult()) { IsBackground = true };
+            watchdogThread.Start();
+        }
     }
 
     public static void StopWatchdog()
     {
-        if (watchdogThread is null)
-            return;
+        if (Interlocked.Exchange(ref watchdogStarted, 0) == 0) return;
 
         watchdogThreadRunning = false;
-        if (watchdogThread.IsAlive)
+        if (watchdogThread?.IsAlive == true)
             watchdogThread.Join(3000);
+        watchdogThread = null;
     }
 
     private static void VirtualManager_Vibrated(byte LargeMotor, byte SmallMotor)
@@ -1232,11 +1236,11 @@ public static class ControllerManager
     private static List<XInputController> InvalidSlotAssignments = new();
     private static bool HasInvalidController => InvalidSlotAssignments.Any();
 
-    private static async void watchdogThreadLoop(object? obj)
+    private static async Task WatchdogLoop()
     {
         while (watchdogThreadRunning)
         {
-            await Task.Delay(1000);
+            await Task.Delay(1000).ConfigureAwait(false);
 
             HashSet<byte> currentSlots = new();
             InvalidSlotAssignments.Clear();
@@ -1259,13 +1263,13 @@ public static class ControllerManager
                     controller.AttachController(index);
                 });
 
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks).ConfigureAwait(false);
 
             bool hasInvalidVirtual = InvalidSlotAssignments.Any(c => c.IsVirtual());
             if (hasInvalidVirtual)
             {
                 VirtualManager.Suspend(false);
-                await Task.Delay(1000);
+                await Task.Delay(1000).ConfigureAwait(false);
                 VirtualManager.Resume(false);
             }
 
@@ -1319,7 +1323,7 @@ public static class ControllerManager
                         VirtualManager.SetControllerMode(HIDmode.NoController);
                         Task timeout = Task.Delay(TimeSpan.FromSeconds(4));
                         while (!timeout.IsCompleted && GetVirtualControllers<XInputController>().Any())
-                            await Task.Delay(100);
+                            await Task.Delay(100).ConfigureAwait(false);
 
                         // Create temporary virtual controllers
                         // VirtualManager.VendorId = vendorId;
@@ -1329,19 +1333,19 @@ public static class ControllerManager
                         // Wait for virtual controllers to appear
                         timeout = Task.Delay(TimeSpan.FromSeconds(4));
                         while (!timeout.IsCompleted && GetVirtualControllers<XInputController>().Count() < usedSlots)
-                            await Task.Delay(100);
+                            await Task.Delay(100).ConfigureAwait(false);
 
                         // Dispose temporary
                         VirtualManager.DisposeTemporaryControllers();
                         timeout = Task.Delay(TimeSpan.FromSeconds(4));
                         while (!timeout.IsCompleted && GetVirtualControllers<XInputController>().Count() > usedSlots)
-                            await Task.Delay(100);
+                            await Task.Delay(100).ConfigureAwait(false);
 
                         // Resume main virtual controller
                         VirtualManager.SetControllerMode(HIDmode.Xbox360Controller);
                         timeout = Task.Delay(TimeSpan.FromSeconds(4));
                         while (!timeout.IsCompleted && !GetVirtualControllers<XInputController>().Any())
-                            await Task.Delay(100);
+                            await Task.Delay(100).ConfigureAwait(false);
                     }
                     else if (managerStatus != ControllerManagerStatus.Succeeded)
                     {
@@ -1358,12 +1362,12 @@ public static class ControllerManager
                     if (vController is null && ShouldAttemptControllerManagement())
                     {
                         VirtualManager.Suspend(false);
-                        await Task.Delay(1000);
+                        await Task.Delay(1000).ConfigureAwait(false);
                         VirtualManager.Resume(false);
 
                         Task timeout = Task.Delay(TimeSpan.FromSeconds(4));
                         while (!timeout.IsCompleted && !GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Any())
-                            await Task.Delay(100);
+                            await Task.Delay(100).ConfigureAwait(false);
                     }
                     else if (managerStatus != ControllerManagerStatus.Succeeded)
                     {
