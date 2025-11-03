@@ -1555,7 +1555,7 @@
                             Text="{Binding Axis2AxisInnerDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
 
                         <Slider
-                            Margin="6,0,0,0"
+                            Margin="3,0,0,0"
                             IsMoveToPointEnabled="True"
                             IsSnapToTickEnabled="True"
                             Maximum="25"
@@ -1767,13 +1767,14 @@
                                 Text="{Binding Axis2ButtonThreshold, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" />
 
                             <Slider
+                                Margin="3,0,0,0"
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
-                                LargeChange="100"
-                                Maximum="250"
-                                Minimum="10"
-                                SmallChange="10"
-                                TickFrequency="10"
+                                LargeChange="4000"
+                                Maximum="32000"
+                                Minimum="1000"
+                                SmallChange="1000"
+                                TickFrequency="4000"
                                 TickPlacement="BottomRight"
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 Value="{Binding Axis2ButtonThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -1853,7 +1854,7 @@
                                 Text="{Binding Axis2AxisInnerDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
 
                             <Slider
-                                Margin="6,0,0,0"
+                                Margin="3,0,0,0"
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
                                 Maximum="25"
@@ -2161,7 +2162,7 @@
                                 Text="{Binding Trigger2TriggerInnerDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
 
                             <Slider
-                                Margin="6,0,0,0"
+                                Margin="3,0,0,0"
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
                                 Maximum="25"
