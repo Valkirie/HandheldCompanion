@@ -24,6 +24,7 @@ using SharpDX.XInput;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,6 +35,7 @@ using Windows.UI.ViewManagement;
 using static HandheldCompanion.Misc.ProcessEx;
 using static HandheldCompanion.Utils.DeviceUtils;
 using DriverStore = HandheldCompanion.Helpers.DriverStore;
+using MediaColor = System.Windows.Media.Color;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
@@ -138,6 +140,7 @@ public static class ControllerManager
         UIGamepad.LostFocus += GamepadFocusManager_FocusChanged;
         VirtualManager.Vibrated += VirtualManager_Vibrated;
         MainWindow.uiSettings.ColorValuesChanged += OnColorValuesChanged;
+        ToastManager.CommandReceived += ToastCommandRouter;
 
         // manage device events
         IDevice.GetCurrent().KeyPressed += CurrentDevice_KeyPressed;
@@ -196,6 +199,24 @@ public static class ControllerManager
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "ControllerManager");
+    }
+
+    private static void ToastCommandRouter(string command, IReadOnlyDictionary<string, string> args)
+    {
+        try
+        {
+            switch (command)
+            {
+                case "SetTarget":
+                    if (args.TryGetValue("deviceId", out string? baseContainerDeviceInstanceId) && !string.IsNullOrEmpty(baseContainerDeviceInstanceId))
+                    {
+                        bool powerCycle = args.TryGetValue("powerCycle", out string? pc) && bool.TryParse(pc, out bool pC) && pC;
+                        SetTargetController(baseContainerDeviceInstanceId, powerCycle);
+                    }
+                    break;
+            }
+        }
+        catch { /* ignore */ }
     }
 
     private static void Tick(long ticks, float delta)
@@ -283,6 +304,33 @@ public static class ControllerManager
                 }
             }
         }
+    }
+
+    private static void ShowDetectedToast(IController controller, bool isCycling)
+    {
+        Color winColor = MainWindow.uiSettings.GetColorValue(UIColorType.Foreground);
+
+        string iconFile = ToastIconHelper.RenderGlyphPng(
+            glyph: "\ue7fc",
+            outputPath: Path.Combine(Path.GetTempPath(), "connect_to_app.png"),
+            foreground: MediaColor.FromArgb(winColor.A, winColor.R, winColor.G, winColor.B));
+
+        ToastManager.SendToast(new ToastRequest
+        {
+            Title = controller.ToString(),
+            Content = "detected",
+            Actions =
+            {
+                new ToastAction
+                {
+                    Label = "Connect",
+                    IconPath = iconFile,
+                    Command = "SetTarget",
+                    Parameters = new() { { "deviceId", controller.GetContainerInstanceId() }, { "powerCycle", isCycling.ToString() } },
+                    Callback = p => SetTargetController(p["deviceId"], isCycling)
+                }
+            }
+        });
     }
 
     private static async void SDL_GamepadAdded(uint deviceIndex)
@@ -403,9 +451,8 @@ public static class ControllerManager
                         LogManager.LogInformation("SDL controller {0} plugged", controller.ToString());
                         ControllerPlugged?.Invoke(controller, false);
 
-                        if (!PowerCyclers.TryGetValue(controller.GetContainerInstanceId(), out bool wasCycling) || !wasCycling)
-                            if (!controller.IsVirtual())
-                                ToastManager.SendToast(controller.ToString(), "detected");
+                        if (!(PowerCyclers.TryGetValue(path, out var isCycling) && isCycling) && !controller.IsVirtual())
+                            ShowDetectedToast(controller, isCycling);
 
                         PickTargetController();
                         PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
@@ -590,7 +637,7 @@ public static class ControllerManager
                     ControllerPlugged?.Invoke(controller, PowerCyclers.TryGetValue(path, out var pc) && pc);
 
                     if (!(PowerCyclers.TryGetValue(path, out var isCycling) && isCycling) && !controller.IsVirtual())
-                        ToastManager.SendToast(controller.ToString(), "detected");
+                        ShowDetectedToast(controller, isCycling);
 
                     PickTargetController();
                     PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
@@ -801,7 +848,7 @@ public static class ControllerManager
                     ControllerPlugged?.Invoke(controller, PowerCyclers.TryGetValue(path, out var pc) && pc);
 
                     if (!(PowerCyclers.TryGetValue(path, out var isCycling) && isCycling) && !controller.IsVirtual())
-                        ToastManager.SendToast(controller.ToString(), "detected");
+                        ShowDetectedToast(controller, isCycling);
 
                     PickTargetController();
                     PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
@@ -921,6 +968,7 @@ public static class ControllerManager
         UIGamepad.LostFocus -= GamepadFocusManager_FocusChanged;
         VirtualManager.Vibrated -= VirtualManager_Vibrated;
         MainWindow.uiSettings.ColorValuesChanged -= OnColorValuesChanged;
+        ToastManager.CommandReceived -= ToastCommandRouter;
 
         // manage device events
         IDevice.GetCurrent().KeyPressed -= CurrentDevice_KeyPressed;
@@ -930,9 +978,12 @@ public static class ControllerManager
         // todo: we might need to use lock (targetLock) within Tick event.
         Suspend(true);
 
-        // stop timer
+        // stop timer(s)
         scenarioTimer.Elapsed -= ScenarioTimer_Elapsed;
         scenarioTimer.Stop();
+
+        pickTimer.Elapsed -= PickTimer_Elapsed;
+        pickTimer.Stop();
 
         foreach (IController controller in GetPhysicalControllers<IController>())
         {
@@ -1169,7 +1220,7 @@ public static class ControllerManager
 
         ClearTargetController();
     }
-    
+
     public static void StartWatchdog()
     {
         if (Interlocked.Exchange(ref watchdogStarted, 1) == 1) return;

@@ -181,6 +181,7 @@ public partial class MainWindow : GamepadWindow
 
         // prepare toast manager
         ToastManager.Start();
+        ToastManager.SendToast(Title, "is starting");
 
         // start non-static managers
         foreach (IManager manager in ManagerFactory.Managers)
