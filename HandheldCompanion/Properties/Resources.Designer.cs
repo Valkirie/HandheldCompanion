@@ -4777,6 +4777,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Quick Copilot.
+        /// </summary>
+        public static string Hotkey_CopilotVoice {
+            get {
+                return ResourceManager.GetString("Hotkey_CopilotVoice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open Copilot and start voice (Alt+T).
+        /// </summary>
+        public static string Hotkey_CopilotVoiceDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_CopilotVoiceDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Current.
         /// </summary>
         public static string Hotkey_Current {

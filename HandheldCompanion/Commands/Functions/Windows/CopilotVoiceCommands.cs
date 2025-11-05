@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Automation;
 
@@ -11,60 +8,81 @@ namespace HandheldCompanion.Commands.Functions.Windows
     [Serializable]
     public class CopilotVoiceCommands : FunctionCommands
     {
+        private bool IsLoading = false;
         public CopilotVoiceCommands()
         {
-            Name = "Copilot Voice";
-            Description = "Open Copilot and start voice (Alt+T)";
+            Name = Properties.Resources.Hotkey_CopilotVoice;
+            Description = Properties.Resources.Hotkey_CopilotVoiceDesc;
             Glyph = "\uE720";
             OnKeyUp = true;
         }
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            try
+            Task.Run(async () =>
             {
-                Process.Start(new ProcessStartInfo
+                AutomationElement desktop = AutomationElement.RootElement;
+                AutomationElement copilot = null;
+
+                Task timeout = Task.Delay(TimeSpan.FromSeconds(5));
+                while (!timeout.IsCompleted && copilot is null)
                 {
-                    FileName = "ms-copilot://",
-                    UseShellExecute = true
-                });
-            }
-            catch { /* ignore */ }
+                    copilot = desktop.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, "WinUIDesktopWin32WindowClass")); // desktop.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Copilot"));
 
-            AutomationElement desktop = AutomationElement.RootElement;
-            AutomationElement copilot = null;
-
-            Task timeout = Task.Delay(TimeSpan.FromSeconds(5));
-            while (!timeout.IsCompleted && copilot is null)
-            {
-                copilot = desktop.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Copilot"));
-                Thread.Sleep(200);
-            }
-
-            AutomationElement mic = null;
-            if (copilot != null)
-            {
-                AutomationElementCollection nodes = copilot.FindAll(TreeScope.Descendants, Condition.TrueCondition);
-                for (int i = 0; i < nodes.Count; i++)
-                {
-                    AutomationElement b = nodes[i];
-
-                    string name = b.Current.Name ?? "";
-                    string accesskey = b.Current.AccessKey ?? "";
-
-                    if (name.Equals("Talk to Copilot") || accesskey.Equals("Alt, T"))
+                    if (copilot is null)
                     {
-                        mic = b; break;
+                        // start copilot and/or show window
+                        Process.Start(new ProcessStartInfo("ms-copilot://")
+                        {
+                            UseShellExecute = true
+                        });
+
+                        // set flag
+                        IsLoading = true;
+                    }
+                    else if (!IsLoading)
+                    {
+                        // hide window
+                        if (copilot.TryGetCurrentPattern(WindowPattern.Pattern, out var p) && p is WindowPattern wp)
+                            try { wp.Close(); return; } catch { /* ignore */ }
+
+                        // set flag
+                        IsLoading = false;
+                    }
+
+                    await Task.Delay(200).ConfigureAwait(false);
+                }
+
+                if (copilot != null)
+                {
+                    // set flag
+                    IsLoading = false;
+
+                    ResizeAutomationElement(copilot, 0, 0, 465, 700);
+
+                    AutomationElementCollection nodes = copilot.FindAll(TreeScope.Descendants, Condition.TrueCondition);
+                    for (int i = 0; i < nodes.Count; i++)
+                    {
+                        AutomationElement b = nodes[i];
+
+                        string name = b.Current.Name ?? "";
+                        string accesskey = b.Current.AccessKey ?? "";
+
+                        if (name.Equals("Talk to Copilot") || accesskey.Equals("Alt, T"))
+                        {
+                            if (b.TryGetCurrentPattern(InvokePattern.Pattern, out var p) && p is InvokePattern inv)
+                                inv.Invoke();
+                        }
+                        /*
+                        else if ((name.Equals("Open quick view") || accesskey.Equals("Alt, Q")) && copilot.Current.BoundingRectangle.Width > 660)
+                        {
+                            if (b.TryGetCurrentPattern(InvokePattern.Pattern, out var p) && p is InvokePattern inv)
+                                inv.Invoke();
+                        }
+                        */
                     }
                 }
-
-                // Invoke it
-                if (mic != null)
-                {
-                    if (mic.TryGetCurrentPattern(InvokePattern.Pattern, out var p) && p is InvokePattern inv)
-                        inv.Invoke();
-                }
-            }
+            });
 
             base.Execute(IsKeyDown, IsKeyUp, false);
         }
@@ -84,37 +102,17 @@ namespace HandheldCompanion.Commands.Functions.Windows
             return commands;
         }
 
-        private static IntPtr FindCopilotWindow()
+        public bool ResizeAutomationElement(AutomationElement window, int xPx, int yPx, int widthPx, int heightPx)
         {
-            IntPtr result = IntPtr.Zero;
+            if (window == null) return false;
+            var hwnd = (IntPtr)window.Current.NativeWindowHandle;
+            if (hwnd == IntPtr.Zero) return false;
 
-            EnumWindows((h, l) =>
-            {
-                if (!IsWindowVisible(h))
-                    return true;
+            const uint SWP_NOMOVE = 0x0002;
+            const uint SWP_NOZORDER = 0x0004;
+            const uint SWP_NOACTIVATE = 0x0010;
 
-                var sb = new StringBuilder(256);
-                GetWindowText(h, sb, sb.Capacity);
-                string title = sb.ToString();
-
-                if (!string.IsNullOrWhiteSpace(title) &&
-                    title.IndexOf("copilot", StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    result = h;
-                    return false; // stop enum
-                }
-
-                return true;
-            }, IntPtr.Zero);
-
-            return result;
+            return WinAPI.SetWindowPos(hwnd, IntPtr.Zero, xPx, yPx, widthPx, heightPx, (xPx == 0 && yPx == 0 ? SWP_NOMOVE : 0) | SWP_NOZORDER | SWP_NOACTIVATE);
         }
-
-        private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
-
-        [DllImport("user32.dll")] private static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
-        [DllImport("user32.dll")] private static extern bool IsWindowVisible(IntPtr hWnd);
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
     }
 }

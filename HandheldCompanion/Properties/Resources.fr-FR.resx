@@ -4008,4 +4008,10 @@ Merci d’utiliser HC et de nous aider à l’améliorer.</value>
   <data name="PowerProfileAYANEOBetterPerformanceDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
+  <data name="Hotkey_CopilotVoice" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="Hotkey_CopilotVoiceDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
 </root>
