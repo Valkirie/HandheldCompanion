@@ -443,6 +443,13 @@ public static class ControllerManager
                         while (!controller.IsReady && controller.IsConnected())
                             await Task.Delay(250).ConfigureAwait(false);
 
+                        // controller is gone ?
+                        if (!controller.IsConnected())
+                        {
+                            controller.Gone();
+                            return;
+                        }
+
                         controller.IsBusy = false;
 
                         Controllers[details.baseContainerDeviceInstanceId] = controller;
@@ -627,6 +634,13 @@ public static class ControllerManager
 
                     while (!controller.IsReady && controller.IsConnected())
                         await Task.Delay(250).ConfigureAwait(false);
+
+                    // controller is gone ?
+                    if (!controller.IsConnected())
+                    {
+                        controller.Gone();
+                        return;
+                    }
 
                     controller.IsBusy = false;
 
@@ -838,6 +852,13 @@ public static class ControllerManager
 
                     while (!controller.IsReady && controller.IsConnected())
                         await Task.Delay(250).ConfigureAwait(false);
+
+                    // controller is gone ?
+                    if (!controller.IsConnected())
+                    {
+                        controller.Gone();
+                        return;
+                    }
 
                     controller.IsBusy = false;
 
