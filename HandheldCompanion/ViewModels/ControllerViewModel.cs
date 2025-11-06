@@ -105,8 +105,9 @@ namespace HandheldCompanion.ViewModels
 
             ConnectCommand = new DelegateCommand(async () =>
             {
-                string path = Controller.GetContainerInstanceId();
-                ControllerManager.SetTargetController(path, false);
+                string path = Controller?.GetContainerInstanceId() ?? string.Empty;
+                if (!string.IsNullOrEmpty(path))
+                    ControllerManager.SetTargetController(path, false);
             });
 
             HideCommand = new DelegateCommand(async () =>
