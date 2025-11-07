@@ -8,6 +8,9 @@ namespace HandheldCompanion.Commands.Functions.Windows
     [Serializable]
     public class CopilotVoiceCommands : FunctionCommands
     {
+        private AutomationElement desktop = null;
+        private AutomationElement copilot = null;
+
         private bool IsLoading = false;
         public CopilotVoiceCommands()
         {
@@ -21,8 +24,8 @@ namespace HandheldCompanion.Commands.Functions.Windows
         {
             Task.Run(async () =>
             {
-                AutomationElement desktop = AutomationElement.RootElement;
-                AutomationElement copilot = null;
+                desktop = AutomationElement.RootElement;
+                copilot = null;
 
                 Task timeout = Task.Delay(TimeSpan.FromSeconds(5));
                 while (!timeout.IsCompleted && copilot is null)
@@ -53,7 +56,8 @@ namespace HandheldCompanion.Commands.Functions.Windows
                     await Task.Delay(200).ConfigureAwait(false);
                 }
 
-                if (copilot != null)
+                // window was located
+                if (copilot is not null)
                 {
                     // set flag
                     IsLoading = false;
