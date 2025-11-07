@@ -52,6 +52,14 @@ public class AYANEOFlipDS : AYANEOFlipKB
         ControllerManager.InputsUpdated += ControllerManager_InputsUpdated;
     }
 
+    public override void Close()
+    {
+        // manage events
+        ControllerManager.InputsUpdated -= ControllerManager_InputsUpdated;
+
+        base.Close();
+    }
+
     private ButtonState prevState = new();
     private void ControllerManager_InputsUpdated(ControllerState Inputs, bool IsMapped)
     {

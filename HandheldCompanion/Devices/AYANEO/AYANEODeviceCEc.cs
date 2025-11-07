@@ -126,6 +126,7 @@ namespace HandheldCompanion.Devices.AYANEO
                 this.CEcControl_RgbReleaseControl();
             }
 
+            // manage events
             PowerManager.RemainingChargePercentChanged -= PowerManager_RemainingChargePercentChanged;
 
             base.Close();
