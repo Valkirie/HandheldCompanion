@@ -80,6 +80,13 @@ public class NeptuneController : SteamController
         return "Valve Software Steam Controller";
     }
 
+    public override bool IsReady => input is not null;
+
+    public override bool IsConnected()
+    {
+        return Controller?.Reading == true && Controller?.IsDeviceValid == true;
+    }
+
     public override void Tick(long ticks, float delta, bool commit)
     {
         if (Inputs is null || IsBusy || !IsPlugged || IsDisposing || IsDisposed)
