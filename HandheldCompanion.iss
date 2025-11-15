@@ -6,15 +6,8 @@
 ; requires netcorecheck.exe and netcorecheck_x64.exe (see download link below)
 #define UseNetCoreCheck
 #ifdef UseNetCoreCheck
-  #define UseDotNet90
+  #define UseDotNet10
 #endif
-
-;#define UseVC2005
-;#define UseVC2008
-;#define UseVC2010
-;#define UseVC2012
-;#define UseVC2013
-;#define UseVC2015To2019
 
 #define UseDirectX
 ;Install ViGem first
@@ -26,7 +19,7 @@
 #define InstallerVersion        "0.2"
 #define MyAppSetupName         "Handheld Companion"
 #define MyBuildId              "HandheldCompanion"
-#define MyAppVersion           "0.28.1.12"
+#define MyAppVersion           "0.28.2.2"
 #define MyAppPublisher         "BenjaminLSR"
 #define MyAppCopyright         "Copyright © BenjaminLSR"
 #define MyAppURL               "https://github.com/Valkirie/HandheldCompanion"
@@ -46,7 +39,7 @@
 #define RtssName               "RTSS Setup"
 #define PawnIOName             "PawnIO"
 
-#define NewDotNetVersion       "9.0.0"
+#define NewDotNetVersion       "10.0.0"
 #define NewDirectXVersion      "9.29.1974"
 #define NewViGemVersion        "1.22.0.0"
 #define NewHidHideVersion      "1.5.230"
@@ -63,10 +56,10 @@
 #define RegAppsPath            "SOFTWARE\" + MyAppSetupName + "\"
 #define SoftwareUninstallKey    "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
 
-#ifdef UseDotNet90
-  #define MyConfigurationExt   "net9.0"
-  #define DotNetX64DownloadLink "https://download.visualstudio.microsoft.com/download/pr/685792b6-4827-4dca-a971-bce5d7905170/1bf61b02151bc56e763dc711e45f0e1e/windowsdesktop-runtime-9.0.0-win-x64.exe"
-  #define DotNetX86DownloadLink "https://download.visualstudio.microsoft.com/download/pr/8dfbde7b-c316-418d-934a-d3246253f342/69c6a35b77a4f01b95588e1df2bddf9a/windowsdesktop-runtime-9.0.0-win-x86.exe"
+#ifdef UseDotNet10
+  #define MyConfigurationExt   "net10.0"
+  #define DotNetX64DownloadLink "https://builds.dotnet.microsoft.com/dotnet/WindowsDesktop/10.0.0/windowsdesktop-runtime-10.0.0-win-x64.exe"
+  #define DotNetX86DownloadLink "https://builds.dotnet.microsoft.com/dotnet/WindowsDesktop/10.0.0/windowsdesktop-runtime-10.0.0-win-x86.exe"
 #endif
 
 ; Windows 10
@@ -109,9 +102,9 @@ Name: en; MessagesFile: "compiler:Default.isl"
 Source: "{#SourcePath}\redist\netcorecheck.exe"; Flags: dontcopy noencryption
 Source: "{#SourcePath}\redist\netcorecheck_x64.exe"; Flags: dontcopy noencryption
 #endif
-Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\WinRing0x64.dll"; DestDir: "{app}"; Flags: onlyifdoesntexist																																				   
-Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\WinRing0x64.sys"; DestDir: "{app}"; Flags: onlyifdoesntexist
-Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\*"; Excludes: "*WinRing0x64.*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\win-x64\WinRing0x64.dll"; DestDir: "{app}"; Flags: onlyifdoesntexist																																				   
+Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\win-x64\WinRing0x64.sys"; DestDir: "{app}"; Flags: onlyifdoesntexist
+Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\win-x64\*"; Excludes: "*WinRing0x64.*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#SourcePath}\Certificate.pfx"; DestDir: "{tmp}"; Flags: deleteafterinstall
 Source: "{#SourcePath}\Certificate.ps1"; DestDir: "{tmp}"; Flags: deleteafterinstall
 Source: "{#SourcePath}\redist\PromptFont.otf"; DestDir: "{autofonts}"; FontInstall: "PromptFont"; Flags: uninsneveruninstall
@@ -175,7 +168,7 @@ procedure Dependency_Add(const Filename, Parameters, Title, URL, Checksum: Strin
 procedure Dependency_Add_With_Version(const Filename, NewVersion, InstalledVersion, Parameters, Title, URL, Checksum: String; const ForceSuccess, RestartNeeded: Boolean); forward;
 function Dependency_PrepareToInstall(var NeedsRestart: Boolean): String; forward;
 function Dependency_UpdateReadyMemo(const Space, NewLine, MemoUserInfoInfo, MemoDirInfo, MemoTypeInfo, MemoComponentsInfo, MemoGroupInfo, MemoTasksInfo: String): String; forward;
-procedure Dependency_AddDotNet90Desktop; forward;
+procedure Dependency_AddDotNet10Desktop; forward;
 procedure Dependency_AddDirectX; forward;
 procedure Dependency_AddHideHide; forward;
 procedure Dependency_AddViGem; forward;
@@ -371,32 +364,13 @@ function InitializeSetup: Boolean;
 var
   installedVersion: String;
 begin
-#ifdef UseDotNet90
+#ifdef UseDotNet10
   installedVersion := RegGetInstalledVersion('{#DotNetName}');
   if compareVersions('{#NewDotNetVersion}', installedVersion, '.', '-') > 0 then
   begin
     Log('{#DotNetName} {#NewDotNetVersion} needs update.');
-    Dependency_AddDotNet90Desktop;
+    Dependency_AddDotNet10Desktop;
   end;
-#endif
-
-#ifdef UseVC2005
-  Dependency_AddVC2005;
-#endif
-#ifdef UseVC2008
-  Dependency_AddVC2008;
-#endif
-#ifdef UseVC2010
-  Dependency_AddVC2010;
-#endif
-#ifdef UseVC2012
-  Dependency_AddVC2012;
-#endif
-#ifdef UseVC2013
-  Dependency_AddVC2013;
-#endif
-#ifdef UseVC2015To2019
-  Dependency_AddVC2015To2019;
 #endif
 
 #ifdef UseDirectX
@@ -662,7 +636,7 @@ end;
 
 function Dependency_ArchSuffix: String;
 begin
-  Result := Dependency_String('', '_x64');
+  Result := Dependency_String('', 'x64');
 end;
 
 function Dependency_ArchTitle: String;
@@ -674,77 +648,17 @@ function Dependency_IsNetCoreInstalled(const Version: String): Boolean;
 var
   ResultCode: Integer;
 begin
-  if not FileExists(ExpandConstant('{tmp}\') + 'netcorecheck' + Dependency_ArchSuffix + '.exe') then
-    ExtractTemporaryFile('netcorecheck' + Dependency_ArchSuffix + '.exe');
-  Result := ShellExec('', ExpandConstant('{tmp}\') + 'netcorecheck' + Dependency_ArchSuffix + '.exe', Version, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) and (ResultCode = 0);
+  if not FileExists(ExpandConstant('{tmp}\') + 'netcorecheck_' + Dependency_ArchSuffix + '.exe') then
+    ExtractTemporaryFile('netcorecheck_' + Dependency_ArchSuffix + '.exe');
+  Result := ShellExec('', ExpandConstant('{tmp}\') + 'netcorecheck_' + Dependency_ArchSuffix + '.exe', Version, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) and (ResultCode = 0);
 end;
 
-procedure Dependency_AddDotNet90Desktop;
+procedure Dependency_AddDotNet10Desktop;
 begin
-  if not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 9.0.0') then
-    Dependency_Add_With_Version('dotNet90desktop' + Dependency_ArchSuffix + '.exe', '{#NewDotNetVersion}', RegGetInstalledVersion('{#DotNetName}'),
+  if not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 10.0.0') then
+    Dependency_Add_With_Version('windowsdesktop-runtime-10.0.0-win-' + Dependency_ArchSuffix + '.exe', '{#NewDotNetVersion}', RegGetInstalledVersion('{#DotNetName}'),
       '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
       '{#DotNetName}', Dependency_String('{#DotNetX86DownloadLink}', '{#DotNetX64DownloadLink}'), '', False, False);
-end;
-
-procedure Dependency_AddVC2005;
-begin
-  if not IsMsiProductInstalled(Dependency_String('{86C9D5AA-F00C-4921-B3F2-C60AF92E2844}', '{A8D19029-8E5C-4E22-8011-48070F9E796E}'), PackVersionComponents(8, 0, 61000, 0)) then
-    Dependency_Add('vcredist2005' + Dependency_ArchSuffix + '.exe',
-      '/q',
-      'Visual C++ 2005 Service Pack 1 Redistributable' + Dependency_ArchTitle,
-      Dependency_String('https://download.microsoft.com/download/8/B/4/8B42259F-5D70-43F4-AC2E-4B208FD8D66A/vcredist_x86.EXE', 'https://download.microsoft.com/download/8/B/4/8B42259F-5D70-43F4-AC2E-4B208FD8D66A/vcredist_x64.EXE'),
-      '', False);
-end;
-
-procedure Dependency_AddVC2008;
-begin
-  if not IsMsiProductInstalled(Dependency_String('{DE2C306F-A067-38EF-B86C-03DE4B0312F9}', '{FDA45DDF-8E17-336F-A3ED-356B7B7C688A}'), PackVersionComponents(9, 0, 30729, 6161)) then
-    Dependency_Add('vcredist2008' + Dependency_ArchSuffix + '.exe',
-      '/q',
-      'Visual C++ 2008 Service Pack 1 Redistributable' + Dependency_ArchTitle,
-      Dependency_String('https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x86.exe', 'https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x64.exe'),
-      '', False);
-end;
-
-procedure Dependency_AddVC2010;
-begin
-  if not IsMsiProductInstalled(Dependency_String('{1F4F1D2A-D9DA-32CF-9909-48485DA06DD5}', '{5B75F761-BAC8-33BC-A381-464DDDD813A3}'), PackVersionComponents(10, 0, 40219, 0)) then
-    Dependency_Add('vcredist2010' + Dependency_ArchSuffix + '.exe',
-      '/passive /norestart',
-      'Visual C++ 2010 Service Pack 1 Redistributable' + Dependency_ArchTitle,
-      Dependency_String('https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe', 'https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe'),
-      '', False);
-end;
-
-procedure Dependency_AddVC2012;
-begin
-  if not IsMsiProductInstalled(Dependency_String('{4121ED58-4BD9-3E7B-A8B5-9F8BAAE045B7}', '{EFA6AFA1-738E-3E00-8101-FD03B86B29D1}'), PackVersionComponents(11, 0, 61030, 0)) then
-    Dependency_Add('vcredist2012' + Dependency_ArchSuffix + '.exe',
-      '/passive /norestart',
-      'Visual C++ 2012 Update 4 Redistributable' + Dependency_ArchTitle,
-      Dependency_String('https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe', 'https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe'),
-      '', False);
-end;
-
-procedure Dependency_AddVC2013;
-begin
-  if not IsMsiProductInstalled(Dependency_String('{B59F5BF1-67C8-3802-8E59-2CE551A39FC5}', '{20400CF0-DE7C-327E-9AE4-F0F38D9085F8}'), PackVersionComponents(12, 0, 40664, 0)) then
-    Dependency_Add('vcredist2013' + Dependency_ArchSuffix + '.exe',
-      '/passive /norestart',
-      'Visual C++ 2013 Update 5 Redistributable' + Dependency_ArchTitle,
-      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/10912113/5da66ddebb0ad32ebd4b922fd82e8e25/vcredist_x86.exe', 'https://download.visualstudio.microsoft.com/download/pr/10912041/cee5d6bca2ddbcd039da727bf4acb48a/vcredist_x64.exe'),
-      '', False);
-end;
-
-procedure Dependency_AddVC2015To2019;
-begin
-  if not IsMsiProductInstalled(Dependency_String('{65E5BD06-6392-3027-8C26-853107D3CF1A}', '{36F68A90-239C-34DF-B58C-64B30153CE35}'), PackVersionComponents(14, 29, 30037, 0)) then
-    Dependency_Add('vcredist2019' + Dependency_ArchSuffix + '.exe',
-      '/passive /norestart',
-      'Visual C++ 2015-2019 Redistributable' + Dependency_ArchTitle,
-      Dependency_String('https://aka.ms/vs/16/release/vc_redist.x86.exe', 'https://aka.ms/vs/16/release/vc_redist.x64.exe'),
-      '', False);
 end;
 
 procedure Dependency_AddDirectX;
@@ -758,7 +672,7 @@ end;
 
 procedure Dependency_AddHideHide;
 begin
-  Dependency_Add_With_Version('HidHide_1.5.230_x64.exe', '{#NewHidHideVersion}', RegGetInstalledVersion('{#HidHideName}'),
+  Dependency_Add_With_Version('HidHide_1.5.230_' + Dependency_ArchSuffix + '.exe', '{#NewHidHideVersion}', RegGetInstalledVersion('{#HidHideName}'),
     '/quiet /norestart',
     '{#HidHideName}',
     '{#HidHideDownloadLink}',

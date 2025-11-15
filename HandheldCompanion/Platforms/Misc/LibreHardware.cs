@@ -53,9 +53,9 @@ namespace HandheldCompanion.Platforms.Misc
             computer = new Computer
             {
                 IsCpuEnabled = IDevice.GetCurrent().CpuMonitor,
-                IsGpuEnabled = false, // IDevice.GetCurrent().GpuMonitor,
+                IsGpuEnabled = IDevice.GetCurrent().GpuMonitor,
                 IsMemoryEnabled = IDevice.GetCurrent().MemoryMonitor,
-                IsBatteryEnabled = false, // IDevice.GetCurrent().BatteryMonitor,
+                IsBatteryEnabled = IDevice.GetCurrent().BatteryMonitor,
             };
         }
 

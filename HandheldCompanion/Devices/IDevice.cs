@@ -174,7 +174,7 @@ public abstract class IDevice
     public bool CpuMonitor = true;
     public bool GpuMonitor = true;
     public bool MemoryMonitor = true;
-    public bool BatteryMonitor = true;
+    public bool BatteryMonitor = false;
 
     protected bool DeviceOpen = false;
     public virtual bool IsOpen => DeviceOpen;
@@ -607,6 +607,9 @@ public abstract class IDevice
                                     device = new GPDWin4_2024_HX370();
                                     break;
                             }
+                            break;
+                        case "G1618-05":
+                            device = new GPDWin5();
                             break;
                         case "G1619-03":
                             device = new GPDWinMax2Intel();

@@ -58,6 +58,7 @@ public class SteamDeck : IDevice
         // device specific settings
         ProductIllustration = "device_valve_jupiter";
         ProductModel = "SteamDeck";
+        GpuMonitor = true;
 
         // Steam Controller Neptune
         // We need to check if firmware is supported

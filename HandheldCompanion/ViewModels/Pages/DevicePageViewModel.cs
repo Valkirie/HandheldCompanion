@@ -1,9 +1,14 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Devices.Zotac;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
+using HandheldCompanion.Views;
 using HandheldCompanion.Watchers;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
+using System.Security.RightsManagement;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace HandheldCompanion.ViewModels
@@ -187,6 +192,43 @@ namespace HandheldCompanion.ViewModels
         }
 
         public bool HasManufacturerPlatform => manufacturerWatcher is not null;
+        #endregion
+
+        #region AdvancedSettings
+        public bool IsAMD => PerformanceManager.GetProcessor() is AMDProcessor;
+        public bool IsIntel => PerformanceManager.GetProcessor() is IntelProcessor;
+        public bool HasAdvancedSettings
+        {
+            get
+            {
+                return ManagerFactory.settingsManager.GetBoolean("ConfigurableTDPOverride");
+            }
+            set
+            {
+                if (value != HasAdvancedSettings)
+                    SetHasAdvancedSettingsAsync(value);
+            }
+        }
+
+        private async Task SetHasAdvancedSettingsAsync(bool value)
+        {
+            if (value)
+            {
+                ContentDialogResult result = await new Dialog(MainWindow.GetCurrent())
+                {
+                    Title = "Warning",
+                    Content = "Altering CPU power or voltage values might cause instabilities. Product warranties may not apply if the processor is operated beyond its specifications. Use at your own risk.",
+                    CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
+                    PrimaryButtonText = Properties.Resources.ProfilesPage_OK
+                }.ShowAsync();
+
+                if (result != ContentDialogResult.Primary)
+                    return;
+            }
+
+            ManagerFactory.settingsManager.SetProperty("ConfigurableTDPOverride", value);
+            OnPropertyChanged(nameof(HasAdvancedSettings));
+        }
         #endregion
 
         public DevicePageViewModel()

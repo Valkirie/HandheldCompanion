@@ -10679,6 +10679,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Advanced settings.
+        /// </summary>
+        public static string SettingsPage_AdvancedSettings {
+            get {
+                return ResourceManager.GetString("SettingsPage_AdvancedSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allows advanced device settings modifications, including power and voltage values.
+        /// </summary>
+        public static string SettingsPage_AdvancedSettingsDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_AdvancedSettingsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Language.
         /// </summary>
         public static string SettingsPage_AppLanguage {
@@ -10828,6 +10846,24 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_CloseMinimizesDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_CloseMinimizesDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CPU Curve Optimiser (All Cores).
+        /// </summary>
+        public static string SettingsPage_CurveOptimiser {
+            get {
+                return ResourceManager.GetString("SettingsPage_CurveOptimiser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the all core Curve Optimiser Frequency/Voltage curve offset (negative values to undervolt, positive to add margin).
+        /// </summary>
+        public static string SettingsPage_CurveOptimiserDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_CurveOptimiserDesc", resourceCulture);
             }
         }
         

@@ -124,9 +124,4 @@ public class GPDWin4 : IDevice
 
         return false;
     }
-
-    public override void Close()
-    {
-        base.Close();
-    }
 }

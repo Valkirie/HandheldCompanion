@@ -18,9 +18,11 @@ public enum RyzenFamily
     FAM_MENDOCINO,
     FAM_PHOENIX,
     FAM_HAWKPOINT,
+    FAM_DRAGONRANGE,
     FAM_KRACKANPOINT,
     FAM_STRIXPOINT,
     FAM_STRIXHALO,
+    FAM_FIRERANGE,
     FAM_END
 }
 
@@ -260,5 +262,10 @@ public class RyzenAdj
     public static extern float set_coall(IntPtr ry, uint value);
 
     [DllImport(ryzenadj)]
+    private static extern int set_cogfx(IntPtr ctx, uint value);
+
+    [DllImport(ryzenadj)]
     public static extern RyzenFamily get_cpu_family(IntPtr ry);
+
+    public static uint EncodeCurveOffset(int steps) => (uint)(steps & 0xFFFFF);
 }
