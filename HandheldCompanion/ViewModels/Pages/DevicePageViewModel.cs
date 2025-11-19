@@ -7,7 +7,6 @@ using HandheldCompanion.Views;
 using HandheldCompanion.Watchers;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
-using System.Security.RightsManagement;
 using System.Threading.Tasks;
 using System.Windows;
 

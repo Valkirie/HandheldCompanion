@@ -579,9 +579,13 @@ public partial class MainWindow : GamepadWindow
                     // open device, when ready
                     new Task(async () =>
                     {
-                        // wait for all HIDs to be ready
-                        while (!CurrentDevice.IsReady())
+                        // wait for the current device to be ready (for 10 seconds)
+                        Task timeout = Task.Delay(TimeSpan.FromSeconds(10));
+                        while (!timeout.IsCompleted && !CurrentDevice.IsReady())
                             await Task.Delay(250).ConfigureAwait(false);
+
+                        if (!CurrentDevice.IsReady())
+                            LogManager.LogCritical("Failed to initialize {0} from {1}", CurrentDevice.ProductName, CurrentDevice.ManufacturerName);
 
                         // open current device (threaded to avoid device to hang)
                         if (CurrentDevice.Open())

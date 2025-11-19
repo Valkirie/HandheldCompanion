@@ -52,7 +52,6 @@ public class OneXPlayerX1 : OneXAOKZOE
         // device specific settings
         ProductIllustration = "device_onexplayer_x1";
         ProductModel = "ONEXPLAYERX1";
-        UseOpenLib = true;
 
         GyrometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
@@ -71,8 +70,7 @@ public class OneXPlayerX1 : OneXAOKZOE
         };
 
         // device specific capacities
-        Capabilities = DeviceCapabilities.FanControl;
-        Capabilities |= DeviceCapabilities.DynamicLighting;
+        Capabilities = DeviceCapabilities.DynamicLighting;
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
         Capabilities |= DeviceCapabilities.DynamicLightingSecondLEDColor;
 
@@ -175,11 +173,11 @@ public class OneXPlayerX1 : OneXAOKZOE
         }
 
         // allow OneX button to pass key inputs
-        ECRamDirectWriteByte(0xEB, ECDetails, 0x40);
-        if (ECRamDirectReadByte(0xEB, ECDetails) == 0x40)
+        EcWriteByte(0xEB, 0x40);
+        if (EcReadByte(0xEB) == 0x40)
             LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
 
-        return true;
+        return success;
     }
 
     protected override void QuerySettings()
@@ -208,8 +206,8 @@ public class OneXPlayerX1 : OneXAOKZOE
             _serialPort.Close();
         }
 
-        ECRamDirectWriteByte(0xEB, ECDetails, 0x00);
-        if (ECRamDirectReadByte(0xEB, ECDetails) == 0x00)
+        EcWriteByte(0xEB, 0x00);
+        if (EcReadByte(0xEB) == 0x00)
             LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
 
         base.Close();
@@ -485,5 +483,78 @@ public class OneXPlayerX1 : OneXAOKZOE
         }
 
         ECRamDirectWriteByte(ECBypassChargingAddress, ECDetails, (byte)modeValue);
+    }
+}
+
+public class OneXPlayerX1AMD : OneXPlayerX1
+{
+    public OneXPlayerX1AMD()
+    {
+        // https://www.amd.com/fr/products/processors/laptop/ryzen/8000-series/amd-ryzen-7-8840u.html
+        nTDP = new double[] { 15, 15, 28 };
+        cTDP = new double[] { 15, 30 };
+        GfxClock = new double[] { 100, 2700 };
+        CpuClock = 5100;
+    }
+
+    public override bool IsBatteryProtectionSupported(int majorVersion, int minorVersion)
+    {
+        return majorVersion >= 1 && minorVersion >= 3;
+    }
+}
+
+public class OneXPlayerX1Intel : OneXPlayerX1
+{
+    public OneXPlayerX1Intel()
+    {
+        // https://www.intel.com/content/www/us/en/products/sku/236847/intel-core-ultra-7-processor-155h-24m-cache-up-to-4-80-ghz/specifications.html
+        // follow the values presented in OneXConsole
+        nTDP = new double[] { 15, 15, 35 };
+        cTDP = new double[] { 6, 35 };
+        GfxClock = new double[] { 100, 2250 };
+        CpuClock = 4800;
+
+        // Power Saving
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBattery, Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBatteryDesc)
+        {
+            Default = true,
+            DeviceDefault = true,
+            OSPowerMode = OSPowerMode.BetterBattery,
+            CPUBoostLevel = CPUBoostLevel.Disabled,
+            Guid = BetterBatteryGuid,
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d }
+        });
+
+        // Performance
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBetterPerformance, Properties.Resources.PowerProfileOneXPlayerX1IntelBetterPerformanceDesc)
+        {
+            Default = true,
+            DeviceDefault = true,
+            OSPowerMode = OSPowerMode.BetterPerformance,
+            CPUBoostLevel = CPUBoostLevel.Enabled,
+            Guid = BetterPerformanceGuid,
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 30.0d, 30.0d, 30.0d }
+        });
+
+        // Max Performance
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBestPerformance, Properties.Resources.PowerProfileOneXPlayerX1IntelBestPerformanceDesc)
+        {
+            Default = true,
+            DeviceDefault = true,
+            OSPowerMode = OSPowerMode.BestPerformance,
+            CPUBoostLevel = CPUBoostLevel.Enabled,
+            Guid = BestPerformanceGuid,
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 35.0d, 35.0d, 64.0d },
+            EPPOverrideEnabled = true,
+            EPPOverrideValue = 32,
+        });
+    }
+
+    public override bool IsBatteryProtectionSupported(int majorVersion, int minorVersion)
+    {
+        return majorVersion >= 0 && minorVersion >= 67;
     }
 }

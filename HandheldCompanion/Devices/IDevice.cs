@@ -215,9 +215,11 @@ public abstract class IDevice
         if (UseOpenLib)
         {
             bool success = OpenLibSys();
-
             if (!success)
+            {
+                LogManager.LogError("Failed to initialize OpenLibSys");
                 return false;
+            }
         }
 
         // set flag
@@ -661,6 +663,12 @@ public abstract class IDevice
                         case "ONEXPLAYER X1Pro":
                             device = new OneXPlayerX1Pro();
                             break;
+                        case "ONEXPLAYER G1 i":
+                            device = new OneXPlayerG1Intel();
+                            break;
+                        case "ONEXPLAYER G1 A":
+                            device = new OneXPlayerG1AMD();
+                            break;
                         case "ONEXPLAYER F1":
                             {
                                 switch (Version)
@@ -1078,11 +1086,17 @@ public abstract class IDevice
 
     protected virtual void EcWriteByte(byte register, byte data)
     {
+        if (!UseOpenLib || !IsOpen)
+            return;
+
         openLibSys.EcWriteByte(register, data);
     }
 
     protected virtual byte EcReadByte(byte register)
     {
+        if (!UseOpenLib || !IsOpen)
+            return 0;
+
         return openLibSys.EcReadByte(register);
     }
 
