@@ -21,8 +21,8 @@ namespace HandheldCompanion.Devices.AYANEO
 
         private bool? ledStatus;
         private int? ledBrightness;
-        private Color? ledColorSticks;
-        private Color? ledColorAYA;
+        private Color? ledColorSticksLeft;
+        private Color? ledColorStickRight;
         private LEDLevel? ledLevel;
 
         public AYANEODeviceCEc()
@@ -31,6 +31,7 @@ namespace HandheldCompanion.Devices.AYANEO
             this.Capabilities |= DeviceCapabilities.FanControl;
             this.Capabilities |= DeviceCapabilities.DynamicLighting;
             this.Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
+            this.Capabilities |= DeviceCapabilities.DynamicLightingSecondLEDColor;
             this.Capabilities |= DeviceCapabilities.BatteryChargeLimit;
             this.Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
 
@@ -207,24 +208,22 @@ namespace HandheldCompanion.Devices.AYANEO
                 if (this.ledBrightness == brightness) return true;
                 this.ledBrightness = brightness;
 
-                if (this.ledColorSticks == null || this.ledColorAYA == null) return true;
+                if (this.ledColorSticksLeft == null || this.ledColorStickRight == null) return true;
 
-                this.CEcRgb_SetColorAll(LEDGroup.StickLeft, (Color)this.ledColorSticks);
-                this.CEcRgb_SetColorAll(LEDGroup.StickRight, (Color)this.ledColorSticks);
-                if (this.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor)) this.CEcRgb_SetColorAya((Color)this.ledColorAYA);
+                this.CEcRgb_SetColorAll(LEDGroup.StickLeft, (Color)this.ledColorSticksLeft);
+                this.CEcRgb_SetColorAll(LEDGroup.StickRight, (Color)this.ledColorStickRight);
+                this.CEcRgb_SetColorAya((Color)this.ledColorSticksLeft);
 
                 return true;
             }
         }
 
-        public override bool SetLedColor(Color colorSticks, Color colorAYA, LEDLevel level, int speed)
+        public override bool SetLedColor(Color colorSticksLeft, Color colorStickRight, LEDLevel level, int speed)
         {
             lock (this.updateLock)
             {
-                bool hasChangedSticks = this.ledColorSticks != colorSticks;
-                bool hasChangedAYA = this.ledColorAYA != colorAYA;
-                this.ledColorSticks = colorSticks;
-                this.ledColorAYA = colorAYA;
+                bool hasChangedSticksLeft = this.ledColorSticksLeft != colorSticksLeft;
+                bool hasChangedSticksRight = this.ledColorStickRight != colorStickRight;
                 this.ledLevel = level;
 
                 if (this.ledBrightness == null)
@@ -235,14 +234,14 @@ namespace HandheldCompanion.Devices.AYANEO
                 switch ((LEDLevel)this.ledLevel)
                 {
                     case LEDLevel.SolidColor:
-                        if (hasChangedSticks)
+                        if (hasChangedSticksLeft)
                         {
-                            this.CEcRgb_SetColorAll(LEDGroup.StickLeft, (Color)this.ledColorSticks);
-                            this.CEcRgb_SetColorAll(LEDGroup.StickRight, (Color)this.ledColorSticks);
+                            this.CEcRgb_SetColorAll(LEDGroup.StickLeft, (Color)this.ledColorSticksLeft);
+                            this.CEcRgb_SetColorAya((Color)this.ledColorSticksLeft);
                         }
-                        if (hasChangedAYA && this.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor))
+                        if (hasChangedSticksRight)
                         {
-                            this.CEcRgb_SetColorAya((Color)this.ledColorAYA);
+                            this.CEcRgb_SetColorAll(LEDGroup.StickRight, (Color)this.ledColorStickRight);
                         }
                         break;
                 }

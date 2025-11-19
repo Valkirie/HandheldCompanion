@@ -17,9 +17,6 @@ public class AYANEOKUN : AYANEO.AYANEODeviceCEc
         this.GfxClock = new double[] { 100, 2700 };
         this.CpuClock = 5100;
 
-        // device specific capacities
-        this.Capabilities |= DeviceCapabilities.DynamicLightingSecondLEDColor;
-
         // old EC
         this.OEMChords.Add(new KeyboardChord("T",
             [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F18],
