@@ -3455,6 +3455,18 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   <data name="Hotkey_CopilotVoiceDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
+  <data name="SettingsPage_AdvancedSettings" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="SettingsPage_AdvancedSettingsDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="SettingsPage_AllCurveOptimiser" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="SettingsPage_AllCurveOptimiserDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
   <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
     <value>컨트롤러의 진동의 세기를 변경</value>
   </data>
@@ -3466,17 +3478,5 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   </data>
   <data name="AboutPage_UnsupportedDeviceDesc" xml:space="preserve">
     <value>아직 장치가 지원되지 않는 것 같습니다. 소프트웨어가 예상대로 실행되지 않을 수 있습니다.</value>
-  </data>
-  <data name="SettingsPage_AdvancedSettings" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="SettingsPage_AdvancedSettingsDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="SettingsPage_CurveOptimiser" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="SettingsPage_CurveOptimiserDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
   </data>
 </root>

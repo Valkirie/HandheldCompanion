@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Processors.Intel;
 using System;
+using static HandheldCompanion.Processors.Intel.KX;
 
 namespace HandheldCompanion.Processors
 {
@@ -124,6 +125,24 @@ namespace HandheldCompanion.Processors
                 {
                     platform.set_msr_limits((int)PL1, (int)PL2);
                 }
+            }
+        }
+
+        public bool SetMSRUndervolt(IntelUndervoltRail rail, int offsetMv)
+        {
+            lock (updateLock)
+            {
+                // Pick command field based on rail (same values as msr-cmd script)
+                string commandHex = rail switch
+                {
+                    IntelUndervoltRail.Core => "0x80000011",
+                    IntelUndervoltRail.Gpu => "0x80000111",
+                    IntelUndervoltRail.Cache => "0x80000211",
+                    IntelUndervoltRail.SystemAgent => "0x80000411",
+                    _ => throw new ArgumentOutOfRangeException(nameof(rail), rail, null)
+                };
+
+                return platform.set_msr_undervolt(commandHex, offsetMv) == 0;
             }
         }
 

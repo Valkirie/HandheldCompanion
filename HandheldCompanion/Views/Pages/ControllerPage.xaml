@@ -169,10 +169,10 @@
                     </ui:SettingsCard.HeaderIcon>
 
                     <DockPanel>
-                        <Label
+                        <TextBlock
                             VerticalAlignment="Center"
-                            Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderStrength}, Mode=OneWay}"
-                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                            Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderStrength}, Mode=OneWay}" />
                         <Slider
                             x:Name="SliderStrength"
                             Width="200"
@@ -320,7 +320,7 @@
             <!--  Related support  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_RelatedSupport}" />
             <ikw:SimpleStackPanel Spacing="3">
-                <ui:SettingsExpander Header="{l:Static resx:Resources.ControllerPage_HelpWithControllerSettings}">
+                <ui:SettingsExpander Header="{l:Static resx:Resources.ControllerPage_HelpWithControllerSettings}" IsExpanded="True">
                     <ui:SettingsExpander.HeaderIcon>
                         <ui:FontIcon Glyph="&#xf6fa;" />
                     </ui:SettingsExpander.HeaderIcon>

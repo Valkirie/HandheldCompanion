@@ -17,6 +17,14 @@ public class KX
     private readonly string path;
     private readonly ProcessStartInfo startInfo;
 
+    public enum IntelUndervoltRail
+    {
+        Core,
+        Gpu,
+        Cache,
+        SystemAgent
+    }
+
     public KX()
     {
         path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Intel", "KX", "KX.exe");
@@ -259,7 +267,43 @@ public class KX
         {
             string? line = ProcessOutput.StandardOutput.ReadLine();
             if (string.IsNullOrEmpty(line))
-                return 0;
+                return 0; // success
+        }
+
+        return -1; // implement error code support
+    }
+
+    public int set_msr_undervolt(string commandHex, int offsetMv)
+    {
+        if (string.IsNullOrEmpty(mchbar))
+            return -1; // failed
+
+        // Encode mV to Cyphray-style 12-bit VID code (HWiNFO-accurate mode)
+        // offsetMv is expected to be negative for undervolt, but we just use the magnitude.
+        int magMv = Math.Abs(offsetMv);
+
+        int code = 0;
+        if (magMv != 0)
+        {
+            // dcuv5 = 4096 - (dcuv * 1024 + 500) / 1000 * 2   (integer math)
+            int scaled = (magMv * 1024 + 500) / 1000;
+            code = 4096 - (scaled * 2);
+        }
+
+        // 12-bit code: 3-digit hex (e.g. "F9C")
+        string vidHex = code.ToString("X3");
+
+        // Build data field: 0x<VID>00000 (e.g. 0xF9C00000)
+        string dataHex = $"0x{vidHex}00000";
+
+        // Call KX: /wrmsr 0x150 <commandHex> <dataHex>
+        startInfo.Arguments = $"/wrmsr 0x150 {commandHex} {dataHex}";
+
+        using (var processOutput = Process.Start(startInfo))
+        {
+            string? line = processOutput?.StandardOutput.ReadLine();
+            if (string.IsNullOrEmpty(line))
+                return 0; // success
         }
 
         return -1; // implement error code support

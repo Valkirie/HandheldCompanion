@@ -262,7 +262,7 @@ public class RyzenAdj
     public static extern float set_coall(IntPtr ry, uint value);
 
     [DllImport(ryzenadj)]
-    private static extern int set_cogfx(IntPtr ctx, uint value);
+    public static extern int set_cogfx(IntPtr ctx, uint value);
 
     [DllImport(ryzenadj)]
     public static extern RyzenFamily get_cpu_family(IntPtr ry);

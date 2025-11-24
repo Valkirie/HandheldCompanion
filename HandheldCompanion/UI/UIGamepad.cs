@@ -675,7 +675,15 @@ namespace HandheldCompanion.Managers
                                 }
                                 else
                                 {
-                                    toggleButton.IsChecked = !toggleButton.IsChecked;
+                                    switch(toggleButton.Tag)
+                                    {
+                                        default:
+                                            toggleButton.IsChecked = !toggleButton.IsChecked;
+                                            break;
+                                        case "Hotkey":
+                                            // Hotkey IsChecked status is managed by a ViewModel
+                                            break;
+                                    }
                                 }
 
                                 // raise event

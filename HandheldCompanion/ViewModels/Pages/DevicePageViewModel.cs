@@ -194,8 +194,10 @@ namespace HandheldCompanion.ViewModels
         #endregion
 
         #region AdvancedSettings
-        public bool IsAMD => PerformanceManager.GetProcessor() is AMDProcessor;
+        public bool HasCoreCurve => PerformanceManager.GetProcessor() is AMDProcessor AMD && AMD.HasAllCoreCurve;
+        public bool HasGPUCurve => PerformanceManager.GetProcessor() is AMDProcessor AMD && AMD.HasGpuCurve;
         public bool IsIntel => PerformanceManager.GetProcessor() is IntelProcessor;
+
         public bool HasAdvancedSettings
         {
             get

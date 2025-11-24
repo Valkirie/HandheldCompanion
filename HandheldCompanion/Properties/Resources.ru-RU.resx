@@ -3443,10 +3443,10 @@
   <data name="SettingsPage_AdvancedSettingsDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
-  <data name="SettingsPage_CurveOptimiser" type="System.Resources.ResXNullRef, System.Windows.Forms">
+  <data name="SettingsPage_AllCurveOptimiser" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
-  <data name="SettingsPage_CurveOptimiserDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
+  <data name="SettingsPage_AllCurveOptimiserDesc" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
 </root>

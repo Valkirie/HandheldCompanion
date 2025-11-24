@@ -19,7 +19,7 @@ namespace HandheldCompanion.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -10697,6 +10697,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CPU curve optimiser.
+        /// </summary>
+        public static string SettingsPage_AllCurveOptimiser {
+            get {
+                return ResourceManager.GetString("SettingsPage_AllCurveOptimiser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the CPU curve optimiser value.
+        /// </summary>
+        public static string SettingsPage_AllCurveOptimiserDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_AllCurveOptimiserDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Values are curve steps, not millivolts. Use negative values (steps) to undervolt. Any option other than 0 can lead to system instability or crashes..
+        /// </summary>
+        public static string SettingsPage_AllCurveOptimiserTooltip {
+            get {
+                return ResourceManager.GetString("SettingsPage_AllCurveOptimiserTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Language.
         /// </summary>
         public static string SettingsPage_AppLanguage {
@@ -10850,24 +10877,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CPU Curve Optimiser (All Cores).
-        /// </summary>
-        public static string SettingsPage_CurveOptimiser {
-            get {
-                return ResourceManager.GetString("SettingsPage_CurveOptimiser", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change the all core Curve Optimiser Frequency/Voltage curve offset (negative values to undervolt, positive to add margin).
-        /// </summary>
-        public static string SettingsPage_CurveOptimiserDesc {
-            get {
-                return ResourceManager.GetString("SettingsPage_CurveOptimiserDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Download.
         /// </summary>
         public static string SettingsPage_Download {
@@ -10940,6 +10949,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to iGPU curve optimiser.
+        /// </summary>
+        public static string SettingsPage_GfxCurveOptimiser {
+            get {
+                return ResourceManager.GetString("SettingsPage_GfxCurveOptimiser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the iGPU curve optimiser value.
+        /// </summary>
+        public static string SettingsPage_GfxCurveOptimiserDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_GfxCurveOptimiserDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Values are curve steps, not millivolts. Use negative values (steps) to undervolt. Any option other than 0 can lead to system instability or crashes..
+        /// </summary>
+        public static string SettingsPage_GfxCurveOptimiserTooltip {
+            get {
+                return ResourceManager.GetString("SettingsPage_GfxCurveOptimiserTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hide when loses focus.
         /// </summary>
         public static string SettingsPage_HideWhenLoseFocus {
@@ -10972,6 +11008,87 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_LastChecked {
             get {
                 return ResourceManager.GetString("SettingsPage_LastChecked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CPU voltage offset.
+        /// </summary>
+        public static string SettingsPage_MsrCPUUndervolt {
+            get {
+                return ResourceManager.GetString("SettingsPage_MsrCPUUndervolt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Applies a voltage offset in millivolts to CPU core and cache rails.
+        /// </summary>
+        public static string SettingsPage_MsrCPUUndervoltDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_MsrCPUUndervoltDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use negative values (-mV) to undervolt. Any option other than 0 can lead to system instability or crashes..
+        /// </summary>
+        public static string SettingsPage_MsrCPUUndervoltTooltip {
+            get {
+                return ResourceManager.GetString("SettingsPage_MsrCPUUndervoltTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to iGPU voltage offset.
+        /// </summary>
+        public static string SettingsPage_MsrGPUUndervolt {
+            get {
+                return ResourceManager.GetString("SettingsPage_MsrGPUUndervolt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Applies a voltage offset in millivolts to the integrated GPU.
+        /// </summary>
+        public static string SettingsPage_MsrGPUUndervoltDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_MsrGPUUndervoltDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use negative values (-mV) to undervolt. Any option other than 0 can lead to system instability or crashes..
+        /// </summary>
+        public static string SettingsPage_MsrGPUUndervoltTooltip {
+            get {
+                return ResourceManager.GetString("SettingsPage_MsrGPUUndervoltTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SoC voltage offset.
+        /// </summary>
+        public static string SettingsPage_MsrSocUndervolt {
+            get {
+                return ResourceManager.GetString("SettingsPage_MsrSocUndervolt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Applies a voltage offset in millivolts to the SoC.
+        /// </summary>
+        public static string SettingsPage_MsrSocUndervoltDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_MsrSocUndervoltDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use negative values (-mV) to undervolt. Any option other than 0 can lead to system instability or crashes..
+        /// </summary>
+        public static string SettingsPage_MsrSocUndervoltTooltip {
+            get {
+                return ResourceManager.GetString("SettingsPage_MsrSocUndervoltTooltip", resourceCulture);
             }
         }
         

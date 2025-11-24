@@ -157,7 +157,8 @@
                         VerticalAlignment="Stretch"
                         Command="{Binding PinButtonCommand}"
                         IsChecked="{Binding IsPinned, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                        IsEnabled="{Binding CanUnpin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Tag="Hotkey">
                         <ui:FontIcon
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"

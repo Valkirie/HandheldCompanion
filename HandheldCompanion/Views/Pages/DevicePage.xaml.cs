@@ -281,6 +281,21 @@ namespace HandheldCompanion.Views.Pages
                     case "SensorPlacementUpsideDown":
                         Toggle_SensorPlacementUpsideDown.IsOn = Convert.ToBoolean(value);
                         break;
+                    case "RyzenAdjCoAll":
+                        NumberBox_SetCoAll.Value = Convert.ToInt32(value);
+                        break;
+                    case "RyzenAdjCoGfx":
+                        NumberBox_SetCoGfx.Value = Convert.ToInt32(value);
+                        break;
+                    case "MsrUndervoltCore":
+                        NumberBox_SetMsrCore.Value = Convert.ToInt32(value);
+                        break;
+                    case "MsrUndervoltGpu":
+                        NumberBox_SetMsrGpu.Value = Convert.ToInt32(value);
+                        break;
+                    case "MsrUndervoltSoc":
+                        NumberBox_SetMsrSoc.Value = Convert.ToInt32(value);
+                        break;
                 }
             });
         }
@@ -548,16 +563,64 @@ namespace HandheldCompanion.Views.Pages
             ManagerFactory.settingsManager.SetProperty("BatteryBypassChargingMode", CB_BatteryBypassCharging.SelectedIndex);
         }
 
-        private void Slider_SetCoall_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void NumberBox_SetCoAll_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
         {
-            var value = Slider_SetCoall.Value;
+            var value = NumberBox_SetCoAll.Value;
             if (double.IsNaN(value))
                 return;
 
             if (!IsLoaded)
                 return;
 
-            ManagerFactory.settingsManager.SetProperty("RyzenAdjCoall", value);
+            ManagerFactory.settingsManager.SetProperty("RyzenAdjCoAll", value);
+        }
+
+        private void NumberBox_SetCoGfx_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
+        {
+            var value = NumberBox_SetCoGfx.Value;
+            if (double.IsNaN(value))
+                return;
+
+            if (!IsLoaded)
+                return;
+
+            ManagerFactory.settingsManager.SetProperty("RyzenAdjCoGfx", value);
+        }
+
+        private void NumberBox_SetMsrCore_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
+        {
+            var value = NumberBox_SetMsrCore.Value;
+            if (double.IsNaN(value))
+                return;
+
+            if (!IsLoaded)
+                return;
+
+            ManagerFactory.settingsManager.SetProperty("MsrUndervoltCore", value);
+        }
+
+        private void NumberBox_SetMsrGpu_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
+        {
+            var value = NumberBox_SetMsrGpu.Value;
+            if (double.IsNaN(value))
+                return;
+
+            if (!IsLoaded)
+                return;
+
+            ManagerFactory.settingsManager.SetProperty("MsrUndervoltGpu", value);
+        }
+
+        private void NumberBox_SetMsrSoc_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
+        {
+            var value = NumberBox_SetMsrSoc.Value;
+            if (double.IsNaN(value))
+                return;
+
+            if (!IsLoaded)
+                return;
+
+            ManagerFactory.settingsManager.SetProperty("MsrUndervoltSoc", value);
         }
 
         #region Sensor

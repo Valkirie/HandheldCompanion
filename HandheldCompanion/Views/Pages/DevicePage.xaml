@@ -41,7 +41,10 @@
                 </ui:SettingsCard>
 
                 <!--  Configurable TDP  -->
-                <ui:SettingsExpander Description="{l:Static resx:Resources.SettingsPage_AdvancedSettingsDesc}" Header="{l:Static resx:Resources.SettingsPage_AdvancedSettings}">
+                <ui:SettingsExpander
+                    d:IsExpanded="True"
+                    Description="{l:Static resx:Resources.SettingsPage_AdvancedSettingsDesc}"
+                    Header="{l:Static resx:Resources.SettingsPage_AdvancedSettings}">
                     <ui:SettingsExpander.HeaderIcon>
                         <ui:FontIcon Glyph="&#xe785;" />
                     </ui:SettingsExpander.HeaderIcon>
@@ -76,29 +79,162 @@
 
                         <!--  RyzenAdj (set_coall)  -->
                         <ui:SettingsCard
-                            Description="{l:Static resx:Resources.SettingsPage_CurveOptimiserDesc}"
-                            Header="{l:Static resx:Resources.SettingsPage_CurveOptimiser}"
+                            Description="{l:Static resx:Resources.SettingsPage_AllCurveOptimiserDesc}"
+                            Header="{l:Static resx:Resources.SettingsPage_AllCurveOptimiser}"
                             IsEnabled="{Binding HasAdvancedSettings, UpdateSourceTrigger=PropertyChanged}"
-                            Visibility="{Binding IsAMD, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <DockPanel>
-                                <Label
-                                    VerticalAlignment="Center"
-                                    Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference Slider_SetCoall}, Mode=OneWay}"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                                <Slider
-                                    Name="Slider_SetCoall"
-                                    Width="200"
+                            Visibility="{Binding HasCoreCurve, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <StackPanel Orientation="Horizontal">
+                                <ui:NumberBox
+                                    Name="NumberBox_SetCoAll"
+                                    MinWidth="20"
+                                    Maximum="12"
+                                    Minimum="-24"
+                                    SpinButtonPlacementMode="Inline"
+                                    ValueChanged="NumberBox_SetCoAll_ValueChanged" />
+
+                                <Button
+                                    Width="24"
+                                    Height="24"
                                     Margin="6,0,0,0"
-                                    IsMoveToPointEnabled="True"
-                                    IsSnapToTickEnabled="True"
-                                    LargeChange="2"
-                                    Maximum="10"
-                                    Minimum="-10"
-                                    SmallChange="1"
-                                    TickFrequency="1"
-                                    TickPlacement="BottomRight"
-                                    ValueChanged="Slider_SetCoall_ValueChanged" />
-                            </DockPanel>
+                                    Padding="0,0,0,0"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    ToolTip="{l:Static resx:Resources.SettingsPage_AllCurveOptimiserTooltip}"
+                                    ToolTipService.InitialShowDelay="200">
+                                    <Grid>
+                                        <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF138;" />
+                                        <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF142;" />
+                                    </Grid>
+                                </Button>
+                            </StackPanel>
+                        </ui:SettingsCard>
+
+                        <!--  RyzenAdj (set_cogfx)  -->
+                        <ui:SettingsCard
+                            Description="{l:Static resx:Resources.SettingsPage_GfxCurveOptimiserDesc}"
+                            Header="{l:Static resx:Resources.SettingsPage_GfxCurveOptimiser}"
+                            IsEnabled="{Binding HasAdvancedSettings, UpdateSourceTrigger=PropertyChanged}"
+                            Visibility="{Binding HasGPUCurve, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <StackPanel Orientation="Horizontal">
+                                <ui:NumberBox
+                                    Name="NumberBox_SetCoGfx"
+                                    MinWidth="20"
+                                    Maximum="12"
+                                    Minimum="-24"
+                                    SpinButtonPlacementMode="Inline"
+                                    ValueChanged="NumberBox_SetCoGfx_ValueChanged" />
+
+                                <Button
+                                    Width="24"
+                                    Height="24"
+                                    Margin="6,0,0,0"
+                                    Padding="0,0,0,0"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    ToolTip="{l:Static resx:Resources.SettingsPage_GfxCurveOptimiserTooltip}"
+                                    ToolTipService.InitialShowDelay="200">
+                                    <Grid>
+                                        <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF138;" />
+                                        <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF142;" />
+                                    </Grid>
+                                </Button>
+                            </StackPanel>
+                        </ui:SettingsCard>
+
+                        <!--  msr-cmd (core, cache)  -->
+                        <ui:SettingsCard
+                            Description="{l:Static resx:Resources.SettingsPage_MsrCPUUndervoltDesc}"
+                            Header="{l:Static resx:Resources.SettingsPage_MsrCPUUndervolt}"
+                            IsEnabled="{Binding HasAdvancedSettings, UpdateSourceTrigger=PropertyChanged}"
+                            Visibility="{Binding IsIntel, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <StackPanel Orientation="Horizontal">
+                                <ui:NumberBox
+                                    Name="NumberBox_SetMsrCore"
+                                    MinWidth="20"
+                                    Maximum="50"
+                                    Minimum="-50"
+                                    SpinButtonPlacementMode="Inline"
+                                    ValueChanged="NumberBox_SetMsrCore_ValueChanged" />
+
+                                <Button
+                                    Width="24"
+                                    Height="24"
+                                    Margin="6,0,0,0"
+                                    Padding="0,0,0,0"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    ToolTip="{l:Static resx:Resources.SettingsPage_MsrCPUUndervoltTooltip}"
+                                    ToolTipService.InitialShowDelay="200">
+                                    <Grid>
+                                        <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF138;" />
+                                        <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF142;" />
+                                    </Grid>
+                                </Button>
+                            </StackPanel>
+                        </ui:SettingsCard>
+
+                        <!--  msr-cmd (gpu)  -->
+                        <ui:SettingsCard
+                            Description="{l:Static resx:Resources.SettingsPage_MsrGPUUndervoltDesc}"
+                            Header="{l:Static resx:Resources.SettingsPage_MsrGPUUndervolt}"
+                            IsEnabled="{Binding HasAdvancedSettings, UpdateSourceTrigger=PropertyChanged}"
+                            Visibility="{Binding IsIntel, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <StackPanel Orientation="Horizontal">
+                                <ui:NumberBox
+                                    Name="NumberBox_SetMsrGpu"
+                                    MinWidth="20"
+                                    Maximum="50"
+                                    Minimum="-50"
+                                    SpinButtonPlacementMode="Inline"
+                                    ValueChanged="NumberBox_SetMsrGpu_ValueChanged" />
+
+                                <Button
+                                    Width="24"
+                                    Height="24"
+                                    Margin="6,0,0,0"
+                                    Padding="0,0,0,0"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    ToolTip="{l:Static resx:Resources.SettingsPage_MsrGPUUndervoltTooltip}"
+                                    ToolTipService.InitialShowDelay="200">
+                                    <Grid>
+                                        <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF138;" />
+                                        <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF142;" />
+                                    </Grid>
+                                </Button>
+                            </StackPanel>
+                        </ui:SettingsCard>
+
+                        <!--  msr-cmd (System agent)  -->
+                        <ui:SettingsCard
+                            Description="{l:Static resx:Resources.SettingsPage_MsrSocUndervoltDesc}"
+                            Header="{l:Static resx:Resources.SettingsPage_MsrSocUndervolt}"
+                            IsEnabled="{Binding HasAdvancedSettings, UpdateSourceTrigger=PropertyChanged}"
+                            Visibility="{Binding IsIntel, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <StackPanel Orientation="Horizontal">
+                                <ui:NumberBox
+                                    Name="NumberBox_SetMsrSoc"
+                                    MinWidth="20"
+                                    Maximum="50"
+                                    Minimum="-50"
+                                    SpinButtonPlacementMode="Inline"
+                                    ValueChanged="NumberBox_SetMsrSoc_ValueChanged" />
+
+                                <Button
+                                    Width="24"
+                                    Height="24"
+                                    Margin="6,0,0,0"
+                                    Padding="0,0,0,0"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    ToolTip="{l:Static resx:Resources.SettingsPage_MsrSocUndervoltTooltip}"
+                                    ToolTipService.InitialShowDelay="200">
+                                    <Grid>
+                                        <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF138;" />
+                                        <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF142;" />
+                                    </Grid>
+                                </Button>
+                            </StackPanel>
                         </ui:SettingsCard>
                     </ui:SettingsExpander.Items>
                 </ui:SettingsExpander>
@@ -174,10 +310,10 @@
                         <ui:FontIcon Glyph="&#xE713;" />
                     </ui:SettingsCard.HeaderIcon>
                     <DockPanel>
-                        <Label
+                        <TextBlock
                             VerticalAlignment="Center"
-                            Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference Slider_BatteryChargeLimitPercent}, Mode=OneWay}"
-                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                            Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference Slider_BatteryChargeLimitPercent}, Mode=OneWay}" />
                         <Slider
                             x:Name="Slider_BatteryChargeLimitPercent"
                             Width="200"
@@ -248,10 +384,10 @@
                             <ui:FontIcon Glyph="&#xE706;" />
                         </ui:SettingsCard.HeaderIcon>
                         <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                            <Label
+                            <TextBlock
                                 VerticalAlignment="Center"
-                                Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLEDBrightness}, Mode=OneWay}"
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLEDBrightness}, Mode=OneWay}" />
                             <Slider
                                 x:Name="SliderLEDBrightness"
                                 Width="200"
@@ -341,10 +477,10 @@
                                 Header="{l:Static resx:Resources.DevicePage_DynamicLighting_EffectSpeed}"
                                 Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6}">
                                 <DockPanel>
-                                    <Label
+                                    <TextBlock
                                         VerticalAlignment="Center"
-                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLEDSpeed}, Mode=OneWay}"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLEDSpeed}, Mode=OneWay}" />
                                     <Slider
                                         x:Name="SliderLEDSpeed"
                                         Width="200"
@@ -716,10 +852,10 @@
                             <!--  Left Joystick deadzone  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerJoystickDeadzone}">
                                 <DockPanel>
-                                    <Label
+                                    <TextBlock
                                         VerticalAlignment="Center"
-                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLeftJoystickDeadzone}, Mode=OneWay}"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLeftJoystickDeadzone}, Mode=OneWay}" />
                                     <Slider
                                         Name="SliderLeftJoystickDeadzone"
                                         Width="200"
@@ -738,10 +874,10 @@
                             <!--  Left Trigger deadzone  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerDeadzone}">
                                 <DockPanel>
-                                    <Label
+                                    <TextBlock
                                         VerticalAlignment="Center"
-                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLeftTriggerDeadzone}, Mode=OneWay}"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLeftTriggerDeadzone}, Mode=OneWay}" />
                                     <Slider
                                         Name="SliderLeftTriggerDeadzone"
                                         Width="200"
@@ -761,10 +897,10 @@
                             <!--  Left Trigger margin  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerMargin}">
                                 <DockPanel>
-                                    <Label
+                                    <TextBlock
                                         VerticalAlignment="Center"
-                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLeftTriggerMargin}, Mode=OneWay}"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLeftTriggerMargin}, Mode=OneWay}" />
                                     <Slider
                                         Name="SliderLeftTriggerMargin"
                                         Width="200"
@@ -820,10 +956,10 @@
                             <!--  Right Joystick deadzone  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerJoystickDeadzone}">
                                 <DockPanel>
-                                    <Label
+                                    <TextBlock
                                         VerticalAlignment="Center"
-                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRightJoystickDeadzone}, Mode=OneWay}"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRightJoystickDeadzone}, Mode=OneWay}" />
                                     <Slider
                                         Name="SliderRightJoystickDeadzone"
                                         Width="200"
@@ -842,10 +978,10 @@
                             <!--  Right Trigger deadzone  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerDeadzone}">
                                 <DockPanel>
-                                    <Label
+                                    <TextBlock
                                         VerticalAlignment="Center"
-                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRightTriggerDeadzone}, Mode=OneWay}"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRightTriggerDeadzone}, Mode=OneWay}" />
                                     <Slider
                                         Name="SliderRightTriggerDeadzone"
                                         Width="200"
@@ -865,10 +1001,10 @@
                             <!--  Right Trigger margin  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerMargin}">
                                 <DockPanel>
-                                    <Label
+                                    <TextBlock
                                         VerticalAlignment="Center"
-                                        Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRightTriggerMargin}, Mode=OneWay}"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRightTriggerMargin}, Mode=OneWay}" />
                                     <Slider
                                         Name="SliderRightTriggerMargin"
                                         Width="200"

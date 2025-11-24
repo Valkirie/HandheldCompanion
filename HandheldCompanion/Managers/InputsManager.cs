@@ -70,6 +70,7 @@ public static class InputsManager
     private static readonly Dictionary<bool, short> KeyIndexOEM = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, short> KeyIndexHotkey = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, bool> KeyUsed = new() { { true, false }, { false, false } };
+    private static readonly HashSet<Keys> PhysicalModifiersDown = new();
 
     public static bool IsInitialized;
 
@@ -239,6 +240,16 @@ public static class InputsManager
 
         bool Injected = (args.Flags & LLKHF_INJECTED) > 0;
         bool InjectedLL = (args.Flags & LLKHF_LOWER_IL_INJECTED) > 0;
+        bool fromPhysicalKeyboard = !(Injected || InjectedLL);
+
+        // Track physical modifier state (only real hardware events)
+        if (fromPhysicalKeyboard && IsModifierKey(args))
+        {
+            if (args.IsKeyDown)
+                PhysicalModifiersDown.Add(args.KeyCode);
+            else if (args.IsKeyUp)
+                PhysicalModifiersDown.Remove(args.KeyCode);
+        }
 
         if ((Injected || InjectedLL))
             if (IsListening && currentChord.chordTarget != InputsChordTarget.Output)
@@ -488,33 +499,37 @@ public static class InputsManager
 
     private static void ReleaseKeyboardBuffer()
     {
-        /*
-        // Checking if we're missing KeyUp(s)
+        // Before replaying buffered keys, fix potential *stuck modifiers*:
+        // If we buffered a modifier KeyDown, never saw a matching KeyUp in the buffer,
+        // and that modifier is no longer physically held, synthesize a KeyUp for it.
         List<KeyEventArgsExt> pressedKeys = BufferKeys[true];
         List<KeyEventArgsExt> releasedKeys = BufferKeys[false];
 
-        // Find keys that were pressed but not released
-        List<KeyEventArgsExt> pressedButNotReleased = pressedKeys
-            .Where(pressed => !releasedKeys.Any(released => released.KeyValue == pressed.KeyValue))
+        var pressedModifiersWithoutRelease = pressedKeys
+            .Where(pressed => IsModifierKey(pressed))
+            .Where(pressed =>
+                !releasedKeys.Any(released => released.KeyValue == pressed.KeyValue))
+            .Where(pressed => !IsModifierPhysicallyDown(pressed.KeyValue))
             .OrderBy(pressed => pressed.Timestamp)
             .ToList();
 
-        // Add missing keys
-        // This may have side effects, but they will certainly be much less harmful than a stuck key
-        BufferKeys[false].AddRange(pressedButNotReleased);
-        */
+        // Re-use the original KeyEventArgsExt instances; KeyboardSimulator only cares about KeyCode
+        BufferKeys[false].AddRange(pressedModifiersWithoutRelease);
 
-        // Send all key inputs
+        // Send all key inputs (first downs, then ups)
         foreach (bool IsKeyDown in new[] { true, false })
         {
             if (BufferKeys[IsKeyDown].Count == 0)
                 continue;
 
-            // reset index
+            // reset indexes used for chord matching
             KeyIndexOEM[IsKeyDown] = 0;
             KeyIndexHotkey[IsKeyDown] = 0;
 
-            List<KeyEventArgsExt> keys = BufferKeys[IsKeyDown].OrderBy(a => a.Timestamp).ToList();
+            List<KeyEventArgsExt> keys = BufferKeys[IsKeyDown]
+                .OrderBy(a => a.Timestamp)
+                .ToList();
+
             for (int i = 0; i < keys.Count; i++)
             {
                 KeyEventArgsExt args = keys[i];
@@ -523,13 +538,14 @@ public static class InputsManager
                     case true:
                         KeyboardSimulator.KeyDown(args);
                         break;
+
                     case false:
                         KeyboardSimulator.KeyUp(args);
                         break;
                 }
             }
 
-            // clear buffer
+            // clear buffer for this direction
             BufferKeys[IsKeyDown].Clear();
         }
     }
@@ -684,6 +700,36 @@ public static class InputsManager
             bufferChord.ButtonState[halfPress] = false;
             buttonState[halfPress] = false;
         }
+    }
+
+    private static bool IsModifierKey(Keys key)
+    {
+        switch (key)
+        {
+            case Keys.LControlKey:
+            case Keys.RControlKey:
+            case Keys.ControlKey:
+            case Keys.LMenu:      // Left Alt
+            case Keys.RMenu:      // Right Alt / AltGr
+            case Keys.Menu:       // Generic Alt
+            case Keys.LShiftKey:
+            case Keys.RShiftKey:
+            case Keys.ShiftKey:
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
+    private static bool IsModifierKey(KeyEventArgsExt args)
+    {
+        return IsModifierKey(args.KeyCode);
+    }
+
+    private static bool IsModifierPhysicallyDown(int keyValue)
+    {
+        return PhysicalModifiersDown.Contains((Keys)keyValue);
     }
 
     private static ButtonFlags currentButtonFlags = ButtonFlags.None;

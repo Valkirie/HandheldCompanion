@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using static HandheldCompanion.Processors.Intel.KX;
 using static HandheldCompanion.Processors.IntelProcessor;
 using Timer = System.Timers.Timer;
 
@@ -185,8 +186,13 @@ public static class PerformanceManager
         // raise events
         SettingsManager_SettingValueChanged("ConfigurableTDPOverrideDown", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideDown"), false);
         SettingsManager_SettingValueChanged("ConfigurableTDPOverrideUp", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideUp"), false);
-
-        SettingsManager_SettingValueChanged("RyzenAdjCoall", ManagerFactory.settingsManager.GetString("RyzenAdjCoall"), false);
+        // AMD
+        SettingsManager_SettingValueChanged("RyzenAdjCoAll", ManagerFactory.settingsManager.GetString("RyzenAdjCoAll"), false);
+        SettingsManager_SettingValueChanged("RyzenAdjCoGfx", ManagerFactory.settingsManager.GetString("RyzenAdjCoGfx"), false);
+        // Intel
+        SettingsManager_SettingValueChanged("MsrUndervoltCore", ManagerFactory.settingsManager.GetString("MsrUndervoltCore"), false);
+        SettingsManager_SettingValueChanged("MsrUndervoltGpu", ManagerFactory.settingsManager.GetString("MsrUndervoltGpu"), false);
+        SettingsManager_SettingValueChanged("MsrUndervoltSoc", ManagerFactory.settingsManager.GetString("MsrUndervoltSoc"), false);
     }
 
     public static void Stop()
@@ -249,12 +255,48 @@ public static class PerformanceManager
                         AutoTDPMax = TDPMax;
                 }
                 break;
-            case "RyzenAdjCoall":
+            case "RyzenAdjCoAll":
                 {
                     if (processor is AMDProcessor AMDProcessor)
                     {
                         int steps = Convert.ToInt32(value);
-                        bool output = AMDProcessor.SetCoall(steps) == 0 ? true : false;
+                        bool output = AMDProcessor.SetCoAll(steps) == 0 ? true : false;
+                    }
+                }
+                break;
+            case "RyzenAdjCoGfx":
+                {
+                    if (processor is AMDProcessor AMDProcessor)
+                    {
+                        int steps = Convert.ToInt32(value);
+                        bool output = AMDProcessor.SetCoGfx(steps) == 0 ? true : false;
+                    }
+                }
+                break;
+            case "MsrUndervoltCore":
+                {
+                    if (processor is IntelProcessor IntelProcessor)
+                    {
+                        int offsetMv = Convert.ToInt32(value);
+                        bool output = IntelProcessor.SetMSRUndervolt(IntelUndervoltRail.Core, offsetMv) && IntelProcessor.SetMSRUndervolt(IntelUndervoltRail.Cache, offsetMv);
+                    }
+                }
+                break;
+            case "MsrUndervoltGpu":
+                {
+                    if (processor is IntelProcessor IntelProcessor)
+                    {
+                        int offsetMv = Convert.ToInt32(value);
+                        bool output = IntelProcessor.SetMSRUndervolt(IntelUndervoltRail.Gpu, offsetMv);
+                    }
+                }
+                break;
+            case "MsrUndervoltSoc":
+                {
+                    if (processor is IntelProcessor IntelProcessor)
+                    {
+                        int offsetMv = Convert.ToInt32(value);
+                        bool output = IntelProcessor.SetMSRUndervolt(IntelUndervoltRail.SystemAgent, offsetMv);
                     }
                 }
                 break;

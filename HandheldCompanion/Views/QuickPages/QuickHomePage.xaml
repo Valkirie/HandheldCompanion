@@ -64,7 +64,8 @@
                                     HorizontalContentAlignment="Stretch"
                                     Command="{Binding ExecuteCommand}"
                                     IsChecked="{Binding IsToggled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    IsEnabled="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                    IsEnabled="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Tag="Hotkey">
                                     <StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
                                         <ui:FontIcon
                                             Width="24"

@@ -9,6 +9,10 @@ public class AMDProcessor : Processor
     public readonly RyzenFamily family;
     public readonly IntPtr ry = IntPtr.Zero;
 
+    public bool HasAllCoreCurve = false;
+    public bool HasPerCoreCurve = false;
+    public bool HasGpuCurve = false;
+
     public AMDProcessor()
     {
         try
@@ -61,6 +65,55 @@ public class AMDProcessor : Processor
             case RyzenFamily.FAM_STRIXPOINT:
             case RyzenFamily.FAM_STRIXHALO:
                 CanChangeTDP = true;
+                break;
+        }
+
+        switch (family)
+        {
+            case RyzenFamily.FAM_CEZANNE:
+            case RyzenFamily.FAM_RENOIR:
+            case RyzenFamily.FAM_LUCIENNE:
+            case RyzenFamily.FAM_REMBRANDT:
+            case RyzenFamily.FAM_VANGOGH:
+            case RyzenFamily.FAM_PHOENIX:
+            case RyzenFamily.FAM_HAWKPOINT:
+            case RyzenFamily.FAM_KRACKANPOINT:
+            case RyzenFamily.FAM_STRIXPOINT:
+            case RyzenFamily.FAM_STRIXHALO:
+            case RyzenFamily.FAM_DRAGONRANGE:
+            case RyzenFamily.FAM_FIRERANGE:
+                HasAllCoreCurve = true;
+                break;
+        }
+
+        switch (family)
+        {
+            case RyzenFamily.FAM_CEZANNE:
+            case RyzenFamily.FAM_RENOIR:
+            case RyzenFamily.FAM_LUCIENNE:
+            case RyzenFamily.FAM_REMBRANDT:
+            case RyzenFamily.FAM_VANGOGH:
+            case RyzenFamily.FAM_PHOENIX:
+            case RyzenFamily.FAM_HAWKPOINT:
+            case RyzenFamily.FAM_KRACKANPOINT:
+            case RyzenFamily.FAM_STRIXPOINT:
+            case RyzenFamily.FAM_STRIXHALO:
+            case RyzenFamily.FAM_DRAGONRANGE:
+            case RyzenFamily.FAM_FIRERANGE:
+                HasPerCoreCurve = true;
+                break;
+        }
+
+        switch (family)
+        {
+            case RyzenFamily.FAM_CEZANNE:
+            case RyzenFamily.FAM_RENOIR:
+            case RyzenFamily.FAM_LUCIENNE:
+            case RyzenFamily.FAM_REMBRANDT:
+            case RyzenFamily.FAM_VANGOGH:
+            case RyzenFamily.FAM_PHOENIX:
+            case RyzenFamily.FAM_HAWKPOINT:
+                HasGpuCurve = true;
                 break;
         }
 
@@ -164,8 +217,13 @@ public class AMDProcessor : Processor
         }
     }
 
-    public float SetCoall(int steps)
+    public float SetCoAll(int steps)
     {
         return RyzenAdj.set_coall(ry, RyzenAdj.EncodeCurveOffset(steps));
+    }
+
+    public float SetCoGfx(int steps)
+    {
+        return RyzenAdj.set_cogfx(ry, RyzenAdj.EncodeCurveOffset(steps));
     }
 }
