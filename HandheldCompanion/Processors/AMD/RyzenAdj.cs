@@ -26,6 +26,16 @@ public enum RyzenFamily
     FAM_END
 }
 
+public enum RyzenError
+{
+    ADJ_ERR_SUCCESS = 0,
+    ADJ_ERR_FAM_UNSUPPORTED = -1,
+    ADJ_ERR_SMU_TIMEOUT = -2,
+    ADJ_ERR_SMU_UNSUPPORTED = -3,
+    ADJ_ERR_SMU_REJECTED = -4,
+    ADJ_ERR_MEMORY_ACCESS = -5,
+}
+
 public class RyzenAdj
 {
     private const string ryzenadj = "Resources\\libryzenadj.dll";
@@ -259,10 +269,13 @@ public class RyzenAdj
     public static extern float get_socket_power(IntPtr ry);
 
     [DllImport(ryzenadj)]
-    public static extern float set_coall(IntPtr ry, uint value);
+    public static extern RyzenError set_coall(IntPtr ry, uint value);
 
     [DllImport(ryzenadj)]
-    public static extern int set_cogfx(IntPtr ctx, uint value);
+    public static extern RyzenError set_coper(IntPtr ry, uint value);
+
+    [DllImport(ryzenadj)]
+    public static extern RyzenError set_cogfx(IntPtr ctx, uint value);
 
     [DllImport(ryzenadj)]
     public static extern RyzenFamily get_cpu_family(IntPtr ry);

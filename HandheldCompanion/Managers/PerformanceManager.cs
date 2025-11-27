@@ -260,7 +260,7 @@ public static class PerformanceManager
                     if (processor is AMDProcessor AMDProcessor)
                     {
                         int steps = Convert.ToInt32(value);
-                        bool output = AMDProcessor.SetCoAll(steps) == 0 ? true : false;
+                        bool output = AMDProcessor.SetCoAll(steps);
                     }
                 }
                 break;
@@ -269,7 +269,7 @@ public static class PerformanceManager
                     if (processor is AMDProcessor AMDProcessor)
                     {
                         int steps = Convert.ToInt32(value);
-                        bool output = AMDProcessor.SetCoGfx(steps) == 0 ? true : false;
+                        bool output = AMDProcessor.SetCoGfx(steps);
                     }
                 }
                 break;

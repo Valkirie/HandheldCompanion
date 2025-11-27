@@ -117,6 +117,10 @@ public class AMDProcessor : Processor
                 break;
         }
 
+        HasAllCoreCurve = SetCoAll(0);
+        HasPerCoreCurve = SetCoPer(0);
+        HasGpuCurve = SetCoGfx(0);
+
         // check capabilities
         CanChangeTDP |= HasOEMCPU;
         CanChangeGPU |= HasOEMGPU;
@@ -217,13 +221,21 @@ public class AMDProcessor : Processor
         }
     }
 
-    public float SetCoAll(int steps)
+    public bool SetCoAll(int steps)
     {
-        return RyzenAdj.set_coall(ry, RyzenAdj.EncodeCurveOffset(steps));
+        RyzenError error = RyzenAdj.set_coall(ry, RyzenAdj.EncodeCurveOffset(steps));
+        return error == RyzenError.ADJ_ERR_SUCCESS;
     }
 
-    public float SetCoGfx(int steps)
+    public bool SetCoPer(int steps)
     {
-        return RyzenAdj.set_cogfx(ry, RyzenAdj.EncodeCurveOffset(steps));
+        RyzenError error = RyzenAdj.set_coper(ry, RyzenAdj.EncodeCurveOffset(steps));
+        return error == RyzenError.ADJ_ERR_SUCCESS;
+    }
+
+    public bool SetCoGfx(int steps)
+    {
+        RyzenError error = RyzenAdj.set_cogfx(ry, RyzenAdj.EncodeCurveOffset(steps));
+        return error == RyzenError.ADJ_ERR_SUCCESS;
     }
 }
