@@ -549,7 +549,7 @@ public abstract class IDevice
                 }
                 break;
 
-            case "Mysten Labs, Inc.":
+            case "MYSTEN LABS, INC.":
                 {
                     switch (ProductName)
                     {
