@@ -1,9 +1,10 @@
+using HandheldCompanion.Devices.AYANEO;
 using System.Collections.Generic;
 using System.Numerics;
 
 namespace HandheldCompanion.Devices;
 
-public class AYANEOAIRPlus : AYANEOAIR
+public class AYANEOAIRPlus : AYANEODeviceCEii
 {
     public AYANEOAIRPlus()
     {
