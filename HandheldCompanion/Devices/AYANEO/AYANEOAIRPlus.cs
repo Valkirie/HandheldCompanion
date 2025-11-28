@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace HandheldCompanion.Devices;
 
-public class AYANEOAIRPlus : AYANEOAIR
+public class AYANEOAIRPlus : AYANEO.AYANEODeviceCEii
 {
     public AYANEOAIRPlus()
     {
