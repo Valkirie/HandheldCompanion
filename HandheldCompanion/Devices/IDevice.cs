@@ -549,6 +549,17 @@ public abstract class IDevice
                 }
                 break;
 
+            case "Mysten Labs, Inc.":
+                {
+                    switch (ProductName)
+                    {
+                        case "SuiPlay0X1":
+                            device = new SuiPlay0X1();
+                            break;
+                    }
+                }
+                break;
+
             case "CNCDAN":
                 {
                     switch (ProductName)
