@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Controllers;
+﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Misc;
@@ -668,6 +669,18 @@ public class ProfileManager : IManager
                         if (powerProfile == Guid.Empty)
                             profile.PowerProfiles[idx] = new Guid(oldPowerProfile);
                     }
+                }
+            }
+
+            // hacky, fix broken profiles with Turbo and Toggle enabled across all actions
+            // the elements inside (IActions instances) are the same references as the ones stored in profile.Layout.ButtonLayout
+            List<IActions> allActions = profile.Layout.ButtonLayout.Values.SelectMany(list => list).ToList();
+            if (allActions.Any() && allActions.All(a => a.HasTurbo && a.HasToggle))
+            {
+                foreach (IActions action in allActions)
+                {
+                    action.HasTurbo = false;
+                    action.HasToggle = false;
                 }
             }
 
