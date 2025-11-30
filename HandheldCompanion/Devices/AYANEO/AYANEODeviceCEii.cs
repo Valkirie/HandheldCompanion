@@ -139,15 +139,15 @@ namespace HandheldCompanion.Devices.AYANEO
         // Based on CEiiEcHelper_BypassChargeOpen (AYASpace) but renamed to override existing function
         protected override void CEcControl_BypassChargeOpen()
         {
-            if (this.ECRamDirectRead(0xd1) != 0x65)
-                this.ECRamDirectWrite(0xd1, 0x65);
+            if (this.ECRamDirectRead(0xd1) != 0x01)
+                this.ECRamDirectWrite(0xd1, 0x01);
         }
 
         // Based on CEiiEcHelper_BypassChargeClose (AYASpace) but renamed to override existing function
         protected override void CEcControl_BypassChargeClose()
         {
-            if (this.ECRamDirectRead(0xd1) != 0x01)
-                this.ECRamDirectWrite(0xd1, 0x01);
+            if (this.ECRamDirectRead(0xd1) != 0x65)
+                this.ECRamDirectWrite(0xd1, 0x65);
         }
     }
 }
