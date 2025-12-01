@@ -685,9 +685,7 @@ public class MultimediaManager : IManager
                 }
             }
         }
-        catch
-        {
-        }
+        catch { }
     }
 
     public void IncreaseBrightness()
@@ -763,12 +761,8 @@ public class MultimediaManager : IManager
                         return (byte)instance.GetPropertyValue("CurrentBrightness");
                 }
             }
-
-            return 0;
         }
-        catch
-        {
-        }
+        catch { }
 
         return -1;
     }
