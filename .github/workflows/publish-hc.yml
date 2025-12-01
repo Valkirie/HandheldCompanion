@@ -37,7 +37,7 @@ jobs:
 
     env:
       SOLUTION_NAME: HandheldCompanion
-      INNO_VERSION: 6.2.2
+      INNO_VERSION: 6.6.1
 
     steps:
       - name: Checkout
