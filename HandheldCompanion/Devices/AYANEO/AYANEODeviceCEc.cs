@@ -325,13 +325,13 @@ namespace HandheldCompanion.Devices.AYANEO
 
         protected virtual void CEcControl_BypassChargeOpen()
         {
-            if (this.ECRamReadByte(0x1e) != 0x55)
+            if (this.EcReadByte(0x1e) != 0x55)
                 this.EcWriteByte(0x1e, 0x55);
         }
 
         protected virtual void CEcControl_BypassChargeClose()
         {
-            if (this.ECRamReadByte(0x1e) != 0xaa)
+            if (this.EcReadByte(0x1e) != 0xaa)
                 this.EcWriteByte(0x1e, 0xaa);
         }
     }
