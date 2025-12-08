@@ -185,6 +185,7 @@ namespace HandheldCompanion.Managers
             return true;
         }
 
+        // 2) Replace ProcessToastQueue() with this:
         private static async Task ProcessToastQueue()
         {
             // if already processing, bail (active loop will drain queue)

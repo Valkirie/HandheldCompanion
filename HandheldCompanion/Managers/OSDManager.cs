@@ -227,6 +227,9 @@ public static class OSDManager
         catch (NotImplementedException)
         {
         }
+        catch (NotImplementedException)
+        {
+        }
 
     Exit:
         return string.Join("\n", Content);

@@ -30,6 +30,7 @@
 
             <ui:ProgressRing
                 Width="50"
+                Foreground="White"
                 Height="50"
                 Margin="233,134,0,109"
                 Foreground="White" />
