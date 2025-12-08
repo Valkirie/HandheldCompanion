@@ -1,10 +1,8 @@
 ﻿using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Shared;
 using HidLibrary;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Windows.Media;
 using WindowsInput.Events;
@@ -12,28 +10,16 @@ using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices;
 
-public class AOKZOEA1 : IDevice
+public class AOKZOEA1 : OneXAOKZOE
 {
-    private enum FanControlMode
-    {
-        Manual = 0x01,
-        Automatic = 0x00,
-        Reset = 0x4C
-    }
-
-    // Define the ACPI memory address for fan control mode
-    byte ACPI_FanMode_Address = 0x4A;
-    // Fan control PWM value
-    byte ACPI_FanPWMDutyCycle_Address = 0x4B;
-
-    HidDevice hidDevice;
+    protected HidDevice? hidDevice;
+    protected const int PID_LED = 0xB001;
 
     public AOKZOEA1()
     {
         // device specific settings
         ProductIllustration = "device_aokzoe_a1";
         ProductModel = "AOKZOEA1";
-        UseOpenLib = true;
 
         // https://www.amd.com/en/products/apu/amd-ryzen-7-6800u 
         nTDP = new double[] { 15, 15, 20 };
@@ -58,7 +44,6 @@ public class AOKZOEA1 : IDevice
         };
 
         // device specific capacities
-        Capabilities = DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.DynamicLighting;
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
 
@@ -68,7 +53,11 @@ public class AOKZOEA1 : IDevice
 
         // LED HID Device
         vendorId = 0x1A2C;
-        productIds = [0xB001];
+        productIds = [PID_LED];
+        hidFilters = new()
+        {
+            { PID_LED, new HidFilter(unchecked((short)0xFF01), unchecked(0x0001)) },
+        };
 
         ECDetails = new ECDetails
         {
@@ -127,32 +116,6 @@ public class AOKZOEA1 : IDevice
         DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM3] = true;
     }
 
-    public override bool Open()
-    {
-        bool success = base.Open();
-        if (!success)
-            return false;
-
-        // allow OneX button to pass key inputs
-        LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM3);
-
-        ECRamDirectWriteByte(0x4F1, ECDetails, 0x40);
-        ECRamDirectWriteByte(0x4F2, ECDetails, 0x02);
-
-        return (ECRamDirectReadByte(0x4F1, ECDetails) == 0x40 && ECRamDirectReadByte(0x4F2, ECDetails) == 0x02);
-    }
-
-    public override void Close()
-    {
-        if (!UseOpenLib || !IsOpen)
-            return;
-
-        LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM3);
-        ECRamDirectWriteByte(0x4F1, ECDetails, 0x00);
-        ECRamDirectWriteByte(0x4F2, ECDetails, 0x00);
-        base.Close();
-    }
-
     public override void SetFanControl(bool enable, int mode)
     {
         if (!UseOpenLib || !IsOpen)
@@ -162,8 +125,6 @@ public class AOKZOEA1 : IDevice
         byte controlValue = enable ? (byte)FanControlMode.Manual : (byte)FanControlMode.Automatic;
 
         // Update the fan control mode
-        if (!enable)
-            EcWriteByte(ACPI_FanPWMDutyCycle_Address, (byte)FanControlMode.Reset);
         EcWriteByte(ACPI_FanMode_Address, controlValue);
     }
 
@@ -199,16 +160,20 @@ public class AOKZOEA1 : IDevice
 
     public override bool IsReady()
     {
-        // Prepare list for all HID devices
-        IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds);
+        IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 0);
         foreach (HidDevice device in devices)
         {
-            // OneXFly device for LED control does not support a FeatureReport, hardcoded to match the Interface Number
-            if (device.IsConnected && device.DevicePath.Contains("&mi_00"))
-            {
-                hidDevice = device;
-                return true;
-            }
+            if (!device.IsConnected)
+                continue;
+
+            if (!hidFilters.TryGetValue(device.Attributes.ProductId, out HidFilter hidFilter))
+                continue;
+
+            if (device.Capabilities.UsagePage != hidFilter.UsagePage || device.Capabilities.Usage != hidFilter.Usage)
+                continue;
+
+            hidDevice = device;
+            return true;
         }
 
         return false;
@@ -216,20 +181,8 @@ public class AOKZOEA1 : IDevice
 
     public override bool SetLedBrightness(int brightness)
     {
-        // OneXFly brightness range is: 0 - 4 range, 0 is off, convert from 0 - 100 % range
-        brightness = (int)Math.Round(brightness / 20.0);
-
-        // Check if device is availible
-        if (hidDevice is null || !hidDevice.IsConnected)
-            return false;
-
-        // Define the HID message for setting brightness.
-        byte[] msg = { 0x00, 0x07, 0xFF, 0xFD, 0x01, 0x05, (byte)brightness };
-
-        // Write the HID message to set the LED brightness.
-        hidDevice.Write(msg);
-
-        return true;
+        // AOKZOE A1 uses the HID v2 vendor protocol (0x1A2C:0xB001, FF01:0001)
+        return SendV2Brightness(hidDevice, brightness);
     }
 
     public override bool SetLedColor(Color mainColor, Color secondaryColor, LEDLevel level, int speed = 100)
@@ -237,49 +190,24 @@ public class AOKZOEA1 : IDevice
         if (!DynamicLightingCapabilities.HasFlag(level))
             return false;
 
-        // Data message consists of a prefix, LED option, RGB data, and closing byte (0x00)
-        byte[] prefix = { 0x00, 0x07, 0xFF };
-        byte[] LEDOption = { 0x00 };
-        byte[] rgbData = { 0x00 };
-
-        // Perform functions and command build-up based on LED level
         switch (level)
         {
             case LEDLevel.SolidColor:
-                // Find nearest possible color due to RGB limitations of the device
-                Color ledColor = FindClosestColor(mainColor);
-
-                LEDOption = new byte[] { 0xFE };
-
-                // RGB data repeats 20 times, fill accordingly
-                rgbData = Enumerable.Repeat(new[] { ledColor.R, ledColor.G, ledColor.B }, 20)
-                                    .SelectMany(colorBytes => colorBytes)
-                                    .ToArray();
-                break;
+                {
+                    // Snap to the nearest colour supported by the A1 LEDs
+                    Color ledColor = FindClosestColor(mainColor);
+                    return SendV2SolidColor(hidDevice, ledColor);
+                }
 
             case LEDLevel.Rainbow:
-                // OneXConsole "Flowing Light" effect as a rainbow effect
-                LEDOption = new byte[] { 0x03 };
-
-                // RGB data empty, repeats 60 times, fill accordingly
-                rgbData = Enumerable.Repeat((byte)0x00, 60).ToArray();
-                break;
+                {
+                    // Map "Rainbow" to the device's flowing mode
+                    return SendV2Rainbow(hidDevice);
+                }
 
             default:
                 return false;
         }
-
-        // Check if device is availible
-        if (hidDevice is null || !hidDevice.IsConnected)
-            return false;
-
-        // Combine prefix, LED Option, RGB data, and closing byte (0x00)
-        byte[] msg = prefix.Concat(LEDOption).Concat(rgbData).Concat(new byte[] { 0x00 }).ToArray();
-
-        // Write the HID message to set the RGB color effect
-        hidDevice.Write(msg);
-
-        return true;
     }
 
     static Color FindClosestColor(Color inputColor)

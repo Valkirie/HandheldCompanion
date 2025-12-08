@@ -46,5 +46,15 @@ namespace HandheldCompanion.Libraries
         {
             return string.Empty;
         }
+
+        public virtual long GetLogoId()
+        {
+            return 0;
+        }
+
+        public virtual string GetLogoExtension(bool thumbnail)
+        {
+            return string.Empty;
+        }
     }
 }

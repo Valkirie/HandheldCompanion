@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace HandheldCompanion.Devices;
+﻿namespace HandheldCompanion.Devices;
 
 public class AOKZOEA1Pro : AOKZOEA1
 {
@@ -25,31 +23,5 @@ public class AOKZOEA1Pro : AOKZOEA1
             FanValueMin = 0,
             FanValueMax = 184
         };
-    }
-
-    public override void SetFanDuty(double percent)
-    {
-        if (ECDetails.AddressFanDuty == 0)
-            return;
-
-        if (!UseOpenLib || !IsOpen)
-            return;
-
-        var duty = percent * (ECDetails.FanValueMax - ECDetails.FanValueMin) / 100 + ECDetails.FanValueMin;
-        var data = Convert.ToByte(duty);
-
-        ECRamDirectWriteByte(ECDetails.AddressFanDuty, ECDetails, data);
-    }
-
-    public override void SetFanControl(bool enable, int mode = 0)
-    {
-        if (ECDetails.AddressFanControl == 0)
-            return;
-
-        if (!UseOpenLib || !IsOpen)
-            return;
-
-        var data = Convert.ToByte(enable);
-        ECRamDirectWriteByte(ECDetails.AddressFanControl, ECDetails, data);
     }
 }

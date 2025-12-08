@@ -32,6 +32,7 @@ namespace HandheldCompanion.ViewModels
     {
         public ObservableCollection<ProfileViewModel> Profiles { get; set; } = [];
         public ListCollectionView ProfilesView { get; }
+        public ListCollectionView FavoritesView { get; }
 
         private bool _sortAscending => ManagerFactory.settingsManager.GetBoolean("LibrarySortAscending");
         public bool SortAscending
@@ -64,6 +65,8 @@ namespace HandheldCompanion.ViewModels
                 }
             }
         }
+
+        public bool HasLiked => Profiles.Any(p => p.IsLiked);
 
         public ICommand ToggleSortCommand { get; }
         public ICommand RefreshMetadataCommand { get; }
@@ -119,10 +122,18 @@ namespace HandheldCompanion.ViewModels
 
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(Profiles, new object());
-            ProfilesView = (ListCollectionView)CollectionViewSource.GetDefaultView(Profiles);
+
+            ProfilesView = new ListCollectionView(Profiles);
             ProfilesView.IsLiveSorting = true;
             ProfilesView.IsLiveGrouping = true;
             ProfilesView.IsLiveFiltering = true;
+
+            FavoritesView = new ListCollectionView(Profiles);
+            FavoritesView.IsLiveSorting = true;
+            FavoritesView.IsLiveGrouping = true;
+            FavoritesView.IsLiveFiltering = true;
+            FavoritesView.Filter = o => o is ProfileViewModel vm && vm.IsLiked;
+
             UpdateSorting();
 
             ToggleSortCommand = new DelegateCommand(() =>
@@ -355,6 +366,7 @@ namespace HandheldCompanion.ViewModels
             ListSortDirection direction = SortAscending ? ListSortDirection.Ascending : ListSortDirection.Descending;
 
             ProfilesView.SortDescriptions.Clear();
+            FavoritesView.SortDescriptions.Clear();
 
             switch (SortTarget)
             {
@@ -380,11 +392,24 @@ namespace HandheldCompanion.ViewModels
             // hack to get ICollectionView to comply with ItemsRepeater
             try
             {
-                LibraryPage.ProfilesRepeater.ItemsSource = null;
-                LibraryPage.ProfilesRepeater.ItemsSource = ProfilesView;
+                // ProfilesView.Refresh();
+                if (LibraryPage.ProfilesRepeater is not null)
+                {
+                    LibraryPage.ProfilesRepeater.ItemsSource = null;
+                    LibraryPage.ProfilesRepeater.ItemsSource = ProfilesView;
+                }
+
+                // FavoritesView.Refresh();
+                if (LibraryPage.FavoritesRepeater is not null)
+                {
+                    LibraryPage.FavoritesRepeater.ItemsSource = null;
+                    LibraryPage.FavoritesRepeater.ItemsSource = FavoritesView;
+                }
             }
             catch (NullReferenceException) { }
             catch { }
+
+            OnPropertyChanged(nameof(HasLiked));
         }
 
         private void ProfileManager_Deleted(Profile profile)

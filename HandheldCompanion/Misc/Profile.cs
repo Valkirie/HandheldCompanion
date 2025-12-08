@@ -129,7 +129,7 @@ public partial class Profile : ICloneable, IComparable
     public List<string> Executables { get; set; } = new();
 
     public bool Enabled { get; set; }
-    public bool IsPinned { get; set; } = true;
+    public bool IsLiked { get; set; } = false;
     public bool SuspendOnSleep { get; set; }
     public bool SuspendOnQT { get; set; }
 
@@ -166,8 +166,8 @@ public partial class Profile : ICloneable, IComparable
     // power & graphics
     public Dictionary<int, Guid> PowerProfiles { get; set; } = new()
     {
-        { 0 /*PowerLineStatus.Offline*/, new() },
-        { 1 /*PowerLineStatus.Online*/, new() },
+        { 0 /*PowerLineStatus.Offline*/, Guid.Empty },
+        { 1 /*PowerLineStatus.Online*/, Guid.Empty },
     };
 
     public int FramerateValue { get; set; } = 0; // default RTSS value

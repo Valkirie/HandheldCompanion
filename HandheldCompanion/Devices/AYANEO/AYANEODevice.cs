@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
 
 namespace HandheldCompanion.Devices.AYANEO
 {
@@ -16,6 +17,37 @@ namespace HandheldCompanion.Devices.AYANEO
         {
             // device specific settings
             UseOpenLib = true;
+
+            DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileAYANEOBetterBattery, Properties.Resources.PowerProfileAYANEOBetterBatteryDesc)
+            {
+                Default = true,
+                DeviceDefault = true,
+                OSPowerMode = OSPowerMode.BetterBattery,
+                CPUBoostLevel = CPUBoostLevel.Disabled,
+                Guid = BetterBatteryGuid,
+                TDPOverrideEnabled = true,
+                TDPOverrideValues = new[] { 8.0d, 8.0d, 8.0d }
+            });
+
+            DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileAYANEOBetterPerformance, Properties.Resources.PowerProfileAYANEOBetterPerformanceDesc)
+            {
+                Default = true,
+                DeviceDefault = true,
+                OSPowerMode = OSPowerMode.BetterPerformance,
+                Guid = BetterPerformanceGuid,
+                TDPOverrideEnabled = true,
+                TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d }
+            });
+
+            DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileAYANEOBestPerformance, Properties.Resources.PowerProfileAYANEOBestPerformanceDesc)
+            {
+                Default = true,
+                DeviceDefault = true,
+                OSPowerMode = OSPowerMode.BestPerformance,
+                Guid = BestPerformanceGuid,
+                TDPOverrideEnabled = true,
+                TDPOverrideValues = new[] { 28.0d, 28.0d, 28.0d }
+            });
         }
 
         public override string GetGlyph(ButtonFlags button)

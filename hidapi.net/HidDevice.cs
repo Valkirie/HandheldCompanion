@@ -77,7 +77,7 @@ namespace hidapi
                     deviceInfo = hidDeviceInfo.NextDevicePtr;
                 }
 
-                HidApiNative.hid_free_enumeration(deviceInfo);
+                HidApiNative.hid_free_enumeration(devEnum);
                 return _deviceHandle != IntPtr.Zero;
             }
         }
@@ -195,8 +195,15 @@ namespace hidapi
         private void ReadLoop()
         {
             while (_reading && !_halting)
-                if (Read(_buffer) > 0 && OnInputReceived != null)
+            {
+                int len = Read(_buffer);
+                if (len > 0 && OnInputReceived != null)
                     _ = OnInputReceived(new HidDeviceInputReceivedEventArgs(this, _buffer));
+                else if (len == 0)
+                    continue;
+                else
+                    EndRead();
+            }
         }
 
         public void BeginRead()
@@ -229,8 +236,14 @@ namespace hidapi
 
         public void Close()
         {
-            HidApiNative.hid_close(_deviceHandle);
-            _deviceHandle = IntPtr.Zero;
+            lock (_lock)
+            {
+                if (_deviceHandle != IntPtr.Zero)
+                {
+                    HidApiNative.hid_close(_deviceHandle);
+                    _deviceHandle = IntPtr.Zero;
+                }
+            }
         }
 
         public void Dispose()

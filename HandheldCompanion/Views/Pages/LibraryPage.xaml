@@ -126,8 +126,31 @@
                 </ui:SettingsExpander>
             </ikw:SimpleStackPanel>
 
+            <!--  Favorites  -->
+            <ikw:SimpleStackPanel Spacing="8" Visibility="{Binding HasLiked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Favorites" />
+                <ui:ItemsRepeater
+                    Name="FavoritesRepeater"
+                    ItemTemplate="{StaticResource LibraryTemplateWide}"
+                    ItemsSource="{Binding FavoritesView}"
+                    VirtualizingPanel.IsVirtualizing="True"
+                    VirtualizingPanel.VirtualizationMode="Recycling">
+                    <ui:ItemsRepeater.Layout>
+                        <ui:UniformGridLayout
+                            ItemsStretch="Fill"
+                            MaximumRowsOrColumns="8"
+                            MinColumnSpacing="6"
+                            MinItemHeight="180"
+                            MinItemWidth="300"
+                            MinRowSpacing="6"
+                            Orientation="Horizontal" />
+                    </ui:ItemsRepeater.Layout>
+                </ui:ItemsRepeater>
+            </ikw:SimpleStackPanel>
+
             <!--  Library  -->
-            <ikw:SimpleStackPanel Spacing="3">
+            <ikw:SimpleStackPanel Spacing="8">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Library" />
                 <ui:ItemsRepeater
                     Name="ProfilesRepeater"
                     ItemTemplate="{StaticResource LibraryTemplate}"
@@ -135,13 +158,12 @@
                     VirtualizingPanel.IsVirtualizing="True"
                     VirtualizingPanel.VirtualizationMode="Recycling">
                     <ui:ItemsRepeater.Layout>
-                        <!--  3:2 ratio  -->
                         <ui:UniformGridLayout
                             ItemsStretch="Uniform"
                             MaximumRowsOrColumns="8"
                             MinColumnSpacing="6"
-                            MinItemHeight="350"
-                            MinItemWidth="210"
+                            MinItemHeight="275"
+                            MinItemWidth="150"
                             MinRowSpacing="6"
                             Orientation="Horizontal" />
                     </ui:ItemsRepeater.Layout>

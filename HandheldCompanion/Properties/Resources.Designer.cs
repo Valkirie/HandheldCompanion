@@ -4777,6 +4777,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Quick Copilot.
+        /// </summary>
+        public static string Hotkey_CopilotVoice {
+            get {
+                return ResourceManager.GetString("Hotkey_CopilotVoice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open Copilot and start voice (Alt+T).
+        /// </summary>
+        public static string Hotkey_CopilotVoiceDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_CopilotVoiceDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Current.
         /// </summary>
         public static string Hotkey_Current {
@@ -5677,7 +5695,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open Task Manager.
+        ///   Looks up a localized string similar to Open Task manager.
         /// </summary>
         public static string Hotkey_TaskManager {
             get {
@@ -7721,6 +7739,60 @@ namespace HandheldCompanion.Properties {
         public static string PerformangePage_Preset_Rename {
             get {
                 return ResourceManager.GetString("PerformangePage_Preset_Rename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extreme.
+        /// </summary>
+        public static string PowerProfileAYANEOBestPerformance {
+            get {
+                return ResourceManager.GetString("PowerProfileAYANEOBestPerformance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 28W TDP.
+        /// </summary>
+        public static string PowerProfileAYANEOBestPerformanceDesc {
+            get {
+                return ResourceManager.GetString("PowerProfileAYANEOBestPerformanceDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Saving power.
+        /// </summary>
+        public static string PowerProfileAYANEOBetterBattery {
+            get {
+                return ResourceManager.GetString("PowerProfileAYANEOBetterBattery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 8W TDP.
+        /// </summary>
+        public static string PowerProfileAYANEOBetterBatteryDesc {
+            get {
+                return ResourceManager.GetString("PowerProfileAYANEOBetterBatteryDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Balanced.
+        /// </summary>
+        public static string PowerProfileAYANEOBetterPerformance {
+            get {
+                return ResourceManager.GetString("PowerProfileAYANEOBetterPerformance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 15W TDP.
+        /// </summary>
+        public static string PowerProfileAYANEOBetterPerformanceDesc {
+            get {
+                return ResourceManager.GetString("PowerProfileAYANEOBetterPerformanceDesc", resourceCulture);
             }
         }
         
@@ -10607,6 +10679,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Advanced settings.
+        /// </summary>
+        public static string SettingsPage_AdvancedSettings {
+            get {
+                return ResourceManager.GetString("SettingsPage_AdvancedSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allows advanced device settings modifications, including power and voltage values.
+        /// </summary>
+        public static string SettingsPage_AdvancedSettingsDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_AdvancedSettingsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Language.
         /// </summary>
         public static string SettingsPage_AppLanguage {
@@ -10756,6 +10846,24 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_CloseMinimizesDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_CloseMinimizesDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CPU Curve Optimiser (All Cores).
+        /// </summary>
+        public static string SettingsPage_CurveOptimiser {
+            get {
+                return ResourceManager.GetString("SettingsPage_CurveOptimiser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the all core Curve Optimiser Frequency/Voltage curve offset (negative values to undervolt, positive to add margin).
+        /// </summary>
+        public static string SettingsPage_CurveOptimiserDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_CurveOptimiserDesc", resourceCulture);
             }
         }
         

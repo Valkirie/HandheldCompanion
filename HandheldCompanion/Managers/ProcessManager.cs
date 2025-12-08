@@ -78,7 +78,7 @@ public class ProcessManager : IManager
         m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, winDelegate, 0, 0, WINEVENT_OUTOFCONTEXT);
 
         ForegroundTimer = new Timer(2000);
-        ForegroundTimer.Elapsed += (sender, e) => ForegroundCallback(false);
+        ForegroundTimer.Elapsed += (sender, e) => ForegroundCallback(false, IntPtr.Zero);
 
         ProcessWatcher = new Timer(2000);
         ProcessWatcher.Elapsed += (sender, e) => ProcessWatcher_Elapsed();
@@ -234,7 +234,7 @@ public class ProcessManager : IManager
     private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
     {
         // Avoid locking UI thread by running the action in a task
-        Task.Run(() => ForegroundCallback(true));
+        Task.Run(() => ForegroundCallback(true, hwnd));
     }
 
     private void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
@@ -333,9 +333,10 @@ public class ProcessManager : IManager
         return Processes.Values.Where(a => a.Executable.Equals(executable, StringComparison.InvariantCultureIgnoreCase)).ToList();
     }
 
-    private async void ForegroundCallback(bool IsEventProc)
+    private void ForegroundCallback(bool IsEventProc, IntPtr hWnd)
     {
-        IntPtr hWnd = GetforegroundWindow();
+        if (hWnd == IntPtr.Zero)
+            hWnd = GetforegroundWindow();
 
         // skip if this window is already in foreground
         if (currenthWnd == hWnd || hWnd == IntPtr.Zero)
@@ -346,7 +347,7 @@ public class ProcessManager : IManager
         // update current foreground window
         currenthWnd = hWnd;
 
-        AutomationElement element = null;
+        AutomationElement? element = null;
         int processId = 0;
 
         try
@@ -356,11 +357,11 @@ public class ProcessManager : IManager
             if (!task.Wait(TimeSpan.FromSeconds(5)))
                 return;
 
+            // get element
             element = task.Result;
-            if (element is null)
-                return;
 
-            processId = element.Current.ProcessId;
+            // get processId
+            processId = element?.Current.ProcessId ?? 0;
         }
         catch (COMException)
         {
@@ -370,6 +371,9 @@ public class ProcessManager : IManager
         {
             // Automation failed to retrieve process id
         }
+
+        if (element is null)
+            return;
 
         ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
         if (processInfo is not null)
@@ -385,14 +389,14 @@ public class ProcessManager : IManager
                 if (!CreateOrUpdateProcess(processId, element))
                     return;
 
-            if (!Processes.TryGetValue(processId, out ProcessEx process))
+            if (!Processes.TryGetValue(processId, out ProcessEx? process))
                 return;
 
             // store previous process
             ProcessEx prevProcess = currentProcess;
 
             // get filter
-            ProcessFilter filter = GetFilter(process.Executable, process.Path);
+            ProcessFilter filter = GetFilter(process.Executable, process.Path, string.Empty, element?.Current.ClassName ?? string.Empty);
 
             switch (filter)
             {
@@ -541,7 +545,7 @@ public class ProcessManager : IManager
         }
     }
 
-    public static ProcessFilter GetFilter(string exec, string path, string MainWindowTitle = "")
+    public static ProcessFilter GetFilter(string exec, string path, string MainWindowTitle = "", string WindowClassName = "")
     {
         if (string.IsNullOrEmpty(path))
             return ProcessFilter.Restricted;
@@ -596,11 +600,22 @@ public class ProcessManager : IManager
             case "searchhost.exe":
             case "startmenuexperiencehost.exe":
             case "textinputhost.exe":
+            case "shellhost.exe":
                 return ProcessFilter.Restricted;
 
             // Desktop
             case "explorer.exe":
-                return ProcessFilter.Desktop;
+                {
+                    switch (WindowClassName)
+                    {
+                        case "Shell_TrayWnd":                           // Clicking taskbar
+                        case "ForegroundStaging":                       // Summoning task tray
+                        case "XamlExplorerHostIslandWindow":            // Navigation task tray
+                        case "ApplicationManager_DesktopShellWindow":   // Clicking a notification
+                            return ProcessFilter.Restricted;
+                    }
+                    return ProcessFilter.Desktop;
+                }
 
             default:
                 return ProcessFilter.Allowed;

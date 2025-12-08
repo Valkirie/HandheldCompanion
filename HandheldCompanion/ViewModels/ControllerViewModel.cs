@@ -105,8 +105,9 @@ namespace HandheldCompanion.ViewModels
 
             ConnectCommand = new DelegateCommand(async () =>
             {
-                string path = Controller.GetContainerInstanceId();
-                ControllerManager.SetTargetController(path, false);
+                string path = Controller?.GetContainerInstanceId() ?? string.Empty;
+                if (!string.IsNullOrEmpty(path))
+                    ControllerManager.SetTargetController(path, false);
             });
 
             HideCommand = new DelegateCommand(async () =>
@@ -114,15 +115,15 @@ namespace HandheldCompanion.ViewModels
                 await Task.Run(() =>
                 {
                     if (IsHidden)
-                        Controller.Unhide();
+                        Controller?.Unhide();
                     else
-                        Controller.Hide();
+                        Controller?.Hide();
                 });
             });
 
             CalibrateCommand = new DelegateCommand(async () =>
             {
-                Controller.Calibrate();
+                Controller?.Calibrate();
             });
 
             SwitchLayoutCommand = new DelegateCommand(async () =>

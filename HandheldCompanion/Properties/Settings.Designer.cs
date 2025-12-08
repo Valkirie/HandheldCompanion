@@ -1425,5 +1425,17 @@ namespace HandheldCompanion.Properties
                 this["HIDuncloakondisconnect"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double RyzenAdjCoall {
+            get {
+                return ((double)(this["RyzenAdjCoall"]));
+            }
+            set {
+                this["RyzenAdjCoall"] = value;
+            }
+        }
     }
 }

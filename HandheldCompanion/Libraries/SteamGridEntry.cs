@@ -10,9 +10,11 @@ namespace HandheldCompanion.Libraries
     {
         public SteamGridDbGrid Grid;
         public SteamGridDbHero Hero;
+        public SteamGridDbLogo Logo;
 
         [JsonIgnore] public SteamGridDbGrid[] Grids;
         [JsonIgnore] public SteamGridDbHero[] Heroes;
+        [JsonIgnore] public SteamGridDbLogo[] Logos;
 
         public SteamGridEntry(long id, string name, DateTime releaseDate) : base(LibraryFamily.SteamGrid, id, name, releaseDate)
         { }
@@ -45,6 +47,21 @@ namespace HandheldCompanion.Libraries
                 return Path.GetExtension(thumbnail ? Hero.ThumbnailImageUrl : Hero.FullImageUrl);
 
             return base.GetArtworkExtension(thumbnail);
+        }
+
+        public override long GetLogoId()
+        {
+            if (Logo is not null)
+                return Logo.Id;
+            return 0;
+        }
+
+        public override string GetLogoExtension(bool thumbnail)
+        {
+            if (Logo is not null)
+                return Path.GetExtension(thumbnail ? Logo.ThumbnailImageUrl : Logo.FullImageUrl);
+
+            return base.GetLogoExtension(thumbnail);
         }
     }
 }

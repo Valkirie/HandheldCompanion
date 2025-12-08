@@ -57,6 +57,9 @@ namespace HandheldCompanion.ViewModels
         public DateTime DateCreated => _Profile.DateCreated;
         public DateTime DateModified => _Profile.DateModified;
         public DateTime LastUsed => _Profile.LastUsed;
+        public bool IsLiked => _Profile.IsLiked;
+
+        public GamePlatform PlatformType => _Profile.PlatformType;
 
         public GamePlatform PlatformType => _Profile.PlatformType;
 
@@ -154,6 +157,21 @@ namespace HandheldCompanion.ViewModels
                 string imageExtension = Profile.LibraryEntry.GetArtworkExtension(false);
 
                 return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.artwork, imageId, imageExtension);
+            }
+        }
+
+        public BitmapImage Logo
+        {
+            get
+            {
+                if (Profile.LibraryEntry is null)
+                    return null;
+
+                long id = Profile.LibraryEntry.Id;
+                long imageId = Profile.LibraryEntry.GetLogoId();
+                string imageExtension = Profile.LibraryEntry.GetLogoExtension(false);
+
+                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.logo, imageId, imageExtension);
             }
         }
 

@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Inputs;
-using HandheldCompanion.Shared;
 using System.Numerics;
 using WindowsInput.Events;
 
@@ -51,28 +50,5 @@ public class OneXPlayerMiniPro : OneXPlayerMini
         }
 
         return defaultGlyph;
-    }
-
-    public override bool Open()
-    {
-        bool success = base.Open();
-        if (!success)
-            return false;
-
-        // allow OneX button to pass key inputs
-        LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
-
-        ECRamDirectWriteByte(0x4F1, ECDetails, 0x40);
-        ECRamDirectWriteByte(0x4F2, ECDetails, 0x02);
-
-        return (ECRamDirectReadByte(0x4F1, ECDetails) == 0x40 && ECRamDirectReadByte(0x4F2, ECDetails) == 0x02);
-    }
-
-    public override void Close()
-    {
-        LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
-        ECRamDirectWriteByte(0x4F1, ECDetails, 0x00);
-        ECRamDirectWriteByte(0x4F2, ECDetails, 0x00);
-        base.Close();
     }
 }

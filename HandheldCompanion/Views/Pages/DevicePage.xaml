@@ -41,46 +41,67 @@
                 </ui:SettingsCard>
 
                 <!--  Configurable TDP  -->
-                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_TDPRangeOverrideDesc}" Header="{l:Static resx:Resources.SettingsPage_TDPRangeOverride}">
-                    <ui:SettingsCard.HeaderIcon>
+                <ui:SettingsExpander Description="{l:Static resx:Resources.SettingsPage_AdvancedSettingsDesc}" Header="{l:Static resx:Resources.SettingsPage_AdvancedSettings}">
+                    <ui:SettingsExpander.HeaderIcon>
                         <ui:FontIcon Glyph="&#xe785;" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ui:ToggleSwitch Name="Toggle_cTDP" Toggled="Toggle_cTDP_Toggled" />
-                </ui:SettingsCard>
+                    </ui:SettingsExpander.HeaderIcon>
+                    <ui:ToggleSwitch Name="Toggle_cTDP" IsOn="{Binding HasAdvancedSettings, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
-                <!--  Configurable TDP down  -->
-                <ui:SettingsCard
-                    d:Visibility="Visible"
-                    Description="{l:Static resx:Resources.SettingsPage_TDPMinDesc}"
-                    Header="{l:Static resx:Resources.SettingsPage_TDPMin}"
-                    Visibility="{Binding ElementName=Toggle_cTDP, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon Glyph="&#xE713;" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ui:NumberBox
-                        Name="NumberBox_TDPMin"
-                        MinWidth="20"
-                        Minimum="3"
-                        SpinButtonPlacementMode="Inline"
-                        ValueChanged="NumberBox_TDPMin_ValueChanged" />
-                </ui:SettingsCard>
+                    <ui:SettingsExpander.Items>
+                        <!--  Configurable TDP down  -->
+                        <ui:SettingsCard
+                            Description="{l:Static resx:Resources.SettingsPage_TDPMinDesc}"
+                            Header="{l:Static resx:Resources.SettingsPage_TDPMin}"
+                            IsEnabled="{Binding HasAdvancedSettings, UpdateSourceTrigger=PropertyChanged}">
+                            <ui:NumberBox
+                                Name="NumberBox_TDPMin"
+                                MinWidth="20"
+                                Minimum="3"
+                                SpinButtonPlacementMode="Inline"
+                                ValueChanged="NumberBox_TDPMin_ValueChanged" />
+                        </ui:SettingsCard>
 
-                <!--  Configurable TDP up  -->
-                <ui:SettingsCard
-                    d:Visibility="Visible"
-                    Description="{l:Static resx:Resources.SettingsPage_TDPMaxDesc}"
-                    Header="{l:Static resx:Resources.SettingsPage_TDPMax}"
-                    Visibility="{Binding ElementName=Toggle_cTDP, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon Glyph="&#xE713;" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ui:NumberBox
-                        Name="NumberBox_TDPMax"
-                        MinWidth="20"
-                        Maximum="75"
-                        SpinButtonPlacementMode="Inline"
-                        ValueChanged="NumberBox_TDPMax_ValueChanged" />
-                </ui:SettingsCard>
+                        <!--  Configurable TDP up  -->
+                        <ui:SettingsCard
+                            Description="{l:Static resx:Resources.SettingsPage_TDPMaxDesc}"
+                            Header="{l:Static resx:Resources.SettingsPage_TDPMax}"
+                            IsEnabled="{Binding HasAdvancedSettings, UpdateSourceTrigger=PropertyChanged}">
+                            <ui:NumberBox
+                                Name="NumberBox_TDPMax"
+                                MinWidth="20"
+                                Maximum="75"
+                                SpinButtonPlacementMode="Inline"
+                                ValueChanged="NumberBox_TDPMax_ValueChanged" />
+                        </ui:SettingsCard>
+
+                        <!--  RyzenAdj (set_coall)  -->
+                        <ui:SettingsCard
+                            Description="{l:Static resx:Resources.SettingsPage_CurveOptimiserDesc}"
+                            Header="{l:Static resx:Resources.SettingsPage_CurveOptimiser}"
+                            IsEnabled="{Binding HasAdvancedSettings, UpdateSourceTrigger=PropertyChanged}"
+                            Visibility="{Binding IsAMD, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <DockPanel>
+                                <Label
+                                    VerticalAlignment="Center"
+                                    Content="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference Slider_SetCoall}, Mode=OneWay}"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                <Slider
+                                    Name="Slider_SetCoall"
+                                    Width="200"
+                                    Margin="6,0,0,0"
+                                    IsMoveToPointEnabled="True"
+                                    IsSnapToTickEnabled="True"
+                                    LargeChange="2"
+                                    Maximum="10"
+                                    Minimum="-10"
+                                    SmallChange="1"
+                                    TickFrequency="1"
+                                    TickPlacement="BottomRight"
+                                    ValueChanged="Slider_SetCoall_ValueChanged" />
+                            </DockPanel>
+                        </ui:SettingsCard>
+                    </ui:SettingsExpander.Items>
+                </ui:SettingsExpander>
             </ikw:SimpleStackPanel>
 
             <!--  Security options  -->
@@ -160,6 +181,7 @@
                         <Slider
                             x:Name="Slider_BatteryChargeLimitPercent"
                             Width="200"
+                            Margin="6,0,0,0"
                             IsMoveToPointEnabled="True"
                             IsSnapToTickEnabled="True"
                             LargeChange="{Binding BatteryBypassStep, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"

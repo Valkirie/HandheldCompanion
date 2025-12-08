@@ -292,55 +292,68 @@ namespace HandheldCompanion.Managers
                 SetControllerMode(defaultHIDmode);
         }
 
+        private static readonly object tempControllersLock = new();
         public static int CreateTemporaryControllers()
         {
-            // Sanity-check: if the ViGEm client isn't available, abort
             if (vClient is null)
                 return 0;
 
-            // count available slots
+            // count available XInput slots
             int availableSlots = 0;
             for (int i = 0; i < XInputController.MaxControllers; i++)
             {
                 Controller controller = new Controller((UserIndex)i);
-                if (!controller.IsConnected)
-                    availableSlots++;
+                if (!controller.IsConnected) availableSlots++;
             }
 
-            // initialize controllers
+            int created = 0;
+
             for (int i = 0; i < availableSlots; i++)
             {
                 try
                 {
                     IXbox360Controller controller = vClient.CreateXbox360Controller(VendorId, ProductId);
                     controller.Connect();
-                    temporaryControllers.Add(controller);
+
+                    lock (tempControllersLock)
+                    {
+                        temporaryControllers.Add(controller);
+                        created++;
+                    }
+
                     Thread.Sleep(500);
                 }
-                catch { }
+                catch { /* swallow */ }
             }
 
-            return temporaryControllers.Count;
+            lock (tempControllersLock) { return temporaryControllers.Count; }
         }
 
         public static void DisposeTemporaryControllers()
         {
-            // Sanity-check: if the ViGEm client isn't available, abort
             if (vClient is null)
                 return;
 
-            // dispose controllers
-            foreach (IXbox360Controller controller in temporaryControllers)
+            IXbox360Controller[] snapshot;
+
+            lock (tempControllersLock)
+            {
+                if (temporaryControllers.Count == 0)
+                    return;
+
+                snapshot = temporaryControllers.ToArray();
+                temporaryControllers.Clear();
+            }
+
+            foreach (IXbox360Controller controller in snapshot)
             {
                 try
                 {
                     controller.Disconnect();
                     Thread.Sleep(500);
                 }
-                catch { }
+                catch { /* swallow */ }
             }
-
-            temporaryControllers.Clear();
         }
 
         private static void SetDSUStatus(bool started)

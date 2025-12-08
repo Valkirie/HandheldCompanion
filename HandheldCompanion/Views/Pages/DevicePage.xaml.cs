@@ -548,6 +548,18 @@ namespace HandheldCompanion.Views.Pages
             ManagerFactory.settingsManager.SetProperty("BatteryBypassChargingMode", CB_BatteryBypassCharging.SelectedIndex);
         }
 
+        private void Slider_SetCoall_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            var value = Slider_SetCoall.Value;
+            if (double.IsNaN(value))
+                return;
+
+            if (!IsLoaded)
+                return;
+
+            ManagerFactory.settingsManager.SetProperty("RyzenAdjCoall", value);
+        }
+
         #region Sensor
         private void cB_SensorSelection_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
         {

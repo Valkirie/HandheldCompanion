@@ -6,14 +6,13 @@ using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices
 {
-    public class OneXPlayer2 : IDevice
+    public class OneXPlayer2 : OneXAOKZOE
     {
         public OneXPlayer2() : base()
         {
             // device specific settings
             this.ProductIllustration = "device_onexplayer_2";
             this.ProductModel = "ONEXPLAYER 2 6800U";
-            this.UseOpenLib = true;
 
             // https://www.amd.com/en/products/apu/amd-ryzen-7-6800u
             this.nTDP = new double[] { 15, 15, 20 };
@@ -36,9 +35,6 @@ namespace HandheldCompanion.Devices
                 { 'Y', 'Z' },
                 { 'Z', 'Y' },
             };
-
-            // device specific capacities
-            this.Capabilities = DeviceCapabilities.FanControl;
 
             ECDetails = new ECDetails
             {
@@ -82,18 +78,36 @@ namespace HandheldCompanion.Devices
                 return false;
 
             // allow OneX button to pass key inputs
-            LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM2);
+            EcWriteByte(0xEB, 0xEB);
+            if (ECRamReadByte(0xEB) == 0xEB)
+                LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM2);
 
-            ECRamDirectWriteByte(0x4EB, ECDetails, 0xEB);
-
-            return ECRamDirectReadByte(0x4EB, ECDetails) == 0xEB;
+            return success;
         }
 
         public override void Close()
         {
-            LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM2);
-            ECRamDirectWriteByte(0x4EB, ECDetails, 0x00);
+            EcWriteByte(0xEB, 0x00);
+            if (EcReadByte(0xEB) == 0x00)
+                LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM2);
+
             base.Close();
+        }
+    }
+
+    public class OneXPlayer2Pro : OneXPlayer2
+    {
+        public OneXPlayer2Pro()
+        {
+            // device specific settings
+            ProductIllustration = "device_onexplayer_2";
+            ProductModel = "ONEXPLAYER 2 7840U";
+
+            // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html
+            nTDP = new double[] { 15, 15, 20 };
+            cTDP = new double[] { 4, 30 };
+            GfxClock = new double[] { 100, 2700 };
+            CpuClock = 5100;
         }
     }
 }

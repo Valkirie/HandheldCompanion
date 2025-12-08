@@ -1,20 +1,20 @@
 using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Shared;
 using HidLibrary;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices;
-public class OneXPlayerOneXFly : IDevice
+
+public class OneXPlayerOneXFly : OneXAOKZOE
 {
-    protected HidDevice hidDevice;
+    protected HidDevice? hidDevice;
+    protected const int PID_LED = 0xB001;
 
     public OneXPlayerOneXFly()
     {
@@ -47,7 +47,6 @@ public class OneXPlayerOneXFly : IDevice
         };
 
         // device specific capacities
-        Capabilities = DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.DynamicLighting;
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
 
@@ -67,7 +66,11 @@ public class OneXPlayerOneXFly : IDevice
 
         // LED HID Device
         vendorId = 0x1A2C;
-        productIds = [0xB001];
+        productIds = [PID_LED];
+        hidFilters = new()
+        {
+            { PID_LED, new HidFilter(unchecked((short)0xFF01), unchecked(0x0001)) },
+        };
 
         OEMChords.Add(new KeyboardChord("Turbo",
             [KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu],
@@ -107,6 +110,34 @@ public class OneXPlayerOneXFly : IDevice
         ));
         */
     }
+
+    public override void SetFanControl(bool enable, int mode)
+    {
+        if (!UseOpenLib || !IsOpen)
+            return;
+
+        // Determine the fan control mode based enable
+        byte controlValue = enable ? (byte)FanControlMode.Manual : (byte)FanControlMode.Automatic;
+
+        // Update the fan control mode
+        EcWriteByte(ACPI_FanMode_Address, controlValue);
+    }
+
+    public override void SetFanDuty(double percent)
+    {
+        if (!UseOpenLib || !IsOpen)
+            return;
+
+        // Convert 0-100 percentage to range
+        byte fanSpeedSetpoint = (byte)(percent * (ECDetails.FanValueMax - ECDetails.FanValueMin) / 100 + ECDetails.FanValueMin);
+
+        // Ensure the value is within the valid range
+        fanSpeedSetpoint = Math.Min((byte)ECDetails.FanValueMax, Math.Max((byte)ECDetails.FanValueMin, fanSpeedSetpoint));
+
+        // Set the requested fan speed
+        EcWriteByte(ACPI_FanPWMDutyCycle_Address, fanSpeedSetpoint);
+    }
+
     public override string GetGlyph(ButtonFlags button)
     {
         switch (button)
@@ -126,39 +157,22 @@ public class OneXPlayerOneXFly : IDevice
         return defaultGlyph;
     }
 
-    public override bool Open()
-    {
-        bool success = base.Open();
-        if (!success)
-            return false;
-
-        // allow OneX turbo button to pass key inputs
-        LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
-
-        ECRamDirectWriteByte(0x4F1, ECDetails, 0x40);
-
-        return (ECRamDirectReadByte(0x4F1, ECDetails) == 0x40);
-    }
-
-    public override void Close()
-    {
-        LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
-        ECRamDirectWriteByte(0x4F1, ECDetails, 0x00);
-        base.Close();
-    }
-
     public override bool IsReady()
     {
-        // Prepare list for all HID devices
-        IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds);
+        IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 0);
         foreach (HidDevice device in devices)
         {
-            // OneXFly device for LED control does not support a FeatureReport, hardcoded to match the Interface Number
-            if (device.IsConnected && device.DevicePath.Contains("&mi_00"))
-            {
-                hidDevice = device;
-                return true;
-            }
+            if (!device.IsConnected)
+                continue;
+
+            if (!hidFilters.TryGetValue(device.Attributes.ProductId, out HidFilter hidFilter))
+                continue;
+
+            if (device.Capabilities.UsagePage != hidFilter.UsagePage || device.Capabilities.Usage != hidFilter.Usage)
+                continue;
+
+            hidDevice = device;
+            return true;
         }
 
         return false;
@@ -166,20 +180,8 @@ public class OneXPlayerOneXFly : IDevice
 
     public override bool SetLedBrightness(int brightness)
     {
-        // OneXFly brightness range is: 0 - 4 range, 0 is off, convert from 0 - 100 % range
-        brightness = (int)Math.Round(brightness / 20.0);
-
-        // Check if device is availible
-        if (hidDevice is null || !hidDevice.IsConnected)
-            return false;
-
-        // Define the HID message for setting brightness.
-        byte[] msg = { 0x00, 0x07, 0xFF, 0xFD, 0x01, 0x05, (byte)brightness };
-
-        // Write the HID message to set the LED brightness.
-        hidDevice.Write(msg);
-
-        return true;
+        // OneXFly / F1 Pro use HID v2 (0x1A2C:0xB001, FF01:0001).
+        return SendV2Brightness(hidDevice, brightness);
     }
 
     public override bool SetLedColor(Color mainColor, Color secondaryColor, LEDLevel level, int speed = 100)
@@ -187,49 +189,24 @@ public class OneXPlayerOneXFly : IDevice
         if (!DynamicLightingCapabilities.HasFlag(level))
             return false;
 
-        // Data message consists of a prefix, LED option, RGB data, and closing byte (0x00)
-        byte[] prefix = { 0x00, 0x07, 0xFF };
-        byte[] LEDOption = { 0x00 };
-        byte[] rgbData = { 0x00 };
-
-        // Perform functions and command build-up based on LED level
         switch (level)
         {
             case LEDLevel.SolidColor:
-                // Find nearest possible color due to RGB limitations of the device
-                Color ledColor = FindClosestColor(mainColor);
-
-                LEDOption = new byte[] { 0xFE };
-
-                // RGB data repeats 20 times, fill accordingly
-                rgbData = Enumerable.Repeat(new[] { ledColor.R, ledColor.G, ledColor.B }, 20)
-                                    .SelectMany(colorBytes => colorBytes)
-                                    .ToArray();
-                break;
+                {
+                    // Find nearest possible color due to RGB limitations of the device
+                    Color ledColor = FindClosestColor(mainColor);
+                    return SendV2SolidColor(hidDevice, ledColor);
+                }
 
             case LEDLevel.Rainbow:
-                // OneXConsole "Flowing Light" effect as a rainbow effect
-                LEDOption = new byte[] { 0x03 };
-
-                // RGB data empty, repeats 60 times, fill accordingly
-                rgbData = Enumerable.Repeat((byte)0x00, 60).ToArray();
-                break;
+                {
+                    // Map "Rainbow" to the built-in flowing mode
+                    return SendV2Rainbow(hidDevice);
+                }
 
             default:
                 return false;
         }
-
-        // Check if device is availible
-        if (hidDevice is null || !hidDevice.IsConnected)
-            return false;
-
-        // Combine prefix, LED Option, RGB data, and closing byte (0x00)
-        byte[] msg = prefix.Concat(LEDOption).Concat(rgbData).Concat(new byte[] { 0x00 }).ToArray();
-
-        // Write the HID message to set the RGB color effect
-        hidDevice.Write(msg);
-
-        return true;
     }
 
     static Color FindClosestColor(Color inputColor)
@@ -282,5 +259,17 @@ public class OneXPlayerOneXFly : IDevice
 
         // Euclidean distance formula
         return Math.Sqrt(deltaR * deltaR + deltaG * deltaG + deltaB * deltaB);
+    }
+}
+
+public class OneXPlayerOneXFlyF1Pro : OneXPlayerOneXFly
+{
+    public OneXPlayerOneXFlyF1Pro()
+    {
+        // https://www.amd.com/en/products/processors/laptop/ryzen/300-series/amd-ryzen-ai-9-365.html
+        nTDP = new double[] { 15, 15, 20 };
+        cTDP = new double[] { 5, 30 };
+        GfxClock = new double[] { 100, 2900 };
+        CpuClock = 5100;
     }
 }

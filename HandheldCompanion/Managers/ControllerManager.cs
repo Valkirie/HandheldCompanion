@@ -24,6 +24,7 @@ using SharpDX.XInput;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,6 +35,7 @@ using Windows.UI.ViewManagement;
 using static HandheldCompanion.Misc.ProcessEx;
 using static HandheldCompanion.Utils.DeviceUtils;
 using DriverStore = HandheldCompanion.Helpers.DriverStore;
+using MediaColor = System.Windows.Media.Color;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
@@ -53,6 +55,8 @@ public static class ControllerManager
 
     private static Thread watchdogThread;
     private static bool watchdogThreadRunning;
+    private static readonly object watchdogLock = new();
+    private static int watchdogStarted;
     private static Thread pumpThread;
     private static bool pumpThreadRunning;
 
@@ -136,6 +140,7 @@ public static class ControllerManager
         UIGamepad.LostFocus += GamepadFocusManager_FocusChanged;
         VirtualManager.Vibrated += VirtualManager_Vibrated;
         MainWindow.uiSettings.ColorValuesChanged += OnColorValuesChanged;
+        ToastManager.CommandReceived += ToastCommandRouter;
 
         // manage device events
         IDevice.GetCurrent().KeyPressed += CurrentDevice_KeyPressed;
@@ -194,6 +199,24 @@ public static class ControllerManager
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "ControllerManager");
+    }
+
+    private static void ToastCommandRouter(string command, IReadOnlyDictionary<string, string> args)
+    {
+        try
+        {
+            switch (command)
+            {
+                case "SetTarget":
+                    if (args.TryGetValue("deviceId", out string? baseContainerDeviceInstanceId) && !string.IsNullOrEmpty(baseContainerDeviceInstanceId))
+                    {
+                        bool powerCycle = args.TryGetValue("powerCycle", out string? pc) && bool.TryParse(pc, out bool pC) && pC;
+                        SetTargetController(baseContainerDeviceInstanceId, powerCycle);
+                    }
+                    break;
+            }
+        }
+        catch { /* ignore */ }
     }
 
     private static void Tick(long ticks, float delta)
@@ -281,6 +304,33 @@ public static class ControllerManager
                 }
             }
         }
+    }
+
+    private static void ShowDetectedToast(IController controller, bool isCycling)
+    {
+        Color winColor = MainWindow.uiSettings.GetColorValue(UIColorType.Foreground);
+
+        string iconFile = ToastIconHelper.RenderGlyphPng(
+            glyph: "\ue7fc",
+            outputPath: Path.Combine(Path.GetTempPath(), "connect_to_app.png"),
+            foreground: MediaColor.FromArgb(winColor.A, winColor.R, winColor.G, winColor.B));
+
+        ToastManager.SendToast(new ToastRequest
+        {
+            Title = controller.ToString(),
+            Content = "detected",
+            Actions =
+            {
+                new ToastAction
+                {
+                    Label = "Connect",
+                    IconPath = iconFile,
+                    Command = "SetTarget",
+                    Parameters = new() { { "deviceId", controller.GetContainerInstanceId() }, { "powerCycle", isCycling.ToString() } },
+                    Callback = p => SetTargetController(p["deviceId"], isCycling)
+                }
+            }
+        });
     }
 
     private static async void SDL_GamepadAdded(uint deviceIndex)
@@ -393,6 +443,13 @@ public static class ControllerManager
                         while (!controller.IsReady && controller.IsConnected())
                             await Task.Delay(250).ConfigureAwait(false);
 
+                        // controller is gone ?
+                        if (!controller.IsConnected())
+                        {
+                            controller.Gone();
+                            return;
+                        }
+
                         controller.IsBusy = false;
 
                         Controllers[details.baseContainerDeviceInstanceId] = controller;
@@ -401,9 +458,8 @@ public static class ControllerManager
                         LogManager.LogInformation("SDL controller {0} plugged", controller.ToString());
                         ControllerPlugged?.Invoke(controller, false);
 
-                        if (!PowerCyclers.TryGetValue(controller.GetContainerInstanceId(), out bool wasCycling) || !wasCycling)
-                            if (!controller.IsVirtual())
-                                ToastManager.SendToast(controller.ToString(), "detected");
+                        if (!(PowerCyclers.TryGetValue(path, out var isCycling) && isCycling) && !controller.IsVirtual())
+                            ShowDetectedToast(controller, isCycling);
 
                         PickTargetController();
                         PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
@@ -579,6 +635,13 @@ public static class ControllerManager
                     while (!controller.IsReady && controller.IsConnected())
                         await Task.Delay(250).ConfigureAwait(false);
 
+                    // controller is gone ?
+                    if (!controller.IsConnected())
+                    {
+                        controller.Gone();
+                        return;
+                    }
+
                     controller.IsBusy = false;
 
                     string path = controller.GetContainerInstanceId();
@@ -588,7 +651,7 @@ public static class ControllerManager
                     ControllerPlugged?.Invoke(controller, PowerCyclers.TryGetValue(path, out var pc) && pc);
 
                     if (!(PowerCyclers.TryGetValue(path, out var isCycling) && isCycling) && !controller.IsVirtual())
-                        ToastManager.SendToast(controller.ToString(), "detected");
+                        ShowDetectedToast(controller, isCycling);
 
                     PickTargetController();
                     PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
@@ -720,6 +783,7 @@ public static class ControllerManager
                                 {
                                     switch (details.GetProductID())
                                     {
+                                        case "0x1ABE": // ASUS Xbox Adaptive Controller
                                         case "0x1B4C": // ASUS Xbox Adaptive Controller
                                             try { controller = new XboxAdaptiveController(details); } catch { }
                                             break;
@@ -789,6 +853,13 @@ public static class ControllerManager
                     while (!controller.IsReady && controller.IsConnected())
                         await Task.Delay(250).ConfigureAwait(false);
 
+                    // controller is gone ?
+                    if (!controller.IsConnected())
+                    {
+                        controller.Gone();
+                        return;
+                    }
+
                     controller.IsBusy = false;
 
                     string path = details.baseContainerDeviceInstanceId;
@@ -798,7 +869,7 @@ public static class ControllerManager
                     ControllerPlugged?.Invoke(controller, PowerCyclers.TryGetValue(path, out var pc) && pc);
 
                     if (!(PowerCyclers.TryGetValue(path, out var isCycling) && isCycling) && !controller.IsVirtual())
-                        ToastManager.SendToast(controller.ToString(), "detected");
+                        ShowDetectedToast(controller, isCycling);
 
                     PickTargetController();
                     PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
@@ -918,6 +989,7 @@ public static class ControllerManager
         UIGamepad.LostFocus -= GamepadFocusManager_FocusChanged;
         VirtualManager.Vibrated -= VirtualManager_Vibrated;
         MainWindow.uiSettings.ColorValuesChanged -= OnColorValuesChanged;
+        ToastManager.CommandReceived -= ToastCommandRouter;
 
         // manage device events
         IDevice.GetCurrent().KeyPressed -= CurrentDevice_KeyPressed;
@@ -927,9 +999,12 @@ public static class ControllerManager
         // todo: we might need to use lock (targetLock) within Tick event.
         Suspend(true);
 
-        // stop timer
+        // stop timer(s)
         scenarioTimer.Elapsed -= ScenarioTimer_Elapsed;
         scenarioTimer.Stop();
+
+        pickTimer.Elapsed -= PickTimer_Elapsed;
+        pickTimer.Stop();
 
         foreach (IController controller in GetPhysicalControllers<IController>())
         {
@@ -1169,22 +1244,24 @@ public static class ControllerManager
 
     public static void StartWatchdog()
     {
-        if (watchdogThreadRunning)
-            return;
+        if (Interlocked.Exchange(ref watchdogStarted, 1) == 1) return;
 
-        watchdogThreadRunning = true;
-        watchdogThread = new Thread(watchdogThreadLoop) { IsBackground = true };
-        watchdogThread.Start();
+        lock (watchdogLock)
+        {
+            watchdogThreadRunning = true;
+            watchdogThread = new Thread(_ => WatchdogLoop().GetAwaiter().GetResult()) { IsBackground = true };
+            watchdogThread.Start();
+        }
     }
 
     public static void StopWatchdog()
     {
-        if (watchdogThread is null)
-            return;
+        if (Interlocked.Exchange(ref watchdogStarted, 0) == 0) return;
 
         watchdogThreadRunning = false;
-        if (watchdogThread.IsAlive)
+        if (watchdogThread?.IsAlive == true)
             watchdogThread.Join(3000);
+        watchdogThread = null;
     }
 
     private static void VirtualManager_Vibrated(byte LargeMotor, byte SmallMotor)
@@ -1231,11 +1308,11 @@ public static class ControllerManager
     private static List<XInputController> InvalidSlotAssignments = new();
     private static bool HasInvalidController => InvalidSlotAssignments.Any();
 
-    private static async void watchdogThreadLoop(object? obj)
+    private static async Task WatchdogLoop()
     {
         while (watchdogThreadRunning)
         {
-            await Task.Delay(1000);
+            await Task.Delay(1000).ConfigureAwait(false);
 
             HashSet<byte> currentSlots = new();
             InvalidSlotAssignments.Clear();
@@ -1258,13 +1335,13 @@ public static class ControllerManager
                     controller.AttachController(index);
                 });
 
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks).ConfigureAwait(false);
 
             bool hasInvalidVirtual = InvalidSlotAssignments.Any(c => c.IsVirtual());
             if (hasInvalidVirtual)
             {
                 VirtualManager.Suspend(false);
-                await Task.Delay(1000);
+                await Task.Delay(1000).ConfigureAwait(false);
                 VirtualManager.Resume(false);
             }
 
@@ -1318,7 +1395,7 @@ public static class ControllerManager
                         VirtualManager.SetControllerMode(HIDmode.NoController);
                         Task timeout = Task.Delay(TimeSpan.FromSeconds(4));
                         while (!timeout.IsCompleted && GetVirtualControllers<XInputController>().Any())
-                            await Task.Delay(100);
+                            await Task.Delay(100).ConfigureAwait(false);
 
                         // Create temporary virtual controllers
                         // VirtualManager.VendorId = vendorId;
@@ -1328,19 +1405,19 @@ public static class ControllerManager
                         // Wait for virtual controllers to appear
                         timeout = Task.Delay(TimeSpan.FromSeconds(4));
                         while (!timeout.IsCompleted && GetVirtualControllers<XInputController>().Count() < usedSlots)
-                            await Task.Delay(100);
+                            await Task.Delay(100).ConfigureAwait(false);
 
                         // Dispose temporary
                         VirtualManager.DisposeTemporaryControllers();
                         timeout = Task.Delay(TimeSpan.FromSeconds(4));
                         while (!timeout.IsCompleted && GetVirtualControllers<XInputController>().Count() > usedSlots)
-                            await Task.Delay(100);
+                            await Task.Delay(100).ConfigureAwait(false);
 
                         // Resume main virtual controller
                         VirtualManager.SetControllerMode(HIDmode.Xbox360Controller);
                         timeout = Task.Delay(TimeSpan.FromSeconds(4));
                         while (!timeout.IsCompleted && !GetVirtualControllers<XInputController>().Any())
-                            await Task.Delay(100);
+                            await Task.Delay(100).ConfigureAwait(false);
                     }
                     else if (managerStatus != ControllerManagerStatus.Succeeded)
                     {
@@ -1357,12 +1434,12 @@ public static class ControllerManager
                     if (vController is null && ShouldAttemptControllerManagement())
                     {
                         VirtualManager.Suspend(false);
-                        await Task.Delay(1000);
+                        await Task.Delay(1000).ConfigureAwait(false);
                         VirtualManager.Resume(false);
 
                         Task timeout = Task.Delay(TimeSpan.FromSeconds(4));
                         while (!timeout.IsCompleted && !GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Any())
-                            await Task.Delay(100);
+                            await Task.Delay(100).ConfigureAwait(false);
                     }
                     else if (managerStatus != ControllerManagerStatus.Succeeded)
                     {

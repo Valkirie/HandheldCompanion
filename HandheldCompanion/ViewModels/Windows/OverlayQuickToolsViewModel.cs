@@ -1,6 +1,8 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Windows;
 using System.Windows;
+using System.Windows.Input;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -9,6 +11,8 @@ namespace HandheldCompanion.ViewModels
         public Visibility QuickKeyboardVisibility => ManagerFactory.settingsManager.GetBoolean("QuickKeyboardVisibility") ? Visibility.Visible : Visibility.Collapsed;
         public Visibility QuickTrackpadVisibility => ManagerFactory.settingsManager.GetBoolean("QuickTrackpadVisibility") ? Visibility.Visible : Visibility.Collapsed;
         public bool QuickToolsApplyNoise => ManagerFactory.settingsManager.GetBoolean("QuickToolsApplyNoise");
+
+        public ICommand PowerDropCommand { get; private set; }
 
         private OverlayQuickTools overlayQuickTools;
         public OverlayQuickToolsViewModel(OverlayQuickTools overlayQuickTools)
@@ -26,6 +30,17 @@ namespace HandheldCompanion.ViewModels
                     QuerySettings();
                     break;
             }
+
+            PowerDropCommand = new DelegateCommand<string>(async (action) =>
+            {
+                switch (action)
+                {
+                    case "Sleep": PowerActions.Sleep(force: false); break;
+                    case "Shutdown": PowerActions.Shutdown(force: false, powerOff: true); break;
+                    case "Restart": PowerActions.Restart(force: false); break;
+                    case "Lock": PowerActions.Lock(); break;
+                }
+            });
         }
 
         private void SettingsManager_Initialized()

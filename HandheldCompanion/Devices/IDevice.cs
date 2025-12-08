@@ -174,7 +174,17 @@ public abstract class IDevice
     public bool CpuMonitor = true;
     public bool GpuMonitor = true;
     public bool MemoryMonitor = true;
-    public bool BatteryMonitor = true;
+    public bool BatteryMonitor = false;
+
+    protected bool DeviceOpen = false;
+    public virtual bool IsOpen => DeviceOpen;
+
+    [DllImport("Kernel32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    protected static extern bool GetPhysicallyInstalledSystemMemory(out ulong TotalMemoryInKilobytes);
+    protected uint physicalInstalledRamGB = 16;
+
+    public Dictionary<Type, Hotkey> DeviceHotkeys = new();
 
     protected bool DeviceOpen = false;
     public virtual bool IsOpen => DeviceOpen;
@@ -215,9 +225,11 @@ public abstract class IDevice
         if (UseOpenLib)
         {
             bool success = OpenLibSys();
-
             if (!success)
+            {
+                LogManager.LogError("Failed to initialize OpenLibSys");
                 return false;
+            }
         }
 
         // set flag
@@ -540,6 +552,9 @@ public abstract class IDevice
                         case "FLIP 1S DS":
                             device = new AYANEOFlip1SDS();
                             break;
+                        case "FLIP 1S KB":
+                            device = new AYANEOFlip1SKB();
+                            break;
                     }
                 }
                 break;
@@ -605,6 +620,9 @@ public abstract class IDevice
                                     break;
                             }
                             break;
+                        case "G1618-05":
+                            device = new GPDWin5();
+                            break;
                         case "G1619-03":
                             device = new GPDWinMax2Intel();
                             break;
@@ -654,6 +672,12 @@ public abstract class IDevice
                             break;
                         case "ONEXPLAYER X1Pro":
                             device = new OneXPlayerX1Pro();
+                            break;
+                        case "ONEXPLAYER G1 i":
+                            device = new OneXPlayerG1Intel();
+                            break;
+                        case "ONEXPLAYER G1 A":
+                            device = new OneXPlayerG1AMD();
                             break;
                         case "ONEXPLAYER F1":
                             {
@@ -727,12 +751,17 @@ public abstract class IDevice
                 {
                     switch (ProductName)
                     {
-                        // Todo, figure out if theres a diff between Z1 and Z1 extreme versions
                         case "RC71L":
                             device = new ROGAlly();
                             break;
                         case "RC72LA":
                             device = new ROGAllyX();
+                            break;
+                        case "RC73YA":
+                            device = new XboxROGAlly();
+                            break;
+                        case "RC73XA":
+                            device = new XboxROGAllyX();
                             break;
                     }
                 }
@@ -1067,11 +1096,17 @@ public abstract class IDevice
 
     protected virtual void EcWriteByte(byte register, byte data)
     {
+        if (!UseOpenLib || !IsOpen)
+            return;
+
         openLibSys.EcWriteByte(register, data);
     }
 
     protected virtual byte EcReadByte(byte register)
     {
+        if (!UseOpenLib || !IsOpen)
+            return 0;
+
         return openLibSys.EcReadByte(register);
     }
 
@@ -1098,6 +1133,16 @@ public abstract class IDevice
     protected void KeyRelease(ButtonFlags button)
     {
         KeyReleased?.Invoke(button);
+    }
+
+    protected void KeyPressAndRelease(ButtonFlags button, short delay)
+    {
+        Task.Run(async () =>
+        {
+            KeyPress(button);
+            await Task.Delay(delay).ConfigureAwait(false); // Avoid blocking the synchronization context
+            KeyRelease(button);
+        });
     }
 
     public bool HasKey()

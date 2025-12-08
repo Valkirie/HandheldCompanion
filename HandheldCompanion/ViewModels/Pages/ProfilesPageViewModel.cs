@@ -238,6 +238,9 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public bool QuerySteamGrid { get; set; } = true;
+        public bool QueryIGDB { get; set; } = true;
+
         private WindowListItemViewModel FindByHwndOrName(ProcessWindow pw)
         {
             var byHwnd = AllWindows.FirstOrDefault(w => w.Hwnd == pw.Hwnd && w.Hwnd != 0);
@@ -399,10 +402,11 @@ namespace HandheldCompanion.ViewModels
                 ClearLibrary();
 
                 // get games
-                IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid | LibraryFamily.IGDB, LibrarySearchField);
+                IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames((QuerySteamGrid ? LibraryFamily.SteamGrid : LibraryFamily.None) | (QueryIGDB ? LibraryFamily.IGDB : LibraryFamily.None), LibrarySearchField);
                 if (entries.Count() != 0)
                 {
                     // sort entries
+                    entries = entries.OrderByDescending(entry => entry.Family); // SteamGrid goes first
                     entries = entries.OrderBy(entry => entry.Name);
 
                     foreach (LibraryEntry entry in entries)
@@ -433,6 +437,10 @@ namespace HandheldCompanion.ViewModels
                 string path = string.Empty;
 
                 FileUtils.CommonFileDialog(out path, out _, out _, ProfilesPage.selectedProfile.Path);
+
+                // skip if no path was provided
+                if (string.IsNullOrEmpty(path))
+                    return;
 
                 ProfilesPage.selectedProfile.Executables.Add(path);
                 ManagerFactory.profileManager.UpdateOrCreateProfile(ProfilesPage.selectedProfile, UpdateSource.ProfilesPage);
