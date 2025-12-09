@@ -186,16 +186,6 @@ public abstract class IDevice
 
     public Dictionary<Type, Hotkey> DeviceHotkeys = new();
 
-    protected bool DeviceOpen = false;
-    public virtual bool IsOpen => DeviceOpen;
-
-    [DllImport("Kernel32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    protected static extern bool GetPhysicallyInstalledSystemMemory(out ulong TotalMemoryInKilobytes);
-    protected uint physicalInstalledRamGB = 16;
-
-    public Dictionary<Type, Hotkey> DeviceHotkeys = new();
-
     public IDevice()
     {
         GamepadMotion = new(ProductIllustration, CalibrationMode.Manual  /*| CalibrationMode.SensorFusion */);
