@@ -46,14 +46,6 @@ namespace HandheldCompanion.Managers
             Exception = 2,
         }
 
-        [Flags]
-        public enum ErrorType
-        {
-            None = 0,
-            NoResults = 1,
-            Exception = 2,
-        }
-
         #region events
         public event NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged;
         public delegate void NetworkAvailabilityChangedEventHandler(bool status);

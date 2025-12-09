@@ -61,8 +61,6 @@ namespace HandheldCompanion.ViewModels
 
         public GamePlatform PlatformType => _Profile.PlatformType;
 
-        public GamePlatform PlatformType => _Profile.PlatformType;
-
         public bool IsAvailable => _Profile.CanExecute && !ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
 
         private bool _IsBusy;

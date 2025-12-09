@@ -13,8 +13,10 @@
     ui:ThemeManager.IsThemeAware="True"
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:WindowHelper.UseModernWindowStyle="True"
+    ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
-    mc:Ignorable="d" ResizeMode="NoResize" WindowStyle="None">
+    WindowStyle="None"
+    mc:Ignorable="d">
 
     <Grid Background="#FF202020">
         <Grid
@@ -30,7 +32,6 @@
 
             <ui:ProgressRing
                 Width="50"
-                Foreground="White"
                 Height="50"
                 Margin="233,134,0,109"
                 Foreground="White" />
