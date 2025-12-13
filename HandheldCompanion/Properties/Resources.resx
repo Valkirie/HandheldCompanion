@@ -4071,4 +4071,10 @@ Thank you for using HC and helping us make it better.</value>
   <data name="SettingsPage_MsrSocUndervoltTooltip" xml:space="preserve">
     <value>Use negative values (-mV) to undervolt. Any option other than 0 can lead to system instability or crashes.</value>
   </data>
+  <data name="Hotkey_ChangeHIDStatus" xml:space="preserve">
+    <value>Toggle emulated controller status</value>
+  </data>
+  <data name="Hotkey_ChangeHIDStatusDesc" xml:space="preserve">
+    <value>Toggle between Connected and Disconnected</value>
+  </data>
 </root>

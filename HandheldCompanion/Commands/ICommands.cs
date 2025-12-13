@@ -69,6 +69,7 @@ namespace HandheldCompanion.Commands
         }
 
         [JsonIgnore] public string FontFamily = "Segoe Fluent Icons";
+        [JsonIgnore] public int FontSize = 16;
 
         public CommandType commandType;
         public Type deviceType = null;

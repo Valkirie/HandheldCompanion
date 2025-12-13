@@ -675,7 +675,7 @@ namespace HandheldCompanion.Managers
                                 }
                                 else
                                 {
-                                    switch(toggleButton.Tag)
+                                    switch (toggleButton.Tag)
                                     {
                                         default:
                                             toggleButton.IsChecked = !toggleButton.IsChecked;

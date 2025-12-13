@@ -4723,6 +4723,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Toggle emulated controller status.
+        /// </summary>
+        public static string Hotkey_ChangeHIDStatus {
+            get {
+                return ResourceManager.GetString("Hotkey_ChangeHIDStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle between Connected and Disconnected.
+        /// </summary>
+        public static string Hotkey_ChangeHIDStatusDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_ChangeHIDStatusDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Command name.
         /// </summary>
         public static string Hotkey_CommandName {

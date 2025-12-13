@@ -134,6 +134,7 @@ namespace HandheldCompanion.ViewModels
         public string LiveGlyph => Hotkey.command.LiveGlyph;
         public string LiveName => CanCustom ? CustomName : Hotkey.command.LiveName;
         public string FontFamily => Hotkey.command.FontFamily;
+        public int FontSize => Hotkey.command.FontSize;
 
         public string CustomName
         {

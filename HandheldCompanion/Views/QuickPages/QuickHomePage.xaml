@@ -72,6 +72,7 @@
                                             Height="24"
                                             HorizontalAlignment="Center"
                                             FontFamily="{Binding FontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                            FontSize="{Binding FontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                             Glyph="{Binding LiveGlyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                     </StackPanel>
                                 </ToggleButton>
