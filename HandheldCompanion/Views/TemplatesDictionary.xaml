@@ -1155,9 +1155,38 @@
                 </ui:SettingsExpander.Content>
 
                 <ui:SettingsExpander.Items>
+                    <!--  Move mouse cursor to X,Y  -->
+                    <!--  TODO: Translate me  -->
+                    <ui:SettingsCard Header="Mouse position" Visibility="{Binding Button2MouseTo, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <StackPanel>
+                            <WrapPanel Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="X" />
+                                <ui:NumberBox
+                                    MinWidth="20"
+                                    Margin="6,0,0,0"
+                                    Minimum="0"
+                                    SpinButtonPlacementMode="Inline"
+                                    Value="{Binding Button2MouseToX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </WrapPanel>
+                            <WrapPanel Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="Y" />
+                                <ui:NumberBox
+                                    MinWidth="20"
+                                    Margin="6,0,0,0"
+                                    Minimum="0"
+                                    SpinButtonPlacementMode="Inline"
+                                    Value="{Binding Button2MouseToY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </ui:SettingsCard>
+                    <!--  TODO: Translate me  -->
+                    <ui:SettingsCard Header="Restore previous position" Visibility="{Binding Button2MouseTo, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <ui:ToggleSwitch IsOn="{Binding Button2MouseRestore, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </ui:SettingsCard>
+
                     <!--  Keyboard/Mouse  -->
                     <!--  Modifiers  -->
-                    <ui:SettingsCard Header="Modifier(s)" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3|4}">
+                    <ui:SettingsCard Header="Modifier(s)" Visibility="{Binding HasModifier, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <ComboBox SelectedIndex="{Binding ModifierIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <ComboBoxItem Content="None" />
                             <ComboBoxItem Content="Shift" />

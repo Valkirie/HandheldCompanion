@@ -38,6 +38,7 @@ namespace HandheldCompanion.ViewModels
                     Action.pressType = (PressType)value;
                     OnPropertyChanged(nameof(PressTypeIndex));
                     OnPropertyChanged(nameof(PressTypeTooltip));
+                    OnPropertyChanged(nameof(HasDuration));
                 }
             }
         }
