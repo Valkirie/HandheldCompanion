@@ -19,9 +19,9 @@ public class GPDWin5 : IDevice
         ProductIllustration = "device_gpd5";
         UseOpenLib = true;
 
-        // Reasonable defaults
+        // https://www.amd.com/en/products/processors/laptop/ryzen/ai-300-series/amd-ryzen-ai-max-385.html
         nTDP = new double[] { 55, 55, 75 };
-        cTDP = new double[] { 8, 75 };
+        cTDP = new double[] { 8, 85 };
 
         // Todo: get exact processor names and use switch/case
         string Processor = MotherboardInfo.ProcessorName;
