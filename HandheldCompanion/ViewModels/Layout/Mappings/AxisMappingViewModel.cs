@@ -256,6 +256,20 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public override void OnPropertyChanged(string propertyName)
+        {
+            switch (propertyName)
+            {
+                case "SelectedTarget":
+                case "ActionTypeIndex":
+                    OnPropertyChanged(nameof(Axis2MouseVisibility));
+                    OnPropertyChanged(nameof(Axis2ButtonVisibility));
+                    break;
+            }
+
+            base.OnPropertyChanged(propertyName);
+        }
+
         #endregion
 
         private AxisStackViewModel _parentStack;

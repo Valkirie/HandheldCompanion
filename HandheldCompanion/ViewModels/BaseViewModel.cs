@@ -48,7 +48,7 @@ namespace HandheldCompanion.ViewModels
             GC.SuppressFinalize(this); // Suppress finalization
         }
 
-        public void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public virtual void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     class DelegateCommand : ICommand

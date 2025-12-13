@@ -9,6 +9,7 @@ using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 
 namespace HandheldCompanion.ViewModels
@@ -107,6 +108,36 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public bool HasModifier
+        {
+            get
+            {
+                if (Action is not null)
+                {
+                    if (Action is KeyboardActions keyboardAction)
+                    {
+                        return true;
+                    }
+                    else if (Action is MouseActions mouseActions)
+                    {
+                        switch (mouseActions.MouseType)
+                        {
+                            case MouseActionsType.LeftButton:
+                            case MouseActionsType.RightButton:
+                            case MouseActionsType.MiddleButton:
+                            case MouseActionsType.ScrollUp:
+                            case MouseActionsType.ScrollDown:
+                                return true;
+                            case MouseActionsType.MoveTo:
+                                return false;
+                        }
+                    }
+                }
+
+                return false;
+            }
+        }
+
         public float TriggerOutput
         {
             get => Action is not null ? Action.motionThreshold : 0;
@@ -144,6 +175,74 @@ namespace HandheldCompanion.ViewModels
                     OnPropertyChanged(nameof(HapticStrengthIndex));
                 }
             }
+        }
+
+        public double Button2MouseToX
+        {
+            get => (Action is MouseActions mouseAction) ? mouseAction.MoveToX : 0;
+            set
+            {
+                if (Action is MouseActions mouseAction && value != Button2MouseToX)
+                {
+                    mouseAction.MoveToX = value is double.NaN ? 0 : value;
+                    OnPropertyChanged(nameof(Button2MouseToX));
+                }
+            }
+        }
+
+        public double Button2MouseToY
+        {
+            get => (Action is MouseActions mouseAction) ? mouseAction.MoveToY : 0;
+            set
+            {
+                if (Action is MouseActions mouseAction && value != Button2MouseToY)
+                {
+                    mouseAction.MoveToY = value is double.NaN ? 0 : value;
+                    OnPropertyChanged(nameof(Button2MouseToY));
+                }
+            }
+        }
+
+        public bool Button2MouseRestore
+        {
+            get => (Action is MouseActions mouseAction) ? mouseAction.MoveToPrevious : false;
+            set
+            {
+                if (Action is MouseActions mouseAction && value != Button2MouseRestore)
+                {
+                    mouseAction.MoveToPrevious = value;
+                    OnPropertyChanged(nameof(Button2MouseRestore));
+                }
+            }
+        }
+
+        public Visibility Button2MouseTo
+        {
+            get
+            {
+                ActionType currentActionType = (ActionType)ActionTypeIndex;
+                if (currentActionType == ActionType.Mouse && SelectedTarget != null)
+                {
+                    MouseActionsType mouseAction = (MouseActionsType)SelectedTarget.Tag;
+                    return mouseAction == MouseActionsType.MoveTo ? Visibility.Visible : Visibility.Collapsed;
+                }
+
+                return Visibility.Collapsed;
+            }
+        }
+
+        public override void OnPropertyChanged(string propertyName)
+        {
+            switch (propertyName)
+            {
+                case "SelectedTarget":
+                case "ActionTypeIndex":
+                    OnPropertyChanged(nameof(HasModifier));
+                    OnPropertyChanged(nameof(Button2MouseTo));
+                    break;
+            }
+
+            base.OnPropertyChanged(propertyName);
         }
 
         public bool HasDuration => PressTypeIndex != (int)PressType.Short;

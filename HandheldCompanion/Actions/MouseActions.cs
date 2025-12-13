@@ -28,6 +28,9 @@ namespace HandheldCompanion.Actions
         ScrollUp = 6,
         [Description("Scroll Down")]
         ScrollDown = 7,
+
+        [Description("Move Cursor")]
+        MoveTo = 8,
     }
 
     [Serializable]
@@ -54,6 +57,12 @@ namespace HandheldCompanion.Actions
         public int Deadzone = 15;           // stick only
         public bool Filtering = false;      // pad only
         public float FilterCutoff = 0.05f;  // pad only
+
+        public double MoveToX = 0;
+        public double MoveToY = 0;
+        public bool MoveToPrevious = true;
+        private double MoveToPreviousX = 0;
+        private double MoveToPreviousY = 0;
 
         // runtime variables
         private float accelMemory = 0.0f;
@@ -82,21 +91,56 @@ namespace HandheldCompanion.Actions
         {
             base.Execute(button, value, shiftSlot, delta);
 
-            if (outBool)
+            if (outBool && !IsCursorDown)
             {
-                if (IsCursorDown) return;
                 IsCursorDown = true;
+
+                // push modifier
                 pressed = ModifierMap[Modifiers];
-                KeyboardSimulator.KeyDown(pressed);
-                MouseSimulator.MouseDown(MouseType, scrollAmountInClicks);
+                if (pressed is not null)
+                    KeyboardSimulator.KeyDown(pressed);
+
+                switch (MouseType)
+                {
+                    default:
+                        MouseSimulator.MouseDown(MouseType, scrollAmountInClicks);
+                        break;
+                    case MouseActionsType.MoveTo:
+                        // store current mouse position
+                        if (MoveToPrevious)
+                        {
+                            MoveToPreviousX = MouseSimulator.MouseX;
+                            MoveToPreviousY = MouseSimulator.MouseY;
+                        }
+                        MouseSimulator.MoveTo(MoveToX, MoveToY);
+                        break;
+                }
+
                 SetHaptic(button, false);
             }
-            else
+            else if (IsCursorDown)
             {
-                if (!IsCursorDown) return;
                 IsCursorDown = false;
-                MouseSimulator.MouseUp(MouseType);
-                KeyboardSimulator.KeyUp(pressed);
+
+                switch (MouseType)
+                {
+                    default:
+                        MouseSimulator.MouseUp(MouseType);
+                        break;
+                    case MouseActionsType.MoveTo:
+                        // restore previous mouse position
+                        if (MoveToPrevious)
+                        {
+                            MouseSimulator.Sleep(200);
+                            MouseSimulator.MoveTo(MoveToPreviousX, MoveToPreviousY);
+                        }
+                        break;
+                }
+
+                // release modifier
+                if (pressed is not null)
+                    KeyboardSimulator.KeyUp(pressed);
+
                 SetHaptic(button, true);
             }
         }

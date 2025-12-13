@@ -67,6 +67,21 @@ public static class MouseSimulator
         }
     }
 
+    public static int MouseX => InputSimulator.Mouse.Position.X;
+    public static int MouseY => InputSimulator.Mouse.Position.Y;
+
+    public static void Sleep(int timeout)
+    {
+        try
+        {
+            InputSimulator.Mouse.Sleep(timeout);
+        }
+        catch (Exception)
+        {
+            // Some simulated input commands were not sent successfully.
+        }
+    }
+
     public static void MoveBy(int x, int y)
     {
         try

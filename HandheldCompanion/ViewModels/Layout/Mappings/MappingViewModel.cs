@@ -39,10 +39,7 @@ namespace HandheldCompanion.ViewModels
                         Action.actionType = (ActionType)value;
 
                     ActionTypeChanged((ActionType)value);
-
-                    // dirty hack to show/hide StackPanel based on ActionType and SelectedTarget
-                    OnPropertyChanged(nameof(Axis2MouseVisibility));
-                    OnPropertyChanged(nameof(Axis2ButtonVisibility));
+                    OnPropertyChanged(nameof(ActionTypeIndex));
                 }
             }
         }
@@ -112,10 +109,6 @@ namespace HandheldCompanion.ViewModels
                     _selectedTarget = value;
                     TargetTypeChanged();
                     OnPropertyChanged(nameof(SelectedTarget));
-
-                    // dirty hack to show/hide StackPanel based on ActionType and SelectedTarget
-                    OnPropertyChanged(nameof(Axis2MouseVisibility));
-                    OnPropertyChanged(nameof(Axis2ButtonVisibility));
                 }
             }
         }
