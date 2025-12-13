@@ -4,6 +4,7 @@ using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,10 @@ public partial class Layout : ICloneable, IDisposable
     public SortedDictionary<ButtonFlags, List<IActions>> ButtonLayout { get; set; } = [];
     public SortedDictionary<AxisLayoutFlags, List<IActions>> AxisLayout { get; set; } = [];
     public SortedDictionary<AxisLayoutFlags, IActions> GyroLayout { get; set; } = [];
+
+    [JsonIgnore]
+    private readonly object _sync = new();
+    public object SyncRoot => _sync;
 
     public Layout()
     {
@@ -96,9 +101,12 @@ public partial class Layout : ICloneable, IDisposable
 
     public void Dispose()
     {
-        ButtonLayout.Clear();
-        AxisLayout.Clear();
-        GyroLayout.Clear();
+        lock (_sync)
+        {
+            ButtonLayout.Clear();
+            AxisLayout.Clear();
+            GyroLayout.Clear();
+        }
 
         GC.SuppressFinalize(this);
     }
@@ -110,50 +118,56 @@ public partial class Layout : ICloneable, IDisposable
 
     public void UpdateLayout(ButtonFlags button, List<IActions> actions)
     {
-        // sort actions based on press type, will be required by layout manager
-        ButtonLayout[button] = actions.OrderByDescending(a => (int)a.pressType).ToList();
+        lock (_sync)
+            ButtonLayout[button] = actions.OrderByDescending(a => (int)a.pressType).ToList();
+
         Updated?.Invoke(this);
     }
 
     public void UpdateLayout(AxisLayoutFlags axis, List<IActions> actions)
     {
-        switch (axis)
+        lock (_sync)
         {
-            default:
-                AxisLayout[axis] = actions;
-                break;
+            switch (axis)
+            {
+                default:
+                    AxisLayout[axis] = actions;
+                    break;
+            }
         }
+
         Updated?.Invoke(this);
     }
 
     public void UpdateLayout(AxisLayoutFlags axis, IActions action)
     {
-        switch (axis)
+        lock (_sync)
         {
-            case AxisLayoutFlags.Gyroscope:
+            if (axis == AxisLayoutFlags.Gyroscope)
                 GyroLayout[axis] = action;
-                break;
         }
+
         Updated?.Invoke(this);
     }
 
     public void RemoveLayout(ButtonFlags button)
     {
-        ButtonLayout.Remove(button);
+        lock (_sync)
+            ButtonLayout.Remove(button);
+
         Updated?.Invoke(this);
     }
 
     public void RemoveLayout(AxisLayoutFlags axis)
     {
-        switch (axis)
+        lock (_sync)
         {
-            default:
-                AxisLayout.Remove(axis);
-                break;
-            case AxisLayoutFlags.Gyroscope:
+            if (axis == AxisLayoutFlags.Gyroscope)
                 GyroLayout.Remove(axis);
-                break;
+            else
+                AxisLayout.Remove(axis);
         }
+
         Updated?.Invoke(this);
     }
 
