@@ -46,6 +46,7 @@ namespace HandheldCompanion.Actions
         ShiftAlt = 5,
         ControlAlt = 6,
         ShiftControlAlt = 7,
+        Windows = 8,
     }
 
     [Serializable]
@@ -79,14 +80,15 @@ namespace HandheldCompanion.Actions
     {
         public static readonly Dictionary<ModifierSet, KeyCode[]> ModifierMap = new()
         {
-            { ModifierSet.None,            Array.Empty<KeyCode>() },
-            { ModifierSet.Shift,           new [] { KeyCode.LShift } },
-            { ModifierSet.Control,         new [] { KeyCode.LControl } },
-            { ModifierSet.Alt,             new [] { KeyCode.LMenu } },
-            { ModifierSet.ShiftControl,    new [] { KeyCode.LShift, KeyCode.LControl } },
-            { ModifierSet.ShiftAlt,        new [] { KeyCode.LShift, KeyCode.LMenu } },
-            { ModifierSet.ControlAlt,      new [] { KeyCode.LControl, KeyCode.LMenu } },
-            { ModifierSet.ShiftControlAlt, new [] { KeyCode.LShift, KeyCode.LControl, KeyCode.LMenu } },
+            { ModifierSet.None,             Array.Empty<KeyCode>() },
+            { ModifierSet.Shift,            new [] { KeyCode.LShift } },
+            { ModifierSet.Control,          new [] { KeyCode.LControl } },
+            { ModifierSet.Alt,              new [] { KeyCode.LMenu } },
+            { ModifierSet.ShiftControl,     new [] { KeyCode.LShift, KeyCode.LControl } },
+            { ModifierSet.ShiftAlt,         new [] { KeyCode.LShift, KeyCode.LMenu } },
+            { ModifierSet.ControlAlt,       new [] { KeyCode.LControl, KeyCode.LMenu } },
+            { ModifierSet.ShiftControlAlt,  new [] { KeyCode.LShift, KeyCode.LControl, KeyCode.LMenu } },
+            { ModifierSet.Windows,          new [] { KeyCode.LWin } },
         };
 
         public ActionType actionType = ActionType.Disabled;
