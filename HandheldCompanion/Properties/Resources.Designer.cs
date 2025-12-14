@@ -8355,7 +8355,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete?.
+        ///   Looks up a localized string similar to Are you sure you want to delete {0}?.
         /// </summary>
         public static string ProfilesPage_AreYouSureDelete1 {
             get {

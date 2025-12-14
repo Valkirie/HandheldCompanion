@@ -620,7 +620,7 @@
     <value> %</value>
   </data>
   <data name="ProfilesPage_AreYouSureDelete1" xml:space="preserve">
-    <value>Are you sure you want to delete?</value>
+    <value>Are you sure you want to delete {0}?</value>
   </data>
   <data name="ProfilesPage_AreYouSureDelete2" xml:space="preserve">
     <value>This item will be deleted immediatly. You can't undo this action.</value>

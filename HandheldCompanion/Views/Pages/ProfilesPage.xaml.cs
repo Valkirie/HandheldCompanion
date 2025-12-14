@@ -681,7 +681,7 @@ public partial class ProfilesPage : Page
 
         Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
         {
-            Title = $"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{selectedMainProfile.Name}\"?",
+            Title = string.Format(Properties.Resources.ProfilesPage_AreYouSureDelete1, selectedMainProfile.Name),
             Content = Properties.Resources.ProfilesPage_AreYouSureDelete2,
             CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
             PrimaryButtonText = Properties.Resources.ProfilesPage_Delete
@@ -1212,7 +1212,7 @@ public partial class ProfilesPage : Page
         // user confirmation
         Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
         {
-            Title = $"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{subProfile.Name}\"?",
+            Title = string.Format(Properties.Resources.ProfilesPage_AreYouSureDelete1, subProfile.Name),
             Content = Properties.Resources.ProfilesPage_AreYouSureDelete2,
             CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
             PrimaryButtonText = Properties.Resources.ProfilesPage_Delete

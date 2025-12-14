@@ -798,7 +798,7 @@ namespace HandheldCompanion.ViewModels
             {
                 Dialog dialog = new Dialog(isQuickTools ? OverlayQuickTools.GetCurrent() : MainWindow.GetCurrent())
                 {
-                    Title = $"{Resources.ProfilesPage_AreYouSureDelete1} \"{SelectedPreset.Name}\"?",
+                    Title = string.Format(Resources.ProfilesPage_AreYouSureDelete1, SelectedPreset.Name),
                     Content = Resources.ProfilesPage_AreYouSureDelete2,
                     CloseButtonText = Resources.ProfilesPage_Cancel,
                     PrimaryButtonText = Resources.ProfilesPage_Delete

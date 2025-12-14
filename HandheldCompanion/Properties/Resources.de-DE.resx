@@ -615,7 +615,7 @@
     <value> %</value>
   </data>
   <data name="ProfilesPage_AreYouSureDelete1" xml:space="preserve">
-    <value>Sind Sie sicher, dass Sie dies löschen wollen?</value>
+    <value>Sind Sie sicher, dass Sie dies löschen wollen {0}?</value>
   </data>
   <data name="ProfilesPage_AreYouSureDelete2" xml:space="preserve">
     <value>Dieses Element wird sofort gelöscht. Sie können diese Aktion nicht rückgängig machen.</value>

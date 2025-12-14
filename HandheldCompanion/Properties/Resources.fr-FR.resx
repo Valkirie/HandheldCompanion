@@ -602,7 +602,7 @@
     <value> %</value>
   </data>
   <data name="ProfilesPage_AreYouSureDelete1" xml:space="preserve">
-    <value>Êtes-vous sûr de vouloir supprimer?</value>
+    <value>Êtes-vous sûr de vouloir supprimer {0}?</value>
   </data>
   <data name="ProfilesPage_AreYouSureDelete2" xml:space="preserve">
     <value>Cet élément sera supprimé immédiatement. Vous ne pouvez pas annuler cette action.</value>

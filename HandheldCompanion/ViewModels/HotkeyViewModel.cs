@@ -7,9 +7,12 @@ using HandheldCompanion.Extensions;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels.Controls;
+using HandheldCompanion.Views;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -629,7 +632,24 @@ namespace HandheldCompanion.ViewModels
 
             DeleteHotkeyCommand = new DelegateCommand(async () =>
             {
-                ManagerFactory.hotkeysManager.DeleteHotkey(Hotkey);
+                Dialog dialog = new Dialog(MainWindow.GetCurrent())
+                {
+                    Title = string.Format(Resources.ProfilesPage_AreYouSureDelete1, Name),
+                    Content = Resources.ProfilesPage_AreYouSureDelete2,
+                    CloseButtonText = Resources.ProfilesPage_Cancel,
+                    PrimaryButtonText = Resources.ProfilesPage_Delete
+                };
+
+                ContentDialogResult result = await dialog.ShowAsync();
+                switch (result)
+                {
+                    case ContentDialogResult.None:
+                        dialog.Hide();
+                        break;
+                    case ContentDialogResult.Primary:
+                        ManagerFactory.hotkeysManager.DeleteHotkey(Hotkey);
+                        break;
+                }
             });
 
             DefineOutputCommand = new DelegateCommand(async () =>
