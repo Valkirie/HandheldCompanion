@@ -14,6 +14,7 @@ namespace HandheldCompanion.Commands
             Function = 1,
             Keyboard = 2,
             Executable = 3,
+            PowerShell = 4,
         }
 
         public delegate void ExecutedEventHandler(ICommands command);

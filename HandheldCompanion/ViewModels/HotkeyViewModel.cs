@@ -286,6 +286,9 @@ namespace HandheldCompanion.ViewModels
                         case CommandType.Executable:
                             Hotkey.command = new ExecutableCommands();
                             break;
+                        case CommandType.PowerShell:
+                            Hotkey.command = new PowerShellCommands();
+                            break;
                     }
 
                     // reset custom name
@@ -402,6 +405,8 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Hotkey.command is ExecutableCommands executableCommand)
                     return (int)executableCommand.windowStyle;
+                else if (Hotkey.command is PowerShellCommands powerShellCommands)
+                    return (int)powerShellCommands.windowStyle;
                 return 0;
             }
             set
@@ -416,6 +421,16 @@ namespace HandheldCompanion.ViewModels
                         ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
                     }
                 }
+                else if (Hotkey.command is PowerShellCommands powerShellCommands)
+                {
+                    if (powerShellCommands.windowStyle != (ProcessWindowStyle)value)
+                    {
+                        powerShellCommands.windowStyle = (ProcessWindowStyle)value;
+                        OnPropertyChanged(nameof(ExecutableWindowStyle));
+
+                        ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    }
+                }
             }
         }
 
@@ -425,6 +440,8 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Hotkey.command is ExecutableCommands executableCommand)
                     return executableCommand.RunAs;
+                else if (Hotkey.command is PowerShellCommands powerShellCommands)
+                    return powerShellCommands.RunAs;
                 return false;
             }
             set
@@ -434,6 +451,39 @@ namespace HandheldCompanion.ViewModels
                     if (executableCommand.RunAs != value)
                     {
                         executableCommand.RunAs = value;
+                        OnPropertyChanged(nameof(ExecutableRunAs));
+
+                        ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    }
+                }
+                else if (Hotkey.command is PowerShellCommands powerShellCommands)
+                {
+                    if (powerShellCommands.RunAs != value)
+                    {
+                        powerShellCommands.RunAs = value;
+                        OnPropertyChanged(nameof(ExecutableRunAs));
+
+                        ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    }
+                }
+            }
+        }
+
+        public string ScriptContent
+        {
+            get
+            {
+                if (Hotkey.command is PowerShellCommands powerShellCommands)
+                    return powerShellCommands.ScriptContent;
+                return string.Empty;
+            }
+            set
+            {
+                if (Hotkey.command is PowerShellCommands powerShellCommands)
+                {
+                    if (powerShellCommands.ScriptContent != value)
+                    {
+                        powerShellCommands.ScriptContent = value;
                         OnPropertyChanged(nameof(ExecutableRunAs));
 
                         ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);

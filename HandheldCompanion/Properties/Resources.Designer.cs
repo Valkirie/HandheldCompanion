@@ -5569,6 +5569,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to PowerShell.
+        /// </summary>
+        public static string Hotkey_PowerShell {
+            get {
+                return ResourceManager.GetString("Hotkey_PowerShell", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Script.
+        /// </summary>
+        public static string Hotkey_PowerShellContent {
+            get {
+                return ResourceManager.GetString("Hotkey_PowerShellContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PowerShell script to run when this hotkey is triggered. The script is executed as-is (multiline supported). Use with caution..
+        /// </summary>
+        public static string Hotkey_PowerShellContentDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_PowerShellContentDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Execute the user-provided powershell script.
+        /// </summary>
+        public static string Hotkey_PowerShellDesc {
+            get {
+                return ResourceManager.GetString("Hotkey_PowerShellDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open Snipping tool.
         /// </summary>
         public static string Hotkey_PrintScreen {

@@ -196,6 +196,7 @@
                         <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Function}" ToolTip="{l:Static resx:Resources.Hotkey_FunctionDesc}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Keystrokes}" ToolTip="{l:Static resx:Resources.Hotkey_KeystrokesDesc}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_Executable}" ToolTip="{l:Static resx:Resources.Hotkey_ExecutableDesc}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_PowerShell}" ToolTip="{l:Static resx:Resources.Hotkey_PowerShellDesc}" />
                     </ComboBox>
                 </ui:SettingsCard>
 
@@ -385,10 +386,11 @@
                     <TextBox Width="290" Text="{Binding ExecutableArguments, Mode=TwoWay}" />
                 </ui:SettingsCard>
 
+                <!--  Executable, PowerShell (CommandTypeIndex == 3,4)  -->
                 <ui:SettingsCard
                     Description="{l:Static resx:Resources.Hotkey_WindowStyleDesc}"
                     Header="{l:Static resx:Resources.Hotkey_WindowStyle}"
-                    Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3}">
+                    Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3|4}">
                     <ComboBox SelectedIndex="{Binding ExecutableWindowStyle, Mode=TwoWay}">
                         <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_WindowStyle_Normal}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.Hotkey_WindowStyle_Hidden}" />
@@ -397,11 +399,26 @@
                     </ComboBox>
                 </ui:SettingsCard>
 
+                <!--  Executable, PowerShell (CommandTypeIndex == 3,4)  -->
                 <ui:SettingsCard
                     Description="{l:Static resx:Resources.Hotkey_RunAsAdministratorDesc}"
                     Header="{l:Static resx:Resources.Hotkey_RunAsAdministrator}"
-                    Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3}">
+                    Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3|4}">
                     <ui:ToggleSwitch HorizontalAlignment="Right" IsOn="{Binding ExecutableRunAs, Mode=TwoWay}" />
+                </ui:SettingsCard>
+
+                <!--  PowerShell (CommandTypeIndex == 4)  -->
+                <ui:SettingsCard
+                    Description="{l:Static resx:Resources.Hotkey_PowerShellContent}"
+                    Header="{l:Static resx:Resources.Hotkey_PowerShellContentDesc}"
+                    Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=4}">
+                    <TextBox
+                        Width="290"
+                        MinHeight="140"
+                        AcceptsReturn="True"
+                        Text="{Binding ScriptContent, UpdateSourceTrigger=PropertyChanged}"
+                        TextWrapping="Wrap"
+                        VerticalScrollBarVisibility="Auto" />
                 </ui:SettingsCard>
 
                 <!--  finally: Delete hotkey  -->
