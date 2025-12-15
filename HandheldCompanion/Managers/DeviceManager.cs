@@ -530,7 +530,7 @@ public class DeviceManager : IManager
     /// </summary>
     /// <param name="devicePath">
     /// The full path, e.g.  
-    /// \\?\hid#vid_045e&pid_02ff&ig_00#9&…&0000#{ec87f1e3-c13b-4100-b5f7-8b84d54260cb}
+    /// \\?\hid#vid_045e&pid_02ff&ig_00#9&...&0000#{ec87f1e3-c13b-4100-b5f7-8b84d54260cb}
     /// </param>
     /// <param name="interfaceGuid">
     /// On success, contains the extracted Guid; otherwise Guid.Empty.

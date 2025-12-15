@@ -237,6 +237,22 @@
                         </ui:SettingsCard>
                     </ui:SettingsExpander.Items>
                 </ui:SettingsExpander>
+
+                <!--  Enhanced Sleep  -->
+                <ui:SettingsCard
+                    x:Name="EnhancedSleepCard"
+                    Description="{l:Static resx:Resources.DevicePage_EnhancedSleepDesc}"
+                    Header="{l:Static resx:Resources.DevicePage_EnhancedSleep}">
+                    <ui:ToggleSwitch x:Name="Toggle_EnhancedSleep" Toggled="Toggle_EnhancedSleep_Toggled" />
+                </ui:SettingsCard>
+
+                <!--  Go Back To Sleep  -->
+                <ui:SettingsCard
+                    x:Name="GoBackToSleepCard"
+                    Description="{l:Static resx:Resources.DevicePage_GoBackToSleepDesc}"
+                    Header="{l:Static resx:Resources.DevicePage_GoBackToSleep}">
+                    <ui:ToggleSwitch x:Name="Toggle_GoBackToSleep" Toggled="Toggle_GoBackToSleep_Toggled" />
+                </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 
             <!--  Security options  -->

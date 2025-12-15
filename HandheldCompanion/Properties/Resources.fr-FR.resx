@@ -2855,7 +2855,7 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
     <value>Activé les données de télémétrie à envoyer automatiquement en cas de plantage</value>
   </data>
   <data name="ControllerPage_ControllerManagement_Content" xml:space="preserve">
-    <value>Initialisation de la reconfiguration du contrôleur… Veuillez patienter.</value>
+    <value>Initialisation de la reconfiguration du contrôleur... Veuillez patienter.</value>
   </data>
   <data name="ControllerPage_ControllerManagement_Attempt0" xml:space="preserve">
     <value>Nous sommes en train de réordonner les contrôleurs pour améliorer la compatibilité du jeu. Veuillez patienter.</value>

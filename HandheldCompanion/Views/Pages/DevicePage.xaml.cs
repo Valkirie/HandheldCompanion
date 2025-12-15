@@ -296,6 +296,12 @@ namespace HandheldCompanion.Views.Pages
                     case "MsrUndervoltSoc":
                         NumberBox_SetMsrSoc.Value = Convert.ToInt32(value);
                         break;
+                    case "EnhancedSleep":
+                        Toggle_EnhancedSleep.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "GoBackToSleep":
+                        Toggle_GoBackToSleep.IsOn = Convert.ToBoolean(value);
+                        break;
                 }
             });
         }
@@ -621,6 +627,22 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             ManagerFactory.settingsManager.SetProperty("MsrUndervoltSoc", value);
+        }
+
+        private void Toggle_EnhancedSleep_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            ManagerFactory.settingsManager.SetProperty("EnhancedSleep", Toggle_EnhancedSleep.IsOn);
+        }
+
+        private void Toggle_GoBackToSleep_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            ManagerFactory.settingsManager.SetProperty("GoBackToSleep", Toggle_GoBackToSleep.IsOn);
         }
 
         #region Sensor

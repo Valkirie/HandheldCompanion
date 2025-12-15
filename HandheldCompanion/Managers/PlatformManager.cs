@@ -26,8 +26,12 @@ public class PlatformManager : IManager
     public static EADesktop EADesktop;
 
     // misc platforms
-    public static RTSS RTSS;
-    public static LibreHardware LibreHardware;
+    public static RTSSPlatform RTSS;
+    public static LibreHardwarePlatform LibreHardware;
+    public static WindowsPlatform WindowsPlatform;
+
+    public PlatformManager()
+    { }
 
     public override void Start()
     {
@@ -48,12 +52,13 @@ public class PlatformManager : IManager
         EADesktop = new EADesktop();
 
         // initialize misc platforms
-        RTSS = new RTSS();
-        LibreHardware = new LibreHardware();
+        RTSS = new RTSSPlatform();
+        LibreHardware = new LibreHardwarePlatform();
+        WindowsPlatform = new WindowsPlatform();
 
         // populate lists
         GamingPlatforms = new() { Steam, GOGGalaxy, UbisoftConnect, BattleNet, Origin, Epic, RiotGames, Rockstar, EADesktop };
-        MiscPlatforms = new() { RTSS, LibreHardware };
+        MiscPlatforms = new() { RTSS, LibreHardware, WindowsPlatform };
         AllPlatforms = new(GamingPlatforms.Concat(MiscPlatforms));
 
         // start platforms
@@ -80,9 +85,9 @@ public class PlatformManager : IManager
             {
                 bool kill = true;
 
-                if (platform is RTSS)
+                if (platform is RTSSPlatform)
                     kill = ManagerFactory.settingsManager.GetBoolean("PlatformRTSSEnabled");
-                else if (platform is LibreHardware)
+                else if (platform is LibreHardwarePlatform)
                     kill = false;
 
                 platform.Stop(kill);

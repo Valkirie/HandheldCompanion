@@ -16,7 +16,7 @@ using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Platforms.Misc;
 
-public class RTSS : IPlatform
+public class RTSSPlatform : IPlatform
 {
     private const uint WM_APP = 0x8000;
     private const uint WM_RTSS_UPDATESETTINGS = WM_APP + 100;
@@ -32,7 +32,7 @@ public class RTSS : IPlatform
     private bool ProfileLoaded;
     private AppEntry appEntry;
 
-    public RTSS()
+    public RTSSPlatform()
     {
         Name = "RTSS";
         ExecutableName = "RTSS.exe";

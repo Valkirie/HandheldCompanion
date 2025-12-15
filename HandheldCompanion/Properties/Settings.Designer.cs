@@ -1485,5 +1485,29 @@ namespace HandheldCompanion.Properties
                 this["MsrUndervoltSoc"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnhancedSleep {
+            get {
+                return ((bool)(this["EnhancedSleep"]));
+            }
+            set {
+                this["EnhancedSleep"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GoBackToSleep {
+            get {
+                return ((bool)(this["GoBackToSleep"]));
+            }
+            set {
+                this["GoBackToSleep"] = value;
+            }
+        }
     }
 }

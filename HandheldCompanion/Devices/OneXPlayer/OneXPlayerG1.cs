@@ -50,7 +50,7 @@ namespace HandheldCompanion.Devices
                 break;
             }
 
-            // We don’t require RGB to be considered “ready”
+            // We don’t require RGB to be considered "ready"
             return base.IsReady();
         }
 

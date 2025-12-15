@@ -6,7 +6,7 @@ using System.Timers;
 
 namespace HandheldCompanion.Platforms.Misc
 {
-    public class LibreHardware : IPlatform
+    public class LibreHardwarePlatform : IPlatform
     {
         private Computer computer;
 
@@ -40,7 +40,7 @@ namespace HandheldCompanion.Platforms.Misc
         private float? BatteryPower;
         private float? BatteryTimeSpan;
 
-        public LibreHardware()
+        public LibreHardwarePlatform()
         {
             Name = "LibreHardwareMonitor";
             IsInstalled = true;

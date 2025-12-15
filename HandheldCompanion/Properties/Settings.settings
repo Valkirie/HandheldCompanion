@@ -368,5 +368,11 @@
     <Setting Name="MsrUndervoltSoc" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="EnhancedSleep" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="GoBackToSleep" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -529,7 +529,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Initializing controller reconfiguration… Please wait..
+        ///   Looks up a localized string similar to Initializing controller reconfiguration... Please wait..
         /// </summary>
         public static string ControllerPage_ControllerManagement_Content {
             get {
@@ -1402,6 +1402,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enhanced sleep.
+        /// </summary>
+        public static string DevicePage_EnhancedSleep {
+            get {
+                return ResourceManager.GetString("DevicePage_EnhancedSleep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Optimizes Modern Standby power policies to reduce sleep drain (e.g., disables wake timers and network activity)..
+        /// </summary>
+        public static string DevicePage_EnhancedSleepDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_EnhancedSleepDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sets the fan to max speed.
         /// </summary>
         public static string DevicePage_FullFanSpeedDesc {
@@ -1434,6 +1452,24 @@ namespace HandheldCompanion.Properties {
         public static string DevicePage_GamingZone_VRAMDesc {
             get {
                 return ResourceManager.GetString("DevicePage_GamingZone_VRAMDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go back to sleep.
+        /// </summary>
+        public static string DevicePage_GoBackToSleep {
+            get {
+                return ResourceManager.GetString("DevicePage_GoBackToSleep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If the device wakes from Modern Standby for any reason other than the power button, it will be sent back to sleep..
+        /// </summary>
+        public static string DevicePage_GoBackToSleepDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_GoBackToSleepDesc", resourceCulture);
             }
         }
         

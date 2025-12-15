@@ -2863,7 +2863,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Enabled telemetry data to be automatically be sent in case of a crash</value>
   </data>
   <data name="ControllerPage_ControllerManagement_Content" xml:space="preserve">
-    <value>Initializing controller reconfiguration… Please wait.</value>
+    <value>Initializing controller reconfiguration... Please wait.</value>
   </data>
   <data name="ControllerPage_ControllerManagement_Attempt0" xml:space="preserve">
     <value>We are reordering controllers to improve game compatibility. Please wait a moment.</value>
@@ -4088,5 +4088,17 @@ Thank you for using HC and helping us make it better.</value>
   </data>
   <data name="Hotkey_PowerShellContentDesc" xml:space="preserve">
     <value>PowerShell script to run when this hotkey is triggered. The script is executed as-is (multiline supported). Use with caution.</value>
+  </data>
+  <data name="DevicePage_EnhancedSleep" xml:space="preserve">
+    <value>Enhanced sleep</value>
+  </data>
+  <data name="DevicePage_EnhancedSleepDesc" xml:space="preserve">
+    <value>Optimizes Modern Standby power policies to reduce sleep drain (e.g., disables wake timers and network activity).</value>
+  </data>
+  <data name="DevicePage_GoBackToSleep" xml:space="preserve">
+    <value>Go back to sleep</value>
+  </data>
+  <data name="DevicePage_GoBackToSleepDesc" xml:space="preserve">
+    <value>If the device wakes from Modern Standby for any reason other than the power button, it will be sent back to sleep.</value>
   </data>
 </root>
