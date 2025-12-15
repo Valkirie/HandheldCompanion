@@ -281,6 +281,9 @@ namespace HandheldCompanion.Views.Pages
                     case "SensorPlacementUpsideDown":
                         Toggle_SensorPlacementUpsideDown.IsOn = Convert.ToBoolean(value);
                         break;
+                    case "RyzenAdjCoall":
+                        Slider_SetCoall.Value = Convert.ToInt32(value);
+                        break;
                 }
             });
         }

@@ -41,7 +41,10 @@
                 </ui:SettingsCard>
 
                 <!--  Configurable TDP  -->
-                <ui:SettingsExpander Description="{l:Static resx:Resources.SettingsPage_AdvancedSettingsDesc}" Header="{l:Static resx:Resources.SettingsPage_AdvancedSettings}">
+                <ui:SettingsExpander
+                    d:IsExpanded="True"
+                    Description="{l:Static resx:Resources.SettingsPage_AdvancedSettingsDesc}"
+                    Header="{l:Static resx:Resources.SettingsPage_AdvancedSettings}">
                     <ui:SettingsExpander.HeaderIcon>
                         <ui:FontIcon Glyph="&#xe785;" />
                     </ui:SettingsExpander.HeaderIcon>
@@ -69,7 +72,6 @@
                             <ui:NumberBox
                                 Name="NumberBox_TDPMax"
                                 MinWidth="20"
-                                Maximum="75"
                                 SpinButtonPlacementMode="Inline"
                                 ValueChanged="NumberBox_TDPMax_ValueChanged" />
                         </ui:SettingsCard>
