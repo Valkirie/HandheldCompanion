@@ -45,6 +45,8 @@ namespace HandheldCompanion.Actions
         private KeyCode[] pressed;
         private OneEuroFilterPair mouseFilter;
 
+        protected override bool GetActualOutputState() => MouseSimulator.IsButtonDown(MouseType);
+
         // settings click
         public ModifierSet Modifiers = ModifierSet.None;
 
