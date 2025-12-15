@@ -291,6 +291,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="ADLX_Probe.deps.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="ADLX_Probe.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
