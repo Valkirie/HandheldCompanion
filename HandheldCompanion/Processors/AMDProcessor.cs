@@ -166,6 +166,15 @@ public class AMDProcessor : Processor
 
     public float SetCoall(int steps)
     {
-        return RyzenAdj.set_coall(ry, RyzenAdj.EncodeCurveOffset(steps));
+        lock (updateLock)
+        {
+            if (!CanChangeTDP)
+                return 0.0f;
+
+            if (ry != IntPtr.Zero)
+                return RyzenAdj.set_coall(ry, RyzenAdj.EncodeCurveOffset(steps));
+
+            return 0.0f;
+        }
     }
 }
