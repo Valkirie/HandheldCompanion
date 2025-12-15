@@ -236,11 +236,13 @@ namespace HandheldCompanion.Devices.AYANEO
                     case LEDLevel.SolidColor:
                         if (hasChangedSticksLeft)
                         {
+                            this.ledColorSticksLeft = colorSticksLeft;
                             this.CEcRgb_SetColorAll(LEDGroup.StickLeft, (Color)this.ledColorSticksLeft);
                             this.CEcRgb_SetColorAya((Color)this.ledColorSticksLeft);
                         }
                         if (hasChangedSticksRight)
                         {
+                            this.ledColorStickRight = colorStickRight;
                             this.CEcRgb_SetColorAll(LEDGroup.StickRight, (Color)this.ledColorStickRight);
                         }
                         break;
