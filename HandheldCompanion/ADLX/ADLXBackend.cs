@@ -1,6 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
-using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
@@ -9,7 +9,7 @@ namespace HandheldCompanion.ADLX
 {
     public static class ADLXBackend
     {
-        public const string ADLX_Wrapper = @"ADLX_Wrapper.dll";
+        public const string ADLX_Wrapper = @".\Resources\AMD\ADLX_Wrapper.dll";
         public const string ADLX_Probe = @"ADLX_Probe.exe";
 
         public enum ADLX_RESULT
@@ -31,7 +31,6 @@ namespace HandheldCompanion.ADLX
             ADLX_GPU_INACTIVE               /**< @ENG_START_DOX This result indicates that the GPU is inactive. @ENG_END_DOX */
         }
 
-        [HandleProcessCorruptedStateExceptions]
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)] public static extern bool IntializeAdlx(StringBuilder dispName, int nameLength);
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool InitializeAdlxWithIncompatibleDriver();
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool CloseAdlx();
@@ -98,10 +97,10 @@ namespace HandheldCompanion.ADLX
             try
             {
                 Process process = new Process();
-                process.StartInfo.FileName = ADLX_Probe;
+                process.StartInfo.FileName = Path.Combine(Environment.CurrentDirectory, "Resources", "AMD", ADLX_Probe);
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.CreateNoWindow = true;
-                process.StartInfo.WorkingDirectory = Path.Combine(System.Environment.CurrentDirectory, "Resources"); // Explicit working directory
+                process.StartInfo.WorkingDirectory = Path.Combine(Environment.CurrentDirectory, "Resources", "AMD");
                 process.Start();
                 process.WaitForExit();
 
