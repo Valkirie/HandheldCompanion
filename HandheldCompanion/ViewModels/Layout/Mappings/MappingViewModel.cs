@@ -99,6 +99,19 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public float StartDelay
+        {
+            get => Action is not null ? Action.StartDelay : 0;
+            set
+            {
+                if (Action is not null && value != StartDelay)
+                {
+                    Action.StartDelay = value;
+                    OnPropertyChanged(nameof(StartDelay));
+                }
+            }
+        }
+
         public ObservableCollection<MappingTargetViewModel> Targets { get; set; } = [];
 
         private MappingTargetViewModel? _selectedTarget;

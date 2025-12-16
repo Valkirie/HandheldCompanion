@@ -111,6 +111,12 @@ namespace HandheldCompanion.Actions
         public bool HasInterruptable = true;
         public float TurboDelay = 30.0f;
 
+        // Delay before action triggers (in ms)
+        [JsonProperty("StartDelay")]
+        public float StartDelay = 0.0f;
+        [JsonIgnore]
+        private float StartDelayTimer = -1.0f;  // -1 inactive, >= 0 counting
+
         [JsonIgnore]
         private bool IsToggled = false;
         [JsonIgnore]
@@ -184,6 +190,35 @@ namespace HandheldCompanion.Actions
             // shift gating
             if (!IsShiftAllowed(shiftSlot, ShiftSlot))
                 value = false;
+
+            // Start delay logic - delays the action trigger by StartDelay ms
+            // Similar pattern to PressType.Hold: continues even after button release
+            // Note: TimerManager has minimum 10ms tick, so if StartDelay < 10ms, use tick period + StartDelay
+            if (StartDelay > 0)
+            {
+                int period = TimerManager.GetPeriod();
+                float effectiveDelay = (StartDelay < period) ? (period + StartDelay) : StartDelay;
+
+                // Start timer on button press (edge detection)
+                if (value && !prevBool)
+                    StartDelayTimer = 0.0f;
+
+                // Timer is active: keep counting until delay reached
+                if (StartDelayTimer >= 0 && StartDelayTimer < effectiveDelay)
+                {
+                    StartDelayTimer += delta;
+                    outBool = false;
+                    prevBool = value;
+                    return;
+                }
+
+                // Delay elapsed: trigger once then reset
+                if (StartDelayTimer >= effectiveDelay)
+                {
+                    StartDelayTimer = -1.0f;  // Reset for next press
+                    value = true;  // Force trigger the action
+                }
+            }
 
             switch (pressType)
             {
