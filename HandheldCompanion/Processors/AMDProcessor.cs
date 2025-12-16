@@ -193,27 +193,30 @@ public class AMDProcessor : Processor
             }
             else
             {
-                switch (family)
+                if (ry != IntPtr.Zero)
                 {
-                    case RyzenFamily.FAM_RAVEN:
-                    case RyzenFamily.FAM_PICASSO:
-                    case RyzenFamily.FAM_DALI:
-                    case RyzenFamily.FAM_LUCIENNE:
-                        {
-                            result = RyzenAdj.set_min_gfxclk_freq(ry, (uint)(restore ? IDevice.GetCurrent().GfxClock[0] : clock));
-                            result = RyzenAdj.set_max_gfxclk_freq(ry, (uint)(restore ? IDevice.GetCurrent().GfxClock[1] : clock));
-                        }
-                        break;
+                    switch (family)
+                    {
+                        case RyzenFamily.FAM_RAVEN:
+                        case RyzenFamily.FAM_PICASSO:
+                        case RyzenFamily.FAM_DALI:
+                        case RyzenFamily.FAM_LUCIENNE:
+                            {
+                                result = RyzenAdj.set_min_gfxclk_freq(ry, (uint)(restore ? IDevice.GetCurrent().GfxClock[0] : clock));
+                                result = RyzenAdj.set_max_gfxclk_freq(ry, (uint)(restore ? IDevice.GetCurrent().GfxClock[1] : clock));
+                            }
+                            break;
 
-                    default:
-                        {
-                            // you can't restore default frequency on AMD GPUs
-                            if (restore)
-                                return;
+                        default:
+                            {
+                                // you can't restore default frequency on AMD GPUs
+                                if (restore)
+                                    return;
 
-                            result = RyzenAdj.set_gfx_clk(ry, (uint)clock);
-                        }
-                        break;
+                                result = RyzenAdj.set_gfx_clk(ry, (uint)clock);
+                            }
+                            break;
+                    }
                 }
             }
 
@@ -223,19 +226,46 @@ public class AMDProcessor : Processor
 
     public bool SetCoAll(int steps)
     {
-        RyzenError error = RyzenAdj.set_coall(ry, RyzenAdj.EncodeCurveOffset(steps));
-        return error == RyzenError.ADJ_ERR_SUCCESS;
+        lock (updateLock)
+        {
+            if (!HasAllCoreCurve)
+                return false;
+
+            RyzenError error = RyzenError.ADJ_ERR_FAM_UNSUPPORTED;
+            if (ry != IntPtr.Zero)
+                error = RyzenAdj.set_coall(ry, RyzenAdj.EncodeCurveOffset(steps));
+
+            return error == RyzenError.ADJ_ERR_SUCCESS;
+        }
     }
 
     public bool SetCoPer(int steps)
     {
-        RyzenError error = RyzenAdj.set_coper(ry, RyzenAdj.EncodeCurveOffset(steps));
-        return error == RyzenError.ADJ_ERR_SUCCESS;
+        lock (updateLock)
+        {
+            if (!HasPerCoreCurve)
+                return false;
+
+            RyzenError error = RyzenError.ADJ_ERR_FAM_UNSUPPORTED;
+            if (ry != IntPtr.Zero)
+                error = RyzenAdj.set_coper(ry, RyzenAdj.EncodeCurveOffset(steps));
+
+            return error == RyzenError.ADJ_ERR_SUCCESS;
+        }
     }
 
     public bool SetCoGfx(int steps)
     {
-        RyzenError error = RyzenAdj.set_cogfx(ry, RyzenAdj.EncodeCurveOffset(steps));
-        return error == RyzenError.ADJ_ERR_SUCCESS;
+        lock (updateLock)
+        {
+            if (!HasGpuCurve)
+                return false;
+
+            RyzenError error = RyzenError.ADJ_ERR_FAM_UNSUPPORTED;
+            if (ry != IntPtr.Zero)
+                error = RyzenAdj.set_cogfx(ry, RyzenAdj.EncodeCurveOffset(steps));
+
+            return error == RyzenError.ADJ_ERR_SUCCESS;
+        }
     }
 }
