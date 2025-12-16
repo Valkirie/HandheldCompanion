@@ -80,8 +80,8 @@
                         <ui:SettingsCard
                             Description="{l:Static resx:Resources.SettingsPage_AllCurveOptimiserDesc}"
                             Header="{l:Static resx:Resources.SettingsPage_AllCurveOptimiser}"
-                            IsEnabled="{Binding HasAdvancedSettings, UpdateSourceTrigger=PropertyChanged}"
-                            Visibility="{Binding HasCoreCurve, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            IsEnabled="{Binding HasCoreCurve, UpdateSourceTrigger=PropertyChanged}"
+                            Visibility="{Binding IsAMD, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <StackPanel Orientation="Horizontal">
                                 <ui:NumberBox
                                     Name="NumberBox_SetCoAll"
@@ -112,8 +112,8 @@
                         <ui:SettingsCard
                             Description="{l:Static resx:Resources.SettingsPage_GfxCurveOptimiserDesc}"
                             Header="{l:Static resx:Resources.SettingsPage_GfxCurveOptimiser}"
-                            IsEnabled="{Binding HasAdvancedSettings, UpdateSourceTrigger=PropertyChanged}"
-                            Visibility="{Binding HasGPUCurve, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            IsEnabled="{Binding HasGPUCurve, UpdateSourceTrigger=PropertyChanged}"
+                            Visibility="{Binding IsAMD, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <StackPanel Orientation="Horizontal">
                                 <ui:NumberBox
                                     Name="NumberBox_SetCoGfx"
