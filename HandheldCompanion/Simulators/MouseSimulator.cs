@@ -1,8 +1,9 @@
-﻿using GregsStack.InputSimulatorStandard;
+using GregsStack.InputSimulatorStandard;
 using HandheldCompanion.Actions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace HandheldCompanion.Simulators;
 
@@ -10,9 +11,14 @@ public static class MouseSimulator
 {
     private static readonly InputSimulator InputSimulator;
 
-    // Shared state tracking for mouse buttons - allows multiple actions to check the same state
-    private static readonly Dictionary<MouseActionsType, bool> ButtonStates = new();
-    private static readonly object StateLock = new();
+    // Shared toggle state per mouse button - all bindings targeting the same button share this state
+    private static readonly Dictionary<MouseActionsType, bool> ToggleStates = new();
+    private static readonly object ToggleLock = new();
+
+    // Virtual key codes for mouse buttons (for GetAsyncKeyState)
+    private const int VK_LBUTTON = 0x01;
+    private const int VK_RBUTTON = 0x02;
+    private const int VK_MBUTTON = 0x04;
 
     static MouseSimulator()
     {
@@ -20,15 +26,69 @@ public static class MouseSimulator
         InputSimulator.Mouse.MouseWheelClickSize = 6;
     }
 
+    [DllImport("user32.dll")]
+    private static extern short GetAsyncKeyState(int vKey);
+
     /// <summary>
-    /// Returns the shared state of a mouse button.
-    /// Used for toggle desync detection when multiple actions target the same button.
+    /// Flip the toggle state for a mouse button. Returns the new toggle state.
+    /// Call this on button press (rising edge) when HasToggle is enabled.
     /// </summary>
-    public static bool IsButtonDown(MouseActionsType type)
+    public static bool FlipToggle(MouseActionsType type)
     {
-        lock (StateLock)
+        lock (ToggleLock)
         {
-            return ButtonStates.TryGetValue(type, out var state) && state;
+            bool wasToggled = ToggleStates.TryGetValue(type, out var state) && state;
+            bool newState = !wasToggled;
+            ToggleStates[type] = newState;
+            return newState;
+        }
+    }
+
+    /// <summary>
+    /// Get the current toggle state for a mouse button.
+    /// Also checks if button was released externally and resets toggle if so.
+    /// </summary>
+    public static bool GetToggleState(MouseActionsType type)
+    {
+        lock (ToggleLock)
+        {
+            if (!ToggleStates.TryGetValue(type, out var state) || !state)
+                return false;
+
+            // Check if button is actually pressed using Windows API
+            int vk = type switch
+            {
+                MouseActionsType.LeftButton => VK_LBUTTON,
+                MouseActionsType.RightButton => VK_RBUTTON,
+                MouseActionsType.MiddleButton => VK_MBUTTON,
+                _ => 0
+            };
+
+            if (vk != 0)
+            {
+                short keyState = GetAsyncKeyState(vk);
+                bool isActuallyPressed = (keyState & 0x8000) != 0;
+
+                if (!isActuallyPressed)
+                {
+                    // External release detected
+                    ToggleStates[type] = false;
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Reset toggle state for a mouse button without sending MouseUp.
+    /// </summary>
+    public static void ResetToggle(MouseActionsType type)
+    {
+        lock (ToggleLock)
+        {
+            ToggleStates[type] = false;
         }
     }
 
@@ -40,15 +100,12 @@ public static class MouseSimulator
             {
                 case MouseActionsType.LeftButton:
                     InputSimulator.Mouse.LeftButtonDown();
-                    lock (StateLock) { ButtonStates[type] = true; }
                     break;
                 case MouseActionsType.RightButton:
                     InputSimulator.Mouse.RightButtonDown();
-                    lock (StateLock) { ButtonStates[type] = true; }
                     break;
                 case MouseActionsType.MiddleButton:
                     InputSimulator.Mouse.MiddleButtonDown();
-                    lock (StateLock) { ButtonStates[type] = true; }
                     break;
                 case MouseActionsType.ScrollUp:
                     InputSimulator.Mouse.VerticalScroll(scrollAmountInClicks);
@@ -72,15 +129,12 @@ public static class MouseSimulator
             {
                 case MouseActionsType.LeftButton:
                     InputSimulator.Mouse.LeftButtonUp();
-                    lock (StateLock) { ButtonStates[type] = false; }
                     break;
                 case MouseActionsType.RightButton:
                     InputSimulator.Mouse.RightButtonUp();
-                    lock (StateLock) { ButtonStates[type] = false; }
                     break;
                 case MouseActionsType.MiddleButton:
                     InputSimulator.Mouse.MiddleButtonUp();
-                    lock (StateLock) { ButtonStates[type] = false; }
                     break;
             }
         }
