@@ -17,6 +17,8 @@ namespace HandheldCompanion.Actions
         private bool IsKeyDown = false;
         private KeyCode[] pressed;
 
+        protected override bool GetActualOutputState() => KeyboardSimulator.IsKeyDown(Key);
+
         // settings
         public ModifierSet Modifiers = ModifierSet.None;
 

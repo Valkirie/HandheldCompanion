@@ -13,6 +13,8 @@ namespace HandheldCompanion.Actions
         // runtime variables
         private bool IsKeyDown = false;
 
+        protected override bool GetActualOutputState() => IsKeyDown;
+
         public ButtonActions()
         {
             actionType = ActionType.Button;

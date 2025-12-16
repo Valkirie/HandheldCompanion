@@ -3,6 +3,7 @@ using GregsStack.InputSimulatorStandard;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Inputs;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using WindowsInput.Events;
@@ -13,9 +14,25 @@ public static class KeyboardSimulator
 {
     private static readonly InputSimulator InputSimulator;
 
+    // Shared state tracking for keyboard keys - allows multiple actions to check the same state
+    private static readonly Dictionary<VirtualKeyCode, bool> KeyStates = new();
+    private static readonly object StateLock = new();
+
     static KeyboardSimulator()
     {
         InputSimulator = new InputSimulator();
+    }
+
+    /// <summary>
+    /// Returns the shared state of a keyboard key.
+    /// Used for toggle desync detection when multiple actions target the same key.
+    /// </summary>
+    public static bool IsKeyDown(VirtualKeyCode key)
+    {
+        lock (StateLock)
+        {
+            return KeyStates.TryGetValue(key, out var state) && state;
+        }
     }
 
     [DllImport("user32.dll")]
@@ -93,6 +110,7 @@ public static class KeyboardSimulator
         try
         {
             InputSimulator.Keyboard.KeyDown(key);
+            lock (StateLock) { KeyStates[key] = true; }
         }
         catch (Exception)
         {
@@ -111,6 +129,7 @@ public static class KeyboardSimulator
         try
         {
             InputSimulator.Keyboard.KeyUp(key);
+            lock (StateLock) { KeyStates[key] = false; }
         }
         catch (Exception)
         {

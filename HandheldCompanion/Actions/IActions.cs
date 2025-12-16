@@ -142,6 +142,12 @@ namespace HandheldCompanion.Actions
 
         public IActions() { }
 
+        /// <summary>
+        /// Returns the actual output state tracked by derived classes or shared simulators.
+        /// Used for toggle desync detection when external actions modify the output.
+        /// </summary>
+        protected virtual bool GetActualOutputState() => outBool;
+
         public virtual void SetHaptic(ButtonFlags button, bool released)
         {
             if (HapticMode == HapticMode.Off) return;
@@ -304,6 +310,13 @@ namespace HandheldCompanion.Actions
             // Toggle
             if (HasToggle)
             {
+                // Detect desync: toggle thinks it's ON but actual output is OFF (externally released)
+                bool actualState = GetActualOutputState();
+                if (IsToggled && !actualState)
+                {
+                    IsToggled = false; // Reset toggle to match reality
+                }
+
                 if (prevBool != value && value) IsToggled = !IsToggled;
             }
             else
