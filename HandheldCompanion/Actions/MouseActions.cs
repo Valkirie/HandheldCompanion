@@ -86,7 +86,8 @@ namespace HandheldCompanion.Actions
         protected override (bool useShared, bool toggleState) GetSharedToggleState(bool risingEdge)
         {
             // Only use shared state for button types, not for Move/Scroll
-            if (MouseType == MouseActionsType.Move || MouseType == MouseActionsType.Scroll)
+            if (MouseType == MouseActionsType.Move || MouseType == MouseActionsType.Scroll ||
+                MouseType == MouseActionsType.ScrollUp || MouseType == MouseActionsType.ScrollDown)
                 return (false, false);
 
             // First, check current state (this also detects external button releases)
