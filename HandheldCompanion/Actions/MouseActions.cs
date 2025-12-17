@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Inputs;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Simulators;
 using HandheldCompanion.Utils;
 using System;
@@ -45,8 +45,6 @@ namespace HandheldCompanion.Actions
         private KeyCode[] pressed;
         private OneEuroFilterPair mouseFilter;
 
-        protected override bool GetActualOutputState() => MouseSimulator.IsButtonDown(MouseType);
-
         // settings click
         public ModifierSet Modifiers = ModifierSet.None;
 
@@ -78,6 +76,28 @@ namespace HandheldCompanion.Actions
         public MouseActions(MouseActionsType type) : this()
         {
             MouseType = type;
+        }
+
+        /// <summary>
+        /// Use shared toggle state from MouseSimulator for button actions.
+        /// This allows multiple bindings targeting the same mouse button to share toggle state,
+        /// and detects when the button is released externally (by user or other app).
+        /// </summary>
+        protected override (bool useShared, bool toggleState) GetSharedToggleState(bool risingEdge)
+        {
+            // Only use shared state for button types, not for Move/Scroll
+            if (MouseType == MouseActionsType.Move || MouseType == MouseActionsType.Scroll ||
+                MouseType == MouseActionsType.ScrollUp || MouseType == MouseActionsType.ScrollDown)
+                return (false, false);
+
+            // First, check current state (this also detects external button releases)
+            bool currentState = MouseSimulator.GetToggleState(MouseType);
+
+            // Flip toggle on rising edge (button press)
+            if (risingEdge)
+                currentState = MouseSimulator.FlipToggle(MouseType);
+
+            return (true, currentState);
         }
 
         public override void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot, float delta)

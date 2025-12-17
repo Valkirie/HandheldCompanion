@@ -116,6 +116,8 @@ namespace HandheldCompanion.Actions
         public float StartDelay = 0.0f;
         [JsonIgnore]
         private float StartDelayTimer = -1.0f;  // -1 inactive, >= 0 counting
+        [JsonIgnore]
+        private bool StartDelayRisingEdge = false;  // Remember if delay was started by a rising edge
 
         [JsonIgnore]
         private bool IsToggled = false;
@@ -147,10 +149,16 @@ namespace HandheldCompanion.Actions
         public IActions() { }
 
         /// <summary>
-        /// Returns the actual output state tracked by derived classes or shared simulators.
-        /// Used for toggle desync detection when external actions modify the output.
+        /// Override in derived classes that use shared toggle state (e.g., KeyboardActions, MouseActions).
+        /// This allows multiple bindings targeting the same key/button to share toggle state.
+        /// Also enables detection of external releases (user physically pressing the key).
         /// </summary>
-        protected virtual bool GetActualOutputState() => outBool;
+        /// <param name="risingEdge">True if this is a button press (rising edge)</param>
+        /// <returns>(useShared, toggleState) - if useShared is true, use the provided toggleState instead of local state</returns>
+        protected virtual (bool useShared, bool toggleState) GetSharedToggleState(bool risingEdge)
+        {
+            return (false, false); // Default: use local toggle state
+        }
 
         public virtual void SetHaptic(ButtonFlags button, bool released)
         {
@@ -200,15 +208,19 @@ namespace HandheldCompanion.Actions
                 float effectiveDelay = (StartDelay < period) ? (period + StartDelay) : StartDelay;
 
                 // Start timer on button press (edge detection)
+                // Remember that this was a rising edge for toggle logic later
                 if (value && !prevBool)
+                {
                     StartDelayTimer = 0.0f;
+                    StartDelayRisingEdge = true;
+                }
 
                 // Timer is active: keep counting until delay reached
                 if (StartDelayTimer >= 0 && StartDelayTimer < effectiveDelay)
                 {
                     StartDelayTimer += delta;
                     outBool = false;
-                    prevBool = value;
+                    // Don't update prevBool here - it would lose the rising edge info
                     return;
                 }
 
@@ -217,6 +229,7 @@ namespace HandheldCompanion.Actions
                 {
                     StartDelayTimer = -1.0f;  // Reset for next press
                     value = true;  // Force trigger the action
+                    // Note: StartDelayRisingEdge will be consumed by toggle logic below
                 }
             }
 
@@ -343,17 +356,25 @@ namespace HandheldCompanion.Actions
             // Toggle
             if (HasToggle)
             {
-                // Detect desync: toggle thinks it's ON but actual output is OFF (externally released)
-                bool actualState = GetActualOutputState();
-                if (IsToggled && !actualState)
+                // Rising edge: either normal edge detection OR delayed action that was started by rising edge
+                bool risingEdge = (prevBool != value && value) || StartDelayRisingEdge;
+                StartDelayRisingEdge = false;  // Consume the delayed rising edge
+                
+                // Check if derived class provides shared toggle state
+                var (useShared, sharedState) = GetSharedToggleState(risingEdge);
+                if (useShared)
                 {
-                    IsToggled = false; // Reset toggle to match reality
+                    IsToggled = sharedState;
                 }
-
-                if (prevBool != value && value) IsToggled = !IsToggled;
+                else
+                {
+                    // Default local toggle behavior
+                    if (risingEdge) IsToggled = !IsToggled;
+                }
             }
             else
             {
+                StartDelayRisingEdge = false;  // Clear even if toggle not enabled
                 IsToggled = false;
             }
 
