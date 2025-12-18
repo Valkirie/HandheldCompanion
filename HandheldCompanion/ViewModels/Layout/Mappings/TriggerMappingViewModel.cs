@@ -1,4 +1,4 @@
-﻿using GregsStack.InputSimulatorStandard.Native;
+using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Extensions;
@@ -181,6 +181,31 @@ namespace HandheldCompanion.ViewModels
                 Targets.ReplaceWith(targets);
                 SelectedTarget = matchingTargetVm ?? Targets.First();
             }
+            else if (actionType == ActionType.Shift)
+            {
+                if (Action is null || Action is not ShiftActions)
+                    Action = new ShiftActions(ShiftSlot.ShiftA) { motionThreshold = Gamepad.TriggerThreshold, motionDirection = DeflectionDirection.Up };
+
+                MappingTargetViewModel? matchingTargetVm = null;
+                foreach (ShiftSlot shiftSlot in Enum.GetValues<ShiftSlot>())
+                {
+                    if (shiftSlot == ShiftSlot.None || shiftSlot == ShiftSlot.Any)
+                        continue;
+
+                    var mappingTargetVm = new MappingTargetViewModel
+                    {
+                        Tag = shiftSlot,
+                        Content = EnumUtils.GetDescriptionFromEnumValue(shiftSlot)
+                    };
+                    targets.Add(mappingTargetVm);
+
+                    if (shiftSlot == ((ShiftActions)Action).ShiftSlot)
+                        matchingTargetVm = mappingTargetVm;
+                }
+
+                Targets.ReplaceWith(targets);
+                SelectedTarget = matchingTargetVm ?? Targets.Last();
+            }
             else if (actionType == ActionType.Inherit)
             {
                 if (Action is null || Action is not InheritActions)
@@ -215,6 +240,10 @@ namespace HandheldCompanion.ViewModels
 
                 case ActionType.Mouse:
                     ((MouseActions)Action).MouseType = (MouseActionsType)SelectedTarget.Tag;
+                    break;
+
+                case ActionType.Shift:
+                    ((ShiftActions)Action).ShiftSlot = (ShiftSlot)SelectedTarget.Tag;
                     break;
             }
         }
