@@ -57,17 +57,21 @@ namespace HandheldCompanion.Actions
             {
                 if (IsKeyDown) return;
                 IsKeyDown = true;
+
                 pressed = ModifierMap[Modifiers];
                 KeyboardSimulator.KeyDown(pressed);
                 KeyboardSimulator.KeyDown(Key);
+
                 SetHaptic(button, false);
             }
             else
             {
                 if (!IsKeyDown) return;
                 IsKeyDown = false;
+
                 KeyboardSimulator.KeyUp(Key);
                 KeyboardSimulator.KeyUp(pressed);
+
                 SetHaptic(button, true);
             }
         }

@@ -4,6 +4,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -101,9 +102,10 @@ namespace HandheldCompanion.ViewModels
             get => Action is not null ? Action.StartDelay : 0;
             set
             {
-                if (Action is not null && value != StartDelay)
+                double rounded = Math.Round(value);
+                if (Action is not null && rounded != StartDelay)
                 {
-                    Action.StartDelay = value;
+                    Action.StartDelay = (float)rounded;
                     OnPropertyChanged(nameof(StartDelay));
                 }
             }

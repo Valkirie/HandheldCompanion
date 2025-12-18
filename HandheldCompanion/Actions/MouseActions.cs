@@ -19,7 +19,7 @@ namespace HandheldCompanion.Actions
         [Description("Middle Button")]
         MiddleButton = 3,
 
-        [Description("Move Cursor")]
+        [Description("Move Cursor (Relative)")]
         Move = 4,
         [Description("Scroll Wheel")]
         Scroll = 5,
@@ -29,7 +29,7 @@ namespace HandheldCompanion.Actions
         [Description("Scroll Down")]
         ScrollDown = 7,
 
-        [Description("Move Cursor")]
+        [Description("Move Cursor (Absolute)")]
         MoveTo = 8,
     }
 
@@ -63,6 +63,7 @@ namespace HandheldCompanion.Actions
         public bool MoveToPrevious = true;
         private double MoveToPreviousX = 0;
         private double MoveToPreviousY = 0;
+        private bool MoveToPreviousPending = false;
 
         // runtime variables
         private float accelMemory = 0.0f;
@@ -113,8 +114,9 @@ namespace HandheldCompanion.Actions
         {
             base.Execute(button, value, shiftSlot, delta);
 
-            if (outBool && !IsCursorDown)
+            if (outBool)
             {
+                if (IsCursorDown) return;
                 IsCursorDown = true;
 
                 // push modifier
@@ -129,10 +131,11 @@ namespace HandheldCompanion.Actions
                         break;
                     case MouseActionsType.MoveTo:
                         // store current mouse position
-                        if (MoveToPrevious)
+                        if (MoveToPrevious && !MoveToPreviousPending)
                         {
                             MoveToPreviousX = MouseSimulator.MouseX;
                             MoveToPreviousY = MouseSimulator.MouseY;
+                            MoveToPreviousPending = true;
                         }
                         MouseSimulator.MoveTo(MoveToX, MoveToY);
                         break;
@@ -140,8 +143,9 @@ namespace HandheldCompanion.Actions
 
                 SetHaptic(button, false);
             }
-            else if (IsCursorDown)
+            else
             {
+                if (!IsCursorDown) return;
                 IsCursorDown = false;
 
                 switch (MouseType)
@@ -150,11 +154,10 @@ namespace HandheldCompanion.Actions
                         MouseSimulator.MouseUp(MouseType);
                         break;
                     case MouseActionsType.MoveTo:
-                        // restore previous mouse position
-                        if (MoveToPrevious)
+                        if (MoveToPrevious && MoveToPreviousPending)
                         {
-                            MouseSimulator.Sleep(200);
                             MouseSimulator.MoveTo(MoveToPreviousX, MoveToPreviousY);
+                            MoveToPreviousPending = false;
                         }
                         break;
                 }
