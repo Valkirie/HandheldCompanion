@@ -4,26 +4,27 @@ using System.ComponentModel;
 namespace HandheldCompanion.Actions
 {
     [Serializable]
+    [Flags]
     public enum ShiftSlot
     {
-        [Description("None")]
-        None,
-        [Description("Enable shift A")]
-        ShiftA,
-        [Description("Enable shift B")]
-        ShiftB,
-        [Description("Enable shift C")]
-        ShiftC,
-        [Description("Enable shift D")]
-        ShiftD,
+        [Description("Disabled on shift")]
+        None = 0,
+        [Description("Shift A")]
+        ShiftA = 1 << 0,
+        [Description("Shift B")]
+        ShiftB = 1 << 1,
+        [Description("Shift C")]
+        ShiftC = 1 << 2,
+        [Description("Shift D")]
+        ShiftD = 1 << 3,
         [Description("Always enabled")]
-        Any,
+        Any = 1 << 7,
     }
 
     [Serializable]
     public sealed class ShiftActions : ButtonActions
     {
-        public ShiftSlot ShiftSlot = ShiftSlot.None;
+        public ShiftSlot ShiftSlot = ShiftSlot.ShiftA;
 
         public ShiftActions()
         {

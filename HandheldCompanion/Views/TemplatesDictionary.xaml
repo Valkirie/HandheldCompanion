@@ -1294,14 +1294,19 @@
                         Description="{x:Static resx:Resources.LayoutPage_InputShiftDesc}"
                         Header="{x:Static resx:Resources.LayoutPage_InputShift}"
                         Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
-                        <ComboBox SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="Disabled on shift" />
-                            <ComboBoxItem Content="Enabled with shift A" />
-                            <ComboBoxItem Content="Enabled with shift B" />
-                            <ComboBoxItem Content="Enabled with shift C" />
-                            <ComboBoxItem Content="Enabled with shift D" />
-                            <ComboBoxItem Content="Always enabled" />
-                        </ComboBox>
+                        <StackPanel Orientation="Horizontal">
+                            <ComboBox SelectedIndex="{Binding ShiftModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="140">
+                                <ComboBoxItem Content="Disabled on shift" />
+                                <ComboBoxItem Content="Always enabled" />
+                                <ComboBoxItem Content="Enabled on shift" />
+                            </ComboBox>
+                            <WrapPanel Orientation="Horizontal" Margin="8,0,0,0" Visibility="{Binding ShowShiftSelection, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <CheckBox Content="A" IsChecked="{Binding ShiftA, Mode=TwoWay}" />
+                                <CheckBox Content="B" IsChecked="{Binding ShiftB, Mode=TwoWay}" />
+                                <CheckBox Content="C" IsChecked="{Binding ShiftC, Mode=TwoWay}" />
+                                <CheckBox Content="D" IsChecked="{Binding ShiftD, Mode=TwoWay}" />
+                            </WrapPanel>
+                        </StackPanel>
                     </ui:SettingsCard>
 
                     <!--  Action type  -->
@@ -2059,14 +2064,19 @@
                         Description="{x:Static resx:Resources.LayoutPage_InputShiftDesc}"
                         Header="{x:Static resx:Resources.LayoutPage_InputShift}"
                         Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
-                        <ComboBox SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="Disabled on shift" />
-                            <ComboBoxItem Content="Enabled with shift A" />
-                            <ComboBoxItem Content="Enabled with shift B" />
-                            <ComboBoxItem Content="Enabled with shift C" />
-                            <ComboBoxItem Content="Enabled with shift D" />
-                            <ComboBoxItem Content="Always enabled" />
-                        </ComboBox>
+                        <StackPanel Orientation="Horizontal">
+                            <ComboBox SelectedIndex="{Binding ShiftModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="140">
+                                <ComboBoxItem Content="Disabled on shift" />
+                                <ComboBoxItem Content="Always enabled" />
+                                <ComboBoxItem Content="Enabled on shift" />
+                            </ComboBox>
+                            <WrapPanel Orientation="Horizontal" Margin="8,0,0,0" Visibility="{Binding ShowShiftSelection, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <CheckBox Content="A" IsChecked="{Binding ShiftA, Mode=TwoWay}" />
+                                <CheckBox Content="B" IsChecked="{Binding ShiftB, Mode=TwoWay}" />
+                                <CheckBox Content="C" IsChecked="{Binding ShiftC, Mode=TwoWay}" />
+                                <CheckBox Content="D" IsChecked="{Binding ShiftD, Mode=TwoWay}" />
+                            </WrapPanel>
+                        </StackPanel>
                     </ui:SettingsCard>
                 </ui:SettingsExpander.Items>
             </ui:SettingsExpander>
@@ -2287,14 +2297,19 @@
                         Description="{x:Static resx:Resources.LayoutPage_InputShiftDesc}"
                         Header="{x:Static resx:Resources.LayoutPage_InputShift}"
                         Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
-                        <ComboBox SelectedIndex="{Binding ShiftIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="Disabled on shift" />
-                            <ComboBoxItem Content="Enabled with shift A" />
-                            <ComboBoxItem Content="Enabled with shift B" />
-                            <ComboBoxItem Content="Enabled with shift C" />
-                            <ComboBoxItem Content="Enabled with shift D" />
-                            <ComboBoxItem Content="Always enabled" />
-                        </ComboBox>
+                        <StackPanel Orientation="Horizontal">
+                            <ComboBox SelectedIndex="{Binding ShiftModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="140">
+                                <ComboBoxItem Content="Disabled on shift" />
+                                <ComboBoxItem Content="Always enabled" />
+                                <ComboBoxItem Content="Enabled on shift" />
+                            </ComboBox>
+                            <WrapPanel Orientation="Horizontal" Margin="8,0,0,0" Visibility="{Binding ShowShiftSelection, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <CheckBox Content="A" IsChecked="{Binding ShiftA, Mode=TwoWay}" />
+                                <CheckBox Content="B" IsChecked="{Binding ShiftB, Mode=TwoWay}" />
+                                <CheckBox Content="C" IsChecked="{Binding ShiftC, Mode=TwoWay}" />
+                                <CheckBox Content="D" IsChecked="{Binding ShiftD, Mode=TwoWay}" />
+                            </WrapPanel>
+                        </StackPanel>
                     </ui:SettingsCard>
                 </ui:SettingsExpander.Items>
             </ui:SettingsExpander>
