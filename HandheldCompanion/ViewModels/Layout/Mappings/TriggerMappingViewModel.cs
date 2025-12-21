@@ -60,17 +60,92 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        // default mapping can't be shifted
-        public int ShiftIndex
+        // Shift mode: 0 = Disabled on shift, 1 = Always enabled, 2 = Enabled on specific shifts
+        public int ShiftModeIndex
         {
-            get => Action is not null ? (int)Action.ShiftSlot : 0;
+            get
+            {
+                if (Action is null) return 1; // Default to always enabled
+                if (Action.ShiftSlot.HasFlag(ShiftSlot.Any)) return 1; // Always enabled
+                if (Action.ShiftSlot == ShiftSlot.None) return 0; // Disabled on shift
+                return 2; // Specific shifts selected
+            }
             set
             {
-                if (Action is not null && value != ShiftIndex)
+                if (Action is null || value == ShiftModeIndex) return;
+                
+                switch (value)
                 {
-                    Action.ShiftSlot = (ShiftSlot)value;
-                    OnPropertyChanged(nameof(ShiftIndex));
+                    case 0: // Disabled on shift
+                        Action.ShiftSlot = ShiftSlot.None;
+                        break;
+                    case 1: // Always enabled
+                        Action.ShiftSlot = ShiftSlot.Any;
+                        break;
+                    case 2: // Enabled on shift - default to ShiftA if nothing selected
+                        Action.ShiftSlot = ShiftSlot.ShiftA;
+                        break;
                 }
+                OnPropertyChanged(nameof(ShiftModeIndex));
+                OnPropertyChanged(nameof(ShowShiftSelection));
+                OnPropertyChanged(nameof(ShiftA));
+                OnPropertyChanged(nameof(ShiftB));
+                OnPropertyChanged(nameof(ShiftC));
+                OnPropertyChanged(nameof(ShiftD));
+            }
+        }
+
+        public bool ShowShiftSelection => ShiftModeIndex == 2;
+
+        public bool ShiftA
+        {
+            get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftA);
+            set
+            {
+                if (Action is null || value == ShiftA) return;
+                Action.ShiftSlot = value
+                    ? Action.ShiftSlot | ShiftSlot.ShiftA
+                    : Action.ShiftSlot & ~ShiftSlot.ShiftA;
+                OnPropertyChanged(nameof(ShiftA));
+            }
+        }
+
+        public bool ShiftB
+        {
+            get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftB);
+            set
+            {
+                if (Action is null || value == ShiftB) return;
+                Action.ShiftSlot = value
+                    ? Action.ShiftSlot | ShiftSlot.ShiftB
+                    : Action.ShiftSlot & ~ShiftSlot.ShiftB;
+                OnPropertyChanged(nameof(ShiftB));
+            }
+        }
+
+        public bool ShiftC
+        {
+            get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftC);
+            set
+            {
+                if (Action is null || value == ShiftC) return;
+                Action.ShiftSlot = value
+                    ? Action.ShiftSlot | ShiftSlot.ShiftC
+                    : Action.ShiftSlot & ~ShiftSlot.ShiftC;
+                OnPropertyChanged(nameof(ShiftC));
+            }
+        }
+
+        public bool ShiftD
+        {
+            get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftD);
+            set
+            {
+                if (Action is null || value == ShiftD) return;
+                Action.ShiftSlot = value
+                    ? Action.ShiftSlot | ShiftSlot.ShiftD
+                    : Action.ShiftSlot & ~ShiftSlot.ShiftD;
+                OnPropertyChanged(nameof(ShiftD));
             }
         }
 
@@ -187,11 +262,9 @@ namespace HandheldCompanion.ViewModels
                     Action = new ShiftActions(ShiftSlot.ShiftA) { motionThreshold = Gamepad.TriggerThreshold, motionDirection = DeflectionDirection.Up };
 
                 MappingTargetViewModel? matchingTargetVm = null;
-                foreach (ShiftSlot shiftSlot in Enum.GetValues<ShiftSlot>())
+                // Only show individual shift slots (A, B, C, D), not None or combined values
+                foreach (ShiftSlot shiftSlot in new[] { ShiftSlot.ShiftA, ShiftSlot.ShiftB, ShiftSlot.ShiftC, ShiftSlot.ShiftD })
                 {
-                    if (shiftSlot == ShiftSlot.None || shiftSlot == ShiftSlot.Any)
-                        continue;
-
                     var mappingTargetVm = new MappingTargetViewModel
                     {
                         Tag = shiftSlot,
@@ -204,7 +277,7 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 Targets.ReplaceWith(targets);
-                SelectedTarget = matchingTargetVm ?? Targets.Last();
+                SelectedTarget = matchingTargetVm ?? Targets.First();
             }
             else if (actionType == ActionType.Inherit)
             {
