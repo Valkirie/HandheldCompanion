@@ -413,12 +413,14 @@ namespace HandheldCompanion.Actions
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected static bool IsShiftAllowed(ShiftSlot current, ShiftSlot required)
         {
-            switch (required)
-            {
-                case ShiftSlot.None: return current == ShiftSlot.None;
-                case ShiftSlot.Any: return true;
-                default: return (current & required) != 0;
-            }
+            // Any flag means always enabled regardless of shift state
+            if (required.HasFlag(ShiftSlot.Any))
+                return true;
+            // None means only trigger when no shifts are pressed
+            if (required == ShiftSlot.None)
+                return current == ShiftSlot.None;
+            // For specific shift combinations, require exact match
+            return current == required;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
