@@ -5,14 +5,14 @@ using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;
 
-public class GPDWin4_2023_7840U : IDevice
+public class GPDWin4_2024 : IDevice
 {
-    public GPDWin4_2023_7840U()
+    public GPDWin4_2024()
     {
         // device specific settings
         ProductIllustration = "device_gpd4";
 
-        // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html
+        // https://www.amd.com/fr/products/processors/laptop/ryzen/8000-series/amd-ryzen-7-8840u.html
         nTDP = new double[] { 15, 15, 28 };
         cTDP = new double[] { 5, 30 };
         GfxClock = new double[] { 200, 2700 };

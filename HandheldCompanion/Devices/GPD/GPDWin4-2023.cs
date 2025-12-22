@@ -5,14 +5,14 @@ using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;
 
-public class GPDWin4_2024_8840U : IDevice
+public class GPDWin4_2023 : IDevice
 {
-    public GPDWin4_2024_8840U()
+    public GPDWin4_2023()
     {
         // device specific settings
         ProductIllustration = "device_gpd4";
 
-        // https://www.amd.com/fr/products/processors/laptop/ryzen/8000-series/amd-ryzen-7-8840u.html
+        // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html
         nTDP = new double[] { 15, 15, 28 };
         cTDP = new double[] { 5, 30 };
         GfxClock = new double[] { 200, 2700 };
@@ -32,20 +32,20 @@ public class GPDWin4_2024_8840U : IDevice
             FanValueMax = 184
         };
 
-        GyrometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
-        GyrometerAxisSwap = new SortedDictionary<char, char>
+        this.GyrometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
+        this.GyrometerAxisSwap = new SortedDictionary<char, char>
         {
-            { 'X', 'Y' },
-            { 'Y', 'Z' },
-            { 'Z', 'X' }
+            { 'X', 'Y' }, // out X from in Y (sign +)
+            { 'Y', 'Z' }, // out Y from in Z (sign -)
+            { 'Z', 'X' }  // out Z from in X (sign -)
         };
 
-        AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
-        AccelerometerAxisSwap = new SortedDictionary<char, char>
+        this.AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
+        this.AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
-            { 'X', 'X' },
-            { 'Y', 'Z' },
-            { 'Z', 'Y' }
+            { 'X', 'X' }, // out X from in X (sign -)
+            { 'Y', 'Z' }, // out Y from in Z (sign -)
+            { 'Z', 'Y' }  // out Z from in Y (sign +)
         };
 
         // Note, OEM1 not configured as this device has it's own Menu button for guide button

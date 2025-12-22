@@ -608,13 +608,13 @@ public abstract class IDevice
                                     device = new GPDWin4_2023_7640U();
                                     break;
                                 case "AMD Ryzen 7 7840U w/ Radeon 780M Graphics":
-                                    device = new GPDWin4_2023_7840U();
+                                    device = new GPDWin4_2023();
                                     break;
                                 case "AMD Ryzen 5 8640U w/ Radeon 760M Graphics":
                                     device = new GPDWin4_2024_8640U();
                                     break;
                                 case "AMD Ryzen 7 8840U w/ Radeon 780M Graphics":
-                                    device = new GPDWin4_2024_8840U();
+                                    device = new GPDWin4_2024();
                                     break;
                                 case "AMD Ryzen AI 9 HX 370 w/ Radeon 890M":
                                     device = new GPDWin4_2024_HX370();

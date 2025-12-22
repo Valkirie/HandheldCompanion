@@ -1,6 +1,6 @@
 ﻿namespace HandheldCompanion.Devices;
 
-public class GPDWin4_2024_8640U : GPDWin4_2024_8840U
+public class GPDWin4_2024_8640U : GPDWin4_2024
 {
     public GPDWin4_2024_8640U()
     {
