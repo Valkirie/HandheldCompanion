@@ -1,3 +1,4 @@
+using HandheldCompanion.Converters;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -137,6 +138,7 @@ namespace HandheldCompanion.Actions
 
         private int PressCount = 0;     // used for double tap
 
+        [JsonConverter(typeof(ShiftSlotConverter))]
         public ShiftSlot ShiftSlot = ShiftSlot.Any;
 
         public HapticMode HapticMode = HapticMode.Off;
