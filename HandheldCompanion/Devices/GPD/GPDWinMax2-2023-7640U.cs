@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Numerics;
-
-namespace HandheldCompanion.Devices;
+﻿namespace HandheldCompanion.Devices;
 
 public class GPDWinMax2_2023_7640U : GPDWinMax2
 {
@@ -12,21 +9,5 @@ public class GPDWinMax2_2023_7640U : GPDWinMax2
         cTDP = new double[] { 3, 28 };
         GfxClock = new double[] { 100, 2600 };
         CpuClock = 4900;
-
-        GyrometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
-        GyrometerAxisSwap = new SortedDictionary<char, char>
-        {
-            { 'X', 'Y' },
-            { 'Y', 'Z' },
-            { 'Z', 'X' }
-        };
-
-        AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
-        AccelerometerAxisSwap = new SortedDictionary<char, char>
-        {
-            { 'X', 'X' },
-            { 'Y', 'Z' },
-            { 'Z', 'Y' }
-        };
     }
 }

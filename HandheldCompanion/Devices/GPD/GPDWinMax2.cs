@@ -1,5 +1,7 @@
 ﻿using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Inputs;
+using System.Collections.Generic;
+using System.Numerics;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;
@@ -23,6 +25,21 @@ public class GPDWinMax2 : IDevice
             AddressDataPort = 0x4F,
             FanValueMin = 0,
             FanValueMax = 184
+        };
+
+        GyrometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
+        GyrometerAxisSwap = new SortedDictionary<char, char>
+        {
+            { 'X', 'Y' },
+            { 'Y', 'Z' },
+            { 'Z', 'X' }
+        };
+        AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
+        AccelerometerAxisSwap = new SortedDictionary<char, char>
+        {
+            { 'X', 'X' },
+            { 'Y', 'Z' },
+            { 'Z', 'Y' }
         };
 
         // Disabled this one as Win Max 2 also sends an Xbox guide input when Menu key is pressed.
