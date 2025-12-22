@@ -1,6 +1,6 @@
 ﻿namespace HandheldCompanion.Devices;
 
-public class GPDWinMini_7640U : GPDWinMini_7840U
+public class GPDWinMini_7640U : GPDWinMini
 {
     public GPDWinMini_7640U()
     {

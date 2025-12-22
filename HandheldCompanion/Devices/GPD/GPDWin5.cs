@@ -49,13 +49,12 @@ public class GPDWin5 : IDevice
             FanValueMax = 244
         };
 
-        // same as GPDWin4
-        GyrometerAxis = new Vector3(-1.0f, 1.0f, 1.0f);
+        GyrometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {
-            { 'X', 'X' },
+            { 'X', 'Y' },
             { 'Y', 'Z' },
-            { 'Z', 'Y' }
+            { 'Z', 'X' }
         };
 
         AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);

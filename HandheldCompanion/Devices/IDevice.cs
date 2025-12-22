@@ -585,7 +585,7 @@ public abstract class IDevice
                                     device = new GPDWinMini_7640U();
                                     break;
                                 case "AMD Ryzen 7 7840U w/ Radeon 780M Graphics":
-                                    device = new GPDWinMini_7840U();
+                                    device = new GPDWinMini();
                                     break;
                                 case "AMD Ryzen 7 8840U w/ Radeon 780M Graphics":
                                     device = new GPDWinMini_8840U();

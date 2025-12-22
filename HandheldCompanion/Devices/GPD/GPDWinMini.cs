@@ -6,9 +6,9 @@ using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;
 
-public class GPDWinMini_7840U : IDevice
+public class GPDWinMini : IDevice
 {
-    public GPDWinMini_7840U()
+    public GPDWinMini()
     {
         // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html
         nTDP = new double[] { 15, 15, 18 };
