@@ -361,7 +361,7 @@ namespace HandheldCompanion.Actions
                 // Rising edge: either normal edge detection OR delayed action that was started by rising edge
                 bool risingEdge = (prevBool != value && value) || StartDelayRisingEdge;
                 StartDelayRisingEdge = false;  // Consume the delayed rising edge
-                
+
                 // Check if derived class provides shared toggle state
                 var (useShared, sharedState) = GetSharedToggleState(risingEdge);
                 if (useShared)

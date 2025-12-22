@@ -73,7 +73,7 @@ namespace HandheldCompanion.ViewModels
             set
             {
                 if (Action is null || value == ShiftModeIndex) return;
-                
+
                 switch (value)
                 {
                     case 0: // Disabled on shift
