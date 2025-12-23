@@ -82,6 +82,8 @@ public partial class MainWindow : GamepadWindow
     public string prevNavItemTag;
 
     private WindowState prevWindowState;
+    private FullScreenExperienceMonitor fullScreenExperienceMonitor;
+
     public static SplashScreen SplashScreen;
 
     public static UISettings uiSettings;
@@ -163,6 +165,11 @@ public partial class MainWindow : GamepadWindow
         CurrentDevice = IDevice.GetCurrent();
         CurrentDevice.PullSensors();
         CurrentDevice.Initialize(FirstStart, NewUpdate);
+
+        // FSE monitor
+        fullScreenExperienceMonitor = new FullScreenExperienceMonitor();
+        fullScreenExperienceMonitor.FseStateChanged += FullScreenExperienceMonitor_FseStateChanged;
+        fullScreenExperienceMonitor.Start();
 
         // initialize UI sounds board
         UISounds uiSounds = new UISounds();
@@ -367,40 +374,6 @@ public partial class MainWindow : GamepadWindow
     {
         var separator = new ToolStripSeparator();
         notifyIcon.ContextMenuStrip.Items.Add(separator);
-    }
-
-    public void ToggleState()
-    {
-        // UI thread
-        UIHelper.TryInvoke(() =>
-        {
-            switch (WindowState)
-            {
-                case WindowState.Normal:
-                case WindowState.Maximized:
-                    SetState(WindowState.Minimized);
-                    break;
-                case WindowState.Minimized:
-                    SetState(prevWindowState);
-                    break;
-            }
-        });
-    }
-
-    public void SetState(WindowState windowState)
-    {
-        UIHelper.TryInvoke(() =>
-        {
-            switch (windowState)
-            {
-                case WindowState.Normal:
-                case WindowState.Maximized:
-                    Show();
-                    break;
-            }
-
-            WindowState = windowState;
-        });
     }
 
     public static MainWindow GetCurrent()
@@ -788,6 +761,97 @@ public partial class MainWindow : GamepadWindow
         }
     }
 
+    private bool isFseActive;
+    private WindowState preFseWindowState = WindowState.Normal;
+
+    private void FullScreenExperienceMonitor_FseStateChanged(object? sender, FullScreenExperienceMonitor.FseStateChangedEventArgs e)
+    {
+        UIHelper.TryInvoke(() =>
+        {
+            if (e.IsActive)
+            {
+                if (!isFseActive)
+                {
+                    // capture once, before we force maximize
+                    preFseWindowState = (WindowState == WindowState.Minimized) ? prevWindowState : WindowState;
+                    isFseActive = true;
+                }
+
+                ResizeMode = ResizeMode.NoResize;          // removes Min/Max buttons
+                SetState(WindowState.Maximized);           // force max while FSE
+            }
+            else
+            {
+                ResizeMode = ResizeMode.CanResize;         // restore buttons
+                SetState(preFseWindowState);               // restore what we captured
+                isFseActive = false;
+            }
+        });
+    }
+
+    public void ToggleState()
+    {
+        // UI thread
+        UIHelper.TryInvoke(() =>
+        {
+            switch (WindowState)
+            {
+                case WindowState.Normal:
+                case WindowState.Maximized:
+                    SetState(WindowState.Minimized);
+                    break;
+                case WindowState.Minimized:
+                    SetState(prevWindowState);
+                    break;
+            }
+        });
+    }
+
+    public void SetState(WindowState windowState)
+    {
+        UIHelper.TryInvoke(() =>
+        {
+            if (isFseActive)
+            {
+                switch (windowState)
+                {
+                    case WindowState.Minimized:
+                        Hide();
+                        break;
+                }
+
+                WindowState = windowState;
+
+                switch (windowState)
+                {
+                    case WindowState.Normal:
+                    case WindowState.Maximized:
+                        Show();
+                        break;
+                }
+            }
+            else
+            {
+                switch (windowState)
+                {
+                    case WindowState.Normal:
+                    case WindowState.Maximized:
+                        Show();
+                        break;
+                }
+
+                WindowState = windowState;
+
+                switch (windowState)
+                {
+                    case WindowState.Minimized:
+                        Hide();
+                        break;
+                }
+            }
+        });
+    }
+
     protected override void Window_StateChanged(object? sender, EventArgs e)
     {
         switch (WindowState)
@@ -811,15 +875,19 @@ public partial class MainWindow : GamepadWindow
                     notifyIcon.Visible = false;
                     ShowInTaskbar = true;
 
+                    Show();
                     Activate();
                     Topmost = true;  // important
                     Topmost = false; // important
                     Focus();
 
-                    prevWindowState = WindowState;
+                    if (!isFseActive)
+                    {
+                        prevWindowState = WindowState;
 
-                    ManagerFactory.settingsManager.SetProperty("MainWindowState", (int)WindowState);
-                    ManagerFactory.settingsManager.SetProperty("MainWindowPrevState", (int)prevWindowState);
+                        ManagerFactory.settingsManager.SetProperty("MainWindowState", (int)WindowState);
+                        ManagerFactory.settingsManager.SetProperty("MainWindowPrevState", (int)prevWindowState);
+                    }
                 }
                 break;
         }
