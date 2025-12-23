@@ -530,7 +530,7 @@ namespace HandheldCompanion.ViewModels
             }
             set
             {
-                if (Hotkey.command is ButtonCommands bc && bc.ButtonFlags != (ButtonFlags)value.Tag)
+                if (Hotkey.command is ButtonCommands bc && value is not null && bc.ButtonFlags != (ButtonFlags)value.Tag)
                 {
                     bc.ButtonFlags = (ButtonFlags)value.Tag;
                     ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
