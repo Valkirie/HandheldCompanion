@@ -287,7 +287,10 @@
                 </ui:SettingsCard>
 
                 <!--  Slide Animation  -->
-                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_QuicktoolsSlideAnimationDesc}" Header="{l:Static resx:Resources.SettingsPage_QuicktoolsSlideAnimation}">
+                <ui:SettingsCard
+                    Description="{l:Static resx:Resources.SettingsPage_QuicktoolsSlideAnimationDesc}"
+                    Header="{l:Static resx:Resources.SettingsPage_QuicktoolsSlideAnimation}"
+                    IsEnabled="False">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Glyph="&#xE8B2;" />
                     </ui:SettingsCard.HeaderIcon>
