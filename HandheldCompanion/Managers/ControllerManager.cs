@@ -1583,7 +1583,10 @@ public static class ControllerManager
 
             // already self
             if (IsTargetController(controller.GetInstanceId()))
+            {
+                controller.Plug();
                 return;
+            }
 
             // clear current target
             ClearTargetControllerInternal();
