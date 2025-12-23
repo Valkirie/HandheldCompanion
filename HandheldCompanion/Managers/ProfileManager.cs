@@ -962,7 +962,17 @@ public class ProfileManager : IManager
                 profile.LastUsed = profile.DateModified;
 
             // download arts
-            ManagerFactory.libraryManager.RefreshProfileArts(profile);
+            switch(profile.Executable)
+            {
+                // skip Windows Explorer
+                case "explorer.exe":
+                    profile.ShowInLibrary = false;
+                    break;
+
+                default:
+                    ManagerFactory.libraryManager.RefreshProfileArts(profile);
+                    break;
+            }
         }
 
         // used to get and store a few previous values
