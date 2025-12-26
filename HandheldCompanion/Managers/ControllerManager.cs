@@ -65,8 +65,8 @@ public static class ControllerManager
     private static int ControllerManagementAttempts = 0;
     private const int ControllerManagementMaxAttempts = 4;
 
-    private static readonly DummyXbox360Controller? dummyXbox360 = new();
-    private static readonly DummyDualShock4Controller? dummyDualShock4 = new();
+    private static readonly DummyXbox360Controller dummyXbox360 = new();
+    private static readonly DummyDualShock4Controller dummyDualShock4 = new();
     public static bool HasTargetController => GetTarget() != null;
 
     private static IController? targetController;
@@ -1847,7 +1847,7 @@ public static class ControllerManager
         HIDmode HIDmode = HIDmode.NoController;
 
         // if profile is selected, get its HIDmode
-        if (profilePage)
+        if (profilePage && ProfilesPage.selectedProfile is not null)
             HIDmode = ProfilesPage.selectedProfile.HID;
         else
             HIDmode = ManagerFactory.profileManager.GetCurrent().HID;
