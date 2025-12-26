@@ -96,7 +96,8 @@ public partial class Layout : ICloneable, IDisposable
 
     public object Clone()
     {
-        return CloningHelper.DeepClone(this);
+        lock (_sync)
+            return CloningHelper.DeepClone(this);
     }
 
     public void Dispose()
