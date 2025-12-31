@@ -1283,7 +1283,7 @@
                                 IsMoveToPointEnabled="True"
                                 Maximum="1000"
                                 Minimum="0"
-                                TickFrequency="100"
+                                TickFrequency="1"
                                 TickPlacement="BottomRight"
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 Value="{Binding StartDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -1902,7 +1902,7 @@
                                 IsMoveToPointEnabled="True"
                                 Maximum="1000"
                                 Minimum="0"
-                                TickFrequency="100"
+                                TickFrequency="1"
                                 TickPlacement="BottomRight"
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 Value="{Binding StartDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -1917,6 +1917,35 @@
                     <!--  Toggle  -->
                     <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_PressToToggle}" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                         <ui:ToggleSwitch IsOn="{Binding HasToggle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                    </ui:SettingsCard>
+
+                    <!--  Move mouse cursor to X,Y  -->
+                    <!--  TODO: Translate me  -->
+                    <ui:SettingsCard Header="Mouse position" Visibility="{Binding Axis2MouseTo, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <StackPanel>
+                            <WrapPanel Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="X" />
+                                <ui:NumberBox
+                                    MinWidth="20"
+                                    Margin="6,0,0,0"
+                                    Minimum="0"
+                                    SpinButtonPlacementMode="Inline"
+                                    Value="{Binding Axis2MouseToX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </WrapPanel>
+                            <WrapPanel Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="Y" />
+                                <ui:NumberBox
+                                    MinWidth="20"
+                                    Margin="6,0,0,0"
+                                    Minimum="0"
+                                    SpinButtonPlacementMode="Inline"
+                                    Value="{Binding Axis2MouseToY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </ui:SettingsCard>
+                    <!--  TODO: Translate me  -->
+                    <ui:SettingsCard Header="Restore previous position" Visibility="{Binding Axis2MouseTo, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <ui:ToggleSwitch IsOn="{Binding Axis2MouseRestore, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </ui:SettingsCard>
 
                     <!--  Output shape  -->
@@ -2262,7 +2291,7 @@
                                 IsMoveToPointEnabled="True"
                                 Maximum="1000"
                                 Minimum="0"
-                                TickFrequency="100"
+                                TickFrequency="1"
                                 TickPlacement="BottomRight"
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 Value="{Binding StartDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

@@ -8,6 +8,7 @@ using HandheldCompanion.Utils;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -331,6 +332,60 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public double Axis2MouseToX
+        {
+            get => (Action is MouseActions mouseAction) ? mouseAction.MoveToX : 0;
+            set
+            {
+                if (Action is MouseActions mouseAction && value != Axis2MouseToX)
+                {
+                    mouseAction.MoveToX = value is double.NaN ? 0 : value;
+                    OnPropertyChanged(nameof(Axis2MouseToX));
+                }
+            }
+        }
+
+        public double Axis2MouseToY
+        {
+            get => (Action is MouseActions mouseAction) ? mouseAction.MoveToY : 0;
+            set
+            {
+                if (Action is MouseActions mouseAction && value != Axis2MouseToY)
+                {
+                    mouseAction.MoveToY = value is double.NaN ? 0 : value;
+                    OnPropertyChanged(nameof(Axis2MouseToY));
+                }
+            }
+        }
+
+        public bool Axis2MouseRestore
+        {
+            get => (Action is MouseActions mouseAction) ? mouseAction.MoveToPrevious : false;
+            set
+            {
+                if (Action is MouseActions mouseAction && value != Axis2MouseRestore)
+                {
+                    mouseAction.MoveToPrevious = value;
+                    OnPropertyChanged(nameof(Axis2MouseRestore));
+                }
+            }
+        }
+
+        public Visibility Axis2MouseTo
+        {
+            get
+            {
+                ActionType currentActionType = (ActionType)ActionTypeIndex;
+                if (currentActionType == ActionType.Mouse && SelectedTarget != null)
+                {
+                    MouseActionsType mouseAction = (MouseActionsType)SelectedTarget.Tag;
+                    return mouseAction == MouseActionsType.MoveTo ? Visibility.Visible : Visibility.Collapsed;
+                }
+
+                return Visibility.Collapsed;
+            }
+        }
+
         public override void OnPropertyChanged(string propertyName)
         {
             switch (propertyName)
@@ -339,6 +394,7 @@ namespace HandheldCompanion.ViewModels
                 case "ActionTypeIndex":
                     OnPropertyChanged(nameof(Axis2MouseVisibility));
                     OnPropertyChanged(nameof(Axis2ButtonVisibility));
+                    OnPropertyChanged(nameof(Axis2MouseTo));
                     break;
             }
 
