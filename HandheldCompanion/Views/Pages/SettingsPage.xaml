@@ -211,6 +211,33 @@
                     </ui:SettingsCard.HeaderIcon>
                     <ui:ToggleSwitch Name="Toggle_GPUMonitor" Toggled="Toggle_GPUMonitor_Toggled" />
                 </ui:SettingsCard>
+
+                <!--  Master Timer  -->
+                <ui:SettingsCard Description="Controller update rate. A higher rate improves responsiveness but increases CPU usage" Header="Update rate">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Stopwatch}" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <DockPanel>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                            Text="{Binding Value, StringFormat={}{0:N0} ms, Source={x:Reference SliderMasterInterval}, Mode=OneWay}" />
+                        <Slider
+                            x:Name="SliderMasterInterval"
+                            Width="200"
+                            Margin="6,0,0,0"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            LargeChange="20"
+                            Maximum="100"
+                            Minimum="1"
+                            SmallChange="10"
+                            TickFrequency="1"
+                            ToolTip="{Binding Value, StringFormat={}{0:N0} ms, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                            ValueChanged="SliderMasterInterval_ValueChanged"
+                            Value="100" />
+                    </DockPanel>
+                </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 
             <!--  Quicktools options  -->

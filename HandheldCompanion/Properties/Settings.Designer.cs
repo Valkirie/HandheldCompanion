@@ -1509,5 +1509,17 @@ namespace HandheldCompanion.Properties
                 this["ControllerSlotManagementMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public double MasterInterval {
+            get {
+                return ((double)(this["MasterInterval"]));
+            }
+            set {
+                this["MasterInterval"] = value;
+            }
+        }
     }
 }

@@ -13,7 +13,7 @@ public static class TimerManager
     public static event TickEventHandler Tick;
     public delegate void TickEventHandler(long ticks, float delta);
 
-    private const int MasterInterval = 10; // 100Hz
+    private static int MasterInterval = 10; // 100Hz
     private static PrecisionTimer MasterTimer;
     public static Stopwatch Stopwatch;
 
@@ -31,6 +31,18 @@ public static class TimerManager
         if (IsInitialized)
             return;
 
+        // raise events
+        switch (ManagerFactory.settingsManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
+        }
+
         // (re)create timer
         MasterTimer = new PrecisionTimer();
         MasterTimer.SetInterval(new Action(DoWork), MasterInterval, false, 0, TimerMode.Periodic, true);
@@ -44,12 +56,41 @@ public static class TimerManager
         LogManager.LogInformation("{0} has started with Period set to {1}", "TimerManager", GetPeriod());
     }
 
+    private static void QuerySettings()
+    {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        SettingsManager_SettingValueChanged("MasterInterval", ManagerFactory.settingsManager.GetString("MasterInterval"), false);
+    }
+
+    private static void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    {
+        switch (name)
+        {
+            case "MasterInterval":
+                MasterInterval = Convert.ToInt32(value);
+                MasterTimer.SetInterval(new Action(DoWork), MasterInterval, false, 0, TimerMode.Periodic, true);
+                break;
+        }
+    }
+
+    private static void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
     public static void Stop()
     {
         if (!IsInitialized)
             return;
 
         IsInitialized = false;
+
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
         MasterTimer.Stop();
         MasterTimer.Dispose();
