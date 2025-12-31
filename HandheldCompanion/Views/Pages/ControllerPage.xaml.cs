@@ -1,4 +1,4 @@
-using HandheldCompanion.Controllers;
+﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
@@ -20,6 +20,8 @@ namespace HandheldCompanion.Views.Pages;
 /// </summary>
 public partial class ControllerPage : Page
 {
+    private bool _hasSlotIssue;
+
     public ControllerPage()
     {
         DataContext = new ControllerPageViewModel(this);
@@ -30,7 +32,12 @@ public partial class ControllerPage : Page
         // manage events
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.StatusChanged += ControllerManager_Working;
+        ControllerManager.SlotIssueChanged += ControllerManager_SlotIssueChanged;
         ManagerFactory.profileManager.Applied += ProfileManager_Applied;
+
+        // Initialize current state
+        _hasSlotIssue = ControllerManager.HasSlotIssue;
+        UpdateSlotFixButton();
     }
 
     public ControllerPage(string Tag) : this()
@@ -75,8 +82,16 @@ public partial class ControllerPage : Page
                 case "HIDvibrateonconnect":
                     Toggle_Vibrate.IsOn = Convert.ToBoolean(value);
                     break;
-                case "ControllerManagement":
-                    Toggle_ControllerManagement.IsOn = Convert.ToBoolean(value);
+                case "ControllerSlotManagementMode":
+                    {
+                        if (!int.TryParse(Convert.ToString(value, CultureInfo.InvariantCulture), out int mode))
+                            mode = 0;
+
+                        mode = Math.Max(0, Math.Min(1, mode));
+                        cB_ControllerSlotManagementMode.SelectedIndex = mode;
+
+                        UpdateSlotFixButton();
+                    }
                     break;
                 case "VibrationStrength":
                     SliderStrength.Value = Convert.ToDouble(value);
@@ -103,11 +118,29 @@ public partial class ControllerPage : Page
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
     {
+        UpdateSlotFixButton();
     }
 
     public void Page_Closed()
     {
+        ControllerManager.SlotIssueChanged -= ControllerManager_SlotIssueChanged;
         ((ControllerPageViewModel)DataContext).Dispose();
+    }
+
+    private void ControllerManager_SlotIssueChanged(bool hasIssue, string reason)
+    {
+        _hasSlotIssue = hasIssue;
+        UpdateSlotFixButton();
+    }
+
+    private void UpdateSlotFixButton()
+    {
+        // UI thread
+        UIHelper.TryInvoke(() =>
+        {
+            bool isManual = cB_ControllerSlotManagementMode.SelectedIndex == 0;
+            b_SlotFixNow.Visibility = (isManual && _hasSlotIssue) ? Visibility.Visible : Visibility.Collapsed;
+        });
     }
 
     private void ControllerManager_Working(ControllerManagerStatus status, int attempts)
@@ -206,6 +239,26 @@ public partial class ControllerPage : Page
         ManagerFactory.settingsManager.SetProperty("HIDstatus", cB_ServiceSwitch.SelectedIndex);
     }
 
+    private void cB_ControllerSlotManagementMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        if (cB_ControllerSlotManagementMode.SelectedIndex == -1)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("ControllerSlotManagementMode", cB_ControllerSlotManagementMode.SelectedIndex);
+
+        UpdateSlotFixButton();
+    }
+
+    private void b_SlotFixNow_Click(object sender, RoutedEventArgs e)
+    {
+        // Manual backup option when toast was ignored.
+        ControllerManager.TriggerSlotFix(resetAttempts: true);
+    }
+
+
     private void Toggle_Cloaked_Toggled(object sender, RoutedEventArgs e)
     {
         if (!IsLoaded)
@@ -244,14 +297,6 @@ public partial class ControllerPage : Page
             return;
 
         ManagerFactory.settingsManager.SetProperty("HIDvibrateonconnect", Toggle_Vibrate.IsOn);
-    }
-
-    private void Toggle_ControllerManagement_Toggled(object sender, RoutedEventArgs e)
-    {
-        if (!IsLoaded)
-            return;
-
-        ManagerFactory.settingsManager.SetProperty("ControllerManagement", Toggle_ControllerManagement.IsOn);
     }
 
     private void Button_Layout_Click(object sender, RoutedEventArgs e)

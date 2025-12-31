@@ -2420,9 +2420,6 @@
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
     <value>手柄管理</value>
   </data>
-  <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
-    <value>自动管理手柄以提高兼容性</value>
-  </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
     <value>触摸板直通</value>
   </data>

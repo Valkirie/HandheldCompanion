@@ -475,7 +475,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Controller management (Experimental).
+        ///   Looks up a localized string similar to Controller management.
         /// </summary>
         public static string ControllerPage_ControllerManagement {
             get {
@@ -484,79 +484,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Attempt {0}: .
-        /// </summary>
-        public static string ControllerPage_ControllerManagement_Attempt {
-            get {
-                return ResourceManager.GetString("ControllerPage_ControllerManagement_Attempt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to We are reordering controllers to improve game compatibility. Please wait a moment..
-        /// </summary>
-        public static string ControllerPage_ControllerManagement_Attempt0 {
-            get {
-                return ResourceManager.GetString("ControllerPage_ControllerManagement_Attempt0", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Adjustments are still in progress. We&apos;ll get this right for your games..
-        /// </summary>
-        public static string ControllerPage_ControllerManagement_Attempt1 {
-            get {
-                return ResourceManager.GetString("ControllerPage_ControllerManagement_Attempt1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Almost there! We&apos;re making another adjustment to optimize controller settings..
-        /// </summary>
-        public static string ControllerPage_ControllerManagement_Attempt2 {
-            get {
-                return ResourceManager.GetString("ControllerPage_ControllerManagement_Attempt2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to One last attempt to reorder controllers. We&apos;re doing everything we can!.
-        /// </summary>
-        public static string ControllerPage_ControllerManagement_Attempt3 {
-            get {
-                return ResourceManager.GetString("ControllerPage_ControllerManagement_Attempt3", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Initializing controller reconfiguration... Please wait..
-        /// </summary>
-        public static string ControllerPage_ControllerManagement_Content {
-            get {
-                return ResourceManager.GetString("ControllerPage_ControllerManagement_Content", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to We&apos;ve failed to reorder your controllers. For maximum compatibility, we encourage you to restart Handheld Companion..
-        /// </summary>
-        public static string ControllerPage_ControllerManagement_Failed {
-            get {
-                return ResourceManager.GetString("ControllerPage_ControllerManagement_Failed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Controller reordering complete. Thank you for your patience..
-        /// </summary>
-        public static string ControllerPage_ControllerManagement_Success {
-            get {
-                return ResourceManager.GetString("ControllerPage_ControllerManagement_Success", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Automatically manage controller order for greater compatibility.
+        ///   Looks up a localized string similar to Manage controllers order for greater compatibility.
         /// </summary>
         public static string ControllerPage_ControllerManagementDesc {
             get {

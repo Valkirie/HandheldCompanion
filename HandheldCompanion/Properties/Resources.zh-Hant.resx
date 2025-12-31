@@ -2422,9 +2422,6 @@
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
     <value>手柄管理</value>
   </data>
-  <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
-    <value>自動管理以提高相容性</value>
-  </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
     <value>觸控板直通</value>
   </data>
@@ -2842,27 +2839,6 @@
   <data name="SettingsPage_TelemetryDesc" xml:space="preserve">
     <value>啟用遙測以自動傳送程式崩潰數據</value>
   </data>
-  <data name="ControllerPage_ControllerManagement_Content" xml:space="preserve">
-    <value>正在初始化手柄配置，請稍候...</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt0" xml:space="preserve">
-    <value>正在嘗試重新排序手柄，請稍候...</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Success" xml:space="preserve">
-    <value>手柄已重新排序完成，感謝耐心等候</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Failed" xml:space="preserve">
-    <value>未能重新排序手柄。為了最佳相容性，我們建議您重新啟動掌機伴侶</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt3" xml:space="preserve">
-    <value>最終嘗試排序手柄，請稍候...</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt2" xml:space="preserve">
-    <value>Red or green, red or green, which do I cut?!</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt1" xml:space="preserve">
-    <value>正在排序中，請稍候...</value>
-  </data>
   <data name="SettingsPage_ScreenRotation_FlippedLandscape" xml:space="preserve">
     <value>横屏（翻轉）</value>
   </data>
@@ -3156,9 +3132,6 @@
   </data>
   <data name="Controller_Calibrate" xml:space="preserve">
     <value>Calibrate</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
-    <value>嘗試 {0}: </value>
   </data>
   <data name="DevicePage_BatteryOptions" xml:space="preserve">
     <value>電池選項</value>

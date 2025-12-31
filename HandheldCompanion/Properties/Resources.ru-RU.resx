@@ -2407,9 +2407,6 @@
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
     <value>Controller management</value>
   </data>
-  <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
-    <value>Automatically manage your controllers for greater compatibility</value>
-  </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
     <value>Touchpad passthrough</value>
   </data>
@@ -2681,9 +2678,6 @@
     <value>Trigger Margin</value>
   </data>
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
-    <value />
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
     <value />
   </data>
   <data name="DevicePage_BatteryOptions" xml:space="preserve">

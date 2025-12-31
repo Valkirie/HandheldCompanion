@@ -197,7 +197,25 @@
                         <ui:FontIcon Glyph="&#xedab;" />
                     </ui:SettingsCard.HeaderIcon>
 
-                    <ui:ToggleSwitch Name="Toggle_ControllerManagement" Toggled="Toggle_ControllerManagement_Toggled" />
+                    <StackPanel Orientation="Horizontal">
+                        <!--  Manual MUST be index 0 (default), Automatic index 1  -->
+                        <ComboBox Name="cB_ControllerSlotManagementMode" SelectionChanged="cB_ControllerSlotManagementMode_SelectionChanged">
+                            <ComboBoxItem Content="Manual" />
+                            <ComboBoxItem Content="Automatic" />
+                        </ComboBox>
+
+                        <!--  Backup action when toast was ignored (Manual mode only)  -->
+                        <Button
+                            Name="b_SlotFixNow"
+                            Margin="6,0,0,0"
+                            d:Visibility="Visible"
+                            Click="b_SlotFixNow_Click"
+                            Style="{DynamicResource AccentButtonStyle}"
+                            ToolTip="Adjust controllers order"
+                            Visibility="Collapsed">
+                            <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xec7a;" />
+                        </Button>
+                    </StackPanel>
                 </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 

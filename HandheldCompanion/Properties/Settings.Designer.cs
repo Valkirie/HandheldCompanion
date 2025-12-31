@@ -698,18 +698,6 @@ namespace HandheldCompanion.Properties
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ControllerManagement {
-            get {
-                return ((bool)(this["ControllerManagement"]));
-            }
-            set {
-                this["ControllerManagement"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool HidModeDoNotShowAgain {
             get {
                 return ((bool)(this["HidModeDoNotShowAgain"]));
@@ -1507,6 +1495,18 @@ namespace HandheldCompanion.Properties
             }
             set {
                 this["GoBackToSleep"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int ControllerSlotManagementMode {
+            get {
+                return ((int)(this["ControllerSlotManagementMode"]));
+            }
+            set {
+                this["ControllerSlotManagementMode"] = value;
             }
         }
     }

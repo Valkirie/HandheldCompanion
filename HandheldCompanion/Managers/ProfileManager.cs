@@ -962,7 +962,7 @@ public class ProfileManager : IManager
                 profile.LastUsed = profile.DateModified;
 
             // download arts
-            switch(profile.Executable)
+            switch (profile.Executable)
             {
                 // skip Windows Explorer
                 case "explorer.exe":

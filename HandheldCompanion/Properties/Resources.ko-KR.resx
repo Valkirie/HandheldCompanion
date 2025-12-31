@@ -2409,10 +2409,7 @@
     <value>이 프로필이 활성화될 때 사용되는 에뮬레이트된 컨트롤러</value>
   </data>
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
-    <value>컨트롤러 관리(실험적 기능)</value>
-  </data>
-  <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
-    <value>자동으로 컨트롤러를 관리하여 호환성을 높입니다</value>
+    <value>컨트롤러 관리</value>
   </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
     <value>터치패드 패스스루</value>
@@ -2860,9 +2857,6 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   </data>
   <data name="Controller_Calibrate" xml:space="preserve">
     <value>보정</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
-    <value>시도 횟수 {0}: </value>
   </data>
   <data name="DevicePage_BatteryOptions" xml:space="preserve">
     <value>배터리 옵션</value>

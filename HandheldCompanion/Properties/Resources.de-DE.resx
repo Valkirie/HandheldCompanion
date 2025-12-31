@@ -2694,9 +2694,6 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="PerformancePage_FanMode_Desc" xml:space="preserve">
     <value>Lüftermodus des Leistungsprofils ändern</value>
   </data>
-  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
-    <value />
-  </data>
   <data name="DevicePage_BatteryOptions" xml:space="preserve">
     <value />
   </data>

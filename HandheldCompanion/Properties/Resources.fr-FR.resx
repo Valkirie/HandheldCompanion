@@ -2432,10 +2432,7 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
     <value>Le contrôleur émulé à utiliser quand ce profil est actif</value>
   </data>
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
-    <value>Gestion de contrôleur (expérimental)</value>
-  </data>
-  <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
-    <value>Automatically manage your controllers for greater compatibility</value>
+    <value>Gestion de contrôleur</value>
   </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
     <value>Passthrough du pavé tactile</value>
@@ -2854,27 +2851,6 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
   <data name="SettingsPage_TelemetryDesc" xml:space="preserve">
     <value>Activé les données de télémétrie à envoyer automatiquement en cas de plantage</value>
   </data>
-  <data name="ControllerPage_ControllerManagement_Content" xml:space="preserve">
-    <value>Initialisation de la reconfiguration du contrôleur... Veuillez patienter.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt0" xml:space="preserve">
-    <value>Nous sommes en train de réordonner les contrôleurs pour améliorer la compatibilité du jeu. Veuillez patienter.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Success" xml:space="preserve">
-    <value>Commande du contrôleur terminée. Merci de votre patience.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Failed" xml:space="preserve">
-    <value>Nous n’avons pas réussi à réorganiser vos manettes. Pour une compatibilité optimale, nous vous recommandons de redémarrer Handheld Companion.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt3" xml:space="preserve">
-    <value>Dernière tentative pour réorganiser les manettes. Nous faisons tout notre possible !</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt2" xml:space="preserve">
-    <value>Presque terminé ! Nous effectuons un autre ajustement pour optimiser les réglages de la manette.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt1" xml:space="preserve">
-    <value>Les ajustements sont encore en cours. Nous allons corriger cela pour vos jeux.</value>
-  </data>
   <data name="SettingsPage_ScreenRotation_FlippedLandscape" xml:space="preserve">
     <value>Paysage inversé</value>
   </data>
@@ -3163,9 +3139,6 @@ Merci d’utiliser HC et de nous aider à l’améliorer.</value>
   </data>
   <data name="Controller_Calibrate" xml:space="preserve">
     <value>Calibrer</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
-    <value>Tentative {0}: </value>
   </data>
   <data name="DevicePage_BatteryOptions" xml:space="preserve">
     <value>Options de batterie</value>

@@ -2442,9 +2442,6 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
     <value>Gerenciar controle</value>
   </data>
-  <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
-    <value>Automaticamente gerenciar seus controles para maior compatibilidade</value>
-  </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
     <value>Passagem de touchpad</value>
   </data>
@@ -2862,27 +2859,6 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="SettingsPage_TelemetryDesc" xml:space="preserve">
     <value>Habilitar os dados de telemetria serem automaticamente enviados em caso de um travamento/encerramento inesperado</value>
   </data>
-  <data name="ControllerPage_ControllerManagement_Content" xml:space="preserve">
-    <value>Inicializando a reconfiguração do controle... Por favor, aguarde.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt0" xml:space="preserve">
-    <value>Estamos reordenando os controles para aumentar a compatibilidade dos jogos. Por favor, aguarde um momento.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Success" xml:space="preserve">
-    <value>Reordenação de controles concluída. Obrigado pela sua paciência.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Failed" xml:space="preserve">
-    <value>Falhamos em reordenar seus controles. Para máxima compatibilidade, sugerimos que reinicie o Handheld Companion.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt3" xml:space="preserve">
-    <value>Uma última tentativa de reordenar os controles. Estamos fazendo o melhor possível!</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt2" xml:space="preserve">
-    <value>Quase lá! Estamos fazendo mais um ajuste para otimizar as configurações de controle.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt1" xml:space="preserve">
-    <value>Ajustes ainda em progresso. Iremos fazer isso direito para seus jogos.</value>
-  </data>
   <data name="SettingsPage_ScreenRotation_FlippedLandscape" xml:space="preserve">
     <value>Paisagem Invertido</value>
   </data>
@@ -3170,9 +3146,6 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   </data>
   <data name="Controller_Calibrate" xml:space="preserve">
     <value>Calibrar</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
-    <value>Tentativa {0}: </value>
   </data>
   <data name="DevicePage_BatteryOptions" xml:space="preserve">
     <value>Opções de bateria</value>
