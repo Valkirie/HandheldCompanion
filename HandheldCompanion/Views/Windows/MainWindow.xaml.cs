@@ -1066,9 +1066,7 @@ public partial class MainWindow : GamepadWindow
             // Update previous navigation item
             prevNavItemTag = CurrentPageName;
 
-            var NavViewItem = navView.MenuItems
-                .OfType<NavigationViewItem>()
-                .Where(n => n.Tag.Equals(CurrentPageName)).FirstOrDefault();
+            var NavViewItem = navView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(n => n.Tag is not null && n.Tag.Equals(CurrentPageName));
 
             if (!(NavViewItem is null))
                 navView.SelectedItem = NavViewItem;

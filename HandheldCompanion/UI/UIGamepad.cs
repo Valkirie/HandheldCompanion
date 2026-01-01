@@ -41,7 +41,12 @@ namespace HandheldCompanion.Managers
         private string windowName = string.Empty;
 
         private ScrollViewer scrollViewer;
-        private NavigationView navigationView;
+
+        // NavigationViews
+        // - windowNavigationView: the NavigationView hosted by the Window (e.g. MainWindow)
+        // - pageNavigationView: an optional NavigationView hosted inside the current Page (e.g. LayoutPage)
+        private NavigationView windowNavigationView;
+        private NavigationView pageNavigationView;
 
         private Frame gamepadFrame;
         private Page gamepadPage;
@@ -65,8 +70,11 @@ namespace HandheldCompanion.Managers
 
         private ButtonState prevButtonState = new();
 
-        // store the latest NavigationViewItem that had focus on this window
+        // store the latest NavigationViewItem that had focus on this window (windowNavigationView)
         private Control prevNavigation;
+
+        // store the latest NavigationViewItem that had focus on the current page (pageNavigationView)
+        private Control prevPageNavigation;
         // key: Page, store the latest control that had focus on this page
         private Dictionary<object, Control> prevControl = [];
         // key: Window, store which window has focus
@@ -137,7 +145,10 @@ namespace HandheldCompanion.Managers
         public void Loaded()
         {
             this.scrollViewer = WPFUtils.FindVisualChild<ScrollViewer>(gamepadWindow);
-            this.navigationView = WPFUtils.FindVisualChild<NavigationView>(gamepadWindow);
+            this.windowNavigationView = WPFUtils.FindVisualChild<NavigationView>(gamepadWindow);
+
+            // will be resolved once the first Page is rendered
+            this.pageNavigationView = null;
         }
 
         private void ContentDialogClosed(ContentDialog contentDialog)
@@ -315,6 +326,10 @@ namespace HandheldCompanion.Managers
 
                     // store current Page
                     gamepadPage = (Page)gamepadFrame.Content;
+
+                    // reset page-scoped navigation view state
+                    pageNavigationView = null;
+                    prevPageNavigation = null;
                 }
                 else
                 {
@@ -338,9 +353,16 @@ namespace HandheldCompanion.Managers
             // UI thread
             UIHelper.TryInvoke(() =>
             {
-                // store top left navigation view item
-                if (navigationView.SelectedItem is NavigationViewItem navigationViewItem)
-                    prevNavigation = navigationViewItem;
+                // refresh page-scoped NavigationView if any
+                // (e.g. LayoutPage has its own NavigationView hosted inside the Page)
+                pageNavigationView = WPFUtils.FindVisualChild<NavigationView>(gamepadPage);
+
+                // store selected navigation items (window and page)
+                if (windowNavigationView?.SelectedItem is NavigationViewItem windowNvi)
+                    prevNavigation = windowNvi;
+
+                if (pageNavigationView?.SelectedItem is NavigationViewItem pageNvi)
+                    prevPageNavigation = pageNvi;
 
                 // update status
                 _navigating = _goingForward;
@@ -516,6 +538,79 @@ namespace HandheldCompanion.Managers
             }
 
             return null;
+        }
+
+        private static List<Control> GetNavigationItems(NavigationView navView)
+        {
+            if (navView is null)
+                return [];
+
+            // Prefer logical order from MenuItems/FooterMenuItems (stable and matches UI order).
+            // Fallback to visual tree enumeration if containers are not NavigationViewItem instances.
+            var ordered = new List<Control>();
+
+            try
+            {
+                if (navView.MenuItems is not null)
+                {
+                    foreach (var mi in navView.MenuItems)
+                    {
+                        if (mi is NavigationViewItem nvi && nvi.IsEnabled && nvi.IsVisible)
+                            ordered.Add(nvi);
+                    }
+                }
+
+                if (navView.FooterMenuItems is not null)
+                {
+                    foreach (var mi in navView.FooterMenuItems)
+                    {
+                        if (mi is NavigationViewItem nvi && nvi.IsEnabled && nvi.IsVisible)
+                            ordered.Add(nvi);
+                    }
+                }
+            }
+            catch
+            {
+                // Some NavigationView implementations may throw or not expose these collections.
+                // We'll fall back to visual enumeration below.
+                ordered.Clear();
+            }
+
+            if (ordered.Count > 0)
+                return ordered;
+
+            // Fallback: collect all NavigationViewItem instances within this NavigationView.
+            // This ensures navigation does not "jump" across nested NavigationViews.
+            return WPFUtils.FindVisualChildren<NavigationViewItem>(navView)
+                           .Where(i => i is Control c && c.IsEnabled && c.IsVisible)
+                           .Cast<Control>()
+                           .ToList();
+        }
+
+        private static bool IsTopPaneNavigationView(NavigationView navView)
+        {
+            // For our purposes, only a fully left-displayed pane should be treated as a navigation "sidebar".
+            return navView is not null && navView.PaneDisplayMode == NavigationViewPaneDisplayMode.Top;
+        }
+
+        private static WPFUtils.Direction GetDirectionTowardsPane(NavigationView navView)
+        {
+            // Used when we want to move focus "back" to the pane items from content.
+            // Left-pane -> Left, Top-pane -> Up.
+            return navView.PaneDisplayMode == NavigationViewPaneDisplayMode.Top ? WPFUtils.Direction.Up : WPFUtils.Direction.Left;
+        }
+
+        private static NavigationViewItem? GetSelectedNavigationViewItem(NavigationView navView)
+        {
+            if (navView is null)
+                return null;
+
+            // Best effort: SelectedItem can be a container or a data item.
+            if (navView.SelectedItem is NavigationViewItem selected)
+                return selected;
+
+            // Fallback: find the visual container that is marked selected.
+            return WPFUtils.FindVisualChildren<NavigationViewItem>(navView).FirstOrDefault(i => i.IsSelected);
         }
 
         // declare a DateTime variable to store the last time the function was called
@@ -827,6 +922,60 @@ namespace HandheldCompanion.Managers
                             return;
                         }
 
+                        // If we're currently within a page-scoped (nested) NavigationView, pressing B should:
+                        //  1) first bring focus back to the page NavigationViewItem
+                        //  2) only on a subsequent press, leave the page
+                        // This prevents accidental "page exit" when the user intended to go back to the page navigation pane.
+                        if (focusedElement is Control focusedControl)
+                        {
+                            NavigationView? focusedNavView = WPFUtils.FindParent<NavigationView>(focusedControl);
+                            if (focusedNavView is not null && focusedNavView != windowNavigationView)
+                            {
+                                // First press: move focus to the (closest/selected) NavigationViewItem
+                                if (focusedElement is not NavigationViewItem)
+                                {
+                                    List<Control> pageNavItems = GetNavigationItems(focusedNavView);
+                                    Control? navItem = null;
+
+                                    if (prevPageNavigation is not null && WPFUtils.FindParent<NavigationView>(prevPageNavigation) == focusedNavView)
+                                        navItem = prevPageNavigation;
+
+                                    navItem ??= pageNavItems.OfType<NavigationViewItem>().FirstOrDefault(i => i.IsSelected) as Control;
+                                    navItem ??= focusedNavView.SelectedItem as NavigationViewItem;
+
+                                    if (navItem is null && pageNavItems.Count > 0)
+                                    {
+                                        // Find the closest NavigationViewItem towards the pane (Left or Top)
+                                        Control? closest = WPFUtils.GetClosestControl<NavigationViewItem>(focusedControl, pageNavItems, GetDirectionTowardsPane(focusedNavView));
+
+                                        // GetClosestControl returns the source if none found; guard against that.
+                                        if (closest is NavigationViewItem)
+                                            navItem = closest;
+                                        else
+                                            navItem = pageNavItems.FirstOrDefault();
+                                    }
+
+                                    if (navItem is not null)
+                                    {
+                                        prevPageNavigation = navItem;
+                                        Focus(navItem);
+                                        return;
+                                    }
+                                }
+                                else
+                                {
+                                    // Second press (already on a page NavigationViewItem): leave the page if possible.
+                                    if (!IsQuicktools && gamepadFrame.CanGoBack)
+                                    {
+                                        _goingBack = true;
+                                        _goingForward = false;
+                                        gamepadFrame.GoBack();
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+
                         // lazy
                         // todo: implement proper RoutedEvent call
                         switch (elementType)
@@ -912,39 +1061,98 @@ namespace HandheldCompanion.Managers
                                 break;
                         }
                     }
-                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.L1))
+                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.L1) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.R1)
+                          || controllerState.ButtonState.Buttons.Contains(ButtonFlags.L2Full) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.R2Full))
                     {
                         if (gamepadWindow.currentDialog is not null)
                             return;
 
-                        if (prevNavigation is not null)
+                        bool isWindowScope = controllerState.ButtonState.Buttons.Contains(ButtonFlags.L1) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.R1);
+                        bool isLeft = controllerState.ButtonState.Buttons.Contains(ButtonFlags.L1) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.L2Soft);
+
+                        NavigationView? targetNavView = null;
+                        Control? startItem = null;
+
+                        if (isWindowScope)
                         {
-                            elementType = prevNavigation.GetType().Name;
-                            focusedElement = prevNavigation;
-
-                            // set state(s)
-                            _goingForward = true;
-                            _navigating = true;
-
-                            direction = WPFUtils.Direction.Left;
+                            targetNavView = windowNavigationView;
+                            startItem = prevNavigation;
                         }
-                    }
-                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.R1))
-                    {
-                        if (gamepadWindow.currentDialog is not null)
+                        else
+                        {
+                            // Prefer the NavigationView that contains the currently focused element (if any)
+                            // so pages with multiple NavigationViews behave intuitively.
+                            if (focusedElement is not null)
+                            {
+                                var scoped = WPFUtils.FindParent<NavigationView>(focusedElement);
+                                if (scoped is not null && scoped != windowNavigationView)
+                                    targetNavView = scoped;
+                            }
+
+                            // fallback to the first NavigationView within the current Page
+                            targetNavView ??= pageNavigationView;
+                            startItem = prevPageNavigation;
+                        }
+
+                        if (targetNavView is null)
                             return;
 
-                        if (prevNavigation is not null)
+                        // Gather items once (stable order).
+                        List<Control> navItems = GetNavigationItems(targetNavView);
+                        if (navItems.Count == 0)
+                            return;
+
+                        // Only "target" (focus) NavigationViewItem when the pane is fully Left.
+                        // For Top/other modes, we switch selection directly without stealing focus.
+                        if (!IsTopPaneNavigationView(targetNavView))
+                            return;
+
+                        // pick a starting item
+                        // Prefer the closest NavigationViewItem from the currently focused element, to avoid "missing" items.
+                        if (focusedElement is Control fc)
                         {
-                            elementType = prevNavigation.GetType().Name;
-                            focusedElement = prevNavigation;
-
-                            // set state(s)
-                            _goingForward = true;
-                            _navigating = true;
-
-                            direction = WPFUtils.Direction.Right;
+                            NavigationView? focusedScope = WPFUtils.FindParent<NavigationView>(fc);
+                            if (focusedScope == targetNavView)
+                            {
+                                if (fc is NavigationViewItem)
+                                {
+                                    startItem = fc;
+                                }
+                                else
+                                {
+                                    Control? closest = WPFUtils.GetClosestControl<NavigationViewItem>(fc, navItems, GetDirectionTowardsPane(targetNavView));
+                                    if (closest is NavigationViewItem)
+                                        startItem = closest;
+                                }
+                            }
                         }
+
+                        if (startItem is null || WPFUtils.FindParent<NavigationView>(startItem) != targetNavView)
+                        {
+                            startItem = targetNavView.SelectedItem as NavigationViewItem;
+                            if (startItem is null)
+                            {
+                                startItem = navItems.FirstOrDefault();
+                            }
+                        }
+
+                        if (startItem is null)
+                            return;
+
+                        // update caches
+                        if (isWindowScope)
+                            prevNavigation = startItem;
+                        else
+                            prevPageNavigation = startItem;
+
+                        elementType = startItem.GetType().Name;
+                        focusedElement = startItem;
+
+                        // set state(s)
+                        _goingForward = true;
+                        _navigating = true;
+
+                        direction = isLeft ? WPFUtils.Direction.Left : WPFUtils.Direction.Right;
                     }
                     else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadUp) /*|| controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickUp)*/ || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickUp))
                     {
@@ -1011,27 +1219,50 @@ namespace HandheldCompanion.Managers
                                 {
                                     if (focusedElement is not null)
                                     {
-                                        Control target = WPFUtils.GetClosestControl<NavigationViewItem>(focusedElement, gamepadWindow.controlElements, direction);
+                                        NavigationView? scope = WPFUtils.FindParent<NavigationView>(focusedElement) ?? windowNavigationView;
+                                        List<Control> scopeItems = scope is not null ? GetNavigationItems(scope) : gamepadWindow.controlElements;
 
-                                        if (IsQuicktools)
+                                        Control target;
+
+                                        // For NavigationView, treat Left/Right as Previous/Next in visual order.
+                                        // This is important for Left-pane NavigationViews (vertical lists) where "left" and "right"
+                                        // do not map cleanly to spatial navigation.
+                                        if (direction == WPFUtils.Direction.Left || direction == WPFUtils.Direction.Right)
                                         {
-                                            // we're at the extreme edge ?
-                                            if (focusedElement.Equals(target))
+                                            int idx = scopeItems.IndexOf(focusedElement);
+                                            if (idx < 0)
+                                                idx = 0;
+
+                                            int nextIdx = direction == WPFUtils.Direction.Left ? idx - 1 : idx + 1;
+                                            if (scopeItems.Count > 0)
                                             {
-                                                switch (direction)
-                                                {
-                                                    case WPFUtils.Direction.Left:
-                                                        direction = WPFUtils.Direction.Right;
-                                                        break;
-                                                    case WPFUtils.Direction.Right:
-                                                        direction = WPFUtils.Direction.Left;
-                                                        break;
-                                                }
-                                                target = WPFUtils.GetFurthestControl<NavigationViewItem>(focusedElement, gamepadWindow.controlElements, direction);
+                                                if (nextIdx < 0)
+                                                    nextIdx = scopeItems.Count - 1;
+                                                else if (nextIdx >= scopeItems.Count)
+                                                    nextIdx = 0;
+                                                target = scopeItems[nextIdx];
                                             }
+                                            else
+                                            {
+                                                target = focusedElement;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            // Fallback to spatial navigation for Up/Down.
+                                            target = WPFUtils.GetClosestControl<NavigationViewItem>(focusedElement, scopeItems, direction);
                                         }
 
                                         Focus(target);
+
+                                        // update navigation caches
+                                        if (target is NavigationViewItem)
+                                        {
+                                            if (scope is not null && scope == windowNavigationView)
+                                                prevNavigation = target;
+                                            else
+                                                prevPageNavigation = target;
+                                        }
                                     }
                                 }
                                 return;

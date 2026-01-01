@@ -33,6 +33,17 @@
         ShoulderNavigationEnabled="WhenSelectionFollowsFocus">
 
         <ui:NavigationView.MenuItems>
+            <ui:NavigationViewItem IsEnabled="False">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon
+                        Name="L2"
+                        Margin="-6,-6,-6,-6"
+                        FontFamily="PromptFont"
+                        FontSize="22"
+                        Glyph="&#x21B2;" />
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
             <ui:NavigationViewItem
                 Name="navButtons"
                 Content="{l:Static resx:Resources.LayoutPage_Buttons}"
@@ -90,6 +101,17 @@
                 Tag="GyroPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE777;" />
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem IsEnabled="False">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon
+                        Name="R2"
+                        Margin="-6,-6,-6,-6"
+                        FontFamily="PromptFont"
+                        FontSize="22"
+                        Glyph="&#x21B3;" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>
