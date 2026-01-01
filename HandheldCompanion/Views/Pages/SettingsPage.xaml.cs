@@ -232,7 +232,7 @@ public partial class SettingsPage : Page
                     QuickToolsNoiseToggle.IsOn = Convert.ToBoolean(value);
                     break;
                 case "MasterInterval":
-                    SliderMasterInterval.Value = Convert.ToInt32(value);
+                    cB_MasterInterval.SelectedIndex = Convert.ToInt32(value);
                     break;
             }
         });
@@ -629,11 +629,11 @@ public partial class SettingsPage : Page
         ManagerFactory.settingsManager.SetProperty("QuickToolsApplyNoise", QuickToolsNoiseToggle.IsOn);
     }
 
-    private void SliderMasterInterval_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    private void cB_MasterInterval_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!IsLoaded)
             return;
 
-        ManagerFactory.settingsManager.SetProperty("MasterInterval", SliderMasterInterval.Value);
+        ManagerFactory.settingsManager.SetProperty("MasterInterval", cB_MasterInterval.SelectedIndex);
     }
 }

@@ -1512,10 +1512,10 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public double MasterInterval {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MasterInterval {
             get {
-                return ((double)(this["MasterInterval"]));
+                return ((int)(this["MasterInterval"]));
             }
             set {
                 this["MasterInterval"] = value;

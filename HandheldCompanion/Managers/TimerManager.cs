@@ -13,7 +13,7 @@ public static class TimerManager
     public static event TickEventHandler Tick;
     public delegate void TickEventHandler(long ticks, float delta);
 
-    private static int MasterInterval = 10; // 100Hz
+    private static int MasterInterval = 8; // 125Hz
     private static PrecisionTimer MasterTimer;
     public static Stopwatch Stopwatch;
 
@@ -70,7 +70,24 @@ public static class TimerManager
         switch (name)
         {
             case "MasterInterval":
-                MasterInterval = Convert.ToInt32(value);
+                int MasterIntervalIdx = Convert.ToInt32(value);
+                switch (MasterIntervalIdx)
+                {
+                    default:
+                    case 0: // 125 Hz
+                        MasterInterval = 8;
+                        break;
+                    case 1: // 250 Hz
+                        MasterInterval = 4;
+                        break;
+                    case 2: // 500 Hz
+                        MasterInterval = 2;
+                        break;
+                    case 3: // 1000 Hz
+                        MasterInterval = 1;
+                        break;
+                }
+
                 MasterTimer.SetInterval(new Action(DoWork), MasterInterval, false, 0, TimerMode.Periodic, true);
                 break;
         }

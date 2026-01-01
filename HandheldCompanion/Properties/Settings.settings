@@ -374,8 +374,8 @@
     <Setting Name="ControllerSlotManagementMode" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="MasterInterval" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">10</Value>
+    <Setting Name="MasterInterval" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
 </SettingsFile>
