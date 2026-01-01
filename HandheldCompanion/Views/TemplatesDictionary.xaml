@@ -1344,7 +1344,8 @@
                             <ComboBox MinWidth="140" SelectedIndex="{Binding ShiftModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBoxItem Content="Disabled on shift" />
                                 <ComboBoxItem Content="Always enabled" />
-                                <ComboBoxItem Content="Enabled on shift" />
+                                <ComboBoxItem Content="Enabled on shift (strict)" />
+                                <ComboBoxItem Content="Enabled on shift (any)" />
                             </ComboBox>
                             <WrapPanel
                                 Margin="8,0,0,0"
@@ -2145,7 +2146,8 @@
                             <ComboBox MinWidth="140" SelectedIndex="{Binding ShiftModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBoxItem Content="Disabled on shift" />
                                 <ComboBoxItem Content="Always enabled" />
-                                <ComboBoxItem Content="Enabled on shift" />
+                                <ComboBoxItem Content="Enabled on shift (strict)" />
+                                <ComboBoxItem Content="Enabled on shift (any)" />
                             </ComboBox>
                             <WrapPanel
                                 Margin="8,0,0,0"
@@ -2380,7 +2382,8 @@
                             <ComboBox MinWidth="140" SelectedIndex="{Binding ShiftModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBoxItem Content="Disabled on shift" />
                                 <ComboBoxItem Content="Always enabled" />
-                                <ComboBoxItem Content="Enabled on shift" />
+                                <ComboBoxItem Content="Enabled on shift (strict)" />
+                                <ComboBoxItem Content="Enabled on shift (any)" />
                             </ComboBox>
                             <WrapPanel
                                 Margin="8,0,0,0"

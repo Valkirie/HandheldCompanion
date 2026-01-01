@@ -140,6 +140,8 @@ namespace HandheldCompanion.Actions
 
         [JsonConverter(typeof(ShiftSlotConverter))]
         public ShiftSlot ShiftSlot = ShiftSlot.Any;
+        
+        public bool ShiftMatchAny = false; // false = strict match, true = OR match (any selected shift)
 
         public HapticMode HapticMode = HapticMode.Off;
         public HapticStrength HapticStrength = HapticStrength.Low;
@@ -176,13 +178,13 @@ namespace HandheldCompanion.Actions
         // AxisFlags version: just compute shift-slot gating (no work)
         public virtual void Execute(AxisFlags axis, ShiftSlot shiftSlot, float delta)
         {
-            axisSlotDisabled = !IsShiftAllowed(shiftSlot, ShiftSlot);
+            axisSlotDisabled = !IsShiftAllowed(shiftSlot, ShiftSlot, ShiftMatchAny);
         }
 
         // AxisLayout version: zero vector when masked to skip downstream work
         public virtual void Execute(AxisLayout layout, ShiftSlot shiftSlot, float delta)
         {
-            if (!IsShiftAllowed(shiftSlot, ShiftSlot))
+            if (!IsShiftAllowed(shiftSlot, ShiftSlot, ShiftMatchAny))
                 outVector = Vector2.Zero;
         }
 
@@ -200,7 +202,7 @@ namespace HandheldCompanion.Actions
             }
 
             // shift gating
-            if (!IsShiftAllowed(shiftSlot, ShiftSlot))
+            if (!IsShiftAllowed(shiftSlot, ShiftSlot, ShiftMatchAny))
                 value = false;
 
             // Start delay logic - delays the action trigger by StartDelay ms
@@ -415,7 +417,7 @@ namespace HandheldCompanion.Actions
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected static bool IsShiftAllowed(ShiftSlot current, ShiftSlot required)
+        protected static bool IsShiftAllowed(ShiftSlot current, ShiftSlot required, bool matchAny)
         {
             // Any flag means always enabled regardless of shift state
             if (required.HasFlag(ShiftSlot.Any))
@@ -423,7 +425,17 @@ namespace HandheldCompanion.Actions
             // None means only trigger when no shifts are pressed
             if (required == ShiftSlot.None)
                 return current == ShiftSlot.None;
-            // For specific shift combinations, require exact match
+            
+            // OR mode: trigger if ANY of the required shifts is active
+            if (matchAny)
+            {
+                // Remove the Any flag if present for comparison
+                ShiftSlot requiredWithoutAny = required & ~ShiftSlot.Any;
+                // Check if any of the required shifts are active
+                return (current & requiredWithoutAny) != ShiftSlot.None;
+            }
+            
+            // Strict mode: require exact match
             return current == required;
         }
 

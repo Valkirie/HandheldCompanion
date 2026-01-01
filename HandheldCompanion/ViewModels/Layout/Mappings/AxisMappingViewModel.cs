@@ -19,7 +19,7 @@ namespace HandheldCompanion.ViewModels
     {
         #region Axis Action Properties
 
-        // Shift mode: 0 = Disabled on shift, 1 = Always enabled, 2 = Enabled on specific shifts
+        // Shift mode: 0 = Disabled on shift, 1 = Always enabled, 2 = Enabled on shift (strict), 3 = Enabled on shift (any)
         public int ShiftModeIndex
         {
             get
@@ -27,7 +27,10 @@ namespace HandheldCompanion.ViewModels
                 if (Action is null) return 1; // Default to always enabled
                 if (Action.ShiftSlot.HasFlag(ShiftSlot.Any)) return 1; // Always enabled
                 if (Action.ShiftSlot == ShiftSlot.None) return 0; // Disabled on shift
-                return 2; // Specific shifts selected
+                
+                // Check if it's OR mode or strict mode
+                if (Action.ShiftMatchAny) return 3; // Enabled on shift (any)
+                return 2; // Enabled on shift (strict)
             }
             set
             {
@@ -37,12 +40,21 @@ namespace HandheldCompanion.ViewModels
                 {
                     case 0: // Disabled on shift
                         Action.ShiftSlot = ShiftSlot.None;
+                        Action.ShiftMatchAny = false;
                         break;
                     case 1: // Always enabled
                         Action.ShiftSlot = ShiftSlot.Any;
+                        Action.ShiftMatchAny = false;
                         break;
-                    case 2: // Enabled on shift - default to ShiftA if nothing selected
-                        Action.ShiftSlot = ShiftSlot.ShiftA;
+                    case 2: // Enabled on shift (strict)
+                        if (Action.ShiftSlot == ShiftSlot.None || Action.ShiftSlot == ShiftSlot.Any)
+                            Action.ShiftSlot = ShiftSlot.ShiftA;
+                        Action.ShiftMatchAny = false;
+                        break;
+                    case 3: // Enabled on shift (any/OR)
+                        if (Action.ShiftSlot == ShiftSlot.None || Action.ShiftSlot == ShiftSlot.Any)
+                            Action.ShiftSlot = ShiftSlot.ShiftA;
+                        Action.ShiftMatchAny = true;
                         break;
                 }
                 OnPropertyChanged(nameof(ShiftModeIndex));
@@ -54,7 +66,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool ShowShiftSelection => ShiftModeIndex == 2;
+        public bool ShowShiftSelection => ShiftModeIndex == 2 || ShiftModeIndex == 3;
 
         public bool ShiftA
         {
