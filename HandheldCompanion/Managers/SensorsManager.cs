@@ -89,7 +89,9 @@ namespace HandheldCompanion.Managers
             if (!IsInitialized)
                 return;
 
+            // stop underlying sensor reads
             StopListening();
+            USBSensor?.Close();
 
             // manage events
             ManagerFactory.deviceManager.UsbDeviceArrived -= DeviceManager_UsbDeviceArrived;
@@ -102,6 +104,38 @@ namespace HandheldCompanion.Managers
             IsInitialized = false;
 
             LogManager.LogInformation("{0} has stopped", "SensorsManager");
+        }
+
+        public static void Suspend(bool OS)
+        {
+            if (!IsInitialized)
+                return;
+
+            StopListening();
+
+            // close serial sensor, if any (avoid stale handles across suspend)
+            if (sensorFamily == SensorFamily.SerialUSBIMU)
+                USBSensor?.Close();
+        }
+
+        public static void Resume(bool OS)
+        {
+            // If we were fully stopped, ensure we are started again.
+            if (!IsInitialized)
+            {
+                Start();
+                return;
+            }
+
+            // Re-open serial sensor if it is currently selected
+            if (sensorFamily == SensorFamily.SerialUSBIMU)
+            {
+                USBSensor = SerialUSBIMU.GetCurrent();
+                USBSensor?.Open();
+            }
+
+            Gyrometer?.UpdateSensor();
+            Accelerometer?.UpdateSensor();
         }
 
         private static void ControllerManager_ControllerSelected(IController Controller)
@@ -242,12 +276,6 @@ namespace HandheldCompanion.Managers
                     }
                     break;
             }
-        }
-
-        public static void Resume(bool OS)
-        {
-            Gyrometer?.UpdateSensor();
-            Accelerometer?.UpdateSensor();
         }
 
         private static void StopListening()

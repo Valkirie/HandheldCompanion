@@ -537,7 +537,6 @@ public partial class MainWindow : GamepadWindow
                         // resume manager(s)
                         InputsManager.Start();
                         TimerManager.Start();
-                        SensorsManager.Resume(true);
                         PerformanceManager.Resume(true);
 
                         ManagerFactory.Resume();
@@ -547,6 +546,7 @@ public partial class MainWindow : GamepadWindow
 
                         VirtualManager.Resume(true);
                         ControllerManager.Resume(true);
+                        SensorsManager.Resume(true);
                     }
 
                     // open device, when ready
@@ -588,7 +588,7 @@ public partial class MainWindow : GamepadWindow
                         VirtualManager.Suspend(true);
                         ControllerManager.Suspend(true);
                         TimerManager.Stop();
-                        SensorsManager.Stop();
+                        SensorsManager.Suspend(true);
                         InputsManager.Stop(false);
 
                         // suspend platform(s)
