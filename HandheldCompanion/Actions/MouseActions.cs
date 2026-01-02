@@ -323,7 +323,7 @@ namespace HandheldCompanion.Actions
             {
                 // Trigger MoveTo on movement
                 IsCursorDown = true;
-                
+
                 // Store current mouse position if restore is enabled
                 if (MoveToPrevious && !MoveToPreviousPending)
                 {
@@ -331,14 +331,14 @@ namespace HandheldCompanion.Actions
                     MoveToPreviousY = MouseSimulator.MouseY;
                     MoveToPreviousPending = true;
                 }
-                
+
                 MouseSimulator.MoveTo(MoveToX, MoveToY);
             }
             else if (!hasMovement && IsCursorDown)
             {
                 // Restore previous position when axis returns to center
                 IsCursorDown = false;
-                
+
                 if (MoveToPrevious && MoveToPreviousPending)
                 {
                     MouseSimulator.MoveTo(MoveToPreviousX, MoveToPreviousY);

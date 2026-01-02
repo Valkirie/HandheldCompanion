@@ -8,7 +8,6 @@ using HandheldCompanion.Utils;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -27,7 +26,7 @@ namespace HandheldCompanion.ViewModels
                 if (Action is null) return 1; // Default to always enabled
                 if (Action.ShiftSlot.HasFlag(ShiftSlot.Any)) return 1; // Always enabled
                 if (Action.ShiftSlot == ShiftSlot.None) return 0; // Disabled on shift
-                
+
                 // Check if it's OR mode or strict mode
                 if (Action.ShiftMatchAny) return 3; // Enabled on shift (any)
                 return 2; // Enabled on shift (strict)

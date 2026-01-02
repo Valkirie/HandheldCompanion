@@ -140,7 +140,7 @@ namespace HandheldCompanion.Actions
 
         [JsonConverter(typeof(ShiftSlotConverter))]
         public ShiftSlot ShiftSlot = ShiftSlot.Any;
-        
+
         public bool ShiftMatchAny = false; // false = strict match, true = OR match (any selected shift)
 
         public HapticMode HapticMode = HapticMode.Off;
@@ -425,7 +425,7 @@ namespace HandheldCompanion.Actions
             // None means only trigger when no shifts are pressed
             if (required == ShiftSlot.None)
                 return current == ShiftSlot.None;
-            
+
             // OR mode: trigger if ANY of the required shifts is active
             if (matchAny)
             {
@@ -434,7 +434,7 @@ namespace HandheldCompanion.Actions
                 // Check if any of the required shifts are active
                 return (current & requiredWithoutAny) != ShiftSlot.None;
             }
-            
+
             // Strict mode: require exact match
             return current == required;
         }
