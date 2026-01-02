@@ -45,7 +45,7 @@
         Loaded="navView_Loaded"
         OpenPaneLength="160"
         PaneClosed="navView_PaneClosed"
-        PaneDisplayMode="Left"
+        PaneDisplayMode="Top"
         PaneOpened="navView_PaneOpened"
         SelectionFollowsFocus="Enabled"
         ShoulderNavigationEnabled="Always">
@@ -63,6 +63,17 @@
         </FrameworkElement.Resources>
 
         <ui:NavigationView.MenuItems>
+            <ui:NavigationViewItem IsEnabled="False">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon
+                        Name="GamepadUILB"
+                        Margin="-6,0,0,0"
+                        FontFamily="PromptFont"
+                        FontSize="22"
+                        Glyph="&#x2198;" />
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
             <!--  Game icon  -->
             <ui:NavigationViewItem
                 Name="navController"
@@ -140,6 +151,17 @@
                 Tag="AboutPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem IsEnabled="False">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon
+                        Name="GamepadUIRB"
+                        Margin="-6,0,0,0"
+                        FontFamily="PromptFont"
+                        FontSize="22"
+                        Glyph="&#x2199;" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>

@@ -1080,21 +1080,11 @@ namespace HandheldCompanion.Managers
                         }
                         else
                         {
-                            // Prefer the NavigationView that contains the currently focused element (if any)
-                            // so pages with multiple NavigationViews behave intuitively.
-                            if (focusedElement is not null)
-                            {
-                                var scoped = WPFUtils.FindParent<NavigationView>(focusedElement);
-                                if (scoped is not null && scoped != windowNavigationView)
-                                    targetNavView = scoped;
-                            }
-
-                            // fallback to the first NavigationView within the current Page
                             targetNavView ??= pageNavigationView;
                             startItem = prevPageNavigation;
                         }
 
-                        if (targetNavView is null)
+                        if (targetNavView is null || startItem is null)
                             return;
 
                         // Gather items once (stable order).
@@ -1106,44 +1096,6 @@ namespace HandheldCompanion.Managers
                         // For Top/other modes, we switch selection directly without stealing focus.
                         if (!IsTopPaneNavigationView(targetNavView))
                             return;
-
-                        // pick a starting item
-                        // Prefer the closest NavigationViewItem from the currently focused element, to avoid "missing" items.
-                        if (focusedElement is Control fc)
-                        {
-                            NavigationView? focusedScope = WPFUtils.FindParent<NavigationView>(fc);
-                            if (focusedScope == targetNavView)
-                            {
-                                if (fc is NavigationViewItem)
-                                {
-                                    startItem = fc;
-                                }
-                                else
-                                {
-                                    Control? closest = WPFUtils.GetClosestControl<NavigationViewItem>(fc, navItems, GetDirectionTowardsPane(targetNavView));
-                                    if (closest is NavigationViewItem)
-                                        startItem = closest;
-                                }
-                            }
-                        }
-
-                        if (startItem is null || WPFUtils.FindParent<NavigationView>(startItem) != targetNavView)
-                        {
-                            startItem = targetNavView.SelectedItem as NavigationViewItem;
-                            if (startItem is null)
-                            {
-                                startItem = navItems.FirstOrDefault();
-                            }
-                        }
-
-                        if (startItem is null)
-                            return;
-
-                        // update caches
-                        if (isWindowScope)
-                            prevNavigation = startItem;
-                        else
-                            prevPageNavigation = startItem;
 
                         elementType = startItem.GetType().Name;
                         focusedElement = startItem;

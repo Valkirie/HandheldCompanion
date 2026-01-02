@@ -268,6 +268,9 @@ public partial class MainWindow : GamepadWindow
             GamepadUIBackIcon.Glyph = Controller.GetGlyph(ButtonFlags.B2);
             GamepadUIToggleIcon.Glyph = Controller.GetGlyph(ButtonFlags.B4);
 
+            GamepadUILB.Glyph = Controller.GetGlyph(ButtonFlags.L1);
+            GamepadUIRB.Glyph = Controller.GetGlyph(ButtonFlags.R1);
+
             // update color(s)
             Color? color1 = Controller.GetGlyphColor(ButtonFlags.B1);
             if (color1.HasValue)
