@@ -127,6 +127,14 @@
                     <ui:ToggleSwitch Name="Toggle_DesktopLayoutOnStart" Toggled="Toggle_DesktopLayoutOnStart_Toggled" />
                 </ui:SettingsCard>
 
+                <!--  Auto Profile on Start  -->
+                <ui:SettingsCard Description="Automatically enable Auto profile when HandheldCompanion starts" Header="Enable Auto profile on start">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE9A1;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="Toggle_AutoProfileOnStart" Toggled="Toggle_AutoProfileOnStart_Toggled" />
+                </ui:SettingsCard>
+
                 <!--  Application theme  -->
                 <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_AppThemeDesc}" Header="{l:Static resx:Resources.SettingsPage_AppTheme}">
                     <ui:SettingsCard.HeaderIcon>

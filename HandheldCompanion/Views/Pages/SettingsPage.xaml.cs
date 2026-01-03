@@ -176,6 +176,9 @@ public partial class SettingsPage : Page
                 case "DesktopLayoutOnStart":
                     Toggle_DesktopLayoutOnStart.IsOn = Convert.ToBoolean(value);
                     break;
+                case "AutoProfileOnStart":
+                    Toggle_AutoProfileOnStart.IsOn = Convert.ToBoolean(value);
+                    break;
                 case "ToastEnable":
                     Toggle_Notification.IsOn = Convert.ToBoolean(value);
                     break;
@@ -279,6 +282,14 @@ public partial class SettingsPage : Page
             return;
 
         ManagerFactory.settingsManager.SetProperty("DesktopLayoutOnStart", Toggle_DesktopLayoutOnStart.IsOn);
+    }
+
+    private void Toggle_AutoProfileOnStart_Toggled(object? sender, RoutedEventArgs? e)
+    {
+        if (!IsLoaded)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("AutoProfileOnStart", Toggle_AutoProfileOnStart.IsOn);
     }
 
     private void UpdateManager_Updated(UpdateStatus status, UpdateFile updateFile, object value)
@@ -626,3 +637,64 @@ public partial class SettingsPage : Page
         ManagerFactory.settingsManager.SetProperty("QuickToolsApplyNoise", QuickToolsNoiseToggle.IsOn);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

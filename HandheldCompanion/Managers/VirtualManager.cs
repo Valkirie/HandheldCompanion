@@ -1,4 +1,4 @@
-using HandheldCompanion.Controllers;
+﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Targets;
@@ -42,8 +42,8 @@ namespace HandheldCompanion.Managers
         private const string driverName = "ViGEmBus";
 
         // settings vars
-        public static HIDmode HIDmode = HIDmode.NoController;
-        private static HIDmode defaultHIDmode = HIDmode.NoController;
+        public static HIDmode HIDmode = HIDmode.None;
+        private static HIDmode defaultHIDmode = HIDmode.None;
         public static HIDstatus HIDstatus = HIDstatus.Disconnected;
 
         private static readonly SemaphoreSlim controllerLock = new SemaphoreSlim(1, 1);
@@ -199,7 +199,7 @@ namespace HandheldCompanion.Managers
         public static void Suspend(bool OS)
         {
             // Disconnect the controller first
-            SetControllerMode(HIDmode.NoController);
+            SetControllerMode(HIDmode.None);
 
             if (!controllerLock.Wait(3000))
                 return;
@@ -395,8 +395,8 @@ namespace HandheldCompanion.Managers
                 // Create a new target based on the requested mode
                 switch (mode)
                 {
-                    case HIDmode.NoController:
-                        // Nothing to initialize
+                    case HIDmode.None:           // ← CHANGED from NoController
+                                                 // Nothing to initialize
                         break;
 
                     case HIDmode.DualShock4Controller:
@@ -408,10 +408,9 @@ namespace HandheldCompanion.Managers
                         break;
                 }
 
-                // If target creation failed, log an error (unless it's the NoController case)
                 if (vTarget is null)
                 {
-                    if (mode != HIDmode.NoController)
+                    if (mode != HIDmode.None && mode != HIDmode.None)  // ← UPDATE
                         LogManager.LogError("Failed to initialise virtual controller with HIDmode: {0}", mode);
                     return;
                 }

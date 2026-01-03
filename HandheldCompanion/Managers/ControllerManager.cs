@@ -1,4 +1,4 @@
-using HandheldCompanion.Controllers;
+﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Controllers.Dummies;
 using HandheldCompanion.Controllers.GameSir;
 using HandheldCompanion.Controllers.Lenovo;
@@ -1118,6 +1118,37 @@ public static class ControllerManager
             ControllerMuted = true;
     }
 
+    private static bool DetermineHideState(ControllerProfile profile, LayoutModes layoutMode)
+    {
+        switch (profile)
+        {
+            case ControllerProfile.Native:
+                return false; // Always unhidden
+
+            case ControllerProfile.Xbox360:
+            case ControllerProfile.DualShock4:
+            case ControllerProfile.Desktop:
+                return true; // Always hidden
+
+            case ControllerProfile.Auto:
+                // In Auto mode, check what the current HIDmode is
+                HIDmode currentHIDmode = (HIDmode)ManagerFactory.settingsManager.GetInt("HIDmode");
+
+                if (currentHIDmode == HIDmode.Xbox360Controller || currentHIDmode == HIDmode.DualShock4Controller)
+                {
+                    return true; // Virtual controller active = hidden
+                }
+                else
+                {
+                    // Native mode - hide only for Desktop layout
+                    return layoutMode == (LayoutModes)1;
+                }
+
+            default:
+                return false;
+        }
+    }
+
     private static void CheckControllerScenario()
     {
         // reset timer
@@ -1160,6 +1191,81 @@ public static class ControllerManager
 
             case "SteamControllerMode":
                 CheckControllerScenario();
+                break;
+
+            case "LayoutMode":
+                {
+                    if (targetController != null && !targetController.IsVirtual())
+                    {
+                        LayoutModes layoutMode = (LayoutModes)Convert.ToInt32(value);
+                        ControllerProfile currentProfile = (ControllerProfile)ManagerFactory.settingsManager.GetInt("ControllerProfile");
+
+                        bool shouldHide = DetermineHideState(currentProfile, layoutMode);
+
+                        if (ManagerFactory.settingsManager.GetBoolean("HIDcloakonconnect"))
+                        {
+                            if (shouldHide && !targetController.IsHidden())
+                            {
+                                LogManager.LogInformation("Hiding controller - LayoutMode changed to: {0}", layoutMode);
+                                targetController.Hide(true);
+                            }
+                            else if (!shouldHide && targetController.IsHidden())
+                            {
+                                LogManager.LogInformation("Unhiding controller - LayoutMode changed to: {0}", layoutMode);
+                                targetController.Unhide(true);
+                            }
+                        }
+                    }
+                }
+                break;
+
+            case "ControllerProfile":
+                {
+                    LogManager.LogInformation("=== ControllerProfile Event Triggered ===");
+                    LogManager.LogInformation("targetController is null: {0}", targetController == null);
+
+                    if (targetController != null)
+                    {
+                        LogManager.LogInformation("IsVirtual: {0}", targetController.IsVirtual());
+                        LogManager.LogInformation("IsHidden: {0}", targetController.IsHidden());
+                    }
+
+                    if (targetController != null && !targetController.IsVirtual())
+                    {
+                        ControllerProfile newProfile = (ControllerProfile)Convert.ToInt32(value);
+                        LayoutModes currentLayout = (LayoutModes)ManagerFactory.settingsManager.GetInt("LayoutMode");
+                        bool shouldHide = DetermineHideState(newProfile, currentLayout);
+                        bool cloakEnabled = ManagerFactory.settingsManager.GetBoolean("HIDcloakonconnect");
+
+                        LogManager.LogInformation("Profile: {0}", newProfile);
+                        LogManager.LogInformation("Layout: {0}", currentLayout);
+                        LogManager.LogInformation("ShouldHide: {0}", shouldHide);
+                        LogManager.LogInformation("HIDcloakonconnect enabled: {0}", cloakEnabled);
+
+                        if (cloakEnabled)
+                        {
+                            if (shouldHide && !targetController.IsHidden())
+                            {
+                                LogManager.LogInformation("ACTION: Hiding controller");
+                                targetController.Hide(true);
+                            }
+                            else if (!shouldHide && targetController.IsHidden())
+                            {
+                                LogManager.LogInformation("ACTION: Unhiding controller");
+                                targetController.Unhide(true);
+                            }
+                            else
+                            {
+                                LogManager.LogInformation("NO ACTION: ShouldHide={0}, IsHidden={1}", shouldHide, targetController.IsHidden());
+                            }
+                        }
+                        else
+                        {
+                            LogManager.LogError("HIDcloakonconnect is DISABLED - Enable it in Settings!");
+                        }
+                    }
+                    LogManager.LogInformation("=== ControllerProfile Event End ===");
+                }
                 break;
         }
     }
@@ -1392,7 +1498,7 @@ public static class ControllerManager
                         }
 
                         // Remove current virtual controller
-                        VirtualManager.SetControllerMode(HIDmode.NoController);
+                        VirtualManager.SetControllerMode(HIDmode.None);
                         Task timeout = Task.Delay(TimeSpan.FromSeconds(4));
                         while (!timeout.IsCompleted && GetVirtualControllers<XInputController>().Any())
                             await Task.Delay(100).ConfigureAwait(false);
@@ -1602,17 +1708,35 @@ public static class ControllerManager
             {
                 if (ManagerFactory.settingsManager.GetBoolean("HIDcloakonconnect"))
                 {
-                    bool powerCycle = true;
+                    // Determine if controller should be hidden based on ControllerProfile and LayoutMode
+                    ControllerProfile currentProfile = (ControllerProfile)ManagerFactory.settingsManager.GetInt("ControllerProfile");
+                    LayoutModes layoutMode = (LayoutModes)ManagerFactory.settingsManager.GetInt("LayoutMode");
 
-                    if (targetController is LegionController)
+                    bool shouldHide = DetermineHideState(currentProfile, layoutMode);
+
+                    if (shouldHide)
                     {
-                        // todo:    Look for a byte within hid report that'd tend to mean both controllers are synced.
-                        //          Then I guess we could try and power cycle them.
-                        powerCycle = !((LegionController)targetController).IsWireless();
-                    }
+                        bool powerCycle = true;
 
-                    if (!targetController.IsHidden())
-                        targetController.Hide(powerCycle);
+                        if (targetController is LegionController)
+                        {
+                            powerCycle = !((LegionController)targetController).IsWireless();
+                        }
+
+                        if (!targetController.IsHidden())
+                        {
+                            LogManager.LogInformation("Hiding controller - Profile: {0}, Layout: {1}", currentProfile, layoutMode);
+                            targetController.Hide(powerCycle);
+                        }
+                    }
+                    else
+                    {
+                        if (targetController.IsHidden())
+                        {
+                            LogManager.LogInformation("Unhiding controller - Profile: {0}, Layout: {1}", currentProfile, layoutMode);
+                            targetController.Unhide(true);
+                        }
+                    }
                 }
             }
 
@@ -1840,23 +1964,20 @@ public static class ControllerManager
 
     public static IController GetDefault(bool profilePage = false)
     {
-        // get HIDmode for the selected profile (could be different than HIDmode in settings if profile has HIDmode)
-        HIDmode HIDmode = HIDmode.NoController;
+        HIDmode HIDmode = HIDmode.None;  // ← CHANGED from NoController
 
-        // if profile is selected, get its HIDmode
         if (profilePage)
             HIDmode = ProfilesPage.selectedProfile.HID;
         else
             HIDmode = ManagerFactory.profileManager.GetCurrent().HID;
 
-        // if profile HID is NotSelected, use HIDmode from settings
         if (HIDmode == HIDmode.NotSelected)
             HIDmode = (HIDmode)ManagerFactory.settingsManager.GetInt("HIDmode", true);
 
         switch (HIDmode)
         {
             default:
-            case HIDmode.NoController:
+            case HIDmode.None:              // ← CHANGED from NoController
             case HIDmode.Xbox360Controller:
                 return dummyXbox360;
 

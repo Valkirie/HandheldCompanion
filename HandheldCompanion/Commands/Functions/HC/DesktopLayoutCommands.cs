@@ -36,29 +36,35 @@ namespace HandheldCompanion.Commands.Functions.HC
             {
                 case SettingsName:
                     Update();
-
-                    LayoutModes LayoutMode = (LayoutModes)ManagerFactory.settingsManager.GetInt(SettingsName);
-                    ToastManager.SendToast($"Controller mode set to {LayoutMode}");
+                    // Toast notifications suppressed - handled by Controller Profile system
                     break;
             }
         }
 
         public override void Update()
         {
-            LayoutModes LayoutMode = (LayoutModes)ManagerFactory.settingsManager.GetInt(SettingsName);
-            switch (LayoutMode)
+            ControllerProfile profile = (ControllerProfile)ManagerFactory.settingsManager.GetInt("ControllerProfile");
+            switch (profile)
             {
-                case LayoutModes.Gamepad:
-                    LiveGlyph = "\uE7FC";
-                    LiveName = "Controller mode\nGamepad";
+                case ControllerProfile.Native:
+                    LiveGlyph = "\u243C";
+                    LiveName = "Controller Profile\nNative";
                     break;
-                case LayoutModes.Desktop:
+                case ControllerProfile.Xbox360:
+                    LiveGlyph = "\uE001";
+                    LiveName = "Controller Profile\nXbox 360";
+                    break;
+                case ControllerProfile.DualShock4:
+                    LiveGlyph = "\uE000";
+                    LiveName = "Controller Profile\nDualShock 4";
+                    break;
+                case ControllerProfile.Desktop:
                     LiveGlyph = "\uE961";
-                    LiveName = "Controller mode\nDesktop";
+                    LiveName = "Controller Profile\nDesktop";
                     break;
-                case LayoutModes.Auto:
+                case ControllerProfile.Auto:
                     LiveGlyph = "\uE9A1";
-                    LiveName = "Controller mode\nAuto";
+                    LiveName = "Controller Profile\nAuto";
                     break;
             }
 
@@ -67,24 +73,19 @@ namespace HandheldCompanion.Commands.Functions.HC
 
         private void ExecuteTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            // Get the current value of LayoutMode
-            int value = ManagerFactory.settingsManager.GetInt(SettingsName);
-            LayoutModes layoutMode = (LayoutModes)value;
+            ControllerProfile currentProfile = (ControllerProfile)ManagerFactory.settingsManager.GetInt("ControllerProfile");
 
-            // Increment or reset the value based on its current state
-            switch (layoutMode)
+            ControllerProfile nextProfile = currentProfile switch
             {
-                case LayoutModes.Gamepad:
-                    layoutMode = LayoutModes.Desktop;
-                    break;
-                default:
-                case LayoutModes.Desktop:
-                    layoutMode = LayoutModes.Gamepad;
-                    break;
-            }
+                ControllerProfile.Native => ControllerProfile.Xbox360,
+                ControllerProfile.Xbox360 => ControllerProfile.DualShock4,
+                ControllerProfile.DualShock4 => ControllerProfile.Desktop,
+                ControllerProfile.Desktop => ControllerProfile.Native,
+                ControllerProfile.Auto => ControllerProfile.Native,
+                _ => ControllerProfile.Native
+            };
 
-            // Update settings
-            ManagerFactory.settingsManager.SetProperty(SettingsName, (int)layoutMode);
+            ManagerFactory.settingsManager.SetProperty("ControllerProfile", (int)nextProfile);
 
             Update();
             base.Execute(StoredKeyDown, StoredKeyUp, false);
@@ -94,20 +95,14 @@ namespace HandheldCompanion.Commands.Functions.HC
         {
             if (ExecuteTimer.Enabled)
             {
-                // Timer is already running, it's likely a double press
                 ExecuteTimer.Stop();
-
-                // Update settings
-                ManagerFactory.settingsManager.SetProperty(SettingsName, (int)LayoutModes.Auto);
-
+                ManagerFactory.settingsManager.SetProperty("ControllerProfile", (int)ControllerProfile.Auto);
                 Update();
                 base.Execute(IsKeyDown, IsKeyUp, false);
             }
             else
             {
-                // Start the timer and store the key states
                 ExecuteTimer.Start();
-
                 StoredKeyDown = IsKeyDown;
                 StoredKeyUp = IsKeyUp;
             }
@@ -117,15 +112,8 @@ namespace HandheldCompanion.Commands.Functions.HC
         {
             get
             {
-                LayoutModes LayoutMode = (LayoutModes)ManagerFactory.settingsManager.GetInt(SettingsName);
-                switch (LayoutMode)
-                {
-                    case LayoutModes.Gamepad:
-                    case LayoutModes.Desktop:
-                        return true;
-                    default:
-                        return false;
-                }
+                // Always toggled since we're using Controller Profiles
+                return true;
             }
         }
 

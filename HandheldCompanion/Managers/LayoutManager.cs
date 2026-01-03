@@ -1,4 +1,4 @@
-using HandheldCompanion.Actions;
+﻿using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Timers;
+using System.Threading.Tasks;
 
 namespace HandheldCompanion.Managers;
 
@@ -43,6 +44,16 @@ public class LayoutManager : IManager
 
     public FileSystemWatcher layoutWatcher { get; set; }
     private Timer layoutTimer;
+
+    public event UpdatedEventHandler Updated;
+    public delegate void UpdatedEventHandler(LayoutTemplate layoutTemplate);
+    // Controller Profile fields
+    private ControllerProfile currentControllerProfile = ControllerProfile.Auto;
+    private ControllerProfile autoModeProfile1 = ControllerProfile.Native;
+    private ControllerProfile autoModeProfile2 = ControllerProfile.Desktop;
+    private ControllerProfile lastAppliedProfile = ControllerProfile.Auto;
+    private DateTime lastProfileSwitch = DateTime.MinValue;
+    private string currentGamepadFocus = "";
 
     public LayoutManager()
     {
@@ -108,8 +119,8 @@ public class LayoutManager : IManager
 
         // manage events
         ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
-        UIGamepad.GotFocus += GamepadFocusManager_FocusChanged;
-        UIGamepad.LostFocus += GamepadFocusManager_FocusChanged;
+        UIGamepad.GotFocus += GamepadFocusManager_FocusGained;
+        UIGamepad.LostFocus += GamepadFocusManager_FocusLost;
 
         // raise events
         switch (ManagerFactory.settingsManager.Status)
@@ -153,9 +164,35 @@ public class LayoutManager : IManager
         CheckProfileLayout();
     }
 
-    private void GamepadFocusManager_FocusChanged(string Name)
+    private void GamepadFocusManager_FocusGained(string Name)
     {
-        CheckProfileLayout();
+        currentGamepadFocus = Name;
+
+        if (currentControllerProfile == ControllerProfile.Auto)
+        {
+            LogManager.LogInformation("Gamepad focus gained: {0}", Name);
+            CheckProfileLayout();
+        }
+    }
+
+    private void GamepadFocusManager_FocusLost(string Name)
+    {
+        LogManager.LogInformation("Gamepad focus LOST: {0}", Name);
+
+        if (currentControllerProfile == ControllerProfile.Auto)
+        {
+            // Only clear focus if the window that lost focus is the CURRENT focus
+            // This prevents MainWindow losing focus from clearing QuickTools focus
+            if (currentGamepadFocus == Name)
+            {
+                currentGamepadFocus = "";
+                CheckProfileLayout();
+            }
+            else
+            {
+                LogManager.LogInformation("Ignoring focus loss from {0} - current focus is {1}", Name, currentGamepadFocus);
+            }
+        }
     }
 
     private void QueryProfile()
@@ -193,7 +230,10 @@ public class LayoutManager : IManager
         // raise events
         bool DesktopLayoutOnStart = ManagerFactory.settingsManager.GetBoolean("DesktopLayoutOnStart");
         if (DesktopLayoutOnStart)
-            ManagerFactory.settingsManager.SetProperty("LayoutMode", (int)LayoutModes.Desktop);
+            ManagerFactory.settingsManager.SetProperty("LayoutMode", (int)(LayoutModes)1);
+
+        // Initialize Controller Profiles
+        QueryControllerProfiles();
     }
 
     public override void Stop()
@@ -218,8 +258,8 @@ public class LayoutManager : IManager
         ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
-        UIGamepad.GotFocus -= GamepadFocusManager_FocusChanged;
-        UIGamepad.LostFocus -= GamepadFocusManager_FocusChanged;
+        UIGamepad.GotFocus -= GamepadFocusManager_FocusGained;
+        UIGamepad.LostFocus -= GamepadFocusManager_FocusLost;
         ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
 
         base.Stop();
@@ -322,36 +362,156 @@ public class LayoutManager : IManager
     {
         LayoutModes layoutMode = (LayoutModes)ManagerFactory.settingsManager.GetInt("LayoutMode");
 
-        if (layoutMode == LayoutModes.Gamepad)
+        if (layoutMode == (LayoutModes)0)
         {
             if (!currentLayout.Equals(profileLayout))
                 SetActiveLayout(profileLayout);
         }
-        else if (layoutMode == LayoutModes.Desktop)
+        else if (layoutMode == (LayoutModes)1)
         {
             if (!currentLayout.Equals(desktopLayout))
                 SetActiveLayout(desktopLayout);
         }
-        else if (layoutMode == LayoutModes.Auto)
-        {
-            if (UIGamepad.HasFocus() && defaultLayout is not null)
-            {
-                if (!currentLayout.Equals(defaultLayout))
-                    SetActiveLayout(defaultLayout);
-            }
-            else
-            {
-                ProcessEx processEx = ProcessManager.GetCurrent();
-                Layout targetLayout = (processEx == null || processEx.IsGame() || processEx.Filter == ProcessEx.ProcessFilter.HandheldCompanion) ? profileLayout : desktopLayout;
+    }
 
-                if (!currentLayout.Equals(targetLayout))
-                    SetActiveLayout(targetLayout);
+    private void QueryControllerProfiles()
+    {
+        // Check if Auto profile should be enabled on start
+        bool autoProfileOnStart = ManagerFactory.settingsManager.GetBoolean("AutoProfileOnStart");
+
+        if (autoProfileOnStart)
+        {
+            // Force Auto mode on startup
+            currentControllerProfile = ControllerProfile.Auto;
+            ManagerFactory.settingsManager.SetProperty("ControllerProfile", (int)ControllerProfile.Auto);
+        }
+        else
+        {
+            // Use saved profile
+            currentControllerProfile = (ControllerProfile)ManagerFactory.settingsManager.GetInt("ControllerProfile");
+        }
+
+        autoModeProfile1 = (ControllerProfile)ManagerFactory.settingsManager.GetInt("AutoModeProfile1");
+        autoModeProfile2 = (ControllerProfile)ManagerFactory.settingsManager.GetInt("AutoModeProfile2");
+
+        ApplyControllerProfile(currentControllerProfile);
+    }
+
+    private void ApplyControllerProfile(ControllerProfile profile, bool isFromAutoMode = false)
+    {
+        if (profile == ControllerProfile.Auto)
+        {
+            // When switching TO Auto mode, set it first
+            if (!isFromAutoMode)
+            {
+                currentControllerProfile = ControllerProfile.Auto;
             }
+            CheckProfileLayout();
+            return;
+        }
+
+        // Skip if same profile applied recently
+        if (profile == lastAppliedProfile &&
+            (DateTime.Now - lastProfileSwitch).TotalMilliseconds < 1000)
+        {
+            return;
+        }
+
+        LogManager.LogInformation("Applying Controller Profile: {0}", profile);
+
+        // ONLY SET SETTINGS - ControllerManager handles Hide/Unhide
+        switch (profile)
+        {
+            case ControllerProfile.Native:
+                ManagerFactory.settingsManager.SetProperty("HIDmode", (int)HIDmode.None);
+                ManagerFactory.settingsManager.SetProperty("HIDstatus", (int)HIDstatus.Disconnected);
+                ManagerFactory.settingsManager.SetProperty("LayoutMode", (int)(LayoutModes)0);
+                break;
+
+            case ControllerProfile.Xbox360:
+                ManagerFactory.settingsManager.SetProperty("HIDmode", (int)HIDmode.Xbox360Controller);
+                ManagerFactory.settingsManager.SetProperty("HIDstatus", (int)HIDstatus.Connected);
+                ManagerFactory.settingsManager.SetProperty("LayoutMode", (int)(LayoutModes)0);
+                break;
+
+            case ControllerProfile.DualShock4:
+                ManagerFactory.settingsManager.SetProperty("HIDmode", (int)HIDmode.DualShock4Controller);
+                ManagerFactory.settingsManager.SetProperty("HIDstatus", (int)HIDstatus.Connected);
+                ManagerFactory.settingsManager.SetProperty("LayoutMode", (int)(LayoutModes)0);
+                break;
+
+            case ControllerProfile.Desktop:
+                ManagerFactory.settingsManager.SetProperty("HIDmode", (int)HIDmode.None);
+                ManagerFactory.settingsManager.SetProperty("HIDstatus", (int)HIDstatus.Disconnected);
+                ManagerFactory.settingsManager.SetProperty("LayoutMode", (int)(LayoutModes)1);
+                break;
+        }
+
+        lastAppliedProfile = profile;
+        lastProfileSwitch = DateTime.Now;
+
+        // ONLY update currentControllerProfile when NOT from Auto mode
+        // This keeps currentControllerProfile = Auto when Auto mode is active
+        if (!isFromAutoMode)
+        {
+            currentControllerProfile = profile;
         }
     }
 
     private void CheckProfileLayout()
     {
+        if (currentControllerProfile == ControllerProfile.Auto)
+        {
+            ProcessEx foregroundProcess = ProcessManager.GetCurrent();
+            bool isGamepadApp = false;
+
+            bool hcHasFocus = !string.IsNullOrEmpty(currentGamepadFocus) &&
+                             (currentGamepadFocus == "MainWindow" ||
+                              currentGamepadFocus == "QuickTools" ||
+                              currentGamepadFocus.Contains("Overlay"));
+
+            LogManager.LogInformation("=== CheckProfileLayout ===");
+            LogManager.LogInformation("currentGamepadFocus: '{0}'", currentGamepadFocus ?? "null");
+            LogManager.LogInformation("hcHasFocus: {0}", hcHasFocus);
+            LogManager.LogInformation("foregroundProcess: {0}", foregroundProcess?.Executable ?? "null");
+
+            if (hcHasFocus)
+            {
+                isGamepadApp = true;
+                LogManager.LogInformation("Decision: HC has focus -> Gamepad mode");
+            }
+            else if (foregroundProcess != null)
+            {
+                if (foregroundProcess.IsGame())
+                {
+                    isGamepadApp = true;
+                    LogManager.LogInformation("Decision: Game detected -> Gamepad mode");
+                }
+                else
+                {
+                    Profile currentProfile = ManagerFactory.profileManager.GetCurrent();
+                    isGamepadApp = currentProfile != null && !currentProfile.Default;
+                    LogManager.LogInformation("Decision: Desktop app, hasProfile={0} -> {1} mode",
+                        currentProfile != null && !currentProfile.Default, isGamepadApp ? "Gamepad" : "Desktop");
+                }
+            }
+            else
+            {
+                LogManager.LogInformation("Decision: No foreground process -> Desktop mode");
+            }
+
+            ControllerProfile profileToApply = isGamepadApp ? autoModeProfile1 : autoModeProfile2;
+            LogManager.LogInformation("Profile to apply: {0} (Profile1={1}, Profile2={2})",
+                profileToApply, autoModeProfile1, autoModeProfile2);
+
+            ApplyControllerProfile(profileToApply, isFromAutoMode: true);
+
+            layoutTimer.Stop();
+            layoutTimer.Start();
+
+            return;
+        }
+
         layoutTimer.Stop();
         layoutTimer.Start();
     }
@@ -410,6 +570,23 @@ public class LayoutManager : IManager
             case "LayoutMode":
                 CheckProfileLayout();
                 break;
+            case "ControllerProfile":
+                currentControllerProfile = (ControllerProfile)value;
+                ApplyControllerProfile(currentControllerProfile);
+                break;
+
+            case "AutoModeProfile1":
+                autoModeProfile1 = (ControllerProfile)value;
+                if (currentControllerProfile == ControllerProfile.Auto)
+                    CheckProfileLayout();
+                break;
+
+            case "AutoModeProfile2":
+                autoModeProfile2 = (ControllerProfile)value;
+                if (currentControllerProfile == ControllerProfile.Auto)
+                    CheckProfileLayout();
+                break;
+
         }
     }
 
@@ -833,8 +1010,6 @@ public class LayoutManager : IManager
     public event LayoutChangedEventHandler LayoutChanged;
     public delegate void LayoutChangedEventHandler(Layout layout);
 
-    public event UpdatedEventHandler Updated;
-    public delegate void UpdatedEventHandler(LayoutTemplate layoutTemplate);
 
     #endregion
 }

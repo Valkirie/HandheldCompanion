@@ -1,4 +1,5 @@
-using HandheldCompanion.Controllers;
+﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
@@ -97,6 +98,21 @@ public partial class ControllerPage : Page
                 case "ConnectOnPlug":
                     Toggle_ConnectOnPlug.IsOn = Convert.ToBoolean(value);
                     break;
+
+                // ========== ADD STEP 5A HERE ==========
+                case "ControllerProfile":
+                    cB_ControllerProfile.SelectedIndex = Convert.ToInt32(value);
+                    ControllerRefresh();
+                    break;
+
+                case "AutoModeProfile1":
+                    cB_AutoModeProfile1.SelectedIndex = Convert.ToInt32(value);
+                    break;
+
+                case "AutoModeProfile2":
+                    cB_AutoModeProfile2.SelectedIndex = Convert.ToInt32(value);
+                    break;
+                    // ======================================
             }
         });
     }
@@ -301,4 +317,31 @@ public partial class ControllerPage : Page
 
         ManagerFactory.settingsManager.SetProperty("HIDuncloakondisconnect", Toggle_UncloakOnDisconnect.IsOn);
     }
+
+    // ========== ADD STEP 5B HERE ==========
+    private void cB_ControllerProfile_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!IsLoaded || cB_ControllerProfile.SelectedIndex == -1)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("ControllerProfile", cB_ControllerProfile.SelectedIndex);
+
+    }
+
+    private void cB_AutoModeProfile1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!IsLoaded || cB_AutoModeProfile1.SelectedIndex == -1)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("AutoModeProfile1", cB_AutoModeProfile1.SelectedIndex);
+    }
+
+    private void cB_AutoModeProfile2_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!IsLoaded || cB_AutoModeProfile2.SelectedIndex == -1)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("AutoModeProfile2", cB_AutoModeProfile2.SelectedIndex);
+    }
+    // ======================================
 }

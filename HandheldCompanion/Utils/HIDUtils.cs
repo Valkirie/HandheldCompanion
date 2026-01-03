@@ -3,9 +3,9 @@
 public enum HIDmode
 {
     NotSelected = -1,
-    Xbox360Controller = 0,
-    DualShock4Controller = 1,
-    NoController = 2
+    None = 0,
+    Xbox360Controller = 1,
+    DualShock4Controller = 2
 }
 
 public enum HIDstatus
