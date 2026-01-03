@@ -222,19 +222,6 @@ public partial class MainWindow : GamepadWindow
         Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, ManagerFactory.settingsManager.GetDouble("MainWindowLeft"));
         Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, ManagerFactory.settingsManager.GetDouble("MainWindowTop"));
 
-        bool MainWindowIsPaneOpen = ManagerFactory.settingsManager.GetBoolean("MainWindowIsPaneOpen");
-
-        navView.IsPaneOpen = MainWindowIsPaneOpen;
-        switch (MainWindowIsPaneOpen)
-        {
-            case true:
-                navView_PaneOpened(navView, null);
-                break;
-            case false:
-                navView_PaneClosed(navView, null);
-                break;
-        }
-
         // update setting(s)
         ManagerFactory.settingsManager.SetProperty("LastVersion", fileVersionInfo.FileVersion);
 
@@ -751,8 +738,6 @@ public partial class MainWindow : GamepadWindow
                 break;
         }
 
-        ManagerFactory.settingsManager.SetProperty("MainWindowIsPaneOpen", navView.IsPaneOpen);
-
         if (ManagerFactory.settingsManager.GetBoolean("CloseMinimises") && !appClosing)
         {
             e.Cancel = true;
@@ -1003,18 +988,6 @@ public partial class MainWindow : GamepadWindow
 
         ContentFrame.GoBack();
         return true;
-    }
-
-    private void navView_PaneOpened(NavigationView sender, object args)
-    {
-        // todo: localize me
-        PaneText.Text = Properties.Resources.MainWindow_CloseNavigation;
-    }
-
-    private void navView_PaneClosed(NavigationView sender, object args)
-    {
-        // todo: localize me
-        PaneText.Text = Properties.Resources.MainWindow_OpenNavigation;
     }
 
     private void GamepadUIMore_Click(object sender, RoutedEventArgs e)

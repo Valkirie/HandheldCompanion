@@ -43,12 +43,8 @@
         IsSettingsVisible="False"
         ItemInvoked="navView_ItemInvoked"
         Loaded="navView_Loaded"
-        OpenPaneLength="160"
-        PaneClosed="navView_PaneClosed"
         PaneDisplayMode="Top"
-        PaneOpened="navView_PaneOpened"
-        SelectionFollowsFocus="Enabled"
-        ShoulderNavigationEnabled="Always">
+        SelectionFollowsFocus="Enabled">
 
         <ui:NavigationView.HeaderTemplate>
             <DataTemplate>
@@ -296,37 +292,6 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
                         Orientation="Horizontal">
-
-                        <!--  More options  -->
-                        <Button
-                            Name="GamepadUIMore"
-                            Padding="3"
-                            Background="Transparent"
-                            BorderBrush="Transparent"
-                            Click="GamepadUIMore_Click"
-                            Focusable="False">
-                            <StackPanel Orientation="Horizontal">
-                                <Grid>
-                                    <ui:FontIcon
-                                        VerticalAlignment="Center"
-                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                        FontSize="18"
-                                        Foreground="{DynamicResource NavigationViewDefaultPaneBackground}"
-                                        Glyph="&#xe91f;" />
-                                    <ui:FontIcon
-                                        VerticalAlignment="Center"
-                                        FontFamily="PromptFont"
-                                        FontSize="28"
-                                        Glyph="&#x21fb;" />
-                                </Grid>
-                                <TextBlock
-                                    Name="PaneText"
-                                    VerticalAlignment="Center"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource BaseTextBlockStyle}"
-                                    Text="{l:Static resx:Resources.MainWindow_OpenNavigation}" />
-                            </StackPanel>
-                        </Button>
 
                         <!--  Select  -->
                         <Button
