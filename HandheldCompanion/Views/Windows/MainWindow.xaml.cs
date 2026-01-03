@@ -158,9 +158,6 @@ public partial class MainWindow : GamepadWindow
         // collect details from MotherboardInfo
         MotherboardInfo.Collect();
 
-        // initialize title
-        Title += $" ({fileVersionInfo.FileVersion})";
-
         // initialize device
         CurrentDevice = IDevice.GetCurrent();
         CurrentDevice.PullSensors();

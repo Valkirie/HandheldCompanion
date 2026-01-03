@@ -14,8 +14,8 @@
     Title="{l:Static resx:Resources.MainWindow_HandheldCompanion}"
     Width="1280"
     Height="720"
-    MinWidth="960"
-    MinHeight="640"
+    MinWidth="1280"
+    MinHeight="720"
     d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
     d:Visibility="Visible"
     ui:ThemeManager.IsThemeAware="True"
@@ -144,16 +144,6 @@
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
-            <!--  About icon  -->
-            <ui:NavigationViewItem
-                Name="navAbout"
-                Content="{l:Static resx:Resources.MainWindow_navAbout}"
-                Tag="AboutPage">
-                <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
-                </ui:NavigationViewItem.Icon>
-            </ui:NavigationViewItem>
-
             <ui:NavigationViewItem IsEnabled="False">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon
@@ -168,10 +158,7 @@
 
         <ui:NavigationView.FooterMenuItems>
             <!--  Notifications icon  -->
-            <ui:NavigationViewItem
-                Name="navNotifications"
-                Content="{l:Static resx:Resources.MainWindow_navNotifications}"
-                Tag="NotificationsPage">
+            <ui:NavigationViewItem Name="navNotifications" Tag="NotificationsPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xea8f;" />
                 </ui:NavigationViewItem.Icon>
@@ -184,12 +171,16 @@
             </ui:NavigationViewItem>
 
             <!--  Settings  -->
-            <ui:NavigationViewItem
-                Name="navSettings"
-                Content="{l:Static resx:Resources.MainWindow_Settings}"
-                Tag="SettingsPage">
+            <ui:NavigationViewItem Name="navSettings" Tag="SettingsPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:SymbolIcon Symbol="Setting" />
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
+            <!--  About icon  -->
+            <ui:NavigationViewItem Name="navAbout" Tag="AboutPage">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
         </ui:NavigationView.FooterMenuItems>
