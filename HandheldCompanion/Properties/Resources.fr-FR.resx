@@ -2185,6 +2185,15 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
   <data name="MainWindow_Select" xml:space="preserve">
     <value>Sélectionner</value>
   </data>
+  <data name="MainWindow_Toggle" xml:space="preserve">
+    <value>Basculer</value>
+  </data>
+  <data name="MainWindow_Layout" xml:space="preserve">
+    <value>Disposition</value>
+  </data>
+  <data name="MainWindow_Play" xml:space="preserve">
+    <value>Jouer</value>
+  </data>
   <data name="Hint_SteamInputReadme" xml:space="preserve">
     <value>Handheld Companion désactivera la saisie Steam et redémarrera Steam</value>
   </data>
@@ -2367,9 +2376,6 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
   </data>
   <data name="ProfilesPage_DeletePowerProfileButton" xml:space="preserve">
     <value>Supprimer le préréglage d'alimentation</value>
-  </data>
-  <data name="MainWindow_Toggle" xml:space="preserve">
-    <value>Basculer</value>
   </data>
   <data name="XInputController_Warning_USB" xml:space="preserve">
     <value>Veuillez patienter un moment pendant que nous redémarrons votre contrôleur.</value>

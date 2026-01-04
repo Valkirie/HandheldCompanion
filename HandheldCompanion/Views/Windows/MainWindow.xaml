@@ -388,6 +388,38 @@
                                     Style="{StaticResource BaseTextBlockStyle}" />
                             </StackPanel>
                         </Button>
+
+                        <!--  More (X button for Open Layout)  -->
+                        <Button
+                            Name="GamepadUIMore"
+                            Padding="3"
+                            d:Visibility="Visible"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Click="GamepadUIMore_Click"
+                            Focusable="False"
+                            Visibility="Collapsed">
+                            <StackPanel Orientation="Horizontal">
+                                <Grid>
+                                    <ui:FontIcon
+                                        VerticalAlignment="Center"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        FontSize="18"
+                                        Foreground="{DynamicResource NavigationViewDefaultPaneBackground}"
+                                        Glyph="&#xe91f;" />
+                                    <ui:FontIcon
+                                        Name="GamepadUIMoreIcon"
+                                        VerticalAlignment="Center"
+                                        FontFamily="PromptFont"
+                                        FontSize="28" />
+                                </Grid>
+                                <TextBlock
+                                    Name="GamepadUIMoreDesc"
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource BaseTextBlockStyle}" />
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
                 </Border>
             </Grid>

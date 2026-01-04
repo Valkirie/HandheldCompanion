@@ -251,6 +251,7 @@ public partial class MainWindow : GamepadWindow
             GamepadUISelectIcon.Glyph = Controller.GetGlyph(ButtonFlags.B1);
             GamepadUIBackIcon.Glyph = Controller.GetGlyph(ButtonFlags.B2);
             GamepadUIToggleIcon.Glyph = Controller.GetGlyph(ButtonFlags.B4);
+            GamepadUIMoreIcon.Glyph = Controller.GetGlyph(ButtonFlags.B3);
 
             GamepadUILB.Glyph = Controller.GetGlyph(ButtonFlags.L1);
             GamepadUIRB.Glyph = Controller.GetGlyph(ButtonFlags.R1);
@@ -268,11 +269,17 @@ public partial class MainWindow : GamepadWindow
             else
                 GamepadUIBackIcon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseHighBrush");
 
+            Color? color3 = Controller.GetGlyphColor(ButtonFlags.B3);
+            if (color3.HasValue)
+                GamepadUIMoreIcon.Foreground = new SolidColorBrush(color3.Value);
+            else
+                GamepadUIMoreIcon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+
             Color? color4 = Controller.GetGlyphColor(ButtonFlags.B4);
             if (color4.HasValue)
                 GamepadUIToggleIcon.Foreground = new SolidColorBrush(color4.Value);
             else
-                GamepadUIBackIcon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+                GamepadUIToggleIcon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseHighBrush");
         });
     }
 
@@ -290,6 +297,7 @@ public partial class MainWindow : GamepadWindow
                         GamepadUISelect.Visibility = Visibility.Visible;
                         GamepadUIBack.Visibility = Visibility.Visible;
                         GamepadUIToggle.Visibility = Visibility.Collapsed;
+                        GamepadUIMore.Visibility = Visibility.Collapsed;
 
                         GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
                         GamepadUIBackDesc.Text = Properties.Resources.MainWindow_Back;
@@ -300,6 +308,8 @@ public partial class MainWindow : GamepadWindow
                     {
                         GamepadUISelect.Visibility = Visibility.Visible;
                         GamepadUIBack.Visibility = Visibility.Visible;
+                        GamepadUIToggle.Visibility = Visibility.Collapsed;
+                        GamepadUIMore.Visibility = Visibility.Collapsed;
 
                         GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
                         GamepadUIBackDesc.Text = Properties.Resources.MainWindow_Back;
@@ -318,7 +328,10 @@ public partial class MainWindow : GamepadWindow
                             if (!profile.ErrorCode.HasFlag(ProfileErrorCode.MissingExecutable))
                             {
                                 GamepadUIToggle.Visibility = Visibility.Visible;
-                                GamepadUIToggleDesc.Text = "Play";
+                                GamepadUIToggleDesc.Text = Properties.Resources.MainWindow_Play;
+                                
+                                GamepadUIMore.Visibility = Visibility.Visible;
+                                GamepadUIMoreDesc.Text = Properties.Resources.MainWindow_Layout;
                             }
                         }
                     }
@@ -329,6 +342,7 @@ public partial class MainWindow : GamepadWindow
                         GamepadUISelect.Visibility = Visibility.Collapsed;
                         GamepadUIBack.Visibility = Visibility.Visible;
                         GamepadUIToggle.Visibility = Visibility.Collapsed;
+                        GamepadUIMore.Visibility = Visibility.Collapsed;
                     }
                     break;
 
@@ -337,6 +351,7 @@ public partial class MainWindow : GamepadWindow
                         GamepadUISelect.Visibility = Visibility.Visible;
                         GamepadUIBack.Visibility = Visibility.Collapsed;
                         GamepadUIToggle.Visibility = Visibility.Collapsed;
+                        GamepadUIMore.Visibility = Visibility.Collapsed;
 
                         GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Navigate;
                     }
@@ -994,9 +1009,9 @@ public partial class MainWindow : GamepadWindow
     {
         Task.Run(async () =>
         {
-            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.Start, true, false);
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B3, true, false);
             await Task.Delay(40);
-            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.Start, false, true);
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B3, false, true);
         });
     }
 

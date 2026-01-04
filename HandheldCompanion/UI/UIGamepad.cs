@@ -1040,6 +1040,20 @@ namespace HandheldCompanion.Managers
                         else if (prevNavigation is not null)
                             Focus(prevNavigation);
                     }
+                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B3))
+                    {
+                        switch (elementType)
+                        {
+                            case "Button":
+                                {
+                                    if (focusedElement.Tag is ProfileViewModel profileViewModel)
+                                    {
+                                        profileViewModel.OpenLayout.Execute(null);
+                                    }
+                                }
+                                break;
+                        }
+                    }
                     else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B4))
                     {
                         switch (elementType)

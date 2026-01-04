@@ -6753,6 +6753,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Layout.
+        /// </summary>
+        public static string MainWindow_Layout {
+            get {
+                return ResourceManager.GetString("MainWindow_Layout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Play.
+        /// </summary>
+        public static string MainWindow_Play {
+            get {
+                return ResourceManager.GetString("MainWindow_Play", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No notifications yet.
         /// </summary>
         public static string NotificationsPage_NothingToSee {

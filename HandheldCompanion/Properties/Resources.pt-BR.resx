@@ -2193,6 +2193,15 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="MainWindow_Select" xml:space="preserve">
     <value>Selecionar</value>
   </data>
+  <data name="MainWindow_Toggle" xml:space="preserve">
+    <value>Alternar</value>
+  </data>
+  <data name="MainWindow_Layout" xml:space="preserve">
+    <value>Layout</value>
+  </data>
+  <data name="MainWindow_Play" xml:space="preserve">
+    <value>Jogar</value>
+  </data>
   <data name="Hint_SteamInputReadme" xml:space="preserve">
     <value>Você deve reiniciar o Steam, então o Handheld Companion poderá automaticamente ajustar o Layout de Área de Trabalho Steam e prevenir entrada duplicada</value>
   </data>
@@ -2375,9 +2384,6 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   </data>
   <data name="ProfilesPage_DeletePowerProfileButton" xml:space="preserve">
     <value>Remover modo de energia</value>
-  </data>
-  <data name="MainWindow_Toggle" xml:space="preserve">
-    <value>Alternar</value>
   </data>
   <data name="XInputController_Warning_USB" xml:space="preserve">
     <value>Favor aguarde um momento enquanto religamos o seu controle.</value>

@@ -2171,6 +2171,15 @@
   <data name="MainWindow_Select" xml:space="preserve">
     <value>선택</value>
   </data>
+  <data name="MainWindow_Toggle" xml:space="preserve">
+    <value>전환</value>
+  </data>
+  <data name="MainWindow_Layout" xml:space="preserve">
+    <value>레이아웃</value>
+  </data>
+  <data name="MainWindow_Play" xml:space="preserve">
+    <value>재생</value>
+  </data>
   <data name="Hint_SteamXboxDriversReadme" xml:space="preserve">
     <value>Steam Xbox 컨트롤러 향상된 기능 드라이버를 제거할 수 있습니다.</value>
   </data>
@@ -2344,9 +2353,6 @@
   </data>
   <data name="ProfilesPage_DeletePowerProfileButton" xml:space="preserve">
     <value>전원 프리셋 삭제</value>
-  </data>
-  <data name="MainWindow_Toggle" xml:space="preserve">
-    <value>전환</value>
   </data>
   <data name="XInputController_Warning_USB" xml:space="preserve">
     <value>컨트롤러의 전원을 껐다 켭니다. 잠시 기다려 주십시오.</value>

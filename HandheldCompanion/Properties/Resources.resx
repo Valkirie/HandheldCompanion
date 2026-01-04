@@ -2193,6 +2193,15 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="MainWindow_Select" xml:space="preserve">
     <value>Select</value>
   </data>
+  <data name="MainWindow_Toggle" xml:space="preserve">
+    <value>Toggle</value>
+  </data>
+  <data name="MainWindow_Layout" xml:space="preserve">
+    <value>Layout</value>
+  </data>
+  <data name="MainWindow_Play" xml:space="preserve">
+    <value>Play</value>
+  </data>
   <data name="Hint_SteamInputReadme" xml:space="preserve">
     <value>Handheld Companion will disable Steam Input and restart Steam</value>
   </data>
@@ -2375,9 +2384,6 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   </data>
   <data name="ProfilesPage_DeletePowerProfileButton" xml:space="preserve">
     <value>Delete power preset</value>
-  </data>
-  <data name="MainWindow_Toggle" xml:space="preserve">
-    <value>Toggle</value>
   </data>
   <data name="XInputController_Warning_USB" xml:space="preserve">
     <value>Please wait a moment while we power cycle your controller.</value>

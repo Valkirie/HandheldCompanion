@@ -2173,6 +2173,15 @@
   <data name="MainWindow_Select" xml:space="preserve">
     <value>選擇</value>
   </data>
+  <data name="MainWindow_Toggle" xml:space="preserve">
+    <value>Toggle</value>
+  </data>
+  <data name="MainWindow_Layout" xml:space="preserve">
+    <value>佈局</value>
+  </data>
+  <data name="MainWindow_Play" xml:space="preserve">
+    <value>播放</value>
+  </data>
   <data name="Hint_SteamInputReadme" xml:space="preserve">
     <value>掌機伴侶將停用 Steam Input 並重新啟動 Steam</value>
   </data>
@@ -2355,9 +2364,6 @@
   </data>
   <data name="ProfilesPage_DeletePowerProfileButton" xml:space="preserve">
     <value>刪除電源設定檔</value>
-  </data>
-  <data name="MainWindow_Toggle" xml:space="preserve">
-    <value>Toggle</value>
   </data>
   <data name="XInputController_Warning_USB" xml:space="preserve">
     <value>Please wait a moment while we power cycle your controller.</value>
