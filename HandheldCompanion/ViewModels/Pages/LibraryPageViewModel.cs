@@ -347,10 +347,12 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
 
             // Load only the ones that should be shown
-            // Note: Sub-profiles are not shown in the library to avoid duplicates
             foreach (Profile profile in ManagerFactory.profileManager.GetProfiles().Where(p => !p.Default))
             {
                 ProfileManager_Updated(profile, UpdateSource.Background, false);
+
+                foreach (Profile subProfile in ManagerFactory.profileManager.GetSubProfilesFromProfile(profile))
+                    ProfileManager_Updated(subProfile, UpdateSource.Background, false);
             }
         }
 
@@ -430,10 +432,6 @@ namespace HandheldCompanion.ViewModels
         {
             // ignore me
             if (profile.Default)
-                return;
-
-            // Don't show sub-profiles in the library - only show main profiles
-            if (profile.IsSubProfile)
                 return;
 
             bool shouldShow = profile.ShowInLibrary;
