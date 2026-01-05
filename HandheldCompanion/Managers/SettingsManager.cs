@@ -66,7 +66,7 @@ public class SettingsManager : IManager
 
         IOrderedEnumerable<SettingsProperty> properties = Properties.Settings.Default.Properties.Cast<SettingsProperty>().OrderBy(s => s.Name);
         foreach (var property in properties)
-            SettingValueChanged(property.Name, GetProperty(property.Name), false);
+            SettingValueChanged?.Invoke(property.Name, GetProperty(property.Name), false);
 
         if (GetBoolean("FirstStart"))
             SetProperty("FirstStart", false);
