@@ -10,7 +10,7 @@ namespace HandheldCompanion.Targets
 {
     public abstract class ViGEmTarget : IDisposable
     {
-        public HIDmode HID = HIDmode.NoController;
+        public HIDmode HID = HIDmode.None;
 
         protected IVirtualGamepad virtualController;
 

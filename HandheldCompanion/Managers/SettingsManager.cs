@@ -39,9 +39,18 @@ public static class Settings
 
 public enum LayoutModes
 {
-    Gamepad = 0,
     Desktop = 1,
     Auto = 2
+}
+
+// Add this new enum:
+public enum ControllerProfile
+{
+    Native = 0,       // ← CHANGED from Gamepad
+    Xbox360 = 1,
+    DualShock4 = 2,
+    Desktop = 3,
+    Auto = 4
 }
 
 public class SettingsManager : IManager
@@ -70,6 +79,16 @@ public class SettingsManager : IManager
 
         if (GetBoolean("FirstStart"))
             SetProperty("FirstStart", false);
+
+        // ========== ADD STEP 2 CODE HERE ==========
+        // Initialize controller profile settings if not set
+        if (!PropertyExists("ControllerProfile"))
+            SetProperty("ControllerProfile", 4); // 4 = Auto mode
+        if (!PropertyExists("AutoModeProfile1"))
+            SetProperty("AutoModeProfile1", 0); // 0 = Gamepad
+        if (!PropertyExists("AutoModeProfile2"))
+            SetProperty("AutoModeProfile2", 3); // 3 = Desktop
+                                                // ==========================================
 
         base.Start();
     }

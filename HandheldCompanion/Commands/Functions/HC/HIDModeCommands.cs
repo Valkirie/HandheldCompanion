@@ -7,7 +7,7 @@ namespace HandheldCompanion.Commands.Functions.HC
     [Serializable]
     public class HIDModeCommands : FunctionCommands
     {
-        private const string SettingsName = "HIDmode";
+        private const string SettingsName = "ControllerProfile"; // ← CHANGED from "HIDmode"
 
         public HIDModeCommands()
         {
@@ -19,25 +19,56 @@ namespace HandheldCompanion.Commands.Functions.HC
 
             Update();
 
+            // ← ADD THIS EVENT SUBSCRIPTION
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             ManagerFactory.profileManager.Applied += ProfileManager_Applied;
+        }
+
+        // ← ADD THIS METHOD
+        private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+        {
+            switch (name)
+            {
+                case SettingsName:
+                    Update();
+
+                    ControllerProfile profile = (ControllerProfile)ManagerFactory.settingsManager.GetInt(SettingsName);
+                    ToastManager.SendToast($"Controller Profile", $"{profile}", $"controller_profile_{(int)profile}", true);
+                    break;
+            }
         }
 
         private void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
-            IsEnabled = profile.HID == HIDmode.NotSelected;
-            Update(profile.HID);
+            IsEnabled = true;
+            Update();
         }
 
         public void Update(HIDmode profileMode = HIDmode.NotSelected)
         {
-            HIDmode currentHIDmode = profileMode == HIDmode.NotSelected ? (HIDmode)ManagerFactory.settingsManager.GetInt(SettingsName, true) : profileMode;
-            switch (currentHIDmode)
+            ControllerProfile currentProfile = (ControllerProfile)ManagerFactory.settingsManager.GetInt("ControllerProfile"); // ← Remove the 'true'
+
+            switch (currentProfile)
             {
-                case HIDmode.Xbox360Controller:
-                    LiveGlyph = "\uE001";
+                case ControllerProfile.Native:
+                    LiveGlyph = "\u243C";
+                    LiveName = "Controller Profile\nNative";
                     break;
-                case HIDmode.DualShock4Controller:
+                case ControllerProfile.Xbox360:
+                    LiveGlyph = "\uE001";
+                    LiveName = "Controller Profile\nXbox 360";
+                    break;
+                case ControllerProfile.DualShock4:
                     LiveGlyph = "\uE000";
+                    LiveName = "Controller Profile\nDualShock 4";
+                    break;
+                case ControllerProfile.Desktop:
+                    LiveGlyph = "\uE75A";
+                    LiveName = "Controller Profile\nDesktop";
+                    break;
+                case ControllerProfile.Auto:
+                    LiveGlyph = "\uE8B7";
+                    LiveName = "Controller Profile\nAuto";
                     break;
             }
 
@@ -46,21 +77,19 @@ namespace HandheldCompanion.Commands.Functions.HC
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            if (IsEnabled)
+            ControllerProfile currentProfile = (ControllerProfile)ManagerFactory.settingsManager.GetInt("ControllerProfile"); // ← Remove the 'true'
+
+            ControllerProfile nextProfile = currentProfile switch
             {
-                HIDmode currentHIDmode = (HIDmode)ManagerFactory.settingsManager.GetInt(SettingsName, true);
-                switch (currentHIDmode)
-                {
-                    case HIDmode.Xbox360Controller:
-                        ManagerFactory.settingsManager.SetProperty(SettingsName, (int)HIDmode.DualShock4Controller);
-                        break;
-                    case HIDmode.DualShock4Controller:
-                        ManagerFactory.settingsManager.SetProperty(SettingsName, (int)HIDmode.Xbox360Controller);
-                        break;
-                    default:
-                        break;
-                }
-            }
+                ControllerProfile.Native => ControllerProfile.Xbox360,
+                ControllerProfile.Xbox360 => ControllerProfile.DualShock4,
+                ControllerProfile.DualShock4 => ControllerProfile.Desktop,
+                ControllerProfile.Desktop => ControllerProfile.Auto,
+                ControllerProfile.Auto => ControllerProfile.Native,
+                _ => ControllerProfile.Native
+            };
+
+            ManagerFactory.settingsManager.SetProperty(SettingsName, (int)nextProfile); // ← Use SettingsName
 
             Update();
             base.Execute(IsKeyDown, IsKeyUp, false);
@@ -85,6 +114,7 @@ namespace HandheldCompanion.Commands.Functions.HC
 
         public override void Dispose()
         {
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged; // ← ADD THIS
             ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
             base.Dispose();
         }

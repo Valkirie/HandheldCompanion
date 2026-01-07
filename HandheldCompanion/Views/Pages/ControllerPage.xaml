@@ -155,12 +155,67 @@
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Glyph="&#xE7FC;" />
                     </ui:SettingsCard.HeaderIcon>
-
                     <ComboBox Name="cB_HidMode" SelectionChanged="cB_HidMode_SelectionChanged">
+                        <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_None}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_Xbox360Controller}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_DualShock4Controller}" />
                     </ComboBox>
                 </ui:SettingsCard>
+
+                <!-- ========== ADD STEP 4A HERE ========== -->
+                <!--  Controller Profile Mode  -->
+                <ui:SettingsCard 
+                Description="{l:Static resx:Resources.ControllerPage_ProfileModeDesc}" 
+                Header="{l:Static resx:Resources.ControllerPage_ProfileMode}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE7FC;" />
+                    </ui:SettingsCard.HeaderIcon>
+
+                    <ComboBox Name="cB_ControllerProfile" SelectionChanged="cB_ControllerProfile_SelectionChanged">
+                        <ComboBoxItem Content="Native" />
+                        <ComboBoxItem Content="Xbox 360" />
+                        <ComboBoxItem Content="DualShock 4" />
+                        <ComboBoxItem Content="Desktop" />
+                        <ComboBoxItem Content="Auto" />
+                    </ComboBox>
+                </ui:SettingsCard>
+                <!-- ====================================== -->
+
+                <!--  Auto Mode Configuration  -->
+                <ui:SettingsExpander 
+                Name="AutoModeSettings"
+                Header="{l:Static resx:Resources.ControllerPage_AutoModeSettings}"
+                Visibility="Visible">
+                    <ui:SettingsExpander.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE8B7;" />
+                    </ui:SettingsExpander.HeaderIcon>
+
+                    <ui:SettingsExpander.Items>
+                        <!--  Auto Mode Profile 1  -->
+                        <ui:SettingsCard
+                    Description="{l:Static resx:Resources.ControllerPage_AutoModeProfile1Desc}"
+                    Header="{l:Static resx:Resources.ControllerPage_AutoModeProfile1}">
+                            <ComboBox Name="cB_AutoModeProfile1" SelectionChanged="cB_AutoModeProfile1_SelectionChanged">
+                                <ComboBoxItem Content="{l:Static resx:Resources.Enum_ControllerProfile_Native}" />
+                                <ComboBoxItem Content="{l:Static resx:Resources.Enum_ControllerProfile_Xbox360}" />
+                                <ComboBoxItem Content="{l:Static resx:Resources.Enum_ControllerProfile_DualShock4}" />
+                                <ComboBoxItem Content="{l:Static resx:Resources.Enum_ControllerProfile_Desktop}" />
+                            </ComboBox>
+                        </ui:SettingsCard>
+
+                        <!--  Auto Mode Profile 2  -->
+                        <ui:SettingsCard
+                        Description="{l:Static resx:Resources.ControllerPage_AutoModeProfile2Desc}"
+                        Header="{l:Static resx:Resources.ControllerPage_AutoModeProfile2}">
+                            <ComboBox Name="cB_AutoModeProfile2" SelectionChanged="cB_AutoModeProfile2_SelectionChanged">
+                                <ComboBoxItem Content="{l:Static resx:Resources.Enum_ControllerProfile_Native}" />
+                                <ComboBoxItem Content="{l:Static resx:Resources.Enum_ControllerProfile_Xbox360}" />
+                                <ComboBoxItem Content="{l:Static resx:Resources.Enum_ControllerProfile_DualShock4}" />
+                                <ComboBoxItem Content="{l:Static resx:Resources.Enum_ControllerProfile_Desktop}" />
+                            </ComboBox>
+                        </ui:SettingsCard>
+                    </ui:SettingsExpander.Items>
+                </ui:SettingsExpander>
 
                 <!--  Vibration Strength  -->
                 <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_VibrationStrengthDesc}" Header="{l:Static resx:Resources.ControllerPage_VibrationStrength}">
