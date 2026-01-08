@@ -4,6 +4,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels;
+using HandheldCompanion.Views;
 
 using iNKORE.UI.WPF.Modern.Controls;
 

@@ -119,6 +119,13 @@
         <!--  Padding is set to NavView OpenPaneLength  -->
         <Grid Name="MainGrid" Margin="20">
             <ikw:SimpleStackPanel Spacing="10">
+
+                <!--  Separator  -->
+                <Separator
+                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                    BorderThickness="0,1,0,0"
+                    Opacity="0.25" />
+
                 <!--  Profile picker  -->
                 <ikw:SimpleStackPanel
                     Name="LayoutPickerPanel"

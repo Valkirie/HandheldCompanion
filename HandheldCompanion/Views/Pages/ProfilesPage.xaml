@@ -652,7 +652,43 @@
                             </Grid>
                         </Border>
                     </ikw:SimpleStackPanel>
-
+                    <!--  Controller settings  -->
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_VirtualDeviceSettings}" />
+                    <ikw:SimpleStackPanel Spacing="3">
+                        <!--  Controller type  -->
+                        <ui:SettingsCard Description="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDesc}" Header="{l:Static resx:Resources.ProfilesPage_EmulatedController}">
+                            <ui:SettingsCard.HeaderIcon>
+                                <ui:FontIcon Glyph="&#xE7FC;" />
+                            </ui:SettingsCard.HeaderIcon>
+                            <ComboBox
+                                x:Name="cB_EmulatedController"
+                                SelectedIndex="0"
+                                SelectionChanged="cB_EmulatedController_Changed">
+                                <ComboBoxItem
+                                    Name="cB_EmulatedController_disabled"
+                                    Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDefault}"
+                                    Tag="-1" />
+                                <ComboBoxItem
+                                    Name="cB_EmulatedController_Xbox"
+                                    Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerXbox}"
+                                    Tag="0" />
+                                <ComboBoxItem
+                                    Name="cB_EmulatedController_DS4"
+                                    Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDS4}"
+                                    Tag="1" />
+                            </ComboBox>
+                        </ui:SettingsCard>
+                        <ui:SettingsCard
+                            Click="ControllerSettingsButton_Click"
+                            Description="{l:Static resx:Resources.ProfilesPage_ControllerLayoutDesc}"
+                            Header="{l:Static resx:Resources.ProfilesPage_ControllerLayout}"
+                            IsClickEnabled="True"
+                            Tag="Navigation">
+                            <ui:SettingsCard.HeaderIcon>
+                                <ui:FontIcon Glyph="&#xE7FC;" />
+                            </ui:SettingsCard.HeaderIcon>
+                        </ui:SettingsCard>
+                    </ikw:SimpleStackPanel>
                     <!--  Profile settings  -->
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_ProfileSettings}" />
                     <ikw:SimpleStackPanel Spacing="3">
@@ -1498,46 +1534,6 @@
                             </ui:SettingsCard.HeaderIcon>
 
                             <ui:ToggleSwitch Name="UseHighDPIAwareness" Toggled="UseHighDPIAwareness_Toggled" />
-                        </ui:SettingsCard>
-                    </ikw:SimpleStackPanel>
-
-                    <!--  Controller settings  -->
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_VirtualDeviceSettings}" />
-                    <ikw:SimpleStackPanel Spacing="3">
-                        <!--  Controller type  -->
-                        <ui:SettingsCard Description="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDesc}" Header="{l:Static resx:Resources.ProfilesPage_EmulatedController}">
-                            <ui:SettingsCard.HeaderIcon>
-                                <ui:FontIcon Glyph="&#xE7FC;" />
-                            </ui:SettingsCard.HeaderIcon>
-
-                            <ComboBox
-                                x:Name="cB_EmulatedController"
-                                SelectedIndex="0"
-                                SelectionChanged="cB_EmulatedController_Changed">
-                                <ComboBoxItem
-                                    Name="cB_EmulatedController_disabled"
-                                    Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDefault}"
-                                    Tag="-1" />
-                                <ComboBoxItem
-                                    Name="cB_EmulatedController_Xbox"
-                                    Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerXbox}"
-                                    Tag="0" />
-                                <ComboBoxItem
-                                    Name="cB_EmulatedController_DS4"
-                                    Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDS4}"
-                                    Tag="1" />
-                            </ComboBox>
-                        </ui:SettingsCard>
-
-                        <ui:SettingsCard
-                            Click="ControllerSettingsButton_Click"
-                            Description="{l:Static resx:Resources.ProfilesPage_ControllerLayoutDesc}"
-                            Header="{l:Static resx:Resources.ProfilesPage_ControllerLayout}"
-                            IsClickEnabled="True"
-                            Tag="Navigation">
-                            <ui:SettingsCard.HeaderIcon>
-                                <ui:FontIcon Glyph="&#xE7FC;" />
-                            </ui:SettingsCard.HeaderIcon>
                         </ui:SettingsCard>
                     </ikw:SimpleStackPanel>
                 </ikw:SimpleStackPanel>

@@ -46,7 +46,13 @@ namespace HandheldCompanion.ViewModels
 
             ButtonCommand = new DelegateCommand(() =>
             {
-                AddMapping();
+                var newMapping = AddMappingAndReturn();
+                // Navigate to LayoutItemPage with the new mapping
+                if (newMapping is not null && MainWindow.layoutItemPage is not null)
+                {
+                    MainWindow.layoutItemPage.SetMapping(newMapping);
+                    MainWindow.NavView_Navigate(MainWindow.layoutItemPage);
+                }
             });
 
             // manage events
@@ -95,7 +101,15 @@ namespace HandheldCompanion.ViewModels
 
         public override void AddMapping()
         {
-            ButtonMappings.SafeAdd(new ButtonMappingViewModel(this, _flag));
+            var newMapping = new ButtonMappingViewModel(this, _flag);
+            ButtonMappings.SafeAdd(newMapping);
+        }
+
+        public ButtonMappingViewModel AddMappingAndReturn()
+        {
+            var newMapping = new ButtonMappingViewModel(this, _flag);
+            ButtonMappings.SafeAdd(newMapping);
+            return newMapping;
         }
 
         public override void RemoveMapping(MappingViewModel mapping)

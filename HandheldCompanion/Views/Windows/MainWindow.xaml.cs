@@ -63,6 +63,7 @@ public partial class MainWindow : GamepadWindow
     public static LayoutPage layoutPage;
     public static NotificationsPage notificationsPage;
     public static LibraryPage libraryPage;
+    public static LayoutItemPage layoutItemPage;
 
     // overlay(s) vars
     public static OverlayModel overlayModel = new();
@@ -431,13 +432,16 @@ public partial class MainWindow : GamepadWindow
         layoutPage = new LayoutPage("layout", navView);
         performancePage = new PerformancePage();
         aboutPage = new AboutPage();
+        layoutItemPage = new LayoutItemPage("layoutitem", navView);
 
         layoutPage.Initialize();
+        layoutItemPage.Initialize();
 
         // storage pages
         _pages.Add("LayoutPage", layoutPage);
         _pages.Add("PerformancePage", performancePage);
         _pages.Add("AboutPage", aboutPage);
+        _pages.Add("LayoutItemPage", layoutItemPage);
     }
 
     private void GenericDeviceUpdated(PnPDevice device, Guid IntefaceGuid)

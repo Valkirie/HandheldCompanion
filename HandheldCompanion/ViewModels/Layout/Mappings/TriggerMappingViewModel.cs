@@ -5,6 +5,7 @@ using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -162,8 +163,10 @@ namespace HandheldCompanion.ViewModels
         }
 
         private TriggerStackViewModel _parentStack;
+        public TriggerStackViewModel ParentStack => _parentStack;
 
         public ICommand ButtonCommand { get; private set; }
+        public ICommand OpenSettingsCommand { get; private set; }
 
         public TriggerMappingViewModel(TriggerStackViewModel parentStack, AxisLayoutFlags value) : base(value)
         {
@@ -173,6 +176,16 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Action is not null) Delete();
                 _parentStack.RemoveMapping(this);
+            });
+
+            OpenSettingsCommand = new DelegateCommand(() =>
+            {
+                // Navigate to LayoutItemPage
+                if (MainWindow.layoutItemPage is not null)
+                {
+                    MainWindow.layoutItemPage.SetMapping(this);
+                    MainWindow.NavView_Navigate(MainWindow.layoutItemPage);
+                }
             });
         }
 

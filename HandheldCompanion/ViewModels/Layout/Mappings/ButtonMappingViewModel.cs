@@ -6,6 +6,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -337,8 +338,10 @@ namespace HandheldCompanion.ViewModels
         #endregion
 
         private ButtonStackViewModel _parentStack;
+        public ButtonStackViewModel ParentStack => _parentStack;
 
         public ICommand ButtonCommand { get; private set; }
+        public ICommand OpenSettingsCommand { get; private set; }
 
         public ButtonMappingViewModel(ButtonStackViewModel parentStack, ButtonFlags button) : base(button)
         {
@@ -348,6 +351,16 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Action is not null) Delete();
                 _parentStack.RemoveMapping(this);
+            });
+
+            OpenSettingsCommand = new DelegateCommand(() =>
+            {
+                // Navigate to LayoutItemPage
+                if (MainWindow.layoutItemPage is not null)
+                {
+                    MainWindow.layoutItemPage.SetMapping(this);
+                    MainWindow.NavView_Navigate(MainWindow.layoutItemPage);
+                }
             });
         }
 

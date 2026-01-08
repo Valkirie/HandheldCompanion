@@ -29,6 +29,8 @@
     <converters:IsNullConverter x:Key="IsNullConverter" />
     <converters:ResourceFormatConverter x:Key="ResourceFormatConverter" />
     <converters:TypeToVisibilityConverter x:Key="TypeToVisibilityConverter" />
+    <converters:ActionTypeIndexToNameConverter x:Key="ActionTypeIndexToNameConverter" />
+    <converters:ActionDisplayConverter x:Key="ActionDisplayConverter" />
 
     <DataTemplate x:Key="HotkeyTemplate" DataType="{x:Type viewmodels:HotkeyViewModel}">
         <DataTemplate.Resources>
@@ -1114,16 +1116,60 @@
     <DataTemplate x:Key="ButtonMappingTemplate" DataType="{x:Type viewmodels:ButtonMappingViewModel}">
         <Grid Margin="48,0,0,0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Button
+            <!--  Action Name Display  -->
+            <TextBlock
                 Grid.Column="0"
-                Margin="0,1,2,1"
+                VerticalAlignment="Center"
+                Margin="0,4"
+                TextWrapping="Wrap">
+                <TextBlock.Text>
+                    <MultiBinding Converter="{StaticResource ActionDisplayConverter}">
+                        <Binding
+                            Path="ActionTypeIndex"
+                            Mode="OneWay"
+                            UpdateSourceTrigger="PropertyChanged"
+                            Converter="{StaticResource ActionTypeIndexToNameConverter}" />
+                        <Binding
+                            Path="SelectedTarget.Content"
+                            Mode="OneWay"
+                            UpdateSourceTrigger="PropertyChanged"
+                            TargetNullValue="None" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+
+            <!--  Gear Button to Open Settings  -->
+            <Button
+                Grid.Column="1"
+                Width="44"
+                Height="44"
+                Margin="0,2,2,0"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Stretch"
-                Command="{Binding ButtonCommand}">
+                VerticalAlignment="Top"
+                Command="{Binding OpenSettingsCommand}"
+                ToolTip="Open action settings">
+                <ui:FontIcon
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                    Glyph="&#xE713;" />
+            </Button>
+
+            <!--  Remove Button  -->
+            <Button
+                Grid.Column="2"
+                Width="44"
+                Height="44"
+                Margin="0,2,2,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Command="{Binding ButtonCommand}"
+                ToolTip="Remove action">
                 <ui:FontIcon
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
@@ -1131,7 +1177,8 @@
                     Glyph="&#xECC9;" />
             </Button>
 
-            <ui:SettingsExpander Grid.Column="1">
+            <!--  Old SettingsExpander - Hidden but kept for reference  -->
+            <ui:SettingsExpander Grid.Column="1" Visibility="Collapsed">
                 <ui:SettingsExpander.Content>
                     <DockPanel>
                         <ComboBox MinWidth="120" SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -1761,15 +1808,60 @@
     <DataTemplate x:Key="AxisMappingTemplate" DataType="{x:Type viewmodels:AxisMappingViewModel}">
         <Grid Margin="48,0,0,0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
+            <!--  Action Name Display  -->
+            <TextBlock
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Margin="0,4"
+                TextWrapping="Wrap">
+                <TextBlock.Text>
+                    <MultiBinding Converter="{StaticResource ActionDisplayConverter}">
+                        <Binding
+                            Path="ActionTypeIndex"
+                            Mode="OneWay"
+                            UpdateSourceTrigger="PropertyChanged"
+                            Converter="{StaticResource ActionTypeIndexToNameConverter}" />
+                        <Binding
+                            Path="SelectedTarget.Content"
+                            Mode="OneWay"
+                            UpdateSourceTrigger="PropertyChanged"
+                            TargetNullValue="None" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+
+            <!--  Gear Button to Open Settings  -->
             <Button
-                Margin="0,1,2,1"
+                Grid.Column="1"
+                Width="44"
+                Height="44"
+                Margin="0,2,2,0"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Stretch"
-                Command="{Binding ButtonCommand}">
+                VerticalAlignment="Top"
+                Command="{Binding OpenSettingsCommand}"
+                ToolTip="Open action settings">
+                <ui:FontIcon
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                    Glyph="&#xE713;" />
+            </Button>
+
+            <!--  Remove Button  -->
+            <Button
+                Grid.Column="2"
+                Width="44"
+                Height="44"
+                Margin="0,2,2,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Command="{Binding ButtonCommand}"
+                ToolTip="Remove action">
                 <ui:FontIcon
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
@@ -1777,7 +1869,8 @@
                     Glyph="&#xECC9;" />
             </Button>
 
-            <ui:SettingsExpander Grid.Column="1">
+            <!--  Old SettingsExpander - Hidden but kept for reference  -->
+            <ui:SettingsExpander Grid.Column="1" Visibility="Collapsed">
                 <ui:SettingsExpander.Content>
                     <DockPanel>
                         <ComboBox MinWidth="120" SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -2168,14 +2261,60 @@
     <DataTemplate x:Key="TriggerMappingTemplate" DataType="{x:Type viewmodels:TriggerMappingViewModel}">
         <Grid Margin="48,0,0,0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
+            <!--  Action Name Display  -->
+            <TextBlock
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Margin="0,4"
+                TextWrapping="Wrap">
+                <TextBlock.Text>
+                    <MultiBinding Converter="{StaticResource ActionDisplayConverter}">
+                        <Binding
+                            Path="ActionTypeIndex"
+                            Mode="OneWay"
+                            UpdateSourceTrigger="PropertyChanged"
+                            Converter="{StaticResource ActionTypeIndexToNameConverter}" />
+                        <Binding
+                            Path="SelectedTarget.Content"
+                            Mode="OneWay"
+                            UpdateSourceTrigger="PropertyChanged"
+                            TargetNullValue="None" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+
+            <!--  Gear Button to Open Settings  -->
             <Button
-                Margin="0,1,2,1"
-                VerticalAlignment="Stretch"
-                Command="{Binding ButtonCommand}">
+                Grid.Column="1"
+                Width="44"
+                Height="44"
+                Margin="0,2,2,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Command="{Binding OpenSettingsCommand}"
+                ToolTip="Open action settings">
+                <ui:FontIcon
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                    Glyph="&#xE713;" />
+            </Button>
+
+            <!--  Remove Button  -->
+            <Button
+                Grid.Column="2"
+                Width="44"
+                Height="44"
+                Margin="0,2,2,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Command="{Binding ButtonCommand}"
+                ToolTip="Remove action">
                 <ui:FontIcon
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
@@ -2183,7 +2322,8 @@
                     Glyph="&#xECC9;" />
             </Button>
 
-            <ui:SettingsExpander Grid.Column="1">
+            <!--  Old SettingsExpander - Hidden but kept for reference  -->
+            <ui:SettingsExpander Grid.Column="1" Visibility="Collapsed">
                 <ui:SettingsExpander.Content>
                     <DockPanel>
                         <ComboBox MinWidth="120" SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">

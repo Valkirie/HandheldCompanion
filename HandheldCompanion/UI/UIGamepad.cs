@@ -1037,6 +1037,15 @@ namespace HandheldCompanion.Managers
                                 gamepadFrame.GoBack();
                             }
                         }
+                        // Special handling for LayoutItemPage: always navigate back to LayoutPage when B is pressed
+                        else if (gamepadPage is not null && gamepadPage.GetType().Name == "LayoutItemPage" && !IsQuicktools)
+                        {
+                            if (MainWindow.layoutPage is not null)
+                            {
+                                MainWindow.NavView_Navigate(MainWindow.layoutPage);
+                                return;
+                            }
+                        }
                         else if (prevNavigation is not null)
                             Focus(prevNavigation);
                     }
