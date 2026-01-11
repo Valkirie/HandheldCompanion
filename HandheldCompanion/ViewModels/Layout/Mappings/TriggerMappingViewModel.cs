@@ -10,6 +10,7 @@ using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 
 namespace HandheldCompanion.ViewModels
@@ -21,8 +22,10 @@ namespace HandheldCompanion.ViewModels
             MouseActionsType.Move,
             MouseActionsType.Scroll
         ];
+        
+        public override bool IsTriggerMapping => true;
 
-        public int Trigger2TriggerInnerDeadzone
+        public override int Trigger2TriggerInnerDeadzone
         {
             get => (Action is TriggerActions triggerAction) ? triggerAction.AxisDeadZoneInner : 0;
             set
@@ -35,7 +38,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public int Trigger2TriggerOuterDeadzone
+        public override int Trigger2TriggerOuterDeadzone
         {
             get => (Action is TriggerActions triggerAction) ? triggerAction.AxisDeadZoneOuter : 0;
             set
@@ -48,7 +51,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public int Trigger2TriggerAntiDeadzone
+        public override int Trigger2TriggerAntiDeadzone
         {
             get => (Action is TriggerActions triggerAction) ? triggerAction.AxisAntiDeadZone : 0;
             set
@@ -58,6 +61,19 @@ namespace HandheldCompanion.ViewModels
                     triggerAction.AxisAntiDeadZone = value;
                     OnPropertyChanged(nameof(Trigger2TriggerAntiDeadzone));
                 }
+            }
+        }
+        
+        // Trigger deadzone visibility - only visible when Trigger -> Trigger/Axis
+        public override Visibility TriggerDeadzoneVisibility
+        {
+            get
+            {
+                ActionType currentActionType = (ActionType)ActionTypeIndex;
+                // Show for Trigger -> Trigger or Trigger -> Joystick (Axis)
+                return (currentActionType == ActionType.Trigger || currentActionType == ActionType.Joystick) 
+                    ? Visibility.Visible 
+                    : Visibility.Collapsed;
             }
         }
 
@@ -352,6 +368,20 @@ namespace HandheldCompanion.ViewModels
 
             // Refresh mapping
             OnPropertyChanged(string.Empty);
+            OnPropertyChanged(nameof(TriggerDeadzoneVisibility));
+        }
+        
+        public override void OnPropertyChanged(string propertyName)
+        {
+            switch (propertyName)
+            {
+                case "SelectedTarget":
+                case "ActionTypeIndex":
+                    OnPropertyChanged(nameof(TriggerDeadzoneVisibility));
+                    break;
+            }
+
+            base.OnPropertyChanged(propertyName);
         }
 
         protected override void TargetTypeChanged()

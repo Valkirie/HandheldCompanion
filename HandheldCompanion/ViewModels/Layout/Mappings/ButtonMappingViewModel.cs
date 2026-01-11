@@ -238,6 +238,16 @@ namespace HandheldCompanion.ViewModels
                 }
             }
         }
+        
+        // Trigger output should only be visible for Button -> Trigger mappings
+        public override Visibility TriggerOutputVisibility
+        {
+            get
+            {
+                ActionType currentActionType = (ActionType)ActionTypeIndex;
+                return currentActionType == ActionType.Trigger ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
 
         public override int HapticModeIndex
         {

@@ -132,7 +132,7 @@
             </ui:SettingsCard>
 
             <!--  Trigger value  -->
-            <ui:SettingsCard Header="Trigger value" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=5}">
+            <ui:SettingsCard Header="Trigger value" Visibility="{Binding TriggerOutputVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                 <DockPanel Margin="12,0,0,0">
                     <TextBox
                         HorizontalContentAlignment="Center"
@@ -200,17 +200,17 @@
             </ui:SettingsCard>
 
             <!--  Invert horizontal  -->
-            <ui:SettingsCard Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+            <ui:SettingsCard Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                 <CheckBox Content="Invert horizontal axis" IsChecked="{Binding Axis2AxisInvertHorizontal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </ui:SettingsCard>
 
             <!--  Invert vertical  -->
-            <ui:SettingsCard Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+            <ui:SettingsCard Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                 <CheckBox Content="Invert vertical axis" IsChecked="{Binding Axis2AxisInvertVertical, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </ui:SettingsCard>
 
-            <!--  Inner deadzone  -->
-            <ui:SettingsCard Header="Inner deadzone" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+            <!--  Axis Inner deadzone  -->
+            <ui:SettingsCard Header="Inner deadzone" Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                 <DockPanel>
                     <TextBox
                         HorizontalContentAlignment="Center"
@@ -230,8 +230,8 @@
                 </DockPanel>
             </ui:SettingsCard>
 
-            <!--  Outer deadzone  -->
-            <ui:SettingsCard Header="Outer deadzone" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+            <!--  Axis Outer deadzone  -->
+            <ui:SettingsCard Header="Outer deadzone" Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                 <DockPanel>
                     <TextBox
                         HorizontalContentAlignment="Center"
@@ -252,7 +252,7 @@
             </ui:SettingsCard>
 
             <!--  Anti deadzone  -->
-            <ui:SettingsCard Header="Anti deadzone" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+            <ui:SettingsCard Header="Anti deadzone" Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                 <DockPanel>
                     <TextBox
                         HorizontalContentAlignment="Center"
@@ -269,6 +269,69 @@
                         TickPlacement="BottomRight"
                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                         Value="{Binding Axis2AxisAntiDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+            </ui:SettingsCard>
+
+            <!--  Trigger Inner deadzone  -->
+            <ui:SettingsCard Header="Inner deadzone" Visibility="{Binding TriggerDeadzoneVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <DockPanel>
+                    <TextBox
+                        HorizontalContentAlignment="Center"
+                        IsReadOnly="True"
+                        Text="{Binding Trigger2TriggerInnerDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
+
+                    <Slider
+                        Margin="3,0,0,0"
+                        IsMoveToPointEnabled="True"
+                        IsSnapToTickEnabled="True"
+                        Maximum="25"
+                        Minimum="0"
+                        TickFrequency="1"
+                        TickPlacement="BottomRight"
+                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                        Value="{Binding Trigger2TriggerInnerDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+            </ui:SettingsCard>
+
+            <!--  Trigger Outer deadzone  -->
+            <ui:SettingsCard Header="Outer deadzone" Visibility="{Binding TriggerDeadzoneVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <DockPanel>
+                    <TextBox
+                        HorizontalContentAlignment="Center"
+                        IsReadOnly="True"
+                        Text="{Binding Trigger2TriggerOuterDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
+
+                    <Slider
+                        Margin="3,0,0,0"
+                        IsMoveToPointEnabled="True"
+                        IsSnapToTickEnabled="True"
+                        Maximum="25"
+                        Minimum="0"
+                        TickFrequency="1"
+                        TickPlacement="BottomRight"
+                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                        Value="{Binding Trigger2TriggerOuterDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+            </ui:SettingsCard>
+
+            <!--  Trigger Anti deadzone  -->
+            <ui:SettingsCard Header="Anti deadzone" Visibility="{Binding TriggerDeadzoneVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <DockPanel>
+                    <TextBox
+                        HorizontalContentAlignment="Center"
+                        IsReadOnly="True"
+                        Text="{Binding Trigger2TriggerAntiDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} %}" />
+
+                    <Slider
+                        Margin="3,0,0,0"
+                        IsMoveToPointEnabled="True"
+                        IsSnapToTickEnabled="True"
+                        Maximum="25"
+                        Minimum="0"
+                        TickFrequency="5"
+                        TickPlacement="BottomRight"
+                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                        Value="{Binding Trigger2TriggerAntiDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </DockPanel>
             </ui:SettingsCard>
 

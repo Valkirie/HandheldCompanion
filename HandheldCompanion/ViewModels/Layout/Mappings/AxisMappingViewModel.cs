@@ -410,6 +410,7 @@ namespace HandheldCompanion.ViewModels
                     OnPropertyChanged(nameof(AxisDirectionVisibility));
                     OnPropertyChanged(nameof(AxisThresholdVisibility));
                     OnPropertyChanged(nameof(GeneralActionVisibility));
+                    OnPropertyChanged(nameof(AxisInvertVisibility));
                     break;
             }
 
@@ -432,6 +433,16 @@ namespace HandheldCompanion.ViewModels
         // Axis Direction and Threshold are only visible when converting Axis to Button
         public override Visibility AxisDirectionVisibility => Axis2ButtonVisibility;
         public override Visibility AxisThresholdVisibility => Axis2ButtonVisibility;
+        
+        // Axis invert properties should only be visible for Axis -> Joystick mappings
+        public override Visibility AxisInvertVisibility
+        {
+            get
+            {
+                ActionType currentActionType = (ActionType)ActionTypeIndex;
+                return currentActionType == ActionType.Joystick ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
 
         public Visibility TouchpadVisibility => _parentStack._touchpad ? Visibility.Visible : Visibility.Collapsed;
         public Visibility JoystickVisibility => _parentStack._touchpad ? Visibility.Collapsed : Visibility.Visible;

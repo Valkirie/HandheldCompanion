@@ -248,21 +248,41 @@ namespace HandheldCompanion.ViewModels
         
         // Property to check if this is an Axis mapping (for visibility conditions)
         public virtual bool IsAxisMapping => false;
+        
+        // Property to check if this is a Trigger mapping (for visibility conditions)
+        public virtual bool IsTriggerMapping => false;
 
         // Trigger output (for Trigger actions) - default to 0
+        // Should only be visible for Button -> Trigger mappings
         public virtual float TriggerOutput
         {
             get => 0;
             set { }
         }
+        
+        // Visibility for Trigger output - only Button -> Trigger
+        public virtual Visibility TriggerOutputVisibility => Visibility.Collapsed;
 
         // Axis to Axis properties (for Joystick actions) - default to 0/false
+        // Should only be visible for Axis -> Joystick mappings
         public virtual int Axis2AxisOutputShapeIndex { get => 0; set { } }
         public virtual bool Axis2AxisInvertHorizontal { get => false; set { } }
         public virtual bool Axis2AxisInvertVertical { get => false; set { } }
         public virtual int Axis2AxisInnerDeadzone { get => 0; set { } }
         public virtual int Axis2AxisOuterDeadzone { get => 0; set { } }
         public virtual int Axis2AxisAntiDeadzone { get => 0; set { } }
+        
+        // Visibility for Axis invert properties - only Axis mappings
+        public virtual Visibility AxisInvertVisibility => Visibility.Collapsed;
+        
+        // Trigger to Trigger/Axis deadzone properties - default to 0
+        // Should only be visible for Trigger -> Trigger/Axis mappings
+        public virtual int Trigger2TriggerInnerDeadzone { get => 0; set { } }
+        public virtual int Trigger2TriggerOuterDeadzone { get => 0; set { } }
+        public virtual int Trigger2TriggerAntiDeadzone { get => 0; set { } }
+        
+        // Visibility for Trigger deadzone properties - only Trigger -> Trigger/Axis
+        public virtual Visibility TriggerDeadzoneVisibility => Visibility.Collapsed;
 
         // Axis to Mouse properties (for Mouse actions) - default to 0/false
         public virtual int Axis2MousePointerSpeed { get => 0; set { } }
