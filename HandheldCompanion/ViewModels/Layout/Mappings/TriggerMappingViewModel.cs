@@ -61,8 +61,21 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public override float TriggerOutput
+        {
+            get => (Action is TriggerActions triggerAction) ? triggerAction.motionThreshold : 0;
+            set
+            {
+                if (Action is TriggerActions triggerAction && value != TriggerOutput)
+                {
+                    triggerAction.motionThreshold = value;
+                    OnPropertyChanged(nameof(TriggerOutput));
+                }
+            }
+        }
+
         // Shift mode: 0 = Disabled on shift, 1 = Always enabled, 2 = Enabled on shift (strict), 3 = Enabled on shift (any)
-        public int ShiftModeIndex
+        public override int ShiftModeIndex
         {
             get
             {
@@ -108,9 +121,9 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool ShowShiftSelection => ShiftModeIndex == 2 || ShiftModeIndex == 3;
+        public override bool ShowShiftSelection => ShiftModeIndex == 2 || ShiftModeIndex == 3;
 
-        public bool ShiftA
+        public override bool ShiftA
         {
             get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftA);
             set
@@ -123,7 +136,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool ShiftB
+        public override bool ShiftB
         {
             get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftB);
             set
@@ -136,7 +149,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool ShiftC
+        public override bool ShiftC
         {
             get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftC);
             set
@@ -149,7 +162,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool ShiftD
+        public override bool ShiftD
         {
             get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftD);
             set
@@ -231,7 +244,16 @@ namespace HandheldCompanion.ViewModels
             else if (actionType == ActionType.Keyboard)
             {
                 if (Action is null || Action is not KeyboardActions)
-                    Action = new KeyboardActions { motionThreshold = Gamepad.TriggerThreshold, motionDirection = DeflectionDirection.Up };
+                {
+                    Action = new KeyboardActions 
+                    { 
+                        motionThreshold = Gamepad.TriggerThreshold, 
+                        motionDirection = DeflectionDirection.Up,
+                        Modifiers = ModifierSet.None,
+                        ShiftSlot = ShiftSlot.Any,
+                        ShiftMatchAny = false
+                    };
+                }
 
                 Targets.ReplaceWith(_keyboardKeysTargets);
                 SelectedTarget = _keyboardKeysTargets.FirstOrDefault(e => e.Tag.Equals(((KeyboardActions)Action).Key)) ?? _keyboardKeysTargets.First();
@@ -239,7 +261,16 @@ namespace HandheldCompanion.ViewModels
             else if (actionType == ActionType.Mouse)
             {
                 if (Action is null || Action is not MouseActions)
-                    Action = new MouseActions { motionThreshold = Gamepad.TriggerThreshold, motionDirection = DeflectionDirection.Up };
+                {
+                    Action = new MouseActions 
+                    { 
+                        motionThreshold = Gamepad.TriggerThreshold, 
+                        motionDirection = DeflectionDirection.Up,
+                        Modifiers = ModifierSet.None,
+                        ShiftSlot = ShiftSlot.Any,
+                        ShiftMatchAny = false
+                    };
+                }
 
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var mouseType in Enum.GetValues<MouseActionsType>().Except(_unsupportedMouseActionTypes))
@@ -262,7 +293,13 @@ namespace HandheldCompanion.ViewModels
             else if (actionType == ActionType.Trigger)
             {
                 if (Action is null || Action is not TriggerActions)
-                    Action = new TriggerActions();
+                {
+                    Action = new TriggerActions()
+                    {
+                        ShiftSlot = ShiftSlot.Any,
+                        ShiftMatchAny = false
+                    };
+                }
 
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var axis in controller.GetTargetTriggers())
