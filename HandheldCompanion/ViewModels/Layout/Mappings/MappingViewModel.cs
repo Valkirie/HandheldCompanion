@@ -202,37 +202,37 @@ namespace HandheldCompanion.ViewModels
         // Overridden in ButtonMappingViewModel and AxisMappingViewModel
         public virtual Visibility Button2MouseTo => Visibility.Collapsed;
         public virtual Visibility Axis2MouseTo => Visibility.Collapsed;
-        
+
         public virtual double Button2MouseToX
         {
             get => 0;
             set { }
         }
-        
+
         public virtual double Button2MouseToY
         {
             get => 0;
             set { }
         }
-        
+
         public virtual double Axis2MouseToX
         {
             get => 0;
             set { }
         }
-        
+
         public virtual double Axis2MouseToY
         {
             get => 0;
             set { }
         }
-        
+
         public virtual bool Button2MouseRestore
         {
             get => false;
             set { }
         }
-        
+
         public virtual bool Axis2MouseRestore
         {
             get => false;
@@ -245,10 +245,10 @@ namespace HandheldCompanion.ViewModels
         public virtual bool IsDown { get => false; set { } }
         public virtual bool IsLeft { get => false; set { } }
         public virtual bool IsRight { get => false; set { } }
-        
+
         // Property to check if this is an Axis mapping (for visibility conditions)
         public virtual bool IsAxisMapping => false;
-        
+
         // Property to check if this is a Trigger mapping (for visibility conditions)
         public virtual bool IsTriggerMapping => false;
 
@@ -259,7 +259,7 @@ namespace HandheldCompanion.ViewModels
             get => 0;
             set { }
         }
-        
+
         // Visibility for Trigger output - only Button -> Trigger
         public virtual Visibility TriggerOutputVisibility => Visibility.Collapsed;
 
@@ -271,16 +271,16 @@ namespace HandheldCompanion.ViewModels
         public virtual int Axis2AxisInnerDeadzone { get => 0; set { } }
         public virtual int Axis2AxisOuterDeadzone { get => 0; set { } }
         public virtual int Axis2AxisAntiDeadzone { get => 0; set { } }
-        
+
         // Visibility for Axis invert properties - only Axis mappings
         public virtual Visibility AxisInvertVisibility => Visibility.Collapsed;
-        
+
         // Trigger to Trigger/Axis deadzone properties - default to 0
         // Should only be visible for Trigger -> Trigger/Axis mappings
         public virtual int Trigger2TriggerInnerDeadzone { get => 0; set { } }
         public virtual int Trigger2TriggerOuterDeadzone { get => 0; set { } }
         public virtual int Trigger2TriggerAntiDeadzone { get => 0; set { } }
-        
+
         // Visibility for Trigger deadzone properties - only Trigger -> Trigger/Axis
         public virtual Visibility TriggerDeadzoneVisibility => Visibility.Collapsed;
 
@@ -294,11 +294,11 @@ namespace HandheldCompanion.ViewModels
         // Axis visibility properties - default to Collapsed
         public virtual Visibility Axis2TouchpadVisibility => Visibility.Collapsed;
         public virtual Visibility Axis2JoystickVisibility => Visibility.Collapsed;
-        
+
         // Axis Direction and Threshold should only be visible for Axis mappings converting to Button
         public virtual Visibility AxisDirectionVisibility => Visibility.Collapsed;
         public virtual Visibility AxisThresholdVisibility => Visibility.Collapsed;
-        
+
         // Combined visibility for settings that apply to both Button mappings and Axis2Button mappings
         // This avoids duplication - shows when ActionTypeIndex is Button/Keyboard/Mouse/Trigger/Shift
         // OR when it's an Axis mapping converting to Button
@@ -312,11 +312,11 @@ namespace HandheldCompanion.ViewModels
                     currentActionType == ActionType.Mouse || currentActionType == ActionType.Trigger ||
                     currentActionType == ActionType.Shift)
                     return Visibility.Visible;
-                
+
                 // For Axis mappings converting to Button, also show
                 if (IsAxisMapping && Axis2ButtonVisibility == Visibility.Visible)
                     return Visibility.Visible;
-                
+
                 return Visibility.Collapsed;
             }
         }

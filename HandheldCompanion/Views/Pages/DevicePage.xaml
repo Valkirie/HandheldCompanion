@@ -306,68 +306,72 @@
 
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.DevicePage_BatteryOptions}" />
                 <!--  Battery Charge  -->
-                <ui:SettingsCard
+                <ui:SettingsExpander
                     Name="BatteryChargeLimitToggle"
+                    d:IsExpanded="True"
                     Description="{l:Static resx:Resources.DevicePage_BatteryChargeLimit_Desc}"
-                    Header="{l:Static resx:Resources.DevicePage_BatteryChargeLimit}">
-                    <ui:SettingsCard.HeaderIcon>
+                    Header="{l:Static resx:Resources.DevicePage_BatteryChargeLimit}"
+                    IsEnabled="{Binding BatteryChargeLimitCapacity, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ui:SettingsExpander.HeaderIcon>
                         <ui:FontIcon Glyph="&#xebb2;" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ui:ToggleSwitch Name="Toggle_BatteryChargeLimit" Toggled="Toggle_BatteryChargeLimit_Toggled" />
-                </ui:SettingsCard>
+                    </ui:SettingsExpander.HeaderIcon>
 
-                <ui:SettingsCard
-                    Name="BatteryChargeLimitPercent"
-                    Description="{l:Static resx:Resources.DevicePage_BatteryChargeLimitPercent_Desc}"
-                    Header="{l:Static resx:Resources.DevicePage_BatteryChargeLimitPercent}"
-                    IsEnabled="{Binding BatteryChargeLimitPercent, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon Glyph="&#xE713;" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <DockPanel>
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                            Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference Slider_BatteryChargeLimitPercent}, Mode=OneWay}" />
-                        <Slider
-                            x:Name="Slider_BatteryChargeLimitPercent"
-                            Width="200"
-                            Margin="6,0,0,0"
-                            IsMoveToPointEnabled="True"
-                            IsSnapToTickEnabled="True"
-                            LargeChange="{Binding BatteryBypassStep, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            Maximum="{Binding BatteryBypassMax, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            Minimum="{Binding BatteryBypassMin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            SmallChange="{Binding BatteryBypassStep, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            TickFrequency="{Binding BatteryBypassStep, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            TickPlacement="BottomRight"
-                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                            ValueChanged="Slider_BatteryChargeLimitPercent_OnValueChanged"
-                            Value="100" />
-                    </DockPanel>
-                </ui:SettingsCard>
-                <ui:SettingsCard
-                    Name="BatteryBypassCharging"
-                    d:Visibility="Visible"
-                    Description="{l:Static resx:Resources.DevicePage_BatteryBypassCharging_Desc}"
-                    Header="{l:Static resx:Resources.DevicePage_BatteryBypassCharging}"
-                    Visibility="{Binding BatteryBypassModeVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon Glyph="&#xE713;" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ComboBox Name="CB_BatteryBypassCharging" SelectionChanged="CB_BatteryBypassCharging_OnSelectionChanged">
-                        <ComboBox.ItemTemplate>
-                            <ItemContainerTemplate>
-                                <WrapPanel>
-                                    <TextBlock
-                                        Height="25"
-                                        Margin="10,6,0,0"
-                                        Text="{Binding DisplayName}" />
-                                </WrapPanel>
-                            </ItemContainerTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </ui:SettingsCard>
+                    <ui:ToggleSwitch Name="Toggle_BatteryChargeLimit" Toggled="Toggle_BatteryChargeLimit_Toggled" />
+
+                    <ui:SettingsExpander.Items>
+                        <ui:SettingsCard
+                            Name="BatteryChargeLimitPercent"
+                            Description="{l:Static resx:Resources.DevicePage_BatteryChargeLimitPercent_Desc}"
+                            Header="{l:Static resx:Resources.DevicePage_BatteryChargeLimitPercent}"
+                            IsEnabled="{Binding BatteryChargeLimit, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                            <DockPanel>
+                                <TextBox
+                                    Height="31"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    HorizontalContentAlignment="Center"
+                                    IsReadOnly="True"
+                                    Text="{Binding BatteryChargeLimitPercent, StringFormat={}{0:N0}%, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <Slider
+                                    x:Name="Slider_BatteryChargeLimitPercent"
+                                    Width="200"
+                                    Margin="6,0,0,0"
+                                    IsMoveToPointEnabled="True"
+                                    IsSnapToTickEnabled="True"
+                                    LargeChange="{Binding BatteryBypassStep, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Maximum="{Binding BatteryBypassMax, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Minimum="{Binding BatteryBypassMin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    SmallChange="{Binding BatteryBypassStep, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    TickFrequency="{Binding BatteryBypassStep, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    TickPlacement="BottomRight"
+                                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                    ValueChanged="Slider_BatteryChargeLimitPercent_OnValueChanged"
+                                    Value="{Binding BatteryChargeLimitPercent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </DockPanel>
+                        </ui:SettingsCard>
+
+                        <ui:SettingsCard
+                            Name="BatteryBypassCharging"
+                            d:Visibility="Visible"
+                            Description="{l:Static resx:Resources.DevicePage_BatteryBypassCharging_Desc}"
+                            Header="{l:Static resx:Resources.DevicePage_BatteryBypassCharging}"
+                            IsEnabled="{Binding BatteryChargeLimit, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            Visibility="{Binding BatteryBypassModeVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBox Name="CB_BatteryBypassCharging" SelectionChanged="CB_BatteryBypassCharging_OnSelectionChanged">
+                                <ComboBox.ItemTemplate>
+                                    <ItemContainerTemplate>
+                                        <WrapPanel>
+                                            <TextBlock
+                                                Height="25"
+                                                Margin="10,6,0,0"
+                                                Text="{Binding DisplayName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        </WrapPanel>
+                                    </ItemContainerTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </ui:SettingsCard>
+                    </ui:SettingsExpander.Items>
+                </ui:SettingsExpander>
             </ikw:SimpleStackPanel>
 
             <!--  Dynamic lighting settings  -->
@@ -399,9 +403,12 @@
                             <ui:FontIcon Glyph="&#xE706;" />
                         </ui:SettingsCard.HeaderIcon>
                         <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                            <TextBlock
+                            <TextBox
+                                Height="31"
+                                HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
                                 Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLEDBrightness}, Mode=OneWay}" />
                             <Slider
                                 x:Name="SliderLEDBrightness"

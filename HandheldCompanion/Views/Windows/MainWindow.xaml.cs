@@ -330,7 +330,7 @@ public partial class MainWindow : GamepadWindow
                             {
                                 GamepadUIToggle.Visibility = Visibility.Visible;
                                 GamepadUIToggleDesc.Text = Properties.Resources.MainWindow_Play;
-                                
+
                                 GamepadUIMore.Visibility = Visibility.Visible;
                                 GamepadUIMoreDesc.Text = Properties.Resources.MainWindow_Layout;
                             }

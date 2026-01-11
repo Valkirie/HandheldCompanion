@@ -493,6 +493,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Controller settings.
+        /// </summary>
+        public static string ControllerPage_ControllerSettings {
+            get {
+                return ResourceManager.GetString("ControllerPage_ControllerSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Desktop layout.
         /// </summary>
         public static string ControllerPage_DesktopLayout {
@@ -565,7 +574,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Go to profiles settings to change per-game emulated controller type preference..
+        ///   Looks up a localized string similar to Go to profiles settings to change per-game virtual controller type preference..
         /// </summary>
         public static string ControllerPage_HIDManagedByProfileAction {
             get {
@@ -574,7 +583,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The emulated controller type is being managed by the currently applied game profile..
+        ///   Looks up a localized string similar to The virtual controller type is being managed by the currently applied game profile..
         /// </summary>
         public static string ControllerPage_HIDManagedByProfileDesc {
             get {
@@ -583,7 +592,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Emulated controller is managed by profile.
+        ///   Looks up a localized string similar to virtual controller is managed by profile.
         /// </summary>
         public static string ControllerPage_HIDManagedByProfileWarning {
             get {
@@ -2131,7 +2140,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No emulated controller.
+        ///   Looks up a localized string similar to No virtual controller.
         /// </summary>
         public static string Enum_HIDmode_NoController {
             get {
@@ -4669,7 +4678,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toggle emulated controller type.
+        ///   Looks up a localized string similar to Toggle virtual controller type.
         /// </summary>
         public static string Hotkey_ChangeHIDMode {
             get {
@@ -4678,7 +4687,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toggle between Xbox 360 and Dualshock 4 emulated controllers.
+        ///   Looks up a localized string similar to Toggle between Xbox 360 and Dualshock 4 virtual controllers.
         /// </summary>
         public static string Hotkey_ChangeHIDModeDesc {
             get {
@@ -4687,7 +4696,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toggle emulated controller status.
+        ///   Looks up a localized string similar to Toggle virtual controller status.
         /// </summary>
         public static string Hotkey_ChangeHIDStatus {
             get {
@@ -6578,6 +6587,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Layout.
+        /// </summary>
+        public static string MainWindow_Layout {
+            get {
+                return ResourceManager.GetString("MainWindow_Layout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Main Window.
         /// </summary>
         public static string MainWindow_MainWindow {
@@ -6695,6 +6713,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Play.
+        /// </summary>
+        public static string MainWindow_Play {
+            get {
+                return ResourceManager.GetString("MainWindow_Play", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Quick Tools.
         /// </summary>
         public static string MainWindow_QuickTools {
@@ -6749,24 +6776,6 @@ namespace HandheldCompanion.Properties {
         public static string MainWindow_Toggle {
             get {
                 return ResourceManager.GetString("MainWindow_Toggle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Layout.
-        /// </summary>
-        public static string MainWindow_Layout {
-            get {
-                return ResourceManager.GetString("MainWindow_Layout", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Play.
-        /// </summary>
-        public static string MainWindow_Play {
-            get {
-                return ResourceManager.GetString("MainWindow_Play", resourceCulture);
             }
         }
         
@@ -6987,7 +6996,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Emulated controller.
+        ///   Looks up a localized string similar to virtual controller.
         /// </summary>
         public static string OverlayPage_EmulatedController {
             get {
@@ -8472,7 +8481,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Controller layout.
+        ///   Looks up a localized string similar to Controller mapping.
         /// </summary>
         public static string ProfilesPage_ControllerLayout {
             get {
@@ -8481,7 +8490,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the virtual controller layout.
+        ///   Looks up a localized string similar to Change how buttons, sticks, triggers, and gyro translate into in-game actions.
         /// </summary>
         public static string ProfilesPage_ControllerLayoutDesc {
             get {
@@ -8616,7 +8625,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Emulated controller type.
+        ///   Looks up a localized string similar to Controller type.
         /// </summary>
         public static string ProfilesPage_EmulatedController {
             get {
@@ -8634,7 +8643,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The emulated controller to be used when this profile is active.
+        ///   Looks up a localized string similar to Change the virtual controller type when profile is active.
         /// </summary>
         public static string ProfilesPage_EmulatedControllerDesc {
             get {
@@ -9003,6 +9012,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Browse libary.
+        /// </summary>
+        public static string ProfilesPage_LibraryDownload {
+            get {
+                return ResourceManager.GetString("ProfilesPage_LibraryDownload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Image.
         /// </summary>
         public static string ProfilesPage_LibraryRefreshImage {
@@ -9026,6 +9044,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_LibraryRefreshImageDesc {
             get {
                 return ResourceManager.GetString("ProfilesPage_LibraryRefreshImageDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Library settings.
+        /// </summary>
+        public static string ProfilesPage_LibrarySettings {
+            get {
+                return ResourceManager.GetString("ProfilesPage_LibrarySettings", resourceCulture);
             }
         }
         
@@ -9444,6 +9471,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sharpening scale.
+        /// </summary>
+        public static string ProfilesPage_SharpeningScale {
+            get {
+                return ResourceManager.GetString("ProfilesPage_SharpeningScale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show in library.
         /// </summary>
         public static string ProfilesPage_ShowInLibrary {
@@ -9453,7 +9489,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable to show the profile listed in the library.
+        ///   Looks up a localized string similar to Display profile on library page.
         /// </summary>
         public static string ProfilesPage_ShowInLibraryDesc {
             get {
@@ -9525,7 +9561,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Suspend on overlay.
+        ///   Looks up a localized string similar to Suspend with quicktools sidebar.
         /// </summary>
         public static string ProfilesPage_SuspendOnOverlay {
             get {
@@ -9534,7 +9570,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pauses the active game or foreground application whenever the QuickTools sidebar is displayed..
+        ///   Looks up a localized string similar to Pauses the active application whenever the quicktools sidebar is displayed.
         /// </summary>
         public static string ProfilesPage_SuspendOnOverlayDesc {
             get {
@@ -9543,11 +9579,20 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Suspend and resume the application when the system enters or exits standby state.
+        ///   Looks up a localized string similar to Suspend and resume with standby state.
         /// </summary>
         public static string ProfilesPage_SuspendOnSleep {
             get {
                 return ResourceManager.GetString("ProfilesPage_SuspendOnSleep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pause the active application when the system enters or exits standby state.
+        /// </summary>
+        public static string ProfilesPage_SuspendOnSleepDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_SuspendOnSleepDesc", resourceCulture);
             }
         }
         
@@ -9761,11 +9806,20 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Allow the application to access device physical controller.
+        ///   Looks up a localized string similar to Controller passthrough.
         /// </summary>
         public static string ProfilesPage_Whitelist {
             get {
                 return ResourceManager.GetString("ProfilesPage_Whitelist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow the application to access device physical controller.
+        /// </summary>
+        public static string ProfilesPage_WhitelistDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_WhitelistDesc", resourceCulture);
             }
         }
         
@@ -9788,7 +9842,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Extended compatibility (XInputPlus).
+        ///   Looks up a localized string similar to Extended compatibility.
         /// </summary>
         public static string ProfilesPage_Wrapper {
             get {
@@ -9820,6 +9874,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_Wrapper_Redirection {
             get {
                 return ResourceManager.GetString("ProfilesPage_Wrapper_Redirection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Improve compatibility by applying XInputPlus.
+        /// </summary>
+        public static string ProfilesPage_WrapperDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_WrapperDesc", resourceCulture);
             }
         }
         

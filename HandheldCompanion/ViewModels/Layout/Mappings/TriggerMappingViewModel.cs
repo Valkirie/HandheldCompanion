@@ -22,7 +22,7 @@ namespace HandheldCompanion.ViewModels
             MouseActionsType.Move,
             MouseActionsType.Scroll
         ];
-        
+
         public override bool IsTriggerMapping => true;
 
         public override int Trigger2TriggerInnerDeadzone
@@ -63,7 +63,7 @@ namespace HandheldCompanion.ViewModels
                 }
             }
         }
-        
+
         // Trigger deadzone visibility - only visible when Trigger -> Trigger/Axis
         public override Visibility TriggerDeadzoneVisibility
         {
@@ -71,8 +71,8 @@ namespace HandheldCompanion.ViewModels
             {
                 ActionType currentActionType = (ActionType)ActionTypeIndex;
                 // Show for Trigger -> Trigger or Trigger -> Joystick (Axis)
-                return (currentActionType == ActionType.Trigger || currentActionType == ActionType.Joystick) 
-                    ? Visibility.Visible 
+                return (currentActionType == ActionType.Trigger || currentActionType == ActionType.Joystick)
+                    ? Visibility.Visible
                     : Visibility.Collapsed;
             }
         }
@@ -261,9 +261,9 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Action is null || Action is not KeyboardActions)
                 {
-                    Action = new KeyboardActions 
-                    { 
-                        motionThreshold = Gamepad.TriggerThreshold, 
+                    Action = new KeyboardActions
+                    {
+                        motionThreshold = Gamepad.TriggerThreshold,
                         motionDirection = DeflectionDirection.Up,
                         Modifiers = ModifierSet.None,
                         ShiftSlot = ShiftSlot.Any,
@@ -278,9 +278,9 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Action is null || Action is not MouseActions)
                 {
-                    Action = new MouseActions 
-                    { 
-                        motionThreshold = Gamepad.TriggerThreshold, 
+                    Action = new MouseActions
+                    {
+                        motionThreshold = Gamepad.TriggerThreshold,
                         motionDirection = DeflectionDirection.Up,
                         Modifiers = ModifierSet.None,
                         ShiftSlot = ShiftSlot.Any,
@@ -370,7 +370,7 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(string.Empty);
             OnPropertyChanged(nameof(TriggerDeadzoneVisibility));
         }
-        
+
         public override void OnPropertyChanged(string propertyName)
         {
             switch (propertyName)

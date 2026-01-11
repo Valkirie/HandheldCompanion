@@ -52,10 +52,7 @@
                             </ikw:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                           >
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <TextBox
                                 Height="31"
                                 HorizontalAlignment="Right"
@@ -112,10 +109,7 @@
                             </ikw:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                           >
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <TextBox
                                 Height="31"
                                 HorizontalAlignment="Right"
@@ -178,10 +172,7 @@
                                     <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode0_AimingDownSightsMultiplier}" />
                                 </StackPanel>
 
-                                <DockPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                   >
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
                                         Height="31"
                                         HorizontalAlignment="Right"
@@ -372,7 +363,6 @@
                             HorizontalAlignment="Center"
                             Background="{DynamicResource ExpanderHeaderBackground}"
                             Orientation="Horizontal"
-                           
                             Spacing="12">
                             <Label VerticalAlignment="Center" Content="{l:Static resx:Resources.SettingsMode0_CustomResponseCurveGameOutput}">
                                 <Label.LayoutTransform>

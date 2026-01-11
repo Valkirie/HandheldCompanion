@@ -504,7 +504,8 @@ public partial class ProfilesPage : Page
                     UseFullscreenOptimizations.IsEnabled = !selectedProfile.Default;
                     UseHighDPIAwareness.IsEnabled = !selectedProfile.Default;
                     LibrarySettings.IsEnabled = !selectedProfile.Default;
-                    Toggle_SuspendOnQuicktools.IsEnabled = !selectedProfile.Default;
+                    CheckBox_SuspendOnQT.IsEnabled = !selectedProfile.Default;
+                    CheckBox_SuspendOnStandby.IsEnabled = !selectedProfile.Default;
 
                     // sub profiles
                     b_SubProfileCreate.IsEnabled = !selectedMainProfile.Default;
@@ -521,19 +522,19 @@ public partial class ProfilesPage : Page
                     Toggle_EnableProfile.IsOn = selectedProfile.Enabled;
 
                     // Global settings
-                    cB_Whitelist.IsChecked = selectedProfile.Whitelisted;
+                    cB_Whitelist.IsOn = selectedProfile.Whitelisted;
                     b_ProfileLike.IsChecked = selectedProfile.IsLiked;
-                    cB_Suspend.IsChecked = selectedProfile.SuspendOnSleep;
+                    CheckBox_SuspendOnStandby.IsChecked = selectedProfile.SuspendOnSleep;
                     cB_Wrapper.SelectedIndex = (int)selectedProfile.XInputPlus;
 
                     // Library
                     Toggle_ShowInLibrary.IsOn = selectedProfile.ShowInLibrary;
 
                     // Window(s)
-                    Toggle_SuspendOnQuicktools.IsOn = selectedProfile.SuspendOnQT;
+                    CheckBox_SuspendOnQT.IsChecked = selectedProfile.SuspendOnQT;
 
-                    // Emulated controller assigned to the profile
-                    cB_EmulatedController.IsEnabled = !selectedProfile.Default; // if default profile, disable combobox
+                    // virtual controller assigned to the profile
+                    cB_EmulatedController.IsEnabled = !selectedProfile.Default; // if default profile, disable comboboxf
                     cB_EmulatedController.SelectedIndex = new Func<int>(() =>
                     {
                         if (selectedProfile.Default) // Default profile always shows default, but keeps track of default controller internally
@@ -562,7 +563,6 @@ public partial class ProfilesPage : Page
                         cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
 
                     // GPU Scaling
-                    GPUScalingToggle.IsOn = selectedProfile.GPUScaling;
                     GPUScalingComboBox.SelectedIndex = selectedProfile.ScalingMode;
 
                     // RSR
@@ -617,9 +617,9 @@ public partial class ProfilesPage : Page
                     };
 
                     WarningInfoBar.Visibility = warningVisibility;
-                    GlobalSettings.IsEnabled = controlsEnabled;
+                    StackGlobalSettings.IsEnabled = controlsEnabled;
                     cB_Wrapper_Injection.IsEnabled = controlsEnabled;
-                    b_Play.IsEnabled = controlsEnabled;
+                    ProfileDetailsExpander.IsEnabled = controlsEnabled;
                     cB_Wrapper_Redirection.IsEnabled = redirectionEnabled;
 
                     // update dropdown lists
@@ -704,17 +704,17 @@ public partial class ProfilesPage : Page
         if (profileLock.IsEntered())
             return;
 
-        selectedProfile.Whitelisted = (bool)cB_Whitelist.IsChecked;
+        selectedProfile.Whitelisted = cB_Whitelist.IsOn;
         UpdateProfile();
     }
 
-    private void cB_Suspend_Checked(object sender, RoutedEventArgs e)
+    private void CheckBox_SuspendOnStandby_Toggled(object sender, RoutedEventArgs e)
     {
         // prevent update loop
         if (profileLock.IsEntered())
             return;
 
-        selectedProfile.SuspendOnSleep = (bool)cB_Suspend.IsChecked;
+        selectedProfile.SuspendOnSleep = CheckBox_SuspendOnStandby.IsChecked ?? false;
         UpdateProfile();
     }
 
@@ -724,7 +724,7 @@ public partial class ProfilesPage : Page
         if (profileLock.IsEntered())
             return;
 
-        selectedProfile.IsLiked = (bool)b_ProfileLike.IsChecked;
+        selectedProfile.IsLiked = b_ProfileLike.IsChecked ?? false;
         UpdateProfile();
     }
 
@@ -745,10 +745,10 @@ public partial class ProfilesPage : Page
         switch (selectedProfile.XInputPlus)
         {
             case XInputPlusMethod.Injection:
-                cB_Whitelist.IsChecked = true;
+                cB_Whitelist.IsOn = true;
                 break;
             case XInputPlusMethod.Redirection:
-                cB_Whitelist.IsChecked = false;
+                cB_Whitelist.IsOn = false;
                 break;
         }
 
@@ -929,6 +929,9 @@ public partial class ProfilesPage : Page
 
     private void tb_ProfileGyroValue_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
+        if (selectedProfile is null)
+            return;
+
         if (!tb_ProfileGyroValue.IsInitialized)
             return;
 
@@ -942,6 +945,9 @@ public partial class ProfilesPage : Page
 
     private void tb_ProfileAcceleroValue_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
+        if (selectedProfile is null)
+            return;
+
         if (!tb_ProfileAcceleroValue.IsInitialized)
             return;
 
@@ -972,7 +978,7 @@ public partial class ProfilesPage : Page
         if (profileLock.IsEntered())
             return;
 
-        selectedProfile.MotionInvertHorizontal = (bool)cB_InvertHorizontal.IsChecked;
+        selectedProfile.MotionInvertHorizontal = cB_InvertHorizontal.IsChecked ?? false;
         UpdateProfile();
     }
 
@@ -982,7 +988,7 @@ public partial class ProfilesPage : Page
         if (profileLock.IsEntered())
             return;
 
-        selectedProfile.MotionInvertVertical = (bool)cB_InvertVertical.IsChecked;
+        selectedProfile.MotionInvertVertical = cB_InvertVertical.IsChecked ?? false;
         UpdateProfile();
     }
 
@@ -1428,7 +1434,7 @@ public partial class ProfilesPage : Page
         UpdateProfile();
     }
 
-    private void Toggle_SuspendOnQuicktools_Toggled(object sender, RoutedEventArgs e)
+    private void CheckBox_SuspendOnQT_Toggled(object sender, RoutedEventArgs e)
     {
         if (selectedProfile is null)
             return;
@@ -1437,7 +1443,7 @@ public partial class ProfilesPage : Page
         if (profileLock.IsEntered())
             return;
 
-        selectedProfile.SuspendOnQT = Toggle_SuspendOnQuicktools.IsOn;
+        selectedProfile.SuspendOnQT = CheckBox_SuspendOnQT.IsChecked ?? false;
         UpdateProfile();
     }
 

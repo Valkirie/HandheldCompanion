@@ -768,11 +768,11 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
   <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
     <value>Mettre à jour le profil</value>
   </data>
-  <data name="ProfilesPage_Whitelist" xml:space="preserve">
+  <data name="ProfilesPage_WhitelistDesc" xml:space="preserve">
     <value>Autoriser l'application à accéder au contrôleur physique du dispositif</value>
   </data>
   <data name="ProfilesPage_Wrapper" xml:space="preserve">
-    <value>Compatibilitée améliorée (XInputPlus)</value>
+    <value>Compatibilitée améliorée</value>
   </data>
   <data name="ProfilesPage_Yaw" xml:space="preserve">
     <value>Lacet</value>
@@ -2423,7 +2423,7 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
     <value>Basculer entre l'émulation Xbox 360 et Dualshock 4</value>
   </data>
   <data name="ProfilesPage_EmulatedController" xml:space="preserve">
-    <value>Type de manette émulé</value>
+    <value>Type de manette</value>
   </data>
   <data name="ProfilesPage_EmulatedControllerDefault" xml:space="preserve">
     <value>Défaut</value>
@@ -2435,7 +2435,7 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
     <value>Contrôleur XBOX 360 émulé</value>
   </data>
   <data name="ProfilesPage_EmulatedControllerDesc" xml:space="preserve">
-    <value>Le contrôleur émulé à utiliser quand ce profil est actif</value>
+    <value>Modifie le type de contrôleur virtuel lorsque le profil est actif</value>
   </data>
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
     <value>Gestion de contrôleur</value>
@@ -3176,9 +3176,6 @@ Merci d’utiliser HC et de nous aider à l’améliorer.</value>
   <data name="SettingsPage_Experimental" xml:space="preserve">
     <value>Options expérimentales</value>
   </data>
-  <data name="ProfilesPage_SuspendOnSleep" xml:space="preserve">
-    <value>Suspendre et reprendre l'application quand le système entre ou quitte l'état de veille</value>
-  </data>
   <data name="OverlayPage_OnScreenDisplayOptions" xml:space="preserve">
     <value>Options d'affichage sur l'écran</value>
   </data>
@@ -3228,7 +3225,7 @@ Merci d’utiliser HC et de nous aider à l’améliorer.</value>
     <value>Afficher dans la bibliothèque</value>
   </data>
   <data name="ProfilesPage_ShowInLibraryDesc" xml:space="preserve">
-    <value>Activer pour afficher le profil dans la bibliothèque</value>
+    <value>Afficher le profil dans la bibliothèque</value>
   </data>
   <data name="ProfilesPage_Library_Title" xml:space="preserve">
     <value>Paramètres de bibliothèque</value>
@@ -3505,12 +3502,6 @@ Merci d’utiliser HC et de nous aider à l’améliorer.</value>
   </data>
   <data name="ProfilesPage_WindowsSettings" xml:space="preserve">
     <value>Paramètres Windows</value>
-  </data>
-  <data name="ProfilesPage_SuspendOnOverlay" xml:space="preserve">
-    <value>Suspendre sur la superposition</value>
-  </data>
-  <data name="ProfilesPage_SuspendOnOverlayDesc" xml:space="preserve">
-    <value>Met en pause le jeu actif ou l'application de premier plan chaque fois que la barre latérale QuickTools est affichée.</value>
   </data>
   <data name="ProfilesPage_WindowsSettingsDesc" xml:space="preserve">
     <value>Gérer les fenêtres associées au profil</value>

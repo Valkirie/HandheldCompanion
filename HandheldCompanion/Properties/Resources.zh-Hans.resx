@@ -770,11 +770,11 @@
   <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
     <value>更新配置</value>
   </data>
-  <data name="ProfilesPage_Whitelist" xml:space="preserve">
+  <data name="ProfilesPage_WhitelistDesc" xml:space="preserve">
     <value>允许程序取得实体手柄输入信号</value>
   </data>
   <data name="ProfilesPage_Wrapper" xml:space="preserve">
-    <value>扩展兼容性 (XInputPlus)</value>
+    <value>扩展兼容性</value>
   </data>
   <data name="ProfilesPage_Yaw" xml:space="preserve">
     <value>垂直（Y轴）</value>

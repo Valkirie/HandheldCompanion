@@ -199,7 +199,7 @@ namespace HandheldCompanion.ViewModels
 
         public override int Axis2AxisInnerDeadzone
         {
-            get => (Action is AxisActions axisAction) ? axisAction.AxisDeadZoneInner : 0;
+            get => (Action is AxisActions axisAction) ? axisAction.AxisDeadZoneInner : (Action is TriggerActions triggerAction) ? triggerAction.AxisAntiDeadZone : 0;
             set
             {
                 if (Action is AxisActions axisAction && value != Axis2AxisInnerDeadzone)
@@ -207,12 +207,17 @@ namespace HandheldCompanion.ViewModels
                     axisAction.AxisDeadZoneInner = value;
                     OnPropertyChanged(nameof(Axis2AxisInnerDeadzone));
                 }
+                else if (Action is TriggerActions triggerAction && value != Axis2AxisInnerDeadzone)
+                {
+                    triggerAction.AxisDeadZoneInner = value;
+                    OnPropertyChanged(nameof(Axis2AxisInnerDeadzone));
+                }
             }
         }
 
         public override int Axis2AxisOuterDeadzone
         {
-            get => (Action is AxisActions axisAction) ? axisAction.AxisDeadZoneOuter : 0;
+            get => (Action is AxisActions axisAction) ? axisAction.AxisDeadZoneOuter : (Action is TriggerActions triggerAction) ? triggerAction.AxisDeadZoneOuter : 0;
             set
             {
                 if (Action is AxisActions axisAction && value != Axis2AxisOuterDeadzone)
@@ -220,17 +225,27 @@ namespace HandheldCompanion.ViewModels
                     axisAction.AxisDeadZoneOuter = value;
                     OnPropertyChanged(nameof(Axis2AxisOuterDeadzone));
                 }
+                else if (Action is TriggerActions triggerAction && value != Axis2AxisOuterDeadzone)
+                {
+                    triggerAction.AxisDeadZoneOuter = value;
+                    OnPropertyChanged(nameof(Axis2AxisOuterDeadzone));
+                }
             }
         }
 
         public override int Axis2AxisAntiDeadzone
         {
-            get => (Action is AxisActions axisAction) ? axisAction.AxisAntiDeadZone : 0;
+            get => (Action is AxisActions axisAction) ? axisAction.AxisAntiDeadZone : (Action is TriggerActions triggerAction) ? triggerAction.AxisAntiDeadZone : 0;
             set
             {
                 if (Action is AxisActions axisAction && value != Axis2AxisAntiDeadzone)
                 {
                     axisAction.AxisAntiDeadZone = value;
+                    OnPropertyChanged(nameof(Axis2AxisAntiDeadzone));
+                }
+                else if (Action is TriggerActions triggerAction && value != Axis2AxisAntiDeadzone)
+                {
+                    triggerAction.AxisAntiDeadZone = value;
                     OnPropertyChanged(nameof(Axis2AxisAntiDeadzone));
                 }
             }
@@ -427,13 +442,13 @@ namespace HandheldCompanion.ViewModels
 
         public override Visibility Axis2TouchpadVisibility => Axis2MouseVisibility == Visibility.Visible && TouchpadVisibility == Visibility.Visible ? Visibility.Visible : Visibility.Collapsed;
         public override Visibility Axis2JoystickVisibility => Axis2MouseVisibility == Visibility.Visible && JoystickVisibility == Visibility.Visible ? Visibility.Visible : Visibility.Collapsed;
-        
+
         public override bool IsAxisMapping => true;
-        
+
         // Axis Direction and Threshold are only visible when converting Axis to Button
         public override Visibility AxisDirectionVisibility => Axis2ButtonVisibility;
         public override Visibility AxisThresholdVisibility => Axis2ButtonVisibility;
-        
+
         // Axis invert properties should only be visible for Axis -> Joystick mappings
         public override Visibility AxisInvertVisibility
         {
@@ -517,8 +532,8 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Action is null || Action is not ButtonActions)
                 {
-                    Action = new ButtonActions() 
-                    { 
+                    Action = new ButtonActions()
+                    {
                         motionThreshold = Gamepad.LeftThumbDeadZone,
                         ShiftSlot = ShiftSlot.Any,
                         ShiftMatchAny = false
@@ -546,8 +561,8 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Action is null || Action is not KeyboardActions)
                 {
-                    Action = new KeyboardActions 
-                    { 
+                    Action = new KeyboardActions
+                    {
                         motionThreshold = Gamepad.LeftThumbDeadZone,
                         Modifiers = ModifierSet.None,
                         ShiftSlot = ShiftSlot.Any,
@@ -562,8 +577,8 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Action is null || Action is not MouseActions)
                 {
-                    Action = new MouseActions 
-                    { 
+                    Action = new MouseActions
+                    {
                         motionThreshold = Gamepad.LeftThumbDeadZone,
                         Modifiers = ModifierSet.None,
                         ShiftSlot = ShiftSlot.Any,

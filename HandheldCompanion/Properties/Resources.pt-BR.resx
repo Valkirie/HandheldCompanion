@@ -786,11 +786,11 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
     <value>Atualizar perfil</value>
   </data>
-  <data name="ProfilesPage_Whitelist" xml:space="preserve">
+  <data name="ProfilesPage_WhitelistDesc" xml:space="preserve">
     <value>Permitir acesso direto ao dispositivo de controle físico pela aplicação (ignorar controle virtual emulado)</value>
   </data>
   <data name="ProfilesPage_Wrapper" xml:space="preserve">
-    <value>Compatiblidade expandida (XInputPlus)</value>
+    <value>Compatiblidade expandida</value>
   </data>
   <data name="ProfilesPage_Yaw" xml:space="preserve">
     <value>Leme</value>
@@ -2431,7 +2431,7 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
     <value>Alterne entre os controles emulados de Xbox 360 e Dualshock 4</value>
   </data>
   <data name="ProfilesPage_EmulatedController" xml:space="preserve">
-    <value>Tipo de controle emulado</value>
+    <value>Tipo de controle</value>
   </data>
   <data name="ProfilesPage_EmulatedControllerDefault" xml:space="preserve">
     <value>Padrão</value>

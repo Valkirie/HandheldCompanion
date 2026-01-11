@@ -778,11 +778,11 @@
   <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
     <value>Actualización del perfil</value>
   </data>
-  <data name="ProfilesPage_Whitelist" xml:space="preserve">
+  <data name="ProfilesPage_WhitelistDesc" xml:space="preserve">
     <value>Permitir que la aplicación acceda al controlador físico del dispositivo</value>
   </data>
   <data name="ProfilesPage_Wrapper" xml:space="preserve">
-    <value>Compatibilidad extendida (XInputPlus)</value>
+    <value>Compatibilidad extendida</value>
   </data>
   <data name="ProfilesPage_Yaw" xml:space="preserve">
     <value>Yaw</value>
@@ -2402,13 +2402,10 @@
     <value>M2</value>
   </data>
   <data name="Hotkey_ChangeHIDMode" xml:space="preserve">
-    <value>Toggle emulated controller type</value>
+    <value>Toggle virtual controller type</value>
   </data>
   <data name="Hotkey_ChangeHIDModeDesc" xml:space="preserve">
-    <value>Toggle between Xbox 360 and Dualshock 4 emulated controllers</value>
-  </data>
-  <data name="ProfilesPage_EmulatedController" xml:space="preserve">
-    <value>Emulated controller type</value>
+    <value>Toggle between Xbox 360 and Dualshock 4 virtual controllers</value>
   </data>
   <data name="ProfilesPage_EmulatedControllerDefault" xml:space="preserve">
     <value>Default</value>
@@ -2418,9 +2415,6 @@
   </data>
   <data name="ProfilesPage_EmulatedControllerXbox" xml:space="preserve">
     <value>Emulated XBOX 360 controller</value>
-  </data>
-  <data name="ProfilesPage_EmulatedControllerDesc" xml:space="preserve">
-    <value>The emulated controller to be used when this profile is active</value>
   </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
     <value>Touchpad passthrough</value>
@@ -2456,13 +2450,13 @@
     <value>You have no notifications right now.</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileAction" xml:space="preserve">
-    <value>Go to profiles settings to change per-game emulated controller type preference.</value>
+    <value>Go to profiles settings to change per-game virtual controller type preference.</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileDesc" xml:space="preserve">
-    <value>The emulated controller type is being managed by the currently applied game profile.</value>
+    <value>The virtual controller type is being managed by the currently applied game profile.</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileWarning" xml:space="preserve">
-    <value>Emulated controller is managed by profile</value>
+    <value>virtual controller is managed by profile</value>
   </data>
   <data name="Hint_CoreIsolationCheck" xml:space="preserve">
     <value>Core isolation features are turned on</value>

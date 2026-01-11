@@ -50,7 +50,7 @@ public partial class ControllerPage : Page
         // UI thread
         UIHelper.TryInvoke(() =>
         {
-            // disable emulated controller combobox if profile is not default or set to default controller
+            // disable virtual controller combobox if profile is not default or set to default controller
             if (!profile.Default && profile.HID != HIDmode.NotSelected)
             {
                 cB_HidMode.IsEnabled = false;

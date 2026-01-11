@@ -10,17 +10,16 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Title="Action Settings"
+    d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:ButtonMappingViewModel}"
-    d:DesignHeight="1000"
+    d:DesignHeight="2000"
     d:DesignWidth="1000"
     mc:Ignorable="d">
 
     <ScrollViewer>
-        <ikw:SimpleStackPanel Spacing="12" Margin="20">
+        <ikw:SimpleStackPanel Margin="20" Spacing="3">
             <!--  Action Type  -->
-            <ui:SettingsCard 
-                Name="ActionTypeCard"
-                Header="Action Type">
+            <ui:SettingsCard Name="ActionTypeCard" Header="Action Type">
                 <ComboBox MinWidth="120" SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="True" />
                     <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="True" />
@@ -200,12 +199,12 @@
             </ui:SettingsCard>
 
             <!--  Invert horizontal  -->
-            <ui:SettingsCard Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+            <ui:SettingsCard ContentAlignment="Left" Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                 <CheckBox Content="Invert horizontal axis" IsChecked="{Binding Axis2AxisInvertHorizontal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </ui:SettingsCard>
 
             <!--  Invert vertical  -->
-            <ui:SettingsCard Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+            <ui:SettingsCard ContentAlignment="Left" Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                 <CheckBox Content="Invert vertical axis" IsChecked="{Binding Axis2AxisInvertVertical, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </ui:SettingsCard>
 
@@ -351,7 +350,7 @@
                         Minimum="5"
                         TickFrequency="10"
                         TickPlacement="BottomRight"
-                        ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                        ToolTip="{Binding Value, StringFormat={}{0:N0}%, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                         Value="{Binding Axis2MousePointerSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </DockPanel>
             </ui:SettingsCard>
@@ -379,16 +378,12 @@
             </ui:SettingsCard>
 
             <!--  Filtering  -->
-            <ui:SettingsCard
-                Header="Filtering"
-                Visibility="{Binding Axis2TouchpadVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+            <ui:SettingsCard Header="Filtering" Visibility="{Binding Axis2TouchpadVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                 <ui:ToggleSwitch IsOn="{Binding Axis2MouseFiltering, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource InvertedToggleSwitchStyle}" />
             </ui:SettingsCard>
 
             <!--  Filtering cutoff  -->
-            <ui:SettingsCard
-                Header="Filtering cutoff (less is more filter)"
-                Visibility="{Binding Axis2MouseFiltering, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ui:SettingsCard Header="Filtering cutoff (less is more filter)" Visibility="{Binding Axis2MouseFiltering, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <DockPanel>
                     <TextBox
                         HorizontalContentAlignment="Center"
@@ -415,7 +410,7 @@
                     <TextBox
                         HorizontalContentAlignment="Center"
                         IsReadOnly="True"
-                        Text="{Binding Axis2MouseDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0} %}" />
+                        Text="{Binding Axis2MouseDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0}%}" />
 
                     <Slider
                         Margin="3,0,0,0"
@@ -425,7 +420,7 @@
                         Minimum="0"
                         TickFrequency="5"
                         TickPlacement="BottomRight"
-                        ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                        ToolTip="{Binding Value, StringFormat={}{0:N0}%, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                         Value="{Binding Axis2MouseDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </DockPanel>
             </ui:SettingsCard>

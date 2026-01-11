@@ -770,11 +770,11 @@
   <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
     <value>프로파일 업데이트</value>
   </data>
-  <data name="ProfilesPage_Whitelist" xml:space="preserve">
+  <data name="ProfilesPage_WhitelistDesc" xml:space="preserve">
     <value>애플리케이션이 디바이스의 물리적 컨트롤러에 접근할 수 있도록 허용합니다</value>
   </data>
   <data name="ProfilesPage_Wrapper" xml:space="preserve">
-    <value>확장 호환성 (XInputPlus)</value>
+    <value>확장 호환성</value>
   </data>
   <data name="ProfilesPage_Yaw" xml:space="preserve">
     <value>회전</value>

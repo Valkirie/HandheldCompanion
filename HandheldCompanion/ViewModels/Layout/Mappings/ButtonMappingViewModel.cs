@@ -238,7 +238,7 @@ namespace HandheldCompanion.ViewModels
                 }
             }
         }
-        
+
         // Trigger output should only be visible for Button -> Trigger mappings
         public override Visibility TriggerOutputVisibility
         {
@@ -398,8 +398,8 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Action is null || Action is not ButtonActions)
                 {
-                    Action = new ButtonActions() 
-                    { 
+                    Action = new ButtonActions()
+                    {
                         pressType = fallbackPressType,
                         ShiftSlot = ShiftSlot.Any,
                         ShiftMatchAny = false
@@ -427,8 +427,8 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Action is null || Action is not KeyboardActions)
                 {
-                    Action = new KeyboardActions() 
-                    { 
+                    Action = new KeyboardActions()
+                    {
                         pressType = fallbackPressType,
                         Modifiers = ModifierSet.None,
                         ShiftSlot = ShiftSlot.Any,
@@ -443,8 +443,8 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Action is null || Action is not MouseActions)
                 {
-                    Action = new MouseActions() 
-                    { 
+                    Action = new MouseActions()
+                    {
                         pressType = fallbackPressType,
                         Modifiers = ModifierSet.None,
                         ShiftSlot = ShiftSlot.Any,
@@ -474,8 +474,8 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Action is null || Action is not TriggerActions)
                 {
-                    Action = new TriggerActions() 
-                    { 
+                    Action = new TriggerActions()
+                    {
                         motionThreshold = 125,
                         ShiftSlot = ShiftSlot.Any,
                         ShiftMatchAny = false

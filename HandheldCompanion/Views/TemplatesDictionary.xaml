@@ -1124,21 +1124,21 @@
             <!--  Action Name Display  -->
             <TextBlock
                 Grid.Column="0"
-                VerticalAlignment="Center"
                 Margin="0,4"
+                VerticalAlignment="Center"
                 TextWrapping="Wrap">
                 <TextBlock.Text>
                     <MultiBinding Converter="{StaticResource ActionDisplayConverter}">
                         <Binding
+                            Converter="{StaticResource ActionTypeIndexToNameConverter}"
+                            Mode="OneWay"
                             Path="ActionTypeIndex"
-                            Mode="OneWay"
-                            UpdateSourceTrigger="PropertyChanged"
-                            Converter="{StaticResource ActionTypeIndexToNameConverter}" />
+                            UpdateSourceTrigger="PropertyChanged" />
                         <Binding
-                            Path="SelectedTarget.Content"
                             Mode="OneWay"
-                            UpdateSourceTrigger="PropertyChanged"
-                            TargetNullValue="None" />
+                            Path="SelectedTarget.Content"
+                            TargetNullValue="None"
+                            UpdateSourceTrigger="PropertyChanged" />
                     </MultiBinding>
                 </TextBlock.Text>
             </TextBlock>
@@ -1816,21 +1816,21 @@
             <!--  Action Name Display  -->
             <TextBlock
                 Grid.Column="0"
-                VerticalAlignment="Center"
                 Margin="0,4"
+                VerticalAlignment="Center"
                 TextWrapping="Wrap">
                 <TextBlock.Text>
                     <MultiBinding Converter="{StaticResource ActionDisplayConverter}">
                         <Binding
+                            Converter="{StaticResource ActionTypeIndexToNameConverter}"
+                            Mode="OneWay"
                             Path="ActionTypeIndex"
-                            Mode="OneWay"
-                            UpdateSourceTrigger="PropertyChanged"
-                            Converter="{StaticResource ActionTypeIndexToNameConverter}" />
+                            UpdateSourceTrigger="PropertyChanged" />
                         <Binding
-                            Path="SelectedTarget.Content"
                             Mode="OneWay"
-                            UpdateSourceTrigger="PropertyChanged"
-                            TargetNullValue="None" />
+                            Path="SelectedTarget.Content"
+                            TargetNullValue="None"
+                            UpdateSourceTrigger="PropertyChanged" />
                     </MultiBinding>
                 </TextBlock.Text>
             </TextBlock>
@@ -2145,7 +2145,7 @@
                                 Minimum="5"
                                 TickFrequency="10"
                                 TickPlacement="BottomRight"
-                                ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                ToolTip="{Binding Value, StringFormat={}{0:N0}%, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 Value="{Binding Axis2MousePointerSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
                     </ui:SettingsCard>
@@ -2215,7 +2215,7 @@
                             <TextBox
                                 HorizontalContentAlignment="Center"
                                 IsReadOnly="True"
-                                Text="{Binding Axis2MouseDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0} %}" />
+                                Text="{Binding Axis2MouseDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0}%}" />
 
                             <Slider
                                 Margin="3,0,0,0"
@@ -2225,7 +2225,7 @@
                                 Minimum="0"
                                 TickFrequency="5"
                                 TickPlacement="BottomRight"
-                                ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                ToolTip="{Binding Value, StringFormat={}{0:N0}%, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 Value="{Binding Axis2MouseDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
                     </ui:SettingsCard>
@@ -2269,21 +2269,21 @@
             <!--  Action Name Display  -->
             <TextBlock
                 Grid.Column="0"
-                VerticalAlignment="Center"
                 Margin="0,4"
+                VerticalAlignment="Center"
                 TextWrapping="Wrap">
                 <TextBlock.Text>
                     <MultiBinding Converter="{StaticResource ActionDisplayConverter}">
                         <Binding
+                            Converter="{StaticResource ActionTypeIndexToNameConverter}"
+                            Mode="OneWay"
                             Path="ActionTypeIndex"
-                            Mode="OneWay"
-                            UpdateSourceTrigger="PropertyChanged"
-                            Converter="{StaticResource ActionTypeIndexToNameConverter}" />
+                            UpdateSourceTrigger="PropertyChanged" />
                         <Binding
-                            Path="SelectedTarget.Content"
                             Mode="OneWay"
-                            UpdateSourceTrigger="PropertyChanged"
-                            TargetNullValue="None" />
+                            Path="SelectedTarget.Content"
+                            TargetNullValue="None"
+                            UpdateSourceTrigger="PropertyChanged" />
                     </MultiBinding>
                 </TextBlock.Text>
             </TextBlock>

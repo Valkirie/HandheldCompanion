@@ -186,7 +186,7 @@ public partial class Profile : ICloneable, IComparable
     public bool FullScreenOptimization { get; set; } = true;
     public bool HighDPIAware { get; set; } = true;
 
-    // emulated controller type, default is default
+    // virtual controller type, default is default
     public HIDmode HID { get; set; } = HIDmode.NotSelected;
 
     public Dictionary<string, ProcessWindowSettings> WindowsSettings = new();

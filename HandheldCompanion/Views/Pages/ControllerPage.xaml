@@ -169,9 +169,12 @@
                     </ui:SettingsCard.HeaderIcon>
 
                     <DockPanel>
-                        <TextBlock
+                        <TextBox
+                            Height="31"
+                            HorizontalAlignment="Right"
                             VerticalAlignment="Center"
-                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                            HorizontalContentAlignment="Center"
+                            IsReadOnly="True"
                             Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderStrength}, Mode=OneWay}" />
                         <Slider
                             x:Name="SliderStrength"
@@ -185,7 +188,7 @@
                             SmallChange="5"
                             TickFrequency="5"
                             TickPlacement="BottomRight"
-                            ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                            ToolTip="{Binding Value, StringFormat={}{0:N0}%, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                             ValueChanged="SliderStrength_ValueChanged"
                             Value="100" />
                     </DockPanel>
@@ -244,10 +247,13 @@
                     </ui:SettingsCard.HeaderIcon>
 
                     <DockPanel>
-                        <Label
+                        <TextBox
+                            Height="31"
+                            HorizontalAlignment="Right"
                             VerticalAlignment="Center"
-                            Content="{Binding Value, StringFormat={}{0:N0}ms, Source={x:Reference SliderInterval}, Mode=OneWay}"
-                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            HorizontalContentAlignment="Center"
+                            IsReadOnly="True"
+                            Text="{Binding Value, StringFormat={}{0:N0}ms, Source={x:Reference SliderInterval}, Mode=OneWay}" />
                         <Slider
                             x:Name="SliderInterval"
                             Width="200"
@@ -261,7 +267,7 @@
                             SmallChange="1"
                             TickFrequency="1"
                             TickPlacement="BottomRight"
-                            ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                            ToolTip="{Binding Value, StringFormat={}{0:N0}%, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                             ValueChanged="SliderInterval_ValueChanged"
                             Value="100" />
                     </DockPanel>

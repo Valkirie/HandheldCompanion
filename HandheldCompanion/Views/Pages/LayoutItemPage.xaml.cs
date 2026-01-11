@@ -1,12 +1,5 @@
-using System;
-using System.Windows;
-using System.Windows.Controls;
-using HandheldCompanion.Helpers;
-using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Properties;
 using HandheldCompanion.ViewModels;
-using HandheldCompanion.Views;
+using System.Windows;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
@@ -42,12 +35,12 @@ public partial class LayoutItemPage : Page
     public void SetMapping(MappingViewModel mapping)
     {
         CurrentMapping = mapping;
-        
+
         // Get profile name
         string profileName = MainWindow.layoutPage.currentTemplate.Product;
         if (string.IsNullOrEmpty(profileName))
             profileName = Properties.Resources.LayoutPage_LaytouDesktop;
-        
+
         // Get input name from parent stack (works for Button, Trigger, and Axis)
         string inputName = "Unknown Input";
         if (mapping is ButtonMappingViewModel buttonMapping)
@@ -56,10 +49,10 @@ public partial class LayoutItemPage : Page
             inputName = triggerMapping.ParentStack?.Name ?? "Unknown Trigger";
         else if (mapping is AxisMappingViewModel axisMapping)
             inputName = axisMapping.ParentStack?.Name ?? "Unknown Axis";
-        
+
         // Update title: "<ProfileName>: <input to be configured>"
         ActionTitle.Text = $"{profileName}: {inputName}";
-        
+
         // Update description
         if (mapping?.Action is not null && mapping.SelectedTarget is not null)
         {
@@ -81,7 +74,7 @@ public partial class LayoutItemPage : Page
         {
             ActionDescription.Text = "Configure action settings";
         }
-        
+
         // Update the settings page with the mapping
         if (actionSettingsPage is not null)
         {

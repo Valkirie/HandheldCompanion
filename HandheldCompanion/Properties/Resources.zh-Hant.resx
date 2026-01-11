@@ -766,11 +766,11 @@
   <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
     <value>更新設定檔</value>
   </data>
-  <data name="ProfilesPage_Whitelist" xml:space="preserve">
+  <data name="ProfilesPage_WhitelistDesc" xml:space="preserve">
     <value>允許程序取得實體手柄輸入信號</value>
   </data>
   <data name="ProfilesPage_Wrapper" xml:space="preserve">
-    <value>擴展兼容性 (XInputPlus)</value>
+    <value>擴展兼容性</value>
   </data>
   <data name="ProfilesPage_Yaw" xml:space="preserve">
     <value>垂直（Y軸）</value>

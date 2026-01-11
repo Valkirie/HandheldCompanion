@@ -199,11 +199,13 @@
 
                             <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
                                 <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                                    <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Text="{Binding PL1OverrideValue, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
-                                    <TextBlock
-                                        Margin="2,0,0,0"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Text=" W" />
+                                    <TextBox
+                                        Height="31"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
+                                        Text="{Binding PL1OverrideValue, StringFormat={}{0:N0}W, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
                                 </StackPanel>
                                 <Slider
                                     Margin="8,0,154,0"
@@ -230,11 +232,13 @@
 
                             <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
                                 <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                                    <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Text="{Binding PL2OverrideValue, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
-                                    <TextBlock
-                                        Margin="2,0,0,0"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Text=" W" />
+                                    <TextBox
+                                        Height="31"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
+                                        Text="{Binding PL2OverrideValue, StringFormat={}{0:N0}W, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
                                 </StackPanel>
                                 <Slider
                                     Margin="8,0,154,0"
@@ -270,10 +274,13 @@
                     <ui:SettingsExpander.Items>
                         <ui:SettingsCard IsEnabled="{Binding AutoTDPEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
-                                <Label
+                                <TextBox
+                                    Height="31"
+                                    HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
-                                    Content="{Binding AutoTDPRequestedFPS, StringFormat={}{0:N0} FPS, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                    HorizontalContentAlignment="Center"
+                                    IsReadOnly="True"
+                                    Text="{Binding AutoTDPRequestedFPS, StringFormat={}{0:N0} FPS, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
                                 <Slider
                                     Margin="8,0,104,0"
                                     HorizontalAlignment="Stretch"
@@ -362,10 +369,13 @@
                     <ui:SettingsExpander.Items>
                         <ui:SettingsCard IsEnabled="{Binding CPUOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
-                                <Label
+                                <TextBox
+                                    Height="31"
+                                    HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
-                                    Content="{Binding CPUOverrideValue, StringFormat={}{0:N0} Mhz, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                    HorizontalContentAlignment="Center"
+                                    IsReadOnly="True"
+                                    Text="{Binding CPUOverrideValue, StringFormat={}{0:N0} Mhz, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
                                 <Slider
                                     Margin="8,0,104,0"
                                     HorizontalAlignment="Stretch"
@@ -400,10 +410,13 @@
                     <ui:SettingsExpander.Items>
                         <ui:SettingsCard IsEnabled="{Binding GPUOverrideEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
-                                <Label
+                                <TextBox
+                                    Height="31"
+                                    HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
-                                    Content="{Binding GPUOverrideValue, StringFormat={}{0:N0} Mhz, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                    HorizontalContentAlignment="Center"
+                                    IsReadOnly="True"
+                                    Text="{Binding GPUOverrideValue, StringFormat={}{0:N0} Mhz, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
                                 <Slider
                                     Margin="8,0,104,0"
                                     HorizontalAlignment="Stretch"

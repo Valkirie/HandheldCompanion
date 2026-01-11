@@ -780,11 +780,11 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
     <value>Profil aktualisieren</value>
   </data>
-  <data name="ProfilesPage_Whitelist" xml:space="preserve">
+  <data name="ProfilesPage_WhitelistDesc" xml:space="preserve">
     <value>Der Anwendung den Zugriff auf den physischen Controller des Geräts ermöglichen</value>
   </data>
   <data name="ProfilesPage_Wrapper" xml:space="preserve">
-    <value>Erweiterte Kompatibilität (XInputPlus)</value>
+    <value>Erweiterte Kompatibilität</value>
   </data>
   <data name="ProfilesPage_Yaw" xml:space="preserve">
     <value>Gier</value>
@@ -1094,9 +1094,6 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   </data>
   <data name="Hotkey_ControlCenterDesc" xml:space="preserve">
     <value>Info-Center anzeigen und ausblenden</value>
-  </data>
-  <data name="ProfilesPage_ControllerLayout" xml:space="preserve">
-    <value>Controller-Layout</value>
   </data>
   <data name="Hotkey_QuietModeToggled" xml:space="preserve">
     <value>Lüftersteuerung</value>
@@ -2404,13 +2401,13 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
     <value>M2</value>
   </data>
   <data name="Hotkey_ChangeHIDMode" xml:space="preserve">
-    <value>Toggle emulated controller type</value>
+    <value>Toggle virtual controller type</value>
   </data>
   <data name="Hotkey_ChangeHIDModeDesc" xml:space="preserve">
-    <value>Toggle between Xbox 360 and Dualshock 4 emulated controllers</value>
+    <value>Toggle between Xbox 360 and Dualshock 4 virtual controllers</value>
   </data>
-  <data name="ProfilesPage_EmulatedController" xml:space="preserve">
-    <value>Emulated controller type</value>
+  <data name="ProfilesPage_EmulatedController" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
   </data>
   <data name="ProfilesPage_EmulatedControllerDefault" xml:space="preserve">
     <value>Default</value>
@@ -2420,9 +2417,6 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   </data>
   <data name="ProfilesPage_EmulatedControllerXbox" xml:space="preserve">
     <value>Emulated XBOX 360 controller</value>
-  </data>
-  <data name="ProfilesPage_EmulatedControllerDesc" xml:space="preserve">
-    <value>The emulated controller to be used when this profile is active</value>
   </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
     <value>Touchpad passthrough</value>
@@ -2458,13 +2452,13 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
     <value>You have no notifications right now.</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileAction" xml:space="preserve">
-    <value>Go to profiles settings to change per-game emulated controller type preference.</value>
+    <value>Go to profiles settings to change per-game virtual controller type preference.</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileDesc" xml:space="preserve">
-    <value>The emulated controller type is being managed by the currently applied game profile.</value>
+    <value>The virtual controller type is being managed by the currently applied game profile.</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileWarning" xml:space="preserve">
-    <value>Emulated controller is managed by profile</value>
+    <value>virtual controller is managed by profile</value>
   </data>
   <data name="Hint_CoreIsolationCheck" xml:space="preserve">
     <value>Core isolation features are turned on</value>

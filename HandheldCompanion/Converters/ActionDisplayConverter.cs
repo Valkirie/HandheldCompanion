@@ -14,7 +14,7 @@ public class ActionDisplayConverter : IMultiValueConverter
             return "Unknown";
 
         string actionType = values[0]?.ToString() ?? "Unknown";
-        
+
         // For Inherit action type, just return "Inherit" without target
         // Compare with the localized resource string
         string inheritString = Resources.LayoutPage_ActionType_Inherit;
@@ -27,7 +27,7 @@ public class ActionDisplayConverter : IMultiValueConverter
             return actionType;
 
         string target = targetValue.ToString() ?? "None";
-        
+
         // If target is "None" or empty, just return the action type
         if (string.IsNullOrWhiteSpace(target) || target.Equals("None", StringComparison.OrdinalIgnoreCase))
             return actionType;
