@@ -434,6 +434,9 @@ public partial class QuickProfilesPage : Page
         if (src is not SettingsCard)
             return;
 
+        if (selectedProfile is null)
+            return;
+
         OverlayQuickTools.GetCurrent().performancePage.SelectionChanged(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
         OverlayQuickTools.GetCurrent().NavigateToPage("QuickPerformancePage");
     }
@@ -443,6 +446,9 @@ public partial class QuickProfilesPage : Page
         // If the click originated in the ComboBox (or any ComboBoxItem), ignore it
         DependencyObject? src = e.Source as DependencyObject;
         if (src is not SettingsCard)
+            return;
+
+        if (selectedProfile is null)
             return;
 
         OverlayQuickTools.GetCurrent().performancePage.SelectionChanged(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);

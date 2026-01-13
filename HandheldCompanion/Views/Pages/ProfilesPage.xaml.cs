@@ -407,6 +407,9 @@ public partial class ProfilesPage : Page
         if (src is not SettingsCard)
             return;
 
+        if (selectedProfile is null)
+            return;
+
         PowerProfile powerProfile = ManagerFactory.powerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
         if (powerProfile is null)
             return;
@@ -420,6 +423,9 @@ public partial class ProfilesPage : Page
         // If the click originated in the ComboBox (or any ComboBoxItem), ignore it
         DependencyObject? src = e.Source as DependencyObject;
         if (src is not SettingsCard)
+            return;
+
+        if (selectedProfile is null)
             return;
 
         PowerProfile powerProfile = ManagerFactory.powerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
