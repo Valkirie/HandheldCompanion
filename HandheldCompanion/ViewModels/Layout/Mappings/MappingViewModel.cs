@@ -45,6 +45,8 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public string ActionTypeName => ((ActionType)ActionTypeIndex).ToString();
+
         public bool HasTurbo
         {
             get => Action is not null && Action.HasTurbo;
