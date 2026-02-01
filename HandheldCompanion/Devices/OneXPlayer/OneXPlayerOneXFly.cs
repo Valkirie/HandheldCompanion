@@ -21,7 +21,6 @@ public class OneXPlayerOneXFly : OneXAOKZOE
         // device specific settings
         ProductIllustration = "device_onexplayer_onexfly";
         ProductModel = "ONEXPLAYEROneXFly";
-        UseOpenLib = true;
 
         // https://www.amd.com/en/products/processors/handhelds/ryzen-z-series/z1-series/z1-extreme.html
         // https://www.amd.com/fr/products/processors/laptop/ryzen/7000-series/amd-ryzen-7-7840u.html

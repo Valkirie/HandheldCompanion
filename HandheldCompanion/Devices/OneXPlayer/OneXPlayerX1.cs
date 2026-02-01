@@ -52,7 +52,6 @@ public class OneXPlayerX1 : OneXAOKZOE
         // device specific settings
         ProductIllustration = "device_onexplayer_x1";
         ProductModel = "ONEXPLAYERX1";
-        UseOpenLib = true;
 
         GyrometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
