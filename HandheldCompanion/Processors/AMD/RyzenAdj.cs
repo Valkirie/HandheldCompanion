@@ -278,6 +278,9 @@ public class RyzenAdj
     public static extern RyzenError set_cogfx(IntPtr ctx, uint value);
 
     [DllImport(ryzenadj)]
+    private static extern int set_cogfx(IntPtr ctx, uint value);
+
+    [DllImport(ryzenadj)]
     public static extern RyzenFamily get_cpu_family(IntPtr ry);
 
     public static uint EncodeCurveOffset(int steps) => (uint)(steps & 0xFFFFF);

@@ -10967,6 +10967,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CPU Curve Optimiser (All Cores).
+        /// </summary>
+        public static string SettingsPage_CurveOptimiser {
+            get {
+                return ResourceManager.GetString("SettingsPage_CurveOptimiser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the all core Curve Optimiser Frequency/Voltage curve offset (negative values to undervolt, positive to add margin).
+        /// </summary>
+        public static string SettingsPage_CurveOptimiserDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_CurveOptimiserDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Download.
         /// </summary>
         public static string SettingsPage_Download {
