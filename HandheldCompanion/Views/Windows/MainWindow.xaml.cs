@@ -63,6 +63,7 @@ public partial class MainWindow : GamepadWindow
     public static LayoutPage layoutPage;
     public static NotificationsPage notificationsPage;
     public static LibraryPage libraryPage;
+    public static LayoutItemPage layoutItemPage;
 
     // overlay(s) vars
     public static OverlayModel overlayModel = new();
@@ -158,9 +159,6 @@ public partial class MainWindow : GamepadWindow
         // collect details from MotherboardInfo
         MotherboardInfo.Collect();
 
-        // initialize title
-        Title += $" ({fileVersionInfo.FileVersion})";
-
         // initialize device
         CurrentDevice = IDevice.GetCurrent();
         CurrentDevice.PullSensors();
@@ -225,19 +223,6 @@ public partial class MainWindow : GamepadWindow
         Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, ManagerFactory.settingsManager.GetDouble("MainWindowLeft"));
         Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, ManagerFactory.settingsManager.GetDouble("MainWindowTop"));
 
-        bool MainWindowIsPaneOpen = ManagerFactory.settingsManager.GetBoolean("MainWindowIsPaneOpen");
-
-        navView.IsPaneOpen = MainWindowIsPaneOpen;
-        switch (MainWindowIsPaneOpen)
-        {
-            case true:
-                navView_PaneOpened(navView, null);
-                break;
-            case false:
-                navView_PaneClosed(navView, null);
-                break;
-        }
-
         // update setting(s)
         ManagerFactory.settingsManager.SetProperty("LastVersion", fileVersionInfo.FileVersion);
 
@@ -267,6 +252,10 @@ public partial class MainWindow : GamepadWindow
             GamepadUISelectIcon.Glyph = Controller.GetGlyph(ButtonFlags.B1);
             GamepadUIBackIcon.Glyph = Controller.GetGlyph(ButtonFlags.B2);
             GamepadUIToggleIcon.Glyph = Controller.GetGlyph(ButtonFlags.B4);
+            GamepadUIMoreIcon.Glyph = Controller.GetGlyph(ButtonFlags.B3);
+
+            GamepadUILB.Glyph = Controller.GetGlyph(ButtonFlags.L1);
+            GamepadUIRB.Glyph = Controller.GetGlyph(ButtonFlags.R1);
 
             // update color(s)
             Color? color1 = Controller.GetGlyphColor(ButtonFlags.B1);
@@ -281,11 +270,17 @@ public partial class MainWindow : GamepadWindow
             else
                 GamepadUIBackIcon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseHighBrush");
 
+            Color? color3 = Controller.GetGlyphColor(ButtonFlags.B3);
+            if (color3.HasValue)
+                GamepadUIMoreIcon.Foreground = new SolidColorBrush(color3.Value);
+            else
+                GamepadUIMoreIcon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+
             Color? color4 = Controller.GetGlyphColor(ButtonFlags.B4);
             if (color4.HasValue)
                 GamepadUIToggleIcon.Foreground = new SolidColorBrush(color4.Value);
             else
-                GamepadUIBackIcon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+                GamepadUIToggleIcon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseHighBrush");
         });
     }
 
@@ -303,6 +298,7 @@ public partial class MainWindow : GamepadWindow
                         GamepadUISelect.Visibility = Visibility.Visible;
                         GamepadUIBack.Visibility = Visibility.Visible;
                         GamepadUIToggle.Visibility = Visibility.Collapsed;
+                        GamepadUIMore.Visibility = Visibility.Collapsed;
 
                         GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
                         GamepadUIBackDesc.Text = Properties.Resources.MainWindow_Back;
@@ -313,6 +309,8 @@ public partial class MainWindow : GamepadWindow
                     {
                         GamepadUISelect.Visibility = Visibility.Visible;
                         GamepadUIBack.Visibility = Visibility.Visible;
+                        GamepadUIToggle.Visibility = Visibility.Collapsed;
+                        GamepadUIMore.Visibility = Visibility.Collapsed;
 
                         GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
                         GamepadUIBackDesc.Text = Properties.Resources.MainWindow_Back;
@@ -331,7 +329,10 @@ public partial class MainWindow : GamepadWindow
                             if (!profile.ErrorCode.HasFlag(ProfileErrorCode.MissingExecutable))
                             {
                                 GamepadUIToggle.Visibility = Visibility.Visible;
-                                GamepadUIToggleDesc.Text = "Play";
+                                GamepadUIToggleDesc.Text = Properties.Resources.MainWindow_Play;
+
+                                GamepadUIMore.Visibility = Visibility.Visible;
+                                GamepadUIMoreDesc.Text = Properties.Resources.MainWindow_Layout;
                             }
                         }
                     }
@@ -342,6 +343,7 @@ public partial class MainWindow : GamepadWindow
                         GamepadUISelect.Visibility = Visibility.Collapsed;
                         GamepadUIBack.Visibility = Visibility.Visible;
                         GamepadUIToggle.Visibility = Visibility.Collapsed;
+                        GamepadUIMore.Visibility = Visibility.Collapsed;
                     }
                     break;
 
@@ -350,6 +352,7 @@ public partial class MainWindow : GamepadWindow
                         GamepadUISelect.Visibility = Visibility.Visible;
                         GamepadUIBack.Visibility = Visibility.Collapsed;
                         GamepadUIToggle.Visibility = Visibility.Collapsed;
+                        GamepadUIMore.Visibility = Visibility.Collapsed;
 
                         GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Navigate;
                     }
@@ -429,13 +432,16 @@ public partial class MainWindow : GamepadWindow
         layoutPage = new LayoutPage("layout", navView);
         performancePage = new PerformancePage();
         aboutPage = new AboutPage();
+        layoutItemPage = new LayoutItemPage("layoutitem", navView);
 
         layoutPage.Initialize();
+        layoutItemPage.Initialize();
 
         // storage pages
         _pages.Add("LayoutPage", layoutPage);
         _pages.Add("PerformancePage", performancePage);
         _pages.Add("AboutPage", aboutPage);
+        _pages.Add("LayoutItemPage", layoutItemPage);
     }
 
     private void GenericDeviceUpdated(PnPDevice device, Guid IntefaceGuid)
@@ -537,7 +543,6 @@ public partial class MainWindow : GamepadWindow
                         // resume manager(s)
                         InputsManager.Start();
                         TimerManager.Start();
-                        SensorsManager.Resume(true);
                         PerformanceManager.Resume(true);
 
                         ManagerFactory.Resume();
@@ -547,6 +552,7 @@ public partial class MainWindow : GamepadWindow
 
                         VirtualManager.Resume(true);
                         ControllerManager.Resume(true);
+                        SensorsManager.Resume(true);
                     }
 
                     // open device, when ready
@@ -588,7 +594,7 @@ public partial class MainWindow : GamepadWindow
                         VirtualManager.Suspend(true);
                         ControllerManager.Suspend(true);
                         TimerManager.Stop();
-                        SensorsManager.Stop();
+                        SensorsManager.Suspend(true);
                         InputsManager.Stop(false);
 
                         // suspend platform(s)
@@ -750,8 +756,6 @@ public partial class MainWindow : GamepadWindow
                 ManagerFactory.settingsManager.SetProperty("MainWindowTop", 0);
                 break;
         }
-
-        ManagerFactory.settingsManager.SetProperty("MainWindowIsPaneOpen", navView.IsPaneOpen);
 
         if (ManagerFactory.settingsManager.GetBoolean("CloseMinimises") && !appClosing)
         {
@@ -1005,16 +1009,44 @@ public partial class MainWindow : GamepadWindow
         return true;
     }
 
-    private void navView_PaneOpened(NavigationView sender, object args)
+    private void GamepadUIMore_Click(object sender, RoutedEventArgs e)
     {
-        // todo: localize me
-        PaneText.Text = Properties.Resources.MainWindow_CloseNavigation;
+        Task.Run(async () =>
+        {
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B3, true, false);
+            await Task.Delay(40);
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B3, false, true);
+        });
     }
 
-    private void navView_PaneClosed(NavigationView sender, object args)
+    private void GamepadUISelect_Click(object sender, RoutedEventArgs e)
     {
-        // todo: localize me
-        PaneText.Text = Properties.Resources.MainWindow_OpenNavigation;
+        Task.Run(async () =>
+        {
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B1, true, false);
+            await Task.Delay(40);
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B1, false, true);
+        });
+    }
+
+    private void GamepadUIBack_Click(object sender, RoutedEventArgs e)
+    {
+        Task.Run(async () =>
+        {
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B2, true, false);
+            await Task.Delay(40);
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B2, false, true);
+        });
+    }
+
+    private void GamepadUIToggle_Click(object sender, RoutedEventArgs e)
+    {
+        Task.Run(async () =>
+        {
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B4, true, false);
+            await Task.Delay(40);
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B4, false, true);
+        });
     }
 
     private void GamepadUIMore_Click(object sender, RoutedEventArgs e)
@@ -1066,9 +1098,7 @@ public partial class MainWindow : GamepadWindow
             // Update previous navigation item
             prevNavItemTag = CurrentPageName;
 
-            var NavViewItem = navView.MenuItems
-                .OfType<NavigationViewItem>()
-                .Where(n => n.Tag.Equals(CurrentPageName)).FirstOrDefault();
+            var NavViewItem = navView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(n => n.Tag is not null && n.Tag.Equals(CurrentPageName));
 
             if (!(NavViewItem is null))
                 navView.SelectedItem = NavViewItem;

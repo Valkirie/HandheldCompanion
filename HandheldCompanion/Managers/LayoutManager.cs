@@ -616,36 +616,46 @@ public class LayoutManager : IManager
 
                 for (int i = 0; i < actions.Length; i++)
                 {
-                    var act = actions[i];
+                    var action = actions[i];
 
-                    switch (act.actionType)
+                    switch (action.actionType)
                     {
                         case ActionType.Button:
                             {
-                                var b = (ButtonActions)act;
-                                b.Execute(button, value, shiftSlot, delta);
-                                bool outVal = b.GetValue() || outputState.ButtonState[b.Button];
-                                outputState.ButtonState[b.Button] = outVal;
+                                if (action is ButtonActions bA)
+                                {
+                                    bA.Execute(button, value, shiftSlot, delta);
+                                    bool outVal = bA.GetValue() || outputState.ButtonState[bA.Button];
+                                    outputState.ButtonState[bA.Button] = outVal;
+                                }
                                 break;
                             }
                         case ActionType.Keyboard:
                             {
-                                ((KeyboardActions)act).Execute(button, value, shiftSlot, delta);
+                                if (action is KeyboardActions kA)
+                                {
+                                    kA.Execute(button, value, shiftSlot, delta);
+                                }
                                 break;
                             }
                         case ActionType.Mouse:
                             {
-                                ((MouseActions)act).Execute(button, value, shiftSlot, delta);
+                                if (action is MouseActions mA)
+                                {
+                                    mA.Execute(button, value, shiftSlot, delta);
+                                }
                                 break;
                             }
                         case ActionType.Trigger:
                             {
-                                var t = (TriggerActions)act;
-                                t.Execute(button, value, shiftSlot, delta);
-                                // write Y only (triggers)
-                                var xyOut = _axisXY[t.Axis];
-                                byte add = t.GetValue();
-                                outputState.AxisState[xyOut.Y] = (byte)Math.Clamp(outputState.AxisState[xyOut.Y] + add, byte.MinValue, byte.MaxValue);
+                                if (action is TriggerActions tA)
+                                {
+                                    tA.Execute(button, value, shiftSlot, delta);
+                                    // write Y only (triggers)
+                                    var xyOut = _axisXY[tA.Axis];
+                                    byte add = tA.GetValue();
+                                    outputState.AxisState[xyOut.Y] = (byte)Math.Clamp(outputState.AxisState[xyOut.Y] + add, byte.MinValue, byte.MaxValue);
+                                }
                                 break;
                             }
                     }
@@ -677,50 +687,61 @@ public class LayoutManager : IManager
 
                 for (int i = 0; i < actions.Length; i++)
                 {
-                    var act = actions[i];
+                    var action = actions[i];
 
-                    switch (act.actionType)
+                    switch (action.actionType)
                     {
                         case ActionType.Button:
                             {
-                                var b = (ButtonActions)act;
-                                b.Execute(inLayout, shiftSlot, delta);
-                                bool outVal = b.GetValue() || outputState.ButtonState[b.Button];
-                                outputState.ButtonState[b.Button] = outVal;
-                                break;
+                                if (action is ButtonActions bA)
+                                {
+                                    bA.Execute(inLayout, shiftSlot, delta);
+                                    bool outVal = bA.GetValue() || outputState.ButtonState[bA.Button];
+                                    outputState.ButtonState[bA.Button] = outVal;
+                                }
                             }
+                            break;
                         case ActionType.Keyboard:
                             {
-                                ((KeyboardActions)act).Execute(inLayout, shiftSlot, delta);
+                                if (action is KeyboardActions kA)
+                                {
+                                    kA.Execute(inLayout, shiftSlot, delta);
+                                }
                                 break;
                             }
                         case ActionType.Joystick:
                             {
-                                var ax = (AxisActions)act;
-                                ax.Execute(inLayout, shiftSlot, delta);
+                                if (action is AxisActions aX)
+                                {
+                                    aX.Execute(inLayout, shiftSlot, delta);
 
-                                var xyOut = _axisXY[ax.Axis];
-                                short addX = (short)Math.Clamp(ax.XOuput, short.MinValue, short.MaxValue);
-                                short addY = (short)Math.Clamp(ax.YOuput, short.MinValue, short.MaxValue);
+                                    var xyOut = _axisXY[aX.Axis];
+                                    short addX = (short)Math.Clamp(aX.XOuput, short.MinValue, short.MaxValue);
+                                    short addY = (short)Math.Clamp(aX.YOuput, short.MinValue, short.MaxValue);
 
-                                outputState.AxisState[xyOut.X] = (short)Math.Clamp(outputState.AxisState[xyOut.X] + addX, short.MinValue, short.MaxValue);
-                                outputState.AxisState[xyOut.Y] = (short)Math.Clamp(outputState.AxisState[xyOut.Y] + addY, short.MinValue, short.MaxValue);
+                                    outputState.AxisState[xyOut.X] = (short)Math.Clamp(outputState.AxisState[xyOut.X] + addX, short.MinValue, short.MaxValue);
+                                    outputState.AxisState[xyOut.Y] = (short)Math.Clamp(outputState.AxisState[xyOut.Y] + addY, short.MinValue, short.MaxValue);
+                                }
                                 break;
                             }
                         case ActionType.Trigger:
                             {
-                                var t = (TriggerActions)act;
-                                t.Execute(xyIn.Y, inLayout.vector.Y, shiftSlot, delta); // Y drives trigger
+                                if (action is TriggerActions tA)
+                                {
+                                    tA.Execute(xyIn.Y, inLayout.vector.Y, shiftSlot, delta); // Y drives trigger
 
-                                var xyOut = _axisXY[t.Axis];
-                                byte add = t.GetValue();
-                                outputState.AxisState[xyOut.Y] = (byte)Math.Clamp(outputState.AxisState[xyOut.Y] + add, byte.MinValue, byte.MaxValue);
+                                    var xyOut = _axisXY[tA.Axis];
+                                    byte add = tA.GetValue();
+                                    outputState.AxisState[xyOut.Y] = (byte)Math.Clamp(outputState.AxisState[xyOut.Y] + add, byte.MinValue, byte.MaxValue);
+                                }
                                 break;
                             }
                         case ActionType.Mouse:
                             {
-                                var m = (MouseActions)act;
-                                m.Execute(inLayout, touched, shiftSlot, delta);
+                                if (action is MouseActions mA)
+                                {
+                                    mA.Execute(inLayout, touched, shiftSlot, delta);
+                                }
                                 break;
                             }
                     }
@@ -745,29 +766,33 @@ public class LayoutManager : IManager
                 {
                     case ActionType.Joystick:
                         {
-                            var a = (AxisActions)action;
-                            a.Execute(inLayout, shiftSlot, delta);
+                            if (action is AxisActions aA)
+                            {
+                                aA.Execute(inLayout, shiftSlot, delta);
 
-                            // blend with stick using gyro weight logic
-                            var xyOut = _axisXY[a.Axis];
-                            var current = new Vector2(outputState.AxisState[xyOut.X], outputState.AxisState[xyOut.Y]);
+                                // blend with stick using gyro weight logic
+                                var xyOut = _axisXY[aA.Axis];
+                                var current = new Vector2(outputState.AxisState[xyOut.X], outputState.AxisState[xyOut.Y]);
 
-                            float len = Math.Clamp(current.Length() / short.MaxValue, 0f, 1f);
-                            float weightFactor = a.gyroWeight - len;
-                            var result = current + a.GetValue() * weightFactor;
+                                float len = Math.Clamp(current.Length() / short.MaxValue, 0f, 1f);
+                                float weightFactor = aA.gyroWeight - len;
+                                var result = current + aA.GetValue() * weightFactor;
 
-                            outputState.AxisState[xyOut.X] = (short)Math.Clamp(result.X, short.MinValue, short.MaxValue);
-                            outputState.AxisState[xyOut.Y] = (short)Math.Clamp(result.Y, short.MinValue, short.MaxValue);
+                                outputState.AxisState[xyOut.X] = (short)Math.Clamp(result.X, short.MinValue, short.MaxValue);
+                                outputState.AxisState[xyOut.Y] = (short)Math.Clamp(result.Y, short.MinValue, short.MaxValue);
+                            }
                             break;
                         }
                     case ActionType.Mouse:
                         {
-                            var m = (MouseActions)action;
-                            bool touched = false;
-                            if (ControllerState.AxisTouchButtons.TryGetValue(inLayout.flags, out var touchButton))
-                                touched = controllerState.ButtonState[touchButton];
+                            if (action is MouseActions mA)
+                            {
+                                bool touched = false;
+                                if (ControllerState.AxisTouchButtons.TryGetValue(inLayout.flags, out var touchButton))
+                                    touched = controllerState.ButtonState[touchButton];
 
-                            m.Execute(inLayout, touched, shiftSlot, delta);
+                                mA.Execute(inLayout, touched, shiftSlot, delta);
+                            }
                             break;
                         }
                 }

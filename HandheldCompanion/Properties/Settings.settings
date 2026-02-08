@@ -143,9 +143,6 @@
     <Setting Name="QuietModeEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="MainWindowIsPaneOpen" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
     <Setting Name="DesktopLayoutOnStart" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
@@ -168,9 +165,6 @@
       <Value Profile="(Default)">3</Value>
     </Setting>
     <Setting Name="QuickToolsAutoHide" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="ControllerManagement" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="HidModeDoNotShowAgain" Type="System.Boolean" Scope="User">
@@ -373,6 +367,12 @@
     </Setting>
     <Setting Name="GoBackToSleep" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ControllerSlotManagementMode" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="MasterInterval" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -33,6 +33,17 @@
         ShoulderNavigationEnabled="WhenSelectionFollowsFocus">
 
         <ui:NavigationView.MenuItems>
+            <ui:NavigationViewItem IsEnabled="False">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon
+                        Name="L2"
+                        Margin="-6,-6,-6,-6"
+                        FontFamily="PromptFont"
+                        FontSize="22"
+                        Glyph="&#x21B2;" />
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
             <ui:NavigationViewItem
                 Name="navButtons"
                 Content="{l:Static resx:Resources.LayoutPage_Buttons}"
@@ -92,11 +103,29 @@
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE777;" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem IsEnabled="False">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon
+                        Name="R2"
+                        Margin="-6,-6,-6,-6"
+                        FontFamily="PromptFont"
+                        FontSize="22"
+                        Glyph="&#x21B3;" />
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>
 
         <!--  Padding is set to NavView OpenPaneLength  -->
         <Grid Name="MainGrid" Margin="20">
             <ikw:SimpleStackPanel Spacing="10">
+
+                <!--  Separator  -->
+                <Separator
+                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                    BorderThickness="0,1,0,0"
+                    Opacity="0.25" />
+
                 <!--  Profile picker  -->
                 <ikw:SimpleStackPanel
                     Name="LayoutPickerPanel"

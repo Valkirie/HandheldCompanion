@@ -25,6 +25,7 @@ namespace HandheldCompanion.ViewModels
     {
         public ICommand StartProcessCommand { get; private set; }
         public ICommand Navigate { get; private set; }
+        public ICommand OpenLayout { get; private set; }
 
         public readonly bool IsQuickTools;
         public bool IsMainPage => !IsQuickTools;
@@ -289,6 +290,43 @@ namespace HandheldCompanion.ViewModels
 
                 MainWindow.GetCurrent().NavigateToPage("ProfilesPage");
             });
+
+            OpenLayout = new DelegateCommand(() =>
+            {
+                var page = MainWindow.profilesPage;
+
+                // pick the profile to select in the main combobox
+                Profile target = Profile.IsSubProfile
+                    ? ManagerFactory.profileManager.GetParent(Profile)
+                    : Profile;
+
+                // find a matching instance in the ComboBox (in case instances differ)
+                Profile? match = page.cB_Profiles.Items
+                    .OfType<Profile>()
+                    .FirstOrDefault(p => p.Guid == target.Guid);
+
+                if (match is not null)
+                    page.cB_Profiles.SelectedItem = match;
+
+                // subprofile picker: select current subprofile or reset
+                if (Profile.IsSubProfile)
+                    page.cb_SubProfilePicker.SelectedItem = Profile;
+                else
+                    page.cb_SubProfilePicker.SelectedIndex = 0;
+
+                // prepare layout editor
+                LayoutTemplate layoutTemplate = new(target.Layout)
+                {
+                    Name = target.LayoutTitle,
+                    Description = Properties.Resources.ProfilesPage_Layout_Desc,
+                    Author = Environment.UserName,
+                    Executable = target.Executable,
+                    Product = target.Name,
+                };
+
+                MainWindow.layoutPage.UpdateLayoutTemplate(layoutTemplate);
+                MainWindow.NavView_Navigate(MainWindow.layoutPage);
+            });
         }
 
         private void ProcessManager_ProcessStarted(ProcessEx processEx, bool OnStartup)
@@ -308,6 +346,7 @@ namespace HandheldCompanion.ViewModels
 
             // dispose commands
             StartProcessCommand = null;
+            OpenLayout = null;
 
             base.Dispose();
         }

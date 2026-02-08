@@ -766,11 +766,11 @@
   <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
     <value>更新設定檔</value>
   </data>
-  <data name="ProfilesPage_Whitelist" xml:space="preserve">
+  <data name="ProfilesPage_WhitelistDesc" xml:space="preserve">
     <value>允許程序取得實體手柄輸入信號</value>
   </data>
   <data name="ProfilesPage_Wrapper" xml:space="preserve">
-    <value>擴展兼容性 (XInputPlus)</value>
+    <value>擴展兼容性</value>
   </data>
   <data name="ProfilesPage_Yaw" xml:space="preserve">
     <value>垂直（Y軸）</value>
@@ -2173,6 +2173,15 @@
   <data name="MainWindow_Select" xml:space="preserve">
     <value>選擇</value>
   </data>
+  <data name="MainWindow_Toggle" xml:space="preserve">
+    <value>Toggle</value>
+  </data>
+  <data name="MainWindow_Layout" xml:space="preserve">
+    <value>佈局</value>
+  </data>
+  <data name="MainWindow_Play" xml:space="preserve">
+    <value>播放</value>
+  </data>
   <data name="Hint_SteamInputReadme" xml:space="preserve">
     <value>掌機伴侶將停用 Steam Input 並重新啟動 Steam</value>
   </data>
@@ -2356,9 +2365,6 @@
   <data name="ProfilesPage_DeletePowerProfileButton" xml:space="preserve">
     <value>刪除電源設定檔</value>
   </data>
-  <data name="MainWindow_Toggle" xml:space="preserve">
-    <value>Toggle</value>
-  </data>
   <data name="XInputController_Warning_USB" xml:space="preserve">
     <value>Please wait a moment while we power cycle your controller.</value>
   </data>
@@ -2421,9 +2427,6 @@
   </data>
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
     <value>手柄管理</value>
-  </data>
-  <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
-    <value>自動管理以提高相容性</value>
   </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
     <value>觸控板直通</value>
@@ -2842,27 +2845,6 @@
   <data name="SettingsPage_TelemetryDesc" xml:space="preserve">
     <value>啟用遙測以自動傳送程式崩潰數據</value>
   </data>
-  <data name="ControllerPage_ControllerManagement_Content" xml:space="preserve">
-    <value>正在初始化手柄配置，請稍候...</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt0" xml:space="preserve">
-    <value>正在嘗試重新排序手柄，請稍候...</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Success" xml:space="preserve">
-    <value>手柄已重新排序完成，感謝耐心等候</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Failed" xml:space="preserve">
-    <value>未能重新排序手柄。為了最佳相容性，我們建議您重新啟動掌機伴侶</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt3" xml:space="preserve">
-    <value>最終嘗試排序手柄，請稍候...</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt2" xml:space="preserve">
-    <value>Red or green, red or green, which do I cut?!</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt1" xml:space="preserve">
-    <value>正在排序中，請稍候...</value>
-  </data>
   <data name="SettingsPage_ScreenRotation_FlippedLandscape" xml:space="preserve">
     <value>横屏（翻轉）</value>
   </data>
@@ -3156,9 +3138,6 @@
   </data>
   <data name="Controller_Calibrate" xml:space="preserve">
     <value>Calibrate</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
-    <value>嘗試 {0}: </value>
   </data>
   <data name="DevicePage_BatteryOptions" xml:space="preserve">
     <value>電池選項</value>

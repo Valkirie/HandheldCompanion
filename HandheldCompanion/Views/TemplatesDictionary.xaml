@@ -29,6 +29,8 @@
     <converters:IsNullConverter x:Key="IsNullConverter" />
     <converters:ResourceFormatConverter x:Key="ResourceFormatConverter" />
     <converters:TypeToVisibilityConverter x:Key="TypeToVisibilityConverter" />
+    <converters:ActionTypeIndexToNameConverter x:Key="ActionTypeIndexToNameConverter" />
+    <converters:ActionDisplayConverter x:Key="ActionDisplayConverter" />
 
     <DataTemplate x:Key="HotkeyTemplate" DataType="{x:Type viewmodels:HotkeyViewModel}">
         <DataTemplate.Resources>
@@ -1114,16 +1116,60 @@
     <DataTemplate x:Key="ButtonMappingTemplate" DataType="{x:Type viewmodels:ButtonMappingViewModel}">
         <Grid Margin="48,0,0,0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Button
+            <!--  Action Name Display  -->
+            <TextBlock
                 Grid.Column="0"
-                Margin="0,1,2,1"
+                Margin="0,4"
+                VerticalAlignment="Center"
+                TextWrapping="Wrap">
+                <TextBlock.Text>
+                    <MultiBinding Converter="{StaticResource ActionDisplayConverter}">
+                        <Binding
+                            Converter="{StaticResource ActionTypeIndexToNameConverter}"
+                            Mode="OneWay"
+                            Path="ActionTypeIndex"
+                            UpdateSourceTrigger="PropertyChanged" />
+                        <Binding
+                            Mode="OneWay"
+                            Path="SelectedTarget.Content"
+                            TargetNullValue="None"
+                            UpdateSourceTrigger="PropertyChanged" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+
+            <!--  Gear Button to Open Settings  -->
+            <Button
+                Grid.Column="1"
+                Width="44"
+                Height="44"
+                Margin="0,2,2,0"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Stretch"
-                Command="{Binding ButtonCommand}">
+                VerticalAlignment="Top"
+                Command="{Binding OpenSettingsCommand}"
+                ToolTip="Open action settings">
+                <ui:FontIcon
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                    Glyph="&#xE713;" />
+            </Button>
+
+            <!--  Remove Button  -->
+            <Button
+                Grid.Column="2"
+                Width="44"
+                Height="44"
+                Margin="0,2,2,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Command="{Binding ButtonCommand}"
+                ToolTip="Remove action">
                 <ui:FontIcon
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
@@ -1131,7 +1177,8 @@
                     Glyph="&#xECC9;" />
             </Button>
 
-            <ui:SettingsExpander Grid.Column="1">
+            <!--  Old SettingsExpander - Hidden but kept for reference  -->
+            <ui:SettingsExpander Grid.Column="1" Visibility="Collapsed">
                 <ui:SettingsExpander.Content>
                     <DockPanel>
                         <ComboBox MinWidth="120" SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -1283,7 +1330,7 @@
                                 IsMoveToPointEnabled="True"
                                 Maximum="1000"
                                 Minimum="0"
-                                TickFrequency="100"
+                                TickFrequency="1"
                                 TickPlacement="BottomRight"
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 Value="{Binding StartDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -1344,7 +1391,8 @@
                             <ComboBox MinWidth="140" SelectedIndex="{Binding ShiftModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBoxItem Content="Disabled on shift" />
                                 <ComboBoxItem Content="Always enabled" />
-                                <ComboBoxItem Content="Enabled on shift" />
+                                <ComboBoxItem Content="Enabled on shift (strict)" />
+                                <ComboBoxItem Content="Enabled on shift (any)" />
                             </ComboBox>
                             <WrapPanel
                                 Margin="8,0,0,0"
@@ -1760,15 +1808,60 @@
     <DataTemplate x:Key="AxisMappingTemplate" DataType="{x:Type viewmodels:AxisMappingViewModel}">
         <Grid Margin="48,0,0,0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
+            <!--  Action Name Display  -->
+            <TextBlock
+                Grid.Column="0"
+                Margin="0,4"
+                VerticalAlignment="Center"
+                TextWrapping="Wrap">
+                <TextBlock.Text>
+                    <MultiBinding Converter="{StaticResource ActionDisplayConverter}">
+                        <Binding
+                            Converter="{StaticResource ActionTypeIndexToNameConverter}"
+                            Mode="OneWay"
+                            Path="ActionTypeIndex"
+                            UpdateSourceTrigger="PropertyChanged" />
+                        <Binding
+                            Mode="OneWay"
+                            Path="SelectedTarget.Content"
+                            TargetNullValue="None"
+                            UpdateSourceTrigger="PropertyChanged" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+
+            <!--  Gear Button to Open Settings  -->
             <Button
-                Margin="0,1,2,1"
+                Grid.Column="1"
+                Width="44"
+                Height="44"
+                Margin="0,2,2,0"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Stretch"
-                Command="{Binding ButtonCommand}">
+                VerticalAlignment="Top"
+                Command="{Binding OpenSettingsCommand}"
+                ToolTip="Open action settings">
+                <ui:FontIcon
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                    Glyph="&#xE713;" />
+            </Button>
+
+            <!--  Remove Button  -->
+            <Button
+                Grid.Column="2"
+                Width="44"
+                Height="44"
+                Margin="0,2,2,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Command="{Binding ButtonCommand}"
+                ToolTip="Remove action">
                 <ui:FontIcon
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
@@ -1776,7 +1869,8 @@
                     Glyph="&#xECC9;" />
             </Button>
 
-            <ui:SettingsExpander Grid.Column="1">
+            <!--  Old SettingsExpander - Hidden but kept for reference  -->
+            <ui:SettingsExpander Grid.Column="1" Visibility="Collapsed">
                 <ui:SettingsExpander.Content>
                     <DockPanel>
                         <ComboBox MinWidth="120" SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -1902,7 +1996,7 @@
                                 IsMoveToPointEnabled="True"
                                 Maximum="1000"
                                 Minimum="0"
-                                TickFrequency="100"
+                                TickFrequency="1"
                                 TickPlacement="BottomRight"
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 Value="{Binding StartDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -1917,6 +2011,35 @@
                     <!--  Toggle  -->
                     <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_PressToToggle}" Visibility="{Binding Axis2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                         <ui:ToggleSwitch IsOn="{Binding HasToggle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                    </ui:SettingsCard>
+
+                    <!--  Move mouse cursor to X,Y  -->
+                    <!--  TODO: Translate me  -->
+                    <ui:SettingsCard Header="Mouse position" Visibility="{Binding Axis2MouseTo, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <StackPanel>
+                            <WrapPanel Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="X" />
+                                <ui:NumberBox
+                                    MinWidth="20"
+                                    Margin="6,0,0,0"
+                                    Minimum="0"
+                                    SpinButtonPlacementMode="Inline"
+                                    Value="{Binding Axis2MouseToX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </WrapPanel>
+                            <WrapPanel Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="Y" />
+                                <ui:NumberBox
+                                    MinWidth="20"
+                                    Margin="6,0,0,0"
+                                    Minimum="0"
+                                    SpinButtonPlacementMode="Inline"
+                                    Value="{Binding Axis2MouseToY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </ui:SettingsCard>
+                    <!--  TODO: Translate me  -->
+                    <ui:SettingsCard Header="Restore previous position" Visibility="{Binding Axis2MouseTo, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                        <ui:ToggleSwitch IsOn="{Binding Axis2MouseRestore, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </ui:SettingsCard>
 
                     <!--  Output shape  -->
@@ -2022,7 +2145,7 @@
                                 Minimum="5"
                                 TickFrequency="10"
                                 TickPlacement="BottomRight"
-                                ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                ToolTip="{Binding Value, StringFormat={}{0:N0}%, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 Value="{Binding Axis2MousePointerSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
                     </ui:SettingsCard>
@@ -2092,7 +2215,7 @@
                             <TextBox
                                 HorizontalContentAlignment="Center"
                                 IsReadOnly="True"
-                                Text="{Binding Axis2MouseDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0} %}" />
+                                Text="{Binding Axis2MouseDeadzone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0}%}" />
 
                             <Slider
                                 Margin="3,0,0,0"
@@ -2102,7 +2225,7 @@
                                 Minimum="0"
                                 TickFrequency="5"
                                 TickPlacement="BottomRight"
-                                ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                ToolTip="{Binding Value, StringFormat={}{0:N0}%, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 Value="{Binding Axis2MouseDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
                     </ui:SettingsCard>
@@ -2116,7 +2239,8 @@
                             <ComboBox MinWidth="140" SelectedIndex="{Binding ShiftModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBoxItem Content="Disabled on shift" />
                                 <ComboBoxItem Content="Always enabled" />
-                                <ComboBoxItem Content="Enabled on shift" />
+                                <ComboBoxItem Content="Enabled on shift (strict)" />
+                                <ComboBoxItem Content="Enabled on shift (any)" />
                             </ComboBox>
                             <WrapPanel
                                 Margin="8,0,0,0"
@@ -2137,14 +2261,60 @@
     <DataTemplate x:Key="TriggerMappingTemplate" DataType="{x:Type viewmodels:TriggerMappingViewModel}">
         <Grid Margin="48,0,0,0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
+            <!--  Action Name Display  -->
+            <TextBlock
+                Grid.Column="0"
+                Margin="0,4"
+                VerticalAlignment="Center"
+                TextWrapping="Wrap">
+                <TextBlock.Text>
+                    <MultiBinding Converter="{StaticResource ActionDisplayConverter}">
+                        <Binding
+                            Converter="{StaticResource ActionTypeIndexToNameConverter}"
+                            Mode="OneWay"
+                            Path="ActionTypeIndex"
+                            UpdateSourceTrigger="PropertyChanged" />
+                        <Binding
+                            Mode="OneWay"
+                            Path="SelectedTarget.Content"
+                            TargetNullValue="None"
+                            UpdateSourceTrigger="PropertyChanged" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+
+            <!--  Gear Button to Open Settings  -->
             <Button
-                Margin="0,1,2,1"
-                VerticalAlignment="Stretch"
-                Command="{Binding ButtonCommand}">
+                Grid.Column="1"
+                Width="44"
+                Height="44"
+                Margin="0,2,2,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Command="{Binding OpenSettingsCommand}"
+                ToolTip="Open action settings">
+                <ui:FontIcon
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                    Glyph="&#xE713;" />
+            </Button>
+
+            <!--  Remove Button  -->
+            <Button
+                Grid.Column="2"
+                Width="44"
+                Height="44"
+                Margin="0,2,2,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Command="{Binding ButtonCommand}"
+                ToolTip="Remove action">
                 <ui:FontIcon
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
@@ -2152,7 +2322,8 @@
                     Glyph="&#xECC9;" />
             </Button>
 
-            <ui:SettingsExpander Grid.Column="1">
+            <!--  Old SettingsExpander - Hidden but kept for reference  -->
+            <ui:SettingsExpander Grid.Column="1" Visibility="Collapsed">
                 <ui:SettingsExpander.Content>
                     <DockPanel>
                         <ComboBox MinWidth="120" SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -2262,7 +2433,7 @@
                                 IsMoveToPointEnabled="True"
                                 Maximum="1000"
                                 Minimum="0"
-                                TickFrequency="100"
+                                TickFrequency="1"
                                 TickPlacement="BottomRight"
                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 Value="{Binding StartDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -2312,7 +2483,7 @@
                                 Margin="3,0,0,0"
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
-                                Maximum="25"
+                                Maximum="100"
                                 Minimum="0"
                                 TickFrequency="5"
                                 TickPlacement="BottomRight"
@@ -2351,7 +2522,8 @@
                             <ComboBox MinWidth="140" SelectedIndex="{Binding ShiftModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBoxItem Content="Disabled on shift" />
                                 <ComboBoxItem Content="Always enabled" />
-                                <ComboBoxItem Content="Enabled on shift" />
+                                <ComboBoxItem Content="Enabled on shift (strict)" />
+                                <ComboBoxItem Content="Enabled on shift (any)" />
                             </ComboBox>
                             <WrapPanel
                                 Margin="8,0,0,0"

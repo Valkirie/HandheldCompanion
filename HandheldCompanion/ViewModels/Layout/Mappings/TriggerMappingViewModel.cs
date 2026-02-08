@@ -5,10 +5,12 @@ using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 
 namespace HandheldCompanion.ViewModels
@@ -21,7 +23,9 @@ namespace HandheldCompanion.ViewModels
             MouseActionsType.Scroll
         ];
 
-        public int Trigger2TriggerInnerDeadzone
+        public override bool IsTriggerMapping => true;
+
+        public override int Trigger2TriggerInnerDeadzone
         {
             get => (Action is TriggerActions triggerAction) ? triggerAction.AxisDeadZoneInner : 0;
             set
@@ -34,7 +38,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public int Trigger2TriggerOuterDeadzone
+        public override int Trigger2TriggerOuterDeadzone
         {
             get => (Action is TriggerActions triggerAction) ? triggerAction.AxisDeadZoneOuter : 0;
             set
@@ -47,7 +51,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public int Trigger2TriggerAntiDeadzone
+        public override int Trigger2TriggerAntiDeadzone
         {
             get => (Action is TriggerActions triggerAction) ? triggerAction.AxisAntiDeadZone : 0;
             set
@@ -60,31 +64,28 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        // Shift mode: 0 = Disabled on shift, 1 = Always enabled, 2 = Enabled on specific shifts
-        public int ShiftModeIndex
+        // Trigger deadzone visibility - only visible when Trigger -> Trigger/Axis
+        public override Visibility TriggerDeadzoneVisibility
         {
             get
             {
-                if (Action is null) return 1; // Default to always enabled
-                if (Action.ShiftSlot.HasFlag(ShiftSlot.Any)) return 1; // Always enabled
-                if (Action.ShiftSlot == ShiftSlot.None) return 0; // Disabled on shift
-                return 2; // Specific shifts selected
+                ActionType currentActionType = (ActionType)ActionTypeIndex;
+                // Show for Trigger -> Trigger or Trigger -> Joystick (Axis)
+                return (currentActionType == ActionType.Trigger || currentActionType == ActionType.Joystick)
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
             }
+        }
+
+        public override float TriggerOutput
+        {
+            get => (Action is TriggerActions triggerAction) ? triggerAction.motionThreshold : 0;
             set
             {
-                if (Action is null || value == ShiftModeIndex) return;
-
-                switch (value)
+                if (Action is TriggerActions triggerAction && value != TriggerOutput)
                 {
-                    case 0: // Disabled on shift
-                        Action.ShiftSlot = ShiftSlot.None;
-                        break;
-                    case 1: // Always enabled
-                        Action.ShiftSlot = ShiftSlot.Any;
-                        break;
-                    case 2: // Enabled on shift - default to ShiftA if nothing selected
-                        Action.ShiftSlot = ShiftSlot.ShiftA;
-                        break;
+                    triggerAction.motionThreshold = value;
+                    OnPropertyChanged(nameof(TriggerOutput));
                 }
                 OnPropertyChanged(nameof(ShiftModeIndex));
                 OnPropertyChanged(nameof(ShowShiftSelection));
@@ -149,9 +150,112 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        // Shift mode: 0 = Disabled on shift, 1 = Always enabled, 2 = Enabled on shift (strict), 3 = Enabled on shift (any)
+        public override int ShiftModeIndex
+        {
+            get
+            {
+                if (Action is null) return 1; // Default to always enabled
+                if (Action.ShiftSlot.HasFlag(ShiftSlot.Any)) return 1; // Always enabled
+                if (Action.ShiftSlot == ShiftSlot.None) return 0; // Disabled on shift
+
+                // Check if it's OR mode or strict mode
+                if (Action.ShiftMatchAny) return 3; // Enabled on shift (any)
+                return 2; // Enabled on shift (strict)
+            }
+            set
+            {
+                if (Action is null || value == ShiftModeIndex) return;
+
+                switch (value)
+                {
+                    case 0: // Disabled on shift
+                        Action.ShiftSlot = ShiftSlot.None;
+                        Action.ShiftMatchAny = false;
+                        break;
+                    case 1: // Always enabled
+                        Action.ShiftSlot = ShiftSlot.Any;
+                        Action.ShiftMatchAny = false;
+                        break;
+                    case 2: // Enabled on shift (strict)
+                        if (Action.ShiftSlot == ShiftSlot.None || Action.ShiftSlot == ShiftSlot.Any)
+                            Action.ShiftSlot = ShiftSlot.ShiftA;
+                        Action.ShiftMatchAny = false;
+                        break;
+                    case 3: // Enabled on shift (any/OR)
+                        if (Action.ShiftSlot == ShiftSlot.None || Action.ShiftSlot == ShiftSlot.Any)
+                            Action.ShiftSlot = ShiftSlot.ShiftA;
+                        Action.ShiftMatchAny = true;
+                        break;
+                }
+                OnPropertyChanged(nameof(ShiftModeIndex));
+                OnPropertyChanged(nameof(ShowShiftSelection));
+                OnPropertyChanged(nameof(ShiftA));
+                OnPropertyChanged(nameof(ShiftB));
+                OnPropertyChanged(nameof(ShiftC));
+                OnPropertyChanged(nameof(ShiftD));
+            }
+        }
+
+        public override bool ShowShiftSelection => ShiftModeIndex == 2 || ShiftModeIndex == 3;
+
+        public override bool ShiftA
+        {
+            get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftA);
+            set
+            {
+                if (Action is null || value == ShiftA) return;
+                Action.ShiftSlot = value
+                    ? Action.ShiftSlot | ShiftSlot.ShiftA
+                    : Action.ShiftSlot & ~ShiftSlot.ShiftA;
+                OnPropertyChanged(nameof(ShiftA));
+            }
+        }
+
+        public override bool ShiftB
+        {
+            get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftB);
+            set
+            {
+                if (Action is null || value == ShiftB) return;
+                Action.ShiftSlot = value
+                    ? Action.ShiftSlot | ShiftSlot.ShiftB
+                    : Action.ShiftSlot & ~ShiftSlot.ShiftB;
+                OnPropertyChanged(nameof(ShiftB));
+            }
+        }
+
+        public override bool ShiftC
+        {
+            get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftC);
+            set
+            {
+                if (Action is null || value == ShiftC) return;
+                Action.ShiftSlot = value
+                    ? Action.ShiftSlot | ShiftSlot.ShiftC
+                    : Action.ShiftSlot & ~ShiftSlot.ShiftC;
+                OnPropertyChanged(nameof(ShiftC));
+            }
+        }
+
+        public override bool ShiftD
+        {
+            get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftD);
+            set
+            {
+                if (Action is null || value == ShiftD) return;
+                Action.ShiftSlot = value
+                    ? Action.ShiftSlot | ShiftSlot.ShiftD
+                    : Action.ShiftSlot & ~ShiftSlot.ShiftD;
+                OnPropertyChanged(nameof(ShiftD));
+            }
+        }
+
         private TriggerStackViewModel _parentStack;
+        public TriggerStackViewModel ParentStack => _parentStack;
 
         public ICommand ButtonCommand { get; private set; }
+        public ICommand OpenSettingsCommand { get; private set; }
 
         public TriggerMappingViewModel(TriggerStackViewModel parentStack, AxisLayoutFlags value) : base(value)
         {
@@ -161,6 +265,16 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Action is not null) Delete();
                 _parentStack.RemoveMapping(this);
+            });
+
+            OpenSettingsCommand = new DelegateCommand(() =>
+            {
+                // Navigate to LayoutItemPage
+                if (MainWindow.layoutItemPage is not null)
+                {
+                    MainWindow.layoutItemPage.SetMapping(this);
+                    MainWindow.NavView_Navigate(MainWindow.layoutItemPage);
+                }
             });
         }
 
@@ -206,7 +320,16 @@ namespace HandheldCompanion.ViewModels
             else if (actionType == ActionType.Keyboard)
             {
                 if (Action is null || Action is not KeyboardActions)
-                    Action = new KeyboardActions { motionThreshold = Gamepad.TriggerThreshold, motionDirection = DeflectionDirection.Up };
+                {
+                    Action = new KeyboardActions
+                    {
+                        motionThreshold = Gamepad.TriggerThreshold,
+                        motionDirection = DeflectionDirection.Up,
+                        Modifiers = ModifierSet.None,
+                        ShiftSlot = ShiftSlot.Any,
+                        ShiftMatchAny = false
+                    };
+                }
 
                 Targets.ReplaceWith(_keyboardKeysTargets);
                 SelectedTarget = _keyboardKeysTargets.FirstOrDefault(e => e.Tag.Equals(((KeyboardActions)Action).Key)) ?? _keyboardKeysTargets.First();
@@ -214,7 +337,16 @@ namespace HandheldCompanion.ViewModels
             else if (actionType == ActionType.Mouse)
             {
                 if (Action is null || Action is not MouseActions)
-                    Action = new MouseActions { motionThreshold = Gamepad.TriggerThreshold, motionDirection = DeflectionDirection.Up };
+                {
+                    Action = new MouseActions
+                    {
+                        motionThreshold = Gamepad.TriggerThreshold,
+                        motionDirection = DeflectionDirection.Up,
+                        Modifiers = ModifierSet.None,
+                        ShiftSlot = ShiftSlot.Any,
+                        ShiftMatchAny = false
+                    };
+                }
 
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var mouseType in Enum.GetValues<MouseActionsType>().Except(_unsupportedMouseActionTypes))
@@ -237,7 +369,13 @@ namespace HandheldCompanion.ViewModels
             else if (actionType == ActionType.Trigger)
             {
                 if (Action is null || Action is not TriggerActions)
-                    Action = new TriggerActions();
+                {
+                    Action = new TriggerActions()
+                    {
+                        ShiftSlot = ShiftSlot.Any,
+                        ShiftMatchAny = false
+                    };
+                }
 
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var axis in controller.GetTargetTriggers())
@@ -290,6 +428,20 @@ namespace HandheldCompanion.ViewModels
 
             // Refresh mapping
             OnPropertyChanged(string.Empty);
+            OnPropertyChanged(nameof(TriggerDeadzoneVisibility));
+        }
+
+        public override void OnPropertyChanged(string propertyName)
+        {
+            switch (propertyName)
+            {
+                case "SelectedTarget":
+                case "ActionTypeIndex":
+                    OnPropertyChanged(nameof(TriggerDeadzoneVisibility));
+                    break;
+            }
+
+            base.OnPropertyChanged(propertyName);
         }
 
         protected override void TargetTypeChanged()

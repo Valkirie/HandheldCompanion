@@ -774,7 +774,7 @@
                                             VerticalAlignment="Center"
                                             HorizontalContentAlignment="Center"
                                             IsReadOnly="True"
-                                            Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=RSRSlider, Mode=OneWay}" />
+                                            Text="{Binding Value, StringFormat={}{0:N0}%, ElementName=RSRSlider, Mode=OneWay}" />
                                         <Slider
                                             x:Name="RSRSlider"
                                             VerticalAlignment="Center"
@@ -1006,7 +1006,7 @@
                                             VerticalAlignment="Center"
                                             HorizontalContentAlignment="Center"
                                             IsReadOnly="True"
-                                            Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=RISSlider, Mode=OneWay}" />
+                                            Text="{Binding Value, StringFormat={}{0:N0}%, ElementName=RISSlider, Mode=OneWay}" />
                                         <Slider
                                             x:Name="RISSlider"
                                             VerticalAlignment="Center"

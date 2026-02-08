@@ -770,11 +770,11 @@
   <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
     <value>프로파일 업데이트</value>
   </data>
-  <data name="ProfilesPage_Whitelist" xml:space="preserve">
+  <data name="ProfilesPage_WhitelistDesc" xml:space="preserve">
     <value>애플리케이션이 디바이스의 물리적 컨트롤러에 접근할 수 있도록 허용합니다</value>
   </data>
   <data name="ProfilesPage_Wrapper" xml:space="preserve">
-    <value>확장 호환성 (XInputPlus)</value>
+    <value>확장 호환성</value>
   </data>
   <data name="ProfilesPage_Yaw" xml:space="preserve">
     <value>회전</value>
@@ -2171,6 +2171,15 @@
   <data name="MainWindow_Select" xml:space="preserve">
     <value>선택</value>
   </data>
+  <data name="MainWindow_Toggle" xml:space="preserve">
+    <value>전환</value>
+  </data>
+  <data name="MainWindow_Layout" xml:space="preserve">
+    <value>레이아웃</value>
+  </data>
+  <data name="MainWindow_Play" xml:space="preserve">
+    <value>재생</value>
+  </data>
   <data name="Hint_SteamXboxDriversReadme" xml:space="preserve">
     <value>Steam Xbox 컨트롤러 향상된 기능 드라이버를 제거할 수 있습니다.</value>
   </data>
@@ -2345,9 +2354,6 @@
   <data name="ProfilesPage_DeletePowerProfileButton" xml:space="preserve">
     <value>전원 프리셋 삭제</value>
   </data>
-  <data name="MainWindow_Toggle" xml:space="preserve">
-    <value>전환</value>
-  </data>
   <data name="XInputController_Warning_USB" xml:space="preserve">
     <value>컨트롤러의 전원을 껐다 켭니다. 잠시 기다려 주십시오.</value>
   </data>
@@ -2409,10 +2415,7 @@
     <value>이 프로필이 활성화될 때 사용되는 에뮬레이트된 컨트롤러</value>
   </data>
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
-    <value>컨트롤러 관리(실험적 기능)</value>
-  </data>
-  <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
-    <value>자동으로 컨트롤러를 관리하여 호환성을 높입니다</value>
+    <value>컨트롤러 관리</value>
   </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
     <value>터치패드 패스스루</value>
@@ -2860,9 +2863,6 @@ HC를 사용해 주시고 더 나은 서비스를 제공할 수 있도록 도와
   </data>
   <data name="Controller_Calibrate" xml:space="preserve">
     <value>보정</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
-    <value>시도 횟수 {0}: </value>
   </data>
   <data name="DevicePage_BatteryOptions" xml:space="preserve">
     <value>배터리 옵션</value>

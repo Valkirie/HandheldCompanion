@@ -625,6 +625,142 @@ namespace HandheldCompanion.ViewModels
 
         private ProcessEx selectedProcess;
 
+        private bool _GPUScalingEnabled;
+        public bool GPUScalingEnabled
+        {
+            get
+            {
+                return _GPUScalingEnabled;
+            }
+            set
+            {
+                if (value != _GPUScalingEnabled)
+                {
+                    _GPUScalingEnabled = value;
+                    OnPropertyChanged(nameof(GPUScalingEnabled));
+                }
+            }
+        }
+
+        private bool _RSREnabled;
+        public bool RSREnabled
+        {
+            get
+            {
+                return _RSREnabled;
+            }
+            set
+            {
+                if (value != _RSREnabled)
+                {
+                    _RSREnabled = value;
+                    OnPropertyChanged(nameof(RSREnabled));
+                }
+            }
+        }
+
+        private double _RSRValue;
+        public double RSRValue
+        {
+            get
+            {
+                return _RSRValue;
+            }
+            set
+            {
+                if (value != _RSRValue)
+                {
+                    _RSRValue = value;
+                    OnPropertyChanged(nameof(RSRValue));
+                }
+            }
+        }
+
+        private bool _IntegerScalingEnabled;
+        public bool IntegerScalingEnabled
+        {
+            get
+            {
+                return _IntegerScalingEnabled;
+            }
+            set
+            {
+                if (value != _IntegerScalingEnabled)
+                {
+                    _IntegerScalingEnabled = value;
+                    OnPropertyChanged(nameof(IntegerScalingEnabled));
+                }
+            }
+        }
+
+        private bool _RISEnabled;
+        public bool RISEnabled
+        {
+            get
+            {
+                return _RISEnabled;
+            }
+            set
+            {
+                if (value != _RISEnabled)
+                {
+                    _RISEnabled = value;
+                    OnPropertyChanged(nameof(RISEnabled));
+                }
+            }
+        }
+
+        private double _RISValue;
+        public double RISValue
+        {
+            get
+            {
+                return _RISValue;
+            }
+            set
+            {
+                if (value != _RISValue)
+                {
+                    _RISValue = value;
+                    OnPropertyChanged(nameof(RISValue));
+                }
+            }
+        }
+
+        private double _GyroMultiplier = 1.0f; // default
+        public double GyroMultiplier
+        {
+            get
+            {
+                return _GyroMultiplier;
+            }
+            set
+            {
+                if (value != _GyroMultiplier)
+                {
+                    _GyroMultiplier = value;
+                    OnPropertyChanged(nameof(GyroMultiplier));
+                }
+            }
+        }
+
+        private double _AcceleroMultiplier = 1.0f; // default
+        public double AcceleroMultiplier
+        {
+            get
+            {
+                return _AcceleroMultiplier;
+            }
+            set
+            {
+                if (value != _AcceleroMultiplier)
+                {
+                    _AcceleroMultiplier = value;
+                    OnPropertyChanged(nameof(AcceleroMultiplier));
+                }
+            }
+        }
+
         public void ProfileChanged(Profile selectedProfile)
         {
             // update library target profile

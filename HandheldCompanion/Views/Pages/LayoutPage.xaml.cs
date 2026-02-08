@@ -1,4 +1,6 @@
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Helpers;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels;
@@ -46,12 +48,28 @@ public partial class LayoutPage : Page
     {
         DataContext = new LayoutPageViewModel(this);
         InitializeComponent();
+
+        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+
+        // raise events
+        if (ControllerManager.HasTargetController)
+            ControllerManager_ControllerSelected(ControllerManager.GetTarget());
     }
 
     public LayoutPage(string Tag, NavigationView parent) : this()
     {
         this.Tag = Tag;
         this.parentNavView = parent;
+    }
+
+    private void ControllerManager_ControllerSelected(IController Controller)
+    {
+        // UI thread
+        UIHelper.TryInvoke(() =>
+        {
+            L2.Glyph = Controller.GetGlyph(AxisFlags.L2);
+            R2.Glyph = Controller.GetGlyph(AxisFlags.R2);
+        });
     }
 
     // Initialize pages later so the reference can be made to layoutPage from MainWindow
@@ -384,8 +402,7 @@ public partial class LayoutPage : Page
             var preNavPageType = ContentFrame.CurrentSourcePageType;
             var preNavPageName = preNavPageType.Name;
 
-            var NavViewItem = navView.MenuItems
-                .OfType<NavigationViewItem>().FirstOrDefault(n => n.Tag.Equals(preNavPageName));
+            var NavViewItem = navView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(n => n.Tag is not null && n.Tag.Equals(preNavPageName));
 
             if (!(NavViewItem is null))
                 navView.SelectedItem = NavViewItem;

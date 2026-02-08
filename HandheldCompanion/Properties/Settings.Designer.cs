@@ -589,18 +589,6 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool MainWindowIsPaneOpen {
-            get {
-                return ((bool)(this["MainWindowIsPaneOpen"]));
-            }
-            set {
-                this["MainWindowIsPaneOpen"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool DesktopLayoutOnStart {
             get {
@@ -692,18 +680,6 @@ namespace HandheldCompanion.Properties
             }
             set {
                 this["QuickToolsAutoHide"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ControllerManagement {
-            get {
-                return ((bool)(this["ControllerManagement"]));
-            }
-            set {
-                this["ControllerManagement"] = value;
             }
         }
         
@@ -1507,6 +1483,30 @@ namespace HandheldCompanion.Properties
             }
             set {
                 this["GoBackToSleep"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int ControllerSlotManagementMode {
+            get {
+                return ((int)(this["ControllerSlotManagementMode"]));
+            }
+            set {
+                this["ControllerSlotManagementMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MasterInterval {
+            get {
+                return ((int)(this["MasterInterval"]));
+            }
+            set {
+                this["MasterInterval"] = value;
             }
         }
     }

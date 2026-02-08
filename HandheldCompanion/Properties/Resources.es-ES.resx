@@ -778,11 +778,11 @@
   <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
     <value>Actualización del perfil</value>
   </data>
-  <data name="ProfilesPage_Whitelist" xml:space="preserve">
+  <data name="ProfilesPage_WhitelistDesc" xml:space="preserve">
     <value>Permitir que la aplicación acceda al controlador físico del dispositivo</value>
   </data>
   <data name="ProfilesPage_Wrapper" xml:space="preserve">
-    <value>Compatibilidad extendida (XInputPlus)</value>
+    <value>Compatibilidad extendida</value>
   </data>
   <data name="ProfilesPage_Yaw" xml:space="preserve">
     <value>Yaw</value>
@@ -2179,6 +2179,15 @@
   <data name="MainWindow_Select" xml:space="preserve">
     <value>Selecciona</value>
   </data>
+  <data name="MainWindow_Toggle" xml:space="preserve">
+    <value>Toggle</value>
+  </data>
+  <data name="MainWindow_Layout" xml:space="preserve">
+    <value>Disposición</value>
+  </data>
+  <data name="MainWindow_Play" xml:space="preserve">
+    <value>Jugar</value>
+  </data>
   <data name="Hint_SteamXboxDriversReadme" xml:space="preserve">
     <value>You might want to uninstall Steam Xbox Controller Enhanced Features Driver</value>
   </data>
@@ -2353,9 +2362,6 @@
   <data name="ProfilesPage_DeletePowerProfileButton" xml:space="preserve">
     <value>Delete power preset</value>
   </data>
-  <data name="MainWindow_Toggle" xml:space="preserve">
-    <value>Toggle</value>
-  </data>
   <data name="XInputController_Warning_USB" xml:space="preserve">
     <value>Please wait a moment while we power cycle your controller.</value>
   </data>
@@ -2396,13 +2402,10 @@
     <value>M2</value>
   </data>
   <data name="Hotkey_ChangeHIDMode" xml:space="preserve">
-    <value>Toggle emulated controller type</value>
+    <value>Toggle virtual controller type</value>
   </data>
   <data name="Hotkey_ChangeHIDModeDesc" xml:space="preserve">
-    <value>Toggle between Xbox 360 and Dualshock 4 emulated controllers</value>
-  </data>
-  <data name="ProfilesPage_EmulatedController" xml:space="preserve">
-    <value>Emulated controller type</value>
+    <value>Toggle between Xbox 360 and Dualshock 4 virtual controllers</value>
   </data>
   <data name="ProfilesPage_EmulatedControllerDefault" xml:space="preserve">
     <value>Default</value>
@@ -2412,12 +2415,6 @@
   </data>
   <data name="ProfilesPage_EmulatedControllerXbox" xml:space="preserve">
     <value>Emulated XBOX 360 controller</value>
-  </data>
-  <data name="ProfilesPage_EmulatedControllerDesc" xml:space="preserve">
-    <value>The emulated controller to be used when this profile is active</value>
-  </data>
-  <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
-    <value>Automatically manage your controllers for greater compatibility</value>
   </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
     <value>Touchpad passthrough</value>
@@ -2453,13 +2450,13 @@
     <value>You have no notifications right now.</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileAction" xml:space="preserve">
-    <value>Go to profiles settings to change per-game emulated controller type preference.</value>
+    <value>Go to profiles settings to change per-game virtual controller type preference.</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileDesc" xml:space="preserve">
-    <value>The emulated controller type is being managed by the currently applied game profile.</value>
+    <value>The virtual controller type is being managed by the currently applied game profile.</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileWarning" xml:space="preserve">
-    <value>Emulated controller is managed by profile</value>
+    <value>virtual controller is managed by profile</value>
   </data>
   <data name="Hint_CoreIsolationCheck" xml:space="preserve">
     <value>Core isolation features are turned on</value>
@@ -2690,9 +2687,6 @@
     <value>Trigger Margin</value>
   </data>
   <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
-    <value />
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
     <value />
   </data>
   <data name="DevicePage_BatteryOptions" xml:space="preserve">

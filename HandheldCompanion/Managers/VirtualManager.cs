@@ -473,12 +473,12 @@ namespace HandheldCompanion.Managers
 
         private static void OnTargetConnected(ViGEmTarget target)
         {
-            ToastManager.SendToast($"{target}", "is now connected", $"controller_{(uint)target.HID}_1", true);
+            ToastManager.SendToast($"{target}", "is now connected"); //, $"controller_{(uint)target.HID}_1", true);
         }
 
         private static void OnTargetDisconnected(ViGEmTarget target)
         {
-            ToastManager.SendToast($"{target}", "is now disconnected", $"controller_{(uint)target.HID}_0", true);
+            ToastManager.SendToast($"{target}", "is now disconnected"); //, $"controller_{(uint)target.HID}_0", true);
         }
 
         private static void OnTargetVibrated(byte LargeMotor, byte SmallMotor)

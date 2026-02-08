@@ -786,11 +786,11 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
     <value>Atualizar perfil</value>
   </data>
-  <data name="ProfilesPage_Whitelist" xml:space="preserve">
+  <data name="ProfilesPage_WhitelistDesc" xml:space="preserve">
     <value>Permitir acesso direto ao dispositivo de controle físico pela aplicação (ignorar controle virtual emulado)</value>
   </data>
   <data name="ProfilesPage_Wrapper" xml:space="preserve">
-    <value>Compatiblidade expandida (XInputPlus)</value>
+    <value>Compatiblidade expandida</value>
   </data>
   <data name="ProfilesPage_Yaw" xml:space="preserve">
     <value>Leme</value>
@@ -2193,6 +2193,15 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="MainWindow_Select" xml:space="preserve">
     <value>Selecionar</value>
   </data>
+  <data name="MainWindow_Toggle" xml:space="preserve">
+    <value>Alternar</value>
+  </data>
+  <data name="MainWindow_Layout" xml:space="preserve">
+    <value>Layout</value>
+  </data>
+  <data name="MainWindow_Play" xml:space="preserve">
+    <value>Jogar</value>
+  </data>
   <data name="Hint_SteamInputReadme" xml:space="preserve">
     <value>Você deve reiniciar o Steam, então o Handheld Companion poderá automaticamente ajustar o Layout de Área de Trabalho Steam e prevenir entrada duplicada</value>
   </data>
@@ -2376,9 +2385,6 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="ProfilesPage_DeletePowerProfileButton" xml:space="preserve">
     <value>Remover modo de energia</value>
   </data>
-  <data name="MainWindow_Toggle" xml:space="preserve">
-    <value>Alternar</value>
-  </data>
   <data name="XInputController_Warning_USB" xml:space="preserve">
     <value>Favor aguarde um momento enquanto religamos o seu controle.</value>
   </data>
@@ -2425,7 +2431,7 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
     <value>Alterne entre os controles emulados de Xbox 360 e Dualshock 4</value>
   </data>
   <data name="ProfilesPage_EmulatedController" xml:space="preserve">
-    <value>Tipo de controle emulado</value>
+    <value>Tipo de controle</value>
   </data>
   <data name="ProfilesPage_EmulatedControllerDefault" xml:space="preserve">
     <value>Padrão</value>
@@ -2441,9 +2447,6 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   </data>
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
     <value>Gerenciar controle</value>
-  </data>
-  <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
-    <value>Automaticamente gerenciar seus controles para maior compatibilidade</value>
   </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
     <value>Passagem de touchpad</value>
@@ -2862,27 +2865,6 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="SettingsPage_TelemetryDesc" xml:space="preserve">
     <value>Habilitar os dados de telemetria serem automaticamente enviados em caso de um travamento/encerramento inesperado</value>
   </data>
-  <data name="ControllerPage_ControllerManagement_Content" xml:space="preserve">
-    <value>Inicializando a reconfiguração do controle... Por favor, aguarde.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt0" xml:space="preserve">
-    <value>Estamos reordenando os controles para aumentar a compatibilidade dos jogos. Por favor, aguarde um momento.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Success" xml:space="preserve">
-    <value>Reordenação de controles concluída. Obrigado pela sua paciência.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Failed" xml:space="preserve">
-    <value>Falhamos em reordenar seus controles. Para máxima compatibilidade, sugerimos que reinicie o Handheld Companion.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt3" xml:space="preserve">
-    <value>Uma última tentativa de reordenar os controles. Estamos fazendo o melhor possível!</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt2" xml:space="preserve">
-    <value>Quase lá! Estamos fazendo mais um ajuste para otimizar as configurações de controle.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt1" xml:space="preserve">
-    <value>Ajustes ainda em progresso. Iremos fazer isso direito para seus jogos.</value>
-  </data>
   <data name="SettingsPage_ScreenRotation_FlippedLandscape" xml:space="preserve">
     <value>Paisagem Invertido</value>
   </data>
@@ -3170,9 +3152,6 @@ Obrigado por utilizar o Handheld Companion e nos ajudá-lo a torná-lo melhor.</
   </data>
   <data name="Controller_Calibrate" xml:space="preserve">
     <value>Calibrar</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
-    <value>Tentativa {0}: </value>
   </data>
   <data name="DevicePage_BatteryOptions" xml:space="preserve">
     <value>Opções de bateria</value>

@@ -21,11 +21,29 @@ namespace HandheldCompanion.ViewModels
         public int BatteryBypassMin => CurrentDevice.BatteryBypassMin;
         public int BatteryBypassMax => CurrentDevice.BatteryBypassMax;
         public int BatteryBypassStep => CurrentDevice.BatteryBypassStep;
-        public Visibility BatteryBypassVisibility => CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimit) ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility BatteryBypassVisibility => BatteryChargeLimitCapacity ? Visibility.Visible : Visibility.Collapsed;
         public Visibility BatteryBypassModeVisibility => CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.BatteryBypassCharging) ? Visibility.Visible : Visibility.Collapsed;
+        public bool BatteryChargeLimitCapacity => CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimit);
 
-        private bool _BatteryChargeLimitPercent;
-        public bool BatteryChargeLimitPercent
+        private bool _BatteryChargeLimit;
+        public bool BatteryChargeLimit
+        {
+            get
+            {
+                return _BatteryChargeLimit;
+            }
+            set
+            {
+                if (value != _BatteryChargeLimit)
+                {
+                    _BatteryChargeLimit = value;
+                    OnPropertyChanged(nameof(BatteryChargeLimit));
+                }
+            }
+        }
+
+        private double _BatteryChargeLimitPercent = 100.0d;
+        public double BatteryChargeLimitPercent
         {
             get
             {
@@ -301,7 +319,10 @@ namespace HandheldCompanion.ViewModels
             switch (name)
             {
                 case "BatteryChargeLimit":
-                    BatteryChargeLimitPercent = Convert.ToBoolean(value) && CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimitPercent);
+                    BatteryChargeLimit = Convert.ToBoolean(value);
+                    break;
+                case "BatteryChargeLimitPercent":
+                    BatteryChargeLimitPercent = Convert.ToDouble(value);
                     break;
             }
         }

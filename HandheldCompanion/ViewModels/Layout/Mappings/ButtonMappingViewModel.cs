@@ -6,6 +6,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,7 @@ namespace HandheldCompanion.ViewModels
         #region Mapping Properties
 
         private int _pressTypeFallbackIndex = 0;
-        public int PressTypeIndex
+        public override int PressTypeIndex
         {
             get => Action is not null ? (int)Action.pressType : 0;
             set
@@ -44,7 +45,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public string PressTypeTooltip
+        public override string PressTypeTooltip
         {
             get
             {
@@ -54,14 +55,17 @@ namespace HandheldCompanion.ViewModels
         }
 
         // Shift mode: 0 = Disabled on shift, 1 = Always enabled, 2 = Enabled on specific shifts
-        public int ShiftModeIndex
+        public override int ShiftModeIndex
         {
             get
             {
                 if (Action is null) return 1; // Default to always enabled
                 if (Action.ShiftSlot.HasFlag(ShiftSlot.Any)) return 1; // Always enabled
                 if (Action.ShiftSlot == ShiftSlot.None) return 0; // Disabled on shift
-                return 2; // Specific shifts selected
+
+                // Check if it's OR mode or strict mode
+                if (Action.ShiftMatchAny) return 3; // Enabled on shift (any)
+                return 2; // Enabled on shift (strict)
             }
             set
             {
@@ -71,12 +75,21 @@ namespace HandheldCompanion.ViewModels
                 {
                     case 0: // Disabled on shift
                         Action.ShiftSlot = ShiftSlot.None;
+                        Action.ShiftMatchAny = false;
                         break;
                     case 1: // Always enabled
                         Action.ShiftSlot = ShiftSlot.Any;
+                        Action.ShiftMatchAny = false;
                         break;
-                    case 2: // Enabled on shift - default to ShiftA if nothing selected
-                        Action.ShiftSlot = ShiftSlot.ShiftA;
+                    case 2: // Enabled on shift (strict)
+                        if (Action.ShiftSlot == ShiftSlot.None || Action.ShiftSlot == ShiftSlot.Any)
+                            Action.ShiftSlot = ShiftSlot.ShiftA;
+                        Action.ShiftMatchAny = false;
+                        break;
+                    case 3: // Enabled on shift (any/OR)
+                        if (Action.ShiftSlot == ShiftSlot.None || Action.ShiftSlot == ShiftSlot.Any)
+                            Action.ShiftSlot = ShiftSlot.ShiftA;
+                        Action.ShiftMatchAny = true;
                         break;
                 }
                 OnPropertyChanged(nameof(ShiftModeIndex));
@@ -88,9 +101,9 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool ShowShiftSelection => ShiftModeIndex == 2;
+        public override bool ShowShiftSelection => ShiftModeIndex == 2 || ShiftModeIndex == 3;
 
-        public bool ShiftA
+        public override bool ShiftA
         {
             get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftA);
             set
@@ -103,7 +116,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool ShiftB
+        public override bool ShiftB
         {
             get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftB);
             set
@@ -116,7 +129,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool ShiftC
+        public override bool ShiftC
         {
             get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftC);
             set
@@ -129,7 +142,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool ShiftD
+        public override bool ShiftD
         {
             get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftD);
             set
@@ -142,7 +155,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public float LongPressDelay
+        public override float LongPressDelay
         {
             get => Action is not null ? Action.ActionTimer : 0;
             set
@@ -155,7 +168,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public int ModifierIndex
+        public override int ModifierIndex
         {
             get
             {
@@ -183,7 +196,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool HasModifier
+        public override bool HasModifier
         {
             get
             {
@@ -213,20 +226,30 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public float TriggerOutput
+        public override float TriggerOutput
         {
-            get => Action is not null ? Action.motionThreshold : 0;
+            get => (Action is TriggerActions triggerAction) ? triggerAction.motionThreshold : 0;
             set
             {
-                if (Action is not null && value != TriggerOutput)
+                if (Action is TriggerActions triggerAction && value != TriggerOutput)
                 {
-                    Action.motionThreshold = value;
+                    triggerAction.motionThreshold = value;
                     OnPropertyChanged(nameof(TriggerOutput));
                 }
             }
         }
 
-        public int HapticModeIndex
+        // Trigger output should only be visible for Button -> Trigger mappings
+        public override Visibility TriggerOutputVisibility
+        {
+            get
+            {
+                ActionType currentActionType = (ActionType)ActionTypeIndex;
+                return currentActionType == ActionType.Trigger ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        public override int HapticModeIndex
         {
             get => Action is not null ? (int)Action.HapticMode : 0;
             set
@@ -239,7 +262,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public int HapticStrengthIndex
+        public override int HapticStrengthIndex
         {
             get => Action is not null ? (int)Action.HapticStrength : 0;
             set
@@ -252,7 +275,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public double Button2MouseToX
+        public override double Button2MouseToX
         {
             get => (Action is MouseActions mouseAction) ? mouseAction.MoveToX : 0;
             set
@@ -265,7 +288,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public double Button2MouseToY
+        public override double Button2MouseToY
         {
             get => (Action is MouseActions mouseAction) ? mouseAction.MoveToY : 0;
             set
@@ -278,7 +301,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool Button2MouseRestore
+        public override bool Button2MouseRestore
         {
             get => (Action is MouseActions mouseAction) ? mouseAction.MoveToPrevious : false;
             set
@@ -291,7 +314,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public Visibility Button2MouseTo
+        public override Visibility Button2MouseTo
         {
             get
             {
@@ -314,19 +337,22 @@ namespace HandheldCompanion.ViewModels
                 case "ActionTypeIndex":
                     OnPropertyChanged(nameof(HasModifier));
                     OnPropertyChanged(nameof(Button2MouseTo));
+                    OnPropertyChanged(nameof(GeneralActionVisibility));
                     break;
             }
 
             base.OnPropertyChanged(propertyName);
         }
 
-        public bool HasDuration => PressTypeIndex != (int)PressType.Short;
+        public override bool HasDuration => PressTypeIndex != (int)PressType.Short;
 
         #endregion
 
         private ButtonStackViewModel _parentStack;
+        public ButtonStackViewModel ParentStack => _parentStack;
 
         public ICommand ButtonCommand { get; private set; }
+        public ICommand OpenSettingsCommand { get; private set; }
 
         public ButtonMappingViewModel(ButtonStackViewModel parentStack, ButtonFlags button) : base(button)
         {
@@ -336,6 +362,16 @@ namespace HandheldCompanion.ViewModels
             {
                 if (Action is not null) Delete();
                 _parentStack.RemoveMapping(this);
+            });
+
+            OpenSettingsCommand = new DelegateCommand(() =>
+            {
+                // Navigate to LayoutItemPage
+                if (MainWindow.layoutItemPage is not null)
+                {
+                    MainWindow.layoutItemPage.SetMapping(this);
+                    MainWindow.NavView_Navigate(MainWindow.layoutItemPage);
+                }
             });
         }
 
@@ -361,7 +397,14 @@ namespace HandheldCompanion.ViewModels
             if (actionType == ActionType.Button)
             {
                 if (Action is null || Action is not ButtonActions)
-                    Action = new ButtonActions() { pressType = fallbackPressType };
+                {
+                    Action = new ButtonActions()
+                    {
+                        pressType = fallbackPressType,
+                        ShiftSlot = ShiftSlot.Any,
+                        ShiftMatchAny = false
+                    };
+                }
 
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var button in controller.GetTargetButtons())
@@ -383,7 +426,15 @@ namespace HandheldCompanion.ViewModels
             else if (actionType == ActionType.Keyboard)
             {
                 if (Action is null || Action is not KeyboardActions)
-                    Action = new KeyboardActions() { pressType = fallbackPressType };
+                {
+                    Action = new KeyboardActions()
+                    {
+                        pressType = fallbackPressType,
+                        Modifiers = ModifierSet.None,
+                        ShiftSlot = ShiftSlot.Any,
+                        ShiftMatchAny = false
+                    };
+                }
 
                 Targets.ReplaceWith(_keyboardKeysTargets);
                 SelectedTarget = _keyboardKeysTargets.FirstOrDefault(e => e.Tag.Equals(((KeyboardActions)Action).Key)) ?? _keyboardKeysTargets.First();
@@ -391,7 +442,15 @@ namespace HandheldCompanion.ViewModels
             else if (actionType == ActionType.Mouse)
             {
                 if (Action is null || Action is not MouseActions)
-                    Action = new MouseActions() { pressType = fallbackPressType };
+                {
+                    Action = new MouseActions()
+                    {
+                        pressType = fallbackPressType,
+                        Modifiers = ModifierSet.None,
+                        ShiftSlot = ShiftSlot.Any,
+                        ShiftMatchAny = false
+                    };
+                }
 
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var mouseType in Enum.GetValues<MouseActionsType>().Except(_unsupportedMouseActionTypes))
@@ -414,7 +473,14 @@ namespace HandheldCompanion.ViewModels
             else if (actionType == ActionType.Trigger)
             {
                 if (Action is null || Action is not TriggerActions)
-                    Action = new TriggerActions() { motionThreshold = 125 };
+                {
+                    Action = new TriggerActions()
+                    {
+                        motionThreshold = 125,
+                        ShiftSlot = ShiftSlot.Any,
+                        ShiftMatchAny = false
+                    };
+                }
 
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var axis in controller.GetTargetTriggers())

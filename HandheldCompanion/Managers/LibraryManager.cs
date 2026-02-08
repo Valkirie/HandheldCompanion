@@ -232,9 +232,9 @@ namespace HandheldCompanion.Managers
                                 Heroes = heroes,
                                 Grids = grids,
                                 Logos = logos,
-                                Hero = heroes.FirstOrDefault(),
-                                Grid = grids.FirstOrDefault(),
-                                Logo = logos.FirstOrDefault(),
+                                Hero = heroes.FirstOrDefault(h => h.Style == SteamGridDbStyles.Official),
+                                Grid = grids.FirstOrDefault(g => g.Style == SteamGridDbStyles.Official),
+                                Logo = logos.FirstOrDefault(l => l.Style == SteamGridDbStyles.Official),
                             };
 
                             lock (entries)

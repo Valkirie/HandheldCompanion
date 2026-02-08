@@ -299,9 +299,51 @@ namespace HandheldCompanion.Actions
                 case MouseActionsType.Scroll:
                     ExecuteAxis(layout, touched, shiftSlot, delta);
                     break;
+                case MouseActionsType.MoveTo:
+                    ExecuteAxisMoveTo(layout, touched, shiftSlot, delta);
+                    break;
                 default:
                     ExecuteButton(layout, touched, shiftSlot, delta);
                     break;
+            }
+        }
+
+        private void ExecuteAxisMoveTo(AxisLayout layout, bool touched, ShiftSlot shiftSlot, float delta)
+        {
+            bool newTouch = IsNewTouch(touched);
+
+            outVector = layout.vector;
+            base.Execute(layout, shiftSlot, delta);
+
+            // Check if axis has moved beyond threshold
+            float threshold = motionThreshold / short.MaxValue;
+            bool hasMovement = outVector.Length() > threshold;
+
+            if (hasMovement && !IsCursorDown)
+            {
+                // Trigger MoveTo on movement
+                IsCursorDown = true;
+
+                // Store current mouse position if restore is enabled
+                if (MoveToPrevious && !MoveToPreviousPending)
+                {
+                    MoveToPreviousX = MouseSimulator.MouseX;
+                    MoveToPreviousY = MouseSimulator.MouseY;
+                    MoveToPreviousPending = true;
+                }
+
+                MouseSimulator.MoveTo(MoveToX, MoveToY);
+            }
+            else if (!hasMovement && IsCursorDown)
+            {
+                // Restore previous position when axis returns to center
+                IsCursorDown = false;
+
+                if (MoveToPrevious && MoveToPreviousPending)
+                {
+                    MouseSimulator.MoveTo(MoveToPreviousX, MoveToPreviousY);
+                    MoveToPreviousPending = false;
+                }
             }
         }
     }

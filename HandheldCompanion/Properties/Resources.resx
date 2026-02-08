@@ -401,7 +401,7 @@
     <value>PlayStation DualSense</value>
   </data>
   <data name="OverlayPage_EmulatedController" xml:space="preserve">
-    <value>Emulated controller</value>
+    <value>virtual controller</value>
   </data>
   <data name="OverlayPage_FaceCamera" xml:space="preserve">
     <value>Face camera</value>
@@ -786,11 +786,11 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
     <value>Update profile</value>
   </data>
-  <data name="ProfilesPage_Whitelist" xml:space="preserve">
+  <data name="ProfilesPage_WhitelistDesc" xml:space="preserve">
     <value>Allow the application to access device physical controller</value>
   </data>
   <data name="ProfilesPage_Wrapper" xml:space="preserve">
-    <value>Extended compatibility (XInputPlus)</value>
+    <value>Extended compatibility</value>
   </data>
   <data name="ProfilesPage_Yaw" xml:space="preserve">
     <value>Yaw</value>
@@ -1108,7 +1108,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Display and hide Windows Action center</value>
   </data>
   <data name="ProfilesPage_ControllerLayout" xml:space="preserve">
-    <value>Controller layout</value>
+    <value>Controller mapping</value>
   </data>
   <data name="Hotkey_QuietModeToggled" xml:space="preserve">
     <value>Fan override</value>
@@ -1471,7 +1471,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>The level of information for your battery.</value>
   </data>
   <data name="ProfilesPage_ControllerLayoutDesc" xml:space="preserve">
-    <value>Change the virtual controller layout</value>
+    <value>Change how buttons, sticks, triggers, and gyro translate into in-game actions</value>
   </data>
   <data name="ProfilesPage_CPU" xml:space="preserve">
     <value>CPU</value>
@@ -1627,7 +1627,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Emulated DualShock 4 controller</value>
   </data>
   <data name="Enum_HIDmode_NoController" xml:space="preserve">
-    <value>No emulated controller</value>
+    <value>No virtual controller</value>
   </data>
   <data name="Enum_HIDmode_Xbox360Controller" xml:space="preserve">
     <value>Emulated XBOX 360 controller</value>
@@ -2193,6 +2193,15 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="MainWindow_Select" xml:space="preserve">
     <value>Select</value>
   </data>
+  <data name="MainWindow_Toggle" xml:space="preserve">
+    <value>Toggle</value>
+  </data>
+  <data name="MainWindow_Layout" xml:space="preserve">
+    <value>Layout</value>
+  </data>
+  <data name="MainWindow_Play" xml:space="preserve">
+    <value>Play</value>
+  </data>
   <data name="Hint_SteamInputReadme" xml:space="preserve">
     <value>Handheld Companion will disable Steam Input and restart Steam</value>
   </data>
@@ -2376,9 +2385,6 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="ProfilesPage_DeletePowerProfileButton" xml:space="preserve">
     <value>Delete power preset</value>
   </data>
-  <data name="MainWindow_Toggle" xml:space="preserve">
-    <value>Toggle</value>
-  </data>
   <data name="XInputController_Warning_USB" xml:space="preserve">
     <value>Please wait a moment while we power cycle your controller.</value>
   </data>
@@ -2419,13 +2425,13 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>M2</value>
   </data>
   <data name="Hotkey_ChangeHIDMode" xml:space="preserve">
-    <value>Toggle emulated controller type</value>
+    <value>Toggle virtual controller type</value>
   </data>
   <data name="Hotkey_ChangeHIDModeDesc" xml:space="preserve">
-    <value>Toggle between Xbox 360 and Dualshock 4 emulated controllers</value>
+    <value>Toggle between Xbox 360 and Dualshock 4 virtual controllers</value>
   </data>
   <data name="ProfilesPage_EmulatedController" xml:space="preserve">
-    <value>Emulated controller type</value>
+    <value>Controller type</value>
   </data>
   <data name="ProfilesPage_EmulatedControllerDefault" xml:space="preserve">
     <value>Default</value>
@@ -2437,13 +2443,13 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Emulated XBOX 360 controller</value>
   </data>
   <data name="ProfilesPage_EmulatedControllerDesc" xml:space="preserve">
-    <value>The emulated controller to be used when this profile is active</value>
+    <value>Change the virtual controller type when profile is active</value>
   </data>
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
-    <value>Controller management (Experimental)</value>
+    <value>Controller management</value>
   </data>
   <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
-    <value>Automatically manage controller order for greater compatibility</value>
+    <value>Manage controllers order for greater compatibility</value>
   </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
     <value>Touchpad passthrough</value>
@@ -2482,13 +2488,13 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>You have no notifications right now.</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileAction" xml:space="preserve">
-    <value>Go to profiles settings to change per-game emulated controller type preference.</value>
+    <value>Go to profiles settings to change per-game virtual controller type preference.</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileDesc" xml:space="preserve">
-    <value>The emulated controller type is being managed by the currently applied game profile.</value>
+    <value>The virtual controller type is being managed by the currently applied game profile.</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileWarning" xml:space="preserve">
-    <value>Emulated controller is managed by profile</value>
+    <value>virtual controller is managed by profile</value>
   </data>
   <data name="Hint_CoreIsolationCheck" xml:space="preserve">
     <value>Core isolation features are turned on</value>
@@ -2862,27 +2868,6 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="SettingsPage_TelemetryDesc" xml:space="preserve">
     <value>Enabled telemetry data to be automatically be sent in case of a crash</value>
   </data>
-  <data name="ControllerPage_ControllerManagement_Content" xml:space="preserve">
-    <value>Initializing controller reconfiguration... Please wait.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt0" xml:space="preserve">
-    <value>We are reordering controllers to improve game compatibility. Please wait a moment.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Success" xml:space="preserve">
-    <value>Controller reordering complete. Thank you for your patience.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Failed" xml:space="preserve">
-    <value>We've failed to reorder your controllers. For maximum compatibility, we encourage you to restart Handheld Companion.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt3" xml:space="preserve">
-    <value>One last attempt to reorder controllers. We're doing everything we can!</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt2" xml:space="preserve">
-    <value>Almost there! We're making another adjustment to optimize controller settings.</value>
-  </data>
-  <data name="ControllerPage_ControllerManagement_Attempt1" xml:space="preserve">
-    <value>Adjustments are still in progress. We'll get this right for your games.</value>
-  </data>
   <data name="SettingsPage_ScreenRotation_FlippedLandscape" xml:space="preserve">
     <value>Flipped Landscape</value>
   </data>
@@ -3171,9 +3156,6 @@ Thank you for using HC and helping us make it better.</value>
   <data name="Controller_Calibrate" xml:space="preserve">
     <value>Calibrate</value>
   </data>
-  <data name="ControllerPage_ControllerManagement_Attempt" xml:space="preserve">
-    <value>Attempt {0}: </value>
-  </data>
   <data name="DevicePage_BatteryOptions" xml:space="preserve">
     <value>Battery options</value>
   </data>
@@ -3205,7 +3187,7 @@ Thank you for using HC and helping us make it better.</value>
     <value>Experimental options</value>
   </data>
   <data name="ProfilesPage_SuspendOnSleep" xml:space="preserve">
-    <value>Suspend and resume the application when the system enters or exits standby state</value>
+    <value>Suspend and resume with standby state</value>
   </data>
   <data name="OverlayPage_OnScreenDisplayOptions" xml:space="preserve">
     <value>On-screen display options</value>
@@ -3256,7 +3238,7 @@ Thank you for using HC and helping us make it better.</value>
     <value>Show in library</value>
   </data>
   <data name="ProfilesPage_ShowInLibraryDesc" xml:space="preserve">
-    <value>Enable to show the profile listed in the library</value>
+    <value>Display profile on library page</value>
   </data>
   <data name="ProfilesPage_Library_Title" xml:space="preserve">
     <value>Library settings</value>
@@ -3535,10 +3517,10 @@ Thank you for using HC and helping us make it better.</value>
     <value>Windows settings</value>
   </data>
   <data name="ProfilesPage_SuspendOnOverlay" xml:space="preserve">
-    <value>Suspend on overlay</value>
+    <value>Suspend with quicktools sidebar</value>
   </data>
   <data name="ProfilesPage_SuspendOnOverlayDesc" xml:space="preserve">
-    <value>Pauses the active game or foreground application whenever the QuickTools sidebar is displayed.</value>
+    <value>Pauses the active application whenever the quicktools sidebar is displayed</value>
   </data>
   <data name="ProfilesPage_WindowsSettingsDesc" xml:space="preserve">
     <value>Manage windows associated with profile</value>
@@ -4072,7 +4054,7 @@ Thank you for using HC and helping us make it better.</value>
     <value>Use negative values (-mV) to undervolt. Any option other than 0 can lead to system instability or crashes.</value>
   </data>
   <data name="Hotkey_ChangeHIDStatus" xml:space="preserve">
-    <value>Toggle emulated controller status</value>
+    <value>Toggle virtual controller status</value>
   </data>
   <data name="Hotkey_ChangeHIDStatusDesc" xml:space="preserve">
     <value>Toggle between Connected and Disconnected</value>
@@ -4100,5 +4082,26 @@ Thank you for using HC and helping us make it better.</value>
   </data>
   <data name="DevicePage_GoBackToSleepDesc" xml:space="preserve">
     <value>If the device wakes from Modern Standby for any reason other than the power button, it will be sent back to sleep.</value>
+  </data>
+  <data name="ProfilesPage_Whitelist" xml:space="preserve">
+    <value>Controller passthrough</value>
+  </data>
+  <data name="ProfilesPage_SharpeningScale" xml:space="preserve">
+    <value>Sharpening scale</value>
+  </data>
+  <data name="ProfilesPage_WrapperDesc" xml:space="preserve">
+    <value>Improve compatibility by applying XInputPlus</value>
+  </data>
+  <data name="ProfilesPage_SuspendOnSleepDesc" xml:space="preserve">
+    <value>Pause the active application when the system enters or exits standby state</value>
+  </data>
+  <data name="ProfilesPage_LibrarySettings" xml:space="preserve">
+    <value>Library settings</value>
+  </data>
+  <data name="ProfilesPage_LibraryDownload" xml:space="preserve">
+    <value>Browse libary</value>
+  </data>
+  <data name="ControllerPage_ControllerSettings" xml:space="preserve">
+    <value>Controller settings</value>
   </data>
 </root>

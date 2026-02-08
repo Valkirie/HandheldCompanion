@@ -770,11 +770,11 @@
   <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
     <value>更新配置</value>
   </data>
-  <data name="ProfilesPage_Whitelist" xml:space="preserve">
+  <data name="ProfilesPage_WhitelistDesc" xml:space="preserve">
     <value>允许程序取得实体手柄输入信号</value>
   </data>
   <data name="ProfilesPage_Wrapper" xml:space="preserve">
-    <value>扩展兼容性 (XInputPlus)</value>
+    <value>扩展兼容性</value>
   </data>
   <data name="ProfilesPage_Yaw" xml:space="preserve">
     <value>垂直（Y轴）</value>
@@ -2171,6 +2171,15 @@
   <data name="MainWindow_Select" xml:space="preserve">
     <value>选择</value>
   </data>
+  <data name="MainWindow_Toggle" xml:space="preserve">
+    <value>Toggle</value>
+  </data>
+  <data name="MainWindow_Layout" xml:space="preserve">
+    <value>布局</value>
+  </data>
+  <data name="MainWindow_Play" xml:space="preserve">
+    <value>播放</value>
+  </data>
   <data name="Hint_SteamInputReadme" xml:space="preserve">
     <value>停用 Steam 输入并重新启动 Steam</value>
   </data>
@@ -2354,9 +2363,6 @@
   <data name="ProfilesPage_DeletePowerProfileButton" xml:space="preserve">
     <value>Delete power preset</value>
   </data>
-  <data name="MainWindow_Toggle" xml:space="preserve">
-    <value>Toggle</value>
-  </data>
   <data name="XInputController_Warning_USB" xml:space="preserve">
     <value>Please wait a moment while we power cycle your controller.</value>
   </data>
@@ -2419,9 +2425,6 @@
   </data>
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
     <value>手柄管理</value>
-  </data>
-  <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
-    <value>自动管理手柄以提高兼容性</value>
   </data>
   <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
     <value>触摸板直通</value>

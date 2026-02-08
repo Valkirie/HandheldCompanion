@@ -201,15 +201,29 @@
             <!--  Advanced options  -->
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Advanced options" />
             <ikw:SimpleStackPanel Spacing="3">
-                <!--  Toast notification  -->
+                <!--  Toast notification  (Not implemented)  -->
                 <ui:SettingsCard
                     Description="Monitor external changes to GPU settings and automatically restore preferred configuration"
                     Header="GPU-Settings monitoring"
-                    IsEnabled="False">
+                    IsEnabled="False"
+                    Visibility="Collapsed">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.History}" />
                     </ui:SettingsCard.HeaderIcon>
                     <ui:ToggleSwitch Name="Toggle_GPUMonitor" Toggled="Toggle_GPUMonitor_Toggled" />
+                </ui:SettingsCard>
+
+                <!--  Master Timer  -->
+                <ui:SettingsCard Description="Controller update rate. A higher rate improves responsiveness but increases CPU usage" Header="Update rate">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Stopwatch}" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox Name="cB_MasterInterval" SelectionChanged="cB_MasterInterval_SelectionChanged">
+                        <ComboBoxItem Content="125 Hz" />
+                        <ComboBoxItem Content="250 Hz" />
+                        <ComboBoxItem Content="500 Hz" />
+                        <ComboBoxItem Content="1000 Hz" />
+                    </ComboBox>
                 </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 

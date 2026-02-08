@@ -797,6 +797,26 @@ namespace HandheldCompanion.Controllers
             return SourceAxis.Any(axis.Contains);
         }
 
+        public bool HasTargetButton(ButtonFlags button)
+        {
+            return TargetButtons.Contains(button);
+        }
+
+        public bool HasTargetButton(List<ButtonFlags> buttons)
+        {
+            return TargetButtons.Any(buttons.Contains);
+        }
+
+        public bool HasTargetAxis(AxisLayoutFlags axis)
+        {
+            return TargetAxis.Contains(axis);
+        }
+
+        public bool HasTargetAxis(List<AxisLayoutFlags> axis)
+        {
+            return TargetAxis.Any(axis.Contains);
+        }
+
         public string GetButtonName(ButtonFlags button)
         {
             return GetLocalizedName(button);
