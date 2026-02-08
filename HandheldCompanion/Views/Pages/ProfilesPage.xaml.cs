@@ -728,6 +728,16 @@ public partial class ProfilesPage : Page
         UpdateProfile();
     }
 
+    private void b_ProfileLike_Click(object sender, RoutedEventArgs e)
+    {
+        // prevent update loop
+        if (profileLock.IsEntered())
+            return;
+
+        selectedProfile.IsLiked = (bool)b_ProfileLike.IsChecked;
+        UpdateProfile();
+    }
+
     private void cB_Wrapper_SelectionChanged(object sender, RoutedEventArgs e)
     {
         if (cB_Wrapper.SelectedIndex == -1)
@@ -1444,6 +1454,19 @@ public partial class ProfilesPage : Page
             return;
 
         selectedProfile.SuspendOnQT = CheckBox_SuspendOnQT.IsChecked ?? false;
+        UpdateProfile();
+    }
+
+    private void tB_ProfileLaunchString_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // prevent update loop
+        if (profileLock.IsEntered())
+            return;
+
+        selectedProfile.LaunchString = tB_ProfileLaunchString.Text;
         UpdateProfile();
     }
 

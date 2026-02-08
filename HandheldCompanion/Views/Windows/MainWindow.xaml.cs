@@ -1049,6 +1049,46 @@ public partial class MainWindow : GamepadWindow
         });
     }
 
+    private void GamepadUIMore_Click(object sender, RoutedEventArgs e)
+    {
+        Task.Run(async () =>
+        {
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.Start, true, false);
+            await Task.Delay(40);
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.Start, false, true);
+        });
+    }
+
+    private void GamepadUISelect_Click(object sender, RoutedEventArgs e)
+    {
+        Task.Run(async () =>
+        {
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B1, true, false);
+            await Task.Delay(40);
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B1, false, true);
+        });
+    }
+
+    private void GamepadUIBack_Click(object sender, RoutedEventArgs e)
+    {
+        Task.Run(async () =>
+        {
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B2, true, false);
+            await Task.Delay(40);
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B2, false, true);
+        });
+    }
+
+    private void GamepadUIToggle_Click(object sender, RoutedEventArgs e)
+    {
+        Task.Run(async () =>
+        {
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B4, true, false);
+            await Task.Delay(40);
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B4, false, true);
+        });
+    }
+
     private void On_Navigated(object sender, NavigationEventArgs e)
     {
         if (ContentFrame.SourcePageType is not null)
