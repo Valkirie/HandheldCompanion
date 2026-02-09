@@ -43,7 +43,7 @@
 #define NewDirectXVersion      "9.29.1974"
 #define NewViGemVersion        "1.22.0.0"
 #define NewHidHideVersion      "1.5.230"
-#define NewRtssVersion         "7.3.5.28010"
+#define NewRtssVersion         "7.3.5.28314"
 #define NewPawnIOVersion       "2.0.1.0"
 
 #define DirectXDownloadLink    "https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe"
