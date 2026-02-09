@@ -220,7 +220,7 @@ public class RTSSPlatform : IPlatform
         {
             try
             {
-                appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None && x.ProcessId == processId).FirstOrDefault();
+                appEntry = OSD.GetAppEntries(AppFlags.MASK).FirstOrDefault(x => x.ProcessId == processId);
             }
             catch (FileNotFoundException) { return; }
             catch { }
@@ -301,7 +301,7 @@ public class RTSSPlatform : IPlatform
         int processId = appEntry is not null ? appEntry.ProcessId : 0;
         try
         {
-            appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None).FirstOrDefault(a => a.ProcessId == processId);
+            appEntry = OSD.GetAppEntries(AppFlags.MASK).FirstOrDefault(a => a.ProcessId == processId);
         }
         catch (FileNotFoundException) { }
     }
@@ -336,7 +336,7 @@ public class RTSSPlatform : IPlatform
             if (appEntry is null)
                 return 0.0d;
 
-            return (double)appEntry.InstantaneousFrameTime / 1000;
+            return (double)appEntry.InstantaneousFrameTime.TotalMilliseconds / 1000;
         }
         catch (InvalidDataException)
         { }
