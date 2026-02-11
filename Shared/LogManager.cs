@@ -68,7 +68,7 @@ public static class LogManager
 
     public static void LogTrace(string message, params object[] args)
     {
-        Trace.TraceInformation(message, args);
+        // Trace.TraceInformation(message, args);
         logger.LogTrace(message, args);
     }
 }

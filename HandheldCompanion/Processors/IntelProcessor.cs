@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Processors.AMD;
 using HandheldCompanion.Processors.Intel;
 using System;
 using static HandheldCompanion.Processors.Intel.KX;
@@ -109,6 +110,21 @@ namespace HandheldCompanion.Processors
 
                 base.SetTDPLimit(type, limit, immediate, result);
             }
+        }
+
+        public override uint GetTDPLimit(PowerType type)
+        {
+            float value = 0.0f;
+            switch (type)
+            {
+                case PowerType.Slow:
+                    value = platform.get_long_limit(false);
+                    break;
+                case PowerType.Fast:
+                    value = platform.get_short_limit(false);
+                    break;
+            }
+            return (uint)value;
         }
 
         public void SetMSRLimit(double PL1, double PL2)

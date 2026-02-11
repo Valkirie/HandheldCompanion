@@ -1,13 +1,11 @@
 using HandheldCompanion.Devices;
 using HandheldCompanion.Processors.AMD;
-using System;
 
 namespace HandheldCompanion.Processors;
 
 public class AMDProcessor : Processor
 {
-    public readonly RyzenFamily family;
-    public readonly IntPtr ry = IntPtr.Zero;
+    public RyzenSmuService ryzenSmuService = new();
 
     public bool HasAllCoreCurve = false;
     public bool HasPerCoreCurve = false;
@@ -15,111 +13,15 @@ public class AMDProcessor : Processor
 
     public AMDProcessor()
     {
-        try
-        {
-            ry = RyzenAdj.init_ryzenadj();
-        }
-        catch { /* ignore */ }
-
-        if (ry == IntPtr.Zero)
+        if (!ryzenSmuService.Initialize())
             return;
 
-        family = RyzenAdj.get_cpu_family(ry);
-        switch (family)
-        {
-            case RyzenFamily.FAM_RENOIR:
-            case RyzenFamily.FAM_LUCIENNE:
-            case RyzenFamily.FAM_CEZANNE:
-            case RyzenFamily.FAM_VANGOGH:
-            case RyzenFamily.FAM_REMBRANDT:
-            case RyzenFamily.FAM_MENDOCINO:
-            case RyzenFamily.FAM_PHOENIX:
-            case RyzenFamily.FAM_HAWKPOINT:
-            case RyzenFamily.FAM_KRACKANPOINT:
-            case RyzenFamily.FAM_STRIXPOINT:
-            case RyzenFamily.FAM_STRIXHALO:
-            case RyzenFamily.FAM_DRAGONRANGE:
-            case RyzenFamily.FAM_FIRERANGE:
-                CanChangeGPU = true;
-                break;
-        }
+        CanChangeTDP = ryzenSmuService.CanSetTDP();
+        CanChangeGPU = ryzenSmuService.CanSetGfxClk();
 
-        switch (family)
-        {
-            default:
-                CanChangeTDP = false;
-                break;
-
-            case RyzenFamily.FAM_RAVEN:
-            case RyzenFamily.FAM_PICASSO:
-            case RyzenFamily.FAM_DALI:
-            case RyzenFamily.FAM_RENOIR:
-            case RyzenFamily.FAM_LUCIENNE:
-            case RyzenFamily.FAM_CEZANNE:
-            case RyzenFamily.FAM_VANGOGH:
-            case RyzenFamily.FAM_REMBRANDT:
-            case RyzenFamily.FAM_MENDOCINO:
-            case RyzenFamily.FAM_PHOENIX:
-            case RyzenFamily.FAM_HAWKPOINT:
-            case RyzenFamily.FAM_KRACKANPOINT: /* Added to debug on KRK, STX, & STXH */
-            case RyzenFamily.FAM_STRIXPOINT:
-            case RyzenFamily.FAM_STRIXHALO:
-                CanChangeTDP = true;
-                break;
-        }
-
-        switch (family)
-        {
-            case RyzenFamily.FAM_CEZANNE:
-            case RyzenFamily.FAM_RENOIR:
-            case RyzenFamily.FAM_LUCIENNE:
-            case RyzenFamily.FAM_REMBRANDT:
-            case RyzenFamily.FAM_VANGOGH:
-            case RyzenFamily.FAM_PHOENIX:
-            case RyzenFamily.FAM_HAWKPOINT:
-            case RyzenFamily.FAM_KRACKANPOINT:
-            case RyzenFamily.FAM_STRIXPOINT:
-            case RyzenFamily.FAM_STRIXHALO:
-            case RyzenFamily.FAM_DRAGONRANGE:
-            case RyzenFamily.FAM_FIRERANGE:
-                HasAllCoreCurve = true;
-                break;
-        }
-
-        switch (family)
-        {
-            case RyzenFamily.FAM_CEZANNE:
-            case RyzenFamily.FAM_RENOIR:
-            case RyzenFamily.FAM_LUCIENNE:
-            case RyzenFamily.FAM_REMBRANDT:
-            case RyzenFamily.FAM_VANGOGH:
-            case RyzenFamily.FAM_PHOENIX:
-            case RyzenFamily.FAM_HAWKPOINT:
-            case RyzenFamily.FAM_KRACKANPOINT:
-            case RyzenFamily.FAM_STRIXPOINT:
-            case RyzenFamily.FAM_STRIXHALO:
-            case RyzenFamily.FAM_DRAGONRANGE:
-            case RyzenFamily.FAM_FIRERANGE:
-                HasPerCoreCurve = true;
-                break;
-        }
-
-        switch (family)
-        {
-            case RyzenFamily.FAM_CEZANNE:
-            case RyzenFamily.FAM_RENOIR:
-            case RyzenFamily.FAM_LUCIENNE:
-            case RyzenFamily.FAM_REMBRANDT:
-            case RyzenFamily.FAM_VANGOGH:
-            case RyzenFamily.FAM_PHOENIX:
-            case RyzenFamily.FAM_HAWKPOINT:
-                HasGpuCurve = true;
-                break;
-        }
-
-        HasAllCoreCurve = SetCoAll(0);
-        HasPerCoreCurve = SetCoPer(0);
-        HasGpuCurve = SetCoGfx(0);
+        HasAllCoreCurve = ryzenSmuService.CanSetCoAll();
+        HasPerCoreCurve = ryzenSmuService.CanSetCoPer();
+        HasGpuCurve = ryzenSmuService.CanSetCoGfx();
 
         // check capabilities
         CanChangeTDP |= HasOEMCPU;
@@ -152,26 +54,41 @@ public class AMDProcessor : Processor
             }
             else
             {
-                if (ry != IntPtr.Zero)
+                // RyzenAdj use mW
+                switch (type)
                 {
-                    // RyzenAdj use mW
-                    switch (type)
-                    {
-                        case PowerType.Fast:
-                            result = RyzenAdj.set_fast_limit(ry, (uint)(limit * 1000.0d));
-                            break;
-                        case PowerType.Slow:
-                            result = RyzenAdj.set_slow_limit(ry, (uint)(limit * 1000.0d));
-                            break;
-                        case PowerType.Stapm:
-                            result = RyzenAdj.set_stapm_limit(ry, (uint)(limit * 1000.0d));
-                            break;
-                    }
+                    case PowerType.Fast:
+                        result = ryzenSmuService.SetFastLimit((uint)limit) ? 0 : -1;
+                        break;
+                    case PowerType.Slow:
+                        result = ryzenSmuService.SetSlowLimit((uint)limit) ? 0 : -1;
+                        break;
+                    case PowerType.Stapm:
+                        result = ryzenSmuService.SetStapmLimit((uint)limit) ? 0 : -1;
+                        break;
                 }
             }
 
             base.SetTDPLimit(type, limit, immediate, result);
         }
+    }
+
+    public override uint GetTDPLimit(PowerType type)
+    {
+        float value = 0.0f;
+        switch(type)
+        {
+            case PowerType.Slow:
+                ryzenSmuService.TryGetSlowLimit(out value);
+                break;
+            case PowerType.Stapm:
+                ryzenSmuService.TryGetStapmLimit(out value);
+                break;
+            case PowerType.Fast:
+                ryzenSmuService.TryGetFastLimit(out value);
+                break;
+        }
+        return (uint)value;
     }
 
     public override void SetGPUClock(double clock, int result)
@@ -193,30 +110,27 @@ public class AMDProcessor : Processor
             }
             else
             {
-                if (ry != IntPtr.Zero)
+                switch (ryzenSmuService.CpuCodeName)
                 {
-                    switch (family)
-                    {
-                        case RyzenFamily.FAM_RAVEN:
-                        case RyzenFamily.FAM_PICASSO:
-                        case RyzenFamily.FAM_DALI:
-                        case RyzenFamily.FAM_LUCIENNE:
-                            {
-                                result = RyzenAdj.set_min_gfxclk_freq(ry, (uint)(restore ? IDevice.GetCurrent().GfxClock[0] : clock));
-                                result = RyzenAdj.set_max_gfxclk_freq(ry, (uint)(restore ? IDevice.GetCurrent().GfxClock[1] : clock));
-                            }
-                            break;
+                    case CpuCodeName.RavenRidge:
+                    case CpuCodeName.Picasso:
+                    //case CpuCodeName.Dali:
+                    case CpuCodeName.Lucienne:
+                        {
+                            result = ryzenSmuService.SetMinGfxClkFreq((uint)(restore ? IDevice.GetCurrent().GfxClock[0] : clock)) ? 0 : -1;
+                            result = ryzenSmuService.SetMaxGfxClkFreq((uint)(restore ? IDevice.GetCurrent().GfxClock[1] : clock)) ? 0 : -1;
+                        }
+                        break;
 
-                        default:
-                            {
-                                // you can't restore default frequency on AMD GPUs
-                                if (restore)
-                                    return;
+                    default:
+                        {
+                            // you can't restore default frequency on AMD GPUs
+                            if (restore)
+                                return;
 
-                                result = RyzenAdj.set_gfx_clk(ry, (uint)clock);
-                            }
-                            break;
-                    }
+                            result = ryzenSmuService.SetGfxClk((uint)clock) ? 0 : -1;
+                        }
+                        break;
                 }
             }
 
@@ -231,11 +145,7 @@ public class AMDProcessor : Processor
             if (!HasAllCoreCurve)
                 return false;
 
-            RyzenError error = RyzenError.ADJ_ERR_FAM_UNSUPPORTED;
-            if (ry != IntPtr.Zero)
-                error = RyzenAdj.set_coall(ry, RyzenAdj.EncodeCurveOffset(steps));
-
-            return error == RyzenError.ADJ_ERR_SUCCESS;
+            return ryzenSmuService.SetCoAll(steps);
         }
     }
 
@@ -246,11 +156,7 @@ public class AMDProcessor : Processor
             if (!HasPerCoreCurve)
                 return false;
 
-            RyzenError error = RyzenError.ADJ_ERR_FAM_UNSUPPORTED;
-            if (ry != IntPtr.Zero)
-                error = RyzenAdj.set_coper(ry, RyzenAdj.EncodeCurveOffset(steps));
-
-            return error == RyzenError.ADJ_ERR_SUCCESS;
+            return ryzenSmuService.SetCoPer(steps);
         }
     }
 
@@ -261,11 +167,7 @@ public class AMDProcessor : Processor
             if (!HasGpuCurve)
                 return false;
 
-            RyzenError error = RyzenError.ADJ_ERR_FAM_UNSUPPORTED;
-            if (ry != IntPtr.Zero)
-                error = RyzenAdj.set_cogfx(ry, RyzenAdj.EncodeCurveOffset(steps));
-
-            return error == RyzenError.ADJ_ERR_SUCCESS;
+            return ryzenSmuService.SetCoGfx(steps);
         }
     }
 }

@@ -12,7 +12,7 @@
     <StartupObject>HandheldCompanion.App</StartupObject>
     <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-    <Version>0.28.3.4</Version>
+    <Version>0.28.4.0</Version>
     <Platforms>x64</Platforms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
@@ -128,6 +128,7 @@
     <None Remove="Resources\MainBody.mtl" />
     <None Remove="Resources\MainBody.obj" />
     <None Remove="Resources\msiapcfg.dll" />
+    <None Remove="Resources\PawnIO\RyzenSMU.bin" />
     <None Remove="Resources\Screen.mtl" />
     <None Remove="Resources\Screen.obj" />
     <None Remove="Resources\seguiemj.ttf" />
@@ -147,6 +148,10 @@
     </Content>
     <Content Include="Resources\icon.ico" />
     <Content Include="Resources\xinput1_x64.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\PawnIO\RyzenSMU.bin" />
   </ItemGroup>
 
   <ItemGroup>
@@ -2344,9 +2349,6 @@
     <None Update="Resources\Intel\KX\KX.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\libryzenadj.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Resources\PromptFont.otf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -2399,9 +2401,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="vcruntime140_1d.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="WinRing0x64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="WinRing0x64.sys">

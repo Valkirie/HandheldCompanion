@@ -84,4 +84,9 @@ public class Processor
 
         LogManager.LogDebug("User requested GPU clock: {0}, error code: {1}", clock, result);
     }
+
+    public virtual uint GetTDPLimit(PowerType type)
+    {
+        return 0;
+    }
 }
