@@ -124,6 +124,10 @@ public static class PerformanceManager
         if (IsInitialized)
             return;
 
+        // temporary values
+        TDPMin = IDevice.GetCurrent().cTDP[0];
+        TDPMax = IDevice.GetCurrent().cTDP[1];
+
         // initialize watchdog(s)
         cpuWatchdog.Start();
 
@@ -243,14 +247,26 @@ public static class PerformanceManager
         {
             case "ConfigurableTDPOverrideDown":
                 {
-                    TDPMin = Convert.ToDouble(value);
+                    double TDPmin = Convert.ToDouble(value);
+                    if (TDPmin == 0 || TDPMin > TDPMax)
+                        return;
+
+                    // update value
+                    TDPMin = TDPmin;
+
                     if (AutoTDPMax != 0d && AutoTDPMax < TDPMin)
                         AutoTDPMax = TDPMin;
                 }
                 break;
             case "ConfigurableTDPOverrideUp":
                 {
-                    TDPMax = Convert.ToDouble(value);
+                    double TDPmax = Convert.ToDouble(value);
+                    if (TDPmax == 0 || TDPMax < TDPMin)
+                        return;
+
+                    // update value
+                    TDPMax = TDPmax;
+
                     if (AutoTDPMax == 0d || AutoTDPMax > TDPMax)
                         AutoTDPMax = TDPMax;
                 }
