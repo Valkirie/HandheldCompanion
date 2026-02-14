@@ -108,7 +108,7 @@
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEE40;" />
                     </ui:SettingsCard.HeaderIcon>
-                    <ui:ToggleSwitch Name="Toggle_Background" Toggled="Toggle_Background_Toggled" />
+                    <ui:ToggleSwitch Name="Toggle_StartMinimized" Toggled="Toggle_StartMinimized_Toggled" />
                 </ui:SettingsCard>
 
                 <!--  Close minimizes  -->
@@ -125,6 +125,14 @@
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEA6C;" />
                     </ui:SettingsCard.HeaderIcon>
                     <ui:ToggleSwitch Name="Toggle_DesktopLayoutOnStart" Toggled="Toggle_DesktopLayoutOnStart_Toggled" />
+                </ui:SettingsCard>
+
+                <!--  Fullscreen on launch  -->
+                <ui:SettingsCard Description="Open Handheld Companion in fullscreen mode on startup." Header="Fullscreen on launch">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE740;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="Toggle_StartMaximized" Toggled="Toggle_StartMaximized_Toggled" />
                 </ui:SettingsCard>
 
                 <!--  Application theme  -->

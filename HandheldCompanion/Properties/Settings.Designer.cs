@@ -1509,5 +1509,17 @@ namespace HandheldCompanion.Properties
                 this["MasterInterval"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool StartMaximized {
+            get {
+                return ((bool)(this["StartMaximized"]));
+            }
+            set {
+                this["StartMaximized"] = value;
+            }
+        }
     }
 }
