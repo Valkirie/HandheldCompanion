@@ -19,9 +19,9 @@ public class AMDProcessor : Processor
         CanChangeTDP = ryzenSmuService.CanSetTDP();
         CanChangeGPU = ryzenSmuService.CanSetGfxClk();
 
-        HasAllCoreCurve = ryzenSmuService.CanSetCoAll();
-        HasPerCoreCurve = ryzenSmuService.CanSetCoPer();
-        HasGpuCurve = ryzenSmuService.CanSetCoGfx();
+        HasAllCoreCurve = ryzenSmuService.CanSetCoAll() && ryzenSmuService.SetCoAll(0);
+        HasPerCoreCurve = ryzenSmuService.CanSetCoPer() && ryzenSmuService.SetCoPer(0);
+        HasGpuCurve = ryzenSmuService.CanSetCoGfx() && ryzenSmuService.SetCoGfx(0);
 
         // check capabilities
         CanChangeTDP |= HasOEMCPU;
