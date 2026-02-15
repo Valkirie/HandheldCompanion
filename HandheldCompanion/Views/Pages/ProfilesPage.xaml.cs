@@ -31,7 +31,7 @@ namespace HandheldCompanion.Views.Pages;
 /// </summary>
 public partial class ProfilesPage : Page
 {
-    // when set on start cannot be null anymore
+    // when set at startup cannot be null anymore
     public static Profile selectedProfile;
     private static Profile selectedMainProfile;
 

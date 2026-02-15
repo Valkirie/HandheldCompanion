@@ -104,6 +104,7 @@ public partial class MainWindow : GamepadWindow
     private static bool StartMinimized => ManagerFactory.settingsManager.GetBoolean("StartMinimized");
     private static bool StartMaximized => ManagerFactory.settingsManager.GetBoolean("StartMaximized");
     private static bool PreloadPages => ManagerFactory.settingsManager.GetBoolean("PreloadPages");
+    private static bool ShowSplashScreen => ManagerFactory.settingsManager.GetBoolean("ShowSplashScreen");
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
     {
@@ -112,7 +113,8 @@ public partial class MainWindow : GamepadWindow
         DataContext = new MainWindowViewModel();
 
 #if !DEBUG
-        SplashScreen.Show();
+        if (ShowSplashScreen)
+            SplashScreen.Show();
 #endif
 
         // set theme
@@ -488,7 +490,7 @@ public partial class MainWindow : GamepadWindow
         SetState(StartMinimized ? WindowState.Minimized : (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowState"));
         prevWindowState = (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowPrevState");
 
-        // apply fullscreen on startup (unless starting minimized)
+        // apply fullscreen at startup (unless starting minimized)
         if (!StartMinimized && StartMaximized)
             EnterFullscreen();
     }

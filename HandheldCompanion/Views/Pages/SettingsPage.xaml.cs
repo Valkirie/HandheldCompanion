@@ -249,6 +249,9 @@ public partial class SettingsPage : Page
                 case "MasterInterval":
                     cB_MasterInterval.SelectedIndex = Convert.ToInt32(value);
                     break;
+                case "ShowSplashScreen":
+                    Toggle_SplashScreen.IsOn = Convert.ToBoolean(value);
+                    break;
             }
         });
     }
@@ -674,5 +677,14 @@ public partial class SettingsPage : Page
             return;
 
         ManagerFactory.settingsManager.SetProperty("MasterInterval", cB_MasterInterval.SelectedIndex);
+    }
+
+    private void Toggle_SplashScreen_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("ShowSplashScreen", Toggle_SplashScreen.IsOn);
+
     }
 }
