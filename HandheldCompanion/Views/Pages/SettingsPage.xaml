@@ -128,7 +128,7 @@
                 </ui:SettingsCard>
 
                 <!--  Fullscreen at startup  -->
-                <ui:SettingsCard Description="Open Handheld Companion in fullscreen mode at startup." Header="Fullscreen at startup">
+                <ui:SettingsCard Description="Open Handheld Companion in fullscreen mode at startup" Header="Fullscreen at startup">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE740;" />
                     </ui:SettingsCard.HeaderIcon>
