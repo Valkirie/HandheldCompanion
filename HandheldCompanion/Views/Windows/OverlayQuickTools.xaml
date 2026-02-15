@@ -221,6 +221,15 @@
                                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.UpdateRestore}" />
                                             </MenuItem.Icon>
                                         </MenuItem>
+                                        <Separator />
+                                        <MenuItem
+                                            Command="{Binding PowerDropCommand}"
+                                            CommandParameter="Exit"
+                                            Header="Exit HC">
+                                            <MenuItem.Icon>
+                                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.PowerButton}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
                                     </ui:MenuFlyout>
                                 </ui:DropDownButton.Flyout>
                             </ui:DropDownButton>
