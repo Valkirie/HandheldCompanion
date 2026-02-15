@@ -20,8 +20,16 @@ namespace HandheldCompanion.Controllers.Lenovo
         private enum FrontEnum
         {
             None = 0,
-            LegionR = 64,
-            LegionL = 128,
+            LegionR = 0x40,
+            LegionL = 0x80,
+        }
+
+        [Flags]
+        private enum FrontExtra
+        {
+            None = 0,
+            Page = 0x20,
+            Desktop = 0x40,
         }
 
         [Flags]
@@ -30,6 +38,7 @@ namespace HandheldCompanion.Controllers.Lenovo
             None = 0,
             M3 = 4,
             M2 = 8,
+            M1 = 16,
             Y3 = 32,
             Y2 = 64,
             Y1 = 128,
@@ -44,6 +53,7 @@ namespace HandheldCompanion.Controllers.Lenovo
         }
 
         private const byte FRONT_IDX = 18;
+        private const byte EXTRA_IDX = 21;
         private const byte BACK_IDX = 20;
         private const byte TOUCH_IDX = 26;
 
@@ -108,6 +118,10 @@ namespace HandheldCompanion.Controllers.Lenovo
             SourceButtons.Add(ButtonFlags.B6);
             SourceButtons.Add(ButtonFlags.B7);
             SourceButtons.Add(ButtonFlags.B8);
+
+            SourceButtons.Add(ButtonFlags.B9);
+            SourceButtons.Add(ButtonFlags.B10);
+            SourceButtons.Add(ButtonFlags.B11);
 
             // Legion Controllers do not have the Special button
             SourceButtons.Remove(ButtonFlags.Special);
@@ -272,9 +286,14 @@ namespace HandheldCompanion.Controllers.Lenovo
             Inputs.ButtonState[ButtonFlags.L4] = backButton.HasFlag(BackEnum.Y1);
             Inputs.ButtonState[ButtonFlags.L5] = backButton.HasFlag(BackEnum.Y2);
             Inputs.ButtonState[ButtonFlags.B5] = backButton.HasFlag(BackEnum.M2);
-            Inputs.ButtonState[ButtonFlags.B6] = data[BACK_IDX] == 128;   // Scroll click
-            Inputs.ButtonState[ButtonFlags.B7] = data[BACK_IDX + 4] == 129;   // Scroll up
-            Inputs.ButtonState[ButtonFlags.B8] = data[BACK_IDX + 4] == 255;   // Scroll down
+            Inputs.ButtonState[ButtonFlags.B6] = data[BACK_IDX] == 128;             // Scroll click
+            Inputs.ButtonState[ButtonFlags.B7] = data[BACK_IDX + 4] == 129;         // Scroll up
+            Inputs.ButtonState[ButtonFlags.B8] = data[BACK_IDX + 4] == 255;         // Scroll down
+            Inputs.ButtonState[ButtonFlags.B11] = backButton.HasFlag(BackEnum.M1);
+
+            FrontExtra frontExtra = (FrontExtra)data[EXTRA_IDX];
+            Inputs.ButtonState[ButtonFlags.B9] = frontExtra.HasFlag(FrontExtra.Page);
+            Inputs.ButtonState[ButtonFlags.B10] = frontExtra.HasFlag(FrontExtra.Desktop);
 
             // handle touchpad if passthrough is off
             if (!ControllerPassthrough)
@@ -337,14 +356,20 @@ namespace HandheldCompanion.Controllers.Lenovo
         {
             switch (button)
             {
+                case ButtonFlags.B11:
+                    return "\u2212";        // M1
                 case ButtonFlags.B5:
-                    return "\u2213"; // M2
+                    return "\u2213";        // M2
                 case ButtonFlags.B6:
-                    return "\u2206"; // Scroll click
+                    return "\u2206";        // Scroll click
                 case ButtonFlags.B7:
-                    return "\u27F0"; // Scroll up
+                    return "\u27F0";        // Scroll up
                 case ButtonFlags.B8:
-                    return "\u27F1"; // Scroll down
+                    return "\u27F1";        // Scroll down
+                case ButtonFlags.B9:
+                    return "P";             // Page
+                case ButtonFlags.B10:
+                    return "D";             // Desktop
             }
 
             return base.GetGlyph(button);

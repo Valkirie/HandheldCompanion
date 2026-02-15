@@ -414,7 +414,8 @@ public static class InputsManager
                         {
                             if (chord.silenced)
                                 args.SuppressKeyPress = true;
-                            continue;
+                            else
+                                continue;
                         }
 
                         bool existsCheck = chord_keys.All(x => buffer_keys.Any(y => x == y));
@@ -423,15 +424,18 @@ public static class InputsManager
                             // reset index
                             KeyIndexOEM[args.IsKeyDown] = 0;
 
-                            // store successful hotkey
-                            successkeyChords.Add(chord);
-
                             // clear buffer
                             BufferKeys[args.IsKeyDown].Clear();
 
-                            // calls current controller (if connected)
-                            IController controller = ControllerManager.GetTarget();
-                            controller?.InjectState(chord.state, args.IsKeyDown, args.IsKeyUp);
+                            if (!args.SuppressKeyPress)
+                            {
+                                // store successful hotkey
+                                successkeyChords.Add(chord);
+
+                                // calls current controller (if connected)
+                                IController controller = ControllerManager.GetTarget();
+                                controller?.InjectState(chord.state, args.IsKeyDown, args.IsKeyUp);
+                            }
 
                             return;
                         }
@@ -507,8 +511,7 @@ public static class InputsManager
 
         var pressedModifiersWithoutRelease = pressedKeys
             .Where(pressed => IsModifierKey(pressed))
-            .Where(pressed =>
-                !releasedKeys.Any(released => released.KeyValue == pressed.KeyValue))
+            .Where(pressed => !releasedKeys.Any(released => released.KeyValue == pressed.KeyValue))
             .Where(pressed => !IsModifierPhysicallyDown(pressed.KeyValue))
             .OrderBy(pressed => pressed.Timestamp)
             .ToList();
