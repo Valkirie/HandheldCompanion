@@ -427,7 +427,7 @@ public static class InputsManager
                             // clear buffer
                             BufferKeys[args.IsKeyDown].Clear();
 
-                            if (!args.SuppressKeyPress)
+                            if (!chord.silenced)
                             {
                                 // store successful hotkey
                                 successkeyChords.Add(chord);
