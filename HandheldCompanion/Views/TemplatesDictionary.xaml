@@ -101,7 +101,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <ui:FontIcon
-                                        FontFamily="PromptFont"
+                                        FontFamily="{Binding FontFamily, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                         FontSize="24"
                                         Glyph="{Binding Glyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                         <ui:FontIcon.Style>

@@ -352,29 +352,6 @@ namespace HandheldCompanion.Controllers.Lenovo
             base.Tick(ticks, delta, true);
         }
 
-        public override string GetGlyph(ButtonFlags button)
-        {
-            switch (button)
-            {
-                case ButtonFlags.B11:
-                    return "\u2212";        // M1
-                case ButtonFlags.B5:
-                    return "\u2213";        // M2
-                case ButtonFlags.B6:
-                    return "\u2206";        // Scroll click
-                case ButtonFlags.B7:
-                    return "\u27F0";        // Scroll up
-                case ButtonFlags.B8:
-                    return "\u27F1";        // Scroll down
-                case ButtonFlags.B9:
-                    return "P";             // Page
-                case ButtonFlags.B10:
-                    return "D";             // Desktop
-            }
-
-            return base.GetGlyph(button);
-        }
-
         public void HandleTouchpadInput(bool touched, ushort TouchpadX, ushort TouchpadY)
         {
             if (ControllerPassthrough)
@@ -525,6 +502,42 @@ namespace HandheldCompanion.Controllers.Lenovo
         public void SetGyroIndex(int idx)
         {
             gamepadIndex = (byte)idx;
+        }
+
+        public override string GetFontFamily(ButtonFlags button)
+        {
+            switch (button)
+            {
+                case ButtonFlags.B9:    // Page
+                case ButtonFlags.B10:   // Desktop
+                    return "Segoe Fluent Icons";             
+            }
+
+            return base.GetFontFamily(button);
+        }
+
+        public override string GetGlyph(ButtonFlags button)
+        {
+            switch (button)
+            {
+                case ButtonFlags.B11:
+                    return "\u2212";        // M1
+                case ButtonFlags.B5:
+                    return "\u2213";        // M2
+                case ButtonFlags.B6:
+                    return "\u2206";        // Scroll click
+                case ButtonFlags.B7:
+                    return "\u27F0";        // Scroll up
+                case ButtonFlags.B8:
+                    return "\u27F1";        // Scroll down
+
+                case ButtonFlags.B9:
+                    return "\ueca5";        // Page
+                case ButtonFlags.B10:
+                    return "\ue75f";        // Desktop
+            }
+
+            return base.GetGlyph(button);
         }
     }
 }

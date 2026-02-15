@@ -24,6 +24,23 @@ namespace HandheldCompanion.ViewModels.Controls
             }
         }
 
+        private string _FontFamily = string.Empty;
+        public string FontFamily
+        {
+            get
+            {
+                return _FontFamily;
+            }
+            set
+            {
+                if (_FontFamily != value)
+                {
+                    _FontFamily = value;
+                    OnPropertyChanged(nameof(FontFamily));
+                }
+            }
+        }
+
         private Brush? _Foreground;
         public Brush? Foreground
         {
@@ -41,12 +58,13 @@ namespace HandheldCompanion.ViewModels.Controls
             }
         }
 
-        public FontIconViewModel(Hotkey hotkey, HotkeyViewModel hotkeyViewModel, string glyph, Brush? glyphColor)
+        public FontIconViewModel(Hotkey hotkey, HotkeyViewModel hotkeyViewModel, string glyph, Brush? glyphColor, string fontFamily)
         {
             Hotkey = hotkey;
             HotkeyViewModel = hotkeyViewModel;
 
             Glyph = glyph;
+            FontFamily = fontFamily;
 
             if (glyphColor != null)
                 Foreground = glyphColor;
