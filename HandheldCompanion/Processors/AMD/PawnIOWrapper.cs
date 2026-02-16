@@ -14,7 +14,7 @@ namespace HandheldCompanion.Processors.AMD
     /// </summary>
     public class PawnIOWrapper : IDisposable
     {
-        private const string DEVICE_PATH = @"\\.\PawnIO";
+        private const string DEVICE_PATH = @"\\?\GLOBALROOT\Device\PawnIO";
         private const int FN_NAME_LENGTH = 32;
 
         // IOCTL codes based on ZenStates-Core
