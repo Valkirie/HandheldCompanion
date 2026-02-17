@@ -100,6 +100,9 @@ public partial class OverlayQuickTools : GamepadWindow
         // used by gamepad navigation
         Tag = "QuickTools";
 
+        ContentDialog.Closed += ContentDialog_Closed;
+        ContentDialog.Opened += ContentDialog_Opened;
+
         Width = (int)Math.Max(MinWidth, ManagerFactory.settingsManager.GetDouble("QuickToolsWidth"));
         Height = (int)Math.Max(MinHeight, ManagerFactory.settingsManager.GetDouble("QuickToolsHeight"));
 
@@ -369,6 +372,28 @@ public partial class OverlayQuickTools : GamepadWindow
         UpdateStyle();
     }
 
+    private bool _pendingHide;
+    private bool _dialogOpen;
+
+    private void ContentDialog_Opened(object? sender, ContentDialogOpenedEventArgs e)
+    {
+        _dialogOpen = true;
+    }
+
+    private void ContentDialog_Closed(object? sender, ContentDialogClosedEventArgs e)
+    {
+        if (_pendingHide)
+        {
+            _pendingHide = false;
+
+            // use your existing safe hide
+            try { Hide(); } catch { }
+            Top = _targetTop;
+        }
+
+        _dialogOpen = false;
+    }
+
     private void ShowInstant()
     {
         UpdateLocation();
@@ -382,8 +407,20 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void HideInstant()
     {
-        try { Hide(); } catch { }
-        // keep resting Y ready for next show
+        // If a dialog is open/visible, close it and wait for Closed before hiding window.
+        if (ContentDialog is not null && _dialogOpen)
+        {
+            _pendingHide = true;
+
+            // Close dialog first; window will hide in ContentDialog_Closed.
+            try { ContentDialog.Hide(); } catch { _pendingHide = false; }
+            return;
+        }
+        else
+        {
+            try { Hide(); } catch { }
+        }
+
         Top = _targetTop;
     }
 

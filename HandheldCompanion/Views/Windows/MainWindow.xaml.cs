@@ -124,6 +124,9 @@ public partial class MainWindow : GamepadWindow
         InitializeComponent();
         this.Tag = "MainWindow";
 
+        ContentDialog.Closed += ContentDialog_Closed;
+        ContentDialog.Opened += ContentDialog_Opened;
+
         fileVersionInfo = _fileVersionInfo;
         CurrentWindow = this;
 
@@ -942,34 +945,76 @@ public partial class MainWindow : GamepadWindow
         });
     }
 
+    private bool _pendingHide;
+    private bool _dialogOpen;
+
+    private void ContentDialog_Opened(object? sender, ContentDialogOpenedEventArgs e)
+    {
+        _dialogOpen = true;
+    }
+
+    private void ContentDialog_Closed(object? sender, ContentDialogClosedEventArgs e)
+    {
+        if (_pendingHide)
+        {
+            _pendingHide = false;
+            TryHide();
+        }
+
+        _dialogOpen = false;
+    }
+
+    private void TryHide()
+    {
+        // use your existing safe hide
+        try { Hide(); } catch { }
+
+        notifyIcon.Visible = Homepage_Loaded;
+        ShowInTaskbar = false;
+
+        if (!NotifyInTaskbar)
+        {
+            if (ToastManager.SendToast(Title, "is running in the background"))
+                NotifyInTaskbar = true;
+        }
+    }
+
     protected override void Window_StateChanged(object? sender, EventArgs e)
     {
         switch (WindowState)
         {
             case WindowState.Minimized:
                 {
-                    Hide();
-                    notifyIcon.Visible = Homepage_Loaded;
-                    ShowInTaskbar = false;
-
-                    if (!NotifyInTaskbar)
+                    // If a dialog is open/visible, close it and wait for Closed before hiding window.
+                    if (ContentDialog is not null && _dialogOpen)
                     {
-                        if (ToastManager.SendToast(Title, "is running in the background"))
-                            NotifyInTaskbar = true;
+                        _pendingHide = true;
+
+                        // Close dialog first; window will hide in ContentDialog_Closed.
+                        try { ContentDialog.Hide(); } catch { _pendingHide = false; }
+                        return;
+                    }
+                    else
+                    {
+                        TryHide();
                     }
                 }
                 break;
+
             case WindowState.Normal:
             case WindowState.Maximized:
                 {
                     notifyIcon.Visible = false;
                     ShowInTaskbar = true;
 
-                    Show();
-                    Activate();
-                    Topmost = true;  // important
-                    Topmost = false; // important
-                    Focus();
+                    try
+                    {
+                        Show();
+                        Activate();
+                        Topmost = true;  // important
+                        Topmost = false; // important
+                        Focus();
+                    } catch { }
 
                     if (!isFseActive)
                     {

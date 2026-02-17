@@ -253,7 +253,7 @@
                     </ui:CommandBar.PrimaryCommands>
                 </ui:CommandBar>
 
-                <ui:ContentDialog Name="ContentDialog" d:Visibility="Collapsed" />
+                <ui:ContentDialog Name="ContentDialog" />
                 <ui:ScrollViewerEx
                     x:Name="scrollViewer"
                     Margin="0,48,0,4"
