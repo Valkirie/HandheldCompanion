@@ -484,7 +484,7 @@ namespace HandheldCompanion.Processors.AMD
                 // MP1_C2PMSG_RESPONSE_ADDR_4 0x3B1057C
                 // MP1_C2PMSG_ARG_BASE_4      0x3B109C4
                 case CpuCodeName.DragonRange:
-                // case CpuCodeName.FireRange:
+                    // case CpuCodeName.FireRange:
                     cmd = 0x03B10530;
                     rsp = 0x03B1057C;
                     args = 0x03B109C4;
@@ -683,7 +683,7 @@ namespace HandheldCompanion.Processors.AMD
 
             // expected value is mW
             uint limitMw = limitW * 1000;
-            
+
             if (SendCommand(cmdId, new uint[] { limitMw }, out uint[] response) == SmuStatus.OK && response.Any())
                 return (response[0] == limitMw);
 

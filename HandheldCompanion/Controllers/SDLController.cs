@@ -150,7 +150,7 @@ namespace HandheldCompanion.Controllers
                 GamepadButton sdlBtn = kvp.Key;
                 ButtonFlags flag = kvp.Value;
 
-                if (HasButton(sdlBtn) && ! SourceButtons.Contains(flag))
+                if (HasButton(sdlBtn) && !SourceButtons.Contains(flag))
                     SourceButtons.Add(flag);
             }
         }

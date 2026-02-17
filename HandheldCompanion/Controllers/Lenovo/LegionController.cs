@@ -510,7 +510,7 @@ namespace HandheldCompanion.Controllers.Lenovo
             {
                 case ButtonFlags.B9:    // Page
                 case ButtonFlags.B10:   // Desktop
-                    return "Segoe Fluent Icons";             
+                    return "Segoe Fluent Icons";
             }
 
             return base.GetFontFamily(button);

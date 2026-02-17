@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Devices;
-using HandheldCompanion.Processors.AMD;
 using HandheldCompanion.Processors.Intel;
 using System;
 using static HandheldCompanion.Processors.Intel.KX;

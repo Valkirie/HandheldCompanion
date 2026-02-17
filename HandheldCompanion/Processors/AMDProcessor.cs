@@ -76,7 +76,7 @@ public class AMDProcessor : Processor
     public override uint GetTDPLimit(PowerType type)
     {
         float value = 0.0f;
-        switch(type)
+        switch (type)
         {
             case PowerType.Slow:
                 ryzenSmuService.TryGetSlowLimit(out value);

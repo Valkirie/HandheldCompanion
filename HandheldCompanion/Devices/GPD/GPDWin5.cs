@@ -74,12 +74,12 @@ public class GPDWin5 : IDevice
         */
 
         // Disabled this one as Win 5 also sends an Xbox guide input when Menu key is pressed.
-        OEMChords.Add(new KeyboardChord("Menu",     [KeyCode.LButton | KeyCode.XButton2], [KeyCode.LButton | KeyCode.XButton2], true,                           ButtonFlags.OEM1));
-        OEMChords.Add(new KeyboardChord("L4",       [KeyCode.LControl, KeyCode.LShift, KeyCode.F14], [KeyCode.F14, KeyCode.LControl, KeyCode.LShift], false,    ButtonFlags.OEM3));
-        OEMChords.Add(new KeyboardChord("R4",       [KeyCode.F3, KeyCode.F15], [KeyCode.F15, KeyCode.F3], false,                                                ButtonFlags.OEM2));
-        OEMChords.Add(new KeyboardChord("Gamepad",  [KeyCode.F13], [KeyCode.F13], false,                                                                        ButtonFlags.OEM4));
-        OEMChords.Add(new KeyboardChord("Keyboard", [KeyCode.LControl, KeyCode.LWin, KeyCode.O], [KeyCode.O, KeyCode.LWin, KeyCode.LControl], false,            ButtonFlags.OEM5));
-        OEMChords.Add(new KeyboardChord("Home",     [KeyCode.LWin, KeyCode.D], [KeyCode.D, KeyCode.LWin], false,                                                ButtonFlags.OEM6));
+        OEMChords.Add(new KeyboardChord("Menu", [KeyCode.LButton | KeyCode.XButton2], [KeyCode.LButton | KeyCode.XButton2], true, ButtonFlags.OEM1));
+        OEMChords.Add(new KeyboardChord("L4", [KeyCode.LControl, KeyCode.LShift, KeyCode.F14], [KeyCode.F14, KeyCode.LControl, KeyCode.LShift], false, ButtonFlags.OEM3));
+        OEMChords.Add(new KeyboardChord("R4", [KeyCode.F3, KeyCode.F15], [KeyCode.F15, KeyCode.F3], false, ButtonFlags.OEM2));
+        OEMChords.Add(new KeyboardChord("Gamepad", [KeyCode.F13], [KeyCode.F13], false, ButtonFlags.OEM4));
+        OEMChords.Add(new KeyboardChord("Keyboard", [KeyCode.LControl, KeyCode.LWin, KeyCode.O], [KeyCode.O, KeyCode.LWin, KeyCode.LControl], false, ButtonFlags.OEM5));
+        OEMChords.Add(new KeyboardChord("Home", [KeyCode.LWin, KeyCode.D], [KeyCode.D, KeyCode.LWin], false, ButtonFlags.OEM6));
     }
 
     public override void SetFanControl(bool enable, int mode = 0)

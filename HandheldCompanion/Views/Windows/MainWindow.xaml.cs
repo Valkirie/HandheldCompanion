@@ -780,7 +780,7 @@ public partial class MainWindow : GamepadWindow
     private bool isFseActive;
     private WindowState preFseWindowState = WindowState.Normal;
 
-    
+
     protected override void OnPreviewKeyDown(System.Windows.Input.KeyEventArgs e)
     {
         // ALT+ENTER toggles fullscreen (classic Windows behavior)
@@ -854,7 +854,7 @@ public partial class MainWindow : GamepadWindow
         });
     }
 
-private void FullScreenExperienceMonitor_FseStateChanged(object? sender, FullScreenExperienceMonitor.FseStateChangedEventArgs e)
+    private void FullScreenExperienceMonitor_FseStateChanged(object? sender, FullScreenExperienceMonitor.FseStateChangedEventArgs e)
     {
         UIHelper.TryInvoke(() =>
         {
