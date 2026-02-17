@@ -135,12 +135,7 @@ namespace HandheldCompanion.Processors.AMD
                 // Get and log version
                 Version? version = _pawnIO.GetVersion();
                 if (version is not null)
-                {
                     LogManager.LogInformation("PawnIO driver version: {0}", version.ToString());
-
-                    if (version < PawnIOWrapper.REQ_VERSION)
-                        LogManager.LogError("PawnIO driver is outdated.");
-                }
 
                 // Load RyzenSMU module
                 bool moduleLoaded = false;

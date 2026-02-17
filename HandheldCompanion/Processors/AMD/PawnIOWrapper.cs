@@ -16,10 +16,8 @@ namespace HandheldCompanion.Processors.AMD
     /// </summary>
     public class PawnIOWrapper : IDisposable
     {
-        private const string DEVICE_PATH = @"\\?\GLOBALROOT\Device\PawnIO";
         private const int FN_NAME_LENGTH = 32;
-
-        public static Version REQ_VERSION = new(2, 1, 0, 0);
+        private Version VERSION_LAST = new(2, 1, 0, 0);
 
         // IOCTL codes based on ZenStates-Core
         private const uint DEVICE_TYPE = 41394u << 16;  // 0xA1B20000
@@ -102,14 +100,31 @@ namespace HandheldCompanion.Processors.AMD
 
             try
             {
-                _rawHandle = CreateFile(
-                    DEVICE_PATH,
-                    GENERIC_READ | GENERIC_WRITE,
-                    FILE_SHARE_READ | FILE_SHARE_WRITE,
-                    IntPtr.Zero,
-                    OPEN_EXISTING,
-                    0,
-                    IntPtr.Zero);
+                Version? version = GetVersion();
+                if (version < VERSION_LAST)
+                {
+                    // PawnIO pre 2.1.0.0
+                    _rawHandle = CreateFile(
+                        @"\\.\PawnIO",
+                        GENERIC_READ | GENERIC_WRITE,
+                        FILE_SHARE_READ | FILE_SHARE_WRITE,
+                        IntPtr.Zero,
+                        OPEN_EXISTING,
+                        0,
+                        IntPtr.Zero);
+                }
+                else
+                {
+                    // PawnIO post 2.1.0.0
+                    _rawHandle = CreateFile(
+                        @"\\?\GLOBALROOT\Device\PawnIO",
+                        GENERIC_READ | GENERIC_WRITE,
+                        FILE_SHARE_READ | FILE_SHARE_WRITE,
+                        IntPtr.Zero,
+                        OPEN_EXISTING,
+                        0,
+                        IntPtr.Zero);
+                }
 
                 if (_rawHandle == IntPtr.Zero || _rawHandle.ToInt64() == -1)
                 {
@@ -143,7 +158,7 @@ namespace HandheldCompanion.Processors.AMD
             if (TryGetInstalledPawnIOVersion(out string versionString))
                 return new Version(versionString);
 
-            return null;
+            return new Version();
         }
 
         private static bool TryGetInstalledPawnIOVersion(out string versionString)
