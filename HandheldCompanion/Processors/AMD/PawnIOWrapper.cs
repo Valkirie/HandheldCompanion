@@ -1,4 +1,6 @@
 ﻿using HandheldCompanion.Shared;
+using HandheldCompanion.Utils;
+using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.IO;
@@ -16,6 +18,8 @@ namespace HandheldCompanion.Processors.AMD
     {
         private const string DEVICE_PATH = @"\\?\GLOBALROOT\Device\PawnIO";
         private const int FN_NAME_LENGTH = 32;
+
+        public static Version REQ_VERSION = new(2, 1, 0, 0);
 
         // IOCTL codes based on ZenStates-Core
         private const uint DEVICE_TYPE = 41394u << 16;  // 0xA1B20000
@@ -126,13 +130,74 @@ namespace HandheldCompanion.Processors.AMD
         }
 
         /// <summary>
-        /// Gets the PawnIO driver version (not implemented - ZenStates reads from registry).
+        /// Gets the PawnIO installed version from registry (same approach as the InnoSetup script).
         /// </summary>
-        public (int Major, int Minor, int Patch)? GetVersion()
+        public Version? GetVersion()
         {
-            // ZenStates-Core doesn't use IOCTL for version, reads registry instead
-            // Return a placeholder - PawnIO 2.x is assumed
-            return (2, 0, 0);
+            // PawnIO.Setup registers itself under Windows "Uninstall" entries.
+            // We resolve DisplayVersion from:
+            //  - HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\* 
+            //  - HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*  (32-bit view)
+            // and match DisplayName containing "PawnIO".
+
+            if (TryGetInstalledPawnIOVersion(out string versionString))
+                return new Version(versionString);
+
+            return null;
+        }
+
+        private static bool TryGetInstalledPawnIOVersion(out string versionString)
+        {
+            versionString = null;
+
+            // Prefer direct 64-bit uninstall hive first.
+            if (TryGetFromUninstallHive(@"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", out versionString))
+                return true;
+
+            // Fallback to WOW6432Node if PawnIO was registered in 32-bit view.
+            if (TryGetFromUninstallHive(@"SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall", out versionString))
+                return true;
+
+            return false;
+        }
+
+        private static bool TryGetFromUninstallHive(string hivePath, out string versionString)
+        {
+            versionString = null;
+
+            try
+            {
+                using RegistryKey root = Registry.LocalMachine.OpenSubKey(hivePath);
+                if (root is null)
+                    return false;
+
+                foreach (string subKeyName in root.GetSubKeyNames())
+                {
+                    // Use our shared registry helpers (mirrors InnoSetup approach of reading uninstall entries).
+                    string fullKeyPath = hivePath + "\\" + subKeyName;
+                    string displayName = RegistryUtils.GetString(fullKeyPath, "DisplayName");
+                    if (string.IsNullOrWhiteSpace(displayName))
+                        continue;
+
+                    // Match like Inno: compare against product name.
+                    // We keep it resilient to minor naming variations.
+                    if (!displayName.Contains("PawnIO", StringComparison.InvariantCultureIgnoreCase))
+                        continue;
+
+                    string displayVersion = RegistryUtils.GetString(fullKeyPath, "DisplayVersion");
+                    if (string.IsNullOrWhiteSpace(displayVersion))
+                        continue;
+
+                    versionString = displayVersion.Trim();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError($"Failed to read PawnIO version from registry ({hivePath}): {ex.Message}");
+            }
+
+            return false;
         }
 
         /// <summary>
