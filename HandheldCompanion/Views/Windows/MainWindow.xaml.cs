@@ -823,7 +823,7 @@ public partial class MainWindow : GamepadWindow
             WindowStyle = WindowStyle.None;
             ResizeMode = ResizeMode.NoResize;
             Topmost = true;
-            WindowState = WindowState.Maximized;
+            SetState(WindowState.Maximized);
             Topmost = false;
 
             isFullscreen = true;
