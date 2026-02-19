@@ -204,18 +204,23 @@ public partial class LayoutPage : Page
         // This is a very important lock, it blocks backward events to the layout when
         // this is actually the backend that triggered the update. Notifications on higher
         // levels (pages and mappings) could potentially be blocked for optimization.
+        // Take a snapshot outside of any dispatcher work to avoid UI deadlocks
+        Layout layoutSnapshot;
+
         lock (updateLock)
         {
-            // Invoke Layout Updated to trigger ViewModel updates
-            LayoutUpdated?.Invoke(currentTemplate.Layout);
-
-            // UI thread
-            UIHelper.TryInvoke(() =>
-            {
-                // clear layout selection
-                cB_Layouts.SelectedValue = null;
-            });
+            layoutSnapshot = currentTemplate.Layout;
         }
+
+        // Trigger ViewModel updates (no locks held)
+        LayoutUpdated?.Invoke(layoutSnapshot);
+
+        // UI thread (never dispatch while holding locks)
+        UIHelper.TryInvoke(() =>
+        {
+            // clear layout selection
+            cB_Layouts.SelectedValue = null;
+        });
     }
 
     private async void ButtonApplyLayout_Click(object sender, RoutedEventArgs e)

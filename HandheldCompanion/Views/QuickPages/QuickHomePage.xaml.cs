@@ -1,9 +1,9 @@
 ﻿using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Windows;
 using System;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
@@ -15,8 +15,9 @@ namespace HandheldCompanion.Views.QuickPages;
 /// </summary>
 public partial class QuickHomePage : Page
 {
-    private CrossThreadLock brightnessLock = new();
-    private CrossThreadLock volumeLock = new();
+    // Guard against feedback loops between manager notifications and slider ValueChanged.
+    private int _suppressBrightnessChanged;
+    private int _suppressVolumeChanged;
 
     public QuickHomePage(string Tag) : this()
     {
@@ -52,76 +53,80 @@ public partial class QuickHomePage : Page
     {
         if (ManagerFactory.multimediaManager.HasBrightnessSupport())
         {
-            lock (brightnessLock)
+            UIHelper.TryInvoke(() =>
             {
-                // UI thread
-                UIHelper.TryInvoke(() =>
+                SliderBrightness.IsEnabled = true;
+
+                Interlocked.Exchange(ref _suppressBrightnessChanged, 1);
+                try
                 {
-                    SliderBrightness.IsEnabled = true;
                     SliderBrightness.Value = ManagerFactory.multimediaManager.GetBrightness();
-                });
-            }
+                }
+                finally
+                {
+                    Interlocked.Exchange(ref _suppressBrightnessChanged, 0);
+                }
+            });
         }
 
         if (ManagerFactory.multimediaManager.HasVolumeSupport())
         {
-            lock (volumeLock)
+            UIHelper.TryInvoke(() =>
             {
-                // UI thread
-                UIHelper.TryInvoke(() =>
+                SliderVolume.IsEnabled = true;
+
+                Interlocked.Exchange(ref _suppressVolumeChanged, 1);
+                try
                 {
-                    SliderVolume.IsEnabled = true;
                     SliderVolume.Value = ManagerFactory.multimediaManager.GetVolume();
                     UpdateVolumeIcon((float)SliderVolume.Value);
-                });
-            }
+                }
+                finally
+                {
+                    Interlocked.Exchange(ref _suppressVolumeChanged, 0);
+                }
+            });
         }
     }
 
     private void SystemManager_BrightnessNotification(int brightness)
     {
-        if (brightnessLock.TryEnter())
+        // UI thread
+        UIHelper.TryInvoke(() =>
         {
+            Interlocked.Exchange(ref _suppressBrightnessChanged, 1);
             try
             {
-                // UI thread
-                UIHelper.TryInvoke(() =>
-                {
-                    if (SliderBrightness.Value != brightness)
-                        SliderBrightness.Value = brightness;
-                });
+                if (SliderBrightness.Value != brightness)
+                    SliderBrightness.Value = brightness;
             }
-            catch { }
             finally
             {
-                brightnessLock.Exit();
+                Interlocked.Exchange(ref _suppressBrightnessChanged, 0);
             }
-        }
+        });
     }
 
     private void SystemManager_VolumeNotification(float volume)
     {
-        if (volumeLock.TryEnter())
+        double value = Convert.ToDouble(volume);
+
+        // UI thread
+        UIHelper.TryInvoke(() =>
         {
+            Interlocked.Exchange(ref _suppressVolumeChanged, 1);
             try
             {
-                double value = Convert.ToDouble(volume);
+                UpdateVolumeIcon(value);
 
-                // UI thread
-                UIHelper.TryInvoke(() =>
-                {
-                    UpdateVolumeIcon(value);
-
-                    if (SliderVolume.Value != value)
-                        SliderVolume.Value = Math.Round(value);
-                });
+                if (SliderVolume.Value != value)
+                    SliderVolume.Value = Math.Round(value);
             }
-            catch { }
             finally
             {
-                volumeLock.Exit();
+                Interlocked.Exchange(ref _suppressVolumeChanged, 0);
             }
-        }
+        });
     }
 
     private void SliderBrightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -129,19 +134,12 @@ public partial class QuickHomePage : Page
         if (!IsLoaded)
             return;
 
-        // prevent update loop
-        if (brightnessLock.TryEnter())
-        {
-            try
-            {
-                ManagerFactory.multimediaManager.SetBrightness(SliderBrightness.Value);
-            }
-            catch { }
-            finally
-            {
-                brightnessLock.Exit();
-            }
-        }
+        // Ignore programmatic updates.
+        if (Interlocked.CompareExchange(ref _suppressBrightnessChanged, 0, 0) == 1)
+            return;
+
+        try { ManagerFactory.multimediaManager.SetBrightness(SliderBrightness.Value); }
+        catch { }
     }
 
     private void SliderVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -149,19 +147,12 @@ public partial class QuickHomePage : Page
         if (!IsLoaded)
             return;
 
-        // prevent update loop
-        if (volumeLock.TryEnter())
-        {
-            try
-            {
-                ManagerFactory.multimediaManager.SetVolume(SliderVolume.Value);
-            }
-            catch { }
-            finally
-            {
-                volumeLock.Exit();
-            }
-        }
+        // Ignore programmatic updates.
+        if (Interlocked.CompareExchange(ref _suppressVolumeChanged, 0, 0) == 1)
+            return;
+
+        try { ManagerFactory.multimediaManager.SetVolume(SliderVolume.Value); }
+        catch { }
     }
 
     private void UpdateVolumeIcon(double volume)

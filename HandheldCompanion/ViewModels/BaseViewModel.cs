@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 
 namespace HandheldCompanion.ViewModels
@@ -48,8 +49,26 @@ namespace HandheldCompanion.ViewModels
             GC.SuppressFinalize(this); // Suppress finalization
         }
 
-        public virtual void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+        public virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler is null)
+                return;
+
+            // WPF bindings are dispatcher-affine: always raise PropertyChanged on the UI thread.
+            var app = Application.Current;
+            if (app?.Dispatcher is null || app.Dispatcher.CheckAccess())
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+                return;
+            }
+
+            app.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }), System.Windows.Threading.DispatcherPriority.DataBind);
+        }
+}
 
     class DelegateCommand : ICommand
     {

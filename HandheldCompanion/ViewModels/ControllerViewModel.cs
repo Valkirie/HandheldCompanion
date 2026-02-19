@@ -150,7 +150,7 @@ namespace HandheldCompanion.ViewModels
 
         private async void Controller_VisibilityChanged(bool status)
         {
-            await Task.Delay(1000).ConfigureAwait(false);
+            await Task.Delay(1000);
             OnPropertyChanged(nameof(IsHidden));
         }
 

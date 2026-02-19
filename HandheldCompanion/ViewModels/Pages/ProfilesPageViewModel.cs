@@ -535,38 +535,48 @@ namespace HandheldCompanion.ViewModels
         private object ProfilePickerLock = new();
         private void PowerProfileManager_Deleted(PowerProfile profile)
         {
-            lock (ProfilePickerLock)
-            {
-                ProfilesPickerViewModel? foundPreset = _profilePickerItems.FirstOrDefault(p => p.LinkedPresetId == profile.Guid);
-                if (foundPreset is not null)
-                {
-                    _profilePickerItems.Remove(foundPreset);
+			// Ensure UI-bound collection + properties are mutated on the UI thread.
+			UIHelper.TryInvoke(() =>
+			{
+				lock (ProfilePickerLock)
+				{
+					ProfilesPickerViewModel? foundPreset = _profilePickerItems.FirstOrDefault(p => p.LinkedPresetId == profile.Guid);
+					if (foundPreset is not null)
+					{
+						_profilePickerItems.Remove(foundPreset);
 
-                    if (SelectedPresetAC.Guid == foundPreset.LinkedPresetId)
-                        SelectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
-                    if (SelectedPresetDC.Guid == foundPreset.LinkedPresetId)
-                        SelectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
-                }
-            }
+						if (SelectedPresetAC.Guid == foundPreset.LinkedPresetId)
+							SelectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
+						if (SelectedPresetDC.Guid == foundPreset.LinkedPresetId)
+							SelectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
+					}
+				}
+			});
         }
 
         private void PowerProfileManager_Updated(PowerProfile profile, UpdateSource source)
         {
-            lock (ProfilePickerLock)
-            {
-                int index;
-                ProfilesPickerViewModel? foundPreset = _profilePickerItems.FirstOrDefault(p => p.LinkedPresetId == profile.Guid);
-                if (foundPreset is not null)
-                {
-                    index = _profilePickerItems.IndexOf(foundPreset);
-                    foundPreset.Text = profile.Name;
-                }
-                else
-                {
-                    index = 0;
-                    _profilePickerItems.Insert(index, new() { LinkedPresetId = profile.Guid, Text = profile.Name, IsInternal = profile.IsDefault() || profile.IsDeviceDefault() });
-                }
-            }
+			// Ensure UI-bound collection + properties are mutated on the UI thread.
+			UIHelper.TryInvoke(() =>
+			{
+				lock (ProfilePickerLock)
+				{
+					ProfilesPickerViewModel? foundPreset = _profilePickerItems.FirstOrDefault(p => p.LinkedPresetId == profile.Guid);
+					if (foundPreset is not null)
+					{
+						foundPreset.Text = profile.Name;
+					}
+					else
+					{
+						_profilePickerItems.Insert(0, new()
+						{
+							LinkedPresetId = profile.Guid,
+							Text = profile.Name,
+							IsInternal = profile.IsDefault() || profile.IsDeviceDefault()
+						});
+					}
+				}
+			});
         }
 
         public BitmapImage Cover
@@ -838,14 +848,15 @@ namespace HandheldCompanion.ViewModels
 
         public void PowerProfileChanged(PowerProfile powerProfileAC, PowerProfile powerProfileDC)
         {
-            lock (ProfilePickerLock)
-            {
-                UIHelper.TryInvoke(() =>
-                {
-                    SelectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == powerProfileAC.Guid));
-                    SelectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == powerProfileDC.Guid));
-                });
-            }
+			// Never block a background thread waiting on the UI thread while holding a lock.
+			UIHelper.TryInvoke(() =>
+			{
+				lock (ProfilePickerLock)
+				{
+					SelectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == powerProfileAC.Guid));
+					SelectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == powerProfileDC.Guid));
+				}
+			});
         }
 
         public override void Dispose()

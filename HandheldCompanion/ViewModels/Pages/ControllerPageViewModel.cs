@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Extensions;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
@@ -122,8 +123,8 @@ namespace HandheldCompanion.ViewModels
                 // force (re)scan
                 ControllerManager.Rescan();
 
-                // set flag
-                ScanHardwareVisibility = Visibility.Collapsed;
+				// set flag
+				ScanHardwareVisibility = Visibility.Collapsed;
             });
 
             OpenWindowsControl = new DelegateCommand<string>(async (target) =>
@@ -154,61 +155,57 @@ namespace HandheldCompanion.ViewModels
             QueryLayouts();
         }
 
-        private object lockcollection = new();
         private void ControllerPlugged(IController Controller, bool IsPowerCycling)
         {
-            lock (lockcollection)
-            {
-                ObservableCollection<ControllerViewModel> controllers = Controller.IsVirtual() ? VirtualControllers : PhysicalControllers;
-                ControllerViewModel? foundController = controllers.FirstOrDefault(controller => controller.Controller.GetInstanceId() == Controller.GetInstanceId());
-                if (foundController is null)
-                {
-                    controllers.SafeAdd(new ControllerViewModel(Controller));
-                }
-                else
-                {
-                    foundController.Controller = Controller;
-                }
+			// Ensure UI-bound collections and view refresh run on the UI thread.
+			UIHelper.TryInvoke(() =>
+			{
+				ObservableCollection<ControllerViewModel> controllers = Controller.IsVirtual() ? VirtualControllers : PhysicalControllers;
+				ControllerViewModel? foundController = controllers.FirstOrDefault(controller => controller.Controller.GetInstanceId() == Controller.GetInstanceId());
+				if (foundController is null)
+					controllers.SafeAdd(new ControllerViewModel(Controller));
+				else
+					foundController.Controller = Controller;
 
-                controllerPage.ControllerRefresh();
-            }
+				controllerPage.ControllerRefresh();
+			});
         }
 
 
         private void ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
         {
-            lock (lockcollection)
-            {
-                ObservableCollection<ControllerViewModel> controllers = Controller.IsVirtual() ? VirtualControllers : PhysicalControllers;
-                ControllerViewModel? foundController = controllers.FirstOrDefault(controller => controller.Controller.GetInstanceId() == Controller.GetInstanceId());
-                if (foundController is not null && !IsPowerCycling)
-                {
-                    controllers.SafeRemove(foundController);
-                    foundController.Dispose();
-                }
-                else if (foundController is null)
-                {
-                    LogManager.LogError("Couldn't find ControllerViewModel associated with {0}", Controller.ToString());
-                }
+			// Ensure UI-bound collections and view refresh run on the UI thread.
+			UIHelper.TryInvoke(() =>
+			{
+				ObservableCollection<ControllerViewModel> controllers = Controller.IsVirtual() ? VirtualControllers : PhysicalControllers;
+				ControllerViewModel? foundController = controllers.FirstOrDefault(controller => controller.Controller.GetInstanceId() == Controller.GetInstanceId());
+				if (foundController is not null && !IsPowerCycling)
+				{
+					controllers.SafeRemove(foundController);
+					foundController.Dispose();
+				}
+				else if (foundController is null)
+				{
+					LogManager.LogError("Couldn't find ControllerViewModel associated with {0}", Controller.ToString());
+				}
 
-                // do something
-                controllerPage.ControllerRefresh();
-            }
+				controllerPage.ControllerRefresh();
+			});
         }
 
         private void ControllerManager_ControllerSelected(IController Controller)
         {
-            lock (lockcollection)
-            {
-                foreach (ControllerViewModel controller in PhysicalControllers)
-                    controller.Updated();
-            }
+			// Ensure UI-bound updates run on the UI thread.
+			UIHelper.TryInvoke(() =>
+			{
+				foreach (ControllerViewModel controller in PhysicalControllers)
+					controller.Updated();
 
-            // check rumble
-            CanRumble = Controller.Capabilities.HasFlag(ControllerCapabilities.Rumble);
+				// check rumble
+				CanRumble = Controller.Capabilities.HasFlag(ControllerCapabilities.Rumble);
 
-            // do something
-            controllerPage.ControllerRefresh();
+				controllerPage.ControllerRefresh();
+			});
         }
 
         public override void Dispose()
