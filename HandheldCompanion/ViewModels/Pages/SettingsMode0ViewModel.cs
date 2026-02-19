@@ -15,7 +15,7 @@ namespace HandheldCompanion.ViewModels
         public SettingsMode0ViewModel()
         {
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(HotkeysList, new object());
+            BindingOperations.EnableCollectionSynchronization(HotkeysList, _collectionLock);
 
             ManagerFactory.hotkeysManager.Updated += HotkeysManager_Updated;
             InputsManager.StartedListening += InputsManager_StartedListening;

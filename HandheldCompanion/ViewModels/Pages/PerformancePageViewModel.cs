@@ -647,7 +647,7 @@ namespace HandheldCompanion.ViewModels
         public PerformancePageViewModel(bool isQuickTools)
         {
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(_profilePickerItems, new object());
+            BindingOperations.EnableCollectionSynchronization(_profilePickerItems, _collectionLock);
 
             ProfilePickerCollectionView = new ListCollectionView(_profilePickerItems);
             ProfilePickerCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Header"));

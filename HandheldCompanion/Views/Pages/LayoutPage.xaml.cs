@@ -204,18 +204,17 @@ public partial class LayoutPage : Page
         // This is a very important lock, it blocks backward events to the layout when
         // this is actually the backend that triggered the update. Notifications on higher
         // levels (pages and mappings) could potentially be blocked for optimization.
-        lock (updateLock)
+        UIHelper.TryBeginInvoke(() =>
         {
-            // Invoke Layout Updated to trigger ViewModel updates
-            LayoutUpdated?.Invoke(currentTemplate.Layout);
-
-            // UI thread
-            UIHelper.TryInvoke(() =>
+            lock (updateLock)
             {
+                // Invoke Layout Updated to trigger ViewModel updates
+                LayoutUpdated?.Invoke(currentTemplate.Layout);
+
                 // clear layout selection
                 cB_Layouts.SelectedValue = null;
-            });
-        }
+            }
+        });
     }
 
     private async void ButtonApplyLayout_Click(object sender, RoutedEventArgs e)

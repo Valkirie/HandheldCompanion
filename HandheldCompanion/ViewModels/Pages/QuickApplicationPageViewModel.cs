@@ -98,8 +98,8 @@ namespace HandheldCompanion.ViewModels
         public QuickApplicationsPageViewModel()
         {
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(Processes, new object());
-            BindingOperations.EnableCollectionSynchronization(Profiles, new object());
+            BindingOperations.EnableCollectionSynchronization(Processes, _collectionLock);
+            BindingOperations.EnableCollectionSynchronization(Profiles, _collectionLock2);
             Profiles.CollectionChanged += (s, e) =>
             {
                 OnPropertyChanged(nameof(TotalPages));

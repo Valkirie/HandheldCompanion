@@ -117,7 +117,7 @@ public partial class SettingsMode0 : Page
             return;
 
         ProfilesPage.selectedProfile.MotionSensivityX = (float)SliderSensitivityX.Value;
-        ProfilesPage.UpdateProfile();
+        ProfilesPage.SubmitProfile();
     }
 
     private void SliderSensitivityY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -130,7 +130,7 @@ public partial class SettingsMode0 : Page
             return;
 
         ProfilesPage.selectedProfile.MotionSensivityY = (float)SliderSensitivityY.Value;
-        ProfilesPage.UpdateProfile();
+        ProfilesPage.SubmitProfile();
     }
 
     private void Highlight_Thumb(float value)
@@ -187,7 +187,7 @@ public partial class SettingsMode0 : Page
             var x = (double)thumb.Tag;
             thumb.Height = StackCurve.ActualHeight - e.GetPosition(StackCurve).Y;
             ProfilesPage.selectedProfile.MotionSensivityArray[x] = thumb.Height / StackCurve.Height;
-            ProfilesPage.UpdateProfile();
+            ProfilesPage.SubmitProfile();
         }
     }
 
@@ -199,7 +199,7 @@ public partial class SettingsMode0 : Page
             var x = (double)Thumb.Tag;
             Thumb.Height = StackCurve.Height / 2.0f;
             ProfilesPage.selectedProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
-            ProfilesPage.UpdateProfile();
+            ProfilesPage.SubmitProfile();
         }
     }
 
@@ -214,7 +214,7 @@ public partial class SettingsMode0 : Page
 
             Thumb.Height = StackCurve.Height * value;
             ProfilesPage.selectedProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
-            ProfilesPage.UpdateProfile();
+            ProfilesPage.SubmitProfile();
         }
     }
 
@@ -229,7 +229,7 @@ public partial class SettingsMode0 : Page
 
             Thumb.Height = StackCurve.Height * value;
             ProfilesPage.selectedProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
-            ProfilesPage.UpdateProfile();
+            ProfilesPage.SubmitProfile();
         }
     }
 
@@ -248,7 +248,7 @@ public partial class SettingsMode0 : Page
             return;
 
         ProfilesPage.selectedProfile.AimingSightsMultiplier = (float)tb_ProfileAimingDownSightsMultiplier.Value;
-        ProfilesPage.UpdateProfile();
+        ProfilesPage.SubmitProfile();
     }
 
     private void HotkeysManager_Updated(Hotkey hotkey)
@@ -266,6 +266,6 @@ public partial class SettingsMode0 : Page
         GyroHotkey = hotkey;
 
         ProfilesPage.selectedProfile.AimingSightsTrigger = hotkey.inputsChord.ButtonState.Clone() as ButtonState;
-        ProfilesPage.UpdateProfile();
+        ProfilesPage.SubmitProfile();
     }
 }

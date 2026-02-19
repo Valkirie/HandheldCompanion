@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using static HandheldCompanion.GraphicsProcessingUnit.GPU;
@@ -42,7 +43,7 @@ public partial class ProfilesPage : Page
     private CrossThreadLock graphicLock = new();
 
     private const int UpdateInterval = 500;
-    private static Timer UpdateTimer;
+    private readonly Timer UpdateTimer;
 
     public ProfilesPage(string Tag) : this()
     {
@@ -78,10 +79,15 @@ public partial class ProfilesPage : Page
         }
 
         UpdateTimer = new Timer(UpdateInterval) { AutoReset = false };
-        UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
+        UpdateTimer.Elapsed += UpdateTimer_Elapsed;
 
         // auto-sort
         cB_Profiles.Items.SortDescriptions.Add(new SortDescription(string.Empty, ListSortDirection.Descending));
+    }
+
+    private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        SubmitProfile();
     }
 
     private void QueryPlatforms()
@@ -107,24 +113,23 @@ public partial class ProfilesPage : Page
 
     private void MultimediaManager_Initialized()
     {
-        if (profileLock.TryEnter())
+        UIHelper.TryBeginInvoke(() =>
         {
+            if (!profileLock.TryEnter())
+                return;
+
             try
             {
-                // UI thread
-                UIHelper.TryInvoke(() =>
-                {
-                    DesktopScreen desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
-                    if (desktopScreen is not null)
-                        desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
-                });
+                DesktopScreen desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
+                if (desktopScreen is not null)
+                    desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
             }
             catch { }
             finally
             {
                 profileLock.Exit();
             }
-        }
+        });
     }
 
     private bool HasRSRSupport = false;
@@ -265,29 +270,27 @@ public partial class ProfilesPage : Page
     private void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
         List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
-
-        if (profileLock.TryEnter())
+        UIHelper.TryBeginInvoke(() =>
         {
+            if (!profileLock.TryEnter())
+                return;
+
             try
             {
-                // UI thread
-                UIHelper.TryInvoke(() =>
-                {
-                    cB_Framerate.Items.Clear();
+                cB_Framerate.Items.Clear();
 
-                    foreach (ScreenFramelimit frameLimit in frameLimits)
-                        cB_Framerate.Items.Add(frameLimit);
+                foreach (ScreenFramelimit frameLimit in frameLimits)
+                    cB_Framerate.Items.Add(frameLimit);
 
-                    if (selectedProfile is not null)
-                        cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
-                });
+                if (selectedProfile is not null)
+                    cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
             }
             catch { }
             finally
             {
                 profileLock.Exit();
             }
-        }
+        });
     }
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -308,7 +311,9 @@ public partial class ProfilesPage : Page
         PlatformManager.RTSS.Updated -= RTSS_Updated;
         ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
 
-        UpdateTimer.Elapsed -= (sender, e) => SubmitProfile();
+        UpdateTimer.Elapsed -= UpdateTimer_Elapsed;
+        UpdateTimer.Stop();
+        UpdateTimer.Dispose();
 
         ((ProfilesPageViewModel)DataContext).Dispose();
     }
@@ -489,156 +494,155 @@ public partial class ProfilesPage : Page
     {
         if (selectedProfile is null)
             return;
-
-        if (profileLock.TryEnter())
+        UIHelper.TryBeginInvoke(() =>
         {
+            if (!profileLock.TryEnter())
+                return;
+
             ((ProfilesPageViewModel)DataContext).ProfileChanged(selectedProfile);
 
             try
             {
-                UIHelper.TryInvoke(() =>
+                // disable delete button if is default profile or any sub profile is running
+                //TODO consider sub profiles pertaining to this main profile is running
+                b_DeleteProfile.IsEnabled = (selectedProfile.ErrorCode & (ProfileErrorCode.Default | ProfileErrorCode.Running)) == 0;
+                // prevent user from renaming default profile
+                b_ProfileRename.IsEnabled = !selectedMainProfile.Default;
+                // prevent user from disabling default profile
+                Toggle_EnableProfile.IsEnabled = !selectedProfile.Default;
+                // prevent user from using Wrapper on default profile
+                cB_Wrapper.IsEnabled = !selectedProfile.Default;
+                UseFullscreenOptimizations.IsEnabled = !selectedProfile.Default;
+                UseHighDPIAwareness.IsEnabled = !selectedProfile.Default;
+                LibrarySettings.IsEnabled = !selectedProfile.Default;
+                CheckBox_SuspendOnQT.IsEnabled = !selectedProfile.Default;
+                CheckBox_SuspendOnStandby.IsEnabled = !selectedProfile.Default;
+
+                // sub profiles
+                b_SubProfileCreate.IsEnabled = !selectedMainProfile.Default;
+
+                // enable delete and rename if not default sub profile
+                b_SubProfileDelete.IsEnabled = selectedProfile.IsSubProfile ? true : false;
+                b_SubProfileRename.IsEnabled = selectedProfile.IsSubProfile ? true : false;
+
+                // Profile info
+                tB_ProfileName.Text = selectedMainProfile.Name;
+                tB_ProfilePath.Text = selectedProfile.Path;
+                tB_ProfileArguments.Text = selectedProfile.Arguments;
+                tB_ProfileLaunchString.Text = selectedProfile.LaunchString;
+                Toggle_EnableProfile.IsOn = selectedProfile.Enabled;
+
+                // Global settings
+                cB_Whitelist.IsOn = selectedProfile.Whitelisted;
+                b_ProfileLike.IsChecked = selectedProfile.IsLiked;
+                CheckBox_SuspendOnStandby.IsChecked = selectedProfile.SuspendOnSleep;
+                cB_Wrapper.SelectedIndex = (int)selectedProfile.XInputPlus;
+
+                // Library
+                Toggle_ShowInLibrary.IsOn = selectedProfile.ShowInLibrary;
+
+                // Window(s)
+                CheckBox_SuspendOnQT.IsChecked = selectedProfile.SuspendOnQT;
+
+                // virtual controller assigned to the profile
+                cB_EmulatedController.IsEnabled = !selectedProfile.Default; // if default profile, disable comboboxf
+                cB_EmulatedController.SelectedIndex = new Func<int>(() =>
                 {
-                    // disable delete button if is default profile or any sub profile is running
-                    //TODO consider sub profiles pertaining to this main profile is running
-                    b_DeleteProfile.IsEnabled = (selectedProfile.ErrorCode & (ProfileErrorCode.Default | ProfileErrorCode.Running)) == 0;
-                    // prevent user from renaming default profile
-                    b_ProfileRename.IsEnabled = !selectedMainProfile.Default;
-                    // prevent user from disabling default profile
-                    Toggle_EnableProfile.IsEnabled = !selectedProfile.Default;
-                    // prevent user from using Wrapper on default profile
-                    cB_Wrapper.IsEnabled = !selectedProfile.Default;
-                    UseFullscreenOptimizations.IsEnabled = !selectedProfile.Default;
-                    UseHighDPIAwareness.IsEnabled = !selectedProfile.Default;
-                    LibrarySettings.IsEnabled = !selectedProfile.Default;
-                    CheckBox_SuspendOnQT.IsEnabled = !selectedProfile.Default;
-                    CheckBox_SuspendOnStandby.IsEnabled = !selectedProfile.Default;
+                    if (selectedProfile.Default) // Default profile always shows default, but keeps track of default controller internally
+                        return 0;
+                    else if (selectedProfile.HID == HIDmode.Xbox360Controller)
+                        return 1;
+                    else if (selectedProfile.HID == HIDmode.DualShock4Controller)
+                        return 2;
+                    else
+                        return 0; // Current or not assigned
+                })();
 
-                    // sub profiles
-                    b_SubProfileCreate.IsEnabled = !selectedMainProfile.Default;
+                // Motion control settings
+                tb_ProfileGyroValue.Value = selectedProfile.GyrometerMultiplier;
+                tb_ProfileAcceleroValue.Value = selectedProfile.AccelerometerMultiplier;
 
-                    // enable delete and rename if not default sub profile
-                    b_SubProfileDelete.IsEnabled = selectedProfile.IsSubProfile ? true : false;
-                    b_SubProfileRename.IsEnabled = selectedProfile.IsSubProfile ? true : false;
+                cB_GyroSteering.SelectedIndex = (byte)selectedProfile.SteeringAxis;
+                cB_InvertHorizontal.IsChecked = selectedProfile.MotionInvertHorizontal;
+                cB_InvertVertical.IsChecked = selectedProfile.MotionInvertVertical;
 
-                    // Profile info
-                    tB_ProfileName.Text = selectedMainProfile.Name;
-                    tB_ProfilePath.Text = selectedProfile.Path;
-                    tB_ProfileArguments.Text = selectedProfile.Arguments;
-                    tB_ProfileLaunchString.Text = selectedProfile.LaunchString;
-                    Toggle_EnableProfile.IsOn = selectedProfile.Enabled;
+                UpdateMotionControlsVisibility();
 
-                    // Global settings
-                    cB_Whitelist.IsOn = selectedProfile.Whitelisted;
-                    b_ProfileLike.IsChecked = selectedProfile.IsLiked;
-                    CheckBox_SuspendOnStandby.IsChecked = selectedProfile.SuspendOnSleep;
-                    cB_Wrapper.SelectedIndex = (int)selectedProfile.XInputPlus;
+                // Framerate limit
+                DesktopScreen? desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
+                if (desktopScreen is not null)
+                    cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
 
-                    // Library
-                    Toggle_ShowInLibrary.IsOn = selectedProfile.ShowInLibrary;
+                // GPU Scaling
+                GPUScalingComboBox.SelectedIndex = selectedProfile.ScalingMode;
 
-                    // Window(s)
-                    CheckBox_SuspendOnQT.IsChecked = selectedProfile.SuspendOnQT;
+                // RSR
+                RSRToggle.IsOn = selectedProfile.RSREnabled;
+                RSRSlider.Value = selectedProfile.RSRSharpness;
 
-                    // virtual controller assigned to the profile
-                    cB_EmulatedController.IsEnabled = !selectedProfile.Default; // if default profile, disable comboboxf
-                    cB_EmulatedController.SelectedIndex = new Func<int>(() =>
-                    {
-                        if (selectedProfile.Default) // Default profile always shows default, but keeps track of default controller internally
-                            return 0;
-                        else if (selectedProfile.HID == HIDmode.Xbox360Controller)
-                            return 1;
-                        else if (selectedProfile.HID == HIDmode.DualShock4Controller)
-                            return 2;
-                        else
-                            return 0; // Current or not assigned
-                    })();
+                // AFMF
+                AFMFToggle.IsOn = selectedProfile.AFMFEnabled;
 
-                    // Motion control settings
-                    tb_ProfileGyroValue.Value = selectedProfile.GyrometerMultiplier;
-                    tb_ProfileAcceleroValue.Value = selectedProfile.AccelerometerMultiplier;
+                // Integer Scaling
+                IntegerScalingToggle.IsOn = selectedProfile.IntegerScalingEnabled;
 
-                    cB_GyroSteering.SelectedIndex = (byte)selectedProfile.SteeringAxis;
-                    cB_InvertHorizontal.IsChecked = selectedProfile.MotionInvertHorizontal;
-                    cB_InvertVertical.IsChecked = selectedProfile.MotionInvertVertical;
+                if (desktopScreen is not null && selectedProfile.IntegerScalingEnabled)
+                    IntegerScalingComboBox.SelectedItem = desktopScreen.screenDividers.FirstOrDefault(d => d.divider == selectedProfile.IntegerScalingDivider);
 
-                    UpdateMotionControlsVisibility();
+                // RIS
+                RISToggle.IsOn = selectedProfile.RISEnabled;
+                RISSlider.Value = selectedProfile.RISSharpness;
 
-                    // Framerate limit
-                    DesktopScreen? desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
-                    if (desktopScreen is not null)
-                        cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
+                // Compatibility settings
+                UseFullscreenOptimizations.IsOn = selectedProfile.FullScreenOptimization;
+                UseHighDPIAwareness.IsOn = selectedProfile.HighDPIAware;
 
-                    // GPU Scaling
-                    GPUScalingComboBox.SelectedIndex = selectedProfile.ScalingMode;
+                // power profile
+                PowerProfile powerProfileDC = ManagerFactory.powerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
+                PowerProfile powerProfileAC = ManagerFactory.powerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
 
-                    // RSR
-                    RSRToggle.IsOn = selectedProfile.RSREnabled;
-                    RSRSlider.Value = selectedProfile.RSRSharpness;
+                switch (System.Windows.Forms.SystemInformation.PowerStatus.PowerLineStatus)
+                {
+                    case System.Windows.Forms.PowerLineStatus.Unknown:
+                    case System.Windows.Forms.PowerLineStatus.Offline:
+                        SelectedPowerProfileName.Text = powerProfileDC?.Name;
+                        break;
+                    case System.Windows.Forms.PowerLineStatus.Online:
+                        SelectedPowerProfileName.Text = powerProfileAC?.Name;
+                        break;
+                }
 
-                    // AFMF
-                    AFMFToggle.IsOn = selectedProfile.AFMFEnabled;
+                                    ((ProfilesPageViewModel)DataContext).PowerProfileChanged(powerProfileAC, powerProfileDC);
 
-                    // Integer Scaling
-                    IntegerScalingToggle.IsOn = selectedProfile.IntegerScalingEnabled;
+                // display warnings
+                WarningInfoBar.Message = EnumUtils.GetDescriptionFromEnumValue(selectedProfile.ErrorCode);
 
-                    if (desktopScreen is not null && selectedProfile.IntegerScalingEnabled)
-                        IntegerScalingComboBox.SelectedItem = desktopScreen.screenDividers.FirstOrDefault(d => d.divider == selectedProfile.IntegerScalingDivider);
+                (Visibility warningVisibility, bool controlsEnabled, bool redirectionEnabled) = selectedProfile.ErrorCode switch
+                {
+                    ProfileErrorCode.MissingPermission => (Visibility.Visible, true, false),
+                    ProfileErrorCode.Running or
+                    ProfileErrorCode.MissingExecutable or
+                    ProfileErrorCode.MissingPath or
+                    ProfileErrorCode.Default => (Visibility.Visible, false, false),
+                    _ => (Visibility.Collapsed, true, true)
+                };
 
-                    // RIS
-                    RISToggle.IsOn = selectedProfile.RISEnabled;
-                    RISSlider.Value = selectedProfile.RISSharpness;
+                WarningInfoBar.Visibility = warningVisibility;
+                StackGlobalSettings.IsEnabled = controlsEnabled;
+                cB_Wrapper_Injection.IsEnabled = controlsEnabled;
+                ProfileDetailsExpander.IsEnabled = controlsEnabled;
+                cB_Wrapper_Redirection.IsEnabled = redirectionEnabled;
 
-                    // Compatibility settings
-                    UseFullscreenOptimizations.IsOn = selectedProfile.FullScreenOptimization;
-                    UseHighDPIAwareness.IsOn = selectedProfile.HighDPIAware;
-
-                    // power profile
-                    PowerProfile powerProfileDC = ManagerFactory.powerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
-                    PowerProfile powerProfileAC = ManagerFactory.powerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
-
-                    switch (System.Windows.Forms.SystemInformation.PowerStatus.PowerLineStatus)
-                    {
-                        case System.Windows.Forms.PowerLineStatus.Unknown:
-                        case System.Windows.Forms.PowerLineStatus.Offline:
-                            SelectedPowerProfileName.Text = powerProfileDC?.Name;
-                            break;
-                        case System.Windows.Forms.PowerLineStatus.Online:
-                            SelectedPowerProfileName.Text = powerProfileAC?.Name;
-                            break;
-                    }
-
-                    ((ProfilesPageViewModel)DataContext).PowerProfileChanged(powerProfileAC, powerProfileDC);
-
-                    // display warnings
-                    WarningInfoBar.Message = EnumUtils.GetDescriptionFromEnumValue(selectedProfile.ErrorCode);
-
-                    (Visibility warningVisibility, bool controlsEnabled, bool redirectionEnabled) = selectedProfile.ErrorCode switch
-                    {
-                        ProfileErrorCode.MissingPermission => (Visibility.Visible, true, false),
-                        ProfileErrorCode.Running or
-                        ProfileErrorCode.MissingExecutable or
-                        ProfileErrorCode.MissingPath or
-                        ProfileErrorCode.Default => (Visibility.Visible, false, false),
-                        _ => (Visibility.Collapsed, true, true)
-                    };
-
-                    WarningInfoBar.Visibility = warningVisibility;
-                    StackGlobalSettings.IsEnabled = controlsEnabled;
-                    cB_Wrapper_Injection.IsEnabled = controlsEnabled;
-                    ProfileDetailsExpander.IsEnabled = controlsEnabled;
-                    cB_Wrapper_Redirection.IsEnabled = redirectionEnabled;
-
-                    // update dropdown lists
-                    cB_Profiles.Items.Refresh();
-                    cb_SubProfilePicker.Items.Refresh();
-                });
+                // update dropdown lists
+                cB_Profiles.Items.Refresh();
+                cb_SubProfilePicker.Items.Refresh();
             }
             catch { }
             finally
             {
                 profileLock.Exit();
             }
-        }
+        });
     }
 
     private void UpdateSubProfiles(Profile updatedProfile = null)
@@ -998,16 +1002,14 @@ public partial class ProfilesPage : Page
         UpdateProfile();
     }
 
-    public static void UpdateProfile()
+    public void UpdateProfile()
     {
-        if (UpdateTimer is not null)
-        {
+        if (UpdateTimer.Enabled)
             UpdateTimer.Stop();
-            UpdateTimer.Start();
-        }
+        UpdateTimer.Start();
     }
 
-    public void SubmitProfile(UpdateSource source = UpdateSource.ProfilesPage)
+    public static void SubmitProfile(UpdateSource source = UpdateSource.ProfilesPage)
     {
         if (selectedProfile is null)
             return;

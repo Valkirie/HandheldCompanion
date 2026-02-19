@@ -477,7 +477,7 @@ namespace HandheldCompanion.ViewModels
             Value = value;
 
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(Targets, new object());
+            BindingOperations.EnableCollectionSynchronization(Targets, _collectionLock);
 
             // manage events
             MainWindow.layoutPage.LayoutUpdated += UpdateMapping;

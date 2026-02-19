@@ -19,6 +19,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 using Frame = iNKORE.UI.WPF.Modern.Controls.Frame;
 using ListView = System.Windows.Controls.ListView;
 using ListViewItem = System.Windows.Controls.ListViewItem;
@@ -1408,7 +1409,7 @@ namespace HandheldCompanion.Managers
                     }
                 }
                 catch { }
-            });
+            }, DispatcherPriority.Normal);
         }
     }
 }

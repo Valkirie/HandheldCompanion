@@ -16,7 +16,7 @@ namespace HandheldCompanion.ViewModels
         private const ButtonFlags gyroButtonFlags = ButtonFlags.HOTKEY_GYRO_ACTIVATION_QP;
         public ObservableCollection<HotkeyViewModel> HotkeysList { get; set; } = [];
 
-        private ObservableCollection<ProfilesPickerViewModel> _profilePickerItems = [];
+        private ObservableCollection<ProfilesPickerViewModel> ProfilePicker = [];
         public ListCollectionView ProfilePickerCollectionViewAC { get; set; }
         public ListCollectionView ProfilePickerCollectionViewDC { get; set; }
 
@@ -34,7 +34,7 @@ namespace HandheldCompanion.ViewModels
                     _selectedPresetDC = value;
 
                     // get the power profile view model
-                    ProfilesPickerViewModel profilesPickerViewModel = _profilePickerItems.First(p => p.LinkedPresetId == _selectedPresetDC.Guid);
+                    ProfilesPickerViewModel profilesPickerViewModel = ProfilePicker.First(p => p.LinkedPresetId == _selectedPresetDC.Guid);
                     _selectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(profilesPickerViewModel);
 
                     // page-specific behaviors
@@ -79,7 +79,7 @@ namespace HandheldCompanion.ViewModels
                     _selectedPresetAC = value;
 
                     // get the power profile view model
-                    ProfilesPickerViewModel profilesPickerViewModel = _profilePickerItems.First(p => p.LinkedPresetId == _selectedPresetAC.Guid);
+                    ProfilesPickerViewModel profilesPickerViewModel = ProfilePicker.First(p => p.LinkedPresetId == _selectedPresetAC.Guid);
                     _selectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(profilesPickerViewModel);
 
                     // page-specific behaviors
@@ -117,12 +117,12 @@ namespace HandheldCompanion.ViewModels
             this.quickProfilesPage = quickProfilesPage;
 
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(HotkeysList, new object());
-            BindingOperations.EnableCollectionSynchronization(_profilePickerItems, new object());
+            BindingOperations.EnableCollectionSynchronization(HotkeysList, _collectionLock);
+            BindingOperations.EnableCollectionSynchronization(ProfilePicker, _collectionLock2);
 
-            ProfilePickerCollectionViewAC = new ListCollectionView(_profilePickerItems);
+            ProfilePickerCollectionViewAC = new ListCollectionView(ProfilePicker);
             ProfilePickerCollectionViewAC.GroupDescriptions.Add(new PropertyGroupDescription("Header"));
-            ProfilePickerCollectionViewDC = new ListCollectionView(_profilePickerItems);
+            ProfilePickerCollectionViewDC = new ListCollectionView(ProfilePicker);
             ProfilePickerCollectionViewDC.GroupDescriptions.Add(new PropertyGroupDescription("Header"));
 
             // manage events
@@ -154,8 +154,8 @@ namespace HandheldCompanion.ViewModels
                 foreach (PowerProfile powerProfile in ManagerFactory.powerProfileManager.profiles.Values)
                     PowerProfileManager_Updated(powerProfile, UpdateSource.Creation);
 
-                SelectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
-                SelectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
+                SelectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
+                SelectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
             });
         }
 
@@ -164,62 +164,60 @@ namespace HandheldCompanion.ViewModels
             QueryPowerProfile();
         }
 
-        private object ProfilePickerLock = new();
         private void PowerProfileManager_Deleted(PowerProfile profile)
         {
-            lock (ProfilePickerLock)
+            lock (_collectionLock2)
             {
-                ProfilesPickerViewModel? foundPreset = _profilePickerItems.FirstOrDefault(p => p.LinkedPresetId == profile.Guid);
+                ProfilesPickerViewModel? foundPreset = ProfilePicker.FirstOrDefault(p => p.LinkedPresetId == profile.Guid);
                 if (foundPreset is not null)
                 {
-                    _profilePickerItems.Remove(foundPreset);
+                    ProfilePicker.Remove(foundPreset);
 
                     if (SelectedPresetAC?.Guid == foundPreset.LinkedPresetId)
-                        SelectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
+                        SelectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
                     if (SelectedPresetDC?.Guid == foundPreset.LinkedPresetId)
-                        SelectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
+                        SelectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
                 }
             }
         }
 
         private void PowerProfileManager_Updated(PowerProfile profile, UpdateSource source)
         {
-            lock (ProfilePickerLock)
+            lock (_collectionLock2)
             {
                 int index;
-                ProfilesPickerViewModel? foundPreset = _profilePickerItems.FirstOrDefault(p => p.LinkedPresetId == profile.Guid);
+                ProfilesPickerViewModel? foundPreset = ProfilePicker.FirstOrDefault(p => p.LinkedPresetId == profile.Guid);
                 if (foundPreset is not null)
                 {
-                    index = _profilePickerItems.IndexOf(foundPreset);
+                    index = ProfilePicker.IndexOf(foundPreset);
                     foundPreset.Text = profile.Name;
                 }
                 else
                 {
                     index = 0;
-                    _profilePickerItems.Insert(index, new() { LinkedPresetId = profile.Guid, Text = profile.Name, IsInternal = profile.IsDefault() || profile.IsDeviceDefault() });
+                    ProfilePicker.Insert(index, new() { LinkedPresetId = profile.Guid, Text = profile.Name, IsInternal = profile.IsDefault() || profile.IsDeviceDefault() });
                 }
             }
         }
 
         public void PowerProfileChanged(PowerProfile powerProfileAC, PowerProfile powerProfileDC)
         {
-            lock (ProfilePickerLock)
+            UIHelper.TryBeginInvoke(() =>
             {
-                UIHelper.TryInvoke(() =>
+                lock (_collectionLock2)
                 {
-                    SelectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == powerProfileAC.Guid));
-                    SelectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(_profilePickerItems.FirstOrDefault(a => a.LinkedPresetId == powerProfileDC.Guid));
-                });
-            }
+                    SelectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == powerProfileAC.Guid));
+                    SelectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == powerProfileDC.Guid));
+                }
+            });
         }
 
-        private object HotkeyListLock = new();
         private void HotkeysManager_Updated(Hotkey hotkey)
         {
             if (hotkey.ButtonFlags != gyroButtonFlags)
                 return;
 
-            lock (HotkeyListLock)
+            lock (_collectionLock)
             {
                 HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
                 if (foundHotkey is null)
@@ -231,7 +229,7 @@ namespace HandheldCompanion.ViewModels
 
         private void InputsManager_StartedListening(ButtonFlags buttonFlags, InputsChordTarget chordTarget)
         {
-            lock (HotkeyListLock)
+            lock (_collectionLock)
             {
                 HotkeyViewModel hotkeyViewModel = HotkeysList.Where(h => h.Hotkey.ButtonFlags == buttonFlags).FirstOrDefault();
                 hotkeyViewModel?.SetListening(true, chordTarget);
@@ -240,7 +238,7 @@ namespace HandheldCompanion.ViewModels
 
         private void InputsManager_StoppedListening(ButtonFlags buttonFlags, InputsChord storedChord)
         {
-            lock (HotkeyListLock)
+            lock (_collectionLock)
             {
                 HotkeyViewModel hotkeyViewModel = HotkeysList.Where(h => h.Hotkey.ButtonFlags == buttonFlags).FirstOrDefault();
                 hotkeyViewModel?.SetListening(false, storedChord.chordTarget);

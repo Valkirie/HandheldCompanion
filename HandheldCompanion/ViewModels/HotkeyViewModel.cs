@@ -576,7 +576,7 @@ namespace HandheldCompanion.ViewModels
             Hotkey = hotkey;
 
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(ButtonGlyphs, new object());
+            BindingOperations.EnableCollectionSynchronization(ButtonGlyphs, _collectionLock);
 
             _functionTypes = FunctionCommands.Functions.Where(item => item is Type type && type.IsAssignableTo(typeof(FunctionCommands))).Cast<Type>().ToList();
             UIHelper.TryInvoke(() =>

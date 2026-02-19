@@ -39,7 +39,7 @@ namespace HandheldCompanion.ViewModels
             _flag = flag;
 
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(ButtonMappings, new object());
+            BindingOperations.EnableCollectionSynchronization(ButtonMappings, _collectionLock);
 
             ButtonMappings.Add(new ButtonMappingViewModel(this, flag));
             ButtonMappings.CollectionChanged += ButtonMappings_CollectionChanged;

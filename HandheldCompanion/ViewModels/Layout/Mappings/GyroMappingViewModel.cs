@@ -171,7 +171,7 @@ namespace HandheldCompanion.ViewModels
         public GyroMappingViewModel(AxisLayoutFlags layoutFlag) : base(layoutFlag)
         {
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(HotkeysList, new object());
+            BindingOperations.EnableCollectionSynchronization(HotkeysList, _collectionLock);
 
             foreach (var mode in Enum.GetValues<MotionInput>())
             {

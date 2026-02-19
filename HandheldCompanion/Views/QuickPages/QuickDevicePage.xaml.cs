@@ -27,6 +27,8 @@ public partial class QuickDevicePage : Page
     private IReadOnlyList<Radio> radios;
     private DispatcherTimer radioTimer;
 
+    private CrossThreadLock multimediaLock = new();
+
     public QuickDevicePage()
     {
         InitializeComponent();
@@ -200,33 +202,35 @@ public partial class QuickDevicePage : Page
         BluetoothToggle.IsOn = bt?.State == RadioState.On;
     }
 
-    private CrossThreadLock multimediaLock = new();
     private void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
     {
-        if (multimediaLock.TryEnter())
+
+        UIHelper.TryBeginInvoke(() =>
         {
+            if (!multimediaLock.TryEnter())
+                return;
+
             try
             {
-                // UI thread
-                UIHelper.TryInvoke(() =>
-                {
-                    ComboBoxResolution.Items.Clear();
-                    foreach (ScreenResolution resolution in screen.screenResolutions)
-                        ComboBoxResolution.Items.Add(resolution);
-                });
+                ComboBoxResolution.Items.Clear();
+                foreach (ScreenResolution resolution in screen.screenResolutions)
+                    ComboBoxResolution.Items.Add(resolution);
             }
             catch { }
             finally
             {
                 multimediaLock.Exit();
             }
-        }
+        });
     }
 
     private void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
-        if (multimediaLock.TryEnter())
+        UIHelper.TryBeginInvoke(() =>
         {
+            if (!multimediaLock.TryEnter())
+                return;
+
             try
             {
                 // We don't want to change the combobox when it's changed from profile integer scaling
@@ -237,49 +241,45 @@ public partial class QuickDevicePage : Page
                     return;
                 }
 
-                // UI thread
-                UIHelper.TryInvoke(() =>
+                if (resolution != ComboBoxResolution.SelectedItem)
                 {
-                    if (resolution != ComboBoxResolution.SelectedItem)
+                    // update target resolution
+                    ComboBoxResolution.SelectedItem = resolution;
+
+                    // update frequency list
+                    ComboBoxFrequency.Items.Clear();
+                    foreach (int frequency in resolution.Frequencies.Keys)
                     {
-                        // update target resolution
-                        ComboBoxResolution.SelectedItem = resolution;
-
-                        // update frequency list
-                        ComboBoxFrequency.Items.Clear();
-                        foreach (int frequency in resolution.Frequencies.Keys)
+                        ComboBoxItem comboBoxItem = new()
                         {
-                            ComboBoxItem comboBoxItem = new()
-                            {
-                                Content = $"{frequency} Hz",
-                                Tag = frequency,
-                            };
+                            Content = $"{frequency} Hz",
+                            Tag = frequency,
+                        };
 
-                            ComboBoxFrequency.Items.Add(comboBoxItem);
+                        ComboBoxFrequency.Items.Add(comboBoxItem);
+                    }
+                }
+
+                // pick current frequency
+                int screenFrequency = desktopScreen.GetCurrentFrequency();
+                foreach (ComboBoxItem comboBoxItem in ComboBoxFrequency.Items)
+                {
+                    if (comboBoxItem.Tag is int frequency)
+                    {
+                        if (frequency == screenFrequency)
+                        {
+                            ComboBoxFrequency.SelectedItem = comboBoxItem;
+                            break;
                         }
                     }
-
-                    // pick current frequency
-                    int screenFrequency = desktopScreen.GetCurrentFrequency();
-                    foreach (ComboBoxItem comboBoxItem in ComboBoxFrequency.Items)
-                    {
-                        if (comboBoxItem.Tag is int frequency)
-                        {
-                            if (frequency == screenFrequency)
-                            {
-                                ComboBoxFrequency.SelectedItem = comboBoxItem;
-                                break;
-                            }
-                        }
-                    }
-                });
+                }
             }
             catch { }
             finally
             {
                 multimediaLock.Exit();
             }
-        }
+        });
     }
 
     private void ComboBoxResolution_SelectionChanged(object sender, SelectionChangedEventArgs e)

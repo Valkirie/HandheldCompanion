@@ -35,7 +35,11 @@ namespace HandheldCompanion.Managers
         // watcher(s)
         private AMDSettingsWatcher AMDSettingsWatcher = new();
 
-        private object screenLock = new();
+        // Coalesced reconciliation to avoid cross-manager "busy" waits
+        private readonly object _reconcileLock = new();
+        private bool _reconcileRunning;
+        private bool _reconcileRequested;
+        private DesktopScreen? _lastPrimaryScreen;
 
         public override async void Start()
         {
@@ -352,52 +356,89 @@ namespace HandheldCompanion.Managers
             // Add to dictionary
             DisplayGPU.TryAdd(adapterInformation, newGPU);
 
-            // Wait until manager is ready
-            Task.Run(async () =>
-            {
-                if (ManagerFactory.multimediaManager.IsRunning)
-                {
-                    while (ManagerFactory.multimediaManager.IsBusy)
-                        await Task.Delay(1000).ConfigureAwait(false);
-
-                    // Force send an update
-                    if (ManagerFactory.multimediaManager.PrimaryDesktop != null)
-                        MultimediaManager_PrimaryScreenChanged(ManagerFactory.multimediaManager.PrimaryDesktop);
-                }
-            });
+            // request a reconciliation pass
+            RequestReconcile();
         }
 
         private void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
         {
-            lock (screenLock)
+            // store latest primary screen
+            lock (_reconcileLock)
+                _lastPrimaryScreen = screen;
+
+            // request a reconciliation pass
+            RequestReconcile();
+        }
+
+        private void RequestReconcile()
+        {
+            bool shouldReconcile;
+            lock (_reconcileLock)
+            {
+                _reconcileRequested = true;
+
+                shouldReconcile = !_reconcileRunning;
+
+                if (shouldReconcile)
+                    _reconcileRunning = true;
+            }
+
+            if (!shouldReconcile)
+                return;
+
+            _ = Task.Run(() =>
             {
                 try
                 {
-                    AdapterInformation? key = DisplayGPU.Keys.FirstOrDefault(GPU => GPU.Details.DeviceName == screen.screen.DeviceName);
-                    if (key is not null && DisplayGPU.TryGetValue(key, out GPU? gpu))
+                    while (true)
                     {
-                        LogManager.LogInformation("Retrieved DisplayAdapter: {0} for screen: {1}", gpu.ToString(), screen.ToString());
-
-                        if (currentGPU != gpu)
+                        DesktopScreen? screen;
+                        lock (_reconcileLock)
                         {
-                            // Disconnect from the current GPU, if any
-                            if (currentGPU is not null)
-                                GPUDisconnect(currentGPU);
+                            if (!_reconcileRequested)
+                            {
+                                _reconcileRunning = false;
+                                return;
+                            }
 
-                            // Connect to the new GPU
-                            GPUConnect(gpu);
+                            _reconcileRequested = false;
+                            screen = _lastPrimaryScreen ?? ManagerFactory.multimediaManager.PrimaryDesktop;
                         }
-                    }
-                    else
-                    {
-                        LogManager.LogError("Failed to retrieve DisplayAdapter for screen: {0}", screen.ToString());
+
+                        if (screen is null)
+                            continue;
+
+                        TryConnectPrimaryGpu(screen);
                     }
                 }
                 catch
                 {
-                    LogManager.LogError("Failed to retrieve DisplayAdapter for screen: {0}, {1}", screen.ToString());
+                    // Best-effort: never let reconciliation crash background thread.
+                    lock (_reconcileLock)
+                        _reconcileRunning = false;
                 }
-            }
+            });
+        }
+
+        private void TryConnectPrimaryGpu(DesktopScreen screen)
+        {
+            // Map the primary screen to a GPU adapter.
+            AdapterInformation? key = DisplayGPU.Keys.FirstOrDefault(a => a.Details.DeviceName == screen.screen.DeviceName);
+            if (key is null)
+                return;
+
+            if (!DisplayGPU.TryGetValue(key, out GPU? gpu) || gpu is null)
+                return;
+
+            LogManager.LogInformation("Retrieved DisplayAdapter: {0} for screen: {1}", gpu.ToString(), screen.ToString());
+
+            if (currentGPU == gpu)
+                return;
+
+            if (currentGPU is not null)
+                GPUDisconnect(currentGPU);
+
+            GPUConnect(gpu);
         }
 
         private void DeviceManager_DisplayAdapterRemoved(AdapterInformation adapterInformation)

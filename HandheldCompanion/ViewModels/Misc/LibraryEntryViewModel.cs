@@ -36,8 +36,8 @@ namespace HandheldCompanion.ViewModels
         public LibraryEntryViewModel(LibraryEntry libraryEntry)
         {
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(LibraryCovers, new object());
-            BindingOperations.EnableCollectionSynchronization(LibraryArtworks, new object());
+            BindingOperations.EnableCollectionSynchronization(LibraryCovers, _collectionLock);
+            BindingOperations.EnableCollectionSynchronization(LibraryArtworks, _collectionLock2);
 
             LibEntry = libraryEntry;
 

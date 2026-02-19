@@ -121,7 +121,7 @@ namespace HandheldCompanion.ViewModels
             this.LibraryPage = libraryPage;
 
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(Profiles, new object());
+            BindingOperations.EnableCollectionSynchronization(Profiles, _collectionLock);
 
             ProfilesView = new ListCollectionView(Profiles);
             ProfilesView.IsLiveSorting = true;

@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using static HandheldCompanion.GraphicsProcessingUnit.GPU;
@@ -159,10 +160,15 @@ public partial class QuickProfilesPage : Page
         {
             AutoReset = false
         };
-        UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
+        UpdateTimer.Elapsed += UpdateTimer_Elapsed;
 
         // store hotkey to manager
         ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
+    }
+
+    private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        SubmitProfile();
     }
 
     private void QueryPlatforms()
@@ -217,29 +223,30 @@ public partial class QuickProfilesPage : Page
 
         ((QuickProfilesPageViewModel)DataContext).Dispose();
 
+        UpdateTimer.Elapsed -= UpdateTimer_Elapsed;
         UpdateTimer.Stop();
+        UpdateTimer.Dispose();
     }
 
     private void MultimediaManager_Initialized()
     {
-        if (multimediaLock.TryEnter())
+        UIHelper.TryBeginInvoke(() =>
         {
+            if (!multimediaLock.TryEnter())
+                return;
+
             try
             {
-                // UI thread
-                UIHelper.TryInvoke(() =>
-                {
-                    DesktopScreen desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
-                    if (desktopScreen is not null)
-                        desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
-                });
+                DesktopScreen desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
+                if (desktopScreen is not null)
+                    desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
             }
             catch { }
             finally
             {
                 multimediaLock.Exit();
             }
-        }
+        });
     }
 
     private bool HasRSRSupport = false;
@@ -394,29 +401,27 @@ public partial class QuickProfilesPage : Page
     private void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
         List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
-
-        if (profileLock.TryEnter())
+        UIHelper.TryBeginInvoke(() =>
         {
+            if (!profileLock.TryEnter())
+                return;
+
             try
             {
-                // UI thread
-                UIHelper.TryInvoke(() =>
-                {
-                    cB_Framerate.Items.Clear();
+                cB_Framerate.Items.Clear();
 
-                    foreach (ScreenFramelimit frameLimit in frameLimits)
-                        cB_Framerate.Items.Add(frameLimit);
+                foreach (ScreenFramelimit frameLimit in frameLimits)
+                    cB_Framerate.Items.Add(frameLimit);
 
-                    if (selectedProfile is not null)
-                        cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
-                });
+                if (selectedProfile is not null)
+                    cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
             }
             catch { }
             finally
             {
                 profileLock.Exit();
             }
-        }
+        });
     }
 
     public void SubmitProfile(UpdateSource source = UpdateSource.QuickProfilesPage)
@@ -488,9 +493,11 @@ public partial class QuickProfilesPage : Page
             case UpdateSource.QuickProfilesPage:
                 return;
         }
-
-        if (profileLock.TryEnter())
+        UIHelper.TryBeginInvoke(() =>
         {
+            if (!profileLock.TryEnter())
+                return;
+
             try
             {
                 // if an update is pending, execute it and stop timer
@@ -519,93 +526,87 @@ public partial class QuickProfilesPage : Page
                 // get gyro layout
                 selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions? currentAction);
 
-                // UI thread
-                UIHelper.TryInvoke(() =>
+                // update profile name
+                CurrentProfileName.Text = selectedProfile.Name;
+
+                // sub profiles
+                cb_SubProfiles.Items.Clear();
+                int selectedIndex = 0;
+
+                foreach (Profile profile in subProfiles)
                 {
-                    // update profile name
-                    CurrentProfileName.Text = selectedProfile.Name;
+                    int idx = cb_SubProfiles.Items.Add(profile);
+                    if (profile.Guid == selectedProfile.Guid)
+                        selectedIndex = idx;
+                }
 
-                    // sub profiles
-                    cb_SubProfiles.Items.Clear();
-                    int selectedIndex = 0;
+                cb_SubProfiles.SelectedIndex = selectedIndex;
 
-                    foreach (Profile profile in subProfiles)
+                ((QuickProfilesPageViewModel)DataContext).PowerProfileChanged(powerProfileAC, powerProfileDC);
+
+                // gyro layout
+                if (currentAction is null)
+                {
+                    // no gyro layout available, mark as disabled
+                    cB_Output.SelectedIndex = (int)MotionOutput.Disabled;
+                }
+                else
+                {
+                    // IActions
+                    GridAntiDeadzone.Visibility = currentAction is AxisActions ? Visibility.Visible : Visibility.Collapsed;
+                    GridGyroWeight.Visibility = currentAction is AxisActions ? Visibility.Visible : Visibility.Collapsed;
+
+                    if (currentAction is AxisActions)
                     {
-                        int idx = cb_SubProfiles.Items.Add(profile);
-                        if (profile.Guid == selectedProfile.Guid)
-                            selectedIndex = idx;
+                        cB_Output.SelectedIndex = (int)((AxisActions)currentAction).Axis;
+                        SliderUMCAntiDeadzone.Value = ((AxisActions)currentAction).AxisAntiDeadZone;
+                        Slider_GyroWeight.Value = ((AxisActions)currentAction).gyroWeight;
+                    }
+                    else if (currentAction is MouseActions)
+                    {
+                        cB_Output.SelectedIndex = (int)((MouseActions)currentAction).MouseType - 1;
                     }
 
-                    cb_SubProfiles.SelectedIndex = selectedIndex;
+                    // GyroActions
+                    cB_Input.SelectedIndex = (int)((GyroActions)currentAction).MotionInput;
+                    cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)((GyroActions)currentAction).MotionMode;
 
-                    ((QuickProfilesPageViewModel)DataContext).PowerProfileChanged(powerProfileAC, powerProfileDC);
+                    // todo: move me to layout ?
+                    SliderSensitivityX.Value = selectedProfile.MotionSensivityX;
+                    SliderSensitivityY.Value = selectedProfile.MotionSensivityY;
+                }
 
-                    // gyro layout
-                    if (currentAction is null)
-                    {
-                        // no gyro layout available, mark as disabled
-                        cB_Output.SelectedIndex = (int)MotionOutput.Disabled;
-                    }
+                // Framerate limit
+                cB_Framerate.SelectedItem = screenFramelimit;
+
+                // GPU Scaling
+                GPUScalingToggle.IsOn = selectedProfile.GPUScaling;
+                GPUScalingComboBox.SelectedIndex = selectedProfile.ScalingMode;
+
+                // RSR
+                RSRToggle.IsOn = selectedProfile.RSREnabled;
+                RSRSlider.Value = selectedProfile.RSRSharpness;
+
+                // AFMF
+                AFMFToggle.IsOn = selectedProfile.AFMFEnabled;
+
+                // Integer Scaling
+                IntegerScalingToggle.IsOn = selectedProfile.IntegerScalingEnabled;
+                IntegerScalingTypeComboBox.SelectedIndex = selectedProfile.IntegerScalingType;
+
+                if (desktopScreen is not null)
+                {
+                    // try and get the appropriate scaling divider, pick first item otherwise
+                    ScreenDivider? scalingDivider = desktopScreen.screenDividers.FirstOrDefault(d => d.divider == selectedProfile.IntegerScalingDivider);
+                    if (scalingDivider is not null && IntegerScalingComboBox.Items.Contains(scalingDivider))
+                        IntegerScalingComboBox.SelectedItem = scalingDivider;
                     else
-                    {
-                        // IActions
-                        GridAntiDeadzone.Visibility = currentAction is AxisActions ? Visibility.Visible : Visibility.Collapsed;
-                        GridGyroWeight.Visibility = currentAction is AxisActions ? Visibility.Visible : Visibility.Collapsed;
+                        IntegerScalingComboBox.SelectedIndex = 0;
+                }
 
-                        if (currentAction is AxisActions)
-                        {
-                            cB_Output.SelectedIndex = (int)((AxisActions)currentAction).Axis;
-                            SliderUMCAntiDeadzone.Value = ((AxisActions)currentAction).AxisAntiDeadZone;
-                            Slider_GyroWeight.Value = ((AxisActions)currentAction).gyroWeight;
-                        }
-                        else if (currentAction is MouseActions)
-                        {
-                            cB_Output.SelectedIndex = (int)((MouseActions)currentAction).MouseType - 1;
-                        }
-
-                        // GyroActions
-                        cB_Input.SelectedIndex = (int)((GyroActions)currentAction).MotionInput;
-                        cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)((GyroActions)currentAction).MotionMode;
-
-                        // todo: move me to layout ?
-                        SliderSensitivityX.Value = selectedProfile.MotionSensivityX;
-                        SliderSensitivityY.Value = selectedProfile.MotionSensivityY;
-                    }
-
-                    // Framerate limit
-                    cB_Framerate.SelectedItem = screenFramelimit;
-
-                    // GPU Scaling
-                    GPUScalingToggle.IsOn = selectedProfile.GPUScaling;
-                    GPUScalingComboBox.SelectedIndex = selectedProfile.ScalingMode;
-
-                    // RSR
-                    RSRToggle.IsOn = selectedProfile.RSREnabled;
-                    RSRSlider.Value = selectedProfile.RSRSharpness;
-
-                    // AFMF
-                    AFMFToggle.IsOn = selectedProfile.AFMFEnabled;
-
-                    // Integer Scaling
-                    IntegerScalingToggle.IsOn = selectedProfile.IntegerScalingEnabled;
-                    IntegerScalingTypeComboBox.SelectedIndex = selectedProfile.IntegerScalingType;
-
-                    if (desktopScreen is not null)
-                    {
-                        // try and get the appropriate scaling divider, pick first item otherwise
-                        ScreenDivider? scalingDivider = desktopScreen.screenDividers.FirstOrDefault(d => d.divider == selectedProfile.IntegerScalingDivider);
-                        if (scalingDivider is not null && IntegerScalingComboBox.Items.Contains(scalingDivider))
-                            IntegerScalingComboBox.SelectedItem = scalingDivider;
-                        else
-                            IntegerScalingComboBox.SelectedIndex = 0;
-                    }
-
-                    // RIS
-                    RISToggle.IsOn = selectedProfile.RISEnabled;
-                    RISSlider.Value = selectedProfile.RISSharpness;
-                });
-
-                if (currentAction is GyroActions gyroActions)
+                // RIS
+                RISToggle.IsOn = selectedProfile.RISEnabled;
+                RISSlider.Value = selectedProfile.RISSharpness; if (currentAction is GyroActions gyroActions)
                 {
                     GyroHotkey.inputsChord.ButtonState = gyroActions.MotionTrigger.Clone() as ButtonState;
                     ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
@@ -616,7 +617,8 @@ public partial class QuickProfilesPage : Page
             {
                 profileLock.Exit();
             }
-        }
+        });
+
     }
 
     private void ProfileManager_Deleted(Profile profile)
@@ -684,7 +686,8 @@ public partial class QuickProfilesPage : Page
 
     private void UpdateProfile()
     {
-        UpdateTimer.Stop();
+        if (UpdateTimer.Enabled)
+            UpdateTimer.Stop();
         UpdateTimer.Start();
     }
 
