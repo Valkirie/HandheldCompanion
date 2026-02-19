@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Notifications;
-using HandheldCompanion.Helpers;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Threading;
