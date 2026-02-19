@@ -203,6 +203,9 @@ namespace HandheldCompanion.Processors.AMD
                     return false;
                 }
 
+                // Get mutex
+                PciBusMutex.Open();
+
                 // Get CPU codename
                 if (!GetCodeName(out _cpuCodeName))
                 {
@@ -236,9 +239,6 @@ namespace HandheldCompanion.Processors.AMD
                 {
                     LogManager.LogInformation("SMU version: {0}", $"0x{_smuVersion:X8}");
                 }
-
-                PciBusMutex.Open();
-
 
                 _initialized = true;
                 LogManager.LogInformation("RyzenSMU service initialized successfully");
