@@ -1014,7 +1014,8 @@ public partial class MainWindow : GamepadWindow
                         Topmost = true;  // important
                         Topmost = false; // important
                         Focus();
-                    } catch { }
+                    }
+                    catch { }
 
                     if (!isFseActive)
                     {
