@@ -89,12 +89,6 @@ public class ProfileManager : IManager
                 LayoutTitle = LayoutTemplate.DefaultLayout.Name,
             };
 
-            // get default power profiles
-            PowerProfile? betterPeformanceProfile = IDevice.GetCurrent().DevicePowerProfiles.FirstOrDefault(p => p.Guid == IDevice.BetterPerformanceGuid);
-            PowerProfile? bestPeformanceProfile = IDevice.GetCurrent().DevicePowerProfiles.FirstOrDefault(p => p.Guid == IDevice.BestPerformanceGuid);
-            defaultProfile.PowerProfiles[(int)PowerLineStatus.Offline] = betterPeformanceProfile?.Guid ?? Guid.Empty;
-            defaultProfile.PowerProfiles[(int)PowerLineStatus.Online] = bestPeformanceProfile?.Guid ?? Guid.Empty;
-
             UpdateOrCreateProfile(defaultProfile, UpdateSource.Creation);
         }
 
@@ -928,8 +922,9 @@ public class ProfileManager : IManager
             if (powerProfile == Guid.Empty)
                 continue;
 
-            if (!ManagerFactory.powerProfileManager.Contains(powerProfile))
-                profileToSanitize.PowerProfiles[idx] = Guid.Empty;
+            if (ManagerFactory.powerProfileManager.Status == ManagerStatus.Initialized)
+                if (!ManagerFactory.powerProfileManager.Contains(powerProfile))
+                    profileToSanitize.PowerProfiles[idx] = Guid.Empty;
         }
     }
 
@@ -981,6 +976,12 @@ public class ProfileManager : IManager
         {
             prevWrapper = prevProfile.XInputPlus;
         }
+
+        // get default power profiles
+        PowerProfile? betterPeformanceProfile = IDevice.GetCurrent().DevicePowerProfiles.FirstOrDefault(p => p.Guid == IDevice.BetterPerformanceGuid);
+        PowerProfile? bestPeformanceProfile = IDevice.GetCurrent().DevicePowerProfiles.FirstOrDefault(p => p.Guid == IDevice.BestPerformanceGuid);
+        profile.PowerProfiles[(int)PowerLineStatus.Offline] = betterPeformanceProfile?.Guid ?? Guid.Empty;
+        profile.PowerProfiles[(int)PowerLineStatus.Online] = bestPeformanceProfile?.Guid ?? Guid.Empty;
 
         // update database
         profiles[profile.Guid] = profile;

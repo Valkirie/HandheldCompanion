@@ -522,8 +522,8 @@ namespace HandheldCompanion.ViewModels
                 foreach (PowerProfile powerProfile in ManagerFactory.powerProfileManager.profiles.Values)
                     PowerProfileManager_Updated(powerProfile, UpdateSource.Creation);
 
-                SelectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
-                SelectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
+                // SelectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
+                // SelectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
             });
         }
 

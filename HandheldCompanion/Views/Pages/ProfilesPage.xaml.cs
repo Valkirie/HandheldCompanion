@@ -612,7 +612,7 @@ public partial class ProfilesPage : Page
                         break;
                 }
 
-                                    ((ProfilesPageViewModel)DataContext).PowerProfileChanged(powerProfileAC, powerProfileDC);
+                ((ProfilesPageViewModel)DataContext).PowerProfileChanged(powerProfileAC, powerProfileDC);
 
                 // display warnings
                 WarningInfoBar.Message = EnumUtils.GetDescriptionFromEnumValue(selectedProfile.ErrorCode);
