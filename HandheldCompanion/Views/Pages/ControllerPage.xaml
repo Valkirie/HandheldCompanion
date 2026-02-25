@@ -216,7 +216,7 @@
                             Style="{DynamicResource AccentButtonStyle}"
                             ToolTip="Adjust controllers order"
                             Visibility="Collapsed">
-                            <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xec7a;" />
+                            Adjust order
                         </Button>
                     </StackPanel>
                 </ui:SettingsCard>
