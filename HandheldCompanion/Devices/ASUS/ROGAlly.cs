@@ -23,6 +23,7 @@ public class ROGAlly : IDevice
     {
         { 0, ButtonFlags.None },
         { 166, ButtonFlags.OEM1 },
+        { 147, ButtonFlags.OEM5 }, // XBOX Rog Ally
         { 56, ButtonFlags.OEM2 },
         { 165, ButtonFlags.OEM3 },
         { 167, ButtonFlags.OEM4 },
@@ -159,6 +160,11 @@ public class ROGAlly : IDevice
             false, ButtonFlags.OEM2
         ));
 
+        OEMChords.Add(new KeyboardChord("LIB",
+            [], [],
+            false, ButtonFlags.OEM5
+        ));
+
         // M1 and M2 do a repeating input when holding the button
         OEMChords.Add(new KeyboardChord("M1",
             [KeyCode.F18],
@@ -174,6 +180,7 @@ public class ROGAlly : IDevice
 
         // prepare hotkeys
         DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
+        DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM5] = true;
         DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
     }
 
@@ -460,6 +467,7 @@ public class ROGAlly : IDevice
 
             case 56:    // Armory crate: Click
             case 166:   // Command center: Click
+            case 147:   // Library: Click
                 KeyPressAndRelease(button, KeyPressDelay);
                 break;
         }
@@ -591,9 +599,22 @@ public class ROGAlly : IDevice
                 return "\u2212";
             case ButtonFlags.OEM4:
                 return "\u2213";
+            case ButtonFlags.OEM5:
+                return "\ue8f1";
         }
 
         return base.GetGlyph(button);
+    }
+
+    public override string GetFontFamily(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM5:  // Library
+                return "Segoe Fluent Icons";
+        }
+
+        return base.GetFontFamily(button);
     }
 
     private void ConfigureController(bool Remap)

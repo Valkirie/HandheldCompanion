@@ -250,13 +250,14 @@ public static class ControllerManager
                         SetTargetController(baseContainerDeviceInstanceId, powerCycle);
                     }
                     break;
+                case "IgnoreTarget":
+                    break;
 
                 case "SlotFixReset":
                     // Manual user action: force a fresh run (reset attempts)
                     StartWatchdog(SlotFixTrigger.Manual, resetAttempts: true);
                     break;
-
-                case "Ignore":
+                case "SlotFixIgnore":
                     // User explicitly dismissed the prompt; suppress prompts for a short period.
                     slotFixIgnoreUntilUtc = DateTime.UtcNow.AddMinutes(5);
                     break;
@@ -366,15 +367,25 @@ public static class ControllerManager
             outputPath: Path.Combine(Path.GetTempPath(), "connect_to_app.png"),
             foreground: MediaColor.FromArgb(winColor.A, winColor.R, winColor.G, winColor.B));
 
-        List<ToastAction> actions = new List<ToastAction>();
-        actions.Add(new ToastAction
-        {
-            Label = "Connect",
-            IconPath = iconFile,
-            Command = "SetTarget",
-            Parameters = new() { { "deviceId", controller.GetContainerInstanceId() }, { "powerCycle", isCycling.ToString() } },
-            Callback = p => SetTargetController(p["deviceId"], isCycling)
-        });
+        List<ToastAction> actions =
+        [
+            new ToastAction
+            {
+                Label = "Connect",
+                // IconPath = iconFile,
+                Command = "SetTarget",
+                Parameters = new() { { "deviceId", controller.GetContainerInstanceId() }, { "powerCycle", isCycling.ToString() } },
+                Callback = p => SetTargetController(p["deviceId"], isCycling)
+            },
+            new ToastAction
+            {
+                Label = "Ignore",
+                // IconPath = iconFile,
+                Command = "IgnoreTarget",
+                Parameters = new(),
+                Callback = p => SetTargetController(string.Empty, false)
+            },
+        ];
 
         ToastManager.SendToast(new ToastRequest
         {
@@ -2072,14 +2083,6 @@ public static class ControllerManager
     {
         try
         {
-            // get controller
-            if (Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
-            {
-                // edge-case
-                if (controller is XboxAdaptiveController xboxController)
-                    return xboxController.Enable();
-            }
-
             PnPDevice pnPDevice = null;
 
             Task timeout = Task.Delay(TimeSpan.FromSeconds(3));
@@ -2131,6 +2134,10 @@ public static class ControllerManager
         // loop through controllers
         foreach (string baseContainerDeviceInstanceId in DriverStore.GetPaths())
             ResumeController(baseContainerDeviceInstanceId);
+
+        // edge case
+        foreach (XboxAdaptiveController xboxAdaptiveController in GetPhysicalControllers<XboxAdaptiveController>())
+            xboxAdaptiveController.Enable();
 
         /*
         if (HostRadioDisabled)
