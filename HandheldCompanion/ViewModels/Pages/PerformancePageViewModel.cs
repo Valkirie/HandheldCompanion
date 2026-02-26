@@ -994,13 +994,9 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // raise events
-            /*
-             * case "ConfigurableTDPOverride":
-             * case "ConfigurableTDPOverrideDown":
-             * case "ConfigurableTDPOverrideUp":
-            */
-
             OnPropertyChanged("ConfigurableTDPOverride");
+            OnPropertyChanged("ConfigurableTDPOverrideDown");
+            OnPropertyChanged("ConfigurableTDPOverrideUp");
         }
 
         private void QueryPowerProfile()
