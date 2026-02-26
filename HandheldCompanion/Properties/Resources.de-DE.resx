@@ -2289,9 +2289,6 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="PowerProfileManualDescription" xml:space="preserve">
     <value>User-defined power and fan speed.</value>
   </data>
-  <data name="PowerProfileManualName" xml:space="preserve">
-    <value>Manual mode: {0}</value>
-  </data>
   <data name="PowerProfileROGAllyBetterPerformanceDesc" xml:space="preserve">
     <value>Balances performance, temperature and acoustic for any scenario.</value>
   </data>

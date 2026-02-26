@@ -770,28 +770,11 @@ namespace HandheldCompanion.ViewModels
 
             CreatePresetCommand = new DelegateCommand(() =>
             {
-                // Get the count of profiles that are not default, then start with +1 of that
-                int count = ManagerFactory.powerProfileManager.profiles.Values.Count(p => !p.IsDefault());
-                int idx = count + 1;
-
-                // Create a base name for the new profile
-                string baseName = Resources.PowerProfileManualName;
-
-                // Check for duplicates and increment the index
-                while (ManagerFactory.powerProfileManager.profiles.Values.Any(p => p.Name == string.Format(baseName, idx)))
-                    idx++;
-
-                // Format the name with the updated index
-                string name = string.Format(baseName, idx);
-
-                // Create the new power profile
-                PowerProfile powerProfile = new PowerProfile(name, Resources.PowerProfileManualDescription)
-                {
-                    TDPOverrideValues = IDevice.GetCurrent().nTDP
-                };
-
-                // Update or create the profile
-                ManagerFactory.powerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);
+                ManagerFactory.powerProfileManager.CreateUserProfile(
+                    Resources.PowerProfileManualName,
+                    Resources.PowerProfileManualDescription,
+                    IDevice.GetCurrent().nTDP,
+                    UpdateSource.Creation);
             });
 
             DeletePresetCommand = new DelegateCommand(async () =>

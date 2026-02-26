@@ -7977,7 +7977,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Manual mode: {0}.
+        ///   Looks up a localized string similar to Manual mode {0}.
         /// </summary>
         public static string PowerProfileManualName {
             get {
