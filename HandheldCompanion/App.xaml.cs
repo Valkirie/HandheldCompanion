@@ -357,7 +357,7 @@ public partial class App : Application
             LogManager.LogCritical(ex.Message + "\t" + ex.StackTrace);
 
         // If you want to avoid the application from crashing:
-        Handled:
+    Handled:
         e.Handled = true;
     }
 

@@ -292,7 +292,7 @@ namespace HandheldCompanion.Managers
                 LogManager.LogError("Failed to parse power profile: {0}", fileName);
                 return;
             }
-            
+
             // store fileName (needed for rename-safe serialization)
             profile.FileName = Path.GetFileName(fileName);
 
@@ -333,11 +333,11 @@ namespace HandheldCompanion.Managers
             SerializeProfile(profile);
         }
 
-        private string GenerateUniqueProfileName(string nameTemplate)
+        public string GetProfileName(string nameTemplate)
         {
             string template = (nameTemplate ?? string.Empty).Trim();
             if (string.IsNullOrWhiteSpace(template))
-                template = "Power Profile {0}";
+                template = "Manual mode {0}";
 
             bool hasPlaceholder = template.Contains("{0}");
 
@@ -353,32 +353,16 @@ namespace HandheldCompanion.Managers
             int idx = 1;
             while (true)
             {
-                string candidateName = hasPlaceholder
-                    ? string.Format(template, idx)
-                    : $"{template} {idx}";
-
+                string candidateName = hasPlaceholder ? string.Format(template, idx) : $"{template} {idx}";
                 string candidateFile = $"{FileUtils.MakeValidFileName(candidateName)}.json";
                 if (string.IsNullOrWhiteSpace(candidateFile) || candidateFile.Equals(".json", StringComparison.OrdinalIgnoreCase))
-                    candidateFile = $"PowerProfile {idx}.json";
+                    candidateFile = $"Manual mode {idx}.json";
 
                 if (!existingFiles.Contains(candidateFile))
                     return candidateName;
 
                 idx++;
             }
-        }
-
-        public PowerProfile CreateUserProfile(string nameTemplate, string description, double[] tdpOverrideValues, UpdateSource source = UpdateSource.Creation)
-        {
-            string uniqueName = GenerateUniqueProfileName(nameTemplate);
-
-            PowerProfile powerProfile = new(uniqueName, description)
-            {
-                TDPOverrideValues = tdpOverrideValues
-            };
-
-            UpdateOrCreateProfile(powerProfile, source);
-            return powerProfile;
         }
 
         public bool Contains(Guid guid)

@@ -770,11 +770,14 @@ namespace HandheldCompanion.ViewModels
 
             CreatePresetCommand = new DelegateCommand(() =>
             {
-                ManagerFactory.powerProfileManager.CreateUserProfile(
-                    Resources.PowerProfileManualName,
-                    Resources.PowerProfileManualDescription,
-                    IDevice.GetCurrent().nTDP,
-                    UpdateSource.Creation);
+                string profileName = ManagerFactory.powerProfileManager.GetProfileName(Resources.PowerProfileManualName);
+
+                PowerProfile powerProfile = new(profileName, Resources.PowerProfileManualDescription)
+                {
+                    TDPOverrideValues = IDevice.GetCurrent().nTDP
+                };
+
+                ManagerFactory.powerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);
             });
 
             DeletePresetCommand = new DelegateCommand(async () =>

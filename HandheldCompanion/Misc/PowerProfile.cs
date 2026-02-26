@@ -1,8 +1,6 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using System;
-using System.IO;
-using System.Text.RegularExpressions;
 
 namespace HandheldCompanion.Misc
 {
