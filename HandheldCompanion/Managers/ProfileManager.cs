@@ -968,6 +968,18 @@ public class ProfileManager : IManager
                     ManagerFactory.libraryManager.RefreshProfileArts(profile);
                     break;
             }
+
+            // get default power profiles
+            if (profile.PowerProfiles[(int)PowerLineStatus.Offline] == Guid.Empty)
+            {
+                PowerProfile? betterPeformanceProfile = IDevice.GetCurrent().DevicePowerProfiles.FirstOrDefault(p => p.Guid == IDevice.BetterPerformanceGuid);
+                profile.PowerProfiles[(int)PowerLineStatus.Offline] = betterPeformanceProfile?.Guid ?? Guid.Empty;
+            }
+            if (profile.PowerProfiles[(int)PowerLineStatus.Online] == Guid.Empty)
+            {
+                PowerProfile? bestPeformanceProfile = IDevice.GetCurrent().DevicePowerProfiles.FirstOrDefault(p => p.Guid == IDevice.BestPerformanceGuid);
+                profile.PowerProfiles[(int)PowerLineStatus.Online] = bestPeformanceProfile?.Guid ?? Guid.Empty;
+            }
         }
 
         // used to get and store a few previous values
@@ -976,12 +988,6 @@ public class ProfileManager : IManager
         {
             prevWrapper = prevProfile.XInputPlus;
         }
-
-        // get default power profiles
-        PowerProfile? betterPeformanceProfile = IDevice.GetCurrent().DevicePowerProfiles.FirstOrDefault(p => p.Guid == IDevice.BetterPerformanceGuid);
-        PowerProfile? bestPeformanceProfile = IDevice.GetCurrent().DevicePowerProfiles.FirstOrDefault(p => p.Guid == IDevice.BestPerformanceGuid);
-        profile.PowerProfiles[(int)PowerLineStatus.Offline] = betterPeformanceProfile?.Guid ?? Guid.Empty;
-        profile.PowerProfiles[(int)PowerLineStatus.Online] = bestPeformanceProfile?.Guid ?? Guid.Empty;
 
         // update database
         profiles[profile.Guid] = profile;
