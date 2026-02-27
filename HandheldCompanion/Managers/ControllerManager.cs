@@ -1482,27 +1482,30 @@ public static class ControllerManager
         {
         }
     }
-
-    private static HashSet<byte> UserIndexes = new();
-    private static List<XInputController> InvalidSlotAssignments = new();
-    private static bool HasInvalidController => InvalidSlotAssignments.Any();
+    // Slot probe state is returned as an immutable snapshot (see SlotProbeResult).
 
     private readonly struct SlotProbeResult
     {
-        public SlotProbeResult(bool needsFix, bool ensureVirtualSlot1, bool virtualInSlot1, bool hasInvalidControllers, bool hasInvalidVirtual, string reason)
+        public SlotProbeResult(
+            bool needsFix,
+            bool ensureVirtualSlot1,
+            bool virtualInSlot1,
+            IReadOnlyList<XInputController> invalidControllers,
+            bool hasInvalidVirtual,
+            string reason)
         {
             NeedsFix = needsFix;
             EnsureVirtualSlot1 = ensureVirtualSlot1;
             VirtualInSlot1 = virtualInSlot1;
-            HasInvalidControllers = hasInvalidControllers;
+            InvalidControllers = invalidControllers ?? Array.Empty<XInputController>();
             HasInvalidVirtual = hasInvalidVirtual;
-            Reason = reason;
+            Reason = reason ?? string.Empty;
         }
 
         public bool NeedsFix { get; }
         public bool EnsureVirtualSlot1 { get; }
         public bool VirtualInSlot1 { get; }
-        public bool HasInvalidControllers { get; }
+        public IReadOnlyList<XInputController> InvalidControllers { get; }
         public bool HasInvalidVirtual { get; }
         public string Reason { get; }
     }
@@ -1538,8 +1541,8 @@ public static class ControllerManager
         await slotStateSemaphore.WaitAsync().ConfigureAwait(false);
         try
         {
-            HashSet<byte> currentSlots = new();
-            InvalidSlotAssignments.Clear();
+            HashSet<byte> usedSlots = new();
+            List<XInputController> invalidControllers = new();
 
             // Track UserIndexes assignment
             IEnumerable<Task> tasks = GetControllers<XInputController>()
@@ -1550,10 +1553,10 @@ public static class ControllerManager
                     if (index == byte.MaxValue)
                         index = (byte)XInputController.TryGetUserIndex(controller.Details);
 
-                    lock (UserIndexes)
+                    lock (usedSlots)
                     {
-                        if (!currentSlots.Add(index))
-                            InvalidSlotAssignments.Add(controller);
+                        if (!usedSlots.Add(index))
+                            invalidControllers.Add(controller);
                     }
 
                     controller.AttachController(index);
@@ -1561,8 +1564,8 @@ public static class ControllerManager
 
             await Task.WhenAll(tasks).ConfigureAwait(false);
 
-            bool hasInvalidControllers = InvalidSlotAssignments.Any();
-            bool hasInvalidVirtual = InvalidSlotAssignments.Any(c => c.IsVirtual());
+            bool hasInvalidControllers = invalidControllers.Count > 0;
+            bool hasInvalidVirtual = invalidControllers.Any(c => c.IsVirtual());
 
             // Ensure virtual controller occupies slot 1 (when applicable)
             bool ensureVirtualSlot1 =
@@ -1582,7 +1585,13 @@ public static class ControllerManager
             else if (ensureVirtualSlot1 && !virtualInSlot1)
                 reason = "Virtual controller is not occupying slot 1.";
 
-            return new SlotProbeResult(needsFix, ensureVirtualSlot1, virtualInSlot1, hasInvalidControllers, hasInvalidVirtual, reason);
+            return new SlotProbeResult(
+                needsFix,
+                ensureVirtualSlot1,
+                virtualInSlot1,
+                invalidControllers,
+                hasInvalidVirtual,
+                reason);
         }
         finally
         {
@@ -1656,9 +1665,11 @@ public static class ControllerManager
                 }
 
                 // Cycle physical controllers with invalid assignment
-                foreach (IController controller in InvalidSlotAssignments)
+                foreach (var controller in probe.InvalidControllers)
+                {
                     if (!controller.IsVirtual())
                         controller.CyclePort();
+                }
 
                 // Enforce virtual controller on slot 1 when applicable
                 if (VirtualManager.HIDmode == HIDmode.Xbox360Controller && VirtualManager.HIDstatus == HIDstatus.Connected)
