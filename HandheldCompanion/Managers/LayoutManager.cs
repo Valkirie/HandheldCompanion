@@ -28,39 +28,45 @@ public class LayoutManager : IManager
         LayoutTemplate.GamepadJoystickLayout
     ];
 
-    private object updateLock = new();
+    private readonly object updateLock = new();
 
     private Layout currentLayout = new();
     private Layout profileLayout = new();
     private Layout? defaultLayout = null;
     private Layout? desktopLayout = null;
 
-    private ControllerState outputState = new();
+    private readonly ControllerState outputState = new();
 
     private const string desktopLayoutFile = "desktop";
 
     public string TemplatesPath;
 
     public FileSystemWatcher layoutWatcher { get; set; }
-    private Timer layoutTimer;
+    private readonly Timer layoutTimer;
+
+    //  Mapping plans & caches (rebuilt when currentLayout changes) 
+    private Dictionary<ButtonFlags, IActions[]> _buttonPlan = new();
+    private Dictionary<AxisLayoutFlags, IActions[]> _axisPlan = new();
+    private Dictionary<AxisLayoutFlags, IActions> _gyroPlan = new();  // one action per axis flag
+
+    // X/Y AxisFlags for each AxisLayoutFlags — cached to avoid per-tick lookups
+    private readonly Dictionary<AxisLayoutFlags, (AxisFlags X, AxisFlags Y)> _axisXY = new();
+
+    // Frozen key arrays for fast index-based iteration in the hot path
+    private ButtonFlags[] _plannedButtons = Array.Empty<ButtonFlags>();
+    private AxisLayoutFlags[] _plannedAxes = Array.Empty<AxisLayoutFlags>();
+    private AxisLayoutFlags[] _plannedGyroAxes = Array.Empty<AxisLayoutFlags>();
+
+    //  Construction ─
 
     public LayoutManager()
     {
-        // initialize path(s)
         ManagerPath = Path.Combine(App.SettingsPath, "layouts");
         TemplatesPath = Path.Combine(App.SettingsPath, "templates");
 
-        // create path(s)
-        if (!Directory.Exists(ManagerPath))
-            Directory.CreateDirectory(ManagerPath);
-        if (!Directory.Exists(TemplatesPath))
-            Directory.CreateDirectory(TemplatesPath);
+        Directory.CreateDirectory(ManagerPath);
+        Directory.CreateDirectory(TemplatesPath);
 
-        // Ensure the path exists before setting FileSystemWatcher
-        if (!Directory.Exists(TemplatesPath))
-            return;
-
-        // monitor layout files
         layoutWatcher = new FileSystemWatcher
         {
             Path = TemplatesPath,
@@ -70,10 +76,11 @@ public class LayoutManager : IManager
             NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite,
         };
 
-        // prepare timer
-        layoutTimer = new(100) { AutoReset = false };
+        layoutTimer = new Timer(100) { AutoReset = false };
         layoutTimer.Elapsed += LayoutTimer_Elapsed;
     }
+
+    //  Lifecycle ─
 
     public override void Start()
     {
@@ -82,15 +89,15 @@ public class LayoutManager : IManager
 
         base.PrepareStart();
 
-        // process community templates
-        string[] fileEntries = Directory.GetFiles(TemplatesPath, "*.json", SearchOption.AllDirectories);
-        foreach (string fileName in fileEntries)
-            ProcessLayoutTemplate(fileName);
+        // Load community templates from disk
+        foreach (string file in Directory.GetFiles(TemplatesPath, "*.json", SearchOption.AllDirectories))
+            ProcessLayoutTemplate(file);
 
-        // process default templates
-        foreach (LayoutTemplate layoutTemplate in Templates)
-            Updated?.Invoke(layoutTemplate);
+        // Publish default (built-in) templates
+        foreach (LayoutTemplate template in Templates)
+            Updated?.Invoke(template);
 
+        // Load or initialize the desktop layout
         string desktopFile = Path.Combine(ManagerPath, $"{desktopLayoutFile}.json");
         desktopLayout = ProcessLayout(desktopFile);
         if (desktopLayout is null)
@@ -99,10 +106,8 @@ public class LayoutManager : IManager
             DesktopLayout_Updated(desktopLayout);
         }
 
-        // manage desktop layout events
-        desktopLayout.Updated += DesktopLayout_Updated;
-
         // manage layout watcher events
+        desktopLayout.Updated += DesktopLayout_Updated;
         layoutWatcher.Created += LayoutWatcher_Template;
         layoutWatcher.Changed += LayoutWatcher_Template;
 
@@ -148,54 +153,6 @@ public class LayoutManager : IManager
         base.Start();
     }
 
-    private void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx, ProcessEx.ProcessFilter filter)
-    {
-        CheckProfileLayout();
-    }
-
-    private void GamepadFocusManager_FocusChanged(string Name)
-    {
-        CheckProfileLayout();
-    }
-
-    private void QueryProfile()
-    {
-        // ref
-        defaultLayout = ManagerFactory.profileManager.GetDefault().Layout;
-        defaultLayout.Updated += DefaultLayout_Updated;
-
-        // manage events
-        ManagerFactory.profileManager.Applied += ProfileManager_Applied;
-
-        ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
-    }
-
-    private void MultimediaManager_Initialized()
-    {
-        QueryMedia();
-    }
-
-    private void QueryMedia()
-    {
-        // do something
-    }
-
-    private void SettingsManager_Initialized()
-    {
-        QuerySettings();
-    }
-
-    private void QuerySettings()
-    {
-        // manage events
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
-        // raise events
-        bool DesktopLayoutOnStart = ManagerFactory.settingsManager.GetBoolean("DesktopLayoutOnStart");
-        if (DesktopLayoutOnStart)
-            ManagerFactory.settingsManager.SetProperty("LayoutMode", (int)LayoutModes.Desktop);
-    }
-
     public override void Stop()
     {
         if (Status.HasFlag(ManagerStatus.Halting) || Status.HasFlag(ManagerStatus.Halted))
@@ -203,17 +160,12 @@ public class LayoutManager : IManager
 
         base.PrepareStop();
 
-        // stop timer(s)
         layoutTimer.Stop();
 
-        // manage desktop layout events
         desktopLayout.Updated -= DesktopLayout_Updated;
-
-        // manage layout watcher events
         layoutWatcher.Created -= LayoutWatcher_Template;
         layoutWatcher.Changed -= LayoutWatcher_Template;
 
-        // manage events
         ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
         ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
@@ -225,24 +177,116 @@ public class LayoutManager : IManager
         base.Stop();
     }
 
-    // this event is called from non main thread and it creates LayoutTemplate which is a WPF element
-    private void LayoutWatcher_Template(object sender, FileSystemEventArgs e)
+    // Event handlers
+    private void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx, ProcessEx.ProcessFilter filter) => CheckProfileLayout();
+    private void GamepadFocusManager_FocusChanged(string Name) => CheckProfileLayout();
+
+    private void MultimediaManager_Initialized() => QueryMedia();
+    private void SettingsManager_Initialized() => QuerySettings();
+    private void ProfileManager_Initialized() => QueryProfile();
+    private void DefaultLayout_Updated(Layout _) => UpdateInherit();
+
+    private void QueryProfile()
     {
-        // UI thread
-        UIHelper.TryInvoke(() =>
-        {
-            ProcessLayoutTemplate(e.FullPath);
-        });
+        defaultLayout = ManagerFactory.profileManager.GetDefault().Layout;
+        defaultLayout.Updated += DefaultLayout_Updated;
+
+        ManagerFactory.profileManager.Applied += ProfileManager_Applied;
+        ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
     }
+
+    private void QueryMedia()
+    {
+        // Reserved for future use
+    }
+
+    private void QuerySettings()
+    {
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        bool desktopLayoutOnStart = ManagerFactory.settingsManager.GetBoolean("DesktopLayoutOnStart");
+        if (desktopLayoutOnStart)
+            ManagerFactory.settingsManager.SetProperty("LayoutMode", (int)LayoutModes.Desktop);
+    }
+
+    private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    {
+        if (name == "LayoutMode")
+            CheckProfileLayout();
+    }
+
+    private void DesktopLayout_Updated(Layout layout)
+    {
+        SerializeLayout(layout, desktopLayoutFile);
+        desktopLayout = layout;
+        CheckProfileLayout();
+    }
+
+    private void ProfileManager_Applied(Profile profile, UpdateSource source)
+    {
+        profileLayout = profile.Layout;
+        CheckProfileLayout();
+    }
+
+    //  Layout switching
+    private void CheckProfileLayout()
+    {
+        // Debounce — restart the timer each time a change signal arrives
+        layoutTimer.Stop();
+        layoutTimer.Start();
+    }
+
+    private void LayoutTimer_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        LayoutModes layoutMode = (LayoutModes)ManagerFactory.settingsManager.GetInt("LayoutMode");
+
+        Layout? target = layoutMode switch
+        {
+            LayoutModes.Gamepad => profileLayout,
+            LayoutModes.Desktop => desktopLayout,
+            LayoutModes.Auto => ResolveAutoLayout(),
+            _ => null,
+        };
+
+        if (target is not null && !currentLayout.Equals(target))
+            SetActiveLayout(target);
+    }
+
+    /// <summary>Selects the appropriate layout for Auto mode.</summary>
+    private Layout ResolveAutoLayout()
+    {
+        if (UIGamepad.HasFocus() && defaultLayout is not null)
+            return defaultLayout;
+
+        ProcessEx? process = ProcessManager.GetCurrent();
+        bool useProfile = process is null
+                       || process.IsGame()
+                       || process.Filter == ProcessEx.ProcessFilter.HandheldCompanion;
+
+        return useProfile ? profileLayout : desktopLayout!;
+    }
+
+    private void SetActiveLayout(Layout layout)
+    {
+        lock (updateLock)
+        {
+            currentLayout = layout.Clone() as Layout;
+            UpdateInherit();
+            BuildPlans();
+            LayoutChanged?.Invoke(currentLayout);
+        }
+    }
+
+    //  File I/O
+    // Called from a non-UI thread by FileSystemWatcher — marshal to UI thread
+    private void LayoutWatcher_Template(object sender, FileSystemEventArgs e) => UIHelper.TryInvoke(() => ProcessLayoutTemplate(e.FullPath));
 
     private Layout? ProcessLayout(string fileName)
     {
-        Layout layout = null;
-
         try
         {
-            string outputraw = File.ReadAllText(fileName);
-            layout = JsonConvert.DeserializeObject<Layout>(outputraw, new JsonSerializerSettings
+            string json = File.ReadAllText(fileName);
+            return JsonConvert.DeserializeObject<Layout>(json, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
             });
@@ -250,23 +294,18 @@ public class LayoutManager : IManager
         catch (Exception ex)
         {
             LogManager.LogError("Could not parse Layout {0}. {1}", fileName, ex.Message);
+            return null;
         }
-
-        // failed to parse
-        if (layout is null)
-            LogManager.LogError("Could not parse Layout {0}", fileName);
-
-        return layout;
     }
 
     private void ProcessLayoutTemplate(string fileName)
     {
-        LayoutTemplate layoutTemplate = null;
+        LayoutTemplate? layoutTemplate = null;
 
         try
         {
-            string outputraw = File.ReadAllText(fileName);
-            layoutTemplate = JsonConvert.DeserializeObject<LayoutTemplate>(outputraw, new JsonSerializerSettings
+            string json = File.ReadAllText(fileName);
+            layoutTemplate = JsonConvert.DeserializeObject<LayoutTemplate>(json, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
             });
@@ -276,555 +315,409 @@ public class LayoutManager : IManager
             LogManager.LogError("Could not parse LayoutTemplate {0}. {1}", fileName, ex.Message);
         }
 
-        // failed to parse
-        if (layoutTemplate is null || layoutTemplate.Layout is null)
+        if (layoutTemplate?.Layout is null)
         {
             LogManager.LogError("Could not parse LayoutTemplate {0}", fileName);
             return;
         }
 
-        // todo: implement deduplication
+        // TODO: implement deduplication
         Templates.Add(layoutTemplate);
         Updated?.Invoke(layoutTemplate);
     }
 
-    private void DesktopLayout_Updated(Layout layout)
-    {
-        SerializeLayout(layout, desktopLayoutFile);
-
-        // update desktop layout
-        // ref
-        desktopLayout = layout;
-
-        CheckProfileLayout();
-    }
-
-    private void ProfileManager_Applied(Profile profile, UpdateSource source)
-    {
-        // use profile layout (will be cloned during SetActiveLayout)
-        // ref
-        profileLayout = profile.Layout;
-
-        CheckProfileLayout();
-    }
-
-    private void ProfileManager_Initialized()
-    {
-        QueryProfile();
-    }
-
-    private void DefaultLayout_Updated(Layout layout)
-    {
-        UpdateInherit();
-    }
-
-    private void LayoutTimer_Elapsed(object? sender, ElapsedEventArgs e)
-    {
-        LayoutModes layoutMode = (LayoutModes)ManagerFactory.settingsManager.GetInt("LayoutMode");
-
-        if (layoutMode == LayoutModes.Gamepad)
-        {
-            if (!currentLayout.Equals(profileLayout))
-                SetActiveLayout(profileLayout);
-        }
-        else if (layoutMode == LayoutModes.Desktop)
-        {
-            if (!currentLayout.Equals(desktopLayout))
-                SetActiveLayout(desktopLayout);
-        }
-        else if (layoutMode == LayoutModes.Auto)
-        {
-            if (UIGamepad.HasFocus() && defaultLayout is not null)
-            {
-                if (!currentLayout.Equals(defaultLayout))
-                    SetActiveLayout(defaultLayout);
-            }
-            else
-            {
-                ProcessEx processEx = ProcessManager.GetCurrent();
-                Layout targetLayout = (processEx == null || processEx.IsGame() || processEx.Filter == ProcessEx.ProcessFilter.HandheldCompanion) ? profileLayout : desktopLayout;
-
-                if (!currentLayout.Equals(targetLayout))
-                    SetActiveLayout(targetLayout);
-            }
-        }
-    }
-
-    private void CheckProfileLayout()
-    {
-        layoutTimer.Stop();
-        layoutTimer.Start();
-    }
-
-    public Layout? GetDefault()
-    {
-        return defaultLayout;
-    }
-
-    public Layout? GetCurrent()
-    {
-        return currentLayout;
-    }
-
-    public Layout? GetDesktop()
-    {
-        return desktopLayout;
-    }
-
     public void SerializeLayout(Layout layout, string fileName)
     {
-        var jsonString = JsonConvert.SerializeObject(layout, Formatting.Indented, new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.All
-        });
+        string json = JsonConvert.SerializeObject(layout, Formatting.Indented, TypeNameSettings);
+        string outPath = Path.Combine(ManagerPath, $"{fileName}.json");
 
-        fileName = Path.Combine(ManagerPath, $"{fileName}.json");
-        if (FileUtils.IsFileWritable(fileName))
-            File.WriteAllText(fileName, jsonString);
+        if (FileUtils.IsFileWritable(outPath))
+            File.WriteAllText(outPath, json);
     }
 
     public void SerializeLayoutTemplate(LayoutTemplate layoutTemplate)
     {
         string fileName = Path.Combine(TemplatesPath, $"{layoutTemplate.Name}_{layoutTemplate.Author}.json");
+
         if (File.Exists(fileName))
         {
-            // get previous template with same name and author
-            LayoutTemplate template = Templates.FirstOrDefault(t => t.Name == layoutTemplate.Name && t.Author == layoutTemplate.Author);
-            if (template is not null)
-                layoutTemplate.Guid = template.Guid;
+            // Preserve the Guid of an existing template with the same name+author
+            LayoutTemplate? existing = Templates.FirstOrDefault(
+                t => t.Name == layoutTemplate.Name && t.Author == layoutTemplate.Author);
+            if (existing is not null)
+                layoutTemplate.Guid = existing.Guid;
         }
 
-        var jsonString = JsonConvert.SerializeObject(layoutTemplate, Formatting.Indented, new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.All
-        });
-
+        string json = JsonConvert.SerializeObject(layoutTemplate, Formatting.Indented, TypeNameSettings);
         if (FileUtils.IsFileWritable(fileName))
-            File.WriteAllText(fileName, jsonString);
+            File.WriteAllText(fileName, json);
     }
 
-    private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    private static readonly JsonSerializerSettings TypeNameSettings = new()
     {
-        switch (name)
-        {
-            case "LayoutMode":
-                CheckProfileLayout();
-                break;
-        }
-    }
+        TypeNameHandling = TypeNameHandling.All
+    };
 
-    private void SetActiveLayout(Layout layout)
-    {
-        lock (updateLock)
-        {
-            // clone
-            currentLayout = layout.Clone() as Layout;
-
-            // (re)apply inheritance
-            UpdateInherit();
-            // build caches for the new layout
-            BuildPlans();
-
-            LayoutChanged?.Invoke(currentLayout);
-        }
-    }
-
-    // --- Mapping plans & caches (rebuilt when currentLayout changes) ---
-    private Dictionary<ButtonFlags, IActions[]> _buttonPlan = new();
-    private Dictionary<AxisLayoutFlags, IActions[]> _axisPlan = new();
-    private Dictionary<AxisLayoutFlags, IActions> _gyroPlan = new(); // single action per flag in GyroLayout
-
-    // Cache AxisFlags (X,Y) for each AxisLayoutFlags to avoid per-tick GetAxisFlags & lookups
-    private readonly Dictionary<AxisLayoutFlags, (AxisFlags X, AxisFlags Y)> _axisXY = new();
-
-    // Reusable arrays to avoid multiple enumerations per tick
-    private ButtonFlags[] _plannedButtons = Array.Empty<ButtonFlags>();
-    private AxisLayoutFlags[] _plannedAxes = Array.Empty<AxisLayoutFlags>();
-    private AxisLayoutFlags[] _plannedGyroAxes = Array.Empty<AxisLayoutFlags>();
-
+    //  Inheritance resolution
     private void UpdateInherit()
     {
         lock (updateLock)
         {
-            // Check for inherit(s) and replace actions with default layout actions where necessary
-            foreach (ButtonFlags buttonFlags in ButtonState.AllButtons.Union(IDevice.GetCurrent().OEMButtons))
+            // Buttons: append default-layout actions where the current layout inherits
+            foreach (ButtonFlags flag in ButtonState.AllButtons.Union(IDevice.GetCurrent().OEMButtons))
             {
-                if (currentLayout.ButtonLayout.TryGetValue(buttonFlags, out var actions) && actions.Any(action => action is InheritActions))
-                {
-                    // Replace with default layout actions
-                    if (defaultLayout.ButtonLayout.TryGetValue(buttonFlags, out var defaultActions))
-                        currentLayout.ButtonLayout[buttonFlags].AddRange(defaultActions);
-                }
+                if (!currentLayout.ButtonLayout.TryGetValue(flag, out var actions)) continue;
+                if (!actions.Any(a => a is InheritActions)) continue;
+
+                if (defaultLayout!.ButtonLayout.TryGetValue(flag, out var defaults))
+                    actions.AddRange(defaults);
             }
 
-            // Check for inherit(s) and replace actions with default layout actions where necessary
-            foreach (AxisLayoutFlags axisLayout in AxisState.AllAxisLayoutFlags)
+            // Axes: replace the entire list with the default when inheriting
+            foreach (AxisLayoutFlags flag in AxisState.AllAxisLayoutFlags)
             {
-                if (currentLayout.AxisLayout.TryGetValue(axisLayout, out List<IActions>? actions))
-                {
-                    foreach (IActions action in actions.Where(act => act is InheritActions))
-                    {
-                        // Replace with default layout actions
-                        if (defaultLayout.AxisLayout.TryGetValue(axisLayout, out var defaultActions))
-                            currentLayout.AxisLayout[axisLayout] = defaultActions;
-                    }
-                }
+                if (!currentLayout.AxisLayout.TryGetValue(flag, out var actions)) continue;
+                if (!actions.Any(a => a is InheritActions)) continue;
+
+                if (defaultLayout!.AxisLayout.TryGetValue(flag, out var defaults))
+                    currentLayout.AxisLayout[flag] = defaults;
             }
         }
     }
 
+    //  Plan building
     private void BuildPlans()
     {
-        // Clear old plans
         _buttonPlan.Clear();
         _axisPlan.Clear();
         _gyroPlan.Clear();
 
-        // Buttons
         foreach (var kv in currentLayout.ButtonLayout)
-        {
-            // Store as array to avoid enumerator allocations & repeated Count checks
-            var actions = kv.Value is List<IActions> list ? list.ToArray() : kv.Value.ToArray();
-            _buttonPlan[kv.Key] = actions;
-        }
+            _buttonPlan[kv.Key] = kv.Value.ToArray();
 
-        // Axes (sticks/pads/triggers routed as axes)
         foreach (var kv in currentLayout.AxisLayout)
-        {
-            var actions = kv.Value is List<IActions> list ? list.ToArray() : kv.Value.ToArray();
-            _axisPlan[kv.Key] = actions;
-        }
+            _axisPlan[kv.Key] = kv.Value.ToArray();
 
-        // Gyro
         foreach (var kv in currentLayout.GyroLayout)
-        {
-            // GyroLayout maps one action per flag in current design
             _gyroPlan[kv.Key] = kv.Value;
-        }
 
-        // Frozen key arrays for faster iteration
         _plannedButtons = _buttonPlan.Keys.ToArray();
         _plannedAxes = _axisPlan.Keys.ToArray();
         _plannedGyroAxes = _gyroPlan.Keys.ToArray();
 
-        // Cache AxisFlags(X,Y) for every AxisLayoutFlags we will touch
+        // Cache X/Y AxisFlags for all flags we will touch during mapping
         _axisXY.Clear();
-        void EnsureXY(AxisLayoutFlags f)
-        {
-            if (_axisXY.ContainsKey(f)) return;
-            var layout = AxisLayout.Layouts[f];
-            _axisXY[f] = (layout.GetAxisFlags('X'), layout.GetAxisFlags('Y'));
-        }
 
-        foreach (var f in _plannedAxes) EnsureXY(f);
-        foreach (var f in _plannedGyroAxes) EnsureXY(f);
+        foreach (var flag in _plannedAxes) EnsureAxisXY(flag);
+        foreach (var flag in _plannedGyroAxes) EnsureAxisXY(flag);
 
-        // Also ensure all possible output targets referenced by actions are cached
         foreach (var actions in _axisPlan.Values)
-            for (int i = 0; i < actions.Length; i++)
-                if (actions[i] is AxisActions aa) EnsureXY(aa.Axis);
-                else if (actions[i] is TriggerActions ta) EnsureXY(ta.Axis);
+            foreach (var action in actions)
+            {
+                if (action is AxisActions aa) EnsureAxisXY(aa.Axis);
+                if (action is TriggerActions ta) EnsureAxisXY(ta.Axis);
+            }
 
         foreach (var actions in _buttonPlan.Values)
-            for (int i = 0; i < actions.Length; i++)
-                if (actions[i] is TriggerActions ta) EnsureXY(ta.Axis);
+            foreach (var action in actions)
+                if (action is TriggerActions ta) EnsureAxisXY(ta.Axis);
     }
 
+    private void EnsureAxisXY(AxisLayoutFlags flag)
+    {
+        if (_axisXY.ContainsKey(flag)) return;
+        var layout = AxisLayout.Layouts[flag];
+        _axisXY[flag] = (layout.GetAxisFlags('X'), layout.GetAxisFlags('Y'));
+    }
+
+    //  Controller mapping (hot path — called at 125–1000 Hz)
     public ControllerState MapController(ControllerState controllerState, float delta)
     {
-        // 1:1 mapping when no active layout
         if (currentLayout is null)
-            return controllerState;
+            return controllerState; // passthrough when no layout is active
 
         lock (updateLock)
         {
-            // Reset output
             outputState.ButtonState.Clear();
             outputState.AxisState.Clear();
             outputState.GyroState.CopyFrom(controllerState.GyroState);
 
-            // compute ShiftSlot
-            ShiftSlot shiftSlot = ShiftSlot.None;
+            // delta arrives in seconds; all timer logic expects milliseconds
+            float deltaMs = delta * 1000f;
 
-            // in ms
-            delta *= 1000.0f;
+            ShiftSlot shiftSlot = ComputeShiftSlot(controllerState, deltaMs);
 
-            // Iterate only over buttons that actually have actions, but also consider real buttons present in state
-            // to maintain shifter behavior even if the button is unmapped elsewhere.
-            foreach (ButtonFlags button in ButtonState.AllButtons)
+            ProcessButtonActions(controllerState, shiftSlot, deltaMs);
+            ProcessAxisActions(controllerState, shiftSlot, deltaMs);
+            ProcessGyroActions(controllerState, shiftSlot, deltaMs);
+        }
+
+        return outputState;
+    }
+
+    /// <summary>
+    /// First pass: evaluate all ShiftActions to determine the active shift slot(s).
+    /// Both button-based and axis-based (trigger) shifts are considered.
+    /// </summary>
+    private ShiftSlot ComputeShiftSlot(ControllerState state, float deltaMs)
+    {
+        ShiftSlot shiftSlot = ShiftSlot.None;
+
+        // Button shifts
+        foreach (ButtonFlags button in ButtonState.AllButtons)
+        {
+            if (!_buttonPlan.TryGetValue(button, out var actions)) continue;
+
+            bool pressed = state.ButtonState[button];
+            foreach (var action in actions)
             {
-                bool value = controllerState.ButtonState[button];
+                if (action is not ShiftActions shift) continue;
+                shift.Execute(button, pressed, shiftSlot, deltaMs);
+                if (shift.GetValue()) shiftSlot |= shift.ShiftSlot;
+            }
+        }
 
-                if (!_buttonPlan.TryGetValue(button, out var actions))
-                    continue;
+        // Axis shifts (e.g. trigger-based shift)
+        for (int i = 0; i < _plannedAxes.Length; i++)
+        {
+            AxisLayoutFlags flag = _plannedAxes[i];
+            var actions = _axisPlan[flag];
+            var xyIn = _axisXY[flag];
+            var layout = AxisLayout.Layouts[flag];
 
-                for (int i = 0; i < actions.Length; i++)
-                {
-                    var act = actions[i];
-                    if (act.actionType != ActionType.Shift)
-                        continue;
+            layout.vector.X = state.AxisState[xyIn.X];
+            layout.vector.Y = state.AxisState[xyIn.Y];
 
-                    // cast once
-                    var sAction = (ShiftActions)act;
-                    sAction.Execute(button, value, shiftSlot, delta);
-                    if (sAction.GetValue())
-                        shiftSlot |= sAction.ShiftSlot;
-                }
+            foreach (var action in actions)
+            {
+                if (action is not ShiftActions shift) continue;
+                shift.Execute(layout, shiftSlot, deltaMs);
+                if (shift.GetValue()) shiftSlot |= shift.ShiftSlot;
+            }
+        }
+
+        return shiftSlot;
+    }
+
+    /// <summary>
+    /// Second pass: process all non-Shift button actions and write to outputState.
+    /// Unmapped buttons are passed through transparently.
+    /// </summary>
+    private void ProcessButtonActions(ControllerState state, ShiftSlot shiftSlot, float deltaMs)
+    {
+        foreach (ButtonFlags button in ButtonState.AllButtons)
+        {
+            bool pressed = state.ButtonState[button];
+
+            if (!_buttonPlan.TryGetValue(button, out var actions))
+            {
+                outputState.ButtonState[button] = pressed; // passthrough
+                continue;
             }
 
-            // Also check axes (triggers) for shift actions
-            for (int a = 0; a < _plannedAxes.Length; a++)
+            for (int i = 0; i < actions.Length; i++)
             {
-                var inFlag = _plannedAxes[a];
-                var actions = _axisPlan[inFlag];
-
-                // Read origin values
-                var xyIn = _axisXY[inFlag];
-                var inX = controllerState.AxisState[xyIn.X];
-                var inY = controllerState.AxisState[xyIn.Y];
-
-                // Prepare InLayout for shift detection
-                var inLayout = AxisLayout.Layouts[inFlag];
-                inLayout.vector.X = inX;
-                inLayout.vector.Y = inY;
-
-                for (int i = 0; i < actions.Length; i++)
-                {
-                    var act = actions[i];
-                    if (act.actionType != ActionType.Shift)
-                        continue;
-
-                    // cast once
-                    var sAction = (ShiftActions)act;
-                    sAction.Execute(inLayout, shiftSlot, delta);
-                    if (sAction.GetValue())
-                        shiftSlot |= sAction.ShiftSlot;
-                }
-            }
-
-            // process button-based map
-            foreach (ButtonFlags button in ButtonState.AllButtons)
-            {
-                bool value = controllerState.ButtonState[button];
-
-                if (!_buttonPlan.TryGetValue(button, out var actions))
-                {
-                    // passthrough if unmapped (keeps fake buttons behavior)
-                    outputState.ButtonState[button] = value;
-                    continue;
-                }
-
-                for (int i = 0; i < actions.Length; i++)
-                {
-                    var action = actions[i];
-
-                    switch (action.actionType)
-                    {
-                        case ActionType.Button:
-                            {
-                                if (action is ButtonActions bA)
-                                {
-                                    bA.Execute(button, value, shiftSlot, delta);
-                                    bool outVal = bA.GetValue() || outputState.ButtonState[bA.Button];
-                                    outputState.ButtonState[bA.Button] = outVal;
-                                }
-                                break;
-                            }
-                        case ActionType.Keyboard:
-                            {
-                                if (action is KeyboardActions kA)
-                                {
-                                    kA.Execute(button, value, shiftSlot, delta);
-                                }
-                                break;
-                            }
-                        case ActionType.Mouse:
-                            {
-                                if (action is MouseActions mA)
-                                {
-                                    mA.Execute(button, value, shiftSlot, delta);
-                                }
-                                break;
-                            }
-                        case ActionType.Trigger:
-                            {
-                                if (action is TriggerActions tA)
-                                {
-                                    tA.Execute(button, value, shiftSlot, delta);
-                                    // write Y only (triggers)
-                                    var xyOut = _axisXY[tA.Axis];
-                                    byte add = tA.GetValue();
-                                    outputState.AxisState[xyOut.Y] = (byte)Math.Clamp(outputState.AxisState[xyOut.Y] + add, byte.MinValue, byte.MaxValue);
-                                }
-                                break;
-                            }
-                    }
-
-                    ApplyActionStateSideEffects(actions, i);
-                }
-            }
-
-            // process axis-based map
-            for (int a = 0; a < _plannedAxes.Length; a++)
-            {
-                var inFlag = _plannedAxes[a];
-                var actions = _axisPlan[inFlag];
-
-                // Read origin values
-                var xyIn = _axisXY[inFlag];
-                var inX = controllerState.AxisState[xyIn.X];
-                var inY = controllerState.AxisState[xyIn.Y];
-
-                // Prepare InLayout (mutate the shared static to avoid allocs)
-                var inLayout = AxisLayout.Layouts[inFlag];
-                inLayout.vector.X = inX;
-                inLayout.vector.Y = inY;
-
-                // "Touched" for pads (needed by MouseActions)
-                bool touched = false;
-                if (ControllerState.AxisTouchButtons.TryGetValue(inLayout.flags, out var touchButton))
-                    touched = controllerState.ButtonState[touchButton];
-
-                for (int i = 0; i < actions.Length; i++)
-                {
-                    var action = actions[i];
-
-                    switch (action.actionType)
-                    {
-                        case ActionType.Button:
-                            {
-                                if (action is ButtonActions bA)
-                                {
-                                    bA.Execute(inLayout, shiftSlot, delta);
-                                    bool outVal = bA.GetValue() || outputState.ButtonState[bA.Button];
-                                    outputState.ButtonState[bA.Button] = outVal;
-                                }
-                            }
-                            break;
-                        case ActionType.Keyboard:
-                            {
-                                if (action is KeyboardActions kA)
-                                {
-                                    kA.Execute(inLayout, shiftSlot, delta);
-                                }
-                                break;
-                            }
-                        case ActionType.Joystick:
-                            {
-                                if (action is AxisActions aX)
-                                {
-                                    aX.Execute(inLayout, shiftSlot, delta);
-
-                                    var xyOut = _axisXY[aX.Axis];
-                                    short addX = (short)Math.Clamp(aX.XOuput, short.MinValue, short.MaxValue);
-                                    short addY = (short)Math.Clamp(aX.YOuput, short.MinValue, short.MaxValue);
-
-                                    outputState.AxisState[xyOut.X] = (short)Math.Clamp(outputState.AxisState[xyOut.X] + addX, short.MinValue, short.MaxValue);
-                                    outputState.AxisState[xyOut.Y] = (short)Math.Clamp(outputState.AxisState[xyOut.Y] + addY, short.MinValue, short.MaxValue);
-                                }
-                                break;
-                            }
-                        case ActionType.Trigger:
-                            {
-                                if (action is TriggerActions tA)
-                                {
-                                    tA.Execute(xyIn.Y, inLayout.vector.Y, shiftSlot, delta); // Y drives trigger
-
-                                    var xyOut = _axisXY[tA.Axis];
-                                    byte add = tA.GetValue();
-                                    outputState.AxisState[xyOut.Y] = (byte)Math.Clamp(outputState.AxisState[xyOut.Y] + add, byte.MinValue, byte.MaxValue);
-                                }
-                                break;
-                            }
-                        case ActionType.Mouse:
-                            {
-                                if (action is MouseActions mA)
-                                {
-                                    mA.Execute(inLayout, touched, shiftSlot, delta);
-                                }
-                                break;
-                            }
-                    }
-
-                    ApplyActionStateSideEffects(actions, i);
-                }
-            }
-
-            // process gyro-based map
-            for (int g = 0; g < _plannedGyroAxes.Length; g++)
-            {
-                var inFlag = _plannedGyroAxes[g];
-                var action = _gyroPlan[inFlag];
-                if (action is null) continue;
-
-                var xyIn = _axisXY[inFlag];
-                var inLayout = AxisLayout.Layouts[inFlag];
-                inLayout.vector.X = controllerState.AxisState[xyIn.X];
-                inLayout.vector.Y = controllerState.AxisState[xyIn.Y];
+                var action = actions[i];
 
                 switch (action.actionType)
                 {
-                    case ActionType.Joystick:
+                    case ActionType.Button:
+                        if (action is ButtonActions bA)
                         {
-                            if (action is AxisActions aA)
-                            {
-                                aA.Execute(inLayout, shiftSlot, delta);
-
-                                // blend with stick using gyro weight logic
-                                var xyOut = _axisXY[aA.Axis];
-                                var current = new Vector2(outputState.AxisState[xyOut.X], outputState.AxisState[xyOut.Y]);
-
-                                float len = Math.Clamp(current.Length() / short.MaxValue, 0f, 1f);
-                                float weightFactor = aA.gyroWeight - len;
-                                var result = current + aA.GetValue() * weightFactor;
-
-                                outputState.AxisState[xyOut.X] = (short)Math.Clamp(result.X, short.MinValue, short.MaxValue);
-                                outputState.AxisState[xyOut.Y] = (short)Math.Clamp(result.Y, short.MinValue, short.MaxValue);
-                            }
-                            break;
+                            bA.Execute(button, pressed, shiftSlot, deltaMs);
+                            outputState.ButtonState[bA.Button] |= bA.GetValue();
                         }
+                        break;
+
+                    case ActionType.Keyboard:
+                        if (action is KeyboardActions kA)
+                            kA.Execute(button, pressed, shiftSlot, deltaMs);
+                        break;
+
                     case ActionType.Mouse:
+                        if (action is MouseActions mA)
+                            mA.Execute(button, pressed, shiftSlot, deltaMs);
+                        break;
+
+                    case ActionType.Trigger:
+                        if (action is TriggerActions tA)
                         {
-                            if (action is MouseActions mA)
-                            {
-                                bool touched = false;
-                                if (ControllerState.AxisTouchButtons.TryGetValue(inLayout.flags, out var touchButton))
-                                    touched = controllerState.ButtonState[touchButton];
-
-                                mA.Execute(inLayout, touched, shiftSlot, delta);
-                            }
-                            break;
+                            tA.Execute(button, pressed, shiftSlot, deltaMs);
+                            var xyOut = _axisXY[tA.Axis];
+                            outputState.AxisState[xyOut.Y] = ClampByte(outputState.AxisState[xyOut.Y] + tA.GetValue());
                         }
+                        break;
                 }
-            }
 
-            return outputState;
+                ApplyActionStateSideEffects(actions, i);
+            }
         }
     }
 
+    /// <summary>
+    /// Third pass: process axis (stick / pad / trigger) actions and write to outputState.
+    /// </summary>
+    private void ProcessAxisActions(ControllerState state, ShiftSlot shiftSlot, float deltaMs)
+    {
+        for (int a = 0; a < _plannedAxes.Length; a++)
+        {
+            AxisLayoutFlags flag = _plannedAxes[a];
+            var actions = _axisPlan[flag];
+            var xyIn = _axisXY[flag];
+            var layout = AxisLayout.Layouts[flag];
+
+            layout.vector.X = state.AxisState[xyIn.X];
+            layout.vector.Y = state.AxisState[xyIn.Y];
+
+            bool touched = false;
+            if (ControllerState.AxisTouchButtons.TryGetValue(layout.flags, out var touchButton))
+                touched = state.ButtonState[touchButton];
+
+            for (int i = 0; i < actions.Length; i++)
+            {
+                var action = actions[i];
+
+                switch (action.actionType)
+                {
+                    case ActionType.Button:
+                        if (action is ButtonActions bA)
+                        {
+                            bA.Execute(layout, shiftSlot, deltaMs);
+                            outputState.ButtonState[bA.Button] |= bA.GetValue();
+                        }
+                        break;
+
+                    case ActionType.Keyboard:
+                        if (action is KeyboardActions kA)
+                            kA.Execute(layout, shiftSlot, deltaMs);
+                        break;
+
+                    case ActionType.Joystick:
+                        if (action is AxisActions aX)
+                        {
+                            aX.Execute(layout, shiftSlot, deltaMs);
+                            var xyOut = _axisXY[aX.Axis];
+                            outputState.AxisState[xyOut.X] = ClampShort(outputState.AxisState[xyOut.X] + (short)Math.Clamp(aX.XOuput, short.MinValue, short.MaxValue));
+                            outputState.AxisState[xyOut.Y] = ClampShort(outputState.AxisState[xyOut.Y] + (short)Math.Clamp(aX.YOuput, short.MinValue, short.MaxValue));
+                        }
+                        break;
+
+                    case ActionType.Trigger:
+                        if (action is TriggerActions tA)
+                        {
+                            tA.Execute(xyIn.Y, layout.vector.Y, shiftSlot, deltaMs); // Y axis drives the trigger
+                            var xyOut = _axisXY[tA.Axis];
+                            outputState.AxisState[xyOut.Y] = ClampByte(outputState.AxisState[xyOut.Y] + tA.GetValue());
+                        }
+                        break;
+
+                    case ActionType.Mouse:
+                        if (action is MouseActions mA)
+                            mA.Execute(layout, touched, shiftSlot, deltaMs);
+                        break;
+                }
+
+                ApplyActionStateSideEffects(actions, i);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Fourth pass: process gyroscope actions, blending gyro output into the target stick.
+    /// </summary>
+    private void ProcessGyroActions(ControllerState state, ShiftSlot shiftSlot, float deltaMs)
+    {
+        for (int g = 0; g < _plannedGyroAxes.Length; g++)
+        {
+            AxisLayoutFlags flag = _plannedGyroAxes[g];
+            IActions? action = _gyroPlan[flag];
+            if (action is null) continue;
+
+            var xyIn = _axisXY[flag];
+            var layout = AxisLayout.Layouts[flag];
+            layout.vector.X = state.AxisState[xyIn.X];
+            layout.vector.Y = state.AxisState[xyIn.Y];
+
+            switch (action.actionType)
+            {
+                case ActionType.Joystick:
+                    if (action is AxisActions aA)
+                    {
+                        aA.Execute(layout, shiftSlot, deltaMs);
+
+                        // Blend gyro output with the current stick value using gyroWeight
+                        var xyOut = _axisXY[aA.Axis];
+                        var current = new Vector2(outputState.AxisState[xyOut.X], outputState.AxisState[xyOut.Y]);
+
+                        float stickNorm = Math.Clamp(current.Length() / short.MaxValue, 0f, 1f);
+                        float weightFactor = aA.gyroWeight - stickNorm;
+                        var blended = current + aA.GetValue() * weightFactor;
+
+                        outputState.AxisState[xyOut.X] = ClampShort(blended.X);
+                        outputState.AxisState[xyOut.Y] = ClampShort(blended.Y);
+                    }
+                    break;
+
+                case ActionType.Mouse:
+                    if (action is MouseActions mA)
+                    {
+                        bool touched = false;
+                        if (ControllerState.AxisTouchButtons.TryGetValue(layout.flags, out var touchButton))
+                            touched = state.ButtonState[touchButton];
+
+                        mA.Execute(layout, touched, shiftSlot, deltaMs);
+                    }
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Propagates action state changes to sibling actions sharing the same <see cref="ShiftSlot"/>:
+    /// <list type="bullet">
+    ///   <item><b>Running</b>  → suspends all interruptable siblings.</item>
+    ///   <item><b>Aborted</b>  → stops all interruptable siblings; forces the next one.</item>
+    ///   <item><b>Stopped</b>  → stops all interruptable siblings.</item>
+    /// </list>
+    /// </summary>
     private static void ApplyActionStateSideEffects(IActions[] actions, int currentIndex)
     {
-        var action = actions[currentIndex];
-        var slot = action.ShiftSlot;
+        var current = actions[currentIndex];
+        ShiftSlot slot = current.ShiftSlot;
+        ActionState state = current.actionState;
 
-        if (action.actionState == ActionState.Aborted || action.actionState == ActionState.Stopped)
+        if (state == ActionState.Running)
         {
-            // Stop/sanitize siblings with same ShiftSlot
+            // Suspend every interruptable sibling in the same slot
             for (int j = 0; j < actions.Length; j++)
             {
                 if (j == currentIndex) continue;
-                var a2 = actions[j];
-                if (a2.ShiftSlot != slot) continue;
-                if (!a2.HasInterruptable) continue;
-                if (a2.actionState == ActionState.Succeed) continue;
+                var sibling = actions[j];
+                if (sibling.ShiftSlot != slot) continue;
+                if (!sibling.HasInterruptable) continue;
+                if (sibling.actionState == ActionState.Succeed) continue;
 
-                var st = a2.actionState;
-                if (st != ActionState.Stopped && st != ActionState.Aborted)
-                    a2.actionState = ActionState.Stopped;
+                sibling.actionState = ActionState.Suspended;
+            }
+        }
+        else if (state == ActionState.Aborted || state == ActionState.Stopped)
+        {
+            // Stop all interruptable siblings
+            for (int j = 0; j < actions.Length; j++)
+            {
+                if (j == currentIndex) continue;
+                var sibling = actions[j];
+                if (sibling.ShiftSlot != slot) continue;
+                if (!sibling.HasInterruptable) continue;
+                if (sibling.actionState == ActionState.Succeed) continue;
+
+                if (sibling.actionState != ActionState.Stopped &&
+                    sibling.actionState != ActionState.Aborted)
+                    sibling.actionState = ActionState.Stopped;
             }
 
-            // On Aborted, force the next interruptable action with same ShiftSlot
-            if (action.actionState == ActionState.Aborted)
+            // On Abort: force the next eligible sibling (short-press fallback)
+            if (state == ActionState.Aborted)
             {
                 for (int j = currentIndex + 1; j < actions.Length; j++)
                 {
@@ -837,29 +730,21 @@ public class LayoutManager : IManager
                 }
             }
         }
-        else if (action.actionState == ActionState.Running)
-        {
-            // Suspend siblings (same ShiftSlot), except Succeed
-            for (int j = 0; j < actions.Length; j++)
-            {
-                if (j == currentIndex) continue;
-                var a2 = actions[j];
-                if (a2.ShiftSlot != slot) continue;
-                if (!a2.HasInterruptable) continue;
-                if (a2.actionState == ActionState.Succeed) continue;
-
-                a2.actionState = ActionState.Suspended;
-            }
-        }
     }
 
-    #region events
+    //  Arithmetic helpers (avoid repeated Math.Clamp boxing)
+    private static short ClampShort(float value) => (short)Math.Clamp(value, short.MinValue, short.MaxValue);
+    private static byte ClampByte(int value) => (byte)Math.Clamp(value, byte.MinValue, byte.MaxValue);
 
-    public event LayoutChangedEventHandler LayoutChanged;
+    //  Public accessors
+    public Layout? GetDefault() => defaultLayout;
+    public Layout? GetCurrent() => currentLayout;
+    public Layout? GetDesktop() => desktopLayout;
+
+    //  Events
+    public event LayoutChangedEventHandler? LayoutChanged;
     public delegate void LayoutChangedEventHandler(Layout layout);
 
-    public event UpdatedEventHandler Updated;
+    public event UpdatedEventHandler? Updated;
     public delegate void UpdatedEventHandler(LayoutTemplate layoutTemplate);
-
-    #endregion
 }

@@ -9,18 +9,18 @@ namespace HandheldCompanion.Actions
     {
         public AxisLayoutFlags Axis;
 
-        // settings
-        public int AxisAntiDeadZone = 0;
+        // Deadzone / anti-deadzone settings (percent, 0..100)
+        public int AxisAntiDeadZone  = 0;
         public int AxisDeadZoneInner = 0;
         public int AxisDeadZoneOuter = 0;
 
-        // runtime output (byte fits trigger path)
+        // Output value in [0, 255] — byte matches the trigger's native resolution
         private byte current;
 
         public TriggerActions()
         {
             actionType = ActionType.Trigger;
-            current = 0;
+            current    = 0;
         }
 
         public TriggerActions(AxisLayoutFlags axis) : this()
@@ -28,30 +28,29 @@ namespace HandheldCompanion.Actions
             Axis = axis;
         }
 
-        // Axis-driven trigger
+        /// <summary>Axis-driven trigger (from a stick or pad axis).</summary>
         public void Execute(AxisFlags axis, float value, ShiftSlot shiftSlot, float delta)
         {
             base.Execute(axis, shiftSlot, delta);
+
             if (axisSlotDisabled) { current = 0; return; }
 
-            // clamp to 0..255 (byte)
+            // Clamp raw value into the byte range before processing
             value = Math.Clamp(value, byte.MinValue, byte.MaxValue);
+            if (value == 0f)      { current = 0; return; }
 
-            if (value == 0.0f) { current = 0; return; }
-
-            // deadzones
             value = InputUtils.InnerOuterDeadzone(value, AxisDeadZoneInner, AxisDeadZoneOuter, byte.MaxValue);
             value = InputUtils.ApplyAntiDeadzone(value, AxisAntiDeadZone, byte.MaxValue);
 
             current = (byte)value;
         }
 
-        // Button-driven trigger (pressType/toggle/turbo handled in base)
+        /// <summary>Button-driven trigger (press/toggle/turbo handled in base).</summary>
         public override void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot, float delta)
         {
             base.Execute(button, value, shiftSlot, delta);
 
-            // Preserve prior behavior (motionThreshold cast to byte as before)
+            // Preserve prior behavior: threshold cast to byte when pressed
             current = (byte)(outBool ? motionThreshold : 0);
         }
 

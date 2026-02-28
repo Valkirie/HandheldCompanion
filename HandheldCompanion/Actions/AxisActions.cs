@@ -8,9 +8,9 @@ namespace HandheldCompanion.Actions
     public enum OutputShape
     {
         Default = 0,
-        Circle = 1,
-        Cross = 2,
-        Square = 3
+        Circle  = 1,
+        Cross   = 2,
+        Square  = 3,
     }
 
     [Serializable]
@@ -18,14 +18,14 @@ namespace HandheldCompanion.Actions
     {
         public AxisLayoutFlags Axis;
 
-        // Axis to axis
-        public int AxisAntiDeadZone = 0;   // percent [0..100]
-        public int AxisDeadZoneInner = 0;  // percent [0..100]
-        public int AxisDeadZoneOuter = 0;  // percent [0..100]
-        public OutputShape OutputShape = OutputShape.Default;
+        // Deadzone / anti-deadzone settings (percent, 0..100)
+        public int         AxisAntiDeadZone  = 0;
+        public int         AxisDeadZoneInner = 0;
+        public int         AxisDeadZoneOuter = 0;
+        public OutputShape OutputShape       = OutputShape.Default;
 
         public bool InvertHorizontal = false;
-        public bool InvertVertical = false;
+        public bool InvertVertical   = false;
 
         public AxisActions()
         {
@@ -45,38 +45,27 @@ namespace HandheldCompanion.Actions
             outVector = layout.vector;
             base.Execute(layout, shiftSlot, delta);
 
-            if (outVector == Vector2.Zero)
-                return;
+            if (outVector == Vector2.Zero) return;
 
-            // radial inner/outer (percentages)
+            // Apply radial deadzones
             outVector = InputUtils.ThumbScaledRadialInnerOuterDeadzone(outVector, AxisDeadZoneInner, AxisDeadZoneOuter);
 
-            // anti-deadzone (percentage)
+            // Apply anti-deadzone
             outVector = InputUtils.ApplyAntiDeadzone(outVector, AxisAntiDeadZone);
 
-            switch (OutputShape)
+            // Reshape the output
+            outVector = OutputShape switch
             {
-                case OutputShape.Circle:
-                    outVector = InputUtils.ImproveCircularity(outVector);
-                    break;
+                OutputShape.Circle => InputUtils.ImproveCircularity(outVector),
+                OutputShape.Cross  => InputUtils.ImproveCircularity(InputUtils.CrossDeadzoneMapping(outVector, AxisDeadZoneInner, AxisDeadZoneOuter)),
+                OutputShape.Square => InputUtils.ImproveSquare(outVector),
 
-                case OutputShape.Cross:
-                    // Use percent-based overload (no pre-normalization needed)
-                    outVector = InputUtils.CrossDeadzoneMapping(outVector, AxisDeadZoneInner, AxisDeadZoneOuter);
-                    outVector = InputUtils.ImproveCircularity(outVector);
-                    break;
+                _ => outVector,
+            };
 
-                case OutputShape.Square:
-                    outVector = InputUtils.ImproveSquare(outVector);
-                    break;
-
-                default:
-                    break;
-            }
-
-            // invert axis
-            outVector = new Vector2(InvertHorizontal ? -outVector.X : outVector.X,
-                                 InvertVertical ? -outVector.Y : outVector.Y);
+            // Axis inversion
+            if (InvertHorizontal) outVector.X = -outVector.X;
+            if (InvertVertical)   outVector.Y = -outVector.Y;
         }
 
         public Vector2 GetValue() => outVector;

@@ -10,14 +10,14 @@ namespace HandheldCompanion.Actions
     {
         public ButtonFlags Button;
 
-        // runtime variables
-        private bool IsKeyDown = false;
+        // Runtime: tracks whether the virtual button is currently held down
+        private bool isKeyDown = false;
 
         public ButtonActions()
         {
             actionType = ActionType.Button;
-            outBool = false;
-            prevBool = false;
+            outBool    = false;
+            prevBool   = false;
         }
 
         public ButtonActions(ButtonFlags button) : this()
@@ -31,15 +31,15 @@ namespace HandheldCompanion.Actions
 
             if (outBool)
             {
-                if (IsKeyDown) return;
-                IsKeyDown = true;
-                SetHaptic(button, false);
+                if (isKeyDown) return;
+                isKeyDown = true;
+                SetHaptic(button, released: false);
             }
             else
             {
-                if (!IsKeyDown) return;
-                IsKeyDown = false;
-                SetHaptic(button, true);
+                if (!isKeyDown) return;
+                isKeyDown = false;
+                SetHaptic(button, released: true);
             }
         }
 
@@ -50,14 +50,13 @@ namespace HandheldCompanion.Actions
 
             if (outVector == Vector2.Zero)
             {
-                Execute(Button, false, shiftSlot, delta);
+                Execute(Button, value: false, shiftSlot, delta);
                 return;
             }
 
-            var direction = InputUtils.GetDeflectionDirection(outVector, motionThreshold);
-            bool press = DirectionMatches(direction, motionDirection);
+            var  direction = InputUtils.GetDeflectionDirection(outVector, motionThreshold);
+            bool press     = DirectionMatches(direction, motionDirection);
 
-            // transition to Button Execute()
             Execute(Button, press, shiftSlot, delta);
         }
 
