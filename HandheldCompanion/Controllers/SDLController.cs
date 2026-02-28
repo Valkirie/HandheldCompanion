@@ -373,6 +373,62 @@ namespace HandheldCompanion.Controllers
             base.Tick(ticks, delta);
         }
 
+        public override string GetGlyph(ButtonFlags button)
+        {
+            switch (button)
+            {
+                case ButtonFlags.B1:
+                    return "\u21A7"; // Down
+                case ButtonFlags.B2:
+                    return "\u21A6"; // Right
+                case ButtonFlags.B3:
+                    return "\u21A4"; // Left
+                case ButtonFlags.B4:
+                    return "\u21A5"; // Up
+                case ButtonFlags.L1:
+                    return "\u219C"; // Left Shoulder
+                case ButtonFlags.R1:
+                    return "\u219D"; // Right Shoulder
+
+                case ButtonFlags.L2Soft:
+                    return "\u21DC";
+                case ButtonFlags.L2Full:
+                    return "\u2196"; // LT
+                case ButtonFlags.R2Soft:
+                    return "\u21DD";
+                case ButtonFlags.R2Full:
+                    return "\u2197"; // RT
+            }
+
+            return button.ToString();
+        }
+
+        public override string GetGlyph(AxisFlags axis)
+        {
+            switch (axis)
+            {
+                case AxisFlags.L2:
+                    return "\u2196"; // LT
+                case AxisFlags.R2:
+                    return "\u2197"; // RT
+            }
+
+            return axis.ToString();
+        }
+
+        public override string GetGlyph(AxisLayoutFlags axis)
+        {
+            switch (axis)
+            {
+                case AxisLayoutFlags.L2:
+                    return "\u2196"; // LT
+                case AxisLayoutFlags.R2:
+                    return "\u2197"; // RT
+            }
+
+            return axis.ToString();
+        }
+
         public override void Unplug()
         {
             if (!IsConnected())
