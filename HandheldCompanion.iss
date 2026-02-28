@@ -161,6 +161,7 @@ var
   Dependency_NeedRestart, Dependency_ForceX86: Boolean;
   Dependency_DownloadPage: TDownloadWizardPage;
   SettingsPage: TInputOptionWizardPage;
+  CoreIsolationPromptNeeded: Boolean;
 
 // Forward declarations
 procedure Dependency_Add(const Filename, Parameters, Title, URL, Checksum: String; const ForceSuccess: Boolean); forward;
@@ -183,6 +184,42 @@ function BoolToStr(Value: Boolean): String; forward;
 
 function NextButtonClick(CurPageID: Integer): Boolean; forward;
 procedure DisableCoreIsolation; forward;
+function GetRegDwordOrDefault(const SubKey, ValueName: String; const Default: Cardinal): Cardinal; forward;
+function IsCoreIsolationDisableRequired: Boolean; forward;
+
+function GetRegDwordOrDefault(const SubKey, ValueName: String; const Default: Cardinal): Cardinal;
+var
+  Value: Cardinal;
+begin
+  if RegQueryDWordValue(HKLM, SubKey, ValueName, Value) then
+    Result := Value
+  else
+    Result := Default;
+end;
+
+function IsCoreIsolationDisableRequired: Boolean;
+var
+  HVCIEnabled, BlocklistEnabled: Cardinal;
+begin
+  HVCIEnabled := GetRegDwordOrDefault(
+    'SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity',
+    'Enabled',
+    1
+  );
+
+  BlocklistEnabled := GetRegDwordOrDefault(
+    'SYSTEM\CurrentControlSet\Control\CI\Config',
+    'VulnerableDriverBlocklistEnable',
+    1
+  );
+
+  Result := (HVCIEnabled <> 0) or (BlocklistEnabled <> 0);
+  Log(
+    'Core isolation state: HVCI=' + IntToStr(HVCIEnabled) +
+    ' Blocklist=' + IntToStr(BlocklistEnabled) +
+    ' disableRequired=' + BoolToStr(Result)
+  );
+end;
 
 procedure InitializeWizard;
 begin
@@ -192,18 +229,23 @@ begin
     nil
   );
 
-  // --- Generic “Optional Settings” page on Welcome ---
-  SettingsPage := CreateInputOptionPage(
-    wpWelcome,
-    'Installation Options',                             // Caption
-    'Optional Features',                                // Description
-    'Select any optional settings you wish to apply before continuing:',  // SubCaption
-    False,                                              // Exclusive = False → checkboxes
-    False                                               // ListBox = False → simple list
-  );
-  // Core Isolation option
-  SettingsPage.Add('Disable Windows Core Isolation (Recommended)');
-  SettingsPage.Values[0] := False;  // unchecked by default
+  CoreIsolationPromptNeeded := IsCoreIsolationDisableRequired();
+
+  if CoreIsolationPromptNeeded then
+  begin
+    // --- Generic “Optional Settings” page on Welcome ---
+    SettingsPage := CreateInputOptionPage(
+      wpWelcome,
+      'Installation Options',                             // Caption
+      'Optional Features',                                // Description
+      'Select any optional settings you wish to apply before continuing:',  // SubCaption
+      False,                                              // Exclusive = False → checkboxes
+      False                                               // ListBox = False → simple list
+    );
+    // Core Isolation option
+    SettingsPage.Add('Disable Windows Core Isolation (Recommended)');
+    SettingsPage.Values[0] := False;  // unchecked by default
+  end;
 end;
 
 procedure AddDefenderExclusions_Simple();
@@ -250,7 +292,7 @@ end;
 function NextButtonClick(CurPageID: Integer): Boolean;
 begin
   Result := True;  // allow wizard to proceed
-  if CurPageID = SettingsPage.ID then
+  if CoreIsolationPromptNeeded and (CurPageID = SettingsPage.ID) then
     if SettingsPage.Values[0] then
       DisableCoreIsolation();
 end;
@@ -259,26 +301,53 @@ end;
 procedure DisableCoreIsolation;
 var
   ResultCode: Integer;
+  HVCIEnabled, BlocklistEnabled: Cardinal;
+  AnyChange: Boolean;
 begin
-  // Hypervisor Enforced Code Integrity
-  Exec('reg.exe',
-    'add "HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" ' +
-    '/v Enabled /t REG_DWORD /d 0 /f',
-    '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+  HVCIEnabled := GetRegDwordOrDefault(
+    'SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity',
+    'Enabled',
+    1
+  );
 
-  // Vulnerable Driver Blocklist
-  Exec('reg.exe',
-    'add "HKLM\SYSTEM\CurrentControlSet\Control\CI\Config" ' +
-    '/v VulnerableDriverBlocklistEnable /t REG_DWORD /d 0 /f',
-    '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+  BlocklistEnabled := GetRegDwordOrDefault(
+    'SYSTEM\CurrentControlSet\Control\CI\Config',
+    'VulnerableDriverBlocklistEnable',
+    1
+  );
 
-  // Control Flow Guard
-  Exec('powershell.exe',
-    '-NoProfile -ExecutionPolicy Bypass -Command "Set-ProcessMitigation -System -Disable CFG"',
-    '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+  AnyChange := False;
 
-  // mark for single reboot at end
-  Dependency_NeedRestart := True;
+  if HVCIEnabled <> 0 then
+  begin
+    Exec('reg.exe',
+      'add "HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" ' +
+      '/v Enabled /t REG_DWORD /d 0 /f',
+      '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+    AnyChange := True;
+  end;
+
+  if BlocklistEnabled <> 0 then
+  begin
+    Exec('reg.exe',
+      'add "HKLM\SYSTEM\CurrentControlSet\Control\CI\Config" ' +
+      '/v VulnerableDriverBlocklistEnable /t REG_DWORD /d 0 /f',
+      '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+    AnyChange := True;
+  end;
+
+  if AnyChange then
+  begin
+    // Control Flow Guard
+    Exec('powershell.exe',
+      '-NoProfile -ExecutionPolicy Bypass -Command "Set-ProcessMitigation -System -Disable CFG"',
+      '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+
+    // mark for single reboot at end
+    Dependency_NeedRestart := True;
+  end
+  else
+    Log('Core isolation is already disabled; no reboot requested.');
 end;
 
 function NeedRestart: Boolean;
