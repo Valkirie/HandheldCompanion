@@ -1764,7 +1764,7 @@ public static class ControllerManager
     }
 
     private static Notification ManagerBusy = new("Controller Manager", "Controllers order is being adjusted, your gamepad might become irresponsive for a few seconds.") { IsInternal = true };
-    
+
     private static void UpdateStatus(ControllerManagerStatus status)
     {
         switch (status)
@@ -1930,6 +1930,9 @@ public static class ControllerManager
 
     public static void SetTargetController(string baseContainerDeviceInstanceId, bool IsPowerCycling)
     {
+        IController? selectedController = null;
+        ControllerSelectedEventHandler? selectedHandlers = null;
+
         lock (targetLock)
         {
             // look for new controller
@@ -1994,8 +1997,17 @@ public static class ControllerManager
                     break;
             }
 
-            ControllerSelected?.Invoke(targetController);
+            // Never invoke external code while holding targetLock.
+            // Subscribers may touch UI / managers that also take locks during shutdown.
+            selectedController = targetController;
+            selectedHandlers = ControllerSelected;
         }
+
+        try
+        {
+            selectedHandlers?.Invoke(selectedController);
+        }
+        catch { }
     }
 
     public static bool SuspendController(string baseContainerDeviceInstanceId)
