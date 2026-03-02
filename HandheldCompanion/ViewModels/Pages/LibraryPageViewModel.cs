@@ -102,6 +102,20 @@ namespace HandheldCompanion.ViewModels
 
         public bool IsLibraryConnected => ManagerFactory.libraryManager.IsConnected;
 
+        private bool _isInitializing;
+        public bool IsInitializing
+        {
+            get => _isInitializing;
+            private set
+            {
+                if (_isInitializing != value)
+                {
+                    _isInitializing = value;
+                    OnPropertyChanged(nameof(IsInitializing));
+                }
+            }
+        }
+
         private Dictionary<Type, GamePlatform> keyValuePairs = new Dictionary<Type, GamePlatform>()
         {
             { typeof(BattleNetGame), GamePlatform.BattleNet },
@@ -281,6 +295,9 @@ namespace HandheldCompanion.ViewModels
                 }
             });
 
+            // show spinner until profiles are loaded for the first time
+            _isInitializing = !ManagerFactory.profileManager.Status.HasFlag(ManagerStatus.Initialized);
+
             // raise events
             switch (ManagerFactory.profileManager.Status)
             {
@@ -354,6 +371,9 @@ namespace HandheldCompanion.ViewModels
                 foreach (Profile subProfile in ManagerFactory.profileManager.GetSubProfilesFromProfile(profile))
                     ProfileManager_Updated(subProfile, UpdateSource.Background, false);
             }
+
+            // Hide spinner once the initial batch of profiles has been dispatched to the UI
+            UIHelper.TryInvoke(() => IsInitializing = false);
         }
 
         private void ProfileManager_Initialized()

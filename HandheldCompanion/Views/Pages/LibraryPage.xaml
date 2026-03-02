@@ -126,30 +126,53 @@
                 </ui:SettingsExpander>
             </ikw:SimpleStackPanel>
 
-            <!--  Favorites  -->
-            <ikw:SimpleStackPanel Spacing="8" Visibility="{Binding HasLiked, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <!--  Loading spinner  -->
+            <ui:ProgressRing
+                HorizontalAlignment="Center"
+                IsIndeterminate="True"
+                Visibility="{Binding IsInitializing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+            <!--  Favorites  (hidden while loading or when no favourites exist)  -->
+            <ikw:SimpleStackPanel Spacing="8">
+                <ikw:SimpleStackPanel.Style>
+                    <Style TargetType="ikw:SimpleStackPanel">
+                        <!--  Default: visible  -->
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasLiked}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsInitializing}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ikw:SimpleStackPanel.Style>
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Favorites" />
-                <ui:ItemsRepeater
-                    Name="FavoritesRepeater"
-                    ItemTemplate="{StaticResource LibraryTemplateWide}"
-                    ItemsSource="{Binding FavoritesView}"
-                    VirtualizingPanel.IsVirtualizing="True"
-                    VirtualizingPanel.VirtualizationMode="Recycling">
-                    <ui:ItemsRepeater.Layout>
-                        <ui:UniformGridLayout
-                            ItemsStretch="Fill"
-                            MaximumRowsOrColumns="8"
-                            MinColumnSpacing="6"
-                            MinItemHeight="180"
-                            MinItemWidth="300"
-                            MinRowSpacing="6"
-                            Orientation="Horizontal" />
-                    </ui:ItemsRepeater.Layout>
-                </ui:ItemsRepeater>
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                    <ui:ItemsRepeater
+                        Name="FavoritesRepeater"
+                        ItemTemplate="{StaticResource LibraryTemplateWide}"
+                        ItemsSource="{Binding FavoritesView}"
+                        VirtualizingPanel.IsVirtualizing="True"
+                        VirtualizingPanel.VirtualizationMode="Recycling">
+                        <ui:ItemsRepeater.Layout>
+                            <ui:UniformGridLayout
+                                ItemsStretch="None"
+                                MaximumRowsOrColumns="100"
+                                MinColumnSpacing="6"
+                                MinItemHeight="250"
+                                MinItemWidth="480"
+                                MinRowSpacing="6"
+                                Orientation="Horizontal" />
+                        </ui:ItemsRepeater.Layout>
+                    </ui:ItemsRepeater>
+                </ScrollViewer>
             </ikw:SimpleStackPanel>
 
             <!--  Library  -->
-            <ikw:SimpleStackPanel Spacing="8">
+            <ikw:SimpleStackPanel
+                Spacing="8"
+                Visibility="{Binding IsInitializing, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Library" />
                 <ui:ItemsRepeater
                     Name="ProfilesRepeater"

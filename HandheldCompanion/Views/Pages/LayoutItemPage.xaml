@@ -20,19 +20,17 @@
     <Grid Margin="20">
         <ikw:SimpleStackPanel Spacing="10">
             <!--  Action Info Header  -->
-            <ikw:SimpleStackPanel
-                Name="ActionInfoHeader"
-                Spacing="12">
-                <TextBlock 
+            <ikw:SimpleStackPanel Name="ActionInfoHeader" Spacing="12">
+                <TextBlock
                     Name="ActionTitle"
-                    Style="{StaticResource BaseTextBlockStyle}" 
-                    Text="Action Settings" 
-                    FontSize="18" />
-                <TextBlock 
+                    FontSize="18"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="Action Settings" />
+                <TextBlock
                     Name="ActionDescription"
-                    Style="{StaticResource CaptionTextBlockStyle}" 
+                    Style="{StaticResource CaptionTextBlockStyle}"
                     Text="Configure action settings" />
-                
+
                 <!--  Separator  -->
                 <Separator
                     BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"

@@ -154,25 +154,26 @@ namespace HandheldCompanion.Managers
 
         private void ContentDialogClosed(ContentDialog contentDialog)
         {
-            // set flag
-            HasDialogOpen = false;
-
-            if (prevControl.TryGetValue(gamepadPage.Tag, out Control control))
+            if (gamepadPage is not null && prevControl.TryGetValue(gamepadPage.Tag, out Control control))
             {
                 if (_focused[windowName])
                     Focus(control);
             }
         }
 
-        private bool HasDialogOpen = false;
+        private bool HasFlyoutOpen = false;
+        private List<MenuItem> flyoutMenuItems = new();  // populated from MenuFlyout.Items when open
+        private MenuItem focusedFlyoutItem = null;        // tracks which item is highlighted
 
         private void ContentDialogOpened(ContentDialog contentDialog)
         {
-            // set flag
-            HasDialogOpen = true;
-
-            Control control = gamepadWindow.controlElements.OfType<Button>().FirstOrDefault();
-            Focus(control);
+            // Defer: ContentDialog children are not in the visual tree yet when this
+            // event fires (OnLayoutUpdated calls us synchronously mid-layout-pass).
+            gamepadWindow.Dispatcher.BeginInvoke(() =>
+            {
+                Control control = WPFUtils.GetTopLeftControl<Control>(gamepadWindow.controlElements);
+                Focus(control);
+            }, DispatcherPriority.Loaded);
         }
 
         private void WindowGotFocus(object sender, RoutedEventArgs e, FocusSource focusSource)
@@ -478,6 +479,12 @@ namespace HandheldCompanion.Managers
 
         public Control GetFocusedElement()
         {
+            // When a flyout is open, return the tracked popup item directly.
+            // Popup elements have no common visual ancestor with gamepadWindow,
+            // so the FindCommonAncestor check below would incorrectly reset focus.
+            if (HasFlyoutOpen && focusedFlyoutItem is not null)
+                return focusedFlyoutItem;
+
             IInputElement FocusedElement = forcedFocus is not null ? forcedFocus : gamepadWindow.GetFocusedElement();
 
             DependencyObject commonAncestor = VisualTreeHelperExtensions.FindCommonAncestor((DependencyObject)FocusedElement, gamepadWindow);
@@ -514,8 +521,8 @@ namespace HandheldCompanion.Managers
 
                     default:
                         {
-                            // store current control if not part of a dialog
-                            if (gamepadPage is not null && !HasDialogOpen)
+                            // store current control if not part of a dialog or open flyout
+                            if (gamepadPage is not null && gamepadWindow.currentDialog is null && !HasFlyoutOpen)
                                 prevControl[gamepadPage.Tag] = controlFocused;
                         }
                         break;
@@ -695,7 +702,7 @@ namespace HandheldCompanion.Managers
 
                     if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B1))
                     {
-                        if (focusedElement is Button button)
+                        if (focusedElement is Button button && focusedElement is not DropDownButton)
                         {
                             Focus(button);
 
@@ -875,10 +882,24 @@ namespace HandheldCompanion.Managers
                             // set state
                             comboBox.IsDropDownOpen = !comboBox.IsDropDownOpen;
 
-                            // get currently selected control 
+                            // get currently selected control
                             int idx = comboBox.SelectedIndex;
                             if (idx != -1)
+                            {
                                 focusedElement = (ComboBoxItem)comboBox.ItemContainerGenerator.ContainerFromIndex(idx);
+                            }
+                            else if (comboBox.IsDropDownOpen)
+                            {
+                                // Nothing selected — focus the first available item so Up/Down works immediately
+                                for (int i = 0; i < comboBox.Items.Count; i++)
+                                {
+                                    if (comboBox.ItemContainerGenerator.ContainerFromIndex(i) is ComboBoxItem ci && ci.IsEnabled && ci.IsVisible)
+                                    {
+                                        focusedElement = ci;
+                                        break;
+                                    }
+                                }
+                            }
 
                             Focus(focusedElement, comboBox, true);
                             return;
@@ -913,9 +934,88 @@ namespace HandheldCompanion.Managers
                             }
                             return;
                         }
+                        else if (focusedElement is DropDownButton dropDownButton)
+                        {
+                            var flyout = dropDownButton.Flyout;
+                            if (flyout is not null)
+                            {
+                                // Self-removing closed handler: clears flyout state and restores focus to the button
+                                EventHandler<object> closedHandler = null;
+                                closedHandler = (s, e) =>
+                                {
+                                    flyout.Closed -= closedHandler;
+                                    HasFlyoutOpen = false;
+                                    gamepadWindow.currentFlyoutButton = null;
+                                    flyoutMenuItems.Clear();
+                                    focusedFlyoutItem = null;
+
+                                    UIHelper.TryInvoke(() =>
+                                    {
+                                        // Don't steal focus from a ContentDialog that caused this flyout to close.
+                                        if (_focused[windowName] && gamepadWindow.currentDialog is null)
+                                            Focus(dropDownButton);
+                                    });
+                                };
+                                flyout.Closed += closedHandler;
+
+                                // Self-removing opened handler: switches focus into the flyout
+                                EventHandler<object> openedHandler = null;
+                                openedHandler = (s, e) =>
+                                {
+                                    flyout.Opened -= openedHandler;
+                                    HasFlyoutOpen = true;
+                                    gamepadWindow.currentFlyoutButton = dropDownButton;
+
+                                    UIHelper.TryInvoke(() =>
+                                    {
+                                        // MenuItems live in a separate popup visual tree — obtain directly
+                                        flyoutMenuItems.Clear();
+                                        if (dropDownButton.Flyout is MenuFlyout menuFlyout)
+                                        {
+                                            foreach (var item in menuFlyout.Items)
+                                                if (item is MenuItem mi)
+                                                    flyoutMenuItems.Add(mi);
+                                        }
+
+                                        // Highlight first enabled item; avoid Focus() which calls
+                                        // FocusManager.SetFocusedElement(gamepadWindow) and can close the popup
+                                        var firstItem = flyoutMenuItems.FirstOrDefault(m => m.IsEnabled);
+                                        if (firstItem is not null)
+                                        {
+                                            focusedFlyoutItem = firstItem;
+                                            Keyboard.Focus(firstItem);
+                                            gamepadWindow.SetFocusedElement(firstItem);
+                                        }
+                                    });
+                                };
+                                flyout.Opened += openedHandler;
+
+                                flyout.ShowAt(dropDownButton);
+                            }
+                            return;
+                        }
+                        else if (focusedElement is MenuItem menuItem && HasFlyoutOpen)
+                        {
+                            // Execute the menu item command
+                            if (menuItem.IsEnabled &&
+                                menuItem.Command?.CanExecute(menuItem.CommandParameter) == true)
+                                menuItem.Command.Execute(menuItem.CommandParameter);
+
+                            // MenuFlyout auto-closes after a MenuItem is invoked; force it if not
+                            if (HasFlyoutOpen)
+                                gamepadWindow.currentFlyoutButton?.Flyout?.Hide();
+                            return;
+                        }
                     }
                     else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B2))
                     {
+                        // close flyout, if any
+                        if (HasFlyoutOpen && gamepadWindow.currentFlyoutButton?.Flyout is { } openFlyout)
+                        {
+                            openFlyout.Hide();
+                            return;
+                        }
+
                         // hide dialog, if any
                         if (gamepadWindow.currentDialog is not null)
                         {
@@ -983,7 +1083,7 @@ namespace HandheldCompanion.Managers
                         {
                             default:
                                 {
-                                    if (HasDialogOpen && prevControl.TryGetValue(gamepadPage, out Control control))
+                                    if (gamepadWindow.currentDialog is not null && prevControl.TryGetValue(gamepadPage, out Control control))
                                     {
                                         Focus(control);
                                         return;
@@ -1312,10 +1412,26 @@ namespace HandheldCompanion.Managers
                                     ComboBox comboBox = (ComboBox)focusedElement;
                                     int idx = comboBox.SelectedIndex;
 
-                                    if (comboBox.IsDropDownOpen && idx != -1)
+                                    if (comboBox.IsDropDownOpen)
                                     {
-                                        focusedElement = (ComboBoxItem)comboBox.ItemContainerGenerator.ContainerFromIndex(idx);
-                                        Focus(focusedElement, comboBox, true);
+                                        if (idx != -1)
+                                        {
+                                            focusedElement = (ComboBoxItem)comboBox.ItemContainerGenerator.ContainerFromIndex(idx);
+                                            Focus(focusedElement, comboBox, true);
+                                        }
+                                        else
+                                        {
+                                            // No item selected yet — jump to the first enabled item
+                                            // so that subsequent Up/Down navigation works correctly.
+                                            for (int i = 0; i < comboBox.Items.Count; i++)
+                                            {
+                                                if (comboBox.ItemContainerGenerator.ContainerFromIndex(i) is ComboBoxItem ci && ci.IsEnabled && ci.IsVisible)
+                                                {
+                                                    Focus(ci, comboBox, true);
+                                                    break;
+                                                }
+                                            }
+                                        }
                                         return;
                                     }
                                 }
@@ -1357,7 +1473,7 @@ namespace HandheldCompanion.Managers
                                                     focusedElement = (ComboBoxItem)comboBox.ItemContainerGenerator.ContainerFromIndex(idx);
 
                                                     // Check if the focused element is enabled
-                                                    if (focusedElement != null && focusedElement.IsEnabled)
+                                                    if (focusedElement != null && focusedElement.IsEnabled && focusedElement.IsVisible)
                                                     {
                                                         // If the element is enabled, focus it and break out of the loop
                                                         Focus(focusedElement, comboBox, true);
@@ -1372,6 +1488,46 @@ namespace HandheldCompanion.Managers
                                     }
                                 }
                                 break;
+
+                            case "MenuItem":
+                                {
+                                    if (HasFlyoutOpen && flyoutMenuItems.Count > 0 && focusedElement is MenuItem currentMenuItem)
+                                    {
+                                        int idx = flyoutMenuItems.IndexOf(currentMenuItem);
+                                        if (idx < 0) idx = 0;
+
+                                        while (true)
+                                        {
+                                            int nextIdx = idx;
+                                            switch (direction)
+                                            {
+                                                case WPFUtils.Direction.Up:   nextIdx--; break;
+                                                case WPFUtils.Direction.Down: nextIdx++; break;
+                                                default:
+                                                    // Left/Right: stay on current item
+                                                    return;
+                                            }
+
+                                            if (nextIdx < 0 || nextIdx >= flyoutMenuItems.Count)
+                                            {
+                                                // Reached top or bottom edge — stay on current item
+                                                return;
+                                            }
+
+                                            idx = nextIdx;
+                                            var candidate = flyoutMenuItems[idx];
+                                            if (candidate.IsEnabled)
+                                            {
+                                                focusedFlyoutItem = candidate;
+                                                Keyboard.Focus(candidate);
+                                                gamepadWindow.SetFocusedElement(candidate);
+                                                return;
+                                            }
+                                            // disabled item — keep looping
+                                        }
+                                    }
+                                    return;
+                                }
 
                             case "Slider":
                                 {

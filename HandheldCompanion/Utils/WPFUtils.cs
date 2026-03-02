@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Interop;
+using System.Windows.Documents;
 using System.Windows.Media;
 using Control = System.Windows.Controls.Control;
 
@@ -102,14 +103,74 @@ public static class WPFUtils
 
     public static Control? GetClosestControl<T>(Control source, List<Control> controls, Direction direction, List<Type> typesToIgnore = null) where T : Control
     {
-        List<Control> controlsInDirection = GetControlInDirection<T>(source, controls, direction, typesToIgnore);
+        // Priority pass: if the source is inside an open Expander, first look for
+        // focusable descendants of that same Expander in the requested direction.
+        // This ensures Down/Up navigation traverses the Expander's own children
+        // (e.g. SettingsExpander.Items) before jumping to controls outside it.
+        // When the Expander is collapsed its content is invisible, so FindChildren
+        // will not have returned those controls and this pass produces no candidates —
+        // navigation then falls through to the global pass naturally.
+        Expander expander = FindParent<Expander>(source);
+        if (expander is not null && expander.IsExpanded)
+        {
+            List<Control> scopedControls = controls
+                .Where(c => GetVisualParents(c).Contains(expander))
+                .ToList();
 
-        // If no controls are found, return source
-        if (controlsInDirection.Count == 0) return source;
+            List<Control> scopedCandidates = GetControlInDirection<T>(source, scopedControls, direction, typesToIgnore, strictAxis: false);
+            if (scopedCandidates.Count > 0)
+                return scopedCandidates.OrderBy(c => GetDistanceV3(source, c, direction)).First();
+        }
 
-        // Flatten the groups and sort controls by distance
-        Control[] clostests = controlsInDirection.OrderBy(c => GetDistanceV3(source, c, direction)).ToArray();
-        return clostests.FirstOrDefault();
+        // Standard pass: prefer candidates whose bounding box overlaps the source on the secondary axis.
+        // This prevents L/R navigation from jumping to elements far above or below the current row.
+        List<Control> candidates = GetControlInDirection<T>(source, controls, direction, typesToIgnore, strictAxis: true);
+        if (candidates.Count > 0)
+            return candidates.OrderBy(c => GetDistanceV3(source, c, direction)).First();
+
+        // Relaxed pass: no strict-axis requirement, but restrict to controls whose secondary-axis
+        // bounding box is within one control-height (or -width) of the source's own boundary.
+        // This lets small controls in immediately adjacent rows/columns be reached
+        // (e.g. the '+' button and the Gear/Remove buttons in ButtonStackTemplate/ButtonMappingTemplate
+        // share no vertical overlap, yet they are only a few pixels apart on the secondary axis).
+        // Controls that are far away on the secondary axis are still excluded so navigation
+        // does not jump to completely unrelated rows or columns.
+        List<Control> relaxedCandidates = GetControlInDirection<T>(source, controls, direction, typesToIgnore, strictAxis: false)
+            .Where(c => SecondaryAxisGap(source, c, direction) <=
+                (direction is Direction.Left or Direction.Right
+                    ? Math.Min(source.ActualHeight, c.ActualHeight)
+                    : Math.Min(source.ActualWidth, c.ActualWidth)))
+            .ToList();
+        if (relaxedCandidates.Count > 0)
+            return relaxedCandidates.OrderBy(c => GetDistanceV3(source, c, direction)).First();
+
+        return source;
+    }
+
+    // Returns the gap in pixels between the source and target bounding boxes
+    // on the secondary axis for a given navigation direction:
+    //   Left / Right → vertical gap   (secondary axis = Y)
+    //   Up   / Down  → horizontal gap (secondary axis = X)
+    // Returns 0 when the boxes touch or overlap.
+    private static double SecondaryAxisGap(Control source, Control target, Direction direction)
+    {
+        var p = target.TranslatePoint(new Point(0, 0), source);
+        double x = Math.Round(p.X);
+        double y = Math.Round(p.Y);
+
+        switch (direction)
+        {
+            case Direction.Left:
+            case Direction.Right:
+                // Vertical gap between [0, source.H] and [y, y + target.H]
+                return Math.Max(0, Math.Max(y - source.ActualHeight, -(y + target.ActualHeight)));
+            case Direction.Up:
+            case Direction.Down:
+                // Horizontal gap between [0, source.W] and [x, x + target.W]
+                return Math.Max(0, Math.Max(x - source.ActualWidth, -(x + target.ActualWidth)));
+            default:
+                return double.MaxValue;
+        }
     }
 
     public static Control? GetFurthestControl<T>(Control source, List<Control> controls, Direction direction, List<Type> typesToIgnore = null) where T : Control
@@ -125,7 +186,7 @@ public static class WPFUtils
     }
 
 
-    private static List<Control> GetControlInDirection<T>(Control source, List<Control> controls, Direction direction, List<Type> typesToIgnore = null) where T : Control
+    private static List<Control> GetControlInDirection<T>(Control source, List<Control> controls, Direction direction, List<Type> typesToIgnore = null, bool strictAxis = false) where T : Control
     {
         // Filter list based on requested type
         controls = controls.Where(c => c is T && c.IsEnabled && c.Opacity != 0).ToList();
@@ -135,7 +196,7 @@ public static class WPFUtils
             controls = controls.Where(c => !typesToIgnore.Contains(c.GetType())).ToList();
 
         // Filter out the controls that are not in the given direction
-        controls = controls.Where(c => c != source && IsInDirection(source, c, direction)).ToList();
+        controls = controls.Where(c => c != source && IsInDirection(source, c, direction, strictAxis)).ToList();
 
         return controls;
     }
@@ -161,8 +222,11 @@ public static class WPFUtils
         }
     }
 
-    // Helper method to check if a control is in a given direction from another control
-    private static bool IsInDirection(Control source, Control target, Direction direction)
+    // Helper method to check if a control is in a given direction from another control.
+    // When strictAxis is true, also requires bounding-box overlap on the secondary axis:
+    //   Left/Right → vertical ranges must overlap (guards against jumping to rows above/below)
+    //   Up/Down    → horizontal ranges must overlap (guards against jumping to columns left/right)
+    private static bool IsInDirection(Control source, Control target, Direction direction, bool strictAxis = false)
     {
         var p = target.TranslatePoint(new Point(0, 0), source);
         double x = Math.Round(p.X);
@@ -171,13 +235,17 @@ public static class WPFUtils
         switch (direction)
         {
             case Direction.Left:
-                return x + (target.ActualWidth / 2) <= 0;
+                if (x + (target.ActualWidth / 2) > 0) return false;
+                return !strictAxis || (y <= source.ActualHeight && y + target.ActualHeight >= 0);
             case Direction.Right:
-                return x >= (source.ActualWidth / 2);
+                if (x < (source.ActualWidth / 2)) return false;
+                return !strictAxis || (y <= source.ActualHeight && y + target.ActualHeight >= 0);
             case Direction.Up:
-                return y + (target.ActualHeight / 2) <= 0;
+                if (y + (target.ActualHeight / 2) > 0) return false;
+                return !strictAxis || (x <= source.ActualWidth && x + target.ActualWidth >= 0);
             case Direction.Down:
-                return y >= (source.ActualHeight / 2);
+                if (y < (source.ActualHeight / 2)) return false;
+                return !strictAxis || (x <= source.ActualWidth && x + target.ActualWidth >= 0);
             default:
                 return false;
         }
@@ -249,32 +317,32 @@ public static class WPFUtils
                 // from c1's left-edge center -> c2's right-edge center
                 return Measure(
                   r1, r2,
-                  r => new Point(r.Left, r.Top + r.Height / 2),
-                  r => new Point(r.Right, r.Top + r.Height / 2)
+                  r => new Point(r.Left, r.Top + r.Height),
+                  r => new Point(r.Right, r.Top + r.Height)
                 );
 
             case Direction.Right:
                 // from c1's right center -> c2's left center
                 return Measure(
                   r1, r2,
-                  r => new Point(r.Right, r.Top + r.Height / 2),
-                  r => new Point(r.Left, r.Top + r.Height / 2)
+                  r => new Point(r.Right, r.Top + r.Height),
+                  r => new Point(r.Left, r.Top + r.Height)
                 );
 
             case Direction.Up:
                 // from c1's top center -> c2's bottom center
                 return Measure(
                   r1, r2,
-                  r => new Point(r.Left + r.Width / 2, r.Top),
-                  r => new Point(r.Left + r.Width / 2, r.Bottom)
+                  r => new Point(r.Left + r.Width, r.Top),
+                  r => new Point(r.Left + r.Width, r.Bottom)
                 );
 
             case Direction.Down:
                 // from c1's bottom center -> c2's top center
                 return Measure(
                   r1, r2,
-                  r => new Point(r.Left + r.Width / 2, r.Bottom),
-                  r => new Point(r.Left + r.Width / 2, r.Top)
+                  r => new Point(r.Left + r.Width, r.Bottom),
+                  r => new Point(r.Left + r.Width, r.Top)
                 );
 
             case Direction.None:
@@ -343,6 +411,12 @@ public static class WPFUtils
 
                         goto case "Slider";
                     }
+
+                case "DropDownButton":
+                    goto case "Slider";
+
+                case "MenuItem":
+                    goto case "Slider";
 
                 case "Slider":
                 case "ToggleSwitch":
@@ -462,40 +536,42 @@ public static class WPFUtils
         }
     }
 
-    // Returns all FrameworkElement of specified type from a list, where their parent or parents of their parent is oftype() Popup
-    public static List<T> GetElementsFromPopup<T>(List<FrameworkElement> elements) where T : FrameworkElement
+    // Shared core: walks each element's visual parent chain, adds the element to the
+    // result if the chain terminates at a node satisfying isTarget before hitting an
+    // earlyStop sentinel (or null).  Used by the two public helpers below.
+    private static List<T> GetElementsByAncestor<T>(
+        List<FrameworkElement> elements,
+        Func<DependencyObject, bool> isTarget,
+        Func<DependencyObject, bool>? earlyStop = null)
+        where T : FrameworkElement
     {
-        // Create an empty list to store the result
         List<T> result = [];
-
-        // Loop through each element in the input list
         foreach (FrameworkElement element in elements)
         {
-            // Check if the element is of the specified type
-            if (element is T)
-            {
-                // Get the parent of the element
-                FrameworkElement parent = element.Parent as FrameworkElement;
+            if (element is not T typed) continue;
 
-                // Loop until the parent is null or a Popup
-                while (parent != null && (!(parent is Popup) && !(parent is ContentDialog)))
-                {
-                    // Get the parent of the parent
-                    parent = parent.Parent as FrameworkElement;
-                }
+            DependencyObject parent = VisualTreeHelper.GetParent(element);
+            while (parent is not null && !isTarget(parent) && earlyStop?.Invoke(parent) != true)
+                parent = VisualTreeHelper.GetParent(parent);
 
-                // Check if the parent is a Popup
-                if (parent is Popup || parent is ContentDialog)
-                {
-                    // Add the element to the result list
-                    result.Add(element as T);
-                }
-            }
+            if (parent is not null && isTarget(parent))
+                result.Add(typed);
         }
-
-        // Return the result list
         return result;
     }
+
+    // Returns elements whose visual parent chain reaches a Popup or ContentDialog.
+    // Visual (not logical) traversal is required because MenuFlyout items live
+    // inside a MenuPopup in the visual tree whose logical chain does not include Popup.
+    public static List<T> GetElementsFromPopup<T>(List<FrameworkElement> elements) where T : FrameworkElement
+        => GetElementsByAncestor<T>(elements, p => p is Popup or ContentDialog);
+
+    // Returns elements whose visual parent chain reaches an AdornerLayer before a
+    // Window.  ContentDialog (iNKORE) is hosted in the window's adorner overlay: its
+    // C# instance is a logical controller, not a visual node, so this is the only
+    // reliable way to find its controls.
+    public static List<T> GetElementsFromAdornerLayer<T>(List<FrameworkElement> elements) where T : FrameworkElement
+        => GetElementsByAncestor<T>(elements, p => p is AdornerLayer, p => p is Window);
 
     public static void SendKeyToControl(Control control, int keyCode)
     {

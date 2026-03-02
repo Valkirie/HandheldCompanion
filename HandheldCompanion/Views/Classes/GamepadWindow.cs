@@ -20,7 +20,19 @@ namespace HandheldCompanion.Views.Classes
 {
     public class GamepadWindow : Window
     {
-        public List<Control> controlElements => currentDialog is not null ? WPFUtils.GetElementsFromPopup<Control>(frameworkElements) : frameworkElements.OfType<Control>().ToList();
+        // When a ContentDialog or a DropDownButton flyout is open, restrict navigation to
+        // only the controls that live inside that popup / dialog.
+        public DropDownButton? currentFlyoutButton;
+
+        public List<Control> controlElements =>
+            currentDialog is not null
+                // ContentDialog (iNKORE) is hosted in the window's AdornerLayer overlay.
+                // Its C# instance is never a visual node, so we identify its controls by
+                // walking each element's visual parent chain until we hit AdornerLayer.
+                ? WPFUtils.GetElementsFromAdornerLayer<Control>(frameworkElements)
+                : currentFlyoutButton is not null
+                    ? WPFUtils.GetElementsFromPopup<Control>(frameworkElements)
+                    : frameworkElements.OfType<Control>().ToList();
         public List<FrameworkElement> frameworkElements
         {
             get

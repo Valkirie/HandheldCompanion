@@ -494,15 +494,15 @@
 
                                     <Image
                                         x:Name="LogoImage"
-                                        Margin="40"
+                                        Margin="50"
                                         RenderTransformOrigin="0.5,0.5"
                                         Source="{Binding Logo}"
                                         Stretch="Uniform">
                                         <Image.Effect>
                                             <DropShadowEffect
-                                                BlurRadius="4"
+                                                BlurRadius="2"
                                                 Direction="330"
-                                                Opacity="0.5"
+                                                Opacity="0.70"
                                                 ShadowDepth="2"
                                                 Color="Black" />
                                         </Image.Effect>
@@ -537,9 +537,9 @@
                                 Stretch="Uniform">
                                 <Image.Effect>
                                     <DropShadowEffect
-                                        BlurRadius="4"
+                                        BlurRadius="2"
                                         Direction="330"
-                                        Opacity="0.5"
+                                        Opacity="0.70"
                                         ShadowDepth="2"
                                         Color="Black" />
                                 </Image.Effect>
@@ -701,9 +701,9 @@
                                 Stretch="Uniform">
                                 <Image.Effect>
                                     <DropShadowEffect
-                                        BlurRadius="4"
+                                        BlurRadius="2"
                                         Direction="330"
-                                        Opacity="0.5"
+                                        Opacity="0.70"
                                         ShadowDepth="2"
                                         Color="Black" />
                                 </Image.Effect>
