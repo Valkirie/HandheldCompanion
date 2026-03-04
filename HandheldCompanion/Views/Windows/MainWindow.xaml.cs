@@ -140,9 +140,6 @@ public partial class MainWindow : GamepadWindow
         // define current directory
         Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
-        // initialize XInputWrapper
-        XInputPlus.ExtractXInputPlusLibraries();
-
         // initialize notifyIcon
         notifyIcon = new NotifyIcon
         {

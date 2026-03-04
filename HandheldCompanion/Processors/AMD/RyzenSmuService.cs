@@ -632,7 +632,7 @@ namespace HandheldCompanion.Processors.AMD
         /// <param name="slowWatts">Slow/SPL limit in watts.</param>
         public bool SetAllLimits(int stapmWatts, int fastWatts, int slowWatts)
         {
-            LogManager.LogInformation($"Setting TDP limits via PawnIO: STAPM={stapmWatts}W, Fast={fastWatts}W, Slow={slowWatts}W");
+            LogManager.LogInformation("Setting TDP limits via PawnIO: STAPM={0}W, Fast={1}W, Slow={2}W", stapmWatts, fastWatts, slowWatts);
 
             bool success = true;
 

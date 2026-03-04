@@ -414,7 +414,7 @@ public static class ControllerManager
                 nint gamepad = SDL.OpenGamepad(deviceIndex);
                 if (gamepad == IntPtr.Zero)
                 {
-                    LogManager.LogError($"Failed to open controller {deviceIndex}: {SDL.GetError()}");
+                    LogManager.LogError("Failed to open controller {0}: {1}", deviceIndex, SDL.GetError());
                 }
                 else
                 {
@@ -434,7 +434,7 @@ public static class ControllerManager
                     PnPDetails? details = DeviceManager.GetDeviceFromInstanceId(path);
                     if (details is null)
                     {
-                        LogManager.LogError($"Failed to retrieve PnPDetails for controller {deviceIndex}");
+                        LogManager.LogError("Failed to retrieve PnPDetails for controller {0}", deviceIndex);
                         return;
                     }
 

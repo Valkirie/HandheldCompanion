@@ -804,7 +804,8 @@ public class ProfileManager : IManager
             HidHide.UnregisterApplication(profile.Path);
 
             // Remove XInputPlus (extended compatibility)
-            XInputPlus.UnregisterApplication(profile);
+            if (profile.XInputPlus == XInputPlusMethod.Redirection)
+                XInputPlus.UnregisterApplication(profile);
 
             _ = profiles.TryRemove(profile.Guid, out Profile removedValue);
 
@@ -826,7 +827,7 @@ public class ProfileManager : IManager
             // todo: localize me
             ToastManager.SendToast($"{(profile.IsSubProfile ? "Subprofile" : "Profile")} {profile.Name} deleted");
 
-            LogManager.LogInformation($"Deleted {(profile.IsSubProfile ? "subprofile" : "profile")}: {0}", profilePath);
+            LogManager.LogInformation("Deleted {0}: {1}", (profile.IsSubProfile ? "subprofile" : "profile"), profilePath);
 
             // restore default profile
             if (isCurrent)
@@ -910,9 +911,8 @@ public class ProfileManager : IManager
                     profileToSanitize.ErrorCode |= ProfileErrorCode.MissingPermission;
             }
 
-            // todo: shouldn't we use path ?
-            if (ProcessManager.GetProcesses(profile.Executable).Any())
-                profile.ErrorCode |= ProfileErrorCode.Running;
+            if (ProcessManager.GetProcesses(profileToSanitize.Executable).Any())
+                profileToSanitize.ErrorCode |= ProfileErrorCode.Running;
         }
 
         // check if profile power profile was deleted, if so, restore balanced
@@ -1032,13 +1032,10 @@ public class ProfileManager : IManager
 
     public bool UpdateProfileCloaking(Profile profile)
     {
-        switch (profile.ErrorCode)
-        {
-            case ProfileErrorCode.MissingExecutable:
-            case ProfileErrorCode.MissingPath:
-            case ProfileErrorCode.Default:
-                return false;
-        }
+        if (profile.ErrorCode.HasFlag(ProfileErrorCode.MissingExecutable) ||
+            profile.ErrorCode.HasFlag(ProfileErrorCode.MissingPath) ||
+            profile.ErrorCode.HasFlag(ProfileErrorCode.Default))
+            return false;
 
         switch (profile.Whitelisted)
         {
@@ -1052,14 +1049,15 @@ public class ProfileManager : IManager
 
     public bool UpdateProfileWrapper(Profile profile)
     {
-        switch (profile.ErrorCode)
-        {
-            case ProfileErrorCode.MissingPermission:
-            case ProfileErrorCode.MissingPath:
-            case ProfileErrorCode.Running:
-            case ProfileErrorCode.Default:
-                return false;
-        }
+        if (profile.ErrorCode.HasFlag(ProfileErrorCode.MissingPermission) ||
+            profile.ErrorCode.HasFlag(ProfileErrorCode.MissingPath) ||
+            profile.ErrorCode.HasFlag(ProfileErrorCode.Default))
+            return false;
+
+        // Redirection deploys DLLs into the game directory; can't do that while the process is running.
+        // Injection happens per process-start event, so Running is not a blocker there.
+        if (profile.ErrorCode.HasFlag(ProfileErrorCode.Running) && profile.XInputPlus == XInputPlusMethod.Redirection)
+            return false;
 
         switch (profile.XInputPlus)
         {

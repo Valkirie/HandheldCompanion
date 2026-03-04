@@ -503,9 +503,12 @@ public partial class ProfilesPage : Page
 
             try
             {
-                // disable delete button if is default profile or any sub profile is running
-                //TODO consider sub profiles pertaining to this main profile is running
-                b_DeleteProfile.IsEnabled = (selectedProfile.ErrorCode & (ProfileErrorCode.Default | ProfileErrorCode.Running)) == 0;
+                // display warnings
+                WarningInfoBar.Message = EnumUtils.GetDescriptionFromEnumValue(selectedProfile.ErrorCode);
+                WarningInfoBar.Visibility = selectedProfile.ErrorCode != ProfileErrorCode.None ? Visibility.Visible : Visibility.Collapsed;
+
+                // disable delete button if profile is default or application is running with XInput redirection enabled
+                b_DeleteProfile.IsEnabled = !selectedProfile.Default && !(selectedProfile.ErrorCode.HasFlag(ProfileErrorCode.Running) && selectedProfile.XInputPlus == XInputPlusMethod.Redirection);
                 // prevent user from renaming default profile
                 b_ProfileRename.IsEnabled = !selectedMainProfile.Default;
                 // prevent user from disabling default profile
@@ -614,24 +617,17 @@ public partial class ProfilesPage : Page
 
                 ((ProfilesPageViewModel)DataContext).PowerProfileChanged(powerProfileAC, powerProfileDC);
 
-                // display warnings
-                WarningInfoBar.Message = EnumUtils.GetDescriptionFromEnumValue(selectedProfile.ErrorCode);
+                StackGlobalSettings.IsEnabled = !selectedProfile.ErrorCode.HasFlag(ProfileErrorCode.Default);
+                ProfileDetailsExpander.IsEnabled = !selectedProfile.ErrorCode.HasFlag(ProfileErrorCode.Default);
 
-                (Visibility warningVisibility, bool controlsEnabled, bool redirectionEnabled) = selectedProfile.ErrorCode switch
-                {
-                    ProfileErrorCode.MissingPermission => (Visibility.Visible, true, false),
-                    ProfileErrorCode.Running or
-                    ProfileErrorCode.MissingExecutable or
-                    ProfileErrorCode.MissingPath or
-                    ProfileErrorCode.Default => (Visibility.Visible, false, false),
-                    _ => (Visibility.Collapsed, true, true)
-                };
-
-                WarningInfoBar.Visibility = warningVisibility;
-                StackGlobalSettings.IsEnabled = controlsEnabled;
-                cB_Wrapper_Injection.IsEnabled = controlsEnabled;
-                ProfileDetailsExpander.IsEnabled = controlsEnabled;
-                cB_Wrapper_Redirection.IsEnabled = redirectionEnabled;
+                // XInput+ related
+                bool disableControls = selectedProfile.ErrorCode.HasFlag(ProfileErrorCode.Running)
+                    || selectedProfile.ErrorCode.HasFlag(ProfileErrorCode.MissingExecutable)
+                    || selectedProfile.ErrorCode.HasFlag(ProfileErrorCode.MissingPath)
+                    || selectedProfile.ErrorCode.HasFlag(ProfileErrorCode.Default);
+                bool disableRedirection = disableControls || selectedProfile.ErrorCode.HasFlag(ProfileErrorCode.MissingPermission);
+                cB_Wrapper_Injection.IsEnabled = !disableControls;
+                cB_Wrapper_Redirection.IsEnabled = !disableRedirection;
 
                 // update dropdown lists
                 cB_Profiles.Items.Refresh();
