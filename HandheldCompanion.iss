@@ -49,7 +49,7 @@
 #define DirectXDownloadLink    "https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe"
 #define HidHideDownloadLink    "https://github.com/nefarius/HidHide/releases/download/v1.5.230.0/HidHide_1.5.230_x64.exe"
 #define ViGemDownloadLink      "https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe"
-#define RtssDownloadLink       "https://github.com/Valkirie/HandheldCompanion/raw/main/redist/RTSSSetup736.exe"
+#define RtssDownloadLink       "https://github.com/Valkirie/HandheldCompanion/raw/main/redist/RTSSSetup737.exe"
 #define PawnIODownloadLink     "https://github.com/namazso/PawnIO.Setup/releases/latest/download/PawnIO_setup.exe"
 
 ; Registry  
@@ -777,7 +777,7 @@ end;
 
 procedure Dependency_AddRTSS;
 begin
-  Dependency_Add_With_Version('RTSSSetup736.exe', '{#NewRtssVersion}', RegGetInstalledVersion('{#RtssName}'),
+  Dependency_Add_With_Version('RTSSSetup737.exe', '{#NewRtssVersion}', RegGetInstalledVersion('{#RtssName}'),
     '/S',
     '{#RtssName}',
     '{#RtssDownloadLink}',
