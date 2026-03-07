@@ -11012,7 +11012,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable desktop profile on start.
+        ///   Looks up a localized string similar to Enable desktop profile at startup.
         /// </summary>
         public static string SettingsPage_EnableDesktopLayoutOnStart {
             get {
@@ -11021,7 +11021,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The desktop profile will be automatically enabled on application start.
+        ///   Looks up a localized string similar to The desktop profile will be automatically enabled at startup.
         /// </summary>
         public static string SettingsPage_EnableDesktopLayoutOnStartDesc {
             get {
@@ -11692,6 +11692,15 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_ThemeLight {
             get {
                 return ResourceManager.GetString("SettingsPage_ThemeLight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Themes options.
+        /// </summary>
+        public static string SettingsPage_ThemesOptions {
+            get {
+                return ResourceManager.GetString("SettingsPage_ThemesOptions", resourceCulture);
             }
         }
         

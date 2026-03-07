@@ -8,6 +8,8 @@ namespace HandheldCompanion.Notifications
 {
     public class AMDIntegerScalingNotification : Notification
     {
+        private string targetRegistryPath;
+
         public AMDIntegerScalingNotification() : base(
             Properties.Resources.Hint_AMD_IntegerScalingCheck,
             Properties.Resources.Hint_AMD_IntegerScalingCheckDesc,
@@ -15,9 +17,18 @@ namespace HandheldCompanion.Notifications
             InfoBarSeverity.Error)
         { }
 
+        public void SetTargetRegistryPath(string registryPath)
+        {
+            targetRegistryPath = registryPath;
+        }
+
         public override async void Execute()
         {
-            RegistryUtils.SetValue(@"SYSTEM\ControlSet001\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0000", "DalEmbeddedIntegerScalingSupport", 1);
+            if (!string.IsNullOrEmpty(targetRegistryPath))
+            {
+                // Force-enable Embedded Integer Scaling support for the matched adapter
+                RegistryUtils.SetValue(targetRegistryPath, "DalEmbeddedIntegerScalingSupport", 1);
+            }
 
             Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
             {
@@ -28,16 +39,10 @@ namespace HandheldCompanion.Notifications
                 PrimaryButtonText = Properties.Resources.Dialog_Yes
             }.ShowAsync();
 
-            await dialogTask; // sync call
+            await dialogTask;
 
-            switch (dialogTask.Result)
-            {
-                case ContentDialogResult.Primary:
-                    DeviceUtils.RestartComputer();
-                    break;
-                case ContentDialogResult.Secondary:
-                    break;
-            }
+            if (dialogTask.Result == ContentDialogResult.Primary)
+                DeviceUtils.RestartComputer();
 
             base.Execute();
         }

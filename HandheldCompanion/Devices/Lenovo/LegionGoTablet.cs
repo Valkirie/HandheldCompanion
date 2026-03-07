@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Windows.Media;
+using WindowsInput.Events;
 using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
 using static HandheldCompanion.Utils.DeviceUtils;
 
@@ -76,6 +77,18 @@ namespace HandheldCompanion.Devices
                 { 'Z', 'Y' }
             };
 
+            OEMChords.Add(new KeyboardChord("Desktop",
+                [KeyCode.LWin, KeyCode.D],
+                [KeyCode.LWin, KeyCode.D],
+                true
+            ));
+
+            OEMChords.Add(new KeyboardChord("Page",
+                [KeyCode.LControl, KeyCode.LMenu, KeyCode.Tab],
+                [KeyCode.LControl, KeyCode.LMenu, KeyCode.Tab],
+                true
+            ));
+
             // device specific layout
             DefaultLayout.AxisLayout[AxisLayoutFlags.RightPad] = [new MouseActions { MouseType = MouseActionsType.Move, Filtering = true, Sensivity = 15 }];
 
@@ -114,6 +127,9 @@ namespace HandheldCompanion.Devices
                 // load RGB profiles
                 device.Write(RgbLoadProfile(LeftJoyconIndex, 0x03));
                 device.Write(RgbLoadProfile(RightJoyconIndex, 0x03));
+
+                // disable windows-specific keyboard commands
+                device.Write(SetSteamOSMode(true));
             }
 
             base.Device_Inserted(reScan);
@@ -143,6 +159,11 @@ namespace HandheldCompanion.Devices
         private IEnumerable<byte[]> DisableControllerGyro(int idx)
         {
             yield return new byte[] { 0x05, 0x06, 0x6A, 0x07, (byte)idx, 0x01, 0x01 }; // disable high-quality
+        }
+
+        private byte[] SetSteamOSMode(bool enabled)
+        {
+            return new byte[] { 0x05, 0x06, 0x69, 0x09, 0x01, (byte)(enabled ? 0x02 : 0x01), 0x01 };
         }
 
         public override void SetPassthrough(bool enabled)

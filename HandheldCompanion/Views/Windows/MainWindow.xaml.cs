@@ -83,6 +83,11 @@ public partial class MainWindow : GamepadWindow
     public string prevNavItemTag;
 
     private WindowState prevWindowState;
+    private bool isFullscreen;
+    private WindowState preFullscreenWindowState = WindowState.Normal;
+    private WindowStyle preFullscreenWindowStyle = WindowStyle.SingleBorderWindow;
+    private ResizeMode preFullscreenResizeMode = ResizeMode.CanResize;
+    private Rect preFullscreenBounds;
     private FullScreenExperienceMonitor fullScreenExperienceMonitor;
 
     public static SplashScreen SplashScreen;
@@ -97,7 +102,9 @@ public partial class MainWindow : GamepadWindow
     public static Version CurrentVersion => Version.Parse(fileVersionInfo.FileVersion);
 
     private static bool StartMinimized => ManagerFactory.settingsManager.GetBoolean("StartMinimized");
+    private static bool StartMaximized => ManagerFactory.settingsManager.GetBoolean("StartMaximized");
     private static bool PreloadPages => ManagerFactory.settingsManager.GetBoolean("PreloadPages");
+    private static bool ShowSplashScreen => ManagerFactory.settingsManager.GetBoolean("ShowSplashScreen");
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
     {
@@ -106,7 +113,8 @@ public partial class MainWindow : GamepadWindow
         DataContext = new MainWindowViewModel();
 
 #if !DEBUG
-        SplashScreen.Show();
+        if (ShowSplashScreen)
+            SplashScreen.Show();
 #endif
 
         // set theme
@@ -481,6 +489,10 @@ public partial class MainWindow : GamepadWindow
         // restore window state
         SetState(StartMinimized ? WindowState.Minimized : (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowState"));
         prevWindowState = (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowPrevState");
+
+        // apply fullscreen at startup (unless starting minimized)
+        if (!StartMinimized && StartMaximized)
+            EnterFullscreen();
     }
 
     private bool Homepage_Loaded = false;
@@ -768,6 +780,80 @@ public partial class MainWindow : GamepadWindow
     private bool isFseActive;
     private WindowState preFseWindowState = WindowState.Normal;
 
+
+    protected override void OnPreviewKeyDown(System.Windows.Input.KeyEventArgs e)
+    {
+        // ALT+ENTER toggles fullscreen (classic Windows behavior)
+        if (!isFseActive && Keyboard.Modifiers.HasFlag(ModifierKeys.Alt) && (e.Key == Key.Enter || e.SystemKey == Key.Enter))
+        {
+            ToggleFullscreen();
+            e.Handled = true;
+            return;
+        }
+
+        base.OnPreviewKeyDown(e);
+    }
+
+    private void ToggleFullscreen()
+    {
+        if (isFullscreen)
+            ExitFullscreen();
+        else
+            EnterFullscreen();
+    }
+
+    private void EnterFullscreen()
+    {
+        // UI thread
+        UIHelper.TryInvoke(() =>
+        {
+            if (isFullscreen || isFseActive)
+                return;
+
+            // capture current state
+            preFullscreenWindowState = (WindowState == WindowState.Minimized) ? prevWindowState : WindowState;
+            preFullscreenWindowStyle = WindowStyle;
+            preFullscreenResizeMode = ResizeMode;
+            preFullscreenBounds = RestoreBounds;
+
+            // apply borderless fullscreen
+            WindowStyle = WindowStyle.None;
+            ResizeMode = ResizeMode.NoResize;
+            Topmost = true;
+            WindowState = WindowState.Maximized;
+            Topmost = false;
+
+            isFullscreen = true;
+        });
+    }
+
+    private void ExitFullscreen()
+    {
+        // UI thread
+        UIHelper.TryInvoke(() =>
+        {
+            if (!isFullscreen || isFseActive)
+                return;
+
+            // restore chrome
+            WindowStyle = preFullscreenWindowStyle;
+            ResizeMode = preFullscreenResizeMode;
+
+            // restore window state/bounds
+            WindowState = preFullscreenWindowState == WindowState.Maximized ? WindowState.Maximized : WindowState.Normal;
+
+            if (WindowState == WindowState.Normal)
+            {
+                Left = preFullscreenBounds.Left;
+                Top = preFullscreenBounds.Top;
+                Width = preFullscreenBounds.Width;
+                Height = preFullscreenBounds.Height;
+            }
+
+            isFullscreen = false;
+        });
+    }
+
     private void FullScreenExperienceMonitor_FseStateChanged(object? sender, FullScreenExperienceMonitor.FseStateChangedEventArgs e)
     {
         UIHelper.TryInvoke(() =>
@@ -1016,46 +1102,6 @@ public partial class MainWindow : GamepadWindow
             ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B3, true, false);
             await Task.Delay(40);
             ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B3, false, true);
-        });
-    }
-
-    private void GamepadUISelect_Click(object sender, RoutedEventArgs e)
-    {
-        Task.Run(async () =>
-        {
-            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B1, true, false);
-            await Task.Delay(40);
-            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B1, false, true);
-        });
-    }
-
-    private void GamepadUIBack_Click(object sender, RoutedEventArgs e)
-    {
-        Task.Run(async () =>
-        {
-            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B2, true, false);
-            await Task.Delay(40);
-            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B2, false, true);
-        });
-    }
-
-    private void GamepadUIToggle_Click(object sender, RoutedEventArgs e)
-    {
-        Task.Run(async () =>
-        {
-            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B4, true, false);
-            await Task.Delay(40);
-            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B4, false, true);
-        });
-    }
-
-    private void GamepadUIMore_Click(object sender, RoutedEventArgs e)
-    {
-        Task.Run(async () =>
-        {
-            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.Start, true, false);
-            await Task.Delay(40);
-            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.Start, false, true);
         });
     }
 

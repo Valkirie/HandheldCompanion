@@ -168,7 +168,7 @@ public abstract class IDevice
     public string ProductModel = "default";
 
     // key press delay to use for certain scenarios
-    public short KeyPressDelay = (short)(TimerManager.GetPeriod() * 2);
+    public short KeyPressDelay = 200;
 
     // LibreHardwareMonitor
     public bool CpuMonitor = true;
@@ -882,6 +882,7 @@ public abstract class IDevice
 
     public virtual void SetKeyPressDelay(HIDmode controllerMode)
     {
+        /*
         switch (controllerMode)
         {
             case HIDmode.DualShock4Controller:
@@ -891,6 +892,7 @@ public abstract class IDevice
                 KeyPressDelay = (short)(TimerManager.GetPeriod() * 2);
                 break;
         }
+        */
     }
 
     public void PullSensors()
@@ -1196,6 +1198,11 @@ public abstract class IDevice
             FontFamily = GlyphFontFamily,
             Color = Colors.White
         };
+    }
+
+    public virtual string GetFontFamily(ButtonFlags button)
+    {
+        return "PromptFont";
     }
 
     public virtual string GetGlyph(ButtonFlags button)

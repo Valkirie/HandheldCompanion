@@ -108,7 +108,7 @@
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEE40;" />
                     </ui:SettingsCard.HeaderIcon>
-                    <ui:ToggleSwitch Name="Toggle_Background" Toggled="Toggle_Background_Toggled" />
+                    <ui:ToggleSwitch Name="Toggle_StartMinimized" Toggled="Toggle_StartMinimized_Toggled" />
                 </ui:SettingsCard>
 
                 <!--  Close minimizes  -->
@@ -119,7 +119,7 @@
                     <ui:ToggleSwitch Name="Toggle_CloseMinimizes" Toggled="Toggle_CloseMinimizes_Toggled" />
                 </ui:SettingsCard>
 
-                <!--  Enable desktop profile on start  -->
+                <!--  Enable desktop profile at startup  -->
                 <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_EnableDesktopLayoutOnStartDesc}" Header="{l:Static resx:Resources.SettingsPage_EnableDesktopLayoutOnStart}">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEA6C;" />
@@ -127,32 +127,12 @@
                     <ui:ToggleSwitch Name="Toggle_DesktopLayoutOnStart" Toggled="Toggle_DesktopLayoutOnStart_Toggled" />
                 </ui:SettingsCard>
 
-                <!--  Application theme  -->
-                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_AppThemeDesc}" Header="{l:Static resx:Resources.SettingsPage_AppTheme}">
+                <!--  Fullscreen at startup  -->
+                <ui:SettingsCard Description="Open Handheld Companion in fullscreen mode at startup" Header="Fullscreen at startup">
                     <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE740;" />
                     </ui:SettingsCard.HeaderIcon>
-                    <ComboBox Name="cB_Theme" SelectionChanged="cB_Theme_SelectionChanged">
-                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_ThemeDefault}" />
-                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_ThemeLight}" />
-                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_ThemeDark}" />
-                    </ComboBox>
-                </ui:SettingsCard>
-
-                <!--  Application backdrop  -->
-                <ui:SettingsCard
-                    d:Visibility="Visible"
-                    Description="{l:Static resx:Resources.SettingsPage_BackdropDesc}"
-                    Header="{l:Static resx:Resources.SettingsPage_Backdrop}">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ComboBox Name="cB_Backdrop" SelectionChanged="cB_Backdrop_SelectionChanged">
-                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropNone}" />
-                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropMica}" />
-                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropTabbed}" />
-                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropAcrylic}" />
-                    </ComboBox>
+                    <ui:ToggleSwitch Name="Toggle_StartMaximized" Toggled="Toggle_StartMaximized_Toggled" />
                 </ui:SettingsCard>
 
                 <!--  Application language  -->
@@ -184,16 +164,36 @@
                     </ui:SettingsCard.HeaderIcon>
                     <ui:ToggleSwitch Name="Toggle_Telemetry" Toggled="Toggle_Telemetry_Toggled" />
                 </ui:SettingsCard>
+            </ikw:SimpleStackPanel>
 
-                <!--  Process Priority  -->
-                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_PriorityDesc}" Header="{l:Static resx:Resources.SettingsPage_Priority}">
+            <!--  Themes options  -->
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsPage_ThemesOptions}" />
+            <ikw:SimpleStackPanel Spacing="3">
+                <!--  Application theme  -->
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_AppThemeDesc}" Header="{l:Static resx:Resources.SettingsPage_AppTheme}">
                     <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE8D0;" />
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
                     </ui:SettingsCard.HeaderIcon>
-                    <ComboBox Name="cB_Priority" SelectionChanged="cB_Priority_SelectionChanged">
-                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_Priority_Normal}" />
-                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_Priority_AboveNormal}" />
-                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_Priority_High}" />
+                    <ComboBox Name="cB_Theme" SelectionChanged="cB_Theme_SelectionChanged">
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_ThemeDefault}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_ThemeLight}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_ThemeDark}" />
+                    </ComboBox>
+                </ui:SettingsCard>
+
+                <!--  Application backdrop  -->
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Description="{l:Static resx:Resources.SettingsPage_BackdropDesc}"
+                    Header="{l:Static resx:Resources.SettingsPage_Backdrop}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox Name="cB_Backdrop" SelectionChanged="cB_Backdrop_SelectionChanged">
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropNone}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropMica}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropTabbed}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_BackdropAcrylic}" />
                     </ComboBox>
                 </ui:SettingsCard>
             </ikw:SimpleStackPanel>
@@ -224,6 +224,23 @@
                         <ComboBoxItem Content="500 Hz" />
                         <ComboBoxItem Content="1000 Hz" />
                     </ComboBox>
+                </ui:SettingsCard>
+
+                <!--  Process Priority  -->
+                <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_PriorityDesc}" Header="{l:Static resx:Resources.SettingsPage_Priority}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE8D0;" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox Name="cB_Priority" SelectionChanged="cB_Priority_SelectionChanged">
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_Priority_Normal}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_Priority_AboveNormal}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_Priority_High}" />
+                    </ComboBox>
+                </ui:SettingsCard>
+
+                <!--  Splashscreen  -->
+                <ui:SettingsCard Header="Show splash-screen at startup">
+                    <ui:ToggleSwitch Name="Toggle_SplashScreen" Toggled="Toggle_SplashScreen_Toggled" />
                 </ui:SettingsCard>
             </ikw:SimpleStackPanel>
 

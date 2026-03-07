@@ -19,7 +19,7 @@
 #define InstallerVersion        "0.2"
 #define MyAppSetupName         "Handheld Companion"
 #define MyBuildId              "HandheldCompanion"
-#define MyAppVersion           "0.28.3.3"
+#define MyAppVersion           "0.28.4.5"
 #define MyAppPublisher         "BenjaminLSR"
 #define MyAppCopyright         "Copyright © BenjaminLSR"
 #define MyAppURL               "https://github.com/Valkirie/HandheldCompanion"
@@ -43,8 +43,8 @@
 #define NewDirectXVersion      "9.29.1974"
 #define NewViGemVersion        "1.22.0.0"
 #define NewHidHideVersion      "1.5.230"
-#define NewRtssVersion         "7.3.5.28010"
-#define NewPawnIOVersion       "2.0.1.0"
+#define NewRtssVersion         "7.3.5.28314"
+#define NewPawnIOVersion       "2.1.0.0"
 
 #define DirectXDownloadLink    "https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe"
 #define HidHideDownloadLink    "https://github.com/nefarius/HidHide/releases/download/v1.5.230.0/HidHide_1.5.230_x64.exe"
@@ -101,10 +101,9 @@ Name: en; MessagesFile: "compiler:Default.isl"
 ; download netcorecheck_x64.exe: https://go.microsoft.com/fwlink/?linkid=2135504
 Source: "{#SourcePath}\redist\netcorecheck.exe"; Flags: dontcopy noencryption
 Source: "{#SourcePath}\redist\netcorecheck_x64.exe"; Flags: dontcopy noencryption
+Source: "{#SourcePath}\redist\PawnIO_setup.exe"; Flags: dontcopy noencryption
 #endif
-Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\win-x64\WinRing0x64.dll"; DestDir: "{app}"; Flags: onlyifdoesntexist																																				   
-Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\win-x64\WinRing0x64.sys"; DestDir: "{app}"; Flags: onlyifdoesntexist
-Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\win-x64\*"; Excludes: "*WinRing0x64.*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\win-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#SourcePath}\Certificate.pfx"; DestDir: "{tmp}"; Flags: deleteafterinstall
 Source: "{#SourcePath}\Certificate.ps1"; DestDir: "{tmp}"; Flags: deleteafterinstall
 Source: "{#SourcePath}\redist\PromptFont.otf"; DestDir: "{autofonts}"; FontInstall: "PromptFont"; Flags: uninsneveruninstall
@@ -231,11 +230,13 @@ begin
   Log('Add-MpPreference exit=' + IntToStr(ExitCode));
 end;
 
+{
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
   if CurStep = ssPostInstall then
     AddDefenderExclusions_Simple();
 end;
+}
 
 procedure CurPageChanged(CurPageID: Integer);
 begin
@@ -363,6 +364,7 @@ end;
 function InitializeSetup: Boolean;
 var
   installedVersion: String;
+  resultCode: Integer;
 begin
 #ifdef UseDotNet10
   installedVersion := RegGetInstalledVersion('{#DotNetName}');
@@ -438,9 +440,25 @@ begin
   else
   begin
     installedVersion := GetInstalledPawnIOVersion();
+
     if compareVersions('{#NewPawnIOVersion}', installedVersion, '.', '-') > 0 then
     begin
-      Log('{#PawnIOName} {#NewPawnIOVersion} needs update.');
+      Log('{#PawnIOName} update required. Installed: ' + installedVersion + ' New: {#NewPawnIOVersion}');
+      
+      if not FileExists(ExpandConstant('{tmp}\') + 'PawnIO_setup.exe') then
+        ExtractTemporaryFile('PawnIO_setup.exe');
+      
+      // Uninstall existing PawnIO
+      if Exec(ExpandConstant('{tmp}\PawnIO_setup.exe'), '-uninstall -silent', '', SW_SHOW, ewWaitUntilTerminated, resultCode) then
+      begin
+        Log('Previous PawnIO uninstalled. ExitCode=' + IntToStr(ResultCode));
+      end
+      else
+      begin
+        Log('Failed to launch PawnIO uninstall.');
+      end;
+
+      // Install new version
       Dependency_AddPawnIO;
     end;
   end;

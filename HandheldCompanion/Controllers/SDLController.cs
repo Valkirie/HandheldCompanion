@@ -143,6 +143,16 @@ namespace HandheldCompanion.Controllers
             {
                 SourceAxis.Add(AxisLayoutFlags.Gyroscope);
             }
+
+            // custom buttons
+            foreach (KeyValuePair<GamepadButton, ButtonFlags> kvp in _buttonMap)
+            {
+                GamepadButton sdlBtn = kvp.Key;
+                ButtonFlags flag = kvp.Value;
+
+                if (HasButton(sdlBtn) && !SourceButtons.Contains(flag))
+                    SourceButtons.Add(flag);
+            }
         }
 
         ~SDLController()
@@ -181,17 +191,34 @@ namespace HandheldCompanion.Controllers
             [GamepadButton.South] = ButtonFlags.B1,
             [GamepadButton.West] = ButtonFlags.B3,
             [GamepadButton.East] = ButtonFlags.B2,
+
             [GamepadButton.DPadUp] = ButtonFlags.DPadUp,
             [GamepadButton.DPadDown] = ButtonFlags.DPadDown,
             [GamepadButton.DPadLeft] = ButtonFlags.DPadLeft,
             [GamepadButton.DPadRight] = ButtonFlags.DPadRight,
+
             [GamepadButton.Start] = ButtonFlags.Start,
             [GamepadButton.Back] = ButtonFlags.Back,
+
             [GamepadButton.LeftShoulder] = ButtonFlags.L1,
             [GamepadButton.RightShoulder] = ButtonFlags.R1,
+
             [GamepadButton.Guide] = ButtonFlags.Special,
+
             [GamepadButton.LeftStick] = ButtonFlags.LeftStickClick,
             [GamepadButton.RightStick] = ButtonFlags.RightStickClick,
+
+            [GamepadButton.LeftPaddle1] = ButtonFlags.L4,
+            [GamepadButton.RightPaddle1] = ButtonFlags.R4,
+            [GamepadButton.LeftPaddle2] = ButtonFlags.L5,
+            [GamepadButton.RightPaddle2] = ButtonFlags.R5,
+
+            [GamepadButton.Misc1] = ButtonFlags.B5,
+            [GamepadButton.Misc2] = ButtonFlags.B6,
+            [GamepadButton.Misc3] = ButtonFlags.B7,
+            [GamepadButton.Misc4] = ButtonFlags.B8,
+            [GamepadButton.Misc5] = ButtonFlags.B9,
+            [GamepadButton.Misc6] = ButtonFlags.B10,
         };
 
         // Hack, SDL_CS has wrong implementation ?
@@ -205,7 +232,7 @@ namespace HandheldCompanion.Controllers
 
             ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
 
-            // --- BUTTONS ---
+            // buttons injection
             foreach (KeyValuePair<GamepadButton, ButtonFlags> kvp in _buttonMap)
             {
                 GamepadButton sdlBtn = kvp.Key;

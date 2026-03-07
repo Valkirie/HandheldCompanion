@@ -17,12 +17,10 @@ public class WidgetFactory
             {"GPU", new GpuWidget()}
         };
 
-    public static void CreateWidget(string name, OverlayEntry entry, short? level = null)
+    public static void CreateWidget(string key, OverlayEntry entry, short? level = null)
     {
-        if (!Widgets.TryGetValue(name.ToUpper(), out var widget))
-        {
+        if (!Widgets.TryGetValue(key, out IWidget? widget))
             return;
-        }
 
         widget.Build(entry, level);
     }

@@ -582,6 +582,11 @@ namespace HandheldCompanion.Controllers
             IsBusy = false;
         }
 
+        public virtual string GetFontFamily(ButtonFlags button)
+        {
+            return "PromptFont";
+        }
+
         public virtual string GetGlyph(ButtonFlags button)
         {
             switch (button)
