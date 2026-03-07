@@ -9,6 +9,7 @@ namespace HandheldCompanion.Misc
         public const int DM_DISPLAYFREQUENCY = 0x400000;
         public const int DM_PELSWIDTH = 0x80000;
         public const int DM_PELSHEIGHT = 0x100000;
+        public const int DM_BITSPERPEL = 0x40000;
         private const int CCHDEVICENAME = 32;
         private const int CCHFORMNAME = 32;
 

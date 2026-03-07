@@ -147,7 +147,8 @@ public partial class LayoutPage : Page
             {
                 case UpdateSource.QuickProfilesPage:
                     {
-                        if (ProfilesPage.selectedProfile.Name.Equals(profile.Name))
+                        if (ProfilesPage.selectedProfile != null && 
+                            ProfilesPage.selectedProfile.Name.Equals(profile.Name))
                             UpdateLayout(profile.Layout);
                     }
                     break;

@@ -227,7 +227,7 @@ namespace HandheldCompanion.ViewModels
             ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
             if (foundProcess is null)
             {
-                Processes.SafeAdd(new ProcessExViewModel(processEx, this));
+                Processes.SafeAdd(new ProcessExViewModel(processEx, true));
             }
             else
             {

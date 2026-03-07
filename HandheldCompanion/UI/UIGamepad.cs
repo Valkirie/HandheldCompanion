@@ -1172,7 +1172,7 @@ namespace HandheldCompanion.Managers
                                 {
                                     if (focusedElement.Tag is ProfileViewModel profileViewModel)
                                     {
-                                        profileViewModel.StartProcessCommand.Execute(null);
+                                        profileViewModel.ToggleProcessCommand.Execute(null);
                                     }
                                     else
                                     {

@@ -337,7 +337,9 @@ public partial class MainWindow : GamepadWindow
                             if (!profile.ErrorCode.HasFlag(ProfileErrorCode.MissingExecutable))
                             {
                                 GamepadUIToggle.Visibility = Visibility.Visible;
-                                GamepadUIToggleDesc.Text = Properties.Resources.MainWindow_Play;
+                                GamepadUIToggleDesc.Text = profileViewModel.IsRunning
+                                    ? Properties.Resources.ProfilesPage_StopProcess
+                                    : Properties.Resources.ProfilesPage_Play;
 
                                 GamepadUIMore.Visibility = Visibility.Visible;
                                 GamepadUIMoreDesc.Text = Properties.Resources.MainWindow_Layout;

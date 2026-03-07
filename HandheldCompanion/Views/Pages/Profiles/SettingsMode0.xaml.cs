@@ -199,8 +199,8 @@ public partial class SettingsMode0 : Page
             var x = (double)Thumb.Tag;
             Thumb.Height = StackCurve.Height / 2.0f;
             ProfilesPage.selectedProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
-            ProfilesPage.SubmitProfile();
         }
+        ProfilesPage.SubmitProfile();
     }
 
     private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -214,8 +214,8 @@ public partial class SettingsMode0 : Page
 
             Thumb.Height = StackCurve.Height * value;
             ProfilesPage.selectedProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
-            ProfilesPage.SubmitProfile();
         }
+        ProfilesPage.SubmitProfile();
     }
 
     private void Button_Click_2(object sender, RoutedEventArgs e)
@@ -229,8 +229,8 @@ public partial class SettingsMode0 : Page
 
             Thumb.Height = StackCurve.Height * value;
             ProfilesPage.selectedProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
-            ProfilesPage.SubmitProfile();
         }
+        ProfilesPage.SubmitProfile();
     }
 
     private void Expander_Expanded(object sender, RoutedEventArgs e)

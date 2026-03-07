@@ -798,6 +798,18 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="ProfilesPage_Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
+  <data name="ProfilesPage_ProcessControl" xml:space="preserve">
+    <value>Process control</value>
+  </data>
+  <data name="ProfilesPage_SuspendProcess" xml:space="preserve">
+    <value>Suspend</value>
+  </data>
+  <data name="ProfilesPage_ResumeProcess" xml:space="preserve">
+    <value>Resume</value>
+  </data>
+  <data name="ProfilesPage_StopProcess" xml:space="preserve">
+    <value>Stop</value>
+  </data>
   <data name="Properties_Resources_ControllerPage_Disconnect" xml:space="preserve">
     <value>Disconnect</value>
   </data>

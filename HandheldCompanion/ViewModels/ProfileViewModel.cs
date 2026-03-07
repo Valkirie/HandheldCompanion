@@ -24,6 +24,7 @@ namespace HandheldCompanion.ViewModels
     public class ProfileViewModel : BaseViewModel
     {
         public ICommand StartProcessCommand { get; private set; }
+        public ICommand ToggleProcessCommand { get; private set; }
         public ICommand Navigate { get; private set; }
         public ICommand OpenLayout { get; private set; }
 
@@ -62,7 +63,10 @@ namespace HandheldCompanion.ViewModels
 
         public GamePlatform PlatformType => _Profile.PlatformType;
 
+        public bool IsRunning => ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
         public bool IsAvailable => _Profile.CanExecute && !ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
+        public bool CanStopProcess => IsRunning;
+        public bool CanToggleProcess => IsAvailable || CanStopProcess;
 
         private bool _IsBusy;
         public bool IsBusy
@@ -265,28 +269,47 @@ namespace HandheldCompanion.ViewModels
                 }
             });
 
+            ToggleProcessCommand = new DelegateCommand(async () =>
+            {
+                if (CanStopProcess)
+                {
+                    ProcessEx? processEx = ProcessManager.GetProcesses().FirstOrDefault(p => p.Path.Equals(Profile.Path));
+                    if (processEx is not null)
+                    {
+                        ProcessExViewModel processViewModel = new(processEx, IsQuickTools);
+                        try
+                        {
+                            processViewModel.KillProcessCommand.Execute(null);
+                        }
+                        finally
+                        {
+                            // Don't dispose - let the async command complete
+                            // processViewModel.Dispose();
+                        }
+                    }
+
+                    return;
+                }
+
+                if (IsAvailable)
+                    StartProcessCommand.Execute(false);
+            });
+
             Navigate = new DelegateCommand(async () =>
             {
                 var page = MainWindow.profilesPage;
 
-                // pick the profile to select in the main combobox
+                // Set the selected main profile via ViewModel (MVVM)
                 Profile target = Profile.IsSubProfile
                     ? ManagerFactory.profileManager.GetParent(Profile)
                     : Profile;
 
-                // find a matching instance in the ComboBox (in case instances differ)
-                Profile? match = page.cB_Profiles.Items
-                    .OfType<Profile>()
-                    .FirstOrDefault(p => p.Guid == target.Guid);
+                // Use ViewModel instead of direct control access
+                page.viewModel.SelectedMainProfile = target;
 
-                if (match is not null)
-                    page.cB_Profiles.SelectedItem = match;
-
-                // subprofile picker: select current subprofile or reset
+                // Set selected sub-profile
                 if (Profile.IsSubProfile)
-                    page.cb_SubProfilePicker.SelectedItem = Profile;
-                else
-                    page.cb_SubProfilePicker.SelectedIndex = 0;
+                    page.viewModel.SelectedProfile = Profile;
 
                 MainWindow.GetCurrent().NavigateToPage("ProfilesPage");
             });
@@ -295,24 +318,17 @@ namespace HandheldCompanion.ViewModels
             {
                 var page = MainWindow.profilesPage;
 
-                // pick the profile to select in the main combobox
+                // Set the selected main profile via ViewModel (MVVM)
                 Profile target = Profile.IsSubProfile
                     ? ManagerFactory.profileManager.GetParent(Profile)
                     : Profile;
 
-                // find a matching instance in the ComboBox (in case instances differ)
-                Profile? match = page.cB_Profiles.Items
-                    .OfType<Profile>()
-                    .FirstOrDefault(p => p.Guid == target.Guid);
+                // Use ViewModel instead of direct control access
+                page.viewModel.SelectedMainProfile = target;
 
-                if (match is not null)
-                    page.cB_Profiles.SelectedItem = match;
-
-                // subprofile picker: select current subprofile or reset
+                // Set selected sub-profile
                 if (Profile.IsSubProfile)
-                    page.cb_SubProfilePicker.SelectedItem = Profile;
-                else
-                    page.cb_SubProfilePicker.SelectedIndex = 0;
+                    page.viewModel.SelectedProfile = Profile;
 
                 // prepare layout editor
                 LayoutTemplate layoutTemplate = new(target.Layout)
@@ -354,7 +370,12 @@ namespace HandheldCompanion.ViewModels
         private void ProcessManager_Changes(string path)
         {
             if (path.Equals(Profile.Path))
+            {
+                OnPropertyChanged(nameof(IsRunning));
                 OnPropertyChanged(nameof(IsAvailable));
+                OnPropertyChanged(nameof(CanStopProcess));
+                OnPropertyChanged(nameof(CanToggleProcess));
+            }
         }
     }
 }

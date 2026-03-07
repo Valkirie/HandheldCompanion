@@ -9174,6 +9174,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Process control.
+        /// </summary>
+        public static string ProfilesPage_ProcessControl {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ProcessControl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Arguments.
         /// </summary>
         public static string ProfilesPage_ProfileArguments {
@@ -9345,6 +9354,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Resume.
+        /// </summary>
+        public static string ProfilesPage_ResumeProcess {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ResumeProcess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Roll.
         /// </summary>
         public static string ProfilesPage_Roll {
@@ -9498,6 +9516,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Stop.
+        /// </summary>
+        public static string ProfilesPage_StopProcess {
+            get {
+                return ResourceManager.GetString("ProfilesPage_StopProcess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Style of input.
         /// </summary>
         public static string ProfilesPage_StyleofInput {
@@ -9593,6 +9620,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_SuspendOnSleepDesc {
             get {
                 return ResourceManager.GetString("ProfilesPage_SuspendOnSleepDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suspend.
+        /// </summary>
+        public static string ProfilesPage_SuspendProcess {
+            get {
+                return ResourceManager.GetString("ProfilesPage_SuspendProcess", resourceCulture);
             }
         }
         

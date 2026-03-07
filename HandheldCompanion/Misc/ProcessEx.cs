@@ -241,7 +241,7 @@ public class ProcessEx : IDisposable, ICloneable
     private bool IsDisposing = false;
 
     #region event
-    public EventHandler Refreshed;
+    public EventHandler? Refreshed;
 
     public event WindowAttachedEventHandler WindowAttached;
     public delegate void WindowAttachedEventHandler(ProcessWindow processWindow);

@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="HandheldCompanion.Views.QuickPages.QuickProfilesPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -14,23 +14,24 @@
     Title="{l:Static resx:Resources.QuickProfilesPage_Title}"
     Margin="12,0,12,0"
     d:Background="White"
-    d:DataContext="{d:DesignInstance Type=viewmodels:QuickProfilesPageViewModel}"
+    d:DataContext="{d:DesignInstance Type=viewmodels:ProfilesPageViewModel}"
     d:DesignHeight="2000"
     d:DesignWidth="640"
     KeepAlive="True"
     mc:Ignorable="d">
 
-    <ikw:SimpleStackPanel Spacing="8">
+    <ikw:SimpleStackPanel IsEnabled="{Binding HasSelectedProfile, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="8">
 
         <!--  Header  -->
-        <ui:SettingsExpander Name="ProcessCard" IsEnabled="False">
+        <ui:SettingsExpander Name="ProcessCard" IsEnabled="{Binding IsProcessCardEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
             <ui:SettingsExpander.HeaderIcon>
                 <Image
                     Name="ProfileIcon"
                     Grid.Column="0"
                     Width="24"
                     Height="24"
-                    CacheMode="BitmapCache" />
+                    CacheMode="BitmapCache"
+                    Source="{Binding ProcessIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
             </ui:SettingsExpander.HeaderIcon>
 
             <ui:SettingsExpander.Header>
@@ -39,7 +40,7 @@
                     VerticalAlignment="Center"
                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                     Style="{StaticResource BodyTextBlockStyle}"
-                    Text="{l:Static resx:Resources.QuickProfilesPage_Waiting}" />
+                    Text="{Binding ProcessName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
             </ui:SettingsExpander.Header>
 
             <ui:SettingsExpander.Description>
@@ -47,8 +48,9 @@
                     Name="ProcessPath"
                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                     Style="{StaticResource CaptionTextBlockStyle}"
+                    Text="{Binding ProcessPath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                     TextWrapping="NoWrap"
-                    Visibility="Collapsed" />
+                    Visibility="{Binding IsProcessPathVisible, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </ui:SettingsExpander.Description>
 
             <ui:SettingsExpander.Items>
@@ -62,7 +64,7 @@
                             TextWrapping="NoWrap" />
                     </ui:SettingsCard.Description>
 
-                    <ui:ToggleSwitch Name="ProfileToggle" Toggled="ProfileToggle_Toggled" />
+                    <ui:ToggleSwitch Name="ProfileToggle" IsOn="{Binding ProfileEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard>
 
                 <!--  Sub Profiles  -->
@@ -71,7 +73,7 @@
                     d:Visibility="Visible"
                     Description="{l:Static resx:Resources.QuickProfilesPage_SubProfilesDesc}"
                     Header="{l:Static resx:Resources.ProfilesPage_SubProfiles}"
-                    Visibility="Collapsed">
+                    Visibility="{Binding IsSubProfilesVisible, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <ui:SettingsCard.Resources>
                         <sys:Double x:Key="SettingsCardWrapThreshold">476</sys:Double>
@@ -79,20 +81,21 @@
                     </ui:SettingsCard.Resources>
 
                     <ComboBox
-                        Name="cb_SubProfiles"
+                        Name="SelectSubProfileComboBox"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
-                        SelectionChanged="cb_SubProfiles_SelectionChanged" />
+                        ItemsSource="{Binding SubProfiles, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedIndex="{Binding SelectedSubProfileIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard>
 
                 <ui:SettingsCard
-                    Click="Button_OpenProfilePage_Click"
+                    Command="{Binding OpenProfilePageCommand}"
                     Header="{l:Static resx:Resources.ProfilesPage_OpenProfilePage}"
                     IsClickEnabled="True"
                     Tag="Navigation" />
 
                 <ui:SettingsCard
-                    Click="Button_OpenProfileLayout_Click"
+                    Command="{Binding OpenProfileLayoutCommand}"
                     Header="{l:Static resx:Resources.ProfilesPage_OpenLayoutPage}"
                     IsClickEnabled="True"
                     Tag="Navigation" />
@@ -117,11 +120,11 @@
                         Name="SelectedPowerProfileName"
                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                         Style="{StaticResource BodyTextBlockStyle}"
-                        Text="{l:Static resx:Resources.PowerProfileDefaultName}" />
+                        Text="{Binding SelectedPowerProfileName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <ui:SettingsExpander.Items>
                         <ui:SettingsCard
-                            Click="PowerProfileOnBatteryMore_Click"
+                            Command="{Binding OpenPowerProfileOnBatteryCommand}"
                             Header="On battery"
                             IsClickEnabled="True"
                             Tag="Navigation">
@@ -148,7 +151,7 @@
                         </ui:SettingsCard>
 
                         <ui:SettingsCard
-                            Click="PowerProfilePluggedMore_Click"
+                            Command="{Binding OpenPowerProfilePluggedCommand}"
                             Header="Plugged in"
                             IsClickEnabled="True"
                             Tag="Navigation">
@@ -175,7 +178,7 @@
                         </ui:SettingsCard>
 
                         <ui:SettingsCard
-                            Click="Button_PowerSettings_Create_Click"
+                            Command="{Binding CreatePowerProfileCommand}"
                             Header="{l:Static resx:Resources.ProfilesPage_CreatePowerProfile}"
                             IsClickEnabled="True" />
                     </ui:SettingsExpander.Items>
@@ -232,15 +235,15 @@
                                 </StackPanel>
 
                                 <ComboBox
-                                    Name="cB_Output"
+                                    Name="MotionOutputComboBox"
                                     Grid.Column="1"
                                     Margin="12,0,0,0"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
-                                    SelectionChanged="cB_Output_SelectionChanged" />
+                                    SelectedIndex="{Binding OutputMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             </Grid>
 
-                            <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ElementName=cB_Output, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5}">
+                            <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ElementName=MotionOutputComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5}">
 
                                 <!--  Separator  -->
                                 <Separator Margin="-16,0,-16,0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
@@ -266,12 +269,12 @@
                                     </StackPanel>
 
                                     <ComboBox
-                                        Name="cB_Input"
+                                        Name="MotionInputComboBox"
                                         Grid.Column="1"
                                         Margin="12,0,0,0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
-                                        SelectionChanged="cB_Input_SelectionChanged" />
+                                        SelectedIndex="{Binding InputMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </Grid>
 
                                 <!--  Separator  -->
@@ -297,12 +300,12 @@
                                     </StackPanel>
 
                                     <ComboBox
-                                        Name="cB_UMC_MotionDefaultOffOn"
+                                        Name="MotionModeComboBox"
                                         Grid.Column="1"
                                         Margin="12,0,0,0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
-                                        SelectionChanged="cB_UMC_MotionDefaultOffOn_SelectionChanged">
+                                        SelectedIndex="{Binding MotionMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                         <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_UMCMotionOff}" />
                                         <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_UMCMotionOn}" />
                                         <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_UMCMotionToggle}" />
@@ -456,7 +459,7 @@
                                                 VerticalAlignment="Center"
                                                 HorizontalContentAlignment="Center"
                                                 IsReadOnly="True"
-                                                Text="{Binding Value, StringFormat={}{0:N0}, ElementName=SliderUMCAntiDeadzone, Mode=OneWay}" />
+                                                Text="{Binding AntiDeadzoneValue, StringFormat={}{0:N0}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <Slider
                                                 x:Name="SliderUMCAntiDeadzone"
                                                 Margin="8,0,0,0"
@@ -470,7 +473,7 @@
                                                 SmallChange="1"
                                                 TickPlacement="BottomRight"
                                                 ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                                ValueChanged="SliderUMCAntiDeadzone_ValueChanged" />
+                                                Value="{Binding AntiDeadzoneValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                         </DockPanel>
                                     </ikw:SimpleStackPanel>
                                 </Grid>
@@ -501,7 +504,7 @@
                                                 VerticalAlignment="Center"
                                                 HorizontalContentAlignment="Center"
                                                 IsReadOnly="True"
-                                                Text="{Binding Value, StringFormat={}{0:N1}, ElementName=Slider_GyroWeight, Mode=OneWay}" />
+                                                Text="{Binding GyroWeightValue, StringFormat={}{0:N1}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <Slider
                                                 x:Name="Slider_GyroWeight"
                                                 Margin="8,0,0,0"
@@ -515,7 +518,7 @@
                                                 TickFrequency="0.1"
                                                 TickPlacement="BottomRight"
                                                 ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                                ValueChanged="Slider_GyroWeight_ValueChanged" />
+                                                Value="{Binding GyroWeightValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                         </DockPanel>
                                     </ikw:SimpleStackPanel>
                                 </Grid>
@@ -551,7 +554,7 @@
                                                         VerticalAlignment="Center"
                                                         HorizontalContentAlignment="Center"
                                                         IsReadOnly="True"
-                                                        Text="{Binding Value, StringFormat={}{0:N1}, ElementName=SliderSensitivityX, Mode=OneWay}" />
+                                                        Text="{Binding SensitivityXValue, StringFormat={}{0:N1}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Slider
                                                         x:Name="SliderSensitivityX"
                                                         Margin="8,0,0,0"
@@ -567,8 +570,7 @@
                                                         TickFrequency="0.1"
                                                         TickPlacement="BottomRight"
                                                         ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                                        ValueChanged="SliderSensitivityX_ValueChanged"
-                                                        Value="1" />
+                                                        Value="{Binding SensitivityXValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 </DockPanel>
                                             </StackPanel>
 
@@ -581,7 +583,7 @@
                                                         VerticalAlignment="Center"
                                                         HorizontalContentAlignment="Center"
                                                         IsReadOnly="True"
-                                                        Text="{Binding Value, StringFormat={}{0:N1}, ElementName=SliderSensitivityY, Mode=OneWay}" />
+                                                        Text="{Binding SensitivityYValue, StringFormat={}{0:N1}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Slider
                                                         x:Name="SliderSensitivityY"
                                                         Margin="8,0,0,0"
@@ -597,8 +599,7 @@
                                                         TickFrequency="0.1"
                                                         TickPlacement="BottomRight"
                                                         ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                                        ValueChanged="SliderSensitivityY_ValueChanged"
-                                                        Value="1" />
+                                                        Value="{Binding SensitivityYValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 </DockPanel>
                                             </StackPanel>
                                         </ikw:SimpleStackPanel>
@@ -663,7 +664,7 @@
                                 <!--  GPU Scaling  -->
                                 <ikw:SimpleStackPanel
                                     Name="StackProfileGPUScaling"
-                                    IsEnabled="False"
+                                    IsEnabled="{Binding HasGPUScalingSupport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                     Spacing="3">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -686,8 +687,8 @@
                                             Margin="12,0,0,0"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
-                                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                            Toggled="GPUScaling_Toggled" />
+                                            IsOn="{Binding GPUScalingEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
                                     </Grid>
 
                                     <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=GPUScalingToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -714,10 +715,10 @@
                                                 Margin="12,0,0,0"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center"
-                                                SelectionChanged="GPUScalingComboBox_SelectionChanged">
+                                                SelectedIndex="{Binding ScalingModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                                 <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_ScalingMode_PreserveAspectRatio}" />
                                                 <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_ScalingMode_FullPanel}" />
-                                                <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_ScalingMode_Center}" IsEnabled="{Binding ElementName=RSRToggle, Path=IsOn, Converter={StaticResource InvertBooleanConverter}}" />
+                                                <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_ScalingMode_Center}" IsEnabled="{Binding RSREnabled, Converter={StaticResource InvertBooleanConverter}}" />
                                             </ComboBox>
                                         </Grid>
                                     </StackPanel>
@@ -731,9 +732,9 @@
                                     Name="StackProfileRSR"
                                     d:Background="Red"
                                     d:Visibility="Visible"
-                                    IsEnabled="False"
+                                    IsEnabled="{Binding HasRSRSupport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                     Spacing="3"
-                                    Visibility="Collapsed">
+                                    Visibility="{Binding IsAMDGPU, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="5*" />
@@ -755,9 +756,9 @@
                                             Margin="12,0,0,0"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
-                                            IsEnabled="{Binding ElementName=GPUScalingToggle, Path=IsOn}"
-                                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                            Toggled="RSRToggle_Toggled" />
+                                            IsEnabled="{Binding GPUScalingEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                            IsOn="{Binding RSREnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
                                     </Grid>
 
                                     <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=RSRToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -774,7 +775,7 @@
                                             VerticalAlignment="Center"
                                             HorizontalContentAlignment="Center"
                                             IsReadOnly="True"
-                                            Text="{Binding Value, StringFormat={}{0:N0}%, ElementName=RSRSlider, Mode=OneWay}" />
+                                            Text="{Binding RSRValue, StringFormat={}{0:N0}%, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                         <Slider
                                             x:Name="RSRSlider"
                                             VerticalAlignment="Center"
@@ -788,7 +789,7 @@
                                             TickFrequency="5"
                                             TickPlacement="BottomRight"
                                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            ValueChanged="RSRSlider_ValueChanged" />
+                                            Value="{Binding RSRValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     </DockPanel>
                                 </ikw:SimpleStackPanel>
 
@@ -803,9 +804,9 @@
                                     Name="StackProfileAFMF"
                                     d:Background="Red"
                                     d:Visibility="Visible"
-                                    IsEnabled="False"
+                                    IsEnabled="{Binding HasAFMFSupport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                     Spacing="3"
-                                    Visibility="Collapsed">
+                                    Visibility="{Binding IsAMDGPU, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="5*" />
@@ -827,8 +828,8 @@
                                             Margin="12,0,0,0"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
-                                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                            Toggled="AFMFToggle_Toggled" />
+                                            IsOn="{Binding AFMFEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
                                     </Grid>
                                 </ikw:SimpleStackPanel>
 
@@ -841,7 +842,7 @@
                                 <!--  Integer Scaling  -->
                                 <ikw:SimpleStackPanel
                                     Name="StackProfileIS"
-                                    IsEnabled="False"
+                                    IsEnabled="{Binding HasIntegerScalingSupport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                     Spacing="3">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -864,9 +865,9 @@
                                             Margin="12,0,0,0"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
-                                            IsEnabled="{Binding ElementName=GPUScalingToggle, Path=IsOn}"
-                                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                            Toggled="IntegerScalingToggle_Toggled" />
+                                            IsEnabled="{Binding GPUScalingEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                            IsOn="{Binding IntegerScalingEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
                                     </Grid>
 
                                     <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=IntegerScalingToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -896,7 +897,8 @@
                                                 Margin="12,0,0,0"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center"
-                                                SelectionChanged="IntegerScalingComboBox_SelectionChanged" />
+                                                ItemsSource="{Binding IntegerScalingDividers}"
+                                                SelectedIndex="{Binding IntegerScalingDividerIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                         </Grid>
 
                                         <Grid>
@@ -951,7 +953,7 @@
                                                 Margin="12,0,0,0"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center"
-                                                SelectionChanged="IntegerScalingTypeComboBox_SelectionChanged">
+                                                SelectedIndex="{Binding IntegerScalingTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                                 <ComboBoxItem Name="IntegerScalingTypeInteger" Content="{l:Static resx:Resources.ProfilesPage_ResolutionScaleTypeInteger}" />
                                                 <ComboBoxItem Name="IntegerScalingTypeNearest" Content="{l:Static resx:Resources.ProfilesPage_ResolutionScaleTypeNearest}" />
                                             </ComboBox>
@@ -965,7 +967,7 @@
                                 <!--  RIS (AMD)  -->
                                 <ikw:SimpleStackPanel
                                     Name="StackProfileRIS"
-                                    IsEnabled="False"
+                                    IsEnabled="{Binding HasGPUScalingSupport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                     Spacing="3">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -988,8 +990,8 @@
                                             Margin="12,0,0,0"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
-                                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                            Toggled="RISToggle_Toggled" />
+                                            IsOn="{Binding RISEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Style="{DynamicResource InvertedToggleSwitchStyle}" />
                                     </Grid>
 
                                     <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=RISToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -1006,7 +1008,7 @@
                                             VerticalAlignment="Center"
                                             HorizontalContentAlignment="Center"
                                             IsReadOnly="True"
-                                            Text="{Binding Value, StringFormat={}{0:N0}%, ElementName=RISSlider, Mode=OneWay}" />
+                                            Text="{Binding RISValue, StringFormat={}{0:N0}%, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                         <Slider
                                             x:Name="RISSlider"
                                             VerticalAlignment="Center"
@@ -1020,7 +1022,7 @@
                                             TickFrequency="5"
                                             TickPlacement="BottomRight"
                                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            ValueChanged="RISSlider_ValueChanged" />
+                                            Value="{Binding RISValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     </DockPanel>
                                 </ikw:SimpleStackPanel>
 
@@ -1030,7 +1032,7 @@
                                 <!--  Framerate Limit  -->
                                 <ikw:SimpleStackPanel
                                     Name="StackProfileFramerate"
-                                    IsEnabled="False"
+                                    IsEnabled="{Binding IsRTSSReady, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                     Spacing="3">
 
                                     <Grid>
@@ -1049,12 +1051,13 @@
                                         </ikw:SimpleStackPanel>
 
                                         <ComboBox
-                                            Name="cB_Framerate"
+                                            Name="FramerateLimitComboBox"
                                             Grid.Column="1"
                                             Margin="12,0,0,0"
                                             HorizontalAlignment="Stretch"
                                             VerticalAlignment="Center"
-                                            SelectionChanged="cB_Framerate_SelectionChanged" />
+                                            ItemsSource="{Binding FramerateLimits}"
+                                            SelectedItem="{Binding SelectedFrameLimit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     </Grid>
                                 </ikw:SimpleStackPanel>
                             </ikw:SimpleStackPanel>

@@ -394,18 +394,26 @@ namespace HandheldCompanion.ViewModels
                 case 0:
                     ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.Name), direction));
                     ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.Name));
+                    FavoritesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.Name), direction));
+                    FavoritesView.LiveSortingProperties.Add(nameof(ProfileViewModel.Name));
                     break;
                 case 1:
                     ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.DateCreated), direction));
                     ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.DateCreated));
+                    FavoritesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.DateCreated), direction));
+                    FavoritesView.LiveSortingProperties.Add(nameof(ProfileViewModel.DateCreated));
                     break;
                 case 2:
                     ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.LastUsed), direction));
                     ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.LastUsed));
+                    FavoritesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.LastUsed), direction));
+                    FavoritesView.LiveSortingProperties.Add(nameof(ProfileViewModel.LastUsed));
                     break;
                 case 3:
                     ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.PlatformType), direction));
                     ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.PlatformType));
+                    FavoritesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.PlatformType), direction));
+                    FavoritesView.LiveSortingProperties.Add(nameof(ProfileViewModel.PlatformType));
                     break;
             }
 
