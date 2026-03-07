@@ -135,8 +135,8 @@ public partial class ControllerPage : Page
 
     private void UpdateSlotFixButton()
     {
-        // UI thread
-        UIHelper.TryInvoke(() =>
+        // UI thread (async to prevent blocking event callers)
+        UIHelper.TryBeginInvoke(() =>
         {
             bool isManual = cB_ControllerSlotManagementMode.SelectedIndex == 0;
             b_SlotFixNow.Visibility = (isManual && _hasSlotIssue) ? Visibility.Visible : Visibility.Collapsed;

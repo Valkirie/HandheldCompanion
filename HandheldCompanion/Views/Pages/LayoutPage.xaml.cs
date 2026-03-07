@@ -64,8 +64,8 @@ public partial class LayoutPage : Page
 
     private void ControllerManager_ControllerSelected(IController Controller)
     {
-        // UI thread
-        UIHelper.TryInvoke(() =>
+        // UI thread (async to prevent blocking event callers)
+        UIHelper.TryBeginInvoke(() =>
         {
             L2.Glyph = Controller.GetGlyph(AxisFlags.L2);
             R2.Glyph = Controller.GetGlyph(AxisFlags.R2);

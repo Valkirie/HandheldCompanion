@@ -118,8 +118,8 @@ namespace HandheldCompanion.Views.Pages
 
         private void ControllerManager_ControllerSelected(IController Controller)
         {
-            // UI thread
-            UIHelper.TryInvoke(() =>
+            // UI thread (async to prevent blocking event callers)
+            UIHelper.TryBeginInvoke(() =>
             {
                 SensorController.IsEnabled = Controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor);
             });

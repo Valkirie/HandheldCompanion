@@ -253,8 +253,8 @@ public partial class MainWindow : GamepadWindow
 
     private void ControllerManager_ControllerSelected(IController Controller)
     {
-        // UI thread
-        UIHelper.TryInvoke(() =>
+        // UI thread (async to prevent blocking event callers)
+        UIHelper.TryBeginInvoke(() =>
         {
             // update glyph(s)
             GamepadUISelectIcon.Glyph = Controller.GetGlyph(ButtonFlags.B1);
