@@ -71,7 +71,16 @@ namespace HandheldCompanion.ViewModels
         public ObservableCollection<ScreenDividerViewModel> IntegerScalingDividers { get; } = [];
 
         public bool HasAnyWindows => AllWindows.Any();
-        public bool HasLibraryEntry => _SelectedLibraryEntry != null;
+
+        // True if library search results are available in LibraryPickers (for enabling ComboBox and showing preview)
+        public bool HasLibraryEntry => LibraryPickers.Any();
+
+        // True if library manager has network connectivity (for enabling library features)
+        public bool IsLibraryConnected => ManagerFactory.libraryManager.IsConnected;
+
+        // True if library manager is busy downloading/searching (for showing ProgressRing in dialog)
+        public bool IsLibraryBusy => ManagerFactory.libraryManager.Status.HasFlag(ManagerStatus.Busy);
+
         public bool HasProfileExecutables => SelectedProfile?.Executables.Any() ?? false;
 
         // True if a profile is selected (not null) - used to enable/disable the entire page
@@ -1133,7 +1142,9 @@ namespace HandheldCompanion.ViewModels
                         _SelectedLibraryIndex = LibraryPickers.IndexOf(LibraryPickers.FirstOrDefault(p => p.Id == value.Id));
                     else
                         _SelectedLibraryIndex = -1;
+
                     OnPropertyChanged(nameof(SelectedLibraryEntry));
+                    OnPropertyChanged(nameof(SelectedLibraryIndex));
                     OnPropertyChanged(nameof(HasLibraryEntry));
                     SelectedLibraryChanged();
                 }
@@ -1153,7 +1164,9 @@ namespace HandheldCompanion.ViewModels
                         _SelectedLibraryEntry = LibraryPickers[value].LibEntry;
                     else
                         _SelectedLibraryEntry = null;
+
                     OnPropertyChanged(nameof(SelectedLibraryEntry));
+                    OnPropertyChanged(nameof(SelectedLibraryIndex));
                     OnPropertyChanged(nameof(HasLibraryEntry));
                     SelectedLibraryChanged();
                 }
@@ -1655,6 +1668,9 @@ namespace HandheldCompanion.ViewModels
                     else
                         SelectedLibraryEntry = ManagerFactory.libraryManager.GetGame(entries, LibrarySearchField);
                 }
+
+                // Notify that library entries are now available
+                OnPropertyChanged(nameof(HasLibraryEntry));
             });
 
             DownloadLibrary = new DelegateCommand(async () =>
@@ -1663,6 +1679,10 @@ namespace HandheldCompanion.ViewModels
                 contentDialog?.Hide();
                 contentDialog = null;
                 ManagerFactory.profileManager.UpdateOrCreateProfile(SelectedProfile, UpdateSource.LibraryUpdate);
+
+                // Refresh the Cover and Artwork properties to display the newly downloaded images
+                OnPropertyChanged(nameof(Cover));
+                OnPropertyChanged(nameof(Artwork));
             });
 
             AddProfileExecutable = new DelegateCommand<object>(async param =>
@@ -2130,17 +2150,19 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.libraryManager.StatusChanged += LibraryManager_StatusChanged;
             ManagerFactory.libraryManager.NetworkAvailabilityChanged += LibraryManager_NetworkAvailabilityChanged;
 
-            OnPropertyChanged(nameof(HasLibraryEntry));
+            // Initial update
+            OnPropertyChanged(nameof(IsLibraryConnected));
+            OnPropertyChanged(nameof(IsLibraryBusy));
         }
 
         private void LibraryManager_NetworkAvailabilityChanged(bool status)
         {
-            OnPropertyChanged(nameof(HasLibraryEntry));
+            OnPropertyChanged(nameof(IsLibraryConnected));
         }
 
         private void LibraryManager_StatusChanged(ManagerStatus status)
         {
-            OnPropertyChanged(nameof(HasLibraryEntry));
+            OnPropertyChanged(nameof(IsLibraryBusy));
         }
 
         private void ProfileApplied(Profile profile, UpdateSource source)
@@ -2700,6 +2722,9 @@ namespace HandheldCompanion.ViewModels
             LibraryCoversIndex = -1;
             SelectedLibraryIndex = -1;
             LibraryPickers.SafeClear();
+
+            // Notify that library entries have been cleared
+            OnPropertyChanged(nameof(HasLibraryEntry));
         }
 
         private void SelectedLibraryChanged()
