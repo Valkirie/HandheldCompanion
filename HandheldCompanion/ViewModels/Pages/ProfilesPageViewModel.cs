@@ -1145,7 +1145,6 @@ namespace HandheldCompanion.ViewModels
 
                     OnPropertyChanged(nameof(SelectedLibraryEntry));
                     OnPropertyChanged(nameof(SelectedLibraryIndex));
-                    OnPropertyChanged(nameof(HasLibraryEntry));
                     SelectedLibraryChanged();
                 }
             }
@@ -1167,7 +1166,6 @@ namespace HandheldCompanion.ViewModels
 
                     OnPropertyChanged(nameof(SelectedLibraryEntry));
                     OnPropertyChanged(nameof(SelectedLibraryIndex));
-                    OnPropertyChanged(nameof(HasLibraryEntry));
                     SelectedLibraryChanged();
                 }
             }
@@ -2425,9 +2423,6 @@ namespace HandheldCompanion.ViewModels
 
             RefreshProfileExecutables();
 
-            OnPropertyChanged(nameof(HasProfileExecutables));
-            OnPropertyChanged(nameof(HasAnyWindows));
-
             UpdateUI();
         }
 
@@ -2729,7 +2724,6 @@ namespace HandheldCompanion.ViewModels
 
         private void SelectedLibraryChanged()
         {
-            OnPropertyChanged(nameof(HasLibraryEntry));
             LibraryArtworksIndex = -1;
             LibraryArtworksIndex = 0;
             LibraryCoversIndex = -1;
