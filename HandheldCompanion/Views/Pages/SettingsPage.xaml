@@ -237,6 +237,7 @@
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_Priority_High}" />
                     </ComboBox>
                 </ui:SettingsCard>
+            </ikw:SimpleStackPanel>
 
                 <!--  Splashscreen  -->
                 <ui:SettingsCard Header="Show splash-screen at startup">

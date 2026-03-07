@@ -122,11 +122,11 @@ public class AMDProcessor : Processor
                         }
                         break;
 
-                    default:
-                        {
-                            // you can't restore default frequency on AMD GPUs
-                            if (restore)
-                                return;
+                        default:
+                            {
+                                // you can't restore default frequency on AMD GPUs
+                                if (restore)
+                                    return;
 
                             result = ryzenSmuService.SetGfxClk((uint)clock) ? 0 : -1;
                         }
