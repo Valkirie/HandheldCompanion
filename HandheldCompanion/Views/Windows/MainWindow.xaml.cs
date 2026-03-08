@@ -261,6 +261,7 @@ public partial class MainWindow : GamepadWindow
             GamepadUIBackIcon.Glyph = Controller.GetGlyph(ButtonFlags.B2);
             GamepadUIToggleIcon.Glyph = Controller.GetGlyph(ButtonFlags.B4);
             GamepadUIMoreIcon.Glyph = Controller.GetGlyph(ButtonFlags.B3);
+            GamepadUILikeIcon.Glyph = Controller.GetGlyph(ButtonFlags.Back);
 
             GamepadUILB.Glyph = Controller.GetGlyph(ButtonFlags.L1);
             GamepadUIRB.Glyph = Controller.GetGlyph(ButtonFlags.R1);
@@ -289,6 +290,12 @@ public partial class MainWindow : GamepadWindow
                 GamepadUIToggleIcon.Foreground = new SolidColorBrush(color4.Value);
             else
                 GamepadUIToggleIcon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+
+            Color? colorBack = Controller.GetGlyphColor(ButtonFlags.Back);
+            if (colorBack.HasValue)
+                GamepadUILikeIcon.Foreground = new SolidColorBrush(colorBack.Value);
+            else
+                GamepadUILikeIcon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseHighBrush");
         });
     }
 
@@ -302,14 +309,15 @@ public partial class MainWindow : GamepadWindow
             switch (controlType)
             {
                 default:
-                    {
-                        GamepadUISelect.Visibility = Visibility.Visible;
-                        GamepadUIBack.Visibility = Visibility.Visible;
-                        GamepadUIToggle.Visibility = Visibility.Collapsed;
-                        GamepadUIMore.Visibility = Visibility.Collapsed;
+                        {
+                            GamepadUISelect.Visibility = Visibility.Visible;
+                            GamepadUIBack.Visibility = Visibility.Visible;
+                            GamepadUIToggle.Visibility = Visibility.Collapsed;
+                            GamepadUIMore.Visibility = Visibility.Collapsed;
+                            GamepadUILike.Visibility = Visibility.Collapsed;
 
-                        GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
-                        GamepadUIBackDesc.Text = Properties.Resources.MainWindow_Back;
+                            GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
+                            GamepadUIBackDesc.Text = Properties.Resources.MainWindow_Back;
                     }
                     break;
 
@@ -319,6 +327,7 @@ public partial class MainWindow : GamepadWindow
                         GamepadUIBack.Visibility = Visibility.Visible;
                         GamepadUIToggle.Visibility = Visibility.Collapsed;
                         GamepadUIMore.Visibility = Visibility.Collapsed;
+                        GamepadUILike.Visibility = Visibility.Collapsed;
 
                         GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
                         GamepadUIBackDesc.Text = Properties.Resources.MainWindow_Back;
@@ -343,6 +352,11 @@ public partial class MainWindow : GamepadWindow
 
                                 GamepadUIMore.Visibility = Visibility.Visible;
                                 GamepadUIMoreDesc.Text = Properties.Resources.MainWindow_Layout;
+
+                                GamepadUILike.Visibility = Visibility.Visible;
+                                GamepadUILikeDesc.Text = profile.IsLiked 
+                                    ? "Unlike"
+                                    : "Like";
                             }
                         }
                     }
@@ -1147,6 +1161,16 @@ public partial class MainWindow : GamepadWindow
             ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B3, true, false);
             await Task.Delay(40);
             ControllerManager.GetTarget()?.InjectButton(ButtonFlags.B3, false, true);
+        });
+    }
+
+    private void GamepadUILike_Click(object sender, RoutedEventArgs e)
+    {
+        Task.Run(async () =>
+        {
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.Back, true, false);
+            await Task.Delay(40);
+            ControllerManager.GetTarget()?.InjectButton(ButtonFlags.Back, false, true);
         });
     }
 

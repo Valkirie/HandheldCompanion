@@ -1725,10 +1725,7 @@ namespace HandheldCompanion.ViewModels
             {
                 if (SelectedProfile != null)
                 {
-                    if (SelectedProfile.IsSubProfile)
-                        SelectedProfile.IsFavoriteSubProfile = !SelectedProfile.IsFavoriteSubProfile;
-                    else
-                        SelectedProfile.IsLiked = !SelectedProfile.IsLiked;
+                    SelectedProfile.IsLiked = !SelectedProfile.IsLiked;
                     SubmitProfile(UpdateSource.ProfilesPageUpdateOnly);
                 }
             });

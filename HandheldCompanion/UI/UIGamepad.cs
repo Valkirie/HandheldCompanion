@@ -84,6 +84,9 @@ namespace HandheldCompanion.Managers
         private bool IsQuicktools => this.windowName.Equals("QuickTools");
         private bool IsMainWindow => !IsQuicktools;
 
+        // Store profile Guid when toggling like, to restore focus after ProfileManager updates
+        private Guid? pendingFocusRestoreProfileGuid = null;
+
         public static bool HasFocus()
         {
             return _focused.Any(w => w.Value);
@@ -141,6 +144,7 @@ namespace HandheldCompanion.Managers
             tooltipTimer.Elapsed += TooltipTimer_Elapsed;
 
             ControllerManager.InputsUpdated += InputsUpdated;
+            ManagerFactory.profileManager.Updated += ProfileManager_Updated;
         }
 
         public void Loaded()
@@ -1185,6 +1189,26 @@ namespace HandheldCompanion.Managers
                                 break;
                         }
                     }
+                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.Back))
+                    {
+                        switch (elementType)
+                        {
+                            case "Button":
+                                {
+                                    if (focusedElement.Tag is ProfileViewModel profileViewModel)
+                                    {
+                                        // Store the profile Guid to restore focus after update
+                                        Profile profile = profileViewModel.Profile;
+                                        pendingFocusRestoreProfileGuid = profile.Guid;
+
+                                        // Toggle the liked state
+                                        profile.IsLiked = !profile.IsLiked;
+                                        ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.Background);
+                                    }
+                                }
+                                break;
+                        }
+                    }
                     else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.L1) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.R1)
                           || controllerState.ButtonState.Buttons.Contains(ButtonFlags.L2Full) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.R2Full))
                     {
@@ -1566,6 +1590,40 @@ namespace HandheldCompanion.Managers
                 }
                 catch { }
             }, DispatcherPriority.Normal);
+        }
+
+        private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
+        {
+            // Check if we have a pending profile to restore focus to
+            if (!pendingFocusRestoreProfileGuid.HasValue)
+                return;
+
+            // Only handle the profile we're waiting for
+            if (profile.Guid != pendingFocusRestoreProfileGuid.Value)
+                return;
+
+            // Clear the pending Guid
+            Guid guidToRestore = pendingFocusRestoreProfileGuid.Value;
+            pendingFocusRestoreProfileGuid = null;
+
+            // Use Dispatcher to ensure UI has updated after the profile change
+            gamepadWindow.Dispatcher.BeginInvoke(() =>
+            {
+                // Search for the button with the matching profile Guid
+                // It will be in either the Favorites or Library section depending on IsLiked
+                var buttons = WPFUtils.FindVisualChildren<Button>(gamepadWindow)
+                    .Where(b => b.Tag is ProfileViewModel)
+                    .ToList();
+
+                foreach (var button in buttons)
+                {
+                    if (button.Tag is ProfileViewModel vm && vm.Profile.Guid == guidToRestore)
+                    {
+                        Focus(button);
+                        break;
+                    }
+                }
+            }, DispatcherPriority.Loaded);
         }
     }
 }
