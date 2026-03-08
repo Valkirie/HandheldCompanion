@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Extensions;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.ViewModels.Misc;
@@ -10,7 +9,6 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;

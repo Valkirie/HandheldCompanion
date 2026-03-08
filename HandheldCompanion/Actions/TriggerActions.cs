@@ -10,7 +10,7 @@ namespace HandheldCompanion.Actions
         public AxisLayoutFlags Axis;
 
         // Deadzone / anti-deadzone settings (percent, 0..100)
-        public int AxisAntiDeadZone  = 0;
+        public int AxisAntiDeadZone = 0;
         public int AxisDeadZoneInner = 0;
         public int AxisDeadZoneOuter = 0;
 
@@ -20,7 +20,7 @@ namespace HandheldCompanion.Actions
         public TriggerActions()
         {
             actionType = ActionType.Trigger;
-            current    = 0;
+            current = 0;
         }
 
         public TriggerActions(AxisLayoutFlags axis) : this()
@@ -37,7 +37,7 @@ namespace HandheldCompanion.Actions
 
             // Clamp raw value into the byte range before processing
             value = Math.Clamp(value, byte.MinValue, byte.MaxValue);
-            if (value == 0f)      { current = 0; return; }
+            if (value == 0f) { current = 0; return; }
 
             value = InputUtils.InnerOuterDeadzone(value, AxisDeadZoneInner, AxisDeadZoneOuter, byte.MaxValue);
             value = InputUtils.ApplyAntiDeadzone(value, AxisAntiDeadZone, byte.MaxValue);

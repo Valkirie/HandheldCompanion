@@ -3,20 +3,15 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
-using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels.Misc;
 using HandheldCompanion.Views.QuickPages;
-using HandheldCompanion.Views.Windows;
-using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Input;
 using System.Windows.Threading;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Radios;
@@ -425,7 +420,7 @@ namespace HandheldCompanion.ViewModels
             if (ManagerFactory.multimediaManager.PrimaryDesktop is not null)
             {
                 MultimediaManager_PrimaryScreenChanged(ManagerFactory.multimediaManager.PrimaryDesktop);
-                MultimediaManager_DisplaySettingsChanged(ManagerFactory.multimediaManager.PrimaryDesktop, 
+                MultimediaManager_DisplaySettingsChanged(ManagerFactory.multimediaManager.PrimaryDesktop,
                     ManagerFactory.multimediaManager.PrimaryDesktop.GetResolution());
             }
         }

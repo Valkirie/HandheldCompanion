@@ -16,64 +16,64 @@ namespace HandheldCompanion.Actions
     public enum ActionType
     {
         Disabled = 0,
-        Button   = 1,
+        Button = 1,
         Joystick = 2,
         Keyboard = 3,
-        Mouse    = 4,
-        Trigger  = 5,
-        Shift    = 6,
-        Inherit  = 7,
+        Mouse = 4,
+        Trigger = 5,
+        Shift = 6,
+        Inherit = 7,
     }
 
     [Serializable]
     public enum ActionState
     {
-        Stopped   = 0,
-        Running   = 1,
-        Aborted   = 2,
-        Succeed   = 3,
+        Stopped = 0,
+        Running = 1,
+        Aborted = 2,
+        Succeed = 3,
         Suspended = 4,
-        Forced    = 5,
+        Forced = 5,
     }
 
     [Serializable]
     public enum ModifierSet
     {
-        None            = 0,
-        Shift           = 1,
-        Control         = 2,
-        Alt             = 3,
-        ShiftControl    = 4,
-        ShiftAlt        = 5,
-        ControlAlt      = 6,
+        None = 0,
+        Shift = 1,
+        Control = 2,
+        Alt = 3,
+        ShiftControl = 4,
+        ShiftAlt = 5,
+        ControlAlt = 6,
         ShiftControlAlt = 7,
-        Windows         = 8,
+        Windows = 8,
     }
 
     [Serializable]
     public enum PressType
     {
-        Short  = 0,
-        Long   = 1, // hold for x ms then fire
-        Hold   = 2, // hold the action for x ms
+        Short = 0,
+        Long = 1, // hold for x ms then fire
+        Hold = 2, // hold the action for x ms
         Double = 3,
     }
 
     [Serializable]
     public enum HapticMode
     {
-        Off  = 0,
+        Off = 0,
         Down = 1,
-        Up   = 2,
+        Up = 2,
         Both = 3,
     }
 
     [Serializable]
     public enum HapticStrength
     {
-        Low    = 0,
+        Low = 0,
         Medium = 1,
-        High   = 2,
+        High = 2,
     }
 
     [Serializable]
@@ -93,18 +93,18 @@ namespace HandheldCompanion.Actions
         };
 
         // --- Core state ---
-        public ActionType  actionType  = ActionType.Disabled;
-        public PressType   pressType   = PressType.Short;
+        public ActionType actionType = ActionType.Disabled;
+        public PressType pressType = PressType.Short;
         public ActionState actionState = ActionState.Stopped;
 
-        protected bool    outBool;
-        protected bool    prevBool;
-        protected Vector2 outVector  = new();
+        protected bool outBool;
+        protected bool prevBool;
+        protected Vector2 outVector = new();
         protected Vector2 prevVector = new();
 
         // --- Timing ---
         public float ActionTimer = 200.0f;  // base duration threshold (ms)
-        public float PressTimer  = -1.0f;   // -1 = inactive, ≥ 0 = counting
+        public float PressTimer = -1.0f;   // -1 = inactive, ≥ 0 = counting
 
         // --- Features ---
         [JsonProperty("HasTurbo")]
@@ -118,34 +118,34 @@ namespace HandheldCompanion.Actions
         // --- Start delay ---
         [JsonProperty("StartDelay")]
         public float StartDelay = 0.0f;
-        [JsonIgnore] private float StartDelayTimer      = -1.0f;  // -1 = inactive
-        [JsonIgnore] private bool  StartDelayRisingEdge = false;  // consumed by toggle logic
+        [JsonIgnore] private float StartDelayTimer = -1.0f;  // -1 = inactive
+        [JsonIgnore] private bool StartDelayRisingEdge = false;  // consumed by toggle logic
 
         // --- Toggle / Turbo runtime ---
-        [JsonIgnore] private bool  IsToggled      = false;
-        [JsonIgnore] private bool  IsTurboed      = false;
-        private              float TurboCountdown = 0.0f;
+        [JsonIgnore] private bool IsToggled = false;
+        [JsonIgnore] private bool IsTurboed = false;
+        private float TurboCountdown = 0.0f;
 
         // --- Double-tap counter ---
         private int PressCount = 0;
 
         // --- Shift gating ---
         [JsonConverter(typeof(ShiftSlotConverter))]
-        public ShiftSlot ShiftSlot     = ShiftSlot.Any;
-        public bool      ShiftMatchAny = false; // false = exact, true = OR (any selected shift)
+        public ShiftSlot ShiftSlot = ShiftSlot.Any;
+        public bool ShiftMatchAny = false; // false = exact, true = OR (any selected shift)
 
         // --- Haptics ---
-        public HapticMode     HapticMode     = HapticMode.Off;
+        public HapticMode HapticMode = HapticMode.Off;
         public HapticStrength HapticStrength = HapticStrength.Low;
 
         // --- Axis/motion ---
         public DeflectionDirection motionDirection = DeflectionDirection.None;
-        public float               motionThreshold = 4000;
-        protected bool             axisSlotDisabled;
+        public float motionThreshold = 4000;
+        protected bool axisSlotDisabled;
 
         // --- Legacy save compatibility ---
         #region legacy
-        [JsonProperty("IsTurbo")]  private bool Legacy_IsTurbo  { set => HasTurbo  = value; }
+        [JsonProperty("IsTurbo")] private bool Legacy_IsTurbo { set => HasTurbo = value; }
         [JsonProperty("IsToggle")] private bool Legacy_IsToggle { set => HasToggle = value; }
         #endregion
 
@@ -159,9 +159,9 @@ namespace HandheldCompanion.Actions
 
         public virtual void SetHaptic(ButtonFlags button, bool released)
         {
-            if (HapticMode == HapticMode.Off)               return;
-            if (HapticMode == HapticMode.Down && released)  return;
-            if (HapticMode == HapticMode.Up   && !released) return;
+            if (HapticMode == HapticMode.Off) return;
+            if (HapticMode == HapticMode.Down && released) return;
+            if (HapticMode == HapticMode.Up && !released) return;
 
             ControllerManager.GetTarget()?.SetHaptic(HapticStrength, button);
         }
@@ -184,7 +184,7 @@ namespace HandheldCompanion.Actions
             // Suspended: block output without consuming edge state
             if (actionState == ActionState.Suspended)
             {
-                outBool  = false;
+                outBool = false;
                 prevBool = value;
                 return;
             }
@@ -212,10 +212,10 @@ namespace HandheldCompanion.Actions
             // Compose final output from active modifiers
             outBool = (HasToggle, HasTurbo) switch
             {
-                (true,  true)  => IsToggled && IsTurboed,
-                (true,  false) => IsToggled,
-                (false, true)  => IsTurboed,
-                _              => value,
+                (true, true) => IsToggled && IsTurboed,
+                (true, false) => IsToggled,
+                (false, true) => IsTurboed,
+                _ => value,
             };
 
             prevBool = value;
@@ -230,13 +230,13 @@ namespace HandheldCompanion.Actions
             if (StartDelay <= 0) return true;
 
             // TimerManager has a minimum 10 ms tick; if StartDelay is shorter, add one tick period.
-            int   period        = TimerManager.GetPeriod();
+            int period = TimerManager.GetPeriod();
             float effectiveDelay = StartDelay < period ? period + StartDelay : StartDelay;
 
             // Begin countdown on rising edge
             if (value && !prevBool)
             {
-                StartDelayTimer      = 0f;
+                StartDelayTimer = 0f;
                 StartDelayRisingEdge = true;
             }
 
@@ -266,10 +266,10 @@ namespace HandheldCompanion.Actions
         {
             return pressType switch
             {
-                PressType.Long   => ProcessLongPress(ref value, delta),
-                PressType.Hold   => ProcessHoldPress(ref value, delta),
+                PressType.Long => ProcessLongPress(ref value, delta),
+                PressType.Hold => ProcessHoldPress(ref value, delta),
                 PressType.Double => ProcessDoublePress(ref value, delta),
-                _                => true,
+                _ => true,
             };
         }
 
@@ -281,12 +281,12 @@ namespace HandheldCompanion.Actions
         {
             if (value)
             {
-                actionState  = ActionState.Running;
-                PressTimer  += delta;
+                actionState = ActionState.Running;
+                PressTimer += delta;
 
                 if (PressTimer < ActionTimer)
                 {
-                    outBool  = false;
+                    outBool = false;
                     prevBool = value;
                     return false;   // still accumulating — suppress
                 }
@@ -299,12 +299,12 @@ namespace HandheldCompanion.Actions
                 {
                     case ActionState.Running:
                         actionState = ActionState.Aborted;
-                        PressTimer  = Math.Max(50, PressTimer);
+                        PressTimer = Math.Max(50, PressTimer);
                         break;
 
                     case ActionState.Succeed:
                         actionState = ActionState.Stopped;
-                        PressTimer  = -1;
+                        PressTimer = -1;
                         break;
 
                     case ActionState.Stopped:
@@ -332,14 +332,14 @@ namespace HandheldCompanion.Actions
 
             if (value || timerActive)
             {
-                actionState  = ActionState.Running;
-                PressTimer  += delta;
-                value        = true;    // keep output active while timer runs
+                actionState = ActionState.Running;
+                PressTimer += delta;
+                value = true;    // keep output active while timer runs
             }
             else if (PressTimer > ActionTimer)
             {
                 actionState = ActionState.Stopped;
-                PressTimer  = -1;
+                PressTimer = -1;
             }
 
             return true;
@@ -365,26 +365,26 @@ namespace HandheldCompanion.Actions
                         if (PressTimer >= 50)
                         {
                             actionState = ActionState.Stopped;
-                            PressCount  = 0;
-                            PressTimer  = 0;
+                            PressCount = 0;
+                            PressTimer = 0;
                         }
                     }
-                    outBool  = false;
+                    outBool = false;
                     prevBool = value;
                     return false;
 
                 // First tap: wait for second tap within window
                 case 1:
-                    actionState  = ActionState.Running;
-                    PressTimer  += delta;
+                    actionState = ActionState.Running;
+                    PressTimer += delta;
 
                     if (PressTimer > ActionTimer)
                     {
                         actionState = ActionState.Aborted;
-                        PressCount  = 0;
-                        PressTimer  = 0;
+                        PressCount = 0;
+                        PressTimer = 0;
                     }
-                    outBool  = false;
+                    outBool = false;
                     prevBool = value;
                     return false;
 
@@ -393,13 +393,13 @@ namespace HandheldCompanion.Actions
                     if (PressTimer <= ActionTimer && value)
                     {
                         actionState = ActionState.Succeed;
-                        PressTimer  = ActionTimer;
+                        PressTimer = ActionTimer;
                     }
                     else
                     {
                         actionState = ActionState.Stopped;
-                        PressCount  = 0;
-                        PressTimer  = 0;
+                        PressCount = 0;
+                        PressTimer = 0;
                     }
                     return true;
             }
@@ -410,13 +410,13 @@ namespace HandheldCompanion.Actions
             if (!HasToggle)
             {
                 StartDelayRisingEdge = false;
-                IsToggled            = false;
+                IsToggled = false;
                 return;
             }
 
             // A rising edge is either a fresh button press, or a delayed-start rising edge
-            bool risingEdge          = (prevBool != value && value) || StartDelayRisingEdge;
-            StartDelayRisingEdge     = false;   // consume
+            bool risingEdge = (prevBool != value && value) || StartDelayRisingEdge;
+            StartDelayRisingEdge = false;   // consume
 
             var (useShared, sharedState) = GetSharedToggleState(risingEdge);
             if (useShared)
@@ -438,13 +438,13 @@ namespace HandheldCompanion.Actions
                 TurboCountdown -= delta;
                 if (TurboCountdown <= 0)
                 {
-                    IsTurboed       = !IsTurboed;
+                    IsTurboed = !IsTurboed;
                     TurboCountdown += Math.Max(1, TurboDelay);
                 }
             }
             else
             {
-                IsTurboed      = false;
+                IsTurboed = false;
                 TurboCountdown = TurboDelay;
             }
         }

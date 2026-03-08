@@ -1,24 +1,15 @@
-using HandheldCompanion.Actions;
-using HandheldCompanion.Devices;
 using HandheldCompanion.Extensions;
-using HandheldCompanion.Helpers;
-using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
-using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Controls;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using static HandheldCompanion.Misc.ProcessEx;
 using Page = System.Windows.Controls.Page;
-using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 
 namespace HandheldCompanion.Views.QuickPages;
 

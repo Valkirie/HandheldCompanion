@@ -3,7 +3,6 @@ using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.QuickPages;

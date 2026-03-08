@@ -8,9 +8,9 @@ namespace HandheldCompanion.Actions
     public enum OutputShape
     {
         Default = 0,
-        Circle  = 1,
-        Cross   = 2,
-        Square  = 3,
+        Circle = 1,
+        Cross = 2,
+        Square = 3,
     }
 
     [Serializable]
@@ -19,13 +19,13 @@ namespace HandheldCompanion.Actions
         public AxisLayoutFlags Axis;
 
         // Deadzone / anti-deadzone settings (percent, 0..100)
-        public int         AxisAntiDeadZone  = 0;
-        public int         AxisDeadZoneInner = 0;
-        public int         AxisDeadZoneOuter = 0;
-        public OutputShape OutputShape       = OutputShape.Default;
+        public int AxisAntiDeadZone = 0;
+        public int AxisDeadZoneInner = 0;
+        public int AxisDeadZoneOuter = 0;
+        public OutputShape OutputShape = OutputShape.Default;
 
         public bool InvertHorizontal = false;
-        public bool InvertVertical   = false;
+        public bool InvertVertical = false;
 
         public AxisActions()
         {
@@ -57,7 +57,7 @@ namespace HandheldCompanion.Actions
             outVector = OutputShape switch
             {
                 OutputShape.Circle => InputUtils.ImproveCircularity(outVector),
-                OutputShape.Cross  => InputUtils.ImproveCircularity(InputUtils.CrossDeadzoneMapping(outVector, AxisDeadZoneInner, AxisDeadZoneOuter)),
+                OutputShape.Cross => InputUtils.ImproveCircularity(InputUtils.CrossDeadzoneMapping(outVector, AxisDeadZoneInner, AxisDeadZoneOuter)),
                 OutputShape.Square => InputUtils.ImproveSquare(outVector),
 
                 _ => outVector,
@@ -65,7 +65,7 @@ namespace HandheldCompanion.Actions
 
             // Axis inversion
             if (InvertHorizontal) outVector.X = -outVector.X;
-            if (InvertVertical)   outVector.Y = -outVector.Y;
+            if (InvertVertical) outVector.Y = -outVector.Y;
         }
 
         public Vector2 GetValue() => outVector;

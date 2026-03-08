@@ -16,8 +16,8 @@ namespace HandheldCompanion.Actions
         public ButtonActions()
         {
             actionType = ActionType.Button;
-            outBool    = false;
-            prevBool   = false;
+            outBool = false;
+            prevBool = false;
         }
 
         public ButtonActions(ButtonFlags button) : this()
@@ -54,8 +54,8 @@ namespace HandheldCompanion.Actions
                 return;
             }
 
-            var  direction = InputUtils.GetDeflectionDirection(outVector, motionThreshold);
-            bool press     = DirectionMatches(direction, motionDirection);
+            var direction = InputUtils.GetDeflectionDirection(outVector, motionThreshold);
+            bool press = DirectionMatches(direction, motionDirection);
 
             Execute(Button, press, shiftSlot, delta);
         }

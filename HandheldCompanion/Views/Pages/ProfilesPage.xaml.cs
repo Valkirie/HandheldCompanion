@@ -1,5 +1,4 @@
 using HandheldCompanion.Actions;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
@@ -9,14 +8,9 @@ using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Pages.Profiles;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using static HandheldCompanion.Utils.XInputPlusUtils;
 using Page = System.Windows.Controls.Page;
-using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 
 namespace HandheldCompanion.Views.Pages;
 

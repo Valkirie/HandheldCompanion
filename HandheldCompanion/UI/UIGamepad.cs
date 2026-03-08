@@ -1525,7 +1525,7 @@ namespace HandheldCompanion.Managers
                                             int nextIdx = idx;
                                             switch (direction)
                                             {
-                                                case WPFUtils.Direction.Up:   nextIdx--; break;
+                                                case WPFUtils.Direction.Up: nextIdx--; break;
                                                 case WPFUtils.Direction.Down: nextIdx++; break;
                                                 default:
                                                     // Left/Right: stay on current item

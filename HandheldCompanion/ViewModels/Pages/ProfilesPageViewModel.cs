@@ -18,14 +18,12 @@ using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using static HandheldCompanion.GraphicsProcessingUnit.GPU;
 using static HandheldCompanion.Libraries.LibraryEntry;
 using static HandheldCompanion.Managers.LibraryManager;
 using static HandheldCompanion.Misc.ProcessEx;
@@ -2951,7 +2949,7 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
             ManagerFactory.powerProfileManager.Updated -= PowerProfileManager_Updated;
             ManagerFactory.powerProfileManager.Deleted -= PowerProfileManager_Deleted;
-            ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;  
+            ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
             PlatformManager.RTSS.Updated -= RTSS_Updated;
             ManagerFactory.platformManager.Initialized -= PlatformManager_Initialized;
 

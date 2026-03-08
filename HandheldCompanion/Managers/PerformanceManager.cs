@@ -330,7 +330,7 @@ public static class PerformanceManager
             {
                 // AutoTDP is off and manual TDP is set
                 // Validate TDPOverrideValues before applying
-                if (profile.TDPOverrideValues != null && 
+                if (profile.TDPOverrideValues != null &&
                     profile.TDPOverrideValues.Length > 0 &&
                     profile.TDPOverrideValues[0] >= TDPMin)
                 {

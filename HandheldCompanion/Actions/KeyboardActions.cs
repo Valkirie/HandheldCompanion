@@ -14,7 +14,7 @@ namespace HandheldCompanion.Actions
         public VirtualKeyCode Key;
 
         // Runtime
-        private bool     isKeyDown = false;
+        private bool isKeyDown = false;
         private KeyCode[] modifiersPressed;
 
         // Settings
@@ -23,8 +23,8 @@ namespace HandheldCompanion.Actions
         public KeyboardActions()
         {
             actionType = ActionType.Keyboard;
-            outBool    = false;
-            prevBool   = false;
+            outBool = false;
+            prevBool = false;
         }
 
         public KeyboardActions(VirtualKeyCode key) : this()
@@ -81,8 +81,8 @@ namespace HandheldCompanion.Actions
             if (outVector == Vector2.Zero && !isKeyDown)
                 return;
 
-            var  direction = InputUtils.GetDeflectionDirection(outVector, motionThreshold);
-            bool press     = DirectionMatches(direction, motionDirection);
+            var direction = InputUtils.GetDeflectionDirection(outVector, motionThreshold);
+            bool press = DirectionMatches(direction, motionDirection);
 
             Execute(ButtonFlags.None, press, shiftSlot, delta);
         }

@@ -12,14 +12,14 @@ namespace HandheldCompanion.Actions
     [Serializable]
     public enum MouseActionsType
     {
-        [Description("Left Button")]           LeftButton   = 1,
-        [Description("Right Button")]          RightButton  = 2,
-        [Description("Middle Button")]         MiddleButton = 3,
-        [Description("Move Cursor (Relative)")] Move        = 4,
-        [Description("Scroll Wheel")]          Scroll       = 5,
-        [Description("Scroll Up")]             ScrollUp     = 6,
-        [Description("Scroll Down")]           ScrollDown   = 7,
-        [Description("Move Cursor (Absolute)")] MoveTo      = 8,
+        [Description("Left Button")] LeftButton = 1,
+        [Description("Right Button")] RightButton = 2,
+        [Description("Middle Button")] MiddleButton = 3,
+        [Description("Move Cursor (Relative)")] Move = 4,
+        [Description("Scroll Wheel")] Scroll = 5,
+        [Description("Scroll Up")] ScrollUp = 6,
+        [Description("Scroll Down")] ScrollDown = 7,
+        [Description("Move Cursor (Absolute)")] MoveTo = 8,
     }
 
     [Serializable]
@@ -27,40 +27,40 @@ namespace HandheldCompanion.Actions
     {
         public MouseActionsType MouseType;
 
-        private const int   ScrollAmountInClicks = 20;
-        private const float FilterBeta           = 0.5f;
+        private const int ScrollAmountInClicks = 20;
+        private const float FilterBeta = 0.5f;
 
         // Runtime
-        private bool              isCursorDown = false;
-        private bool              isTouched    = false;
-        private Vector2           remainder    = new();
-        private KeyCode[]         modifiersPressed;
+        private bool isCursorDown = false;
+        private bool isTouched = false;
+        private Vector2 remainder = new();
+        private KeyCode[] modifiersPressed;
         private OneEuroFilterPair mouseFilter;
-        private float             accelMemory = 0f;
+        private float accelMemory = 0f;
 
         // Click settings
         public ModifierSet Modifiers = ModifierSet.None;
 
         // Axis settings (sticks / pads)
-        public int   Sensivity      = 33;
-        public float Acceleration   = 1.0f;     // ≤ 1.0 = off; > 1.0 = boost
-        public int   Deadzone       = 15;        // stick only
-        public bool  Filtering      = false;     // pad only
-        public float FilterCutoff   = 0.05f;    // pad only
+        public int Sensivity = 33;
+        public float Acceleration = 1.0f;     // ≤ 1.0 = off; > 1.0 = boost
+        public int Deadzone = 15;        // stick only
+        public bool Filtering = false;     // pad only
+        public float FilterCutoff = 0.05f;    // pad only
 
         // MoveTo settings
-        public double MoveToX           = 0;
-        public double MoveToY           = 0;
-        public bool   MoveToPrevious    = true;
-        private double moveToPrevX      = 0;
-        private double moveToPrevY      = 0;
-        private bool   moveToRestorePending = false;
+        public double MoveToX = 0;
+        public double MoveToY = 0;
+        public bool MoveToPrevious = true;
+        private double moveToPrevX = 0;
+        private double moveToPrevY = 0;
+        private bool moveToRestorePending = false;
 
         public MouseActions()
         {
-            actionType  = ActionType.Mouse;
-            outBool     = false;
-            prevBool    = false;
+            actionType = ActionType.Mouse;
+            outBool = false;
+            prevBool = false;
             mouseFilter = new(FilterCutoff, FilterBeta);
         }
 
@@ -106,8 +106,8 @@ namespace HandheldCompanion.Actions
                     case MouseActionsType.MoveTo:
                         if (MoveToPrevious && !moveToRestorePending)
                         {
-                            moveToPrevX          = MouseSimulator.MouseX;
-                            moveToPrevY          = MouseSimulator.MouseY;
+                            moveToPrevX = MouseSimulator.MouseX;
+                            moveToPrevY = MouseSimulator.MouseY;
                             moveToRestorePending = true;
                         }
                         MouseSimulator.MoveTo(MoveToX, MoveToY);
@@ -164,7 +164,7 @@ namespace HandheldCompanion.Actions
                     ExecuteAxisAsButton(layout, touched, shiftSlot, delta);
                     break;
             }
-        } 
+        }
 
         private void ExecuteAxisAsButton(AxisLayout layout, bool touched, ShiftSlot shiftSlot, float delta)
         {
@@ -174,8 +174,8 @@ namespace HandheldCompanion.Actions
             if (outVector == Vector2.Zero && !isCursorDown)
                 return;
 
-            var  direction = InputUtils.GetDeflectionDirection(outVector, motionThreshold);
-            bool press     = DirectionMatches(direction, motionDirection);
+            var direction = InputUtils.GetDeflectionDirection(outVector, motionThreshold);
+            bool press = DirectionMatches(direction, motionDirection);
 
             Execute(ButtonFlags.None, press, shiftSlot, delta);
         }
@@ -193,7 +193,7 @@ namespace HandheldCompanion.Actions
             outVector.Y *= -1;
 
             Vector2 deltaVector;
-            float   sensitivityScale;
+            float sensitivityScale;
 
             switch (layout.flags)
             {
@@ -201,7 +201,7 @@ namespace HandheldCompanion.Actions
                 case AxisLayoutFlags.LeftStick:
                 case AxisLayoutFlags.RightStick:
                 case AxisLayoutFlags.Gyroscope:
-                    deltaVector      = ComputeStickDelta(outVector);
+                    deltaVector = ComputeStickDelta(outVector);
                     sensitivityScale = MouseType == MouseActionsType.Move ? 0.3f : 0.1f;
                     break;
 
@@ -212,8 +212,8 @@ namespace HandheldCompanion.Actions
                         prevVector = outVector;
                         return;
                     }
-                    deltaVector      = (outVector - prevVector) / short.MaxValue;
-                    prevVector       = outVector;
+                    deltaVector = (outVector - prevVector) / short.MaxValue;
+                    prevVector = outVector;
                     sensitivityScale = MouseType == MouseActionsType.Move ? 9.0f : 3.0f;
                     break;
             }
@@ -225,13 +225,13 @@ namespace HandheldCompanion.Actions
                 deltaVector.Y = (float)mouseFilter.axis2Filter.Filter(deltaVector.Y, 1);
             }
 
-            deltaVector  = ApplyAcceleration(deltaVector, delta);
+            deltaVector = ApplyAcceleration(deltaVector, delta);
             deltaVector *= Sensivity * sensitivityScale;
 
             // Accumulate fractional pixels to maintain sub-pixel precision
             deltaVector += remainder;
             var intDelta = new Vector2((int)Math.Truncate(deltaVector.X), (int)Math.Truncate(deltaVector.Y));
-            remainder    = deltaVector - intDelta;
+            remainder = deltaVector - intDelta;
 
             if (MouseType == MouseActionsType.Move)
                 MouseSimulator.MoveBy((int)intDelta.X, (int)intDelta.Y);
@@ -241,8 +241,8 @@ namespace HandheldCompanion.Actions
 
         private Vector2 ComputeStickDelta(Vector2 raw)
         {
-            var    delta = raw / short.MaxValue;
-            float  dz    = Deadzone / 100f;
+            var delta = raw / short.MaxValue;
+            float dz = Deadzone / 100f;
 
             if (delta.Length() < dz) return Vector2.Zero;
 
@@ -268,15 +268,15 @@ namespace HandheldCompanion.Actions
 
             // Half-life grows with s: ~24 ms at s→0, ~144 ms at s=1 (Acceleration=2)
             float halfLifeMs = 24f + 120f * s;
-            float decay      = (float)Math.Exp(-0.693147f * (deltaMs / halfLifeMs));
+            float decay = (float)Math.Exp(-0.693147f * (deltaMs / halfLifeMs));
 
             float mag = delta.Length();
             if (mag > accelMemory) accelMemory = mag;
-            else                   accelMemory *= decay;
+            else accelMemory *= decay;
 
-            float t       = Smooth01(MathF.Min(1f, accelMemory));
+            float t = Smooth01(MathF.Min(1f, accelMemory));
             float gainMax = 1f + 2.6f * s;
-            float gain    = 1f + (gainMax - 1f) * t;
+            float gain = 1f + (gainMax - 1f) * t;
 
             return delta * gain;
         }
@@ -288,8 +288,8 @@ namespace HandheldCompanion.Actions
             outVector = layout.vector;
             base.Execute(layout, shiftSlot, delta);
 
-            float threshold  = motionThreshold / short.MaxValue;
-            bool  hasMovement = outVector.Length() > threshold;
+            float threshold = motionThreshold / short.MaxValue;
+            bool hasMovement = outVector.Length() > threshold;
 
             if (hasMovement && !isCursorDown)
             {
@@ -297,8 +297,8 @@ namespace HandheldCompanion.Actions
 
                 if (MoveToPrevious && !moveToRestorePending)
                 {
-                    moveToPrevX          = MouseSimulator.MouseX;
-                    moveToPrevY          = MouseSimulator.MouseY;
+                    moveToPrevX = MouseSimulator.MouseX;
+                    moveToPrevY = MouseSimulator.MouseY;
                     moveToRestorePending = true;
                 }
 

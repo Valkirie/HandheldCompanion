@@ -332,7 +332,7 @@ public class MultimediaManager : IManager
 
                     // Get all frequencies for this resolution
                     List<int> frequencies = resolutions
-                        .Where(a => a.dmPelsWidth == mode.dmPelsWidth && 
+                        .Where(a => a.dmPelsWidth == mode.dmPelsWidth &&
                                     a.dmPelsHeight == mode.dmPelsHeight &&
                                     a.dmBitsPerPel == mode.dmBitsPerPel)
                         .Select(b => b.dmDisplayFrequency)

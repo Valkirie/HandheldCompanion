@@ -309,15 +309,15 @@ public partial class MainWindow : GamepadWindow
             switch (controlType)
             {
                 default:
-                        {
-                            GamepadUISelect.Visibility = Visibility.Visible;
-                            GamepadUIBack.Visibility = Visibility.Visible;
-                            GamepadUIToggle.Visibility = Visibility.Collapsed;
-                            GamepadUIMore.Visibility = Visibility.Collapsed;
-                            GamepadUILike.Visibility = Visibility.Collapsed;
+                    {
+                        GamepadUISelect.Visibility = Visibility.Visible;
+                        GamepadUIBack.Visibility = Visibility.Visible;
+                        GamepadUIToggle.Visibility = Visibility.Collapsed;
+                        GamepadUIMore.Visibility = Visibility.Collapsed;
+                        GamepadUILike.Visibility = Visibility.Collapsed;
 
-                            GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
-                            GamepadUIBackDesc.Text = Properties.Resources.MainWindow_Back;
+                        GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
+                        GamepadUIBackDesc.Text = Properties.Resources.MainWindow_Back;
                     }
                     break;
 
@@ -354,7 +354,7 @@ public partial class MainWindow : GamepadWindow
                                 GamepadUIMoreDesc.Text = Properties.Resources.MainWindow_Layout;
 
                                 GamepadUILike.Visibility = Visibility.Visible;
-                                GamepadUILikeDesc.Text = profile.IsLiked 
+                                GamepadUILikeDesc.Text = profile.IsLiked
                                     ? "Unlike"
                                     : "Like";
                             }

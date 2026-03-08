@@ -7,12 +7,12 @@ namespace HandheldCompanion.Actions
     [Flags]
     public enum ShiftSlot
     {
-        [Description("Disabled on shift")] None   = 0,
-        [Description("Shift A")]           ShiftA = 1 << 0,
-        [Description("Shift B")]           ShiftB = 1 << 1,
-        [Description("Shift C")]           ShiftC = 1 << 2,
-        [Description("Shift D")]           ShiftD = 1 << 3,
-        [Description("Always enabled")]    Any    = 1 << 7,
+        [Description("Disabled on shift")] None = 0,
+        [Description("Shift A")] ShiftA = 1 << 0,
+        [Description("Shift B")] ShiftB = 1 << 1,
+        [Description("Shift C")] ShiftC = 1 << 2,
+        [Description("Shift D")] ShiftD = 1 << 3,
+        [Description("Always enabled")] Any = 1 << 7,
     }
 
     [Serializable]
@@ -26,10 +26,10 @@ namespace HandheldCompanion.Actions
 
             // Shift keys are not interruptable, toggleable, or turboable
             HasInterruptable = false;
-            HasTurbo         = false;
-            HasToggle        = false;
+            HasTurbo = false;
+            HasToggle = false;
 
-            outBool  = false;
+            outBool = false;
             prevBool = false;
         }
 
