@@ -166,8 +166,10 @@ namespace HandheldCompanion.Managers
                 if (profile.TDPOverrideValues == null)
                     continue;
 
+                /*
                 if (profile.IsDeviceDefault())
                     continue;
+                */
 
                 // Loop through all override values
                 for (int i = 0; i < profile.TDPOverrideValues.Length; i++)

@@ -1001,6 +1001,8 @@ namespace HandheldCompanion.ViewModels
             */
 
             OnPropertyChanged("ConfigurableTDPOverride");
+            OnPropertyChanged("ConfigurableTDPOverrideDown");
+            OnPropertyChanged("ConfigurableTDPOverrideUp");
         }
 
         private void QueryPowerProfile()

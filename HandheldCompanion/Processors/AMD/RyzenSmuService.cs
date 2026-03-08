@@ -203,6 +203,9 @@ namespace HandheldCompanion.Processors.AMD
                     return false;
                 }
 
+                // Get mutex
+                PciBusMutex.Open();
+
                 // Get CPU codename
                 if (!GetCodeName(out _cpuCodeName))
                 {
@@ -297,42 +300,44 @@ namespace HandheldCompanion.Processors.AMD
                 return SmuStatus.Failed;
             }
 
+            if (!PciBusMutex.Wait(5000))
+            {
+                LogManager.LogError("Failed to acquire global PCI mutex (Global\\Access_PCI)");
+                return SmuStatus.Failed;
+            }
+
             try
             {
                 // Input: command + 6 args = 7 values
                 ulong[] input = new ulong[7];
                 input[0] = command;
                 for (int i = 0; i < 6 && args != null && i < args.Length; i++)
-                {
                     input[i + 1] = args[i];
-                }
 
-                // Output: status + 6 response args = 7 values (we get 6 back per the module)
+                // Output: the module returns 6 response args
                 ulong[] output = new ulong[6];
 
                 if (_pawnIO.ExecuteFunction("ioctl_send_smu_command", input, output))
                 {
-                    // First output is status, rest are response args
-                    // Actually looking at the module, output is the 6 response args
-                    // Status is returned differently - let's check by trying
                     for (int i = 0; i < 6; i++)
-                    {
                         response[i] = (uint)output[i];
-                    }
 
                     LogManager.LogDebug("SMU command {0} executed. Response: {1}", $"0x{command:X2}", string.Join(", ", response));
+
                     return SmuStatus.OK;
                 }
-                else
-                {
-                    LogManager.LogError("Failed to execute SMU command {0}", $"0x{command:X2}");
-                    return SmuStatus.Failed;
-                }
+
+                LogManager.LogError("Failed to execute SMU command {0}", $"0x{command:X2}");
+                return SmuStatus.Failed;
             }
             catch (Exception ex)
             {
                 LogManager.LogError("Exception sending SMU command: {0}", ex.Message);
                 return SmuStatus.Failed;
+            }
+            finally
+            {
+                PciBusMutex.Release();
             }
         }
 
@@ -627,7 +632,7 @@ namespace HandheldCompanion.Processors.AMD
         /// <param name="slowWatts">Slow/SPL limit in watts.</param>
         public bool SetAllLimits(int stapmWatts, int fastWatts, int slowWatts)
         {
-            LogManager.LogInformation($"Setting TDP limits via PawnIO: STAPM={stapmWatts}W, Fast={fastWatts}W, Slow={slowWatts}W");
+            LogManager.LogInformation("Setting TDP limits via PawnIO: STAPM={0}W, Fast={1}W, Slow={2}W", stapmWatts, fastWatts, slowWatts);
 
             bool success = true;
 
@@ -655,15 +660,26 @@ namespace HandheldCompanion.Processors.AMD
         {
             value = 0;
 
-            ulong[] input = new ulong[] { address };
-            ulong[] output = new ulong[1];
+            if (!PciBusMutex.Wait(5000))
+                return false;
 
-            if (_pawnIO.ExecuteFunction("ioctl_read_smu_register", input, output))
+            try
             {
-                value = (uint)output[0];
-                return true;
+                ulong[] input = new ulong[] { address };
+                ulong[] output = new ulong[1];
+
+                if (_pawnIO.ExecuteFunction("ioctl_read_smu_register", input, output))
+                {
+                    value = (uint)output[0];
+                    return true;
+                }
+
+                return false;
             }
-            return false;
+            finally
+            {
+                PciBusMutex.Release();
+            }
         }
 
         /// <summary>
@@ -671,9 +687,18 @@ namespace HandheldCompanion.Processors.AMD
         /// </summary>
         public bool WriteSmuRegister(uint address, uint value)
         {
-            ulong[] input = new ulong[] { address, value };
+            if (!PciBusMutex.Wait(5000))
+                return false;
 
-            return _pawnIO.ExecuteFunction("ioctl_write_smu_register", input, null);
+            try
+            {
+                ulong[] input = new ulong[] { address, value };
+                return _pawnIO.ExecuteFunction("ioctl_write_smu_register", input, null);
+            }
+            finally
+            {
+                PciBusMutex.Release();
+            }
         }
 
         public bool SetStapmLimit(uint limitW)
@@ -1086,7 +1111,9 @@ namespace HandheldCompanion.Processors.AMD
                 if (disposing)
                 {
                     _pawnIO?.Dispose();
+                    PciBusMutex.Close();
                 }
+
                 _initialized = false;
                 _disposed = true;
             }
