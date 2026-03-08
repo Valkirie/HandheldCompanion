@@ -248,7 +248,7 @@ public static class PerformanceManager
             case "ConfigurableTDPOverrideDown":
                 {
                     double TDPmin = Convert.ToDouble(value);
-                    if (TDPmin == 0 || TDPMin > TDPMax)
+                    if (TDPmin == 0 || TDPmin > TDPMax)
                         return;
 
                     // update value
@@ -261,7 +261,7 @@ public static class PerformanceManager
             case "ConfigurableTDPOverrideUp":
                 {
                     double TDPmax = Convert.ToDouble(value);
-                    if (TDPmax == 0 || TDPMax < TDPMin)
+                    if (TDPmax == 0 || TDPmax < TDPMin)
                         return;
 
                     // update value
@@ -329,12 +329,25 @@ public static class PerformanceManager
             if (!profile.AutoTDPEnabled)
             {
                 // AutoTDP is off and manual TDP is set
-                // stop AutoTDP watchdog and apply manual TDP
-                StopAutoTDPWatchdog(true);
-                RequestTDP(profile.TDPOverrideValues);
+                // Validate TDPOverrideValues before applying
+                if (profile.TDPOverrideValues != null && 
+                    profile.TDPOverrideValues.Length > 0 &&
+                    profile.TDPOverrideValues[0] >= TDPMin)
+                {
+                    // stop AutoTDP watchdog and apply manual TDP
+                    StopAutoTDPWatchdog(true);
+                    RequestTDP(profile.TDPOverrideValues);
 
-                if (!tdpWatchdog.Enabled)
-                    StartTDPWatchdog();
+                    if (!tdpWatchdog.Enabled)
+                        StartTDPWatchdog();
+                }
+                else
+                {
+                    // Invalid or missing TDP values, restore default instead
+                    LogManager.LogWarning("Profile {0} has invalid or missing TDP override values, restoring default", profile.Name);
+                    StopAutoTDPWatchdog(true);
+                    RestoreTDP(true);
+                }
             }
             else
             {
@@ -346,8 +359,24 @@ public static class PerformanceManager
 
             // use manual slider as the starting value
             // and max limit for AutoTDP
-            if (profile.TDPOverrideValues is not null)
-                AutoTDP = AutoTDPMax = profile.TDPOverrideValues[0];
+            if (profile.TDPOverrideValues is not null && profile.TDPOverrideValues.Length > 0)
+            {
+                // Validate TDP value meets minimum threshold
+                double tdpValue = profile.TDPOverrideValues[0];
+                if (tdpValue >= TDPMin)
+                    AutoTDP = AutoTDPMax = tdpValue;
+                else
+                {
+                    // Invalid TDP value, use settings default instead
+                    LogManager.LogWarning("Profile {0} has invalid TDP value {1}W, using settings default", profile.Name, tdpValue);
+                    AutoTDP = AutoTDPMax = ManagerFactory.settingsManager.GetDouble(Settings.ConfigurableTDPOverrideUp);
+                }
+            }
+            else
+            {
+                // TDPOverrideValues is null or empty, use settings default
+                AutoTDP = AutoTDPMax = ManagerFactory.settingsManager.GetDouble(Settings.ConfigurableTDPOverrideUp);
+            }
         }
         else
         {
