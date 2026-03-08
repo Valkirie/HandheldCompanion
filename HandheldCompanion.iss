@@ -162,6 +162,7 @@ var
   Dependency_DownloadPage: TDownloadWizardPage;
   SettingsPage: TInputOptionWizardPage;
   CoreIsolationPromptNeeded: Boolean;
+  deleteSettingsCheckbox: TNewCheckBox;
 
 // Forward declarations
 procedure Dependency_Add(const Filename, Parameters, Title, URL, Checksum: String; const ForceSuccess: Boolean); forward;
@@ -363,6 +364,30 @@ var
   PrepareToInstallResult: String;
 begin
   Log('***Enter PrepareToInstall()***');
+
+  // Kill any running RTSS-related processes before installing dependencies
+  if IsProcessRunning('{#EncoderServerExe}') or
+     IsProcessRunning('{#EncoderServer64Exe}') or
+     IsProcessRunning('{#RTSSHooksLoaderExe}') or
+     IsProcessRunning('{#RTSSHooksLoader64Exe}') or
+     IsProcessRunning('{#RtssExe}') then
+  begin
+    Dependency_DownloadPage.Show;
+    Dependency_DownloadPage.SetText('Stopping RivaTuner Statistics Server processes...', '');
+    Dependency_DownloadPage.SetProgress(0, 5);
+    StopProcess('{#EncoderServerExe}');
+    Dependency_DownloadPage.SetProgress(1, 5);
+    StopProcess('{#EncoderServer64Exe}');
+    Dependency_DownloadPage.SetProgress(2, 5);
+    StopProcess('{#RTSSHooksLoaderExe}');
+    Dependency_DownloadPage.SetProgress(3, 5);
+    StopProcess('{#RTSSHooksLoader64Exe}');
+    Dependency_DownloadPage.SetProgress(4, 5);
+    StopProcess('{#RtssExe}');
+    Dependency_DownloadPage.SetProgress(5, 5);
+    Dependency_DownloadPage.Hide;
+  end;
+
   Log('Restart needed: ' + BoolToStr(NeedsRestart));
   PrepareToInstallResult := Dependency_PrepareToInstall(NeedsRestart);
   Log('Result: ' + PrepareToInstallResult);
@@ -388,28 +413,9 @@ var
 begin
   if CurUninstallStep = usUninstall then
   begin
-    if not(checkListBox.checked[keepAllCheck]) then
-    begin
-      if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}\profiles')) then
-        DelTree(ExpandConstant('{localappdata}\{#MyBuildId}\profiles'), True, True, True);
-      if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}\hotkeys')) then
-        DelTree(ExpandConstant('{localappdata}\{#MyBuildId}\hotkeys'), True, True, True);
-      DelTree(ExpandConstant('{localappdata}\{#MyBuildId}'), True, True, True);
-      Exit;
-    end
-    else
-    begin
-      if not(checkListBox.checked[profilesCheck]) then
-        if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}\profiles')) then
-          DelTree(ExpandConstant('{localappdata}\{#MyBuildId}\profiles'), True, True, True);
-
-      if not(checkListBox.checked[hotkeysCheck]) then
-        if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}\hotkeys')) then
-          DelTree(ExpandConstant('{localappdata}\{#MyBuildId}\hotkeys'), True, True, True);
-
-      if not(checkListBox.checked[applicationSettingsCheck]) then
+    if deleteSettingsCheckbox.Checked then
+      if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}')) then
         DelTree(ExpandConstant('{localappdata}\{#MyBuildId}'), True, True, True);
-    end;
 
     if not(keepHidhideCheckbox.Checked) then
       uninstallHidHide();
@@ -782,13 +788,6 @@ begin
     '{#RtssName}',
     '{#RtssDownloadLink}',
     '', True, True);
-
-  StopProcess('{#EncoderServer64Exe}');
-  StopProcess('{#RTSSHooksLoader64Exe}');
-  StopProcess('{#EncoderServerExe}');
-  StopProcess('{#RTSSHooksLoaderExe}');
-  if IsProcessRunning('{#RtssExe}') then
-    StopProcess('{#RtssExe}');
 end;
 
 procedure Dependency_AddPawnIO;
