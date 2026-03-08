@@ -585,7 +585,6 @@
                                             Grid.Column="1"
                                             Margin="6,0,0,0"
                                             VerticalAlignment="Center"
-                                            Command="{Binding ToggleFavoriteCommand}"
                                             IsChecked="{Binding IsLiked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                             <Grid>
                                                 <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEB52;" />

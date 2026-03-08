@@ -286,7 +286,7 @@ public partial class ProfilesPage : Page
             return;
 
         viewModel.SelectedProfile.Name = SubProfileNameTextBox.Text;
-        viewModel.SubmitProfile(UpdateSource.ProfilesPageUpdateOnly);
+        viewModel.SubmitProfile();
     }
 
     private void SubProfileRenameDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -305,7 +305,7 @@ public partial class ProfilesPage : Page
             return;
 
         viewModel.SelectedMainProfile.Name = ProfileNameTextBox.Text;
-        viewModel.SubmitProfile(UpdateSource.ProfilesPageUpdateOnly);
+        viewModel.SubmitProfile();
     }
 
     public void b_ProfileRename_Click(object sender, RoutedEventArgs e)

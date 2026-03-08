@@ -1724,7 +1724,7 @@ namespace HandheldCompanion.ViewModels
                 if (SelectedProfile != null)
                 {
                     SelectedProfile.IsLiked = !SelectedProfile.IsLiked;
-                    SubmitProfile(UpdateSource.ProfilesPageUpdateOnly);
+                    SubmitProfile();
                 }
             });
 
@@ -1743,6 +1743,8 @@ namespace HandheldCompanion.ViewModels
             {
                 if (SelectedProfile != null && SelectedProfile.IsSubProfile)
                     RequestRenameSubProfile?.Invoke(this, SelectedProfile);
+                else if (SelectedMainProfile != null)
+                    RequestRenameProfile?.Invoke(this, SelectedMainProfile);
             });
 
             OpenControllerLayoutCommand = new DelegateCommand(() =>

@@ -35,8 +35,7 @@ public enum UpdateSource
     QuickProfilesCreation = 4,
     Creation = 8,
     Serializer = 16,
-    ProfilesPageUpdateOnly = 32,
-    LibraryUpdate = 64,
+    LibraryUpdate = 32,
 }
 
 public enum SteeringAxis
