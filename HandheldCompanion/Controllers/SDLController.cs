@@ -400,7 +400,11 @@ namespace HandheldCompanion.Controllers
                     return "\u2197"; // RT
             }
 
-            return button.ToString();
+            // custom buttons
+            foreach (ButtonFlags b in SourceButtons)
+                return b.ToString();
+
+            return base.GetGlyph(button);
         }
 
         public override string GetGlyph(AxisFlags axis)
@@ -413,7 +417,7 @@ namespace HandheldCompanion.Controllers
                     return "\u2197"; // RT
             }
 
-            return axis.ToString();
+            return base.GetGlyph(axis);
         }
 
         public override string GetGlyph(AxisLayoutFlags axis)
@@ -426,7 +430,11 @@ namespace HandheldCompanion.Controllers
                     return "\u2197"; // RT
             }
 
-            return axis.ToString();
+            // custom axis
+            foreach (AxisLayoutFlags a in SourceAxis)
+                return a.ToString();
+
+            return base.GetGlyph(axis);
         }
 
         public override void Unplug()
