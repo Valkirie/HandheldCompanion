@@ -162,6 +162,36 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public int VelocityModeIndex
+        {
+            get => (Action is GyroActions gyroAction) ? (int)gyroAction.VelocityMode : 0;
+            set
+            {
+                if (Action is GyroActions gyroAction && value != VelocityModeIndex)
+                {
+                    gyroAction.VelocityMode = (GyroVelocityMode)value;
+                    OnPropertyChanged(nameof(VelocityModeIndex));
+                    OnPropertyChanged(nameof(IsVelocityModeEnabled));
+                }
+            }
+        }
+
+        public float VelocityScale
+        {
+            get => (Action is GyroActions gyroAction) ? gyroAction.VelocityScale : 1.0f;
+            set
+            {
+                if (Action is GyroActions gyroAction && value != VelocityScale)
+                {
+                    gyroAction.VelocityScale = value;
+                    OnPropertyChanged(nameof(VelocityScale));
+                }
+            }
+        }
+
+        // True when VelocityMode is enabled (used to enable/disable VelocityScale slider)
+        public bool IsVelocityModeEnabled => VelocityModeIndex == 1;
+
         public List<MotionInputViewModel> MotionInputItems { get; private set; } = [];
         public ObservableCollection<HotkeyViewModel> HotkeysList { get; set; } = [];
 

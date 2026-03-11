@@ -1212,6 +1212,34 @@
                     </ComboBox>
                 </ui:SettingsCard>
 
+                <!--  Velocity Mode  -->
+                <ui:SettingsCard Description="Enable velocity-based scaling: faster gyro movements produce more cursor/stick displacement" Header="Gyro velocity mode">
+                    <ComboBox SelectedIndex="{Binding VelocityModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBoxItem Content="Default (Legacy)" />
+                        <ComboBoxItem Content="Velocity-based" />
+                    </ComboBox>
+                </ui:SettingsCard>
+
+                <!--  Velocity Scale (only visible when Velocity Mode is enabled)  -->
+                <ui:SettingsCard
+                    Description="Adjust how much faster gyro movements are amplified (1.0 = balanced, higher = more sensitive)"
+                    Header="Velocity scale"
+                    Visibility="{Binding IsVelocityModeEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <DockPanel>
+                        <TextBox Text="{Binding VelocityScale, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}" TextAlignment="Center" />
+                        <Slider
+                            Margin="3,0,0,0"
+                            AutoToolTipPrecision="1"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            Maximum="5.0"
+                            Minimum="0.1"
+                            TickFrequency="0.1"
+                            ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                            Value="{Binding VelocityScale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                </ui:SettingsCard>
+
                 <ui:SettingsCard Description="{l:Static resx:Resources.ProfilesPage_UMCMotionOnOffDesc}" Header="{l:Static resx:Resources.ProfilesPage_UMCMotionOnOff}">
                     <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3">
                         <ComboBox SelectedIndex="{Binding MotionModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">

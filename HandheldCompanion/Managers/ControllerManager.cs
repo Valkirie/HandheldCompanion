@@ -313,7 +313,7 @@ public static class ControllerManager
         }
 
         // Update motion consumers (null-safe)
-        MotionManager.UpdateReport(controllerState, gamepadMotion);
+        MotionManager.UpdateReport(controllerState, gamepadMotion, delta);
         MainWindow.overlayModel?.UpdateReport(controllerState, gamepadMotion, delta);
 
         // compute layout (null-safe mapping)
