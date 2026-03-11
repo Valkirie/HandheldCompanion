@@ -360,6 +360,11 @@ public static class ControllerManager
         if (controller.IsVirtual())
             return;
 
+        // don't show toast if this is the only controller and it's already hooked
+        var physicalControllers = GetPhysicalControllers<IController>();
+        if (physicalControllers.Count() == 1 && IsTargetController(controller.GetInstanceId()))
+            return;
+
         Color winColor = MainWindow.uiSettings.GetColorValue(UIColorType.Foreground);
 
         string iconFile = ToastIconHelper.RenderGlyphPng(
