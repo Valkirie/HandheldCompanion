@@ -360,9 +360,9 @@ public static class ControllerManager
         if (controller.IsVirtual())
             return;
 
-        // don't show toast if this is the only controller and it's already hooked
+        // don't show toast if this is the only controller 
         var physicalControllers = GetPhysicalControllers<IController>();
-        if (physicalControllers.Count() == 1 && IsTargetController(controller.GetInstanceId()))
+        if (physicalControllers.Count() == 1)
             return;
 
         Color winColor = MainWindow.uiSettings.GetColorValue(UIColorType.Foreground);
@@ -1584,7 +1584,7 @@ public static class ControllerManager
         {
             new ToastAction
             {
-                Label = "Fix",
+                Label = "Adjust order",
                 Command = "SlotFixReset",
                 Callback = _ => TriggerSlotFix(resetAttempts: true)
             },
