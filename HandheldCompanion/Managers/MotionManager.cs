@@ -252,7 +252,7 @@ namespace HandheldCompanion.Managers
             switch (gyroAction.MotionInput)
             {
                 case MotionInput.LocalSpace:
-                    output = new Vector2(controllerState.GyroState.GetGyroscope(SensorState.Default).Z - controllerState.GyroState.GetGyroscope(SensorState.Default).Y, controllerState.GyroState.GetGyroscope(SensorState.Default).X);
+                    output = new Vector2(controllerState.GyroState.GetGyroscope(SensorState.Default).Z, controllerState.GyroState.GetGyroscope(SensorState.Default).X);
                     break;
                 case MotionInput.PlayerSpace:
                     gamepadMotion.GetPlayerSpaceGyro(out float playerX, out float playerY, 1.41f);
