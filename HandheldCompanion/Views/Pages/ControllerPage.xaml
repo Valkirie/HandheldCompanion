@@ -185,9 +185,8 @@
                             LargeChange="10"
                             Maximum="100"
                             Minimum="0"
-                            SmallChange="5"
-                            TickFrequency="5"
-                            TickPlacement="BottomRight"
+                            SmallChange="1"
+                            TickFrequency="1"
                             ToolTip="{Binding Value, StringFormat={}{0:N0}%, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                             ValueChanged="SliderStrength_ValueChanged"
                             Value="100" />
