@@ -87,6 +87,9 @@ namespace HandheldCompanion.ViewModels
         // True if the selected profile can be renamed/deleted (not Default)
         public bool IsProfileManagementEnabled => SelectedMainProfile != null && !SelectedMainProfile.Default;
 
+        // True if the ProfileEnabled toggle can be modified (not Default profile)
+        public bool IsProfileEnabledToggleEnabled => SelectedProfile != null && !SelectedProfile.Default;
+
         private readonly bool IsQuickTools;
         private ProfilesPage profilesPage;
         private QuickProfilesPage quickProfilesPage;
@@ -2514,11 +2517,7 @@ namespace HandheldCompanion.ViewModels
                     GyroMultiplier = SelectedProfile.GyrometerMultiplier;
                     AcceleroMultiplier = SelectedProfile.AccelerometerMultiplier;
 
-                    if (IsQuickTools)
-                    {
-                        ProfileEnabled = SelectedProfile.Enabled;
-                    }
-
+                    ProfileEnabled = SelectedProfile.Enabled;
                     ProfileArguments = SelectedProfile.Arguments;
                     ProfileLaunchString = SelectedProfile.LaunchString;
 
@@ -2646,6 +2645,8 @@ namespace HandheldCompanion.ViewModels
             // Warning InfoBar - show for any error except None
             HasWarning = SelectedProfile.ErrorCode != ProfileErrorCode.None;
             WarningMessage = EnumUtils.GetDescriptionFromEnumValue(SelectedProfile.ErrorCode);
+
+            OnPropertyChanged(nameof(IsProfileEnabledToggleEnabled));
         }
 
         private void UpdateSubProfiles(Profile updatedProfile = null)

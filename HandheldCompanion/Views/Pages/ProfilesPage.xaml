@@ -742,7 +742,10 @@
                                 <ui:FontIcon Glyph="&#xE7EE;" />
                             </ui:SettingsCard.HeaderIcon>
 
-                            <ui:ToggleSwitch x:Name="EnableProfileToggle" IsOn="{Binding ProfileEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ui:ToggleSwitch
+                                x:Name="EnableProfileToggle"
+                                IsEnabled="{Binding IsProfileEnabledToggleEnabled}"
+                                IsOn="{Binding ProfileEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </ui:SettingsCard>
 
                         <ui:SettingsCard
