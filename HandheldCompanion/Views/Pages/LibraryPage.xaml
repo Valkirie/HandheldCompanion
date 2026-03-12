@@ -191,6 +191,7 @@
                 </ikw:SimpleStackPanel.Style>
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Favorites" />
                 <ScrollViewer
+                    x:Name="favoritesScrollViewer"
                     HorizontalScrollBarVisibility="Visible"
                     PanningMode="HorizontalOnly"
                     PreviewMouseWheel="FavoritesScrollViewer_PreviewMouseWheel"

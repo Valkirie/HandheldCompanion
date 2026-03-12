@@ -1,27 +1,75 @@
 using HandheldCompanion.Converters;
 using HandheldCompanion.ViewModels;
-using iNKORE.UI.WPF.Modern.Controls;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 
 namespace HandheldCompanion.Views.Pages;
 
-public partial class LibraryPage : System.Windows.Controls.Page
+public partial class LibraryPage : Page
 {
+    private const int WM_MOUSEHWHEEL = 0x020E;
     private AverageColorConverter averageColorConverter = new AverageColorConverter();
+    private HwndSource hwndSource;
 
     public LibraryPage()
     {
         Tag = "about";
         DataContext = new LibraryPageViewModel(this);
         InitializeComponent();
+
+        Loaded += LibraryPage_Loaded;
+        Unloaded += LibraryPage_Unloaded;
     }
 
     public LibraryPage(string Tag) : this()
     {
         this.Tag = Tag;
+    }
+
+    private void LibraryPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        // Hook into Windows message pump for horizontal mouse wheel
+        Window window = Window.GetWindow(this);
+        if (window != null)
+        {
+            hwndSource = PresentationSource.FromVisual(window) as HwndSource;
+            hwndSource?.AddHook(WndProc);
+        }
+    }
+
+    private void LibraryPage_Unloaded(object sender, RoutedEventArgs e)
+    {
+        // Unhook from Windows message pump
+        hwndSource?.RemoveHook(WndProc);
+        hwndSource = null;
+    }
+
+    private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    {
+        if (msg == WM_MOUSEHWHEEL)
+        {
+            // Check if mouse is over the favorites ScrollViewer
+            if (favoritesScrollViewer != null && favoritesScrollViewer.IsMouseOver)
+            {
+                // Extract delta from wParam (high word)
+                int delta = (short)((int)wParam >> 16);
+
+                // Horizontal wheel: positive delta = scroll right, negative = scroll left
+                // Note: Some mice may have inverted delta, but this is the Windows standard
+                if (delta > 0)
+                    favoritesScrollViewer.LineRight();
+                else if (delta < 0)
+                    favoritesScrollViewer.LineLeft();
+
+                handled = true;
+            }
+        }
+
+        return IntPtr.Zero;
     }
 
     private void ImageContainer_GotFocus(object sender, RoutedEventArgs e)
@@ -50,12 +98,9 @@ public partial class LibraryPage : System.Windows.Controls.Page
     private void Page_Loaded(object sender, RoutedEventArgs e)
     { }
 
-    public void Page_Closed()
-    { }
-
     /// <summary>
     /// Handles mouse wheel scrolling for the horizontal favorites ScrollViewer.
-    /// - Horizontal scroll: Shift+MouseWheel
+    /// - Horizontal scroll: Shift+MouseWheel OR native horizontal wheel (via WndProc)
     /// - Vertical scroll: Bubbles to parent ScrollViewer
     /// </summary>
     private void FavoritesScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -70,7 +115,7 @@ public partial class LibraryPage : System.Windows.Controls.Page
                 scrollViewer.LineLeft();
             else
                 scrollViewer.LineRight();
-            
+
             e.Handled = true;
             return;
         }
@@ -78,7 +123,7 @@ public partial class LibraryPage : System.Windows.Controls.Page
         // For vertical scrolling (no Shift), bubble event to parent ScrollViewer
         // This allows the main page to scroll vertically even when mouse is over favorites
         e.Handled = true;
-        
+
         var parentScrollViewer = FindParentScrollViewer(scrollViewer);
         if (parentScrollViewer != null)
         {
@@ -102,4 +147,7 @@ public partial class LibraryPage : System.Windows.Controls.Page
         }
         return null;
     }
+
+    public void Page_Closed()
+    { }
 }
