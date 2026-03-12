@@ -1,4 +1,4 @@
-name: Build HandheldCompanion
+name: Build and upload artifacts
 
 on:
   pull_request:
@@ -89,9 +89,11 @@ jobs:
           $version = (Select-String -Path './${{ env.SOLUTION_NAME }}.iss' -Pattern '#define MyAppVersion\s+"([\d.]+)"').Matches[0].Groups[1].Value
           echo "value=$version" >> $env:GITHUB_OUTPUT
 
-      - name: Upload Installer Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Installer
+        uses: softprops/action-gh-release@v0.1.15
         with:
-          name: HandheldCompanion-${{ steps.version.outputs.value }}
-          path: ./install/HandheldCompanion-${{ steps.version.outputs.value }}.exe
-          if-no-files-found: error
+          tag_name: build-${{ github.run_number }}
+          name: build-${{ github.run_number }}
+          draft: true
+          fail_on_unmatched_files: true
+          files: ./install/HandheldCompanion-${{ steps.version.outputs.value }}.exe
