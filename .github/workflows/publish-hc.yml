@@ -1,4 +1,4 @@
-name: Build and upload artifacts
+name: Build HandheldCompanion
 
 on:
   pull_request:
@@ -64,6 +64,15 @@ jobs:
           (Get-Content -Path ./HandheldCompanion.iss) -replace '#define MyAppVersion\s+"\d+(?:\.\d+){3}"', "#define MyAppVersion `"${{ inputs.releaseVersion }}`"" | Out-File ./HandheldCompanion.iss
           (Get-Content -Path ./HandheldCompanion/HandheldCompanion.csproj) -replace "<Version>\d+(?:\.\d+){3}</Version>", "<Version>${{ inputs.releaseVersion }}</Version>" | Out-File ./HandheldCompanion/HandheldCompanion.csproj
 
+      - name: Set Unofficial Build Version
+        if: inputs.releaseVersion == ''
+        run: |
+          $issContent = Get-Content -Path ./HandheldCompanion.iss -Raw
+          $baseVersion = ([regex]'#define MyAppVersion\s+"(\d+\.\d+\.\d+)\.\d+"').Match($issContent).Groups[1].Value
+          $unofficialVersion = "$baseVersion.${{ github.run_number }}"
+          Write-Host "Stamping unofficial build version: $unofficialVersion"
+          ($issContent -replace '#define MyAppVersion\s+"\d+(?:\.\d+){3}"', "#define MyAppVersion `"$unofficialVersion`"") | Out-File ./HandheldCompanion.iss
+
       - name: Install Innosetup
         run: |
           choco install innosetup --version=${{ env.INNO_VERSION }} --force
@@ -89,11 +98,9 @@ jobs:
           $version = (Select-String -Path './${{ env.SOLUTION_NAME }}.iss' -Pattern '#define MyAppVersion\s+"([\d.]+)"').Matches[0].Groups[1].Value
           echo "value=$version" >> $env:GITHUB_OUTPUT
 
-      - name: Upload Installer
-        uses: softprops/action-gh-release@v0.1.15
+      - name: Upload Installer Artifact
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: build-${{ github.run_number }}
-          name: build-${{ github.run_number }}
-          draft: true
-          fail_on_unmatched_files: true
-          files: ./install/HandheldCompanion-${{ steps.version.outputs.value }}.exe
+          name: HandheldCompanion-${{ steps.version.outputs.value }}
+          path: ./install/HandheldCompanion-${{ steps.version.outputs.value }}.exe
+          if-no-files-found: error
