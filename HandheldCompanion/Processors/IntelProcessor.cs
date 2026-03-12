@@ -111,6 +111,21 @@ namespace HandheldCompanion.Processors
             }
         }
 
+        public override uint GetTDPLimit(PowerType type)
+        {
+            float value = 0.0f;
+            switch (type)
+            {
+                case PowerType.Slow:
+                    value = platform.get_long_limit(false);
+                    break;
+                case PowerType.Fast:
+                    value = platform.get_short_limit(false);
+                    break;
+            }
+            return (uint)value;
+        }
+
         public void SetMSRLimit(double PL1, double PL2)
         {
             lock (updateLock)

@@ -164,10 +164,19 @@ public class OneXPlayerX1 : OneXAOKZOE
                 // Initialize and open the serial port if it has not been initialized yet
                 if (_serialPort is null)
                 {
-                    _serialPort = new SerialPort(SerialPortName, SerialPortBaudRate, SerialPortParity, SerialPortDataBits, SerialPortStopBits);
-                    _serialPort.Open();
-
-                    LogManager.LogInformation("Enabled Serial Port Control: {0}", _serialPort.PortName);
+                    try
+                    {
+                        _serialPort = new SerialPort(SerialPortName, SerialPortBaudRate, SerialPortParity, SerialPortDataBits, SerialPortStopBits);
+                        _serialPort.Open();
+                        LogManager.LogInformation("Enabled Serial Port Control: {0}", _serialPort.PortName);
+                    }
+                    catch
+                    {
+                        LogManager.LogWarning("Serial port {0} is busy/denied. Disabling Serial Port Control.", SerialPortName);
+                        _serialPort?.Dispose();
+                        _serialPort = null;
+                        EnableSerialPort = false;
+                    }
                 }
             }
         }
@@ -201,9 +210,18 @@ public class OneXPlayerX1 : OneXAOKZOE
 
     public override void Close()
     {
-        if (_serialPort is not null && _serialPort.IsOpen)
+        if (_serialPort is not null)
         {
-            _serialPort.Close();
+            try
+            {
+                if (_serialPort.IsOpen)
+                    _serialPort.Close();
+            }
+            finally
+            {
+                _serialPort.Dispose();
+                _serialPort = null;
+            }
         }
 
         EcWriteByte(0xEB, 0x00);

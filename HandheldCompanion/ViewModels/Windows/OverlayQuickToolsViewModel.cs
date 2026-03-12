@@ -39,6 +39,7 @@ namespace HandheldCompanion.ViewModels
                     case "Shutdown": PowerActions.Shutdown(force: false, powerOff: true); break;
                     case "Restart": PowerActions.Restart(force: false); break;
                     case "Lock": PowerActions.Lock(); break;
+                    case "Exit": Application.Current.Shutdown(); break;
                 }
             });
         }

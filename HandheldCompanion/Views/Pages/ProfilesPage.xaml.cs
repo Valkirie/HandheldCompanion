@@ -31,7 +31,7 @@ namespace HandheldCompanion.Views.Pages;
 /// </summary>
 public partial class ProfilesPage : Page
 {
-    // when set on start cannot be null anymore
+    // when set at startup cannot be null anymore
     public static Profile selectedProfile;
     private static Profile selectedMainProfile;
 
@@ -407,6 +407,9 @@ public partial class ProfilesPage : Page
         if (src is not SettingsCard)
             return;
 
+        if (selectedProfile is null)
+            return;
+
         PowerProfile powerProfile = ManagerFactory.powerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
         if (powerProfile is null)
             return;
@@ -420,6 +423,9 @@ public partial class ProfilesPage : Page
         // If the click originated in the ComboBox (or any ComboBoxItem), ignore it
         DependencyObject? src = e.Source as DependencyObject;
         if (src is not SettingsCard)
+            return;
+
+        if (selectedProfile is null)
             return;
 
         PowerProfile powerProfile = ManagerFactory.powerProfileManager.GetProfile(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
@@ -725,16 +731,6 @@ public partial class ProfilesPage : Page
             return;
 
         selectedProfile.IsLiked = b_ProfileLike.IsChecked ?? false;
-        UpdateProfile();
-    }
-
-    private void b_ProfileLike_Click(object sender, RoutedEventArgs e)
-    {
-        // prevent update loop
-        if (profileLock.IsEntered())
-            return;
-
-        selectedProfile.IsLiked = (bool)b_ProfileLike.IsChecked;
         UpdateProfile();
     }
 
@@ -1454,19 +1450,6 @@ public partial class ProfilesPage : Page
             return;
 
         selectedProfile.SuspendOnQT = CheckBox_SuspendOnQT.IsChecked ?? false;
-        UpdateProfile();
-    }
-
-    private void tB_ProfileLaunchString_TextChanged(object sender, TextChangedEventArgs e)
-    {
-        if (selectedProfile is null)
-            return;
-
-        // prevent update loop
-        if (profileLock.IsEntered())
-            return;
-
-        selectedProfile.LaunchString = tB_ProfileLaunchString.Text;
         UpdateProfile();
     }
 

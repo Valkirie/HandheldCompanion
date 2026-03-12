@@ -94,8 +94,8 @@ public static class PerformanceManager
     private static double TDPMin;
     private static double TDPMax;
     private static bool tdpWatchdogPendingStop;
-    private static readonly double[] CurrentTDP = new double[5]; // used to store current TDP
-    private static readonly double[] StoredTDP = new double[3]; // used to store TDP
+    private static readonly double[] CurrentTDP = new double[5] { 0, 0, 0, 0, 0 };  // store current TDP, unused
+    private static readonly double[] RequestedTDP = new double[3] { 0, 0, 0 };      // store requested TDP
 
     private const string dllName = "WinRing0x64.dll";
 
@@ -123,6 +123,10 @@ public static class PerformanceManager
     {
         if (IsInitialized)
             return;
+
+        // temporary values
+        TDPMin = IDevice.GetCurrent().cTDP[0];
+        TDPMax = IDevice.GetCurrent().cTDP[1];
 
         // initialize watchdog(s)
         cpuWatchdog.Start();
@@ -243,14 +247,26 @@ public static class PerformanceManager
         {
             case "ConfigurableTDPOverrideDown":
                 {
-                    TDPMin = Convert.ToDouble(value);
+                    double TDPmin = Convert.ToDouble(value);
+                    if (TDPmin == 0 || TDPMin > TDPMax)
+                        return;
+
+                    // update value
+                    TDPMin = TDPmin;
+
                     if (AutoTDPMax != 0d && AutoTDPMax < TDPMin)
                         AutoTDPMax = TDPMin;
                 }
                 break;
             case "ConfigurableTDPOverrideUp":
                 {
-                    TDPMax = Convert.ToDouble(value);
+                    double TDPmax = Convert.ToDouble(value);
+                    if (TDPmax == 0 || TDPMax < TDPMin)
+                        return;
+
+                    // update value
+                    TDPMax = TDPmax;
+
                     if (AutoTDPMax == 0d || AutoTDPMax > TDPMax)
                         AutoTDPMax = TDPMax;
                 }
@@ -567,13 +583,13 @@ public static class PerformanceManager
                 }
 
                 // are we done ?
-                TDPdone = CurrentTDP[0] == StoredTDP[0] && CurrentTDP[1] == StoredTDP[1] && CurrentTDP[2] == StoredTDP[2];
+                TDPdone = CurrentTDP[0] == RequestedTDP[0] && CurrentTDP[1] == RequestedTDP[1] && CurrentTDP[2] == RequestedTDP[2];
 
                 // processor specific
                 if (processor is IntelProcessor)
                 {
-                    double TDPslow = StoredTDP[(int)PowerType.Slow];
-                    double TDPfast = StoredTDP[(int)PowerType.Fast];
+                    double TDPslow = RequestedTDP[(int)PowerType.Slow];
+                    double TDPfast = RequestedTDP[(int)PowerType.Fast];
 
                     if (TDPslow != 0.0d && TDPfast != 0.0d)
                         // only request an update if current limit is different than stored
@@ -713,7 +729,7 @@ public static class PerformanceManager
                 // read current values and (re)apply requested TDP if needed
                 for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
                 {
-                    double TDP = StoredTDP[idx];
+                    double TDP = RequestedTDP[idx];
                     if (TDP == 0.0d)
                         continue;
 
@@ -736,13 +752,13 @@ public static class PerformanceManager
                 }
 
                 // are we done ?
-                TDPdone = CurrentTDP[0] == StoredTDP[0] && CurrentTDP[1] == StoredTDP[1] && CurrentTDP[2] == StoredTDP[2];
+                TDPdone = CurrentTDP[0] == RequestedTDP[0] && CurrentTDP[1] == RequestedTDP[1] && CurrentTDP[2] == RequestedTDP[2];
 
                 // processor specific
                 if (processor is IntelProcessor)
                 {
-                    double TDPslow = StoredTDP[(int)PowerType.Slow];
-                    double TDPfast = StoredTDP[(int)PowerType.Fast];
+                    double TDPslow = RequestedTDP[(int)PowerType.Slow];
+                    double TDPfast = RequestedTDP[(int)PowerType.Fast];
 
                     if (TDPslow != 0.0d && TDPfast != 0.0d)
                         // only request an update if current limit is different than stored
@@ -899,7 +915,7 @@ public static class PerformanceManager
 
         // update value read by timer
         int idx = (int)type;
-        StoredTDP[idx] = value;
+        RequestedTDP[idx] = value;
 
         // skip if processor is not ready
         if (processor is null || !processor.IsInitialized)
@@ -908,7 +924,8 @@ public static class PerformanceManager
         // immediately apply
         if (immediate)
         {
-            CurrentTDP[idx] = value;
+            // TODO: Implement proper TDP reading
+            // CurrentTDP[idx] = value;
 
             if (processor is IntelProcessor)
                 // Intel doesn't have stapm
@@ -943,8 +960,9 @@ public static class PerformanceManager
             double TDPslow = Math.Min(TDPMax, Math.Max(TDPMin, PL1));
             double TDPfast = Math.Min(TDPMax, Math.Max(TDPMin, PL2));
 
-            CurrentTDP[(int)PowerType.MsrSlow] = TDPslow;
-            CurrentTDP[(int)PowerType.MsrFast] = TDPfast;
+            // TODO: Implement proper TDP reading
+            // CurrentTDP[(int)PowerType.MsrSlow] = TDPslow;
+            // CurrentTDP[(int)PowerType.MsrFast] = TDPfast;
             ((IntelProcessor)processor).SetMSRLimit(TDPslow, TDPfast);
         }
     }
@@ -1136,11 +1154,14 @@ public static class PerformanceManager
 
     public static void Resume(bool OS)
     {
+        // TODO: Implement proper TDP reading
+        /*
         foreach (PowerType type in (PowerType[])Enum.GetValues(typeof(PowerType)))
         {
             int idx = (int)type;
             CurrentTDP[idx] = 0;
         }
+        */
     }
 
     public static Processor? GetProcessor() => processor;

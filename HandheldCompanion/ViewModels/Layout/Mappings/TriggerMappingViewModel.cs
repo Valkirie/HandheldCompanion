@@ -87,66 +87,6 @@ namespace HandheldCompanion.ViewModels
                     triggerAction.motionThreshold = value;
                     OnPropertyChanged(nameof(TriggerOutput));
                 }
-                OnPropertyChanged(nameof(ShiftModeIndex));
-                OnPropertyChanged(nameof(ShowShiftSelection));
-                OnPropertyChanged(nameof(ShiftA));
-                OnPropertyChanged(nameof(ShiftB));
-                OnPropertyChanged(nameof(ShiftC));
-                OnPropertyChanged(nameof(ShiftD));
-            }
-        }
-
-        public bool ShowShiftSelection => ShiftModeIndex == 2;
-
-        public bool ShiftA
-        {
-            get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftA);
-            set
-            {
-                if (Action is null || value == ShiftA) return;
-                Action.ShiftSlot = value
-                    ? Action.ShiftSlot | ShiftSlot.ShiftA
-                    : Action.ShiftSlot & ~ShiftSlot.ShiftA;
-                OnPropertyChanged(nameof(ShiftA));
-            }
-        }
-
-        public bool ShiftB
-        {
-            get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftB);
-            set
-            {
-                if (Action is null || value == ShiftB) return;
-                Action.ShiftSlot = value
-                    ? Action.ShiftSlot | ShiftSlot.ShiftB
-                    : Action.ShiftSlot & ~ShiftSlot.ShiftB;
-                OnPropertyChanged(nameof(ShiftB));
-            }
-        }
-
-        public bool ShiftC
-        {
-            get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftC);
-            set
-            {
-                if (Action is null || value == ShiftC) return;
-                Action.ShiftSlot = value
-                    ? Action.ShiftSlot | ShiftSlot.ShiftC
-                    : Action.ShiftSlot & ~ShiftSlot.ShiftC;
-                OnPropertyChanged(nameof(ShiftC));
-            }
-        }
-
-        public bool ShiftD
-        {
-            get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftD);
-            set
-            {
-                if (Action is null || value == ShiftD) return;
-                Action.ShiftSlot = value
-                    ? Action.ShiftSlot | ShiftSlot.ShiftD
-                    : Action.ShiftSlot & ~ShiftSlot.ShiftD;
-                OnPropertyChanged(nameof(ShiftD));
             }
         }
 

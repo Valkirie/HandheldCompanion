@@ -434,6 +434,9 @@ public partial class QuickProfilesPage : Page
         if (src is not SettingsCard)
             return;
 
+        if (selectedProfile is null)
+            return;
+
         OverlayQuickTools.GetCurrent().performancePage.SelectionChanged(selectedProfile.PowerProfiles[(int)PowerLineStatus.Offline]);
         OverlayQuickTools.GetCurrent().NavigateToPage("QuickPerformancePage");
     }
@@ -443,6 +446,9 @@ public partial class QuickProfilesPage : Page
         // If the click originated in the ComboBox (or any ComboBoxItem), ignore it
         DependencyObject? src = e.Source as DependencyObject;
         if (src is not SettingsCard)
+            return;
+
+        if (selectedProfile is null)
             return;
 
         OverlayQuickTools.GetCurrent().performancePage.SelectionChanged(selectedProfile.PowerProfiles[(int)PowerLineStatus.Online]);
@@ -585,16 +591,23 @@ public partial class QuickProfilesPage : Page
                     IntegerScalingTypeComboBox.SelectedIndex = selectedProfile.IntegerScalingType;
 
                     if (desktopScreen is not null)
-                        IntegerScalingComboBox.SelectedItem = desktopScreen.screenDividers.FirstOrDefault(d => d.divider == selectedProfile.IntegerScalingDivider);
+                    {
+                        // try and get the appropriate scaling divider, pick first item otherwise
+                        ScreenDivider? scalingDivider = desktopScreen.screenDividers.FirstOrDefault(d => d.divider == selectedProfile.IntegerScalingDivider);
+                        if (scalingDivider is not null && IntegerScalingComboBox.Items.Contains(scalingDivider))
+                            IntegerScalingComboBox.SelectedItem = scalingDivider;
+                        else
+                            IntegerScalingComboBox.SelectedIndex = 0;
+                    }
 
                     // RIS
                     RISToggle.IsOn = selectedProfile.RISEnabled;
                     RISSlider.Value = selectedProfile.RISSharpness;
                 });
 
-                if (currentAction is not null)
+                if (currentAction is GyroActions gyroActions)
                 {
-                    GyroHotkey.inputsChord.ButtonState = ((GyroActions)currentAction).MotionTrigger.Clone() as ButtonState;
+                    GyroHotkey.inputsChord.ButtonState = gyroActions.MotionTrigger.Clone() as ButtonState;
                     ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
                 }
             }
@@ -732,10 +745,12 @@ public partial class QuickProfilesPage : Page
         if (profileLock.IsEntered())
             return;
 
-        if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+        if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions? currentAction))
             return;
 
-        ((GyroActions)currentAction).MotionInput = (MotionInput)cB_Input.SelectedIndex;
+        if (currentAction is GyroActions gyroActions)
+            gyroActions.MotionInput = (MotionInput)cB_Input.SelectedIndex;
+
         UpdateProfile();
     }
 
@@ -749,7 +764,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // try get current actions, if exists
-        selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions gyroActions);
+        selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions? gyroActions);
 
         MotionOutput motionOuput = (MotionOutput)cB_Output.SelectedIndex;
         switch (motionOuput)
@@ -762,24 +777,25 @@ public partial class QuickProfilesPage : Page
             case MotionOutput.LeftStick:
             case MotionOutput.RightStick:
                 {
-                    if (gyroActions is null || gyroActions is not AxisActions)
+                    if (gyroActions is not AxisActions)
                     {
                         gyroActions = new AxisActions()
                         {
                             AxisAntiDeadZone = GyroActions.DefaultAxisAntiDeadZone
                         };
                     }
-
-                    ((AxisActions)gyroActions).Axis = motionOuput == MotionOutput.LeftStick ? AxisLayoutFlags.LeftStick : AxisLayoutFlags.RightStick;
-
-                    ((AxisActions)gyroActions).MotionTrigger = GyroHotkey.inputsChord.ButtonState.Clone() as ButtonState;
+                    else if (gyroActions is AxisActions axisActions)
+                    {
+                        axisActions.Axis = motionOuput == MotionOutput.LeftStick ? AxisLayoutFlags.LeftStick : AxisLayoutFlags.RightStick;
+                        axisActions.MotionTrigger = GyroHotkey.inputsChord.ButtonState.Clone() as ButtonState;
+                    }
                 }
                 break;
 
             case MotionOutput.MoveCursor:
             case MotionOutput.ScrollWheel:
                 {
-                    if (gyroActions is null || gyroActions is not MouseActions)
+                    if (gyroActions is not MouseActions)
                     {
                         gyroActions = new MouseActions()
                         {
@@ -788,8 +804,10 @@ public partial class QuickProfilesPage : Page
                             Deadzone = GyroActions.DefaultDeadzone
                         };
                     }
-
-                    ((MouseActions)gyroActions).MotionTrigger = GyroHotkey.inputsChord.ButtonState.Clone() as ButtonState;
+                    else if (gyroActions is MouseActions mouseActions)
+                    {
+                        mouseActions.MotionTrigger = GyroHotkey.inputsChord.ButtonState.Clone() as ButtonState;
+                    }
                 }
                 break;
         }
@@ -810,11 +828,11 @@ public partial class QuickProfilesPage : Page
         if (profileLock.IsEntered())
             return;
 
-        if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+        if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions? currentAction))
             return;
 
-        if (currentAction is AxisActions)
-            ((AxisActions)currentAction).AxisAntiDeadZone = (int)SliderUMCAntiDeadzone.Value;
+        if (currentAction is AxisActions axisActions)
+            axisActions.AxisAntiDeadZone = (int)SliderUMCAntiDeadzone.Value;
 
         UpdateProfile();
     }
@@ -828,11 +846,11 @@ public partial class QuickProfilesPage : Page
         if (profileLock.IsEntered())
             return;
 
-        if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+        if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions? currentAction))
             return;
 
-        if (currentAction is AxisActions)
-            ((AxisActions)currentAction).gyroWeight = (float)Slider_GyroWeight.Value;
+        if (currentAction is AxisActions axisActions)
+            axisActions.gyroWeight = (float)Slider_GyroWeight.Value;
 
         UpdateProfile();
     }
@@ -868,7 +886,7 @@ public partial class QuickProfilesPage : Page
         if (selectedProfile is null)
             return;
 
-        if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+        if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions? currentAction))
             return;
 
         if (hotkey.ButtonFlags != gyroButtonFlags)
@@ -881,7 +899,9 @@ public partial class QuickProfilesPage : Page
         // update gyro hotkey
         GyroHotkey = hotkey;
 
-        ((GyroActions)currentAction).MotionTrigger = hotkey.inputsChord.ButtonState.Clone() as ButtonState;
+        if (currentAction is GyroActions gyroActions)
+            gyroActions.MotionTrigger = hotkey.inputsChord.ButtonState.Clone() as ButtonState;
+
         UpdateProfile();
     }
 
@@ -894,10 +914,12 @@ public partial class QuickProfilesPage : Page
         if (profileLock.IsEntered())
             return;
 
-        if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+        if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions? currentAction))
             return;
 
-        ((GyroActions)currentAction).MotionMode = (MotionMode)cB_UMC_MotionDefaultOffOn.SelectedIndex;
+        if (currentAction is GyroActions gyroActions)
+            gyroActions.MotionMode = (MotionMode)cB_UMC_MotionDefaultOffOn.SelectedIndex;
+
         UpdateProfile();
     }
 

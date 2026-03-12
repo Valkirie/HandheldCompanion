@@ -154,21 +154,19 @@ public class SettingsManager : IManager
         {
             case "ConfigurableTDPOverrideDown":
                 {
-                    var TDPoverride = GetBoolean("ConfigurableTDPOverride");
-
-                    var TDPvalue = Convert.ToDouble(Properties.Settings.Default["ConfigurableTDPOverrideDown"]);
-                    return TDPoverride
-                        ? Properties.Settings.Default["ConfigurableTDPOverrideDown"]
+                    bool TDPoverride = GetBoolean("ConfigurableTDPOverride");
+                    double TDPvalue = Convert.ToDouble(Properties.Settings.Default["ConfigurableTDPOverrideDown"]);
+                    return TDPoverride && TDPvalue != 0.0d
+                        ? TDPvalue
                         : IDevice.GetCurrent().cTDP[0];
                 }
 
             case "ConfigurableTDPOverrideUp":
                 {
-                    var TDPoverride = GetBoolean("ConfigurableTDPOverride");
-
-                    var TDPvalue = Convert.ToDouble(Properties.Settings.Default["ConfigurableTDPOverrideUp"]);
-                    return TDPoverride
-                        ? Properties.Settings.Default["ConfigurableTDPOverrideUp"]
+                    bool TDPoverride = GetBoolean("ConfigurableTDPOverride");
+                    double TDPvalue = Convert.ToDouble(Properties.Settings.Default["ConfigurableTDPOverrideUp"]);
+                    return TDPoverride && TDPvalue != 0.0d
+                        ? TDPvalue
                         : IDevice.GetCurrent().cTDP[1];
                 }
 

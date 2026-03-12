@@ -740,8 +740,9 @@ namespace HandheldCompanion.ViewModels
                 foreach (ButtonFlags buttonFlags in Hotkey.inputsChord.ButtonState.Buttons)
                 {
                     string glyphString = string.Empty;
+                    string glyphFont = string.Empty;
 
-                    var color = controller.GetGlyphColor(buttonFlags);
+                    Color? color = controller.GetGlyphColor(buttonFlags);
                     Brush? glyphColor = color.HasValue ? new SolidColorBrush(color.Value) : null;
 
                     switch (buttonFlags)
@@ -757,13 +758,16 @@ namespace HandheldCompanion.ViewModels
                         case ButtonFlags.OEM9:
                         case ButtonFlags.OEM10:
                             glyphString = IDevice.GetCurrent().GetGlyph(buttonFlags);
+                            glyphFont = IDevice.GetCurrent().GetFontFamily(buttonFlags);
                             break;
                         default:
                             glyphString = controller.GetGlyph(buttonFlags);
+                            glyphFont = controller.GetFontFamily(buttonFlags);
                             break;
                     }
 
-                    ButtonGlyphs.SafeAdd(new(Hotkey, this, glyphString, glyphColor));
+                    FontIconViewModel fontIcon = new(Hotkey, this, glyphString, glyphColor, glyphFont);
+                    ButtonGlyphs.SafeAdd(fontIcon);
                 }
             });
 

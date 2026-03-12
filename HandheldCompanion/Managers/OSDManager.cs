@@ -5,6 +5,7 @@ using RTSSSharedMemoryNET;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Timers;
 
 namespace HandheldCompanion.Managers;
@@ -20,8 +21,7 @@ public static class OSDManager
     // C4: VRAM
     // C5: BATT
     // C6: FPS
-    private const string Header =
-        "<C0=FFFFFF><C1=8000FF><A0=-4><S0=-50><S1=50>";
+    private const string Header = "<C0=FFFFFF><C1=8000FF><A0=-4><S0=-50><S1=50>";
 
     private static bool IsInitialized;
     public static string[] OverlayOrder;
@@ -38,8 +38,9 @@ public static class OSDManager
     private static readonly Timer RefreshTimer;
     private static int RefreshInterval = 100;
 
-    private static readonly ConcurrentDictionary<int, OSD> OnScreenDisplay = new();
-    private static AppEntry OnScreenAppEntry;
+    private static readonly ConcurrentDictionary<int, OSD> OnScreenDisplays = new();
+    public static OSD OnScreenDisplay => OnScreenDisplays.FirstOrDefault(o => o.Key == OnScreenAppEntry.ProcessId).Value;
+    public static AppEntry OnScreenAppEntry;
     private static List<string> Content = new();
 
     static OSDManager()
@@ -132,7 +133,7 @@ public static class OSDManager
         RefreshTimer.Stop();
 
         // unhook all processes
-        foreach (var processId in OnScreenDisplay.Keys)
+        foreach (var processId in OnScreenDisplays.Keys)
             RTSS_Unhooked(processId);
 
         // manage events
@@ -151,7 +152,7 @@ public static class OSDManager
         try
         {
             // clear previous display
-            if (OnScreenDisplay.TryGetValue(processId, out OSD? OSD))
+            if (OnScreenDisplays.TryGetValue(processId, out OSD? OSD))
             {
                 if (OSD is not null)
                 {
@@ -159,7 +160,7 @@ public static class OSDManager
                     OSD.Dispose();
                 }
 
-                OnScreenDisplay.Remove(processId, out _);
+                OnScreenDisplays.Remove(processId, out _);
             }
         }
         catch { }
@@ -176,10 +177,10 @@ public static class OSDManager
             OnScreenAppEntry = appEntry;
 
             // only create a new OSD if needed
-            if (OnScreenDisplay.ContainsKey(appEntry.ProcessId))
+            if (OnScreenDisplays.ContainsKey(appEntry.ProcessId))
                 return;
 
-            OnScreenDisplay[OnScreenAppEntry.ProcessId] = new OSD(OnScreenAppEntry.Name);
+            OnScreenDisplays[OnScreenAppEntry.ProcessId] = new OSD(OnScreenAppEntry.Name);
         }
         catch { }
     }
@@ -189,21 +190,21 @@ public static class OSDManager
         if (OverlayLevel == 0)
             return;
 
-        foreach (var pair in OnScreenDisplay)
+        foreach (var pair in OnScreenDisplays)
         {
-            var processId = pair.Key;
-            var processOSD = pair.Value;
+            int processId = pair.Key;
+            OSD processOSD = pair.Value;
 
             try
             {
                 if (processId == OnScreenAppEntry.ProcessId)
                 {
-                    var content = Draw(processId);
+                    string content = Draw(processId);
                     processOSD.Update(content);
                 }
                 else
                 {
-                    processOSD.Update("");
+                    processOSD.Update(string.Empty);
                 }
             }
             catch { }
@@ -279,7 +280,7 @@ public static class OSDManager
                             RefreshTimer.Stop();
 
                             // Remove previous UI in External
-                            foreach (var pair in OnScreenDisplay)
+                            foreach (var pair in OnScreenDisplays)
                             {
                                 var processOSD = pair.Value;
                                 processOSD.Update("");
@@ -297,7 +298,7 @@ public static class OSDManager
                         RefreshTimer.Stop();
 
                         // clear UI on stop
-                        foreach (var pair in OnScreenDisplay)
+                        foreach (var pair in OnScreenDisplays)
                         {
                             var processOSD = pair.Value;
                             processOSD.Update("");
@@ -357,6 +358,12 @@ public struct OverlayEntryElement
         SzUnit = unit;
     }
 
+    public OverlayEntryElement(string value, string unit = "")
+    {
+        Value = value;
+        SzUnit = unit;
+    }
+
     private static string FormatValue(float value, string unit)
     {
         string format = unit switch
@@ -372,12 +379,6 @@ public struct OverlayEntryElement
         };
 
         return value.ToString(format);
-    }
-
-    public OverlayEntryElement(string value, string unit)
-    {
-        Value = value;
-        SzUnit = unit;
     }
 }
 

@@ -168,7 +168,22 @@ public partial class SettingsPage : Page
                     Toggle_AutoStart.IsOn = Convert.ToBoolean(value);
                     break;
                 case "StartMinimized":
-                    Toggle_Background.IsOn = Convert.ToBoolean(value);
+                    {
+                        bool enabled = Convert.ToBoolean(value);
+                        Toggle_StartMinimized.IsOn = enabled;
+
+                        if (enabled)
+                            Toggle_StartMaximized.IsOn = !enabled;
+                    }
+                    break;
+                case "StartMaximized":
+                    {
+                        bool enabled = Convert.ToBoolean(value);
+                        Toggle_StartMaximized.IsOn = enabled;
+
+                        if (enabled)
+                            Toggle_StartMinimized.IsOn = !enabled;
+                    }
                     break;
                 case "CloseMinimises":
                     Toggle_CloseMinimizes.IsOn = Convert.ToBoolean(value);
@@ -234,6 +249,9 @@ public partial class SettingsPage : Page
                 case "MasterInterval":
                     cB_MasterInterval.SelectedIndex = Convert.ToInt32(value);
                     break;
+                case "ShowSplashScreen":
+                    Toggle_SplashScreen.IsOn = Convert.ToBoolean(value);
+                    break;
             }
         });
     }
@@ -260,12 +278,36 @@ public partial class SettingsPage : Page
         ManagerFactory.settingsManager.SetProperty("RunAtStartup", Toggle_AutoStart.IsOn);
     }
 
-    private void Toggle_Background_Toggled(object? sender, RoutedEventArgs? e)
+    private void Toggle_StartMinimized_Toggled(object? sender, RoutedEventArgs? e)
     {
         if (!IsLoaded)
             return;
 
-        ManagerFactory.settingsManager.SetProperty("StartMinimized", Toggle_Background.IsOn);
+        bool startMinimized = Toggle_StartMinimized.IsOn;
+        ManagerFactory.settingsManager.SetProperty("StartMinimized", startMinimized);
+
+        // Enforce mutual exclusivity with StartMaximized
+        if (startMinimized && Toggle_StartMaximized.IsOn)
+        {
+            Toggle_StartMaximized.IsOn = false;
+            ManagerFactory.settingsManager.SetProperty("StartMaximized", false);
+        }
+    }
+
+    private void Toggle_StartMaximized_Toggled(object? sender, RoutedEventArgs? e)
+    {
+        if (!IsLoaded)
+            return;
+
+        bool StartMaximized = Toggle_StartMaximized.IsOn;
+        ManagerFactory.settingsManager.SetProperty("StartMaximized", StartMaximized);
+
+        // Enforce mutual exclusivity with StartMinimized
+        if (StartMaximized && Toggle_StartMinimized.IsOn)
+        {
+            Toggle_StartMinimized.IsOn = false;
+            ManagerFactory.settingsManager.SetProperty("StartMinimized", false);
+        }
     }
 
     private void Toggle_CloseMinimizes_Toggled(object? sender, RoutedEventArgs? e)
@@ -635,5 +677,14 @@ public partial class SettingsPage : Page
             return;
 
         ManagerFactory.settingsManager.SetProperty("MasterInterval", cB_MasterInterval.SelectedIndex);
+    }
+
+    private void Toggle_SplashScreen_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("ShowSplashScreen", Toggle_SplashScreen.IsOn);
+
     }
 }
