@@ -1,4 +1,4 @@
-name: Build and Release HandheldCompanion
+name: Build HandheldCompanion
 
 on:
   pull_request:
@@ -61,7 +61,7 @@ jobs:
       - name: Set Release Version in Repo
         if: inputs.releaseVersion != ''
         run: |
-          (Get-Content -Path ./HandheldCompanion.iss) -replace "#define MyAppVersion `'\d+(?:\.\d+){3}`'", "#define MyAppVersion '${{ inputs.releaseVersion }}'" | Out-File ./HandheldCompanion.iss
+          (Get-Content -Path ./HandheldCompanion.iss) -replace '#define MyAppVersion\s+"\d+(?:\.\d+){3}"', "#define MyAppVersion `"${{ inputs.releaseVersion }}`"" | Out-File ./HandheldCompanion.iss
           (Get-Content -Path ./HandheldCompanion/HandheldCompanion.csproj) -replace "<Version>\d+(?:\.\d+){3}</Version>", "<Version>${{ inputs.releaseVersion }}</Version>" | Out-File ./HandheldCompanion/HandheldCompanion.csproj
 
       - name: Install Innosetup
@@ -79,15 +79,15 @@ jobs:
       - name: Build Solution
         run: dotnet build ${{ env.SOLUTION_NAME }}.sln /p:Configuration=Release
 
-      - name: Set Installer Version
-        id: version
-        run: |
-          $version = if ('${{ inputs.releaseVersion }}' -ne '') { '${{ inputs.releaseVersion }}' } else { '${{ github.sha }}' }
-          echo "value=$version" >> $env:GITHUB_OUTPUT
-
       - name: Create Installer
         run: |
-          iscc.exe ${{ env.SOLUTION_NAME }}.iss /DMyAppVersion=${{ steps.version.outputs.value }}
+          iscc.exe ${{ env.SOLUTION_NAME }}.iss
+
+      - name: Read Installer Version
+        id: version
+        run: |
+          $version = (Select-String -Path './${{ env.SOLUTION_NAME }}.iss' -Pattern '#define MyAppVersion\s+"([\d.]+)"').Matches[0].Groups[1].Value
+          echo "value=$version" >> $env:GITHUB_OUTPUT
 
       - name: Upload Installer Artifact
         uses: actions/upload-artifact@v4
