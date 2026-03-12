@@ -5,11 +5,6 @@ on:
     branches:
       - main
   workflow_dispatch:
-    inputs:
-      releaseVersion:
-        description: 'Release version to create'
-        required: false
-        type: string
 
 defaults:
   run:
