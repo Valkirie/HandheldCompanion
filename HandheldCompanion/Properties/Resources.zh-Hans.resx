@@ -2159,9 +2159,6 @@
   <data name="MainWindow_Exit" xml:space="preserve">
     <value>退出</value>
   </data>
-  <data name="MainWindow_MainWindow" xml:space="preserve">
-    <value>主窗口</value>
-  </data>
   <data name="MainWindow_Navigate" xml:space="preserve">
     <value>导航</value>
   </data>

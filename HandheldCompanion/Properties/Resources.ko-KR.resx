@@ -2159,9 +2159,6 @@
   <data name="MainWindow_Exit" xml:space="preserve">
     <value>종료</value>
   </data>
-  <data name="MainWindow_MainWindow" xml:space="preserve">
-    <value>메인 창</value>
-  </data>
   <data name="MainWindow_Navigate" xml:space="preserve">
     <value>탐색</value>
   </data>

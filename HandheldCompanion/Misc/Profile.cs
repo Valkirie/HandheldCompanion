@@ -8,6 +8,7 @@ using HandheldCompanion.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using WpfScreenHelper.Enum;
@@ -301,5 +302,30 @@ public partial class Profile : ICloneable, IComparable
             execs.Add(Path);
 
         return execs;
+    }
+
+    /// <summary>
+    /// Launches the profile's executable with its configured arguments and working directory.
+    /// </summary>
+    /// <param name="runAsAdmin">If true, launches with administrator privileges.</param>
+    /// <returns>The started Process, or null if launch failed.</returns>
+    public Process? Launch(bool runAsAdmin = false)
+    {
+        if (string.IsNullOrEmpty(Path))
+            throw new InvalidOperationException("Profile path is not set.");
+
+        if (!File.Exists(Path))
+            throw new FileNotFoundException($"Profile executable not found: {Path}");
+
+        ProcessStartInfo psi = new ProcessStartInfo
+        {
+            FileName = !string.IsNullOrEmpty(LaunchString) ? LaunchString : Executable,
+            WorkingDirectory = Directory.GetParent(Path)?.FullName ?? string.Empty,
+            Arguments = Arguments,
+            UseShellExecute = true,
+            Verb = runAsAdmin ? "runas" : string.Empty
+        };
+
+        return Process.Start(psi);
     }
 }

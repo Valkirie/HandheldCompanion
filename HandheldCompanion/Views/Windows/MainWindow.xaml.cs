@@ -82,6 +82,10 @@ public partial class MainWindow : GamepadWindow
     private bool NotifyInTaskbar;
     public string prevNavItemTag;
 
+    // Track tray menu items for liked profiles
+    private readonly Dictionary<Guid, ToolStripMenuItem> profileMenuItems = new();
+    private ToolStripSeparator profileSeparator;
+
     private WindowState prevWindowState;
     private bool isFullscreen;
     private WindowState preFullscreenWindowState = WindowState.Normal;
@@ -151,10 +155,8 @@ public partial class MainWindow : GamepadWindow
 
         notifyIcon.DoubleClick += (sender, e) => { ToggleState(); };
 
-        AddNotifyIconItem(Properties.Resources.MainWindow_MainWindow, "MainWindow");
-        AddNotifyIconItem(Properties.Resources.MainWindow_QuickTools, "QuickTools");
-        AddNotifyIconSeparator();
-        AddNotifyIconItem(Properties.Resources.MainWindow_Exit, "Exit");
+        // Build initial tray menu (will be updated when ProfileManager initializes)
+        BuildTrayMenu();
 
         // paths
         Process process = Process.GetCurrentProcess();
@@ -191,6 +193,11 @@ public partial class MainWindow : GamepadWindow
         ManagerFactory.notificationManager.Added += NotificationManagerUpdated;
         ManagerFactory.notificationManager.Discarded += NotificationManagerUpdated;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+
+        // Subscribe to profile manager events to update tray menu
+        ManagerFactory.profileManager.Initialized += ProfileManager_Initialized;
+        ManagerFactory.profileManager.Updated += OnProfileUpdated;
+        ManagerFactory.profileManager.Deleted += RemoveProfileFromTrayMenu;
 
         // prepare toast manager
         ToastManager.Start();
@@ -236,6 +243,17 @@ public partial class MainWindow : GamepadWindow
 
         // load gamepad navigation manager
         gamepadFocusManager = new(this, ContentFrame);
+    }
+
+    private void ProfileManager_Initialized()
+    {
+        List<Profile> likedProfiles = ManagerFactory.profileManager?.GetProfiles(true)
+            .Where(p => p.IsLiked && !p.Default)
+            .OrderBy(p => p.Name)
+            .ToList() ?? new List<Profile>();
+
+        foreach (Profile profile in likedProfiles)
+            AddProfileToTrayMenu(profile);
     }
 
     protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -403,6 +421,107 @@ public partial class MainWindow : GamepadWindow
         notifyIcon.ContextMenuStrip.Items.Add(separator);
     }
 
+    /// <summary>
+    /// Initializes the tray icon context menu with standard items.
+    /// Called once during initialization.
+    /// </summary>
+    private void BuildTrayMenu()
+    {
+        UIHelper.TryInvoke(() =>
+        {
+            notifyIcon.ContextMenuStrip.Items.Clear();
+
+            // Add separator placeholder (will be shown/hidden based on liked profiles)
+            profileSeparator = new ToolStripSeparator { Visible = false };
+            notifyIcon.ContextMenuStrip.Items.Add(profileSeparator);
+
+            // Add standard menu items
+            AddNotifyIconItem(Properties.Resources.MainWindow_MainWindow, "MainWindow");
+            AddNotifyIconItem(Properties.Resources.MainWindow_QuickTools, "QuickTools");
+            AddNotifyIconSeparator();
+            AddNotifyIconItem(Properties.Resources.MainWindow_Exit, "Exit");
+        });
+    }
+
+    /// <summary>
+    /// Adds a liked profile to the tray menu.
+    /// </summary>
+    private void AddProfileToTrayMenu(Profile profile)
+    {
+        if (profile == null || !profile.IsLiked || profile.Default || profileMenuItems.ContainsKey(profile.Guid))
+            return;
+
+        UIHelper.TryInvoke(() =>
+        {
+            // Extract icon from executable
+            System.Drawing.Icon profileIcon = null;
+            if (!string.IsNullOrEmpty(profile.Path) && File.Exists(profile.Path))
+            {
+                try
+                {
+                    profileIcon = System.Drawing.Icon.ExtractAssociatedIcon(profile.Path);
+                }
+                catch { }
+            }
+
+            var menuItem = new ToolStripMenuItem(profile.Name)
+            {
+                Tag = $"LaunchProfile:{profile.Guid}",
+                Image = profileIcon?.ToBitmap()
+            };
+            menuItem.Click += MenuItem_Click;
+
+            // Insert at the correct alphabetical position
+            int insertIndex = 0;
+            foreach (var existingGuid in profileMenuItems.Keys.OrderBy(g => profileMenuItems[g].Text))
+            {
+                if (string.Compare(profile.Name, profileMenuItems[existingGuid].Text, StringComparison.OrdinalIgnoreCase) > 0)
+                    insertIndex++;
+                else
+                    break;
+            }
+
+            notifyIcon.ContextMenuStrip.Items.Insert(insertIndex, menuItem);
+            profileMenuItems[profile.Guid] = menuItem;
+
+            // Show separator since we have at least one liked profile
+            profileSeparator.Visible = true;
+        });
+    }
+
+    /// <summary>
+    /// Removes a profile from the tray menu.
+    /// </summary>
+    private void RemoveProfileFromTrayMenu(Profile profile)
+    {
+        if (profile == null || !profileMenuItems.ContainsKey(profile.Guid))
+            return;
+
+        UIHelper.TryInvoke(() =>
+        {
+            if (profileMenuItems.TryGetValue(profile.Guid, out var menuItem))
+            {
+                notifyIcon.ContextMenuStrip.Items.Remove(menuItem);
+                profileMenuItems.Remove(profile.Guid);
+                menuItem.Dispose();
+            }
+
+            // Hide separator if no liked profiles remain
+            profileSeparator.Visible = profileMenuItems.Any();
+        });
+    }
+
+    /// <summary>
+    /// Handles profile updates - adds if newly liked, removes if unliked.
+    /// </summary>
+    private void OnProfileUpdated(Profile profile, UpdateSource source, bool isCurrent)
+    {
+        if (profile.IsLiked)
+            AddProfileToTrayMenu(profile);
+        else
+            RemoveProfileFromTrayMenu(profile);
+    }
+
     public static MainWindow GetCurrent()
     {
         return CurrentWindow;
@@ -476,7 +595,32 @@ public partial class MainWindow : GamepadWindow
 
     private void MenuItem_Click(object? sender, EventArgs e)
     {
-        switch (((ToolStripMenuItem)sender).Tag)
+        string tag = ((ToolStripMenuItem)sender)?.Tag?.ToString() ?? string.Empty;
+
+        // Handle profile launch commands
+        if (tag.StartsWith("LaunchProfile:"))
+        {
+            string guidStr = tag.Substring("LaunchProfile:".Length);
+            if (Guid.TryParse(guidStr, out Guid profileGuid))
+            {
+                Profile profile = ManagerFactory.profileManager.GetProfileFromGuid(profileGuid);
+                if (profile != null)
+                {
+                    try
+                    {
+                        profile.Launch();
+                    }
+                    catch (Exception ex)
+                    {
+                        LogManager.LogError("Failed to launch profile {0}: {1}", profile.Name, ex.Message);
+                    }
+                }
+            }
+            return;
+        }
+
+        // Handle standard menu items
+        switch (tag)
         {
             case "MainWindow":
                 ToggleState();
@@ -715,6 +859,11 @@ public partial class MainWindow : GamepadWindow
         }
 
         CurrentDevice.Close();
+
+        // Clean up tray menu items
+        foreach (var menuItem in profileMenuItems.Values)
+            menuItem.Dispose();
+        profileMenuItems.Clear();
 
         notifyIcon.Visible = false;
         notifyIcon.Dispose();

@@ -224,16 +224,7 @@ namespace HandheldCompanion.ViewModels
 
                     await Task.Run(async () =>
                     {
-                        ProcessStartInfo psi = new ProcessStartInfo
-                        {
-                            FileName = !string.IsNullOrEmpty(profile.LaunchString) ? profile.LaunchString : Profile.Executable,
-                            WorkingDirectory = Directory.GetParent(Profile.Path)?.FullName ?? string.Empty,
-                            Arguments = Profile.Arguments,
-                            UseShellExecute = true,
-                            Verb = runAsAdmin ? "runas" : string.Empty,
-                        };
-
-                        using (Process? process = Process.Start(psi))
+                        using (Process? process = profile.Launch(runAsAdmin))
                         {
                             // failed to start the process
                             if (process == null)

@@ -2194,7 +2194,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Exit</value>
   </data>
   <data name="MainWindow_MainWindow" xml:space="preserve">
-    <value>Main Window</value>
+    <value>Handheld Companion</value>
   </data>
   <data name="MainWindow_Navigate" xml:space="preserve">
     <value>Navigate</value>

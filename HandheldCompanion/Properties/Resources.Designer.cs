@@ -6596,7 +6596,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Main Window.
+        ///   Looks up a localized string similar to Handheld Companion.
         /// </summary>
         public static string MainWindow_MainWindow {
             get {

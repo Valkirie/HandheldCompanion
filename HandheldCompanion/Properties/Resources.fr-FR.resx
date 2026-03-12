@@ -2173,9 +2173,6 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
   <data name="MainWindow_Exit" xml:space="preserve">
     <value>Quitter</value>
   </data>
-  <data name="MainWindow_MainWindow" xml:space="preserve">
-    <value>Fenêtre principale</value>
-  </data>
   <data name="MainWindow_Navigate" xml:space="preserve">
     <value>Naviguer</value>
   </data>
