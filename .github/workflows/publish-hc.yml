@@ -1,4 +1,4 @@
-name: Build and Release HandheldCompanion
+name: Build HandheldCompanion
 
 on:
   pull_request:
@@ -37,7 +37,7 @@ jobs:
 
     env:
       SOLUTION_NAME: HandheldCompanion
-      INNO_VERSION: 6.2.2
+      INNO_VERSION: 6.6.1
 
     steps:
       - name: Checkout
@@ -58,21 +58,29 @@ jobs:
             Exit 1
           }
 
-      # This step sets release version in source control. Uses pwsh for lack of an available github action.
       - name: Set Release Version in Repo
         if: inputs.releaseVersion != ''
         run: |
-          (Get-Content -Path ./HandheldCompanion.iss) -replace "#define MyAppVersion `'\d+(?:\.\d+){3}`'", "#define MyAppVersion '${{ inputs.releaseVersion }}'" | Out-File ./HandheldCompanion.iss
+          (Get-Content -Path ./HandheldCompanion.iss) -replace '#define MyAppVersion\s+"\d+(?:\.\d+){3}"', "#define MyAppVersion `"${{ inputs.releaseVersion }}`"" | Out-File ./HandheldCompanion.iss
           (Get-Content -Path ./HandheldCompanion/HandheldCompanion.csproj) -replace "<Version>\d+(?:\.\d+){3}</Version>", "<Version>${{ inputs.releaseVersion }}</Version>" | Out-File ./HandheldCompanion/HandheldCompanion.csproj
+
+      - name: Set Unofficial Build Version
+        if: inputs.releaseVersion == ''
+        run: |
+          $issContent = Get-Content -Path ./HandheldCompanion.iss -Raw
+          $baseVersion = ([regex]'#define MyAppVersion\s+"(\d+\.\d+\.\d+)\.\d+"').Match($issContent).Groups[1].Value
+          $unofficialVersion = "$baseVersion.${{ github.run_number }}"
+          Write-Host "Stamping unofficial build version: $unofficialVersion"
+          ($issContent -replace '#define MyAppVersion\s+"\d+(?:\.\d+){3}"', "#define MyAppVersion `"$unofficialVersion`"") | Out-File ./HandheldCompanion.iss
 
       - name: Install Innosetup
         run: |
           choco install innosetup --version=${{ env.INNO_VERSION }} --force
           
-      - name: Setup dotnet 8 SDK
+      - name: Setup dotnet 10 SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '10.x'
 
       - name: Restore Solution
         run: dotnet restore ${{ env.SOLUTION_NAME }}.sln
@@ -84,23 +92,15 @@ jobs:
         run: |
           iscc.exe ${{ env.SOLUTION_NAME }}.iss
 
-      - name: Create Release Pull Request
-        if: inputs.releaseVersion != ''
-        uses: peter-evans/create-pull-request@v5
+      - name: Read Installer Version
+        id: version
+        run: |
+          $version = (Select-String -Path './${{ env.SOLUTION_NAME }}.iss' -Pattern '#define MyAppVersion\s+"([\d.]+)"').Matches[0].Groups[1].Value
+          echo "value=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Upload Installer Artifact
+        uses: actions/upload-artifact@v4
         with:
-          branch: release/${{ inputs.releaseVersion }}
-          title: 'Release ${{ inputs.releaseVersion }}'
-          commit-message: 'Release ${{ inputs.releaseVersion }}'
-          body: 'Release ${{ inputs.releaseVersion }}. Triggered by ${{ github.actor }}'
-          
-      - name: Create Release
-        if: inputs.releaseVersion != ''
-        uses: softprops/action-gh-release@v0.1.15
-        with:
-          body_path: .github/workflows/RELEASE_FORMAT.txt
-          tag_name: ${{ inputs.releaseVersion }}
-          name: "Build ${{ inputs.releaseVersion }}"
-          draft: true
-          fail_on_unmatched_files: true
-          files: |
-            ./install/HandheldCompanion-${{ inputs.releaseVersion }}.exe
+          name: HandheldCompanion-${{ steps.version.outputs.value }}
+          path: ./install/HandheldCompanion-${{ steps.version.outputs.value }}.exe
+          if-no-files-found: error
