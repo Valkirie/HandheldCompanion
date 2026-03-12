@@ -66,9 +66,45 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private int _viewMode => ManagerFactory.settingsManager.GetInt("LibraryViewMode");
+        public int ViewMode
+        {
+            get => _viewMode;
+            set
+            {
+                int currentValue = ManagerFactory.settingsManager.GetInt("LibraryViewMode");
+                if (value != currentValue)
+                {
+                    ManagerFactory.settingsManager.SetProperty("LibraryViewMode", value);
+                    OnPropertyChanged(nameof(ViewMode));
+                    OnPropertyChanged(nameof(IsGridView));
+                    OnPropertyChanged(nameof(IsListView));
+                }
+            }
+        }
+
+        public bool IsGridView => ViewMode == 0;
+        public bool IsListView => ViewMode == 1;
+
+        private string _searchText = string.Empty;
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                if (_searchText != value)
+                {
+                    _searchText = value;
+                    OnPropertyChanged(nameof(SearchText));
+                    UpdateFiltering();
+                }
+            }
+        }
+
         public bool HasLiked => Profiles.Any(p => p.IsLiked);
 
         public ICommand ToggleSortCommand { get; }
+        public ICommand ToggleViewModeCommand { get; }
         public ICommand RefreshMetadataCommand { get; }
         public ICommand ScanLibraryCommand { get; }
 
@@ -141,18 +177,24 @@ namespace HandheldCompanion.ViewModels
             ProfilesView.IsLiveSorting = true;
             ProfilesView.IsLiveGrouping = true;
             ProfilesView.IsLiveFiltering = true;
+            ProfilesView.Filter = o => o is ProfileViewModel vm && MatchesSearchFilter(vm);
 
             FavoritesView = new ListCollectionView(Profiles);
             FavoritesView.IsLiveSorting = true;
             FavoritesView.IsLiveGrouping = true;
             FavoritesView.IsLiveFiltering = true;
-            FavoritesView.Filter = o => o is ProfileViewModel vm && vm.IsLiked;
+            FavoritesView.Filter = o => o is ProfileViewModel vm && vm.IsLiked && MatchesSearchFilter(vm);
 
             UpdateSorting();
 
             ToggleSortCommand = new DelegateCommand(() =>
             {
                 SortAscending = !SortAscending;
+            });
+
+            ToggleViewModeCommand = new DelegateCommand(() =>
+            {
+                ViewMode = ViewMode == 0 ? 1 : 0;
             });
 
             RefreshMetadataCommand = new DelegateCommand(async () =>
@@ -398,40 +440,46 @@ namespace HandheldCompanion.ViewModels
                     FavoritesView.LiveSortingProperties.Add(nameof(ProfileViewModel.Name));
                     break;
                 case 1:
-                    ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.DateCreated), direction));
-                    ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.DateCreated));
-                    FavoritesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.DateCreated), direction));
-                    FavoritesView.LiveSortingProperties.Add(nameof(ProfileViewModel.DateCreated));
-                    break;
-                case 2:
-                    ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.LastUsed), direction));
-                    ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.LastUsed));
-                    FavoritesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.LastUsed), direction));
-                    FavoritesView.LiveSortingProperties.Add(nameof(ProfileViewModel.LastUsed));
-                    break;
-                case 3:
                     ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.PlatformType), direction));
                     ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.PlatformType));
                     FavoritesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.PlatformType), direction));
                     FavoritesView.LiveSortingProperties.Add(nameof(ProfileViewModel.PlatformType));
                     break;
+                case 2:
+                    ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.DateCreated), direction));
+                    ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.DateCreated));
+                    FavoritesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.DateCreated), direction));
+                    FavoritesView.LiveSortingProperties.Add(nameof(ProfileViewModel.DateCreated));
+                    break;
+                case 3:
+                    ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.LastUsed), direction));
+                    ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.LastUsed));
+                    FavoritesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.LastUsed), direction));
+                    FavoritesView.LiveSortingProperties.Add(nameof(ProfileViewModel.LastUsed));
+                    break;
             }
 
-            // hack to get ICollectionView to comply with ItemsRepeater
+            // hack to get ICollectionView to comply with ItemsRepeate
             try
             {
                 // ProfilesView.Refresh();
-                if (LibraryPage.ProfilesRepeater is not null)
+                if (LibraryPage.profilesRepeaterGrid is not null)
                 {
-                    LibraryPage.ProfilesRepeater.ItemsSource = null;
-                    LibraryPage.ProfilesRepeater.ItemsSource = ProfilesView;
+                    LibraryPage.profilesRepeaterGrid.ItemsSource = null;
+                    LibraryPage.profilesRepeaterGrid.ItemsSource = ProfilesView;
+                }
+
+                if (LibraryPage.profilesRepeaterList is not null)
+                {
+                    LibraryPage.profilesRepeaterList.ItemsSource = null;
+                    LibraryPage.profilesRepeaterList.ItemsSource = ProfilesView;
                 }
 
                 // FavoritesView.Refresh();
-                if (LibraryPage.FavoritesRepeater is not null)
+                if (LibraryPage.favoritesRepeater is not null)
                 {
-                    LibraryPage.FavoritesRepeater.ItemsSource = null;
-                    LibraryPage.FavoritesRepeater.ItemsSource = FavoritesView;
+                    LibraryPage.favoritesRepeater.ItemsSource = null;
+                    LibraryPage.favoritesRepeater.ItemsSource = FavoritesView;
                 }
             }
             catch (NullReferenceException) { }
@@ -502,6 +550,44 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.libraryManager.NetworkAvailabilityChanged -= LibraryManager_NetworkAvailabilityChanged;
 
             base.Dispose();
+        }
+
+        private void UpdateFiltering()
+        {
+            ProfilesView.Filter = o => o is ProfileViewModel vm && MatchesSearchFilter(vm);
+            FavoritesView.Filter = o => o is ProfileViewModel vm && vm.IsLiked && MatchesSearchFilter(vm);
+
+            // hack to get ICollectionView to comply with ItemsRepeater
+            try
+            {
+                if (LibraryPage.profilesRepeaterGrid is not null)
+                {
+                    LibraryPage.profilesRepeaterGrid.ItemsSource = null;
+                    LibraryPage.profilesRepeaterGrid.ItemsSource = ProfilesView;
+                }
+
+                if (LibraryPage.profilesRepeaterList is not null)
+                {
+                    LibraryPage.profilesRepeaterList.ItemsSource = null;
+                    LibraryPage.profilesRepeaterList.ItemsSource = ProfilesView;
+                }
+
+                if (LibraryPage.favoritesRepeater is not null)
+                {
+                    LibraryPage.favoritesRepeater.ItemsSource = null;
+                    LibraryPage.favoritesRepeater.ItemsSource = FavoritesView;
+                }
+            }
+            catch { }
+        }
+
+        private bool MatchesSearchFilter(ProfileViewModel profile)
+        {
+            if (string.IsNullOrWhiteSpace(SearchText))
+                return true;
+
+            return profile.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                   profile.Profile.Executable.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

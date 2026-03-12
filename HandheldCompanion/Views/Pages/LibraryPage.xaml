@@ -35,15 +35,6 @@
                         HorizontalAlignment="Right"
                         Orientation="Horizontal"
                         Spacing="3">
-                        <ComboBox
-                            Width="180"
-                            VerticalAlignment="Bottom"
-                            SelectedIndex="{Binding SortTarget}">
-                            <ComboBoxItem Content="Title" />
-                            <ComboBoxItem Content="Recently added" />
-                            <ComboBoxItem Content="Recently played" />
-                            <ComboBoxItem Content="Platform" />
-                        </ComboBox>
                         <Button
                             Height="31"
                             VerticalAlignment="Bottom"
@@ -52,7 +43,7 @@
                                 <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
                                     <Setter Property="Content">
                                         <Setter.Value>
-                                            <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE70E;" />
+                                            <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF090;" />
                                         </Setter.Value>
                                     </Setter>
 
@@ -60,7 +51,31 @@
                                         <DataTrigger Binding="{Binding SortAscending}" Value="False">
                                             <Setter Property="Content">
                                                 <Setter.Value>
-                                                    <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE70D;" />
+                                                    <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xf08e;" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button
+                            Height="31"
+                            VerticalAlignment="Bottom"
+                            Command="{Binding ToggleViewModeCommand}">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <ui:FontIcon Glyph="&#xe80a;" />
+                                        </Setter.Value>
+                                    </Setter>
+
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ViewMode}" Value="1">
+                                            <Setter Property="Content">
+                                                <Setter.Value>
+                                                    <ui:FontIcon Glyph="&#xf2c7;" />
                                                 </Setter.Value>
                                             </Setter>
                                         </DataTrigger>
@@ -126,6 +141,33 @@
                 </ui:SettingsExpander>
             </ikw:SimpleStackPanel>
 
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="8*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ui:AutoSuggestBox
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    PlaceholderText="Search library..."
+                    Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ui:AutoSuggestBox.QueryIcon>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Search}" />
+                    </ui:AutoSuggestBox.QueryIcon>
+                </ui:AutoSuggestBox>
+                <ComboBox
+                    Grid.Column="1"
+                    Margin="6,0,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    SelectedIndex="{Binding SortTarget}">
+                    <ComboBoxItem Content="Alphabetic" />
+                    <ComboBoxItem Content="Platform" />
+                    <ComboBoxItem Content="Recently added" />
+                    <ComboBoxItem Content="Recently played" />
+                </ComboBox>
+            </Grid>
+
             <!--  Loading spinner  -->
             <ui:ProgressRing
                 HorizontalAlignment="Center"
@@ -149,12 +191,11 @@
                 </ikw:SimpleStackPanel.Style>
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Favorites" />
                 <ScrollViewer
-                    ui:ScrollViewerHelper.AutoHideScrollBars="True"
-                    HorizontalScrollBarVisibility="Hidden"
-                    ScrollViewer.PanningMode="HorizontalOnly"
+                    HorizontalScrollBarVisibility="Visible"
+                    PanningMode="HorizontalOnly"
                     VerticalScrollBarVisibility="Disabled">
                     <ui:ItemsRepeater
-                        Name="FavoritesRepeater"
+                        x:Name="favoritesRepeater"
                         Margin="0,0,0,12"
                         ItemTemplate="{StaticResource LibraryTemplateWide}"
                         ItemsSource="{Binding FavoritesView}"
@@ -176,13 +217,16 @@
 
             <!--  Library  -->
             <ikw:SimpleStackPanel Spacing="8" Visibility="{Binding IsInitializing, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                <!-- <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Library" /> -->
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Library" />
+
+                <!--  Grid View  -->
                 <ui:ItemsRepeater
-                    Name="ProfilesRepeater"
+                    x:Name="profilesRepeaterGrid"
                     ItemTemplate="{StaticResource LibraryTemplate}"
                     ItemsSource="{Binding ProfilesView}"
                     VirtualizingPanel.IsVirtualizing="True"
-                    VirtualizingPanel.VirtualizationMode="Recycling">
+                    VirtualizingPanel.VirtualizationMode="Recycling"
+                    Visibility="{Binding IsGridView, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ui:ItemsRepeater.Layout>
                         <ui:UniformGridLayout
                             ItemsStretch="Uniform"
@@ -190,6 +234,26 @@
                             MinColumnSpacing="6"
                             MinItemHeight="320"
                             MinItemWidth="180"
+                            MinRowSpacing="6"
+                            Orientation="Horizontal" />
+                    </ui:ItemsRepeater.Layout>
+                </ui:ItemsRepeater>
+
+                <!--  List View  -->
+                <ui:ItemsRepeater
+                    x:Name="profilesRepeaterList"
+                    ItemTemplate="{StaticResource LibraryTemplateList}"
+                    ItemsSource="{Binding ProfilesView}"
+                    VirtualizingPanel.IsVirtualizing="True"
+                    VirtualizingPanel.VirtualizationMode="Recycling"
+                    Visibility="{Binding IsListView, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ui:ItemsRepeater.Layout>
+                        <ui:UniformGridLayout
+                            ItemsStretch="Fill"
+                            MaximumRowsOrColumns="1"
+                            MinColumnSpacing="6"
+                            MinItemHeight="64"
+                            MinItemWidth="480"
                             MinRowSpacing="6"
                             Orientation="Horizontal" />
                     </ui:ItemsRepeater.Layout>

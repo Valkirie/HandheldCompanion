@@ -1,12 +1,13 @@
 using HandheldCompanion.Converters;
 using HandheldCompanion.ViewModels;
+using iNKORE.UI.WPF.Modern.Controls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace HandheldCompanion.Views.Pages;
 
-public partial class LibraryPage : Page
+public partial class LibraryPage : System.Windows.Controls.Page
 {
     private AverageColorConverter averageColorConverter = new AverageColorConverter();
 

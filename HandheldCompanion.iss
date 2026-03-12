@@ -70,6 +70,8 @@ AppName={#MyAppSetupName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppSetupName} {#MyAppVersion}
 AppCopyright={#MyAppCopyright}
+; Only allow the installer to run on x64-compatible systems and enable 64-bit install mode
+ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}

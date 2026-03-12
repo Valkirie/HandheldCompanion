@@ -1533,5 +1533,17 @@ namespace HandheldCompanion.Properties
                 this["ShowSplashScreen"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int LibraryViewMode {
+            get {
+                return ((int)(this["LibraryViewMode"]));
+            }
+            set {
+                this["LibraryViewMode"] = value;
+            }
+        }
     }
 }

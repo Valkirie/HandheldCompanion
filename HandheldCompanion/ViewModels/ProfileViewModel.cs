@@ -54,7 +54,7 @@ namespace HandheldCompanion.ViewModels
         }
 
         public string Name => _Profile.Name;
-        public string Description => _Profile.GetOwnerName();
+        public string Description => _Profile.IsSubProfile ? _Profile.GetOwnerName() : _Profile.PlatformType.ToString();
 
         public DateTime DateCreated => _Profile.DateCreated;
         public DateTime DateModified => _Profile.DateModified;

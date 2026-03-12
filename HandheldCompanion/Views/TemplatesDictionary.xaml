@@ -782,6 +782,97 @@
         </Button>
     </DataTemplate>
 
+    <DataTemplate x:Key="LibraryTemplateList" DataType="{x:Type viewmodels:ProfileViewModel}">
+        <Button
+            Height="64"
+            Padding="0"
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch"
+            BorderThickness="0"
+            Command="{Binding Navigate}"
+            IsEnabled="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+            Tag="{Binding}">
+            <Button.Style>
+                <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+                    <Style.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.20" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="172" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Border ClipToBounds="True" CornerRadius="{DynamicResource ControlCornerRadius}">
+                    <Grid>
+                        <Image
+                            Source="{Binding Artwork}"
+                            Stretch="UniformToFill"
+                            StretchDirection="Both" />
+                        <ui:ProgressRing
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            IsIndeterminate="True"
+                            Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </Grid>
+                </Border>
+
+                <StackPanel
+                    Grid.Column="1"
+                    Margin="12,8,12,8"
+                    VerticalAlignment="Center">
+                    <TextBlock
+                        Style="{StaticResource BaseTextBlockStyle}"
+                        Text="{Binding Name}"
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="NoWrap" />
+                    <TextBlock
+                        Text="{Binding Description}"
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="NoWrap">
+                        <TextBlock.Style>
+                            <Style BasedOn="{StaticResource BodyTextBlockStyle}" TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Description}" Value="">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Description}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+
+                <Image
+                    Grid.Column="2"
+                    Width="24"
+                    Height="24"
+                    Margin="0,0,12,0"
+                    VerticalAlignment="Center"
+                    Source="{Binding Platform, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DrawingImageToImageSourceConverter}}"
+                    Stretch="Uniform">
+                    <Image.Effect>
+                        <DropShadowEffect
+                            BlurRadius="2"
+                            Direction="330"
+                            Opacity="0.70"
+                            ShadowDepth="2"
+                            Color="Black" />
+                    </Image.Effect>
+                </Image>
+            </Grid>
+        </Button>
+    </DataTemplate>
+
     <DataTemplate x:Key="ControllerTemplate" DataType="{x:Type viewmodels:ControllerViewModel}">
         <Border
             Padding="15,12,12,12"
