@@ -21,34 +21,6 @@
     mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
-        <Image
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Opacity="0"
-            Source="{Binding Artwork, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
-            Stretch="Uniform">
-            <Image.Triggers>
-                <EventTrigger RoutedEvent="Binding.TargetUpdated">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <!--  fade in from 0->1 in 300ms  -->
-                            <DoubleAnimation
-                                Storyboard.TargetProperty="Opacity"
-                                From="0"
-                                To="0.6"
-                                Duration="0:0:0.3" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-            </Image.Triggers>
-            <Image.OpacityMask>
-                <RadialGradientBrush Center="0.8,0.4" GradientOrigin="0.8,0.4" RadiusX="0.8" RadiusY="1.2">
-                    <GradientStop Offset="0.0" Color="{DynamicResource MaskGradientStartColor}" />
-                    <GradientStop Offset="0.4" Color="{DynamicResource MaskGradientEndColor}" />
-                </RadialGradientBrush>
-            </Image.OpacityMask>
-        </Image>
-
         <StackPanel>
             <ui:ContentDialog
                 Name="IGGBDialog"
@@ -328,6 +300,47 @@
                             Severity="Warning"
                             Visibility="{Binding HasWarning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </ikw:SimpleStackPanel>
+
+                    <Grid
+                        Name="ArtworkBanner"
+                        Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}, Converter={StaticResource WidthToAspectHeightConverter}, ConverterParameter=0.22}"
+                        MinHeight="245"
+                        MaxHeight="320"
+                        HorizontalAlignment="Stretch"
+                        ClipToBounds="True"
+                        Visibility="{Binding Artwork, Converter={StaticResource HasArtworkConverter}}">
+                        <Rectangle>
+                            <Rectangle.Fill>
+                                <ImageBrush
+                                    AlignmentX="Center"
+                                    AlignmentY="Center"
+                                    ImageSource="{Binding Artwork, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
+                                    Stretch="UniformToFill" />
+                            </Rectangle.Fill>
+                            <Rectangle.Triggers>
+                                <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <!--  fade in from 0->1 in 300ms  -->
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="Opacity"
+                                                From="0"
+                                                To="0.6"
+                                                Duration="0:0:0.3" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Rectangle.Triggers>
+                        </Rectangle>
+
+                        <Image
+                            Height="80"
+                            Margin="24"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom"
+                            Source="{Binding Logo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
+                            Stretch="Uniform" />
+                    </Grid>
 
                     <!--  Profile details  -->
                     <Expander

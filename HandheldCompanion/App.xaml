@@ -86,6 +86,8 @@
             <converters:OddIndexFilterConverter x:Key="OddIndexFilterConverter" />
             <converters:DrawingImageToImageSourceConverter x:Key="DrawingImageToImageSourceConverter" />
             <converters:WidthToColumnsConverter x:Key="WidthToColumnsConverter" />
+            <converters:WidthToAspectHeightConverter x:Key="WidthToAspectHeightConverter" />
+            <converters:HasArtworkConverter x:Key="HasArtworkConverter" />
 
             <math:MathConverter x:Key="Math" />
 

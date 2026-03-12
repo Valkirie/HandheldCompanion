@@ -1254,6 +1254,25 @@ namespace HandheldCompanion.ViewModels
                 return null;
             }
         }
+
+        public BitmapImage Logo
+        {
+            get
+            {
+                if (SelectedProfile?.LibraryEntry == null)
+                    return null;
+
+                long id = SelectedProfile.LibraryEntry.Id;
+                long imageId = SelectedProfile.LibraryEntry.GetLogoId();
+                string imageExtension = SelectedProfile.LibraryEntry.GetLogoExtension(false);
+
+                BitmapImage logo = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.logo, imageId, imageExtension);
+                if (logo != LibraryResources.MissingCover)
+                    return logo;
+
+                return null;
+            }
+        }
         #endregion
 
         #region PowerProfile
@@ -1682,6 +1701,7 @@ namespace HandheldCompanion.ViewModels
                 // Refresh the Cover and Artwork properties to display the newly downloaded images
                 OnPropertyChanged(nameof(Cover));
                 OnPropertyChanged(nameof(Artwork));
+                OnPropertyChanged(nameof(Logo));
             });
 
             AddProfileExecutable = new DelegateCommand<object>(async param =>
@@ -2390,6 +2410,7 @@ namespace HandheldCompanion.ViewModels
 
             OnPropertyChanged(nameof(Cover));
             OnPropertyChanged(nameof(Artwork));
+            OnPropertyChanged(nameof(Logo));
 
             ClearWindows();
 

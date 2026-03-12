@@ -209,14 +209,14 @@ namespace HandheldCompanion.Managers
                                 gameId: game.Id,
                                 types: SteamGridDbTypes.Static,
                                 styles: SteamGridDbStyles.Alternate | SteamGridDbStyles.None | SteamGridDbStyles.Material,
-                                dimensions: SteamGridDbDimensions.W600H900,
+                                dimensions: SteamGridDbDimensions.AllGrids,
                                 formats: SteamGridDbFormats.Png | SteamGridDbFormats.Jpeg);
 
                             SteamGridDbHero[]? heroes = await steamGridDb.GetHeroesByGameIdAsync(
                                 gameId: game.Id,
                                 types: SteamGridDbTypes.Static,
                                 styles: SteamGridDbStyles.Alternate | SteamGridDbStyles.None | SteamGridDbStyles.Material,
-                                dimensions: SteamGridDbDimensions.W1920H620,
+                                dimensions: SteamGridDbDimensions.AllHeroes,
                                 formats: SteamGridDbFormats.Png | SteamGridDbFormats.Jpeg);
 
                             SteamGridDbLogo[]? logos = await steamGridDb.GetLogosByGameIdAsync(
@@ -232,9 +232,9 @@ namespace HandheldCompanion.Managers
                                 Heroes = heroes,
                                 Grids = grids,
                                 Logos = logos,
-                                Hero = heroes.FirstOrDefault(h => h.Style == SteamGridDbStyles.Official),
-                                Grid = grids.FirstOrDefault(g => g.Style == SteamGridDbStyles.Official),
-                                Logo = logos.FirstOrDefault(l => l.Style == SteamGridDbStyles.Official),
+                                Hero = heroes.OrderByDescending(h => h.Style == SteamGridDbStyles.Official).FirstOrDefault(),
+                                Grid = grids.OrderByDescending(g => g.Style == SteamGridDbStyles.Official).FirstOrDefault(),
+                                Logo = logos.OrderByDescending(l => l.Style == SteamGridDbStyles.Official).FirstOrDefault(),
                             };
 
                             lock (entries)
