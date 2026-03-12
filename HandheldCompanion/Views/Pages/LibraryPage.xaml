@@ -193,6 +193,7 @@
                 <ScrollViewer
                     HorizontalScrollBarVisibility="Visible"
                     PanningMode="HorizontalOnly"
+                    PreviewMouseWheel="FavoritesScrollViewer_PreviewMouseWheel"
                     VerticalScrollBarVisibility="Disabled">
                     <ui:ItemsRepeater
                         x:Name="favoritesRepeater"
