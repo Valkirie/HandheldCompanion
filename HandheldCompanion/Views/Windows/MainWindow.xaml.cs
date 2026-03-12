@@ -226,10 +226,20 @@ public partial class MainWindow : GamepadWindow
         LoadPages_MVVM();
 
         // update Position and Size
+        double screenWidth = SystemParameters.PrimaryScreenWidth;
+        double screenHeight = SystemParameters.PrimaryScreenHeight;
+
         Height = (int)Math.Max(MinHeight, ManagerFactory.settingsManager.GetDouble("MainWindowHeight"));
         Width = (int)Math.Max(MinWidth, ManagerFactory.settingsManager.GetDouble("MainWindowWidth"));
-        Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, ManagerFactory.settingsManager.GetDouble("MainWindowLeft"));
-        Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, ManagerFactory.settingsManager.GetDouble("MainWindowTop"));
+
+        // Clamp window size to fit the available screen (critical for high-DPI small screens)
+        if (Width > screenWidth)
+            Width = screenWidth;
+        if (Height > screenHeight - 40) // leave room for taskbar
+            Height = screenHeight - 40;
+
+        Left = Math.Min(screenWidth - Width, Math.Max(0, ManagerFactory.settingsManager.GetDouble("MainWindowLeft")));
+        Top = Math.Min(screenHeight - Height, Math.Max(0, ManagerFactory.settingsManager.GetDouble("MainWindowTop")));
 
         // update setting(s)
         ManagerFactory.settingsManager.SetProperty("LastVersion", fileVersionInfo.FileVersion);
