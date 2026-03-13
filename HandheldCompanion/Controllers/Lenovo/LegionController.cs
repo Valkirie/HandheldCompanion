@@ -44,6 +44,14 @@ namespace HandheldCompanion.Controllers.Lenovo
             Y1 = 128,
         }
 
+        private enum WheelState : byte
+        {
+            None = 0,
+            Click = 128,
+            Up = 129,
+            Down = 255,
+        }
+
         private enum ControllerState
         {
             Unk0 = 0,
@@ -55,6 +63,7 @@ namespace HandheldCompanion.Controllers.Lenovo
         private const byte FRONT_IDX = 18;
         private const byte EXTRA_IDX = 21;
         private const byte BACK_IDX = 20;
+        private const byte WHEEL_IDX = 24;
         private const byte TOUCH_IDX = 26;
 
         private const byte LCONTROLLER_STATE_IDX = 12;
@@ -286,9 +295,10 @@ namespace HandheldCompanion.Controllers.Lenovo
             Inputs.ButtonState[ButtonFlags.L4] = backButton.HasFlag(BackEnum.Y1);
             Inputs.ButtonState[ButtonFlags.L5] = backButton.HasFlag(BackEnum.Y2);
             Inputs.ButtonState[ButtonFlags.B5] = backButton.HasFlag(BackEnum.M2);
-            Inputs.ButtonState[ButtonFlags.B6] = data[BACK_IDX] == 128;             // Scroll click
-            Inputs.ButtonState[ButtonFlags.B7] = data[BACK_IDX + 4] == 129;         // Scroll up
-            Inputs.ButtonState[ButtonFlags.B8] = data[BACK_IDX + 4] == 255;         // Scroll down
+            WheelState wheelState = (WheelState)data[WHEEL_IDX];
+            Inputs.ButtonState[ButtonFlags.B6] = wheelState == WheelState.Click;    // Scroll click
+            Inputs.ButtonState[ButtonFlags.B7] = wheelState == WheelState.Up;       // Scroll up
+            Inputs.ButtonState[ButtonFlags.B8] = wheelState == WheelState.Down;     // Scroll down
             Inputs.ButtonState[ButtonFlags.B11] = backButton.HasFlag(BackEnum.M1);
 
             FrontExtra frontExtra = (FrontExtra)data[EXTRA_IDX];
