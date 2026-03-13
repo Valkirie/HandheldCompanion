@@ -165,6 +165,12 @@ namespace HandheldCompanion.Controls
                     scale = Math.Max(0.01, availableItemWidth / totalItemWidth);
             }
 
+            if (!justify && rows.Count > 0)
+            {
+                double previousRowScale = rows[^1].Height / Math.Max(1.0, targetHeight);
+                scale = Math.Min(scale, previousRowScale);
+            }
+
             double rowHeight = Math.Max(1.0, targetHeight * scale);
             RowLayout row = new(rowHeight);
 
