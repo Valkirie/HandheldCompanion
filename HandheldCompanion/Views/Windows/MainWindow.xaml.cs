@@ -860,13 +860,16 @@ public partial class MainWindow : GamepadWindow
 
         CurrentDevice.Close();
 
-        // Clean up tray menu items
-        foreach (var menuItem in profileMenuItems.Values)
-            menuItem.Dispose();
-        profileMenuItems.Clear();
+        // Clean up tray menu items - must be done on UI thread
+        UIHelper.TryInvoke(() =>
+        {
+            foreach (var menuItem in profileMenuItems.Values)
+                menuItem.Dispose();
+            profileMenuItems.Clear();
 
-        notifyIcon.Visible = false;
-        notifyIcon.Dispose();
+            notifyIcon.Visible = false;
+            notifyIcon.Dispose();
+        });
 
         // manage events
         SystemManager.SystemStatusChanged -= OnSystemStatusChanged;
