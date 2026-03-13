@@ -62,8 +62,8 @@
   #define DotNetX86DownloadLink "https://builds.dotnet.microsoft.com/dotnet/WindowsDesktop/10.0.0/windowsdesktop-runtime-10.0.0-win-x86.exe"
 #endif
 
-; Windows 10
-#define WindowsVersion         "10.0.22621"
+; Windows 10 (2004+)
+#define WindowsVersion         "10.0.19041"
 
 AllowNoIcons=yes
 AppName={#MyAppSetupName}
