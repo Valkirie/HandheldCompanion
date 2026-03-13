@@ -173,19 +173,19 @@ namespace HandheldCompanion.ViewModels
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(Profiles, _collectionLock);
 
-            ProfilesView = new ListCollectionView(Profiles);
-            ProfilesView.IsLiveSorting = true;
-            ProfilesView.IsLiveGrouping = true;
-            ProfilesView.IsLiveFiltering = true;
-            ProfilesView.Filter = o => o is ProfileViewModel vm && MatchesSearchFilter(vm);
+            ProfilesView = new ListCollectionView(Profiles)
+            {
+                IsLiveSorting = true,
+                IsLiveFiltering = true,
+                Filter = o => o is ProfileViewModel vm && MatchesSearchFilter(vm)
+            };
 
-            FavoritesView = new ListCollectionView(Profiles);
-            FavoritesView.IsLiveSorting = true;
-            FavoritesView.IsLiveGrouping = true;
-            FavoritesView.IsLiveFiltering = true;
-            FavoritesView.Filter = o => o is ProfileViewModel vm && vm.IsLiked && MatchesSearchFilter(vm);
-
-            UpdateSorting();
+            FavoritesView = new ListCollectionView(Profiles)
+            {
+                IsLiveSorting = true,
+                IsLiveFiltering = true,
+                Filter = o => o is ProfileViewModel vm && vm.IsLiked && MatchesSearchFilter(vm)
+            };
 
             ToggleSortCommand = new DelegateCommand(() =>
             {
@@ -415,7 +415,11 @@ namespace HandheldCompanion.ViewModels
             }
 
             // Hide spinner once the initial batch of profiles has been dispatched to the UI
-            UIHelper.TryInvoke(() => IsInitializing = false);
+            IsInitializing = false;
+            UIHelper.TryInvoke(() =>
+            {
+                UpdateSorting();
+            });
         }
 
         private void ProfileManager_Initialized()
@@ -494,14 +498,16 @@ namespace HandheldCompanion.ViewModels
             if (profile.Default)
                 return;
 
-            ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
+            ProfileViewModel? foundProfile;
+            lock (_collectionLock)
+            {
+                foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
+            }
             if (foundProfile is not null)
             {
                 Profiles.SafeRemove(foundProfile);
                 foundProfile.Dispose();
             }
-
-            UIHelper.TryInvoke(UpdateSorting);
         }
 
         private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
@@ -513,7 +519,11 @@ namespace HandheldCompanion.ViewModels
             bool shouldShow = profile.ShowInLibrary;
 
             // find based on guid
-            ProfileViewModel? existingVm = Profiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid);
+            ProfileViewModel? existingVm;
+            lock (_collectionLock)
+            {
+                existingVm = Profiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid);
+            }
 
             if (shouldShow)
             {
@@ -537,8 +547,6 @@ namespace HandheldCompanion.ViewModels
                     existingVm.Dispose();
                 }
             }
-
-            UIHelper.TryInvoke(UpdateSorting);
         }
 
         public override void Dispose()
