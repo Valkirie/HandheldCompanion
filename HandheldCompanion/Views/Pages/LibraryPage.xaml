@@ -174,92 +174,68 @@
                 IsIndeterminate="True"
                 Visibility="{Binding IsInitializing, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-            <!--  Favorites  (hidden while loading or when no favourites exist)  -->
-            <ikw:SimpleStackPanel Spacing="8">
-                <ikw:SimpleStackPanel.Style>
-                    <Style TargetType="ikw:SimpleStackPanel">
-                        <!--  Default: visible  -->
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding HasLiked}" Value="False">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding IsInitializing}" Value="True">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </ikw:SimpleStackPanel.Style>
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Favorites" />
-                <ScrollViewer
-                    x:Name="favoritesScrollViewer"
-                    HorizontalScrollBarVisibility="Visible"
-                    PanningMode="HorizontalOnly"
-                    PreviewMouseWheel="FavoritesScrollViewer_PreviewMouseWheel"
-                    VerticalScrollBarVisibility="Disabled">
-                    <ui:ItemsRepeater
-                        x:Name="favoritesRepeater"
-                        Margin="0,0,0,12"
-                        ItemTemplate="{StaticResource LibraryTemplateWide}"
-                        ItemsSource="{Binding FavoritesView}"
-                        VirtualizingPanel.IsVirtualizing="True"
-                        VirtualizingPanel.VirtualizationMode="Recycling">
-                        <ui:ItemsRepeater.Layout>
-                            <ui:UniformGridLayout
-                                ItemsStretch="None"
-                                MaximumRowsOrColumns="100"
-                                MinColumnSpacing="6"
-                                MinItemHeight="250"
-                                MinItemWidth="480"
-                                MinRowSpacing="6"
-                                Orientation="Horizontal" />
-                        </ui:ItemsRepeater.Layout>
-                    </ui:ItemsRepeater>
-                </ScrollViewer>
-            </ikw:SimpleStackPanel>
-
-            <!--  Library  -->
+            <!--  Unified Library (Favorites shown with wide template, others with grid/list template)  -->
             <ikw:SimpleStackPanel Spacing="8" Visibility="{Binding IsInitializing, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Library" />
 
-                <!--  Grid View  -->
-                <ui:ItemsRepeater
-                    x:Name="profilesRepeaterGrid"
-                    ItemTemplate="{StaticResource LibraryTemplate}"
+                <ItemsControl
+                    x:Name="profilesRepeater"
+                    HorizontalAlignment="Stretch"
                     ItemsSource="{Binding ProfilesView}"
                     VirtualizingPanel.IsVirtualizing="True"
-                    VirtualizingPanel.VirtualizationMode="Recycling"
-                    Visibility="{Binding IsGridView, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <ui:ItemsRepeater.Layout>
-                        <ui:UniformGridLayout
-                            ItemsStretch="Uniform"
-                            MaximumRowsOrColumns="8"
-                            MinColumnSpacing="6"
-                            MinItemHeight="320"
-                            MinItemWidth="180"
-                            MinRowSpacing="6"
-                            Orientation="Horizontal" />
-                    </ui:ItemsRepeater.Layout>
-                </ui:ItemsRepeater>
-
-                <!--  List View  -->
-                <ui:ItemsRepeater
-                    x:Name="profilesRepeaterList"
-                    ItemTemplate="{StaticResource LibraryTemplateList}"
-                    ItemsSource="{Binding ProfilesView}"
-                    VirtualizingPanel.IsVirtualizing="True"
-                    VirtualizingPanel.VirtualizationMode="Recycling"
-                    Visibility="{Binding IsListView, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <ui:ItemsRepeater.Layout>
-                        <ui:UniformGridLayout
-                            ItemsStretch="Fill"
-                            MaximumRowsOrColumns="1"
-                            MinColumnSpacing="6"
-                            MinItemHeight="64"
-                            MinItemWidth="480"
-                            MinRowSpacing="6"
-                            Orientation="Horizontal" />
-                    </ui:ItemsRepeater.Layout>
-                </ui:ItemsRepeater>
+                    VirtualizingPanel.VirtualizationMode="Recycling">
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="Tag" Value="1" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding DataContext.IsListView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True">
+                                    <Setter Property="Margin" Value="0,0,0,6" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsLiked}" Value="True">
+                                    <Setter Property="Tag" Value="3" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ContentControl
+                                Margin="0"
+                                HorizontalAlignment="Stretch"
+                                Content="{Binding}">
+                                <ContentControl.Style>
+                                    <Style TargetType="ContentControl">
+                                        <Style.Triggers>
+                                            <!--  Wide template for favorites (same height, double width)  -->
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding IsLiked}" Value="True" />
+                                                    <Condition Binding="{Binding DataContext.IsGridView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="ContentTemplate" Value="{StaticResource LibraryTemplateWide}" />
+                                            </MultiDataTrigger>
+                                            <!--  Grid template for non-favorites (when in grid view)  -->
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding IsLiked}" Value="False" />
+                                                    <Condition Binding="{Binding DataContext.IsGridView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="ContentTemplate" Value="{StaticResource LibraryTemplate}" />
+                                            </MultiDataTrigger>
+                                            <!--  List template for non-favorites (when in list view)  -->
+                                            <DataTrigger Binding="{Binding DataContext.IsListView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True">
+                                                <Setter Property="ContentTemplate" Value="{StaticResource LibraryTemplateList}" />
+                                                <Setter Property="Height" Value="64" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ContentControl.Style>
+                            </ContentControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
     </Grid>

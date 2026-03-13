@@ -1,26 +1,25 @@
 using HandheldCompanion.Converters;
+using HandheldCompanion.Controls;
 using HandheldCompanion.ViewModels;
 using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
 
 namespace HandheldCompanion.Views.Pages;
 
 public partial class LibraryPage : Page
 {
-    private const int WM_MOUSEHWHEEL = 0x020E;
-    private AverageColorConverter averageColorConverter = new AverageColorConverter();
-    private HwndSource hwndSource;
+    private readonly AverageColorConverter averageColorConverter = new AverageColorConverter();
+    private LibraryPageViewModel? libraryPageViewModel;
 
     public LibraryPage()
     {
         Tag = "about";
         DataContext = new LibraryPageViewModel(this);
         InitializeComponent();
-
         Loaded += LibraryPage_Loaded;
         Unloaded += LibraryPage_Unloaded;
     }
@@ -28,48 +27,6 @@ public partial class LibraryPage : Page
     public LibraryPage(string Tag) : this()
     {
         this.Tag = Tag;
-    }
-
-    private void LibraryPage_Loaded(object sender, RoutedEventArgs e)
-    {
-        // Hook into Windows message pump for horizontal mouse wheel
-        Window window = Window.GetWindow(this);
-        if (window != null)
-        {
-            hwndSource = PresentationSource.FromVisual(window) as HwndSource;
-            hwndSource?.AddHook(WndProc);
-        }
-    }
-
-    private void LibraryPage_Unloaded(object sender, RoutedEventArgs e)
-    {
-        // Unhook from Windows message pump
-        hwndSource?.RemoveHook(WndProc);
-        hwndSource = null;
-    }
-
-    private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-    {
-        if (msg == WM_MOUSEHWHEEL)
-        {
-            // Check if mouse is over the favorites ScrollViewer
-            if (favoritesScrollViewer != null && favoritesScrollViewer.IsMouseOver)
-            {
-                // Extract delta from wParam (high word)
-                int delta = (short)((int)wParam >> 16);
-
-                // Horizontal wheel: positive delta = scroll right, negative = scroll left
-                // Note: Some mice may have inverted delta, but this is the Windows standard
-                if (delta > 0)
-                    favoritesScrollViewer.LineRight();
-                else if (delta < 0)
-                    favoritesScrollViewer.LineLeft();
-
-                handled = true;
-            }
-        }
-
-        return IntPtr.Zero;
     }
 
     private void ImageContainer_GotFocus(object sender, RoutedEventArgs e)
@@ -98,56 +55,67 @@ public partial class LibraryPage : Page
     private void Page_Loaded(object sender, RoutedEventArgs e)
     { }
 
-    /// <summary>
-    /// Handles mouse wheel scrolling for the horizontal favorites ScrollViewer.
-    /// - Horizontal scroll: Shift+MouseWheel OR native horizontal wheel (via WndProc)
-    /// - Vertical scroll: Bubbles to parent ScrollViewer
-    /// </summary>
-    private void FavoritesScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-    {
-        if (sender is not ScrollViewer scrollViewer)
-            return;
-
-        // Allow horizontal scrolling with Shift key
-        if (Keyboard.Modifiers == ModifierKeys.Shift)
-        {
-            if (e.Delta > 0)
-                scrollViewer.LineLeft();
-            else
-                scrollViewer.LineRight();
-
-            e.Handled = true;
-            return;
-        }
-
-        // For vertical scrolling (no Shift), bubble event to parent ScrollViewer
-        // This allows the main page to scroll vertically even when mouse is over favorites
-        e.Handled = true;
-
-        var parentScrollViewer = FindParentScrollViewer(scrollViewer);
-        if (parentScrollViewer != null)
-        {
-            var newEvent = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
-            {
-                RoutedEvent = UIElement.MouseWheelEvent,
-                Source = scrollViewer
-            };
-            parentScrollViewer.RaiseEvent(newEvent);
-        }
-    }
-
-    private ScrollViewer FindParentScrollViewer(DependencyObject child)
-    {
-        DependencyObject parent = VisualTreeHelper.GetParent(child);
-        while (parent != null)
-        {
-            if (parent is ScrollViewer sv)
-                return sv;
-            parent = VisualTreeHelper.GetParent(parent);
-        }
-        return null;
-    }
-
     public void Page_Closed()
     { }
+
+    private void LibraryPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        AttachViewModel(DataContext as LibraryPageViewModel);
+        UpdateItemsPanel();
+    }
+
+    private void LibraryPage_Unloaded(object sender, RoutedEventArgs e)
+    {
+        DetachViewModel();
+    }
+
+    private void AttachViewModel(LibraryPageViewModel? viewModel)
+    {
+        if (ReferenceEquals(libraryPageViewModel, viewModel))
+            return;
+
+        DetachViewModel();
+        libraryPageViewModel = viewModel;
+
+        if (libraryPageViewModel is not null)
+            libraryPageViewModel.PropertyChanged += LibraryPageViewModel_PropertyChanged;
+    }
+
+    private void DetachViewModel()
+    {
+        if (libraryPageViewModel is not null)
+            libraryPageViewModel.PropertyChanged -= LibraryPageViewModel_PropertyChanged;
+
+        libraryPageViewModel = null;
+    }
+
+    private void LibraryPageViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(LibraryPageViewModel.ViewMode)
+            or nameof(LibraryPageViewModel.IsGridView)
+            or nameof(LibraryPageViewModel.IsListView))
+        {
+            Dispatcher.Invoke(UpdateItemsPanel);
+        }
+    }
+
+    private void UpdateItemsPanel()
+    {
+        FrameworkElementFactory factory;
+
+        if (libraryPageViewModel?.IsListView is true)
+        {
+            factory = new FrameworkElementFactory(typeof(StackPanel));
+        }
+        else
+        {
+            factory = new FrameworkElementFactory(typeof(JustifiedWrapPanel));
+            factory.SetValue(JustifiedWrapPanel.HorizontalSpacingProperty, 6.0);
+            factory.SetValue(JustifiedWrapPanel.VerticalSpacingProperty, 6.0);
+            factory.SetValue(JustifiedWrapPanel.TargetRowHeightProperty, 300.0d);
+            factory.SetValue(JustifiedWrapPanel.ItemAspectRatioProperty, 475.0 / 900.0);
+        }
+
+        profilesRepeater.ItemsPanel = new ItemsPanelTemplate(factory);
+    }
 }

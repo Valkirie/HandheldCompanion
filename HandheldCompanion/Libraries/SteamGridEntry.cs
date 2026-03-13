@@ -8,9 +8,9 @@ namespace HandheldCompanion.Libraries
     [Serializable]
     public class SteamGridEntry : LibraryEntry
     {
-        public SteamGridDbGrid Grid;
-        public SteamGridDbHero Hero;
-        public SteamGridDbLogo Logo;
+        public SteamGridDbGrid? Grid;
+        public SteamGridDbHero? Hero;
+        public SteamGridDbLogo? Logo;
 
         [JsonIgnore] public SteamGridDbGrid[] Grids;
         [JsonIgnore] public SteamGridDbHero[] Heroes;

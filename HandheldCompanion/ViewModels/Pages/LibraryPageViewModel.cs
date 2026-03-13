@@ -32,7 +32,6 @@ namespace HandheldCompanion.ViewModels
     {
         public ObservableCollection<ProfileViewModel> Profiles { get; set; } = [];
         public ListCollectionView ProfilesView { get; }
-        public ListCollectionView FavoritesView { get; }
 
         private bool _sortAscending => ManagerFactory.settingsManager.GetBoolean("LibrarySortAscending");
         public bool SortAscending
@@ -178,13 +177,6 @@ namespace HandheldCompanion.ViewModels
                 IsLiveSorting = true,
                 IsLiveFiltering = true,
                 Filter = o => o is ProfileViewModel vm && MatchesSearchFilter(vm)
-            };
-
-            FavoritesView = new ListCollectionView(Profiles)
-            {
-                IsLiveSorting = true,
-                IsLiveFiltering = true,
-                Filter = o => o is ProfileViewModel vm && vm.IsLiked && MatchesSearchFilter(vm)
             };
 
             ToggleSortCommand = new DelegateCommand(() =>
@@ -432,58 +424,41 @@ namespace HandheldCompanion.ViewModels
             ListSortDirection direction = SortAscending ? ListSortDirection.Ascending : ListSortDirection.Descending;
 
             ProfilesView.SortDescriptions.Clear();
-            FavoritesView.SortDescriptions.Clear();
+            ProfilesView.LiveSortingProperties.Clear();
 
+            // Always sort favorites first (descending IsLiked = favorites on top)
+            ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.IsLiked), ListSortDirection.Descending));
+            ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.IsLiked));
+
+            // Then apply secondary sort based on user selection
             switch (SortTarget)
             {
                 default:
                 case 0:
                     ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.Name), direction));
                     ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.Name));
-                    FavoritesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.Name), direction));
-                    FavoritesView.LiveSortingProperties.Add(nameof(ProfileViewModel.Name));
                     break;
                 case 1:
                     ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.PlatformType), direction));
                     ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.PlatformType));
-                    FavoritesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.PlatformType), direction));
-                    FavoritesView.LiveSortingProperties.Add(nameof(ProfileViewModel.PlatformType));
                     break;
                 case 2:
                     ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.DateCreated), direction));
                     ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.DateCreated));
-                    FavoritesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.DateCreated), direction));
-                    FavoritesView.LiveSortingProperties.Add(nameof(ProfileViewModel.DateCreated));
                     break;
                 case 3:
                     ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.LastUsed), direction));
                     ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.LastUsed));
-                    FavoritesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.LastUsed), direction));
-                    FavoritesView.LiveSortingProperties.Add(nameof(ProfileViewModel.LastUsed));
                     break;
             }
 
-            // hack to get ICollectionView to comply with ItemsRepeate
+            // Workaround for iNKORE ItemsRepeater not observing ICollectionView changes
             try
             {
-                // ProfilesView.Refresh();
-                if (LibraryPage.profilesRepeaterGrid is not null)
+                if (LibraryPage.profilesRepeater is not null)
                 {
-                    LibraryPage.profilesRepeaterGrid.ItemsSource = null;
-                    LibraryPage.profilesRepeaterGrid.ItemsSource = ProfilesView;
-                }
-
-                if (LibraryPage.profilesRepeaterList is not null)
-                {
-                    LibraryPage.profilesRepeaterList.ItemsSource = null;
-                    LibraryPage.profilesRepeaterList.ItemsSource = ProfilesView;
-                }
-
-                // FavoritesView.Refresh();
-                if (LibraryPage.favoritesRepeater is not null)
-                {
-                    LibraryPage.favoritesRepeater.ItemsSource = null;
-                    LibraryPage.favoritesRepeater.ItemsSource = FavoritesView;
+                    LibraryPage.profilesRepeater.ItemsSource = null;
+                    LibraryPage.profilesRepeater.ItemsSource = ProfilesView;
                 }
             }
             catch (NullReferenceException) { }
@@ -563,27 +538,14 @@ namespace HandheldCompanion.ViewModels
         private void UpdateFiltering()
         {
             ProfilesView.Filter = o => o is ProfileViewModel vm && MatchesSearchFilter(vm);
-            FavoritesView.Filter = o => o is ProfileViewModel vm && vm.IsLiked && MatchesSearchFilter(vm);
 
-            // hack to get ICollectionView to comply with ItemsRepeater
+            // Workaround for iNKORE ItemsRepeater not observing ICollectionView changes
             try
             {
-                if (LibraryPage.profilesRepeaterGrid is not null)
+                if (LibraryPage.profilesRepeater is not null)
                 {
-                    LibraryPage.profilesRepeaterGrid.ItemsSource = null;
-                    LibraryPage.profilesRepeaterGrid.ItemsSource = ProfilesView;
-                }
-
-                if (LibraryPage.profilesRepeaterList is not null)
-                {
-                    LibraryPage.profilesRepeaterList.ItemsSource = null;
-                    LibraryPage.profilesRepeaterList.ItemsSource = ProfilesView;
-                }
-
-                if (LibraryPage.favoritesRepeater is not null)
-                {
-                    LibraryPage.favoritesRepeater.ItemsSource = null;
-                    LibraryPage.favoritesRepeater.ItemsSource = FavoritesView;
+                    LibraryPage.profilesRepeater.ItemsSource = null;
+                    LibraryPage.profilesRepeater.ItemsSource = ProfilesView;
                 }
             }
             catch { }

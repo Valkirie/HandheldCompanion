@@ -208,20 +208,37 @@ namespace HandheldCompanion.Managers
                             SteamGridDbGrid[]? grids = await steamGridDb.GetGridsByGameIdAsync(
                                 gameId: game.Id,
                                 types: SteamGridDbTypes.Static,
-                                styles: SteamGridDbStyles.Alternate | SteamGridDbStyles.None | SteamGridDbStyles.Material,
+                                styles: SteamGridDbStyles.AllGrids,
                                 dimensions: SteamGridDbDimensions.AllGrids,
                                 formats: SteamGridDbFormats.Png | SteamGridDbFormats.Jpeg);
+                            grids = grids
+                                .Where(g => !g.IsLocked)
+                                .OrderByDescending(g => g.Style == SteamGridDbStyles.Official)
+                                .ThenByDescending(g => g.Upvotes)
+                                .ToArray();
 
                             SteamGridDbHero[]? heroes = await steamGridDb.GetHeroesByGameIdAsync(
                                 gameId: game.Id,
                                 types: SteamGridDbTypes.Static,
-                                styles: SteamGridDbStyles.Alternate | SteamGridDbStyles.None | SteamGridDbStyles.Material,
+                                styles: SteamGridDbStyles.AllHeroes,
                                 dimensions: SteamGridDbDimensions.AllHeroes,
                                 formats: SteamGridDbFormats.Png | SteamGridDbFormats.Jpeg);
+                            heroes = heroes
+                                .Where(h => !h.IsLocked)
+                                .OrderByDescending(h => h.Style == SteamGridDbStyles.Official)
+                                .ThenByDescending(h => h.Upvotes)
+                                .ToArray();
 
                             SteamGridDbLogo[]? logos = await steamGridDb.GetLogosByGameIdAsync(
                                 gameId: game.Id,
+                                types: SteamGridDbTypes.Static,
+                                styles: SteamGridDbStyles.AllLogos,
                                 formats: SteamGridDbFormats.Png);
+                            logos = logos
+                                .Where(l => !l.IsLocked)
+                                .OrderByDescending(l => l.Style == SteamGridDbStyles.Official)
+                                .ThenByDescending(l => l.Upvotes)
+                                .ToArray();
 
                             // Skip if no visuals are available
                             if (grids.Length == 0 && heroes.Length == 0)
@@ -232,9 +249,9 @@ namespace HandheldCompanion.Managers
                                 Heroes = heroes,
                                 Grids = grids,
                                 Logos = logos,
-                                Hero = heroes.OrderByDescending(h => h.Style == SteamGridDbStyles.Official).FirstOrDefault(),
-                                Grid = grids.OrderByDescending(g => g.Style == SteamGridDbStyles.Official).FirstOrDefault(),
-                                Logo = logos.OrderByDescending(l => l.Style == SteamGridDbStyles.Official).FirstOrDefault(),
+                                Hero = heroes.FirstOrDefault(),
+                                Grid = grids.FirstOrDefault(),
+                                Logo = logos.FirstOrDefault(),
                             };
 
                             lock (entries)
