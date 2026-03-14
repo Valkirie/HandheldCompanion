@@ -854,7 +854,11 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon Glyph="&#xe735;" Visibility="{Binding IsLiked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <ui:FontIcon
+                            Margin="0,0,6,0"
+                            Foreground="{DynamicResource AccentAAFillColorDefaultBrush}"
+                            Glyph="&#xe735;"
+                            Visibility="{Binding IsLiked, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                         <TextBlock
                             Grid.Column="1"
