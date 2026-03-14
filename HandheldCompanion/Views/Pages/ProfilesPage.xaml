@@ -251,9 +251,9 @@
                                     <ComboBox
                                         Name="SelectMainProfileComboBox"
                                         Grid.Column="0"
-                                        DisplayMemberPath="Name"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
+                                        DisplayMemberPath="Name"
                                         ItemsSource="{Binding MainProfiles, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                         SelectedItem="{Binding SelectedMainProfile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
@@ -589,9 +589,9 @@
                                         <ComboBox
                                             Name="SelectSubProfileComboBox"
                                             Grid.Column="0"
-                                            DisplayMemberPath="Name"
                                             HorizontalAlignment="Stretch"
                                             VerticalAlignment="Center"
+                                            DisplayMemberPath="Name"
                                             ItemsSource="{Binding SubProfiles, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                             SelectedItem="{Binding SelectedProfile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
