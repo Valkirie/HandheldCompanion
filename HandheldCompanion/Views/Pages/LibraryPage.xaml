@@ -2,6 +2,7 @@
     x:Class="HandheldCompanion.Views.Pages.LibraryPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:HandheldCompanion.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:emoji="http://schemas.inkore.net/lib/ui/wpf/emojis"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
@@ -188,13 +189,12 @@
                         <Style TargetType="ContentPresenter">
                             <Setter Property="HorizontalAlignment" Value="Stretch" />
                             <Setter Property="Margin" Value="0" />
-                            <Setter Property="Tag" Value="1" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding DataContext.IsListView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True">
                                     <Setter Property="Margin" Value="0,0,0,6" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding IsLiked}" Value="True">
-                                    <Setter Property="Tag" Value="3" />
+                                    <Setter Property="controls:JustifiedWrapPanel.ItemSpan" Value="3" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>

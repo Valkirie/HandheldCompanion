@@ -33,6 +33,15 @@ namespace HandheldCompanion.Controls
             typeof(JustifiedWrapPanel),
             new FrameworkPropertyMetadata(200.0 / 360.0, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
 
+        public static readonly DependencyProperty ItemSpanProperty = DependencyProperty.RegisterAttached(
+            "ItemSpan",
+            typeof(int),
+            typeof(JustifiedWrapPanel),
+            new FrameworkPropertyMetadata(1, FrameworkPropertyMetadataOptions.AffectsParentMeasure | FrameworkPropertyMetadataOptions.AffectsParentArrange));
+
+        public static int GetItemSpan(UIElement element) => (int)element.GetValue(ItemSpanProperty);
+        public static void SetItemSpan(UIElement element, int value) => element.SetValue(ItemSpanProperty, value);
+
         private readonly List<RowLayout> rows = new();
 
         public double TargetRowHeight
@@ -119,7 +128,7 @@ namespace HandheldCompanion.Controls
 
             foreach (UIElement child in visibleChildren)
             {
-                int itemSpan = Math.Max(1, GetItemSpan(child));
+                int itemSpan = Math.Max(1, ReadItemSpan(child));
                 double width = (targetWidth * itemSpan) + (HorizontalSpacing * (itemSpan - 1));
 
                 pendingItems.Add(new PendingItemLayout(child, width));
@@ -180,8 +189,12 @@ namespace HandheldCompanion.Controls
             return row;
         }
 
-        private int GetItemSpan(UIElement child)
+        private int ReadItemSpan(UIElement child)
         {
+            int attachedSpan = GetItemSpan(child);
+            if (attachedSpan > 1)
+                return attachedSpan;
+
             if (child is FrameworkElement frameworkElement && frameworkElement.Tag is not null)
             {
                 if (frameworkElement.Tag is int tagInt && tagInt > 0)
