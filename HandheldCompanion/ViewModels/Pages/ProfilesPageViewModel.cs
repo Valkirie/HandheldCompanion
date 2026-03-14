@@ -1895,10 +1895,12 @@ namespace HandheldCompanion.ViewModels
         {
             UIHelper.TryInvoke(() =>
             {
-                // Only update the display name - don't notify about SelectedPresetAC/DC
-                // because we're not changing which power profile is selected in the UI,
-                // just updating the name of the currently active one
-                SelectedPowerProfileName = profile.Name;
+                // QuickTools: show the currently applied power profile name
+                // ProfilesPage: show the selected profile's power profile for the current AC/DC state
+                if (IsQuickTools)
+                    SelectedPowerProfileName = profile.Name;
+                else
+                    UpdateSelectedPowerProfileName();
             });
         }
 
@@ -2569,28 +2571,26 @@ namespace HandheldCompanion.ViewModels
             if (SelectedProfile.PowerProfiles.ContainsKey((int)PowerLineStatus.Offline))
             {
                 Guid offlineGuid = SelectedProfile.PowerProfiles[(int)PowerLineStatus.Offline];
-                if (offlineGuid != Guid.Empty)
+                var pickerViewModel = ProfilePicker.FirstOrDefault(p => p.LinkedPresetId == offlineGuid);
+                if (pickerViewModel != null)
                 {
-                    var pickerViewModel = ProfilePicker.FirstOrDefault(p => p.LinkedPresetId == offlineGuid);
-                    if (pickerViewModel != null)
-                    {
-                        _selectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(pickerViewModel);
-                        OnPropertyChanged(nameof(SelectedPresetIndexDC));
-                    }
+                    _selectedPresetDC = ManagerFactory.powerProfileManager.GetProfile(offlineGuid);
+                    _selectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(pickerViewModel);
+                    OnPropertyChanged(nameof(SelectedPresetDC));
+                    OnPropertyChanged(nameof(SelectedPresetIndexDC));
                 }
             }
 
             if (SelectedProfile.PowerProfiles.ContainsKey((int)PowerLineStatus.Online))
             {
                 Guid onlineGuid = SelectedProfile.PowerProfiles[(int)PowerLineStatus.Online];
-                if (onlineGuid != Guid.Empty)
+                var pickerViewModel = ProfilePicker.FirstOrDefault(p => p.LinkedPresetId == onlineGuid);
+                if (pickerViewModel != null)
                 {
-                    var pickerViewModel = ProfilePicker.FirstOrDefault(p => p.LinkedPresetId == onlineGuid);
-                    if (pickerViewModel != null)
-                    {
-                        _selectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(pickerViewModel);
-                        OnPropertyChanged(nameof(SelectedPresetIndexAC));
-                    }
+                    _selectedPresetAC = ManagerFactory.powerProfileManager.GetProfile(onlineGuid);
+                    _selectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(pickerViewModel);
+                    OnPropertyChanged(nameof(SelectedPresetAC));
+                    OnPropertyChanged(nameof(SelectedPresetIndexAC));
                 }
             }
         }
@@ -2625,21 +2625,15 @@ namespace HandheldCompanion.ViewModels
             if (SelectedProfile == null)
                 return;
 
-            // Get current power line status
             PowerLineStatus currentStatus = System.Windows.Forms.SystemInformation.PowerStatus.PowerLineStatus;
 
-            // Get the appropriate power profile GUID based on current status
             Guid powerProfileGuid = currentStatus == PowerLineStatus.Online
                 ? SelectedProfile.PowerProfiles[(int)PowerLineStatus.Online]
                 : SelectedProfile.PowerProfiles[(int)PowerLineStatus.Offline];
 
-            // Get the power profile and set the name
-            if (powerProfileGuid != Guid.Empty)
-            {
-                PowerProfile powerProfile = ManagerFactory.powerProfileManager.GetProfile(powerProfileGuid);
-                if (powerProfile != null)
-                    SelectedPowerProfileName = powerProfile.Name;
-            }
+            PowerProfile powerProfile = ManagerFactory.powerProfileManager.GetProfile(powerProfileGuid);
+            if (powerProfile?.Name != null)
+                SelectedPowerProfileName = powerProfile.Name;
         }
 
         private void UpdateControlsEnabledState()
