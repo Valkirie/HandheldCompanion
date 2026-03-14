@@ -251,6 +251,7 @@
                                     <ComboBox
                                         Name="SelectMainProfileComboBox"
                                         Grid.Column="0"
+                                        DisplayMemberPath="Name"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
                                         ItemsSource="{Binding MainProfiles, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -588,6 +589,7 @@
                                         <ComboBox
                                             Name="SelectSubProfileComboBox"
                                             Grid.Column="0"
+                                            DisplayMemberPath="Name"
                                             HorizontalAlignment="Stretch"
                                             VerticalAlignment="Center"
                                             ItemsSource="{Binding SubProfiles, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"

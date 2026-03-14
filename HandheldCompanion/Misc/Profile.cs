@@ -7,9 +7,11 @@ using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using Newtonsoft.Json;
 using System;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using WpfScreenHelper.Enum;
 using static HandheldCompanion.Utils.XInputPlusUtils;
@@ -68,7 +70,7 @@ public class ProcessWindowSettings
 }
 
 [Serializable]
-public partial class Profile : ICloneable, IComparable
+public partial class Profile : ICloneable, IComparable, INotifyPropertyChanged
 {
     [JsonIgnore]
     public const int SensivityArraySize = 49; // x + 1 (hidden)
@@ -101,7 +103,19 @@ public partial class Profile : ICloneable, IComparable
         }
     }
 
-    public string Name { get; set; } = string.Empty;
+    private string _name = string.Empty;
+    public string Name
+    {
+        get => _name;
+        set
+        {
+            if (_name != value)
+            {
+                _name = value;
+                OnPropertyChanged();
+            }
+        }
+    }
     public string Path { get; set; } = string.Empty;
     public string Arguments { get; set; } = string.Empty;
     [JsonIgnore]
@@ -292,6 +306,13 @@ public partial class Profile : ICloneable, IComparable
     public override string ToString()
     {
         return Name;
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     public List<string> GetExecutables(bool addMain)

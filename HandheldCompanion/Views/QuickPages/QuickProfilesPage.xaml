@@ -82,6 +82,7 @@
 
                     <ComboBox
                         Name="SelectSubProfileComboBox"
+                        DisplayMemberPath="Name"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
                         ItemsSource="{Binding SubProfiles, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
