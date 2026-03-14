@@ -854,22 +854,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock
-                            x:Name="FavoriteIcon"
-                            Margin="0,0,6,0"
-                            Foreground="{DynamicResource AccentAAFillColorDefaultBrush}"
-                            Text="★">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsLiked}" Value="True">
-                                            <Setter Property="Visibility" Value="Visible" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
+                        <ui:FontIcon Glyph="&#xe735;" Visibility="{Binding IsLiked, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                         <TextBlock
                             Grid.Column="1"

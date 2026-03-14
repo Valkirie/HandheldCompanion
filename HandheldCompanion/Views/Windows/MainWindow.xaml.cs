@@ -373,8 +373,8 @@ public partial class MainWindow : GamepadWindow
 
                                 GamepadUILike.Visibility = Visibility.Visible;
                                 GamepadUILikeDesc.Text = profile.IsLiked
-                                    ? "Unlike"
-                                    : "Like";
+                                    ? "Remove from favorites"
+                                    : "Add to favorites";
                             }
                         }
                     }

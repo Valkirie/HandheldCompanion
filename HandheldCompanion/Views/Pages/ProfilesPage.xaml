@@ -1,4 +1,4 @@
-<Page
+﻿<Page
     x:Class="HandheldCompanion.Views.Pages.ProfilesPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -429,7 +429,7 @@
                                     IsEnabled="{Binding CanToggleProfileProcess, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                     Style="{DynamicResource AccentButtonStyle}">
                                     <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                        <ui:FontIcon FontSize="16">
+                                        <ui:FontIcon>
                                             <ui:FontIcon.Style>
                                                 <Style TargetType="ui:FontIcon">
                                                     <Setter Property="Glyph" Value="&#xE768;" />
@@ -601,9 +601,18 @@
                                             Margin="6,0,0,0"
                                             VerticalAlignment="Center"
                                             IsChecked="{Binding IsLiked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                            <Grid>
-                                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEB52;" />
-                                            </Grid>
+                                            <ui:FontIcon>
+                                                <ui:FontIcon.Style>
+                                                    <Style TargetType="ui:FontIcon">
+                                                        <Setter Property="Glyph" Value="&#xe734;" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsLiked, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                                                <Setter Property="Glyph" Value="&#xe735;" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </ui:FontIcon.Style>
+                                            </ui:FontIcon>
                                         </ToggleButton>
 
                                         <Button
