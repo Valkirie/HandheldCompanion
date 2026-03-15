@@ -87,7 +87,7 @@
                     </ikw:SimpleStackPanel>
 
                     <ui:SettingsExpander.Items>
-                        <ui:SettingsCard Header="Download metadata">
+                        <ui:SettingsCard Header="Download metadata and artworks">
                             <Button Command="{Binding RefreshMetadataCommand}" IsEnabled="{Binding IsLibraryConnected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">Download</Button>
                         </ui:SettingsCard>
                         <ui:SettingsCard Header="Update game library">

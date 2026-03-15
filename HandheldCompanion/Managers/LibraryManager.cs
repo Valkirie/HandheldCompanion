@@ -636,22 +636,28 @@ namespace HandheldCompanion.Managers
             if (profile.Default)
                 return;
 
-            LibraryEntry entry;
-            if (profile.LibraryEntry is SteamGridEntry || profile.LibraryEntry is IGDBEntry)
+            // update status
+            ProfileStatusChanged?.Invoke(profile, ManagerStatus.Busy);
+
+            LibraryEntry? entry = profile.LibraryEntry ?? null;
+            long entryId = entry?.Id ?? 0;
+
+            // retrieve library entry
+            IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid, profile.Name);
+
+            if (entryId == 0)
             {
-                entry = profile.LibraryEntry;
+                // pick most relevant entry
+                entry = ManagerFactory.libraryManager.GetGame(entries, profile.Name);
             }
             else
             {
-                // update status
-                ProfileStatusChanged?.Invoke(profile, ManagerStatus.Busy);
-
-                IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid, profile.Name);
-                entry = ManagerFactory.libraryManager.GetGame(entries, profile.Name);
-
-                // update status
-                ProfileStatusChanged?.Invoke(profile, ManagerStatus.None);
+                // update entry
+                entry = entries.FirstOrDefault(e => e.Id == entryId);
             }
+
+            // update status
+            ProfileStatusChanged?.Invoke(profile, ManagerStatus.None);
 
             // failed to retrieve a library entry
             if (entry is null)
@@ -664,7 +670,7 @@ namespace HandheldCompanion.Managers
             ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.LibraryUpdate);
         }
 
-        public async Task UpdateProfileArts(Profile profile, LibraryEntry entry, int coverIndex = 0, int artworkIndex = 0)
+        public async Task UpdateProfileArts(Profile profile, LibraryEntry entry, int coverIndex = 0, int artworkIndex = 0, int logoIndex = 0)
         {
             // update status
             ProfileStatusChanged?.Invoke(profile, ManagerStatus.Busy);
@@ -677,11 +683,15 @@ namespace HandheldCompanion.Managers
                     if (Steam.Grids?.Length > coverIndex)
                         Steam.Grid = Steam.Grids[coverIndex];
                 }
-
                 if (Steam.Hero is null || artworkIndex != 0)
                 {
                     if (Steam.Heroes?.Length > artworkIndex)
                         Steam.Hero = Steam.Heroes[artworkIndex];
+                }
+                if (Steam.Logo is null || logoIndex != 0)
+                {
+                    if (Steam.Logos?.Length > logoIndex)
+                        Steam.Logo = Steam.Logos[logoIndex];
                 }
             }
             else if (entry is IGDBEntry IGDB)

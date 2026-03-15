@@ -132,7 +132,7 @@ public partial class Profile : ICloneable, IComparable, INotifyPropertyChanged
     public DateTime LastUsed { get; set; } = DateTime.MinValue;
 
     // Library
-    public LibraryEntry LibraryEntry { get; set; }
+    public LibraryEntry? LibraryEntry { get; set; }
     public bool ShowInLibrary { get; set; } = true;
 
     // GameLib
