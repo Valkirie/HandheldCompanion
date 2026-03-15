@@ -355,7 +355,11 @@ public class ProcessManager : IManager
             // Run the call to AutomationElement.FromHandle in a separate task
             Task<AutomationElement> task = Task.Run(() => AutomationElement.FromHandle(hWnd));
             if (!task.Wait(TimeSpan.FromSeconds(5)))
+            {
+                // Observe any eventual exception to prevent UnobservedTaskException
+                task.ContinueWith(t => { _ = t.Exception; }, TaskContinuationOptions.OnlyOnFaulted);
                 return;
+            }
 
             // get element
             element = task.Result;
