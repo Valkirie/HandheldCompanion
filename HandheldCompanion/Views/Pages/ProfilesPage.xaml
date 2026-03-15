@@ -95,47 +95,77 @@
                             </StackPanel>
 
                             <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding HasLibraryEntry, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Preview" />
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="120" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
 
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="120" />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Cover" />
+                                            <ui:FlipView
+                                                x:Name="FlipViewCovers"
+                                                Height="180"
+                                                HorizontalAlignment="Stretch"
+                                                ItemsSource="{Binding LibraryCovers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                SelectedIndex="{Binding LibraryCoversIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <ui:FlipView.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Image
+                                                            HorizontalAlignment="Center"
+                                                            Source="{Binding Image, Mode=OneWay}"
+                                                            Stretch="UniformToFill" />
+                                                    </DataTemplate>
+                                                </ui:FlipView.ItemTemplate>
+                                            </ui:FlipView>
 
-                                    <StackPanel Grid.Column="0">
-                                        <ui:FlipView
-                                            x:Name="FlipViewCovers"
-                                            Height="180"
-                                            HorizontalAlignment="Stretch"
-                                            ItemsSource="{Binding LibraryCovers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                            SelectedIndex="{Binding LibraryCoversIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                            <ui:FlipView.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Image
-                                                        HorizontalAlignment="Center"
-                                                        Source="{Binding Image, Mode=OneWay}"
-                                                        Stretch="UniformToFill" />
-                                                </DataTemplate>
-                                            </ui:FlipView.ItemTemplate>
-                                        </ui:FlipView>
+                                            <ui:PipsPager
+                                                Margin="0,10,0,0"
+                                                HorizontalAlignment="Center"
+                                                IsEnabled="False"
+                                                MaxVisiblePips="6"
+                                                NextButtonVisibility="Collapsed"
+                                                NumberOfPages="{Binding LibraryCovers.Count}"
+                                                PreviousButtonVisibility="Collapsed"
+                                                SelectedPageIndex="{Binding SelectedIndex, ElementName=FlipViewCovers, Mode=TwoWay}" />
+                                        </StackPanel>
 
-                                        <ui:PipsPager
-                                            Margin="0,10,0,0"
-                                            HorizontalAlignment="Center"
-                                            IsEnabled="False"
-                                            MaxVisiblePips="6"
-                                            NextButtonVisibility="Collapsed"
-                                            NumberOfPages="{Binding LibraryCovers.Count}"
-                                            PreviousButtonVisibility="Collapsed"
-                                            SelectedPageIndex="{Binding SelectedIndex, ElementName=FlipViewCovers, Mode=TwoWay}" />
-                                    </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Logo" />
+                                            <ui:FlipView
+                                                x:Name="FlipViewLogos"
+                                                Height="180"
+                                                ItemsSource="{Binding LibraryLogos, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                SelectedIndex="{Binding LibraryLogosIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <ui:FlipView.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Image
+                                                            HorizontalAlignment="Center"
+                                                            Margin="32"
+                                                            Source="{Binding Image, Mode=OneWay}"
+                                                            Stretch="Uniform" />
+                                                    </DataTemplate>
+                                                </ui:FlipView.ItemTemplate>
+                                            </ui:FlipView>
 
-                                    <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                            <ui:PipsPager
+                                                Margin="0,10,0,0"
+                                                HorizontalAlignment="Center"
+                                                IsEnabled="False"
+                                                MaxVisiblePips="6"
+                                                NextButtonVisibility="Collapsed"
+                                                NumberOfPages="{Binding FlipViewLogos.Count}"
+                                                PreviousButtonVisibility="Collapsed"
+                                                SelectedPageIndex="{Binding SelectedIndex, ElementName=FlipViewLogos, Mode=TwoWay}" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Artwork" />
                                         <ui:FlipView
                                             x:Name="FlipViewArtworks"
                                             Height="180"
-                                            HorizontalAlignment="Stretch"
                                             ItemsSource="{Binding LibraryArtworks, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                             SelectedIndex="{Binding LibraryArtworksIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                             <ui:FlipView.ItemTemplate>
@@ -158,7 +188,7 @@
                                             PreviousButtonVisibility="Collapsed"
                                             SelectedPageIndex="{Binding SelectedIndex, ElementName=FlipViewArtworks, Mode=TwoWay}" />
                                     </StackPanel>
-                                </Grid>
+                                </StackPanel>
 
                                 <Button
                                     HorizontalAlignment="Stretch"

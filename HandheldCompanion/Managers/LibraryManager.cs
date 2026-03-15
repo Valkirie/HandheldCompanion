@@ -380,13 +380,11 @@ namespace HandheldCompanion.Managers
 
         public async Task<bool> DownloadGameArt(SteamGridEntry entry, int index, LibraryType libraryType)
         {
-            SteamGridDbObject[] objects = libraryType.HasFlag(LibraryType.cover) ? entry.Grids : entry.Heroes;
+            SteamGridDbObject[] objects = libraryType.HasFlag(LibraryType.cover) ? entry.Grids : libraryType.HasFlag(LibraryType.artwork) ? entry.Heroes: entry.Logos;
             if (index < 0 || index >= objects.Length)
                 return false;
 
-            return await DownloadGameArt(entry.Id,
-                libraryType.HasFlag(LibraryType.cover) ? entry.Grids[index] : entry.Heroes[index],
-                libraryType);
+            return await DownloadGameArt(entry.Id, libraryType.HasFlag(LibraryType.cover) ? entry.Grids[index] : libraryType.HasFlag(LibraryType.artwork) ? entry.Heroes[index] : entry.Logos[index], libraryType);
         }
 
         public async Task<bool> DownloadGameArt(long gameId, SteamGridDbObject entry, LibraryType libraryType)
@@ -482,9 +480,7 @@ namespace HandheldCompanion.Managers
                 libraryType, false);
             */
 
-            return await DownloadGameArt(entry.Id,
-                libraryType.HasFlag(LibraryType.cover) ? entry.Cover : entry.Artworks[index],
-                libraryType, false);
+            return await DownloadGameArt(entry.Id, libraryType.HasFlag(LibraryType.cover) ? entry.Cover : entry.Artworks[index], libraryType, false);
         }
 
         /* long gameId, string imageName, long? imageId, LibraryType libraryType, bool preview */

@@ -1218,6 +1218,29 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private int _LibraryLogosIndex;
+        public int LibraryLogosIndex
+        {
+            get => _LibraryLogosIndex;
+            set
+            {
+                if (value != -1)
+                    _ = TriggerGameArtDownloadAsync(value, LibraryType.logo | LibraryType.thumbnails);
+                else
+                    RefreshLogo(value);
+            }
+        }
+
+        public ObservableCollection<LibraryVisualViewModel> LibraryLogos
+        {
+            get
+            {
+                if (_SelectedLibraryIndex != -1 && _SelectedLibraryIndex < LibraryPickers.Count)
+                    return LibraryPickers[_SelectedLibraryIndex].LibraryLogos;
+                return new();
+            }
+        }
+
         public bool QuerySteamGrid { get; set; } = true;
         public bool QueryIGDB { get; set; } = true;
 
@@ -1685,7 +1708,7 @@ namespace HandheldCompanion.ViewModels
 
             DownloadLibrary = new DelegateCommand(async () =>
             {
-                await ManagerFactory.libraryManager.UpdateProfileArts(SelectedProfile, SelectedLibraryEntry, LibraryCoversIndex, LibraryArtworksIndex);
+                await ManagerFactory.libraryManager.UpdateProfileArts(SelectedProfile, SelectedLibraryEntry, LibraryCoversIndex, LibraryArtworksIndex, LibraryLogosIndex);
                 contentDialog?.Hide();
                 contentDialog = null;
                 ManagerFactory.profileManager.UpdateOrCreateProfile(SelectedProfile, UpdateSource.LibraryUpdate);
@@ -2720,6 +2743,7 @@ namespace HandheldCompanion.ViewModels
         {
             LibraryArtworksIndex = -1;
             LibraryCoversIndex = -1;
+            LibraryLogosIndex = -1;
             SelectedLibraryIndex = -1;
             LibraryPickers.SafeClear();
 
@@ -2733,6 +2757,8 @@ namespace HandheldCompanion.ViewModels
             LibraryArtworksIndex = 0;
             LibraryCoversIndex = -1;
             LibraryCoversIndex = 0;
+            LibraryLogosIndex = -1;
+            LibraryLogosIndex = 0;
         }
 
         private async Task TriggerGameArtDownloadAsync(int value, LibraryType libraryType)
@@ -2742,8 +2768,10 @@ namespace HandheldCompanion.ViewModels
 
             if (libraryType.HasFlag(LibraryType.cover))
                 RefreshCover(value);
-            else
+            else if (libraryType.HasFlag(LibraryType.artwork))
                 RefreshArtwork(value);
+            else if (libraryType.HasFlag(LibraryType.logo))
+                RefreshLogo(value);
         }
 
         private void RefreshCover(int index)
@@ -2764,6 +2792,17 @@ namespace HandheldCompanion.ViewModels
                 OnPropertyChanged(nameof(LibraryArtworks));
                 _LibraryArtworksIndex = index;
                 OnPropertyChanged(nameof(LibraryArtworksIndex));
+            }
+            catch { }
+        }
+
+        private void RefreshLogo(int index)
+        {
+            try
+            {
+                OnPropertyChanged(nameof(LibraryLogos));
+                _LibraryLogosIndex = index;
+                OnPropertyChanged(nameof(LibraryLogosIndex));
             }
             catch { }
         }
