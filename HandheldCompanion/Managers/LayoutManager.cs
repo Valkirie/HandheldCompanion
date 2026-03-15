@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Timers;
 
 namespace HandheldCompanion.Managers;
@@ -733,7 +734,9 @@ public class LayoutManager : IManager
     }
 
     //  Arithmetic helpers (avoid repeated Math.Clamp boxing)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static short ClampShort(float value) => (short)Math.Clamp(value, short.MinValue, short.MaxValue);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static byte ClampByte(int value) => (byte)Math.Clamp(value, byte.MinValue, byte.MaxValue);
 
     //  Public accessors

@@ -1,6 +1,7 @@
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Utils;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace HandheldCompanion.Actions
 {
@@ -54,6 +55,7 @@ namespace HandheldCompanion.Actions
             current = (byte)(outBool ? motionThreshold : 0);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public byte GetValue() => current;
     }
 }

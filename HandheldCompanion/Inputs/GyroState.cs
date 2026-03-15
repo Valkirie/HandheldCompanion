@@ -34,16 +34,24 @@ namespace HandheldCompanion.Inputs
             for (int i = 0; i < _gyroscope.Length; i++) _gyroscope[i] = v;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetAccelerometer(SensorState s, float ax, float ay, float az) => _accelerometer[Idx(s)] = new Vector3(ax, ay, az);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetGyroscope(SensorState s, float gx, float gy, float gz) => _gyroscope[Idx(s)] = new Vector3(gx, gy, gz);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetGyroscope(SensorState s, Vector3 v) => _gyroscope[(int)s] = v;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetAccelerometer(SensorState s, Vector3 v) => _accelerometer[(int)s] = v;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector3 GetAccelerometer(SensorState s) => _accelerometer[Idx(s)];
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector3 GetGyroscope(SensorState s) => _gyroscope[Idx(s)];
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref Vector3 GetGyroscopeRef(SensorState s) => ref _gyroscope[(int)s];
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref Vector3 GetAccelerometerRef(SensorState s) => ref _accelerometer[(int)s];
 
 

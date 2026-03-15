@@ -2,6 +2,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Utils;
 using System;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace HandheldCompanion.Actions
 {
@@ -37,8 +38,8 @@ namespace HandheldCompanion.Actions
             Axis = axis;
         }
 
-        public float XOuput => outVector.X;
-        public float YOuput => outVector.Y;
+        public float XOuput { [MethodImpl(MethodImplOptions.AggressiveInlining)] get => outVector.X; }
+        public float YOuput { [MethodImpl(MethodImplOptions.AggressiveInlining)] get => outVector.Y; }
 
         public override void Execute(AxisLayout layout, ShiftSlot shiftSlot, float delta)
         {
@@ -68,6 +69,7 @@ namespace HandheldCompanion.Actions
             if (InvertVertical) outVector.Y = -outVector.Y;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector2 GetValue() => outVector;
     }
 }

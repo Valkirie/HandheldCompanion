@@ -2,6 +2,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Utils;
 using System;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace HandheldCompanion.Actions
 {
@@ -60,6 +61,7 @@ namespace HandheldCompanion.Actions
             Execute(Button, press, shiftSlot, delta);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool GetValue() => outBool;
     }
 }
