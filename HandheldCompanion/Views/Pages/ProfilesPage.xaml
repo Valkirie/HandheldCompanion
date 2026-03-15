@@ -141,8 +141,8 @@
                                                 <ui:FlipView.ItemTemplate>
                                                     <DataTemplate>
                                                         <Image
-                                                            HorizontalAlignment="Center"
                                                             Margin="32"
+                                                            HorizontalAlignment="Center"
                                                             Source="{Binding Image, Mode=OneWay}"
                                                             Stretch="Uniform" />
                                                     </DataTemplate>
@@ -194,6 +194,7 @@
                                     HorizontalAlignment="Stretch"
                                     Command="{Binding DownloadLibrary}"
                                     Content="Update metadata"
+                                    IsDefault="True"
                                     IsEnabled="{Binding HasLibraryEntry, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                     Style="{DynamicResource AccentButtonStyle}" />
                             </ikw:SimpleStackPanel>
@@ -206,6 +207,7 @@
                 Name="ProfileRenameDialog"
                 CloseButtonClick="ProfileRenameDialog_CloseButtonClick"
                 CloseButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Cancel}"
+                DefaultButton="Primary"
                 PrimaryButtonClick="ProfileRenameDialog_PrimaryButtonClick"
                 PrimaryButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Rename}">
                 <ikw:SimpleStackPanel MinWidth="500" Spacing="12">
@@ -220,6 +222,7 @@
                 Name="SubProfileRenameDialog"
                 CloseButtonClick="SubProfileRenameDialog_CloseButtonClick"
                 CloseButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Cancel}"
+                DefaultButton="Primary"
                 PrimaryButtonClick="SubProfileRenameDialog_PrimaryButtonClick"
                 PrimaryButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Rename}">
                 <ikw:SimpleStackPanel MinWidth="500" Spacing="12">
