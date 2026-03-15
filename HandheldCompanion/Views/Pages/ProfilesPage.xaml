@@ -359,7 +359,7 @@
                                             <DoubleAnimation
                                                 Storyboard.TargetProperty="Opacity"
                                                 From="0"
-                                                To="0.6"
+                                                To="1.0"
                                                 Duration="0:0:0.3" />
                                         </Storyboard>
                                     </BeginStoryboard>
@@ -368,12 +368,28 @@
                         </Rectangle>
 
                         <Image
-                            Height="80"
-                            Margin="24"
+                            MaxWidth="420"
+                            MaxHeight="128"
+                            Margin="32,0,0,32"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Bottom"
                             Source="{Binding Logo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
-                            Stretch="Uniform" />
+                            Stretch="Uniform">
+                            <Image.Triggers>
+                                <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <!--  fade in from 0->1 in 300ms  -->
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="Opacity"
+                                                From="0"
+                                                To="1.0"
+                                                Duration="0:0:0.3" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Image.Triggers>
+                        </Image>
                     </Grid>
 
                     <!--  Profile details  -->
@@ -737,55 +753,6 @@
                             </Grid>
                         </ikw:SimpleStackPanel>
                     </Expander>
-
-                    <ikw:SimpleStackPanel
-                        Name="ProfileDetails"
-                        Spacing="3"
-                        Visibility="Collapsed">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="8*" MinWidth="200" />
-                            </Grid.ColumnDefinitions>
-
-                            <ikw:SimpleStackPanel Spacing="3">
-                                <Border
-                                    Height="237"
-                                    Padding="15,12,12,12"
-                                    BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                                    CornerRadius="{DynamicResource ControlCornerRadius}">
-                                    <Border.Background>
-                                        <ImageBrush
-                                            AlignmentY="Center"
-                                            ImageSource="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
-                                            Stretch="UniformToFill" />
-                                    </Border.Background>
-                                    <Border.Triggers>
-                                        <EventTrigger RoutedEvent="Binding.TargetUpdated">
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <!--  fade in from 0->1 in 300ms  -->
-                                                    <DoubleAnimation
-                                                        Storyboard.TargetProperty="Opacity"
-                                                        From="0"
-                                                        To="1"
-                                                        Duration="0:0:0.3" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </EventTrigger>
-                                    </Border.Triggers>
-                                </Border>
-                            </ikw:SimpleStackPanel>
-
-                            <Border
-                                Grid.Column="1"
-                                Margin="6,0,0,0"
-                                Padding="15,12,12,12"
-                                Background="{DynamicResource ExpanderHeaderBackground}"
-                                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                                CornerRadius="{DynamicResource ControlCornerRadius}" />
-                        </Grid>
-                    </ikw:SimpleStackPanel>
 
                     <!--  Global settings  -->
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Global settings" />
