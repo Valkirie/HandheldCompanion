@@ -23,6 +23,7 @@ namespace HandheldCompanion.Managers
     {
         // GameArt
         public static BitmapImage MissingCover = new BitmapImage(new Uri("pack://application:,,,/Resources/MissingCover.png"));
+        public static BitmapImage MissingArtwork = new BitmapImage(new Uri("pack://application:,,,/Resources/MissingArtwork.png"));
         public static BitmapImage Xbox360Big = new BitmapImage(new Uri("pack://application:,,,/Resources/controller_0_big.png"));
         public static BitmapImage DualShock4Big = new BitmapImage(new Uri("pack://application:,,,/Resources/controller_1_big.png"));
     }
@@ -92,7 +93,7 @@ namespace HandheldCompanion.Managers
             return GetGameArtPath(gameId, libraryType, imageId.ToString(), extension);
         }
 
-        public BitmapImage GetGameArt(long gameId, LibraryType libraryType, string imageId, string extension)
+        public BitmapImage? GetGameArt(long gameId, LibraryType libraryType, string imageId, string extension)
         {
             string fileName = GetGameArtPath(gameId, libraryType, imageId, extension);
             if (!File.Exists(fileName))
@@ -100,7 +101,7 @@ namespace HandheldCompanion.Managers
                 if (libraryType.HasFlag(LibraryType.cover))
                     return LibraryResources.MissingCover;
                 else if (libraryType.HasFlag(LibraryType.artwork))
-                    return LibraryResources.MissingCover;
+                    return LibraryResources.MissingArtwork;
                 else if (libraryType.HasFlag(LibraryType.thumbnails))
                     return LibraryResources.MissingCover;
                 else if (libraryType.HasFlag(LibraryType.logo))
@@ -110,7 +111,7 @@ namespace HandheldCompanion.Managers
             return new BitmapImage(new Uri(fileName));
         }
 
-        public BitmapImage GetGameArt(long gameId, LibraryType libraryType, long imageId, string extension)
+        public BitmapImage? GetGameArt(long gameId, LibraryType libraryType, long imageId, string extension)
         {
             return GetGameArt(gameId, libraryType, imageId.ToString(), extension);
         }

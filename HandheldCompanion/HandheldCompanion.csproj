@@ -132,6 +132,7 @@
     <None Remove="Resources\led_presets\onexplayer\preset11.png" />
     <None Remove="Resources\MainBody.mtl" />
     <None Remove="Resources\MainBody.obj" />
+    <None Remove="Resources\MissingArtwork.png" />
     <None Remove="Resources\msiapcfg.dll" />
     <None Remove="Resources\PawnIO\RyzenSMU.bin" />
     <None Remove="Resources\Screen.mtl" />
@@ -208,6 +209,7 @@
     <Resource Include="Resources\DeviceImages\device_zotac_zone.png" />
     <Resource Include="Resources\droix.png" />
     <Resource Include="Resources\icon.png" />
+    <Resource Include="Resources\MissingArtwork.png" />
     <Resource Include="Resources\MissingCover.png" />
     <Resource Include="Resources\led_presets\onexplayer\preset01.png" />
     <Resource Include="Resources\led_presets\onexplayer\preset02.png" />

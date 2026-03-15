@@ -133,7 +133,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public BitmapImage Cover
+        public BitmapImage? Cover
         {
             get
             {
@@ -148,12 +148,12 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public BitmapImage Artwork
+        public BitmapImage? Artwork
         {
             get
             {
                 if (Profile.LibraryEntry is null)
-                    return null;
+                    return LibraryResources.MissingArtwork;
 
                 long id = Profile.LibraryEntry.Id;
                 long imageId = Profile.LibraryEntry.GetArtworkId();
@@ -163,7 +163,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public BitmapImage Logo
+        public BitmapImage? Logo
         {
             get
             {

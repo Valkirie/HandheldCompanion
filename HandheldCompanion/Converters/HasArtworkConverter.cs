@@ -9,7 +9,7 @@ namespace HandheldCompanion.Converters;
 
 /// <summary>
 /// Converts a BitmapImage to Visibility based on whether it's valid artwork or a placeholder.
-/// Returns Collapsed if the image is null, MissingCover, or empty.
+/// Returns Collapsed if the image is null, MissingCover, MissingArtwork or empty.
 /// </summary>
 public sealed class HasArtworkConverter : IValueConverter
 {
@@ -19,7 +19,7 @@ public sealed class HasArtworkConverter : IValueConverter
             return Visibility.Collapsed;
 
         // Check if it's the MissingCover placeholder
-        if (image == LibraryResources.MissingCover)
+        if (image == LibraryResources.MissingCover || image == LibraryResources.MissingArtwork)
             return Visibility.Collapsed;
 
         // Check if UriSource is null or empty
@@ -30,6 +30,8 @@ public sealed class HasArtworkConverter : IValueConverter
         string uri = image.UriSource.ToString();
         if (uri.Contains("MissingCover.png", StringComparison.OrdinalIgnoreCase))
             return Visibility.Collapsed;
+        else if (uri.Contains("MissingArtwork.png", StringComparison.OrdinalIgnoreCase))
+                return Visibility.Collapsed;
 
         return Visibility.Visible;
     }

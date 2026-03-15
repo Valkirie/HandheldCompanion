@@ -1221,7 +1221,7 @@ namespace HandheldCompanion.ViewModels
         public bool QuerySteamGrid { get; set; } = true;
         public bool QueryIGDB { get; set; } = true;
 
-        public BitmapImage Cover
+        public BitmapImage? Cover
         {
             get
             {
@@ -1236,26 +1236,22 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public BitmapImage Artwork
+        public BitmapImage? Artwork
         {
             get
             {
                 if (SelectedProfile?.LibraryEntry == null)
-                    return null;
+                    return LibraryResources.MissingArtwork;
 
                 long id = SelectedProfile.LibraryEntry.Id;
                 long imageId = SelectedProfile.LibraryEntry.GetArtworkId();
                 string imageExtension = SelectedProfile.LibraryEntry.GetArtworkExtension(false);
 
-                BitmapImage artwork = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.artwork, imageId, imageExtension);
-                if (artwork != LibraryResources.MissingCover)
-                    return artwork;
-
-                return null;
+                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.artwork, imageId, imageExtension);
             }
         }
 
-        public BitmapImage Logo
+        public BitmapImage? Logo
         {
             get
             {
@@ -1266,11 +1262,7 @@ namespace HandheldCompanion.ViewModels
                 long imageId = SelectedProfile.LibraryEntry.GetLogoId();
                 string imageExtension = SelectedProfile.LibraryEntry.GetLogoExtension(false);
 
-                BitmapImage logo = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.logo, imageId, imageExtension);
-                if (logo != LibraryResources.MissingCover)
-                    return logo;
-
-                return null;
+                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.logo, imageId, imageExtension);
             }
         }
         #endregion
