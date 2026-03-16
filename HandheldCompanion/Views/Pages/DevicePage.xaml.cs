@@ -373,10 +373,12 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
+            // save setting before updating device cTDP to ensure the new value is
+            // detected as a change (GetProperty falls back to cTDP when not yet saved)
+            ManagerFactory.settingsManager.SetProperty("ConfigurableTDPOverrideUp", value);
+
             // update current device cTDP
             IDevice.GetCurrent().cTDP[1] = value;
-
-            ManagerFactory.settingsManager.SetProperty("ConfigurableTDPOverrideUp", value);
         }
 
         private void NumberBox_TDPMin_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
@@ -390,10 +392,12 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
+            // save setting before updating device cTDP to ensure the new value is
+            // detected as a change (GetProperty falls back to cTDP when not yet saved)
+            ManagerFactory.settingsManager.SetProperty("ConfigurableTDPOverrideDown", value);
+
             // update current device cTDP
             IDevice.GetCurrent().cTDP[0] = value;
-
-            ManagerFactory.settingsManager.SetProperty("ConfigurableTDPOverrideDown", value);
         }
 
         private void UseDynamicLightingToggle_Toggled(object sender, RoutedEventArgs e)
