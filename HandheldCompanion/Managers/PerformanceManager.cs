@@ -248,7 +248,7 @@ public static class PerformanceManager
             case "ConfigurableTDPOverrideDown":
                 {
                     double TDPmin = Convert.ToDouble(value);
-                    if (TDPmin == 0 || TDPMin > TDPMax)
+                    if (TDPmin == 0 || TDPmin > TDPMax)
                         return;
 
                     // update value
@@ -261,7 +261,7 @@ public static class PerformanceManager
             case "ConfigurableTDPOverrideUp":
                 {
                     double TDPmax = Convert.ToDouble(value);
-                    if (TDPmax == 0 || TDPMax < TDPMin)
+                    if (TDPmax == 0 || TDPmax < TDPMin)
                         return;
 
                     // update value
