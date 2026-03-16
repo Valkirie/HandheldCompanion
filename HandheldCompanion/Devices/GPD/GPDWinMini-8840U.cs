@@ -9,12 +9,12 @@ public class GPDWinMini_8840U : GPDWinMini
     {
         // https://www.amd.com/en/products/processors/laptop/ryzen/8000-series/amd-ryzen-7-8840u.html
 
-        GyrometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
+        GyrometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {
-            { 'X', 'Y' },
+            { 'X', 'X' },
             { 'Y', 'Z' },
-            { 'Z', 'X' }
+            { 'Z', 'Y' }
         };
 
         AccelerometerAxis = new Vector3(-1.0f, 1.0f, 1.0f);

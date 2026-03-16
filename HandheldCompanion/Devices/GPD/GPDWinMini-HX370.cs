@@ -13,15 +13,15 @@ public class GPDWinMini_HX370 : GPDWinMini_8840U
         GfxClock = new double[] { 100, 2900 };
         CpuClock = 5100;
 
-        GyrometerAxis = new Vector3(1.0f, 1.0f, 1.0f);
+        GyrometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {
-            { 'X', 'Z' },
-            { 'Y', 'X' },
-            { 'Z', 'Y' }
+            { 'X', 'Y' },
+            { 'Y', 'Z' },
+            { 'Z', 'X' }
         };
 
-        AccelerometerAxis = new Vector3(-1.0f, -1.0f, -1.0f);
+        AccelerometerAxis = new Vector3(-1.0f, 1.0f, 1.0f);
         AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
