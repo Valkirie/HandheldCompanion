@@ -3,6 +3,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
+using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Pages.Profiles;
@@ -40,6 +41,8 @@ public partial class ProfilesPage : Page
         viewModel = new ProfilesPageViewModel(this);
         DataContext = viewModel;
         InitializeComponent();
+
+        EmulatedControllerDInputItem.Visibility = VJoyTarget.IsInstalled() ? Visibility.Visible : Visibility.Collapsed;
 
         // Subscribe to control changes for Profile properties that are bound directly
         Loaded += ProfilesPage_Loaded;

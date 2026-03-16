@@ -159,6 +159,7 @@
                     <ComboBox Name="cB_HidMode" SelectionChanged="cB_HidMode_SelectionChanged">
                         <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_Xbox360Controller}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_DualShock4Controller}" />
+                        <ComboBoxItem Name="cB_HidModeDInputItem" Content="{l:Static resx:Resources.Enum_HIDmode_vJoyController}" />
                     </ComboBox>
                 </ui:SettingsCard>
 

@@ -31,7 +31,7 @@ public sealed class HasArtworkConverter : IValueConverter
         if (uri.Contains("MissingCover.png", StringComparison.OrdinalIgnoreCase))
             return Visibility.Collapsed;
         else if (uri.Contains("MissingArtwork.png", StringComparison.OrdinalIgnoreCase))
-                return Visibility.Collapsed;
+            return Visibility.Collapsed;
 
         return Visibility.Visible;
     }

@@ -2229,6 +2229,7 @@ public static class ControllerManager
             default:
             case HIDmode.NoController:
             case HIDmode.Xbox360Controller:
+            case HIDmode.DInputController:
                 return dummyXbox360;
 
             case HIDmode.DualShock4Controller:

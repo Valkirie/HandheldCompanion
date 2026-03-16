@@ -823,13 +823,29 @@ namespace HandheldCompanion.ViewModels
 
         public int HIDModeIndex
         {
-            get => SelectedProfile != null ? (int)SelectedProfile.HID + 1 : 0; // +1 because NotSelected=-1, Xbox=0, DS4=1 → indices 0,1,2
+            get
+            {
+                if (SelectedProfile == null) return 0;
+                return SelectedProfile.HID switch
+                {
+                    HIDmode.Xbox360Controller => 1,
+                    HIDmode.DualShock4Controller => 2,
+                    HIDmode.DInputController => 3,
+                    _ => 0 // NotSelected
+                };
+            }
             set
             {
-                int hidValue = value - 1; // Convert back: index 0→-1, 1→0, 2→1
-                if (SelectedProfile != null && (int)SelectedProfile.HID != hidValue)
+                HIDmode mode = value switch
                 {
-                    SelectedProfile.HID = (HIDmode)hidValue;
+                    1 => HIDmode.Xbox360Controller,
+                    2 => HIDmode.DualShock4Controller,
+                    3 => HIDmode.DInputController,
+                    _ => HIDmode.NotSelected
+                };
+                if (SelectedProfile != null && SelectedProfile.HID != mode)
+                {
+                    SelectedProfile.HID = mode;
                     OnPropertyChanged(nameof(HIDModeIndex));
 
                     if (!isLoadingProfile)
@@ -1708,7 +1724,11 @@ namespace HandheldCompanion.ViewModels
 
             DownloadLibrary = new DelegateCommand(async () =>
             {
-                await ManagerFactory.libraryManager.UpdateProfileArts(SelectedProfile, SelectedLibraryEntry, LibraryCoversIndex, LibraryArtworksIndex, LibraryLogosIndex);
+                int coverId = (int)LibraryCovers[LibraryCoversIndex].Id;
+                int artworkId = (int)LibraryArtworks[LibraryArtworksIndex].Id;
+                int logoId = (int)LibraryLogos[LibraryLogosIndex].Id;
+
+                await ManagerFactory.libraryManager.UpdateProfileArts(SelectedProfile, SelectedLibraryEntry, coverId, artworkId, logoId);
                 contentDialog?.Hide();
                 contentDialog = null;
                 ManagerFactory.profileManager.UpdateOrCreateProfile(SelectedProfile, UpdateSource.LibraryUpdate);

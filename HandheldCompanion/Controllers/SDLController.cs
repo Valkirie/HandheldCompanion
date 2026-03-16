@@ -17,6 +17,7 @@ namespace HandheldCompanion.Controllers
 
         // Cached capabilities — read once in the constructor, never recomputed
         public readonly uint deviceProperties;
+        public readonly GamepadType GamepadType;
 
         private readonly bool HasGyro;
         private readonly bool HasAccel;
@@ -60,6 +61,7 @@ namespace HandheldCompanion.Controllers
 
             // Cache all capabilities once — avoids repeated SDL calls on every tick
             deviceProperties = GetGamepadProperties(gamepad);
+            GamepadType = GetGamepadType(this.gamepad);
 
             HasGyro = GamepadHasSensor(gamepad, SensorType.Gyro);
             HasAccel = GamepadHasSensor(gamepad, SensorType.Accel);
@@ -124,8 +126,6 @@ namespace HandheldCompanion.Controllers
                     break;
             }
         }
-
-        public GamepadType GamepadType => GetGamepadType(this.gamepad);
 
         public override void AttachDetails(PnPDetails details)
         {

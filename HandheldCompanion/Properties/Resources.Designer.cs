@@ -2149,6 +2149,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Emulated DInput controller.
+        /// </summary>
+        public static string Enum_HIDmode_vJoyController {
+            get {
+                return ResourceManager.GetString("Enum_HIDmode_vJoyController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Emulated XBOX 360 controller.
         /// </summary>
         public static string Enum_HIDmode_Xbox360Controller {
@@ -8657,6 +8666,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_EmulatedControllerDS4 {
             get {
                 return ResourceManager.GetString("ProfilesPage_EmulatedControllerDS4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Emulated DInput controller.
+        /// </summary>
+        public static string ProfilesPage_EmulatedControllervJoy {
+            get {
+                return ResourceManager.GetString("ProfilesPage_EmulatedControllervJoy", resourceCulture);
             }
         }
         

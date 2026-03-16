@@ -363,7 +363,7 @@ public class DeviceManager : IManager
                 EnumeratorName = usbDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName) ?? string.Empty,
                 deviceInstanceId = hidDevice.InstanceId.ToUpper(),
                 baseContainerDeviceInstanceId = usbDevice.InstanceId.ToUpper(),
-                isVirtual = (usbDevice.IsVirtual() || hidDevice.IsVirtual()) && !IsMoonlight(attributes.Value),
+                isVirtual = (usbDevice.IsVirtual() || hidDevice.IsVirtual() || IsvJoy(attributes.Value)) && !IsMoonlight(attributes.Value),
                 isGaming = IsGaming(attributes.Value, capabilities.Value),
                 ProductID = attributes.Value.ProductID,
                 VendorID = attributes.Value.VendorID,
@@ -399,6 +399,7 @@ public class DeviceManager : IManager
     /// <param name="attributes"></param>
     /// <returns></returns>
     private static bool IsMoonlight(Attributes attributes) => attributes.VendorID == 1356 && attributes.ProductID == 1476;
+    private static bool IsvJoy(Attributes attributes) => attributes.VendorID == 4660 && attributes.ProductID == 48813;
 
     public List<PnPDetails> GetDetails(ushort VendorId = 0, ushort ProductId = 0)
     {

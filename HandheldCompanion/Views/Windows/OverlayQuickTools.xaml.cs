@@ -621,6 +621,14 @@ public partial class OverlayQuickTools : GamepadWindow
         // Give gamepad focus
         gamepadFocusManager.Focus((NavigationViewItem)navView.SelectedItem);
 
+        // Debounce: update visual selection immediately, defer actual page load
+        _pendingNavTag = navItemTag;
+        _navDebounceTimer.Stop();
+        _navDebounceTimer.Start();
+    }
+
+    protected override void ApplyPendingNavigation(string navItemTag)
+    {
         KeyValuePair<string, Page> item = _pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
         Page? _page = item.Value;
 

@@ -412,7 +412,6 @@
                                 <ui:DropDownButton
                                     Grid.Column="1"
                                     MinWidth="140"
-                                    Margin="12,0,0,0"
                                     HorizontalAlignment="Right"
                                     Style="{DynamicResource AccentButtonStyle}"
                                     Visibility="Collapsed">
@@ -469,42 +468,70 @@
                                     </ui:DropDownButton.Flyout>
                                 </ui:DropDownButton>
 
-                                <Button
+                                <ikw:SimpleStackPanel
                                     Grid.Column="1"
-                                    MinWidth="140"
-                                    Margin="12,0,0,0"
                                     HorizontalAlignment="Right"
-                                    Command="{Binding ToggleProfileProcessCommand}"
-                                    IsEnabled="{Binding CanToggleProfileProcess, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Style="{DynamicResource AccentButtonStyle}">
-                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    Orientation="Horizontal"
+                                    Spacing="3">
+                                    <Button
+                                        MinWidth="100"
+                                        Command="{Binding ToggleProfileProcessCommand}"
+                                        IsEnabled="{Binding CanToggleProfileProcess, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Style="{DynamicResource AccentButtonStyle}">
+                                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                            <ui:FontIcon>
+                                                <ui:FontIcon.Style>
+                                                    <Style TargetType="ui:FontIcon">
+                                                        <Setter Property="Glyph" Value="&#xf5b0;" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsProfileProcessRunning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                                                <Setter Property="Glyph" Value="&#xee95;" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </ui:FontIcon.Style>
+                                            </ui:FontIcon>
+
+                                            <TextBlock>
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text" Value="{l:Static resx:Resources.ProfilesPage_Play}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsProfileProcessRunning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                                                <Setter Property="Text" Value="{l:Static resx:Resources.ProfilesPage_StopProcess}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </ikw:SimpleStackPanel>
+                                    </Button>
+
+                                    <Button
+                                        VerticalAlignment="Stretch"
+                                        Command="{Binding OpenControllerLayoutCommand}"
+                                        Tag="Navigation">
+                                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" />
+                                    </Button>
+
+                                    <ToggleButton
+                                        Name="ToggleFavoriteButton"
+                                        VerticalAlignment="Stretch"
+                                        IsChecked="{Binding IsLiked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                         <ui:FontIcon>
                                             <ui:FontIcon.Style>
                                                 <Style TargetType="ui:FontIcon">
-                                                    <Setter Property="Glyph" Value="&#xE768;" />
+                                                    <Setter Property="Glyph" Value="&#xe734;" />
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsProfileProcessRunning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                                                            <Setter Property="Glyph" Value="&#xE71A;" />
+                                                        <DataTrigger Binding="{Binding IsLiked, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                                            <Setter Property="Glyph" Value="&#xe735;" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </ui:FontIcon.Style>
                                         </ui:FontIcon>
-
-                                        <TextBlock>
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="Text" Value="{l:Static resx:Resources.ProfilesPage_Play}" />
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsProfileProcessRunning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                                                            <Setter Property="Text" Value="{l:Static resx:Resources.ProfilesPage_StopProcess}" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                    </ikw:SimpleStackPanel>
-                                </Button>
+                                    </ToggleButton>
+                                </ikw:SimpleStackPanel>
                             </Grid>
                         </Expander.Header>
                         <ikw:SimpleStackPanel Spacing="3">
@@ -643,26 +670,6 @@
                                             DisplayMemberPath="Name"
                                             ItemsSource="{Binding SubProfiles, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                             SelectedItem="{Binding SelectedProfile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                                        <ToggleButton
-                                            Name="ToggleFavoriteButton"
-                                            Grid.Column="1"
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            IsChecked="{Binding IsLiked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                            <ui:FontIcon>
-                                                <ui:FontIcon.Style>
-                                                    <Style TargetType="ui:FontIcon">
-                                                        <Setter Property="Glyph" Value="&#xe734;" />
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding IsLiked, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                                                                <Setter Property="Glyph" Value="&#xe735;" />
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </ui:FontIcon.Style>
-                                            </ui:FontIcon>
-                                        </ToggleButton>
 
                                         <Button
                                             Name="RenameSubProfileButton"
@@ -811,6 +818,7 @@
                                 <ComboBoxItem Name="EmulatedControllerDefaultItem" Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDefault}" />
                                 <ComboBoxItem Name="EmulatedControllerXboxItem" Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerXbox}" />
                                 <ComboBoxItem Name="EmulatedControllerDS4Item" Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDS4}" />
+                                <ComboBoxItem Name="EmulatedControllerDInputItem" Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllervJoy}" />
                             </ComboBox>
                         </ui:SettingsCard>
 

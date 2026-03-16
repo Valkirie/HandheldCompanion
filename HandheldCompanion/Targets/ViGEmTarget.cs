@@ -23,6 +23,9 @@ namespace HandheldCompanion.Targets
         public event VibratedEventHandler Vibrated;
         public delegate void VibratedEventHandler(byte LargeMotor, byte SmallMotor);
 
+        protected void RaiseConnected() => Connected?.Invoke(this);
+        protected void RaiseDisconnected() => Disconnected?.Invoke(this);
+
         public bool IsConnected = false;
 
         ~ViGEmTarget()

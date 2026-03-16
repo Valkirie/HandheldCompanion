@@ -77,6 +77,9 @@ namespace HandheldCompanion.Managers
                 MessageBox.Show("Unable to start Handheld Companion, the ViGEm application is missing.\n\nPlease get it from: https://github.com/ViGEm/ViGEmBus/releases", "Error");
                 throw new InvalidOperationException();
             }
+
+            // prepare vJoy SDL mapping
+            VJoyTarget.WriteSDLGameControllerMapping();
         }
 
         public static async void Start()
@@ -269,6 +272,7 @@ namespace HandheldCompanion.Managers
             {
                 case HIDmode.Xbox360Controller:
                 case HIDmode.DualShock4Controller:
+                case HIDmode.DInputController:
                     SetControllerMode(profile.HID);
                     break;
 
@@ -405,6 +409,11 @@ namespace HandheldCompanion.Managers
 
                     case HIDmode.Xbox360Controller:
                         vTarget = new Xbox360Target(VendorId, ProductId);
+                        break;
+
+                    case HIDmode.DInputController:
+                        uint deviceId = VJoyTarget.FindAvailableDeviceId();
+                        vTarget = new VJoyTarget(deviceId);
                         break;
                 }
 
