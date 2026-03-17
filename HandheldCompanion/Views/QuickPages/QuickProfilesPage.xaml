@@ -82,9 +82,9 @@
 
                     <ComboBox
                         Name="SelectSubProfileComboBox"
-                        DisplayMemberPath="Name"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
+                        DisplayMemberPath="Name"
                         ItemsSource="{Binding SubProfiles, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectedIndex="{Binding SelectedSubProfileIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard>

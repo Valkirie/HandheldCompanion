@@ -67,84 +67,128 @@ public static class WPFUtils
     // A function that takes a list of controls and returns the top-left control
     public static Control GetTopLeftControl<T>(List<Control> controls, List<Type> typesToIgnore = null) where T : Control
     {
-        // filter list
         controls = controls.Where(c => c is T && c.IsEnabled).ToList();
 
-        // Filter based on exclusion type list
         if (typesToIgnore is not null)
             controls = controls.Where(c => !typesToIgnore.Contains(c.GetType())).ToList();
 
-        // If no controls are found, return null
         if (controls == null || controls.Count == 0)
             return null;
 
-        // Initialize the top left control with the first element of the list
         Control topLeft = controls[0];
-
-        // Browse other list items
         for (int i = 1; i < controls.Count; i++)
         {
-            // Get current control
             Control current = controls[i];
-
-            // Compare the Canvas.Top and Canvas.Left properties of the current control with those of the top-left control
-            // If the current control is farther up or to the left, replace it with the farthest control to the left
             if (Canvas.GetTop(current) < Canvas.GetTop(topLeft) || (Canvas.GetTop(current) == Canvas.GetTop(topLeft) && Canvas.GetLeft(current) < Canvas.GetLeft(topLeft)))
-            {
                 topLeft = current;
-            }
         }
 
-        // Return the top left control
         return topLeft;
     }
 
     public enum Direction { None, Left, Right, Up, Down }
 
+    private const double SecondaryAxisCenterOffsetThresholdMultiplier = 4.0;
+
     public static Control? GetClosestControl<T>(Control source, List<Control> controls, Direction direction, List<Type> typesToIgnore = null) where T : Control
     {
-        // Priority pass: if the source is inside an open Expander, first look for
-        // focusable descendants of that same Expander in the requested direction.
-        // This ensures Down/Up navigation traverses the Expander's own children
-        // (e.g. SettingsExpander.Items) before jumping to controls outside it.
-        // When the Expander is collapsed its content is invisible, so FindChildren
-        // will not have returned those controls and this pass produces no candidates —
-        // navigation then falls through to the global pass naturally.
         Expander expander = FindParent<Expander>(source);
         if (expander is not null && expander.IsExpanded)
         {
-            List<Control> scopedControls = controls
-                .Where(c => GetVisualParents(c).Contains(expander))
-                .ToList();
-
-            List<Control> scopedCandidates = GetControlInDirection<T>(source, scopedControls, direction, typesToIgnore, strictAxis: false);
-            if (scopedCandidates.Count > 0)
-                return scopedCandidates.OrderBy(c => GetDistanceV3(source, c, direction)).First();
+            Control? scopedCandidate = GetClosestCandidate<T>(
+                source,
+                controls.Where(c => HasVisualAncestor(c, expander)),
+                direction,
+                typesToIgnore,
+                strictAxis: false);
+            if (scopedCandidate is not null)
+                return scopedCandidate;
         }
 
-        // Standard pass: prefer candidates whose bounding box overlaps the source on the secondary axis.
-        // This prevents L/R navigation from jumping to elements far above or below the current row.
-        List<Control> candidates = GetControlInDirection<T>(source, controls, direction, typesToIgnore, strictAxis: true);
-        if (candidates.Count > 0)
-            return candidates.OrderBy(c => GetDistanceV3(source, c, direction)).First();
-
-        // Relaxed pass: no strict-axis requirement, but restrict to controls whose secondary-axis
-        // bounding box is within one control-height (or -width) of the source's own boundary.
-        // This lets small controls in immediately adjacent rows/columns be reached
-        // (e.g. the '+' button and the Gear/Remove buttons in ButtonStackTemplate/ButtonMappingTemplate
-        // share no vertical overlap, yet they are only a few pixels apart on the secondary axis).
-        // Controls that are far away on the secondary axis are still excluded so navigation
-        // does not jump to completely unrelated rows or columns.
-        List<Control> relaxedCandidates = GetControlInDirection<T>(source, controls, direction, typesToIgnore, strictAxis: false)
-            .Where(c => SecondaryAxisGap(source, c, direction) <=
-                (direction is Direction.Left or Direction.Right
-                    ? Math.Min(source.ActualHeight, c.ActualHeight)
-                    : Math.Min(source.ActualWidth, c.ActualWidth)))
-            .ToList();
-        if (relaxedCandidates.Count > 0)
-            return relaxedCandidates.OrderBy(c => GetDistanceV3(source, c, direction)).First();
+        Control? strictCandidate = GetClosestCandidate<T>(source, controls, direction, typesToIgnore, strictAxis: true);
+        Control? relaxedCandidate = GetClosestCandidate<T>(source, controls, direction, typesToIgnore, strictAxis: false, restrictSecondaryAxisGap: true);
+        Control? candidate = GetBetterCandidate(source, direction, strictCandidate, relaxedCandidate);
+        if (candidate is not null)
+            return candidate;
 
         return source;
+    }
+
+    private static double PrimaryAxisGap(Control source, Control target, Direction direction)
+    {
+        var p = target.TranslatePoint(new Point(0, 0), source);
+        double x = Math.Round(p.X);
+        double y = Math.Round(p.Y);
+
+        switch (direction)
+        {
+            case Direction.Left:
+                return Math.Max(0, -(x + target.ActualWidth));
+            case Direction.Right:
+                return Math.Max(0, x - source.ActualWidth);
+            case Direction.Up:
+                return Math.Max(0, -(y + target.ActualHeight));
+            case Direction.Down:
+                return Math.Max(0, y - source.ActualHeight);
+            default:
+                return double.MaxValue;
+        }
+    }
+
+    private static double GetDirectionalScore(Control source, Control target, Direction direction)
+    {
+        double primaryGap = PrimaryAxisGap(source, target, direction);
+        double secondaryGap = SecondaryAxisGap(source, target, direction);
+        double overallDistance = GetDistanceV3(source, target, Direction.None);
+        double directionalDistance = GetDistanceV3(source, target, direction);
+
+        return (primaryGap * 25) + (secondaryGap * 8) + (overallDistance * 6) + directionalDistance;
+    }
+
+    private static double SecondaryAxisCenterOffset(Control source, Control target, Direction direction)
+    {
+        var p = target.TranslatePoint(new Point(0, 0), source);
+        double targetCenterX = Math.Round(p.X + (target.ActualWidth / 2));
+        double targetCenterY = Math.Round(p.Y + (target.ActualHeight / 2));
+        double sourceCenterX = Math.Round(source.ActualWidth / 2);
+        double sourceCenterY = Math.Round(source.ActualHeight / 2);
+
+        return direction switch
+        {
+            Direction.Left or Direction.Right => Math.Abs(targetCenterY - sourceCenterY),
+            Direction.Up or Direction.Down => Math.Abs(targetCenterX - sourceCenterX),
+            _ => 0
+        };
+    }
+
+    private static bool IsWithinSecondaryAxisCenterOffsetThreshold(Control source, Control target, Direction direction)
+    {
+        if (direction == Direction.None)
+            return true;
+
+        double sourceAxisSize = direction is Direction.Left or Direction.Right
+            ? source.ActualHeight
+            : source.ActualWidth;
+        double targetAxisSize = direction is Direction.Left or Direction.Right
+            ? target.ActualHeight
+            : target.ActualWidth;
+
+        double maxOffset = Math.Max(sourceAxisSize * SecondaryAxisCenterOffsetThresholdMultiplier, targetAxisSize);
+        return SecondaryAxisCenterOffset(source, target, direction) <= maxOffset;
+    }
+
+    private static Control? GetBetterCandidate(Control source, Direction direction, Control? first, Control? second)
+    {
+        if (first is null)
+            return second;
+
+        if (second is null)
+            return first;
+
+        double firstScore = GetDirectionalScore(source, first, direction);
+        double secondScore = GetDirectionalScore(source, second, direction);
+
+        return secondScore < firstScore ? second : first;
     }
 
     // Returns the gap in pixels between the source and target bounding boxes
@@ -201,6 +245,65 @@ public static class WPFUtils
         return controls;
     }
 
+    private static Control? GetClosestCandidate<T>(
+        Control source,
+        IEnumerable<Control> controls,
+        Direction direction,
+        List<Type>? typesToIgnore = null,
+        bool strictAxis = false,
+        bool restrictSecondaryAxisGap = false) where T : Control
+    {
+        Control? closest = null;
+        double closestScore = double.MaxValue;
+        Control? closestAncestor = null;
+        double closestAncestorScore = double.MaxValue;
+
+        foreach (Control control in controls)
+        {
+            if (control == source || control is not T || !control.IsEnabled || control.Opacity == 0)
+                continue;
+
+            if (typesToIgnore is not null && typesToIgnore.Contains(control.GetType()))
+                continue;
+
+            if (!IsInDirection(source, control, direction, strictAxis))
+                continue;
+
+            if (!IsWithinSecondaryAxisCenterOffsetThreshold(source, control, direction))
+                continue;
+
+            if (restrictSecondaryAxisGap)
+            {
+                double axisGap = SecondaryAxisGap(source, control, direction);
+                double maxGap = direction is Direction.Left or Direction.Right
+                    ? Math.Min(source.ActualHeight, control.ActualHeight)
+                    : Math.Min(source.ActualWidth, control.ActualWidth);
+
+                if (axisGap > maxGap)
+                    continue;
+            }
+
+            double score = GetDirectionalScore(source, control, direction);
+            if (HasVisualAncestor(source, control))
+            {
+                if (score >= closestAncestorScore)
+                    continue;
+
+                closestAncestor = control;
+                closestAncestorScore = score;
+                continue;
+            }
+
+            if (score >= closestScore)
+                continue;
+
+            closest = control;
+            closestScore = score;
+        }
+
+        return closest ?? closestAncestor;
+    }
+
     // Helper method to find the nearest common parent of two controls
     private static DependencyObject GetNearestCommonParent(Control c1, Control c2)
     {
@@ -220,6 +323,19 @@ public static class WPFUtils
             yield return child;
             child = VisualTreeHelper.GetParent(child);
         }
+    }
+
+    private static bool HasVisualAncestor(DependencyObject child, DependencyObject ancestor)
+    {
+        while (child is not null)
+        {
+            if (ReferenceEquals(child, ancestor))
+                return true;
+
+            child = VisualTreeHelper.GetParent(child);
+        }
+
+        return false;
     }
 
     // Helper method to check if a control is in a given direction from another control.
@@ -317,32 +433,32 @@ public static class WPFUtils
                 // from c1's left-edge center -> c2's right-edge center
                 return Measure(
                   r1, r2,
-                  r => new Point(r.Left, r.Top + r.Height),
-                  r => new Point(r.Right, r.Top + r.Height)
+                  r => new Point(r.Left, r.Top + (r.Height / 2)),
+                  r => new Point(r.Right, r.Top + (r.Height / 2))
                 );
 
             case Direction.Right:
                 // from c1's right center -> c2's left center
                 return Measure(
                   r1, r2,
-                  r => new Point(r.Right, r.Top + r.Height),
-                  r => new Point(r.Left, r.Top + r.Height)
+                  r => new Point(r.Right, r.Top + (r.Height / 2)),
+                  r => new Point(r.Left, r.Top + (r.Height / 2))
                 );
 
             case Direction.Up:
                 // from c1's top center -> c2's bottom center
                 return Measure(
                   r1, r2,
-                  r => new Point(r.Left + r.Width, r.Top),
-                  r => new Point(r.Left + r.Width, r.Bottom)
+                  r => new Point(r.Left + (r.Width / 2), r.Top),
+                  r => new Point(r.Left + (r.Width / 2), r.Bottom)
                 );
 
             case Direction.Down:
                 // from c1's bottom center -> c2's top center
                 return Measure(
                   r1, r2,
-                  r => new Point(r.Left + r.Width, r.Bottom),
-                  r => new Point(r.Left + r.Width, r.Top)
+                  r => new Point(r.Left + (r.Width / 2), r.Bottom),
+                  r => new Point(r.Left + (r.Width / 2), r.Top)
                 );
 
             case Direction.None:
