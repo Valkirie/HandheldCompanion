@@ -398,11 +398,50 @@ namespace HandheldCompanion.ViewModels
                     _ProfileEnabled = value;
                     OnPropertyChanged(nameof(ProfileEnabled));
 
-                    // Only write back to profile if we're not loading from it
-                    if (!isLoadingProfile && SelectedProfile != null && SelectedProfile.Enabled != value)
+                    if (isLoadingProfile || SelectedProfile is null)
+                        return;
+
+                    if (IsQuickTools)
                     {
-                        SelectedProfile.Enabled = value;
-                        UpdateProfile();
+                        if (value)
+                        {
+                            // Toggle ON: only act when Default is currently applied (no active per-game profile)
+                            if (SelectedProfile.Default && currentProcess is not null)
+                            {
+                                // Check if a disabled profile already exists for this process
+                                Profile existingProfile = ManagerFactory.profileManager.GetProfileFromPath(currentProcess.Path, true, true);
+                                if (!existingProfile.Default)
+                                {
+                                    // Enable the existing disabled profile and force-apply it immediately
+                                    existingProfile.Enabled = true;
+                                    ManagerFactory.profileManager.UpdateOrCreateProfile(existingProfile, UpdateSource.QuickProfilesEnable);
+                                }
+                                else
+                                {
+                                    // No profile exists - create one for the foreground process
+                                    Profile newProfile = new Profile(currentProcess.Path);
+                                    ManagerFactory.profileManager.UpdateOrCreateProfile(newProfile, UpdateSource.QuickProfilesCreation);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Toggle OFF: disable the active per-game profile so Default is used
+                            if (!SelectedProfile.Default && SelectedProfile.Enabled)
+                            {
+                                SelectedProfile.Enabled = false;
+                                UpdateProfile();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Regular profiles page: just set the enabled state
+                        if (SelectedProfile.Enabled != value)
+                        {
+                            SelectedProfile.Enabled = value;
+                            UpdateProfile();
+                        }
                     }
                 }
             }
@@ -2575,7 +2614,7 @@ namespace HandheldCompanion.ViewModels
                     GyroMultiplier = SelectedProfile.GyrometerMultiplier;
                     AcceleroMultiplier = SelectedProfile.AccelerometerMultiplier;
 
-                    ProfileEnabled = SelectedProfile.Enabled;
+                    ProfileEnabled = IsQuickTools ? !SelectedProfile.Default : SelectedProfile.Enabled;
                     ProfileArguments = SelectedProfile.Arguments;
                     ProfileLaunchString = SelectedProfile.LaunchString;
 

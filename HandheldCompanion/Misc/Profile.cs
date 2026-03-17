@@ -39,6 +39,7 @@ public enum UpdateSource
     Creation = 8,
     Serializer = 16,
     LibraryUpdate = 32,
+    QuickProfilesEnable = 64,
 }
 
 public enum SteeringAxis

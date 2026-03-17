@@ -942,6 +942,7 @@ public class ProfileManager : IManager
         bool isCurrent = source switch
         {
             UpdateSource.QuickProfilesCreation => true,
+            UpdateSource.QuickProfilesEnable => true,
             _ => IsCurrentProfile(profile)
         };
 
