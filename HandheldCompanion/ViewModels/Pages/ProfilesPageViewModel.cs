@@ -90,6 +90,8 @@ namespace HandheldCompanion.ViewModels
         // True if the ProfileEnabled toggle can be modified (not Default profile)
         public bool IsProfileEnabledToggleEnabled => SelectedProfile != null && !SelectedProfile.Default;
 
+        public bool IsControllerPassthroughEnabled => SelectedProfile != null && !SelectedProfile.Default;
+
         private readonly bool IsQuickTools;
         private ProfilesPage profilesPage;
         private QuickProfilesPage quickProfilesPage;
@@ -126,6 +128,8 @@ namespace HandheldCompanion.ViewModels
                         OnPropertyChanged(nameof(CanKillProcess));
                         OnPropertyChanged(nameof(IsProfileProcessRunning));
                         OnPropertyChanged(nameof(CanToggleProfileProcess));
+                        OnPropertyChanged(nameof(IsProfileEnabledToggleEnabled));
+                        OnPropertyChanged(nameof(IsControllerPassthroughEnabled));
                         OnProfileChanged();
                     }
                 }
@@ -2736,6 +2740,7 @@ namespace HandheldCompanion.ViewModels
             WarningMessage = EnumUtils.GetDescriptionFromEnumValue(SelectedProfile.ErrorCode);
 
             OnPropertyChanged(nameof(IsProfileEnabledToggleEnabled));
+            OnPropertyChanged(nameof(IsControllerPassthroughEnabled));
         }
 
         private void UpdateSubProfiles(Profile updatedProfile = null)

@@ -782,7 +782,8 @@
                         <ui:SettingsCard
                             Name="SettingsCardControllerPassthrough"
                             Description="{l:Static resx:Resources.ProfilesPage_WhitelistDesc}"
-                            Header="{l:Static resx:Resources.ProfilesPage_Whitelist}">
+                            Header="{l:Static resx:Resources.ProfilesPage_Whitelist}"
+                            IsEnabled="{Binding IsControllerPassthroughEnabled, Mode=OneWay}">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xe7b3;" />
                             </ui:SettingsCard.HeaderIcon>
