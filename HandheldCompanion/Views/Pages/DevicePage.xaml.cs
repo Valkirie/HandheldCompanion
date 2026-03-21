@@ -46,25 +46,36 @@ namespace HandheldCompanion.Views.Pages
             LEDBrightness.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingBrightness) ? Visibility.Visible : Visibility.Collapsed;
             SecondColorToggleCard.Visibility = SecondColorPickerCard.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor) ? Visibility.Visible : Visibility.Collapsed;
 
+            // Move device-specific USB I/O operations to background thread
             if (device is LegionGoTablet)
             {
-                // Left joycon settings
-                SliderLeftJoystickDeadzone.Value = SapientiaUsb.GetStickCustomDeadzone(LegionGoTablet.LeftJoyconIndex) + 1;
-                SliderLeftAutoSleepTime.Value = SapientiaUsb.GetAutoSleepTime(LegionGoTablet.LeftJoyconIndex);
+                Task.Run(() =>
+                {
+                    // Perform USB I/O operations on background thread
+                    int leftJoystickDeadzone = SapientiaUsb.GetStickCustomDeadzone(LegionGoTablet.LeftJoyconIndex);
+                    int leftAutoSleepTime = SapientiaUsb.GetAutoSleepTime(LegionGoTablet.LeftJoyconIndex);
+                    var leftTrigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGoTablet.LeftJoyconIndex);
 
-                var leftTrigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGoTablet.LeftJoyconIndex);
-                SliderLeftTriggerDeadzone.Value = leftTrigger.Deadzone + 1;
-                SliderLeftTriggerMargin.Value = leftTrigger.Margin + 1;
+                    int rightJoystickDeadzone = SapientiaUsb.GetStickCustomDeadzone(LegionGoTablet.RightJoyconIndex);
+                    int rightAutoSleepTime = SapientiaUsb.GetAutoSleepTime(LegionGoTablet.RightJoyconIndex);
+                    var rightTrigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGoTablet.RightJoyconIndex);
 
-                // Right joycon settings
-                SliderRightJoystickDeadzone.Value = SapientiaUsb.GetStickCustomDeadzone(LegionGoTablet.RightJoyconIndex) + 1;
-                SliderRightAutoSleepTime.Value = SapientiaUsb.GetAutoSleepTime(LegionGoTablet.RightJoyconIndex);
+                    // Update UI on UI thread
+                    UIHelper.TryInvoke(() =>
+                    {
+                        SliderLeftJoystickDeadzone.Value = leftJoystickDeadzone + 1;
+                        SliderLeftAutoSleepTime.Value = leftAutoSleepTime;
+                        SliderLeftTriggerDeadzone.Value = leftTrigger.Deadzone + 1;
+                        SliderLeftTriggerMargin.Value = leftTrigger.Margin + 1;
 
-                var rightTrigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGoTablet.RightJoyconIndex);
-                SliderRightTriggerDeadzone.Value = rightTrigger.Deadzone + 1;
-                SliderRightTriggerMargin.Value = rightTrigger.Margin + 1;
+                        SliderRightJoystickDeadzone.Value = rightJoystickDeadzone + 1;
+                        SliderRightAutoSleepTime.Value = rightAutoSleepTime;
+                        SliderRightTriggerDeadzone.Value = rightTrigger.Deadzone + 1;
+                        SliderRightTriggerMargin.Value = rightTrigger.Margin + 1;
+                    });
+                });
 
-                // Show LegionGoPanel
+                // Show LegionGoPanel immediately
                 LegionGoPanel.Visibility = Visibility.Visible;
 
                 if (device.GetType() == typeof(LegionGoTablet) ||

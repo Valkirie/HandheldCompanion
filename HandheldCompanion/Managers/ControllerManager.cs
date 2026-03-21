@@ -480,7 +480,7 @@ public static class ControllerManager
                                 default:
                                 case SDL.GamepadType.Unknown:
                                 case SDL.GamepadType.Standard:
-                                    controller = new SDLController(gamepad, deviceIndex, details);
+                                    controller = new Xbox360Controller(gamepad, deviceIndex, details);
                                     break;
 
                                 case SDL.GamepadType.Xbox360:

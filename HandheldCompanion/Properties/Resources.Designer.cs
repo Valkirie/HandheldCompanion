@@ -6569,6 +6569,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string MainWindow_Close {
+            get {
+                return ResourceManager.GetString("MainWindow_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close navigation.
         /// </summary>
         public static string MainWindow_CloseNavigation {
@@ -6709,6 +6718,15 @@ namespace HandheldCompanion.Properties {
         public static string MainWindow_OK {
             get {
                 return ResourceManager.GetString("MainWindow_OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open.
+        /// </summary>
+        public static string MainWindow_Open {
+            get {
+                return ResourceManager.GetString("MainWindow_Open", resourceCulture);
             }
         }
         

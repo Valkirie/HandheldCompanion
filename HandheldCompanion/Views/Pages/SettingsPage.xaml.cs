@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static HandheldCompanion.Managers.UpdateManager;
@@ -31,8 +32,15 @@ public partial class SettingsPage : Page
     {
         InitializeComponent();
 
-        // initialize components
-        cB_Language.ItemsSource = TranslationSource.ValidCultures;
+        // Move culture loading to background thread
+        Task.Run(() =>
+        {
+            CultureInfo[] cultures = TranslationSource.ValidCultures;
+            UIHelper.TryInvoke(() =>
+            {
+                cB_Language.ItemsSource = cultures;
+            });
+        });
 
         // manage events
         UpdateManager.Updated += UpdateManager_Updated;

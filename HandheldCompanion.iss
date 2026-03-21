@@ -19,7 +19,7 @@
 #define InstallerVersion        "0.2"
 #define MyAppSetupName         "Handheld Companion"
 #define MyBuildId              "HandheldCompanion"
-#define MyAppVersion           "0.28.6.1"
+#define MyAppVersion           "0.28.6.4"
 #define MyAppPublisher         "BenjaminLSR"
 #define MyAppCopyright         "Copyright © BenjaminLSR"
 #define MyAppURL               "https://github.com/Valkirie/HandheldCompanion"
@@ -51,6 +51,7 @@
 #define ViGemDownloadLink      "https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe"
 #define RtssDownloadLink       "https://github.com/Valkirie/HandheldCompanion/raw/main/redist/RTSSSetup737.exe"
 #define PawnIODownloadLink     "https://github.com/namazso/PawnIO.Setup/releases/latest/download/PawnIO_setup.exe"
+#define GameControllerDBDownloadLink "https://raw.githubusercontent.com/mdqinc/SDL_GameControllerDB/refs/heads/master/gamecontrollerdb.txt"
 
 ; Registry  
 #define RegAppsPath            "SOFTWARE\" + MyAppSetupName + "\"
@@ -275,13 +276,27 @@ begin
   Log('Add-MpPreference exit=' + IntToStr(ExitCode));
 end;
 
-{
 procedure CurStepChanged(CurStep: TSetupStep);
+var
+  DestFile: String;
 begin
   if CurStep = ssPostInstall then
-    AddDefenderExclusions_Simple();
+  begin
+    DestFile := ExpandConstant('{app}\gamecontrollerdb.txt');
+    Dependency_DownloadPage.Clear;
+    Dependency_DownloadPage.Add('{#GameControllerDBDownloadLink}', 'gamecontrollerdb.txt', '');
+    Dependency_DownloadPage.SetText('Downloading SDL Game Controller Database...', 'This database enables correct gamepad recognition for hundreds of controllers.');
+    Dependency_DownloadPage.Show;
+    try
+      Dependency_DownloadPage.Download;
+      FileCopy(ExpandConstant('{tmp}\gamecontrollerdb.txt'), DestFile, False);
+      Log('gamecontrollerdb.txt downloaded and placed at: ' + DestFile);
+    except
+      Log('Failed to download gamecontrollerdb.txt: ' + GetExceptionMessage);
+    end;
+    Dependency_DownloadPage.Hide;
+  end;
 end;
-}
 
 procedure CurPageChanged(CurPageID: Integer);
 begin

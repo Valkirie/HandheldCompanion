@@ -78,12 +78,14 @@ namespace HandheldCompanion.ViewModels
                     OnPropertyChanged(nameof(ViewMode));
                     OnPropertyChanged(nameof(IsGridView));
                     OnPropertyChanged(nameof(IsListView));
+                    OnPropertyChanged(nameof(IsWideView));
                 }
             }
         }
 
         public bool IsGridView => ViewMode == 0;
         public bool IsListView => ViewMode == 1;
+        public bool IsWideView => ViewMode == 2;
 
         private string _searchText = string.Empty;
         public string SearchText
@@ -186,7 +188,18 @@ namespace HandheldCompanion.ViewModels
 
             ToggleViewModeCommand = new DelegateCommand(() =>
             {
-                ViewMode = ViewMode == 0 ? 1 : 0;
+                switch (ViewMode)
+                {
+                    case 0:
+                        ViewMode = 1;
+                        break;
+                    case 1:
+                        ViewMode = 2;
+                        break;
+                    case 2:
+                        ViewMode = 0;
+                        break;
+                }
             });
 
             RefreshMetadataCommand = new DelegateCommand(async () =>
@@ -397,8 +410,10 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.profileManager.Updated += ProfileManager_Updated;
             ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
 
-            // Load only the ones that should be shown
-            foreach (Profile profile in ManagerFactory.profileManager.GetProfiles().Where(p => !p.Default))
+            // Bind the repeater to the sorted view BEFORE any profiles arrive so cards can render incrementally rather than all at once after the bulk load completes
+            UIHelper.TryInvoke(() => UpdateSorting());
+
+            foreach (Profile profile in ManagerFactory.profileManager.GetProfiles())
             {
                 ProfileManager_Updated(profile, UpdateSource.Background, false);
 
@@ -406,12 +421,8 @@ namespace HandheldCompanion.ViewModels
                     ProfileManager_Updated(subProfile, UpdateSource.Background, false);
             }
 
-            // Hide spinner once the initial batch of profiles has been dispatched to the UI
+            // Hide the spinner once every card has been dispatched to the UI
             IsInitializing = false;
-            UIHelper.TryInvoke(() =>
-            {
-                UpdateSorting();
-            });
         }
 
         private void ProfileManager_Initialized()

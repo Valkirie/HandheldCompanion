@@ -30,6 +30,13 @@ namespace HandheldCompanion.ViewModels
             });
         }
 
+        private bool _isInitializing = true;
+        public bool IsInitializing
+        {
+            get => _isInitializing;
+            set => SetProperty(ref _isInitializing, value, null, nameof(IsInitializing));
+        }
+
         public bool IsInfoBarOpen
         {
             get => _isInfoBarOpen;

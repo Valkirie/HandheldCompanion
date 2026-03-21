@@ -12,6 +12,7 @@ using HandheldCompanion.Properties;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels.Controls;
 using HandheldCompanion.Views;
+using HandheldCompanion.Views.Pages;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
@@ -35,9 +36,12 @@ namespace HandheldCompanion.ViewModels
         public ObservableCollection<FontIconViewModel> ButtonGlyphs { get; set; } = [];
 
         private List<Type> _functionTypes;
-
-        private ObservableCollection<ComboBoxItemViewModel> _functionItems = [];
         public ListCollectionView FunctionCollectionView { get; set; }
+
+        // Shared across all instances – built once to avoid repeated Activator.CreateInstance
+        private static readonly object _sharedDataLock = new();
+        private static List<Type>? _sharedFunctionTypes;
+        private static ObservableCollection<ComboBoxItemViewModel>? _sharedFunctionItems;
 
         private Hotkey _Hotkey;
         public Hotkey Hotkey
@@ -570,33 +574,35 @@ namespace HandheldCompanion.ViewModels
         public ICommand ExecuteCommand { get; private set; }
         public ICommand EraseButtonCommand { get; private set; }
         public ICommand EraseOutputButtonCommand { get; private set; }
+        public ICommand OpenSettingsCommand { get; private set; }
 
-        public HotkeyViewModel(Hotkey hotkey)
+        private static void EnsureSharedFunctionData()
         {
-            Hotkey = hotkey;
+            if (_sharedFunctionTypes is not null)
+                return;
 
-            // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(ButtonGlyphs, _collectionLock);
-
-            _functionTypes = FunctionCommands.Functions.Where(item => item is Type type && type.IsAssignableTo(typeof(FunctionCommands))).Cast<Type>().ToList();
-            UIHelper.TryInvoke(() =>
+            lock (_sharedDataLock)
             {
-                FunctionCollectionView = new ListCollectionView(_functionItems);
-                FunctionCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
-                // Fill initial data
+                if (_sharedFunctionTypes is not null)
+                    return;
+
+                var types = FunctionCommands.Functions
+                    .Where(item => item is Type type && type.IsAssignableTo(typeof(FunctionCommands)))
+                    .Cast<Type>().ToList();
+
+                var items = new ObservableCollection<ComboBoxItemViewModel>();
                 string currentCategory = "Ungrouped";
                 foreach (object value in FunctionCommands.Functions)
                 {
-                    if (value is string)
+                    if (value is string strVal)
                     {
-                        currentCategory = Convert.ToString(value);
+                        currentCategory = strVal;
                     }
-                    else
+                    else if (value is Type function)
                     {
-                        Type function = value as Type;
                         if (function == typeof(Separator))
                         {
-                            _functionItems.Add(new ComboBoxItemViewModel(string.Empty, false, string.Empty));
+                            items.Add(new ComboBoxItemViewModel(string.Empty, false, string.Empty));
                         }
                         else
                         {
@@ -608,12 +614,30 @@ namespace HandheldCompanion.ViewModels
                             bool isSupported = command.deviceType is null || (command.deviceType == IDevice.GetCurrent().GetType());
                             bool isEnabled = canUnpin && isSupported;
 
-                            _functionItems.Add(new ComboBoxItemViewModel(command.Name, isEnabled, currentCategory));
-
+                            items.Add(new ComboBoxItemViewModel(command.Name, isEnabled, currentCategory));
                             disposable?.Dispose();
                         }
                     }
                 }
+
+                _sharedFunctionItems = items;
+                _sharedFunctionTypes = types;
+            }
+        }
+
+        public HotkeyViewModel(Hotkey hotkey)
+        {
+            Hotkey = hotkey;
+
+            // Enable thread-safe access to the collection
+            BindingOperations.EnableCollectionSynchronization(ButtonGlyphs, _collectionLock);
+
+            EnsureSharedFunctionData();
+            _functionTypes = _sharedFunctionTypes!;
+            UIHelper.TryInvoke(() =>
+            {
+                FunctionCollectionView = new ListCollectionView(_sharedFunctionItems);
+                FunctionCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
             });
 
             DefineButtonCommand = new DelegateCommand(async () =>
@@ -694,6 +718,15 @@ namespace HandheldCompanion.ViewModels
                 {
                     keyboardCommands.outputChord = new();
                     ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                }
+            });
+
+            OpenSettingsCommand = new DelegateCommand(() =>
+            {
+                if (HotkeysPage.hotkeySettingsPage is not null)
+                {
+                    HotkeysPage.hotkeySettingsPage.SetHotkey(this);
+                    MainWindow.NavView_Navigate(HotkeysPage.hotkeySettingsPage);
                 }
             });
 
@@ -784,40 +817,42 @@ namespace HandheldCompanion.ViewModels
 
         private void DrawNameAndDescription()
         {
-            if (Hotkey.command.commandType == CommandType.Function)
-            {
-                // do something
-            }
-            else if (Hotkey.command.commandType == CommandType.Executable)
+            if (Hotkey.command.commandType == CommandType.Executable)
             {
                 if (Hotkey.command is ExecutableCommands executableCommands)
                 {
-                    if (File.Exists(executableCommands.Path))
+                    // GetAppProperties is a blocking COM/Shell call; run it off the UI thread
+                    string execPath = executableCommands.Path;
+                    ICommands cmd = Hotkey.command;
+                    Task.Run(() =>
                     {
-                        Dictionary<string, string> AppProperties = ProcessUtils.GetAppProperties(executableCommands.Path);
-                        string ProductName = AppProperties.TryGetValue("FileDescription", out var property) ? property : AppProperties["ItemFolderNameDisplay"];
-                        string Executable = System.IO.Path.GetFileName(executableCommands.Path);
-                        Name = string.IsNullOrEmpty(ProductName) ? Executable : ProductName;
-                    }
-                    else
-                    {
-                        Name = Hotkey.command.Name;
-                    }
+                        string name;
+                        if (File.Exists(execPath))
+                        {
+                            Dictionary<string, string> AppProperties = ProcessUtils.GetAppProperties(execPath);
+                            string ProductName = AppProperties.TryGetValue("FileDescription", out var property) ? property : AppProperties.GetValueOrDefault("ItemFolderNameDisplay", string.Empty);
+                            string Executable = System.IO.Path.GetFileName(execPath);
+                            name = string.IsNullOrEmpty(ProductName) ? Executable : ProductName;
+                        }
+                        else
+                        {
+                            name = cmd.Name;
+                        }
 
-                    Description = Hotkey.command.Description;
-
-                    goto Success;
+                        UIHelper.TryInvoke(() =>
+                        {
+                            Name = name;
+                            Description = cmd.Description;
+                            OnPropertyChanged(nameof(FontFamily));
+                            OnPropertyChanged(nameof(Glyph));
+                        });
+                    });
+                    return;
                 }
-            }
-            else if (Hotkey.command.commandType == CommandType.Keyboard)
-            {
-                // do something
             }
 
             Name = string.IsNullOrEmpty(CustomName) ? Hotkey.command.Name : CustomName;
             Description = Hotkey.command.Description;
-
-        Success:
             OnPropertyChanged(nameof(FontFamily));
             OnPropertyChanged(nameof(Glyph));
         }

@@ -105,6 +105,22 @@ public static class WPFUtils
                 return scopedCandidate;
         }
 
+        // When the source is inside a ScrollViewer, prefer candidates within the same
+        // scroll container (even if they are scrolled out of view) over controls that
+        // are visible but live in a sibling container such as a CommandBar above the
+        // scroll area.  UIGamepad.Focus() calls BringIntoView(), so the selected
+        // control will scroll into view automatically.
+        ScrollViewer? scrollViewer = FindParent<ScrollViewer>(source);
+        if (scrollViewer is not null)
+        {
+            IEnumerable<Control> scrollerControls = controls.Where(c => HasVisualAncestor(c, scrollViewer));
+            Control? svStrict = GetClosestCandidate<T>(source, scrollerControls, direction, typesToIgnore, strictAxis: true);
+            Control? svRelaxed = GetClosestCandidate<T>(source, scrollerControls, direction, typesToIgnore, strictAxis: false, restrictSecondaryAxisGap: true);
+            Control? svCandidate = GetBetterCandidate(source, direction, svStrict, svRelaxed);
+            if (svCandidate is not null)
+                return svCandidate;
+        }
+
         Control? strictCandidate = GetClosestCandidate<T>(source, controls, direction, typesToIgnore, strictAxis: true);
         Control? relaxedCandidate = GetClosestCandidate<T>(source, controls, direction, typesToIgnore, strictAxis: false, restrictSecondaryAxisGap: true);
         Control? candidate = GetBetterCandidate(source, direction, strictCandidate, relaxedCandidate);

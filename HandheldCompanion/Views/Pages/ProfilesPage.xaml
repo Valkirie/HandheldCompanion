@@ -25,7 +25,11 @@
             <ui:ContentDialog
                 Name="IGGBDialog"
                 CloseButtonText="Close"
-                IsEnabled="{Binding IsLibraryConnected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                DefaultButton="Primary"
+                IsEnabled="{Binding IsLibraryConnected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                IsPrimaryButtonEnabled="{Binding CanApplyLibrary, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                PrimaryButtonCommand="{Binding DownloadLibrary}"
+                PrimaryButtonText="Apply">
                 <Grid>
                     <ui:ProgressRing
                         Panel.ZIndex="1"
@@ -155,7 +159,7 @@
                                                 IsEnabled="False"
                                                 MaxVisiblePips="6"
                                                 NextButtonVisibility="Collapsed"
-                                                NumberOfPages="{Binding FlipViewLogos.Count}"
+                                                NumberOfPages="{Binding LibraryLogos.Count}"
                                                 PreviousButtonVisibility="Collapsed"
                                                 SelectedPageIndex="{Binding SelectedIndex, ElementName=FlipViewLogos, Mode=TwoWay}" />
                                         </StackPanel>
@@ -190,13 +194,6 @@
                                     </StackPanel>
                                 </StackPanel>
 
-                                <Button
-                                    HorizontalAlignment="Stretch"
-                                    Command="{Binding DownloadLibrary}"
-                                    Content="Update metadata"
-                                    IsDefault="True"
-                                    IsEnabled="{Binding HasLibraryEntry, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Style="{DynamicResource AccentButtonStyle}" />
                             </ikw:SimpleStackPanel>
                         </ikw:SimpleStackPanel>
                     </ikw:SimpleStackPanel>
@@ -287,8 +284,17 @@
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
                                         DisplayMemberPath="Name"
-                                        ItemsSource="{Binding MainProfiles, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                        SelectedItem="{Binding SelectedMainProfile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        ItemsSource="{Binding MainProfilesView, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        ScrollViewer.CanContentScroll="True"
+                                        SelectedItem="{Binding SelectedMainProfileViewModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        VirtualizingPanel.IsVirtualizing="True"
+                                        VirtualizingPanel.VirtualizationMode="Recycling">
+                                        <ComboBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel />
+                                            </ItemsPanelTemplate>
+                                        </ComboBox.ItemsPanel>
+                                    </ComboBox>
 
                                     <!--  Rename profile  -->
                                     <Button
@@ -668,8 +674,17 @@
                                             HorizontalAlignment="Stretch"
                                             VerticalAlignment="Center"
                                             DisplayMemberPath="Name"
-                                            ItemsSource="{Binding SubProfiles, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                            SelectedItem="{Binding SelectedProfile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            ItemsSource="{Binding SubProfilesView, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                            ScrollViewer.CanContentScroll="True"
+                                            SelectedItem="{Binding SelectedSubProfileViewModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            VirtualizingPanel.IsVirtualizing="True"
+                                            VirtualizingPanel.VirtualizationMode="Recycling">
+                                            <ComboBox.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <VirtualizingStackPanel />
+                                                </ItemsPanelTemplate>
+                                            </ComboBox.ItemsPanel>
+                                        </ComboBox>
 
                                         <Button
                                             Name="RenameSubProfileButton"
@@ -1094,7 +1109,7 @@
                             Command="{Binding DisplayLibrary}"
                             Header="{l:Static resx:Resources.ProfilesPage_LibraryDownload}"
                             IsClickEnabled="True"
-                            IsEnabled="{Binding IsLibraryConnected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            IsEnabled="{Binding IsLibrarySettingsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             Tag="Navigation">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xE8F1;" />

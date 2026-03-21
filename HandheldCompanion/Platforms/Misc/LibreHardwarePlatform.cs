@@ -101,14 +101,22 @@ namespace HandheldCompanion.Platforms.Misc
                 }
 
                 // prevent sensor from being stored to memory for too long
+                var window = new TimeSpan(0, 0, 10);
                 foreach (var hardware in computer.Hardware)
-                    foreach (var sensor in hardware.Sensors)
-                        sensor.ValuesTimeWindow = new(0, 0, 10);
+                    ApplyValuesTimeWindow(hardware, window);
             }
 
             updateTimer?.Start();
 
             return base.Start();
+        }
+
+        private static void ApplyValuesTimeWindow(IHardware hardware, TimeSpan window)
+        {
+            foreach (var sensor in hardware.Sensors)
+                sensor.ValuesTimeWindow = window;
+            foreach (var subHardware in hardware.SubHardware)
+                ApplyValuesTimeWindow(subHardware, window);
         }
 
         private void SettingsManager_Initialized()

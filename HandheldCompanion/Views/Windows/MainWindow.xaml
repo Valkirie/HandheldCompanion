@@ -25,7 +25,6 @@
     Closing="Window_Closing"
     Icon="/Resources/icon.png"
     Loaded="Window_Loaded"
-    PreviewGotKeyboardFocus="GamepadWindow_PreviewGotKeyboardFocus"
     PreviewLostKeyboardFocus="GamepadWindow_PreviewLostKeyboardFocus"
     SnapsToDevicePixels="True"
     UseLayoutRounding="True"
@@ -77,7 +76,7 @@
                 Content="{l:Static resx:Resources.MainWindow_navController}"
                 Tag="ControllerPage">
                 <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" />
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Game}" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -87,7 +86,7 @@
                 Content="{l:Static resx:Resources.MainWindow_navLibrary}"
                 Tag="LibraryPage">
                 <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8F1;" />
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Library}" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -97,7 +96,7 @@
                 Content="{l:Static resx:Resources.MainWindow_navDevice}"
                 Tag="DevicePage">
                 <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7F7;" />
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.XboxOneConsole}" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -107,7 +106,7 @@
                 Content="{l:Static resx:Resources.MainWindow_navPerformance}"
                 Tag="PerformancePage">
                 <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe9d9;" />
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.SpeedHigh}" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -117,7 +116,7 @@
                 Content="{l:Static resx:Resources.MainWindow_navProfiles}"
                 Tag="ProfilesPage">
                 <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE748;" />
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.SwitchUser}" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -127,7 +126,7 @@
                 Content="{l:Static resx:Resources.MainWindow_navOverlay}"
                 Tag="OverlayPage">
                 <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE78B;" />
+                    <ui:FontIcon Icon="{x:Static ui:FluentSystemIcons.ShareScreenPersonOverlayInside_16_Regular}" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -137,7 +136,7 @@
                 Content="{l:Static resx:Resources.MainWindow_navHotkeys}"
                 Tag="HotkeysPage">
                 <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF26B;" />
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardShortcut}" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -270,13 +269,14 @@
                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
                                 MaxWidth="2000"
                                 HorizontalAlignment="Left" />
-                            <Frame
-                                Name="PreloadFrame"
-                                Width="1"
-                                Height="1"
-                                IsHitTestVisible="False"
-                                NavigationUIVisibility="Hidden"
-                                Visibility="Hidden" />
+                            <ui:ProgressRing
+                                Width="60"
+                                Height="60"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Panel.ZIndex="1000"
+                                IsActive="True"
+                                Visibility="{Binding IsInitializing, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         </Grid>
                     </ui:ScrollViewerEx>
                 </Grid>
@@ -316,13 +316,15 @@
                                         Name="GamepadUISelectIcon"
                                         VerticalAlignment="Center"
                                         FontFamily="PromptFont"
-                                        FontSize="28" />
+                                        FontSize="28"
+                                        Glyph="&#x21D3;" />
                                 </Grid>
                                 <TextBlock
                                     Name="GamepadUISelectDesc"
                                     VerticalAlignment="Center"
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource BaseTextBlockStyle}" />
+                                    Style="{StaticResource BaseTextBlockStyle}"
+                                    Text="{l:Static resx:Resources.MainWindow_Select}" />
                             </StackPanel>
                         </Button>
 
@@ -348,13 +350,15 @@
                                         Name="GamepadUIBackIcon"
                                         VerticalAlignment="Center"
                                         FontFamily="PromptFont"
-                                        FontSize="28" />
+                                        FontSize="28"
+                                        Glyph="&#x21D2;" />
                                 </Grid>
                                 <TextBlock
                                     Name="GamepadUIBackDesc"
                                     VerticalAlignment="Center"
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource BaseTextBlockStyle}" />
+                                    Style="{StaticResource BaseTextBlockStyle}"
+                                    Text="{l:Static resx:Resources.MainWindow_Back}" />
                             </StackPanel>
                         </Button>
 

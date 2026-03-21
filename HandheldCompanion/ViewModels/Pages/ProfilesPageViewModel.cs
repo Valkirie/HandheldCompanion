@@ -14,10 +14,10 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels.Misc;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.QuickPages;
-using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
@@ -51,14 +51,16 @@ namespace HandheldCompanion.ViewModels
         private const int UpdateInterval = 500;
 
         // Main profiles collection for cB_Profiles ComboBox
-        public ObservableCollection<Profile> MainProfiles { get; } = [];
+        public ObservableCollection<ProfileViewModel> MainProfiles { get; } = [];
 
         // Sub-profiles collection for cb_SubProfilePicker ComboBox
-        public ObservableCollection<Profile> SubProfiles { get; } = [];
+        public ObservableCollection<ProfileViewModel> SubProfiles { get; } = [];
 
         private ObservableCollection<ProfilesPickerViewModel> ProfilePicker = [];
         public ListCollectionView ProfilePickerCollectionViewAC { get; set; }
         public ListCollectionView ProfilePickerCollectionViewDC { get; set; }
+        public ListCollectionView MainProfilesView { get; private set; }
+        public ListCollectionView SubProfilesView { get; private set; }
 
         public ObservableCollection<LibraryEntryViewModel> LibraryPickers { get; } = [];
         public ObservableCollection<WindowListItemViewModel> AllWindows { get; } = [];
@@ -79,6 +81,9 @@ namespace HandheldCompanion.ViewModels
         // True if library manager is busy downloading/searching (for showing ProgressRing in dialog)
         public bool IsLibraryBusy => ManagerFactory.libraryManager.Status.HasFlag(ManagerStatus.Busy);
 
+        // True if the Apply button in the library dialog should be enabled (results available and not currently loading)
+        public bool CanApplyLibrary => HasLibraryEntry && !IsLibraryBusy;
+
         public bool HasProfileExecutables => SelectedProfile?.Executables.Any() ?? false;
 
         // True if a profile is selected (not null) - used to enable/disable the entire page
@@ -86,6 +91,9 @@ namespace HandheldCompanion.ViewModels
 
         // True if the selected profile can be renamed/deleted (not Default)
         public bool IsProfileManagementEnabled => SelectedMainProfile != null && !SelectedMainProfile.Default;
+
+        // True if the library browse button should be enabled (connected and not Default profile)
+        public bool IsLibrarySettingsEnabled => IsLibraryConnected && IsProfileManagementEnabled;
 
         // True if the ProfileEnabled toggle can be modified (not Default profile)
         public bool IsProfileEnabledToggleEnabled => SelectedProfile != null && !SelectedProfile.Default;
@@ -130,6 +138,7 @@ namespace HandheldCompanion.ViewModels
                         OnPropertyChanged(nameof(CanToggleProfileProcess));
                         OnPropertyChanged(nameof(IsProfileEnabledToggleEnabled));
                         OnPropertyChanged(nameof(IsControllerPassthroughEnabled));
+                        OnPropertyChanged(nameof(SelectedSubProfileViewModel));
                         OnProfileChanged();
                     }
                 }
@@ -146,13 +155,25 @@ namespace HandheldCompanion.ViewModels
                 {
                     _selectedMainProfile = value;
                     OnPropertyChanged(nameof(SelectedMainProfile));
+                    OnPropertyChanged(nameof(SelectedMainProfileViewModel));
                     OnPropertyChanged(nameof(IsProfileManagementEnabled));
+                    OnPropertyChanged(nameof(IsLibrarySettingsEnabled));
                     OnPropertyChanged(nameof(CanLaunchProcess));
                     OnPropertyChanged(nameof(CanKillProcess));
                     OnPropertyChanged(nameof(IsProfileProcessRunning));
                     OnPropertyChanged(nameof(CanToggleProfileProcess));
                     UpdateSubProfiles();
                 }
+            }
+        }
+
+        public ProfileViewModel SelectedMainProfileViewModel
+        {
+            get => MainProfiles.FirstOrDefault(vm => vm.Profile.Guid == _selectedMainProfile?.Guid);
+            set
+            {
+                if (value?.Profile != _selectedMainProfile)
+                    SelectedMainProfile = value?.Profile;
             }
         }
 
@@ -518,11 +539,26 @@ namespace HandheldCompanion.ViewModels
 
                     if (value >= 0 && value < SubProfiles.Count)
                     {
-                        Profile newSelectedProfile = SubProfiles[value];
-                        ManagerFactory.profileManager.UpdateOrCreateProfile(newSelectedProfile,
-                            IsQuickTools ? UpdateSource.QuickProfilesPage : UpdateSource.ProfilesPage);
+                        Profile newSelectedProfile = SubProfiles[value].Profile;
+                        if (newSelectedProfile != _selectedProfile)
+                            SelectedProfile = newSelectedProfile;
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// The currently selected sub-profile ViewModel, used for ComboBox SelectedItem binding.
+        /// Works correctly with sorted views — no index mapping required.
+        /// Setting this (by user ComboBox interaction) triggers profile application.
+        /// </summary>
+        public ProfileViewModel SelectedSubProfileViewModel
+        {
+            get => SubProfiles.FirstOrDefault(vm => vm.Profile.Guid == _selectedProfile?.Guid);
+            set
+            {
+                if (!isLoadingProfile && value != null && value.Profile != _selectedProfile)
+                    SelectedProfile = value.Profile;
             }
         }
 
@@ -1513,6 +1549,7 @@ namespace HandheldCompanion.ViewModels
         public event EventHandler RequestOpenProfileLayout;
         public event EventHandler RequestCreatePowerProfile;
         public event EventHandler RequestOpenAdditionalSettings;
+        public event EventHandler RequestShowLibraryDialog;
 
         // Commands
         public ICommand RefreshLibrary { get; private set; }
@@ -1537,8 +1574,6 @@ namespace HandheldCompanion.ViewModels
         public ICommand OpenProfileLayoutCommand { get; private set; }
         public ICommand CreatePowerProfileCommand { get; private set; }
         public ICommand OpenAdditionalSettingsCommand { get; private set; }
-
-        private ContentDialog contentDialog;
 
         private bool isLoadingProfile = false;
         public bool IsLoadingProfile => isLoadingProfile;
@@ -1569,9 +1604,11 @@ namespace HandheldCompanion.ViewModels
         /// </summary>
         private void SafeUpdateSubProfiles(IEnumerable<Profile> newProfiles, Profile profileToSelect)
         {
+            foreach (var vm in SubProfiles)
+                vm.Dispose();
             SubProfiles.Clear();
             foreach (var profile in newProfiles)
-                SubProfiles.Add(profile);
+                SubProfiles.Add(new ProfileViewModel(profile, IsQuickTools));
         }
 
         public ProfilesPageViewModel(ProfilesPage profilesPage)
@@ -1611,6 +1648,13 @@ namespace HandheldCompanion.ViewModels
             ProfilePickerCollectionViewDC.GroupDescriptions.Add(new PropertyGroupDescription("Header"));
             ProfilePickerCollectionViewAC = new ListCollectionView(ProfilePicker);
             ProfilePickerCollectionViewAC.GroupDescriptions.Add(new PropertyGroupDescription("Header"));
+
+            MainProfilesView = new ListCollectionView(MainProfiles);
+            MainProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.Name), ListSortDirection.Ascending));
+
+            SubProfilesView = new ListCollectionView(SubProfiles);
+            SubProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.SortOrder), ListSortDirection.Ascending));
+            SubProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.Name), ListSortDirection.Ascending));
 
             ProfileExecutables.CollectionChanged += (_, __) =>
             {
@@ -1719,23 +1763,7 @@ namespace HandheldCompanion.ViewModels
 
             DisplayLibrary = new DelegateCommand(async () =>
             {
-                if (profilesPage?.IGGBDialog == null)
-                    return;
-
-                ContentDialog storedDialog = profilesPage.IGGBDialog;
-                object content = storedDialog.Content;
-
-                contentDialog = new ContentDialog
-                {
-                    Title = storedDialog.Title,
-                    CloseButtonText = storedDialog.CloseButtonText,
-                    PrimaryButtonText = storedDialog.PrimaryButtonText,
-                    IsEnabled = storedDialog.IsEnabled,
-                    Content = content,
-                    DataContext = this,
-                };
-
-                contentDialog.ShowAsync();
+                RequestShowLibraryDialog?.Invoke(this, EventArgs.Empty);
                 RefreshLibrary.Execute(null);
             });
 
@@ -1763,17 +1791,16 @@ namespace HandheldCompanion.ViewModels
 
                 // Notify that library entries are now available
                 OnPropertyChanged(nameof(HasLibraryEntry));
+                OnPropertyChanged(nameof(CanApplyLibrary));
             });
 
             DownloadLibrary = new DelegateCommand(async () =>
             {
-                int coverId = (int)LibraryCovers[LibraryCoversIndex].Id;
-                int artworkId = (int)LibraryArtworks[LibraryArtworksIndex].Id;
-                int logoId = (int)LibraryLogos[LibraryLogosIndex].Id;
+                int coverId = (int)(LibraryCoversIndex != -1 && LibraryCoversIndex < LibraryCovers.Count ? LibraryCovers[LibraryCoversIndex].Id : 0);
+                int artworkId = (int)(LibraryArtworksIndex != -1 && LibraryArtworksIndex < LibraryArtworks.Count ? LibraryArtworks[LibraryArtworksIndex].Id : 0);
+                int logoId = (int)(LibraryLogosIndex != -1 && LibraryLogosIndex < LibraryLogos.Count ? LibraryLogos[LibraryLogosIndex].Id : 0);
 
                 await ManagerFactory.libraryManager.UpdateProfileArts(SelectedProfile, SelectedLibraryEntry, coverId, artworkId, logoId);
-                contentDialog?.Hide();
-                contentDialog = null;
                 ManagerFactory.profileManager.UpdateOrCreateProfile(SelectedProfile, UpdateSource.LibraryUpdate);
 
                 // Refresh the Cover and Artwork properties to display the newly downloaded images
@@ -2250,17 +2277,21 @@ namespace HandheldCompanion.ViewModels
 
             // Initial update
             OnPropertyChanged(nameof(IsLibraryConnected));
+            OnPropertyChanged(nameof(IsLibrarySettingsEnabled));
             OnPropertyChanged(nameof(IsLibraryBusy));
+            OnPropertyChanged(nameof(CanApplyLibrary));
         }
 
         private void LibraryManager_NetworkAvailabilityChanged(bool status)
         {
             OnPropertyChanged(nameof(IsLibraryConnected));
+            OnPropertyChanged(nameof(IsLibrarySettingsEnabled));
         }
 
         private void LibraryManager_StatusChanged(ManagerStatus status)
         {
             OnPropertyChanged(nameof(IsLibraryBusy));
+            OnPropertyChanged(nameof(CanApplyLibrary));
         }
 
         private void ProfileApplied(Profile profile, UpdateSource source)
@@ -2316,7 +2347,9 @@ namespace HandheldCompanion.ViewModels
                         {
                             _selectedMainProfile = mainProfile;
                             OnPropertyChanged(nameof(SelectedMainProfile));
+                            OnPropertyChanged(nameof(SelectedMainProfileViewModel));
                             OnPropertyChanged(nameof(IsProfileManagementEnabled));
+                            OnPropertyChanged(nameof(IsLibrarySettingsEnabled));
                         }
 
                         IEnumerable<Profile> subProfiles = ManagerFactory.profileManager.GetSubProfilesFromProfile(mainProfile, true);
@@ -2356,6 +2389,12 @@ namespace HandheldCompanion.ViewModels
         /// </summary>
         public void ProfileUpdated(Profile profile, UpdateSource source, bool isCurrent)
         {
+            // Serializer loads are handled in bulk by ProfileManagerLoaded; skip per-profile
+            // UI work here to avoid N blocking Dispatcher.Invoke calls and N CollectionChanged
+            // notifications that are immediately discarded when ProfileManagerLoaded clears the collection.
+            if (source == UpdateSource.Serializer)
+                return;
+
             isCurrent = SelectedProfile?.Guid == profile?.Guid;
             isCurrent |= source.HasFlag(UpdateSource.Creation);
 
@@ -2366,31 +2405,39 @@ namespace HandheldCompanion.ViewModels
             {
                 if (!profile.IsSubProfile)
                 {
-                    var existingProfile = MainProfiles.FirstOrDefault(p => p.Guid == profile.Guid);
-                    if (existingProfile == null)
+                    var existingVm = MainProfiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid);
+                    if (existingVm == null)
                     {
-                        MainProfiles.Add(profile);
+                        MainProfiles.Add(new ProfileViewModel(profile, false));
 
-                        if (source.HasFlag(UpdateSource.Creation) && SelectedMainProfile == null)
-                        {
+                        if (source.HasFlag(UpdateSource.Creation))
                             SelectedMainProfile = profile;
-                        }
                         return;
                     }
 
+                    existingVm.Profile = profile;
+                    MainProfilesView.Refresh();
                     if (SelectedMainProfile?.Guid == profile.Guid)
                     {
                         _selectedMainProfile = profile;
                         OnPropertyChanged(nameof(SelectedMainProfile));
+                        OnPropertyChanged(nameof(SelectedMainProfileViewModel));
                     }
                 }
                 else
                 {
-                    var existingSubProfile = SubProfiles.FirstOrDefault(p => p.Guid == profile.Guid);
+                    var existingSubProfile = SubProfiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid);
                     if (existingSubProfile == null && SelectedMainProfile != null && profile.ParentGuid == SelectedMainProfile.Guid)
                     {
-                        SubProfiles.Add(profile);
+                        SubProfiles.Add(new ProfileViewModel(profile, IsQuickTools));
+                        if (source.HasFlag(UpdateSource.Creation))
+                            SelectedProfile = profile;
                         return;
+                    }
+                    else if (existingSubProfile != null)
+                    {
+                        existingSubProfile.Profile = profile;
+                        SubProfilesView.Refresh();
                     }
                 }
 
@@ -2403,10 +2450,14 @@ namespace HandheldCompanion.ViewModels
                     OnPropertyChanged(nameof(CanKillProcess));
                     OnPropertyChanged(nameof(IsProfileProcessRunning));
                     OnPropertyChanged(nameof(CanToggleProfileProcess));
+                    OnPropertyChanged(nameof(SelectedSubProfileViewModel));
+                    OnPropertyChanged(nameof(Cover));
+                    OnPropertyChanged(nameof(Artwork));
+                    OnPropertyChanged(nameof(Logo));
 
                     if (profile.IsSubProfile && !IsQuickTools)
                     {
-                        int subProfileIndex = SubProfiles.IndexOf(SubProfiles.FirstOrDefault(p => p.Guid == profile.Guid));
+                        int subProfileIndex = SubProfiles.IndexOf(SubProfiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid));
                         if (subProfileIndex >= 0 && subProfileIndex != _SelectedSubProfileIndex)
                         {
                             _SelectedSubProfileIndex = subProfileIndex;
@@ -2436,15 +2487,16 @@ namespace HandheldCompanion.ViewModels
             {
                 if (!profile.IsSubProfile)
                 {
-                    var existingProfile = MainProfiles.FirstOrDefault(p => p.Guid == profile.Guid);
-                    if (existingProfile != null)
-                    {
-                        MainProfiles.Remove(existingProfile);
-                    }
-
+                    // CRITICAL: Set new selection BEFORE removing from collection.
+                    // WPF will auto-null SelectedItem when the selected item is removed.
                     if (SelectedMainProfile?.Guid == profile.Guid)
-                    {
                         SelectedMainProfile = ManagerFactory.profileManager.GetDefault();
+
+                    var existingVm = MainProfiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid);
+                    if (existingVm != null)
+                    {
+                        MainProfiles.Remove(existingVm);
+                        existingVm.Dispose();
                     }
                 }
                 else
@@ -2454,10 +2506,11 @@ namespace HandheldCompanion.ViewModels
                         SelectedProfile = SelectedMainProfile;
                     }
 
-                    var existingSubProfile = SubProfiles.FirstOrDefault(p => p.Guid == profile.Guid);
-                    if (existingSubProfile != null)
+                    var existingSubVm = SubProfiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid);
+                    if (existingSubVm != null)
                     {
-                        SubProfiles.Remove(existingSubProfile);
+                        SubProfiles.Remove(existingSubVm);
+                        existingSubVm.Dispose();
                     }
                 }
 
@@ -2472,10 +2525,12 @@ namespace HandheldCompanion.ViewModels
         {
             UIHelper.TryInvoke(() =>
             {
+                foreach (var vm in MainProfiles)
+                    vm.Dispose();
                 MainProfiles.Clear();
                 var profiles = ManagerFactory.profileManager.GetProfiles(false);
                 foreach (var profile in profiles.OrderBy(p => p.Name))
-                    MainProfiles.Add(profile);
+                    MainProfiles.Add(new ProfileViewModel(profile, false));
 
                 Profile defaultProfile = ManagerFactory.profileManager.GetDefault();
                 SelectedMainProfile = defaultProfile;
@@ -2813,6 +2868,7 @@ namespace HandheldCompanion.ViewModels
 
             // Notify that library entries have been cleared
             OnPropertyChanged(nameof(HasLibraryEntry));
+            OnPropertyChanged(nameof(CanApplyLibrary));
         }
 
         private void SelectedLibraryChanged()
@@ -3077,6 +3133,14 @@ namespace HandheldCompanion.ViewModels
         {
             CurrentProcessViewModel?.Dispose();
             CurrentProcessViewModel = null;
+
+            foreach (var vm in MainProfiles)
+                vm.Dispose();
+            MainProfiles.Clear();
+
+            foreach (var vm in SubProfiles)
+                vm.Dispose();
+            SubProfiles.Clear();
 
             base.Dispose();
         }

@@ -10,9 +10,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Windows.Media;
 using WpfScreenHelper.Enum;
 using static HandheldCompanion.Utils.XInputPlusUtils;
 
@@ -121,6 +123,21 @@ public partial class Profile : ICloneable, IComparable, INotifyPropertyChanged
     public string Arguments { get; set; } = string.Empty;
     [JsonIgnore]
     public string FileName { get; set; } = string.Empty;
+
+    [JsonIgnore]
+    public ImageSource? Icon
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(Path) && File.Exists(Path))
+            {
+                Icon? icon = System.Drawing.Icon.ExtractAssociatedIcon(Path);
+                if (icon is not null)
+                    return icon.ToImageSource();
+            }
+            return null;
+        }
+    }
 
     public bool IsSubProfile { get; set; }
     public bool IsFavoriteSubProfile { get; set; }

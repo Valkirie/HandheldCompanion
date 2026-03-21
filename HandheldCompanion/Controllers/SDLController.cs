@@ -414,7 +414,7 @@ namespace HandheldCompanion.Controllers
                 return button.ToString();
             }
 
-            return defaultGlyph;
+            return glyph;
         }
 
         public override string GetGlyph(AxisFlags axis)
@@ -439,7 +439,7 @@ namespace HandheldCompanion.Controllers
                 return axis.ToString();
             }
 
-            return defaultGlyph;
+            return glyph;
         }
 
         public override void Unplug()

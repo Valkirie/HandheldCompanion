@@ -17,6 +17,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using System.Windows.Threading;
@@ -66,6 +67,9 @@ namespace HandheldCompanion.Managers
         private bool _goingForward;
         private bool _navigating;
 
+        // navigation history: pages to return to when B2 is pressed from a sub-page
+        private Stack<Page> _navigationHistory = new();
+
         private bool _rendered;
         private object _rendering = new();
 
@@ -91,6 +95,8 @@ namespace HandheldCompanion.Managers
         {
             return _focused.Any(w => w.Value);
         }
+
+        public bool CanGoBack => _navigationHistory.Count > 0;
 
         private enum FocusSource
         {
@@ -327,11 +333,30 @@ namespace HandheldCompanion.Managers
                 // store current Frame and listen to render events
                 if (gamepadPage != (Page)gamepadFrame.Content)
                 {
+                    Page newPage = (Page)gamepadFrame.Content;
+
+                    // Update navigation history based on navigation type
+                    if (_goingBack)
+                    {
+                        // Going back: history was already updated by the B2 handler
+                    }
+                    else if (IsTopLevelPage(newPage))
+                    {
+                        // Top-level lateral navigation: reset the drill-down history
+                        _navigationHistory.Clear();
+                    }
+                    else if (gamepadPage is not null)
+                    {
+                        // Drill-down into a sub-page: push the current page
+                        _navigationHistory.Push(gamepadPage);
+                        _goingForward = true;
+                    }
+
                     gamepadFrame = (Frame)sender;
                     gamepadFrame.ContentRendered += ContentRendering;
 
                     // store current Page
-                    gamepadPage = (Page)gamepadFrame.Content;
+                    gamepadPage = newPage;
 
                     // reset page-scoped navigation view state
                     pageNavigationView = null;
@@ -599,6 +624,20 @@ namespace HandheldCompanion.Managers
                            .ToList();
         }
 
+        private bool IsTopLevelPage(Page page)
+        {
+            if (page is null || windowNavigationView is null)
+                return true;
+
+            string pageTag = page.Tag?.ToString();
+            if (string.IsNullOrEmpty(pageTag))
+                return false;
+
+            // A page is top-level if its tag matches a window NavigationViewItem.
+            // Sub-pages (e.g. LayoutItemPage, HotkeySettingsPage) have no matching nav item.
+            return GetNavigationItems(windowNavigationView).Any(nvi => nvi.Tag?.ToString() == pageTag);
+        }
+
         private static bool IsTopPaneNavigationView(NavigationView navView)
         {
             // For our purposes, only a fully left-displayed pane should be treated as a navigation "sidebar".
@@ -696,7 +735,7 @@ namespace HandheldCompanion.Managers
                 {
                     // get current focused element
                     Control focusedElement = GetFocusedElement();
-                    if (focusedElement is null)
+                    if (focusedElement is null || !focusedElement.IsEnabled || !focusedElement.IsVisible)
                         return;
 
                     string elementType = focusedElement.GetType().Name;
@@ -735,67 +774,57 @@ namespace HandheldCompanion.Managers
                                 }
                             }
 
-                            if (button.IsEnabled)
-                            {
-                                // execute command
-                                button.Command?.Execute(button.CommandParameter);
+                            // execute command
+                            button.Command?.Execute(button.CommandParameter);
 
-                                // raise event
-                                button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-                            }
+                            // raise event
+                            button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
                         }
                         else if (focusedElement is RepeatButton repeatButton)
                         {
                             Focus(repeatButton);
 
-                            if (repeatButton.IsEnabled)
-                            {
-                                // execute command
-                                repeatButton.Command?.Execute(repeatButton.CommandParameter);
+                            // execute command
+                            repeatButton.Command?.Execute(repeatButton.CommandParameter);
 
-                                // raise event
-                                repeatButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-                            }
+                            // raise event
+                            repeatButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
                         }
                         else if (focusedElement is ToggleButton toggleButton)
                         {
                             Focus(toggleButton);
 
-                            if (toggleButton.IsEnabled)
+                            // specific scenario
+                            if (toggleButton.Name.Equals("ExpanderHeader"))
                             {
-                                // execute command
-                                toggleButton.Command?.Execute(toggleButton.CommandParameter);
-
-                                // specific scenario
-                                if (toggleButton.Name.Equals("ExpanderHeader"))
+                                Expander Expander = WPFUtils.FindParent<Expander>(toggleButton);
+                                if (Expander is not null)
                                 {
-                                    Expander Expander = WPFUtils.FindParent<Expander>(toggleButton);
-                                    if (Expander is not null)
-                                    {
-                                        // set state
-                                        Expander.IsExpanded = !Expander.IsExpanded;
-                                    }
+                                    // set state
+                                    Expander.IsExpanded = !Expander.IsExpanded;
                                 }
-                                else if (toggleButton is RadioButton radioButton)
-                                {
-                                    toggleButton.IsChecked = !toggleButton.IsChecked;
-                                }
-                                else
-                                {
-                                    switch (toggleButton.Tag)
-                                    {
-                                        default:
-                                            toggleButton.IsChecked = !toggleButton.IsChecked;
-                                            break;
-                                        case "Hotkey":
-                                            // Hotkey IsChecked status is managed by a ViewModel
-                                            break;
-                                    }
-                                }
-
-                                // raise event
-                                toggleButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
                             }
+                            else if (toggleButton is RadioButton radioButton)
+                            {
+                                toggleButton.IsChecked = !toggleButton.IsChecked;
+                            }
+                            else
+                            {
+                                switch (toggleButton.Tag)
+                                {
+                                    default:
+                                        // Do not manually set IsChecked when the property has a OneWay binding
+                                        if (BindingOperations.GetBindingExpression(toggleButton, ToggleButton.IsCheckedProperty)?.ParentBinding?.Mode != BindingMode.OneWay)
+                                            toggleButton.IsChecked = !toggleButton.IsChecked;
+                                        break;
+                                    case "Hotkey":
+                                        // Hotkey IsChecked status is managed by a ViewModel
+                                        break;
+                                }
+                            }
+
+                            // execute command after state change, mirroring standard WPF ToggleButton.OnClick()
+                            toggleButton.Command?.Execute(toggleButton.CommandParameter);
                         }
                         else if (focusedElement is SettingsCard settingsCard)
                         {
@@ -912,7 +941,7 @@ namespace HandheldCompanion.Managers
                         {
                             // get the associated ComboBox
                             comboBox = ItemsControl.ItemsControlFromItemContainer(focusedElement) as ComboBox;
-                            if (comboBox is not null && comboBox.IsDropDownOpen && comboBoxItem.IsEnabled)
+                            if (comboBox is not null && comboBox.IsDropDownOpen)
                             {
                                 int idx = comboBox.Items.IndexOf(comboBoxItem);
                                 if (idx == -1)
@@ -929,7 +958,7 @@ namespace HandheldCompanion.Managers
                         {
                             // get the associated ComboBox
                             ListBox listBox = ItemsControl.ItemsControlFromItemContainer(focusedElement) as ListBox;
-                            if (listBox is not null && listBox.IsEnabled)
+                            if (listBox is not null)
                             {
                                 // leave ListBox and get below control
                                 // todo: we could look for the neareast control with a specific tag, like in HTML with Submit button from a form ?
@@ -1001,8 +1030,7 @@ namespace HandheldCompanion.Managers
                         else if (focusedElement is MenuItem menuItem && HasFlyoutOpen)
                         {
                             // Execute the menu item command
-                            if (menuItem.IsEnabled &&
-                                menuItem.Command?.CanExecute(menuItem.CommandParameter) == true)
+                            if (menuItem.Command?.CanExecute(menuItem.CommandParameter) == true)
                                 menuItem.Command.Execute(menuItem.CommandParameter);
 
                             // MenuFlyout auto-closes after a MenuItem is invoked; force it if not
@@ -1070,12 +1098,21 @@ namespace HandheldCompanion.Managers
                                 else
                                 {
                                     // Second press (already on a page NavigationViewItem): leave the page if possible.
-                                    if (!IsQuicktools && gamepadFrame.CanGoBack)
+                                    if (!IsQuicktools)
                                     {
-                                        _goingBack = true;
-                                        _goingForward = false;
-                                        gamepadFrame.GoBack();
-                                        return;
+                                        if (_navigationHistory.Count > 0)
+                                        {
+                                            _goingBack = true;
+                                            _goingForward = false;
+                                            Page previousPage = _navigationHistory.Pop();
+                                            MainWindow.NavView_Navigate(previousPage);
+                                            return;
+                                        }
+                                        else if (prevNavigation is not null)
+                                        {
+                                            Focus(prevNavigation);
+                                            return;
+                                        }
                                     }
                                 }
                             }
@@ -1131,25 +1168,14 @@ namespace HandheldCompanion.Managers
                                 break;
                         }
 
-                        // go back to previous page
-                        if (_goingForward && !IsQuicktools)
+                        // go back to previous page using navigation history
+                        if (!IsQuicktools && _navigationHistory.Count > 0)
                         {
-                            if (gamepadFrame.CanGoBack)
-                            {
-                                // set state
-                                _goingBack = true;
-                                _goingForward = false;
-                                gamepadFrame.GoBack();
-                            }
-                        }
-                        // Special handling for LayoutItemPage: always navigate back to LayoutPage when B is pressed
-                        else if (gamepadPage is not null && gamepadPage.GetType().Name == "LayoutItemPage" && !IsQuicktools)
-                        {
-                            if (MainWindow.layoutPage is not null)
-                            {
-                                MainWindow.NavView_Navigate(MainWindow.layoutPage);
-                                return;
-                            }
+                            _goingBack = true;
+                            _goingForward = false;
+                            Page previousPage = _navigationHistory.Pop();
+                            MainWindow.NavView_Navigate(previousPage);
+                            return;
                         }
                         else if (prevNavigation is not null)
                             Focus(prevNavigation);
@@ -1282,6 +1308,10 @@ namespace HandheldCompanion.Managers
                     {
                         if (gamepadWindow is MainWindow mainWindow)
                         {
+                            // skip on top display mode
+                            if (mainWindow.navView.PaneDisplayMode == NavigationViewPaneDisplayMode.Top)
+                                return;
+
                             switch (mainWindow.navView.IsPaneOpen)
                             {
                                 case false:

@@ -6,6 +6,7 @@ using HandheldCompanion.Shared;
 using IGDB;
 using IGDB.Models;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -62,6 +63,8 @@ namespace HandheldCompanion.Managers
         private IGDBClient IGDBClient;
         private SteamGridDb steamGridDb;
 
+        private readonly ConcurrentDictionary<string, BitmapImage> _imageCache = new();
+
         public bool HasIGDBClient => IGDBClient != null;
         public bool HasSteamGridDb => steamGridDb != null;
 
@@ -108,7 +111,16 @@ namespace HandheldCompanion.Managers
                     return null;
             }
 
-            return new BitmapImage(new Uri(fileName));
+            return _imageCache.GetOrAdd(fileName, path =>
+            {
+                var bmp = new BitmapImage();
+                bmp.BeginInit();
+                bmp.CacheOption = BitmapCacheOption.OnLoad;
+                bmp.UriSource = new Uri(path);
+                bmp.EndInit();
+                bmp.Freeze();
+                return bmp;
+            });
         }
 
         public BitmapImage? GetGameArt(long gameId, LibraryType libraryType, long imageId, string extension)

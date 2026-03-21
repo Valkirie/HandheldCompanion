@@ -410,8 +410,26 @@ namespace HandheldCompanion.Targets
             }
         }
 
+        // Cache for IsInstalled check - vJoy installation state won't change during app runtime
+        private static bool? _isInstalledCache;
+        private static readonly object _isInstalledLock = new object();
+
         // Returns true when the vJoy driver is installed on this system.
-        public static bool IsInstalled() => !string.IsNullOrEmpty(FindVJoyConfig());
+        public static bool IsInstalled()
+        {
+            if (_isInstalledCache.HasValue)
+                return _isInstalledCache.Value;
+
+            lock (_isInstalledLock)
+            {
+                // Double-check pattern
+                if (_isInstalledCache.HasValue)
+                    return _isInstalledCache.Value;
+
+                _isInstalledCache = !string.IsNullOrEmpty(FindVJoyConfig());
+                return _isInstalledCache.Value;
+            }
+        }
 
         // Searches standard registry uninstall entries for vJoyConfig.exe
         private static string FindVJoyConfig()

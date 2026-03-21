@@ -170,6 +170,10 @@ namespace HandheldCompanion.ViewModels
 
         private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
         {
+            // Serializer loads are handled in bulk after ProfileManager initializes.
+            if (source == UpdateSource.Serializer)
+                return;
+
             // ignore me
             if (profile.Default)
                 return;

@@ -85,8 +85,8 @@
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
                         DisplayMemberPath="Name"
-                        ItemsSource="{Binding SubProfiles, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedIndex="{Binding SelectedSubProfileIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        ItemsSource="{Binding SubProfilesView, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedItem="{Binding SelectedSubProfileViewModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard>
 
                 <ui:SettingsCard

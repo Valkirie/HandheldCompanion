@@ -9,7 +9,6 @@ using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Pages.Profiles;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
-using System.Linq;
 using System.Windows;
 using Page = System.Windows.Controls.Page;
 
@@ -65,6 +64,12 @@ public partial class ProfilesPage : Page
             MainWindow.GetCurrent().NavigateToPage("PerformancePage");
         };
         viewModel.RequestOpenAdditionalSettings += (s, e) => b_AdditionalSettings_Click(null, null);
+        viewModel.RequestShowLibraryDialog += (s, e) =>
+        {
+            if (IGGBDialog.Content is FrameworkElement content)
+                content.DataContext = viewModel;
+            IGGBDialog.ShowAsync();
+        };
     }
 
     private void ProfilesPage_Loaded(object sender, RoutedEventArgs e)
@@ -109,8 +114,6 @@ public partial class ProfilesPage : Page
     // Navigation and dialog events that cannot be bound
     public async void b_CreateProfile_Click(object sender, RoutedEventArgs e)
     {
-        viewModel.UpdateProfile();
-
         try
         {
             string path = string.Empty;
@@ -212,9 +215,6 @@ public partial class ProfilesPage : Page
         {
             case ContentDialogResult.Primary:
                 ManagerFactory.profileManager.DeleteProfile(viewModel.SelectedMainProfile);
-                // Select first profile via ViewModel instead of direct control access
-                if (viewModel.MainProfiles.Any())
-                    viewModel.SelectedMainProfile = viewModel.MainProfiles[0];
                 break;
         }
     }
@@ -248,7 +248,7 @@ public partial class ProfilesPage : Page
         newSubProfile.IsSubProfile = true;
         newSubProfile.ParentGuid = viewModel.SelectedMainProfile.Guid;
 
-        ManagerFactory.profileManager.UpdateOrCreateProfile(newSubProfile);
+        ManagerFactory.profileManager.UpdateOrCreateProfile(newSubProfile, UpdateSource.Creation);
     }
 
     public async void b_SubProfileDelete_Click(object sender, RoutedEventArgs e)

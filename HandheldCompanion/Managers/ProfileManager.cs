@@ -911,7 +911,9 @@ public class ProfileManager : IManager
                     profileToSanitize.ErrorCode |= ProfileErrorCode.MissingPermission;
             }
 
-            if (ProcessManager.GetProcesses(profileToSanitize.Executable).Any())
+            // Skip the WinRT/COM process scan during the initial serializer pass;
+            // the foreground-changed event will set the Running flag correctly shortly after.
+            if (source != UpdateSource.Serializer && ProcessManager.GetProcesses(profileToSanitize.Executable).Any())
                 profileToSanitize.ErrorCode |= ProfileErrorCode.Running;
         }
 

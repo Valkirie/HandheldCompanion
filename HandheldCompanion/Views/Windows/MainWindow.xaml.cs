@@ -21,7 +21,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
@@ -34,7 +33,6 @@ using System.Windows.Navigation;
 using System.Windows.Shell;
 using Windows.UI.ViewManagement;
 using Control = System.Windows.Controls.Control;
-using Frame = System.Windows.Controls.Frame;
 using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
 using Page = System.Windows.Controls.Page;
 using RadioButton = System.Windows.Controls.RadioButton;
@@ -70,23 +68,35 @@ public partial class MainWindow : GamepadWindow
     public static OverlayTrackpad overlayTrackpad = new();
     public static OverlayQuickTools overlayquickTools = new();
 
-    public static string CurrentExe, CurrentPath;
+    public static string CurrentExe = Environment.ProcessPath ?? string.Empty;
+    public static string CurrentPath => AppDomain.CurrentDomain.BaseDirectory;
 
-    private static MainWindow CurrentWindow;
-    private static FileVersionInfo fileVersionInfo;
+    private static MainWindow? CurrentWindow;
+    private static FileVersionInfo? fileVersionInfo;
 
     public static string CurrentPageName = string.Empty;
 
     private bool appClosing;
     private readonly NotifyIcon notifyIcon;
     private bool NotifyInTaskbar;
-    public string prevNavItemTag;
+    public string prevNavItemTag = string.Empty;
 
     // Track tray menu items for liked profiles
     private readonly Dictionary<Guid, ToolStripMenuItem> profileMenuItems = new();
     private ToolStripSeparator profileSeparator;
 
-    private WindowState prevWindowState;
+    private WindowState prevWindowState
+    {
+        get
+        {
+            return (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowPrevState");
+        }
+        set
+        {
+            ManagerFactory.settingsManager.SetProperty("MainWindowPrevState", (int)value);
+        }
+    }
+
     private bool isFullscreen;
     private WindowState preFullscreenWindowState = WindowState.Normal;
     private WindowStyle preFullscreenWindowStyle = WindowStyle.SingleBorderWindow;
@@ -103,11 +113,10 @@ public partial class MainWindow : GamepadWindow
     private const int WM_DEVICECHANGE = 0x0219;
 
     public static Version LastVersion => Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
-    public static Version CurrentVersion => Version.Parse(fileVersionInfo.FileVersion);
+    public static Version CurrentVersion => Version.Parse(fileVersionInfo?.FileVersion ?? "0.0.0.0");
 
     private static bool StartMinimized => ManagerFactory.settingsManager.GetBoolean("StartMinimized");
     private static bool StartMaximized => ManagerFactory.settingsManager.GetBoolean("StartMaximized");
-    private static bool PreloadPages => ManagerFactory.settingsManager.GetBoolean("PreloadPages");
     private static bool ShowSplashScreen => ManagerFactory.settingsManager.GetBoolean("ShowSplashScreen");
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
@@ -121,12 +130,18 @@ public partial class MainWindow : GamepadWindow
             SplashScreen.Show();
 #endif
 
-        // set theme
-        var currentTheme = (ElementTheme)ManagerFactory.settingsManager.GetInt("MainWindowTheme");
+        // update theme
+        ElementTheme currentTheme = (ElementTheme)ManagerFactory.settingsManager.GetInt("MainWindowTheme");
         ThemeManager.SetRequestedTheme(this, currentTheme);
 
         InitializeComponent();
         this.Tag = "MainWindow";
+
+        // update Position and Size
+        Height = (int)Math.Max(MinHeight, ManagerFactory.settingsManager.GetDouble("MainWindowHeight"));
+        Width = (int)Math.Max(MinWidth, ManagerFactory.settingsManager.GetDouble("MainWindowWidth"));
+        Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, ManagerFactory.settingsManager.GetDouble("MainWindowLeft"));
+        Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, ManagerFactory.settingsManager.GetDouble("MainWindowTop"));
 
         ContentDialog.Closed += ContentDialog_Closed;
         ContentDialog.Opened += ContentDialog_Opened;
@@ -142,7 +157,7 @@ public partial class MainWindow : GamepadWindow
         uiSettings = new UISettings();
 
         // define current directory
-        Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+        Directory.SetCurrentDirectory(CurrentPath);
 
         // initialize notifyIcon
         notifyIcon = new NotifyIcon
@@ -158,21 +173,15 @@ public partial class MainWindow : GamepadWindow
         // Build initial tray menu (will be updated when ProfileManager initializes)
         BuildTrayMenu();
 
-        // paths
-        Process process = Process.GetCurrentProcess();
-        CurrentExe = process.MainModule.FileName;
-        CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
+        // HidHide registration can block up to 3 seconds on driver error - run off the UI thread
+        Task.Run(() => HidHide.RegisterApplication(CurrentExe));
 
-        // initialize HidHide
-        HidHide.RegisterApplication(CurrentExe);
-
-        // collect details from MotherboardInfo
+        // collect details from MotherboardInfo (reads JSON cache - fast on subsequent starts)
         MotherboardInfo.Collect();
 
-        // initialize device
+        // initialize device singleton synchronously: page constructors call IDevice.GetCurrent()
+        // and rely on Capabilities/OEMChords that are set in the device's own constructor
         CurrentDevice = IDevice.GetCurrent();
-        CurrentDevice.PullSensors();
-        CurrentDevice.Initialize(FirstStart, NewUpdate);
 
         // FSE monitor
         fullScreenExperienceMonitor = new FullScreenExperienceMonitor();
@@ -182,9 +191,24 @@ public partial class MainWindow : GamepadWindow
         // initialize UI sounds board
         UISounds uiSounds = new UISounds();
 
-        // load page(s)
+        // load page(s) BEFORE starting managers (architectural requirement)
         overlayquickTools.loadPages();
         loadPages();
+
+        // start non-threaded managers that don't depend on MVVM pages
+        InputsManager.Start();
+        TimerManager.Start();
+        MotionManager.Start();
+        ManagerFactory.settingsManager.Start();
+
+        // Load MVVM pages after the Models / data have been created.
+        overlayquickTools.LoadPages_MVVM();
+        LoadPages_MVVM();
+
+        // Now that ALL pages are loaded, start background managers
+        // PullSensors, device Initialize, and all manager starts move to background;
+        // pages are guaranteed to exist before managers finish starting
+        Task.Run(() => StartNonUIInit(CurrentExe, FirstStart, NewUpdate));
 
         // manage events
         SystemManager.SystemStatusChanged += OnSystemStatusChanged;
@@ -203,46 +227,38 @@ public partial class MainWindow : GamepadWindow
         ToastManager.Start();
         ToastManager.SendToast(Title, "is starting");
 
-        // start non-static managers
-        foreach (IManager manager in ManagerFactory.Managers)
-            Task.Run(() => manager.Start());
-
-        // start static managers
-        // todo: make them non-static
-        List<Task> tasks = new List<Task>
-        {
-            Task.Run(() => OSDManager.Start()),
-            Task.Run(() => SystemManager.Start()),
-            Task.Run(() => DynamicLightingManager.Start()),
-            Task.Run(() => VirtualManager.Start()),
-            Task.Run(() => SensorsManager.Start()),
-            Task.Run(() => ControllerManager.Start()),
-            Task.Run(() => TaskManager.Start(CurrentExe)),
-            Task.Run(() => PerformanceManager.Start()),
-            Task.Run(() => UpdateManager.Start())
-        };
-
-        // start non-threaded managers
-        InputsManager.Start();
-        TimerManager.Start();
-        MotionManager.Start();
-        ManagerFactory.settingsManager.Start();
-
-        // Load MVVM pages after the Models / data have been created.
-        overlayquickTools.LoadPages_MVVM();
-        LoadPages_MVVM();
-
-        // update Position and Size
-        Height = (int)Math.Max(MinHeight, ManagerFactory.settingsManager.GetDouble("MainWindowHeight"));
-        Width = (int)Math.Max(MinWidth, ManagerFactory.settingsManager.GetDouble("MainWindowWidth"));
-        Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, ManagerFactory.settingsManager.GetDouble("MainWindowLeft"));
-        Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, ManagerFactory.settingsManager.GetDouble("MainWindowTop"));
-
         // update setting(s)
         ManagerFactory.settingsManager.SetProperty("LastVersion", fileVersionInfo.FileVersion);
 
         // load gamepad navigation manager
         gamepadFocusManager = new(this, ContentFrame);
+    }
+
+    /// <summary>
+    /// Runs on a background thread: sensor pull, device hardware init, and all manager starts.
+    /// The device singleton is already constructed before this is called, so Capabilities and
+    /// OEMChords (set in device constructors) are available to page constructors on the UI thread.
+    /// </summary>
+    private static void StartNonUIInit(string exePath, bool firstStart, bool newUpdate)
+    {
+        CurrentDevice.PullSensors();
+        CurrentDevice.Initialize(firstStart, newUpdate);
+
+        // start non-static managers
+        // todo: make them non-static
+        foreach (IManager manager in ManagerFactory.Managers)
+            Task.Run(() => manager.Start());
+
+        // start static managers
+        Task.Run(() => OSDManager.Start());
+        Task.Run(() => SystemManager.Start());
+        Task.Run(() => DynamicLightingManager.Start());
+        Task.Run(() => VirtualManager.Start());
+        Task.Run(() => SensorsManager.Start());
+        Task.Run(() => ControllerManager.Start());
+        Task.Run(() => TaskManager.Start(exePath));
+        Task.Run(() => PerformanceManager.Start());
+        Task.Run(() => UpdateManager.Start());
     }
 
     private void ProfileManager_Initialized()
@@ -322,6 +338,12 @@ public partial class MainWindow : GamepadWindow
         // UI thread
         UIHelper.TryInvoke(() =>
         {
+            GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
+
+            bool canGoBack = gamepadFocusManager.CanGoBack;
+            GamepadUIBack.Visibility = canGoBack ? Visibility.Visible : Visibility.Collapsed;
+            GamepadUIBackDesc.Text = canGoBack ? Properties.Resources.MainWindow_Back : Properties.Resources.MainWindow_Close;
+
             // todo : localize me
             string controlType = control.GetType().Name;
             switch (controlType)
@@ -329,26 +351,18 @@ public partial class MainWindow : GamepadWindow
                 default:
                     {
                         GamepadUISelect.Visibility = Visibility.Visible;
-                        GamepadUIBack.Visibility = Visibility.Visible;
                         GamepadUIToggle.Visibility = Visibility.Collapsed;
                         GamepadUIMore.Visibility = Visibility.Collapsed;
                         GamepadUILike.Visibility = Visibility.Collapsed;
-
-                        GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
-                        GamepadUIBackDesc.Text = Properties.Resources.MainWindow_Back;
                     }
                     break;
 
                 case "Button":
                     {
                         GamepadUISelect.Visibility = Visibility.Visible;
-                        GamepadUIBack.Visibility = Visibility.Visible;
                         GamepadUIToggle.Visibility = Visibility.Collapsed;
                         GamepadUIMore.Visibility = Visibility.Collapsed;
                         GamepadUILike.Visibility = Visibility.Collapsed;
-
-                        GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
-                        GamepadUIBackDesc.Text = Properties.Resources.MainWindow_Back;
 
                         // To get the first RadioButton in the list, if any
                         RadioButton firstRadioButton = WPFUtils.FindChildren(control).FirstOrDefault(c => c is RadioButton) as RadioButton;
@@ -383,7 +397,6 @@ public partial class MainWindow : GamepadWindow
                 case "Slider":
                     {
                         GamepadUISelect.Visibility = Visibility.Collapsed;
-                        GamepadUIBack.Visibility = Visibility.Visible;
                         GamepadUIToggle.Visibility = Visibility.Collapsed;
                         GamepadUIMore.Visibility = Visibility.Collapsed;
                     }
@@ -392,7 +405,6 @@ public partial class MainWindow : GamepadWindow
                 case "NavigationViewItem":
                     {
                         GamepadUISelect.Visibility = Visibility.Visible;
-                        GamepadUIBack.Visibility = Visibility.Collapsed;
                         GamepadUIToggle.Visibility = Visibility.Collapsed;
                         GamepadUIMore.Visibility = Visibility.Collapsed;
 
@@ -516,6 +528,10 @@ public partial class MainWindow : GamepadWindow
     /// </summary>
     private void OnProfileUpdated(Profile profile, UpdateSource source, bool isCurrent)
     {
+        // Tray menu is rebuilt when ProfileManager fires Initialized; skip per-profile work during load.
+        if (source == UpdateSource.Serializer)
+            return;
+
         if (profile.IsLiked)
             AddProfileToTrayMenu(profile);
         else
@@ -643,12 +659,15 @@ public partial class MainWindow : GamepadWindow
         // load gamepad navigation manager
         gamepadFocusManager.Loaded();
 
+        // hook focus changes from all input types (mouse, touch, keyboard, gamepad)
+        AddHandler(FocusManager.GotFocusEvent, new RoutedEventHandler(GamepadWindow_PreviewGotFocus));
+
         HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
         source.AddHook(WndProc); // Hook into the window's message loop
 
         // restore window state
-        SetState(StartMinimized ? WindowState.Minimized : (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowState"));
-        prevWindowState = (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowPrevState");
+        WindowState windowState = (WindowState)ManagerFactory.settingsManager.GetInt("MainWindowState");
+        SetState(StartMinimized ? WindowState.Minimized : windowState);
 
         // apply fullscreen at startup (unless starting minimized)
         if (!StartMinimized && StartMaximized)
@@ -660,6 +679,9 @@ public partial class MainWindow : GamepadWindow
     {
         // set status
         Homepage_Loaded = true;
+
+        // hide the startup overlay — home page is rendered and ready
+        ((MainWindowViewModel)DataContext).IsInitializing = false;
 
         // home page is ready, display main window
         notifyIcon.Visible = true;
@@ -948,6 +970,7 @@ public partial class MainWindow : GamepadWindow
         if (ManagerFactory.settingsManager.GetBoolean("CloseMinimises") && !appClosing)
         {
             e.Cancel = true;
+            _isClosingToMinimize = true;
             SetState(WindowState.Minimized);
             return;
         }
@@ -1067,7 +1090,10 @@ public partial class MainWindow : GamepadWindow
                     SetState(WindowState.Minimized);
                     break;
                 case WindowState.Minimized:
-                    SetState(prevWindowState);
+                    if (prevWindowState != WindowState.Minimized)
+                        SetState(prevWindowState);
+                    else
+                        SetState(WindowState.Normal);
                     break;
             }
         });
@@ -1120,6 +1146,7 @@ public partial class MainWindow : GamepadWindow
 
     private bool _pendingHide;
     private bool _dialogOpen;
+    private bool _isClosingToMinimize;
 
     private void ContentDialog_Opened(object? sender, ContentDialogOpenedEventArgs e)
     {
@@ -1154,6 +1181,9 @@ public partial class MainWindow : GamepadWindow
 
     protected override void Window_StateChanged(object? sender, EventArgs e)
     {
+        if (!IsLoaded)
+            return;
+
         switch (WindowState)
         {
             case WindowState.Minimized:
@@ -1170,6 +1200,13 @@ public partial class MainWindow : GamepadWindow
                     else
                     {
                         TryHide();
+                    }
+
+                    // Don't save state when minimizing due to CloseMinimises setting
+                    if (!_isClosingToMinimize && !isFseActive)
+                    {
+                        prevWindowState = WindowState;
+                        ManagerFactory.settingsManager.SetProperty("MainWindowState", (int)WindowState);
                     }
                 }
                 break;
@@ -1193,10 +1230,11 @@ public partial class MainWindow : GamepadWindow
                     if (!isFseActive)
                     {
                         prevWindowState = WindowState;
-
                         ManagerFactory.settingsManager.SetProperty("MainWindowState", (int)WindowState);
-                        ManagerFactory.settingsManager.SetProperty("MainWindowPrevState", (int)prevWindowState);
                     }
+
+                    // Clear the flag when window is restored from CloseMinimises
+                    _isClosingToMinimize = false;
                 }
                 break;
         }
@@ -1205,93 +1243,44 @@ public partial class MainWindow : GamepadWindow
     }
 
     private const string HomeKey = "LibraryPage";
-    private readonly CancellationTokenSource _preloadCts = new();
 
     private async void navView_Loaded(object sender, RoutedEventArgs e)
     {
         ContentFrame.Navigated += On_Navigated;
 
-        // Preload HOME first (invisible, in PreloadFrame)
         if (_pages.TryGetValue(HomeKey, out var homePage))
         {
-            await PreloadInHiddenFrameAsync(PreloadFrame, homePage);
-
-            // IMPORTANT: detach from hidden frame before showing it in the visible one
-            if (ReferenceEquals(PreloadFrame.Content, homePage))
-                PreloadFrame.Content = null;
-
-            // Show Home in the visible frame
+            // The ProgressRing covers the content area while the page renders,
+            // so navigate directly — no need for the hidden-frame pre-render step.
+            var loadTask = WaitForPageLoadedAsync(homePage);
             NavigateToPage(HomeKey);
-
-            // Now that Home is really ready, reveal window & run your callback
+            await loadTask;
             HomePage_Loaded();
         }
-
-        // Warm the rest in the background (non-blocking)
-        if (PreloadPages)
-            _ = PreloadRemainingAsync(_preloadCts.Token);
     }
 
-    private async Task PreloadRemainingAsync(CancellationToken ct)
+    private static Task WaitForPageLoadedAsync(Page page)
     {
-        foreach (var kvp in _pages)
-        {
-            if (ct.IsCancellationRequested) break;
-            if (kvp.Key == HomeKey) continue;
-
-            var page = kvp.Value;
-
-            // Already warmed once? skip.
-            if (page.IsLoaded && !ReferenceEquals(PreloadFrame.Content, page))
-                continue;
-
-            try
-            {
-                await PreloadInHiddenFrameAsync(PreloadFrame, page);
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogError("Background preload failed for {0}", page.GetType().Name);
-            }
-        }
-
-        // Optional: release the last preloaded page
-        PreloadFrame.Content = null;
-    }
-
-    private static Task PreloadInHiddenFrameAsync(Frame hiddenFrame, Page page)
-    {
-        // If this page has already been loaded once in the app lifetime,
-        // we're warmed; no need to wait again.
-        if (page.IsLoaded && !ReferenceEquals(hiddenFrame.Content, page))
+        if (page.IsLoaded)
             return Task.CompletedTask;
 
         var tcs = new TaskCompletionSource<object?>();
-
         RoutedEventHandler? onLoaded = null;
         onLoaded = (s, e) =>
         {
             page.Loaded -= onLoaded;
-            LogManager.LogInformation("Preloaded: {0}", page.GetType().Name);
             tcs.TrySetResult(null);
         };
-
-        // Subscribe before navigating
         page.Loaded += onLoaded;
-
-        // Navigate the hidden frame to the *existing* instance
-        hiddenFrame.Navigate(page);
-
         return tcs.Task;
     }
 
-
-    private void GamepadWindow_PreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+    private void GamepadWindow_PreviewGotFocus(object sender, RoutedEventArgs e)
     {
-        if (!e.NewFocus.GetType().IsSubclassOf(typeof(Control)))
+        if (e.OriginalSource is not Control control)
             return;
 
-        GamepadFocusManagerOnFocused((Control)e.NewFocus);
+        GamepadFocusManagerOnFocused(control);
     }
 
     private void GamepadWindow_PreviewLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)

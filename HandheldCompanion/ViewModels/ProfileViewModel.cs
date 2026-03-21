@@ -2,7 +2,6 @@
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
-using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
@@ -39,13 +38,33 @@ namespace HandheldCompanion.ViewModels
             {
                 // todo: we need to check if _hotkey != value but this will return false because this is a pointer
                 // I've implemented all required Clone() functions but not sure where to call them
+                if (value != _Profile)
+                {
+                    _Profile = value;
 
-                _Profile = value;
+                    // refresh all properties
+                    OnPropertyChanged(string.Empty);
+                    OnPropertyChanged(nameof(Name));
+                }
 
-                // refresh all properties
-                OnPropertyChanged(string.Empty);
-                OnPropertyChanged(nameof(Name));
+                RefreshImages();
             }
+        }
+
+        private void RefreshImages()
+        {
+            if (_Profile.LibraryEntry is null)
+            {
+                Cover = LibraryResources.MissingCover;
+                Artwork = LibraryResources.MissingArtwork;
+                Logo = null;
+                return;
+            }
+
+            long id = _Profile.LibraryEntry.Id;
+            Cover = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.cover, _Profile.LibraryEntry.GetCoverId(), _Profile.LibraryEntry.GetCoverExtension(false));
+            Artwork = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.artwork, _Profile.LibraryEntry.GetArtworkId(), _Profile.LibraryEntry.GetArtworkExtension(false));
+            Logo = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.logo, _Profile.LibraryEntry.GetLogoId(), _Profile.LibraryEntry.GetLogoExtension(false));
         }
 
         public override string ToString()
@@ -54,6 +73,7 @@ namespace HandheldCompanion.ViewModels
         }
 
         public string Name => _Profile.Name;
+        public int SortOrder => _Profile.IsSubProfile ? 1 : 0;
         public string Description => _Profile.IsSubProfile ? _Profile.GetOwnerName() : _Profile.PlatformType.ToString();
 
         public DateTime DateCreated => _Profile.DateCreated;
@@ -82,25 +102,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public ImageSource Icon
-        {
-            get
-            {
-                // todo: use Profile.ErrorCode instead (MissingExecutable | MissingPath)
-                if (!string.IsNullOrEmpty(Profile.Path) && File.Exists(Profile.Path))
-                {
-                    Icon? icon = System.Drawing.Icon.ExtractAssociatedIcon(Profile.Path);
-                    {
-                        if (icon is not null)
-                        {
-                            ImageSource imgSource = icon.ToImageSource();
-                            return icon.ToImageSource();
-                        }
-                    }
-                }
-                return null;
-            }
-        }
+        public ImageSource? Icon => _Profile.Icon;
 
         public Image Platform
         {
@@ -133,48 +135,45 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private BitmapImage? _cover;
         public BitmapImage? Cover
         {
-            get
+            get => _cover;
+            set
             {
-                if (Profile.LibraryEntry is null)
-                    return LibraryResources.MissingCover;
-
-                long id = Profile.LibraryEntry.Id;
-                long imageId = Profile.LibraryEntry.GetCoverId();
-                string imageExtension = Profile.LibraryEntry.GetCoverExtension(false);
-
-                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.cover, imageId, imageExtension);
+                if (_cover != value)
+                {
+                    _cover = value;
+                    OnPropertyChanged(nameof(Cover));
+                }
             }
         }
 
+        private BitmapImage? _artwork;
         public BitmapImage? Artwork
         {
-            get
+            get => _artwork;
+            set
             {
-                if (Profile.LibraryEntry is null)
-                    return LibraryResources.MissingArtwork;
-
-                long id = Profile.LibraryEntry.Id;
-                long imageId = Profile.LibraryEntry.GetArtworkId();
-                string imageExtension = Profile.LibraryEntry.GetArtworkExtension(false);
-
-                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.artwork, imageId, imageExtension);
+                if (_artwork != value)
+                {
+                    _artwork = value;
+                    OnPropertyChanged(nameof(Artwork));
+                }
             }
         }
 
+        private BitmapImage? _logo;
         public BitmapImage? Logo
         {
-            get
+            get => _logo;
+            set
             {
-                if (Profile.LibraryEntry is null)
-                    return null;
-
-                long id = Profile.LibraryEntry.Id;
-                long imageId = Profile.LibraryEntry.GetLogoId();
-                string imageExtension = Profile.LibraryEntry.GetLogoExtension(false);
-
-                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.logo, imageId, imageExtension);
+                if (_logo != value)
+                {
+                    _logo = value;
+                    OnPropertyChanged(nameof(Logo));
+                }
             }
         }
 

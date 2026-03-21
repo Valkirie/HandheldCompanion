@@ -44,7 +44,10 @@
                                 <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
                                     <Setter Property="Content">
                                         <Setter.Value>
-                                            <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF090;" />
+                                            <ui:FontIcon
+                                                Height="28"
+                                                VerticalAlignment="Center"
+                                                Icon="{x:Static ui:FluentSystemIcons.ArrowSortDownLines_24_Regular}" />
                                         </Setter.Value>
                                     </Setter>
 
@@ -52,7 +55,10 @@
                                         <DataTrigger Binding="{Binding SortAscending}" Value="False">
                                             <Setter Property="Content">
                                                 <Setter.Value>
-                                                    <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xf08e;" />
+                                                    <ui:FontIcon
+                                                        Height="28"
+                                                        VerticalAlignment="Center"
+                                                        Icon="{x:Static ui:FluentSystemIcons.ArrowSortUpLines_24_Regular}" />
                                                 </Setter.Value>
                                             </Setter>
                                         </DataTrigger>
@@ -68,7 +74,10 @@
                                 <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
                                     <Setter Property="Content">
                                         <Setter.Value>
-                                            <ui:FontIcon Glyph="&#xe80a;" />
+                                            <ui:FontIcon
+                                                Height="28"
+                                                VerticalAlignment="Center"
+                                                Icon="{x:Static ui:FluentSystemIcons.AppsListDetail_24_Filled}" />
                                         </Setter.Value>
                                     </Setter>
 
@@ -76,7 +85,20 @@
                                         <DataTrigger Binding="{Binding ViewMode}" Value="1">
                                             <Setter Property="Content">
                                                 <Setter.Value>
-                                                    <ui:FontIcon Glyph="&#xf2c7;" />
+                                                    <ui:FontIcon
+                                                        Height="28"
+                                                        VerticalAlignment="Center"
+                                                        Icon="{x:Static ui:FluentSystemIcons.Grid_20_Filled}" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ViewMode}" Value="2">
+                                            <Setter Property="Content">
+                                                <Setter.Value>
+                                                    <ui:FontIcon
+                                                        Height="28"
+                                                        VerticalAlignment="Center"
+                                                        Icon="{x:Static ui:FluentSystemIcons.GridKanban_20_Filled}" />
                                                 </Setter.Value>
                                             </Setter>
                                         </DataTrigger>
@@ -169,74 +191,91 @@
                 </ComboBox>
             </Grid>
 
-            <!--  Loading spinner  -->
-            <ui:ProgressRing
-                HorizontalAlignment="Center"
-                IsIndeterminate="True"
-                Visibility="{Binding IsInitializing, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
             <!--  Unified Library (Favorites shown with wide template, others with grid/list template)  -->
-            <ikw:SimpleStackPanel Spacing="8" Visibility="{Binding IsInitializing, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Library" />
+            <!--  Content is always visible so cards render incrementally as they arrive.  -->
+            <!--  The spinner overlays the content via Panel.ZIndex inside the Grid wrapper.  -->
+            <Grid>
+                <ikw:SimpleStackPanel Spacing="8">
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Library" />
 
-                <ItemsControl
-                    x:Name="profilesRepeater"
-                    HorizontalAlignment="Stretch"
-                    ItemsSource="{Binding ProfilesView}"
-                    VirtualizingPanel.IsVirtualizing="True"
-                    VirtualizingPanel.VirtualizationMode="Recycling">
-                    <ItemsControl.ItemContainerStyle>
-                        <Style TargetType="ContentPresenter">
-                            <Setter Property="HorizontalAlignment" Value="Stretch" />
-                            <Setter Property="Margin" Value="0" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding DataContext.IsListView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True">
-                                    <Setter Property="Margin" Value="0,0,0,6" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsLiked}" Value="True">
-                                    <Setter Property="controls:JustifiedWrapPanel.ItemSpan" Value="3" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <ContentControl
-                                Margin="0"
-                                HorizontalAlignment="Stretch"
-                                Content="{Binding}">
-                                <ContentControl.Style>
-                                    <Style TargetType="ContentControl">
-                                        <Style.Triggers>
-                                            <!--  Wide template for favorites (same height, double width)  -->
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding IsLiked}" Value="True" />
-                                                    <Condition Binding="{Binding DataContext.IsGridView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True" />
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter Property="ContentTemplate" Value="{StaticResource LibraryTemplateWide}" />
-                                            </MultiDataTrigger>
-                                            <!--  Grid template for non-favorites (when in grid view)  -->
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding IsLiked}" Value="False" />
-                                                    <Condition Binding="{Binding DataContext.IsGridView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True" />
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter Property="ContentTemplate" Value="{StaticResource LibraryTemplate}" />
-                                            </MultiDataTrigger>
-                                            <!--  List template for non-favorites (when in list view)  -->
-                                            <DataTrigger Binding="{Binding DataContext.IsListView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True">
-                                                <Setter Property="ContentTemplate" Value="{StaticResource LibraryTemplateList}" />
-                                                <Setter Property="Height" Value="64" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ContentControl.Style>
-                            </ContentControl>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ikw:SimpleStackPanel>
+                    <ItemsControl
+                        x:Name="profilesRepeater"
+                        HorizontalAlignment="Stretch"
+                        ItemsSource="{Binding ProfilesView}"
+                        VirtualizingPanel.IsVirtualizing="True"
+                        VirtualizingPanel.VirtualizationMode="Recycling">
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                <Setter Property="Margin" Value="0" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.IsListView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True">
+                                        <Setter Property="Margin" Value="0,0,0,6" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsLiked}" Value="True">
+                                        <Setter Property="controls:JustifiedWrapPanel.ItemSpan" Value="3" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding DataContext.IsWideView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True">
+                                        <Setter Property="controls:JustifiedWrapPanel.ItemSpan" Value="3" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl
+                                    Margin="0"
+                                    HorizontalAlignment="Stretch"
+                                    Content="{Binding}">
+                                    <ContentControl.Style>
+                                        <Style TargetType="ContentControl">
+                                            <Style.Triggers>
+                                                <!--  Wide template for favorites (same height, double width)  -->
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding IsLiked}" Value="True" />
+                                                        <Condition Binding="{Binding DataContext.IsGridView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="ContentTemplate" Value="{StaticResource LibraryTemplateWide}" />
+                                                </MultiDataTrigger>
+                                                <!--  Grid template for non-favorites (when in grid view)  -->
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding IsLiked}" Value="False" />
+                                                        <Condition Binding="{Binding DataContext.IsGridView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="ContentTemplate" Value="{StaticResource LibraryTemplate}" />
+                                                </MultiDataTrigger>
+                                                <!--  List template for non-favorites (when in list view)  -->
+                                                <DataTrigger Binding="{Binding DataContext.IsListView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True">
+                                                    <Setter Property="ContentTemplate" Value="{StaticResource LibraryTemplateList}" />
+                                                    <Setter Property="Height" Value="64" />
+                                                </DataTrigger>
+                                                <!--  Wide view: all items use wide template regardless of IsLiked  -->
+                                                <DataTrigger Binding="{Binding DataContext.IsWideView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True">
+                                                    <Setter Property="ContentTemplate" Value="{StaticResource LibraryTemplateWide}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ContentControl.Style>
+                                </ContentControl>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ikw:SimpleStackPanel>
+
+                <!--  Spinner overlays the card grid while the initial load is in progress  -->
+                <ui:ProgressRing
+                    Width="60"
+                    Height="60"
+                    Margin="0,20,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Panel.ZIndex="1"
+                    IsActive="True"
+                    IsIndeterminate="True"
+                    Visibility="{Binding IsInitializing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </Grid>
         </ikw:SimpleStackPanel>
     </Grid>
 </Page>
