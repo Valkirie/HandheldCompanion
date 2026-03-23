@@ -22,6 +22,11 @@ namespace HandheldCompanion.Watchers
             PlatformManager.Steam.Updated += Steam_Updated;
             PlatformManager.Steam.SettingValueChanged += Steam_SettingValueChanged;
             base.Start();
+
+            // Check immediately on startup: Updated only fires on status transitions,
+            // so if Steam is already running the event won't fire and the notification
+            // would never be shown without this proactive check.
+            CheckDrivers();
         }
 
         public override void Stop()
