@@ -3,6 +3,7 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Classes;
@@ -385,6 +386,7 @@ public partial class OverlayQuickTools : GamepadWindow
         if (_pendingHide)
         {
             _pendingHide = false;
+            Dialog.Reset(this);
 
             // use your existing safe hide
             try { Hide(); } catch { }
@@ -407,20 +409,25 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void HideInstant()
     {
-        // If a dialog is open/visible, close it and wait for Closed before hiding window.
-        if (ContentDialog is not null && _dialogOpen)
+        var openDialog = iNKORE.UI.WPF.Modern.Controls.ContentDialog.GetOpenDialog(this);
+        if (openDialog is not null)
         {
-            _pendingHide = true;
-
-            // Close dialog first; window will hide in ContentDialog_Closed.
-            try { ContentDialog.Hide(); } catch { _pendingHide = false; }
-            return;
+            if (openDialog == ContentDialog && _dialogOpen)
+            {
+                // Managed dialog: defer window hide until ContentDialog_Closed fires.
+                _pendingHide = true;
+                try { ContentDialog.Hide(); } catch { _pendingHide = false; }
+                return;
+            }
+            else
+            {
+                // Fire-and-forget dialog: close it immediately and clear stuck state.
+                try { openDialog.Hide(); } catch { }
+                Dialog.Reset(this);
+            }
         }
-        else
-        {
-            try { Hide(); } catch { }
-        }
 
+        try { Hide(); } catch { }
         Top = _targetTop;
     }
 

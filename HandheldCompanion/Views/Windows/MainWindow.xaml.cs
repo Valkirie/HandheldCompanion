@@ -3,6 +3,7 @@ using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Notifications;
 using HandheldCompanion.Shared;
 using HandheldCompanion.UI;
@@ -1166,6 +1167,8 @@ public partial class MainWindow : GamepadWindow
 
     private void TryHide()
     {
+        Dialog.Reset(this);
+
         // use your existing safe hide
         try { Hide(); } catch { }
 
@@ -1188,19 +1191,25 @@ public partial class MainWindow : GamepadWindow
         {
             case WindowState.Minimized:
                 {
-                    // If a dialog is open/visible, close it and wait for Closed before hiding window.
-                    if (ContentDialog is not null && _dialogOpen)
+                    var openDialog = iNKORE.UI.WPF.Modern.Controls.ContentDialog.GetOpenDialog(this);
+                    if (openDialog is not null)
                     {
-                        _pendingHide = true;
+                        if (openDialog == ContentDialog && _dialogOpen)
+                        {
+                            // Managed dialog: defer window hide until ContentDialog_Closed fires.
+                            _pendingHide = true;
+                            try { ContentDialog.Hide(); } catch { _pendingHide = false; }
+                            return;
+                        }
+                        else
+                        {
+                            // Fire-and-forget dialog: close it immediately and clear stuck state.
+                            try { openDialog.Hide(); } catch { }
+                            Dialog.Reset(this);
+                        }
+                    }
 
-                        // Close dialog first; window will hide in ContentDialog_Closed.
-                        try { ContentDialog.Hide(); } catch { _pendingHide = false; }
-                        return;
-                    }
-                    else
-                    {
-                        TryHide();
-                    }
+                    TryHide();
 
                     // Don't save state when minimizing due to CloseMinimises setting
                     if (!_isClosingToMinimize && !isFseActive)

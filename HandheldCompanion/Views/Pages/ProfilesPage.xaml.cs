@@ -64,11 +64,11 @@ public partial class ProfilesPage : Page
             MainWindow.GetCurrent().NavigateToPage("PerformancePage");
         };
         viewModel.RequestOpenAdditionalSettings += (s, e) => b_AdditionalSettings_Click(null, null);
-        viewModel.RequestShowLibraryDialog += (s, e) =>
+        viewModel.RequestShowLibraryDialog += async (s, e) =>
         {
             if (IGGBDialog.Content is FrameworkElement content)
                 content.DataContext = viewModel;
-            IGGBDialog.ShowAsync();
+            try { await IGGBDialog.ShowAsync(); } catch { }
         };
     }
 
@@ -277,10 +277,10 @@ public partial class ProfilesPage : Page
         }
     }
 
-    public void b_SubProfileRename_Click(object sender, RoutedEventArgs e)
+    public async void b_SubProfileRename_Click(object sender, RoutedEventArgs e)
     {
         SubProfileNameTextBox.Text = viewModel.SelectedProfile?.Name ?? "";
-        SubProfileRenameDialog.ShowAsync();
+        try { await SubProfileRenameDialog.ShowAsync(); } catch { }
     }
 
     private void SubProfileRenameDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -311,10 +311,10 @@ public partial class ProfilesPage : Page
         viewModel.SubmitProfile();
     }
 
-    public void b_ProfileRename_Click(object sender, RoutedEventArgs e)
+    public async void b_ProfileRename_Click(object sender, RoutedEventArgs e)
     {
         ProfileNameTextBox.Text = viewModel.SelectedMainProfile?.Name ?? "";
-        ProfileRenameDialog.ShowAsync();
+        try { await ProfileRenameDialog.ShowAsync(); } catch { }
     }
 
     public static void SubmitProfile()

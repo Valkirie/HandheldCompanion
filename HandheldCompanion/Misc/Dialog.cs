@@ -54,7 +54,7 @@ namespace HandheldCompanion.Misc
                 // this will throw and we catch below
                 return await _dialog.ShowAsync(_owner);
             }
-            catch (InvalidOperationException)
+            catch (Exception)
             {
                 return ContentDialogResult.None;
             }
@@ -69,6 +69,11 @@ namespace HandheldCompanion.Misc
             CanClose = true;
             _dialog.Hide();
             _openDialogs.TryRemove(_owner, out _);
+        }
+
+        public static void Reset(Window owner)
+        {
+            _openDialogs.TryRemove(owner, out _);
         }
 
         public void UpdateTitle(string Title)

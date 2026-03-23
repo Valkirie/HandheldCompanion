@@ -807,7 +807,7 @@ namespace HandheldCompanion.ViewModels
             #region Main Window Setup
             if (IsMainPage)
             {
-                OpenModifyDialogCommand = new DelegateCommand(() =>
+                OpenModifyDialogCommand = new DelegateCommand(async () =>
                 {
                     // capture dialog content
                     ContentDialog storedDialog = MainWindow.performancePage.PowerProfileSettingsDialog;
@@ -828,7 +828,7 @@ namespace HandheldCompanion.ViewModels
                     ModifyPresetName = PresetName;
                     ModifyPresetDescription = PresetDescription;
 
-                    contentDialog.ShowAsync();
+                    try { await contentDialog.ShowAsync(); } catch { }
                 });
 
                 ConfirmModifyCommand = new DelegateCommand(() =>
