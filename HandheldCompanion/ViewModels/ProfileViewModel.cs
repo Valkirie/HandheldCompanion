@@ -36,16 +36,15 @@ namespace HandheldCompanion.ViewModels
             get => _Profile;
             set
             {
-                // todo: we need to check if _hotkey != value but this will return false because this is a pointer
-                // I've implemented all required Clone() functions but not sure where to call them
-                if (value != _Profile)
-                {
-                    _Profile = value;
+                // Profile objects are mutable and re-assigned by reference after external mutation
+                // (e.g. toggling IsLiked via gamepad). Reference equality would always be true in
+                // that case, so we must always notify to keep bindings (IsLiked, templates, live
+                // sort) and RefreshImages in sync.
+                _Profile = value;
 
-                    // refresh all properties
-                    OnPropertyChanged(string.Empty);
-                    OnPropertyChanged(nameof(Name));
-                }
+                // refresh all properties
+                OnPropertyChanged(string.Empty);
+                OnPropertyChanged(nameof(Name));
 
                 RefreshImages();
             }
