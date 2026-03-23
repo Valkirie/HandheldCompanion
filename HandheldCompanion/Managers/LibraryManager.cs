@@ -96,6 +96,15 @@ namespace HandheldCompanion.Managers
             return GetGameArtPath(gameId, libraryType, imageId.ToString(), extension);
         }
 
+        private static int GetDecodePixelWidth(LibraryType libraryType)
+        {
+            if (libraryType.HasFlag(LibraryType.thumbnails)) return 80;
+            if (libraryType.HasFlag(LibraryType.logo)) return 150;
+            if (libraryType.HasFlag(LibraryType.cover)) return 250;
+            if (libraryType.HasFlag(LibraryType.artwork)) return 400;
+            return 250;
+        }
+
         public BitmapImage? GetGameArt(long gameId, LibraryType libraryType, string imageId, string extension)
         {
             string fileName = GetGameArtPath(gameId, libraryType, imageId, extension);
@@ -111,12 +120,14 @@ namespace HandheldCompanion.Managers
                     return null;
             }
 
+            int decodeWidth = GetDecodePixelWidth(libraryType);
             return _imageCache.GetOrAdd(fileName, path =>
             {
                 var bmp = new BitmapImage();
                 bmp.BeginInit();
                 bmp.CacheOption = BitmapCacheOption.OnLoad;
                 bmp.UriSource = new Uri(path);
+                bmp.DecodePixelWidth = decodeWidth;
                 bmp.EndInit();
                 bmp.Freeze();
                 return bmp;
