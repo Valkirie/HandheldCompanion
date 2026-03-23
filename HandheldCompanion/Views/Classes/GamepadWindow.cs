@@ -120,7 +120,18 @@ namespace HandheldCompanion.Views.Classes
             hwndSource = HwndSource.FromHwnd(hwnd);
             hwndSource.AddHook(WndProc);
 
+            // Block hit-testing so the first WM_ACTIVATE cannot set IsMouseOver
+            // from the stale cursor position (see _startupGracePending).
+            IsHitTestVisible = false;
+
             base.OnSourceInitialized(e);
+        }
+
+        protected override void OnActivated(EventArgs e)
+        {
+            Dispatcher.BeginInvoke(DispatcherPriority.Background, () => IsHitTestVisible = true);
+
+            base.OnActivated(e);
         }
 
         protected virtual IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
