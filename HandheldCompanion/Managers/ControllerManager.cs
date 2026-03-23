@@ -338,7 +338,8 @@ public static class ControllerManager
     {
         while (pumpThreadRunning)
         {
-            if (SDL.WaitEventTimeout(out SDL.Event e, TimerManager.GetPeriod()))
+            // check controller events every 500ms; this is used by SDLController to detect disconnections and hotplug events
+            if (SDL.WaitEventTimeout(out SDL.Event e, 500))
             {
                 switch ((SDL.EventType)e.Type)
                 {
