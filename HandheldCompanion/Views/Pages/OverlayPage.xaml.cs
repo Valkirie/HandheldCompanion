@@ -73,6 +73,9 @@ public partial class OverlayPage : Page
 
     private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
+        if (temporary)
+            return;
+
         // UI thread
         UIHelper.TryInvoke(() =>
         {
