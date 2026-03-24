@@ -32,6 +32,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using System.Windows.Shell;
+using System.Windows.Threading;
 using Windows.UI.ViewManagement;
 using Control = System.Windows.Controls.Control;
 using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
@@ -1097,7 +1098,7 @@ public partial class MainWindow : GamepadWindow
                         SetState(WindowState.Normal);
                     break;
             }
-        });
+        }, DispatcherPriority.Normal);
     }
 
     public void SetState(WindowState windowState)

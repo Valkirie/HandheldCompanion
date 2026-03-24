@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Timers;
+using System.Windows.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -303,7 +304,7 @@ public partial class OverlayModel : OverlayWindow
                     try { Show(); } catch { /* ItemsRepeater might have a NaN DesiredSize */ }
                     break;
             }
-        });
+        }, DispatcherPriority.Normal);
     }
 
     #region ModelVisual3D

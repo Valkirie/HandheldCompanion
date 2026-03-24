@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace HandheldCompanion.Views.Classes;
 
@@ -159,7 +160,7 @@ public class OverlayWindow : Window
                     try { Show(); } catch { /* ItemsRepeater might have a NaN DesiredSize */ }
                     break;
             }
-        });
+        }, DispatcherPriority.Normal);
     }
 
     #region import

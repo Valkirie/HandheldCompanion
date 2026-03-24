@@ -2,6 +2,7 @@
 using HandheldCompanion.Views;
 using System;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace HandheldCompanion.Commands.Functions.HC
 {
@@ -59,7 +60,7 @@ namespace HandheldCompanion.Commands.Functions.HC
                             mainWindow.NavigateToPage(pageTag);
                         break;
                 }
-            });
+            }, DispatcherPriority.Normal);
 
             base.Execute(IsKeyDown, IsKeyUp, false);
         }

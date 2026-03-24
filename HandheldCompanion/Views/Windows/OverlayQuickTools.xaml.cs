@@ -402,9 +402,9 @@ public partial class OverlayQuickTools : GamepadWindow
         Left = _Left;
         Top = _targetTop;
 
-        Topmost = false;
         try { Show(); } catch { }
-        Topmost = true;
+        // Re-assert topmost without activating — avoids triggering WinEvent foreground-change
+        WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     }
 
     private void HideInstant()
@@ -550,7 +550,7 @@ public partial class OverlayQuickTools : GamepadWindow
                 HideInstant();
                 IsHitTestVisible = false;
             }
-        });
+        }, DispatcherPriority.Normal);
     }
 
     protected override void Window_VisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
