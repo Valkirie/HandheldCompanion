@@ -129,7 +129,7 @@ namespace HandheldCompanion.Views.Classes
 
         protected override void OnActivated(EventArgs e)
         {
-            Dispatcher.BeginInvoke(DispatcherPriority.Background, () => IsHitTestVisible = true);
+            IsHitTestVisible = true;
 
             base.OnActivated(e);
         }

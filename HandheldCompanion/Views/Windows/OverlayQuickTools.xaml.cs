@@ -543,10 +543,12 @@ public partial class OverlayQuickTools : GamepadWindow
             if (!IsVisible || Visibility != Visibility.Visible)
             {
                 ShowInstant();
+                IsHitTestVisible = true;
             }
             else
             {
                 HideInstant();
+                IsHitTestVisible = false;
             }
         });
     }
