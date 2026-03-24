@@ -96,13 +96,32 @@ namespace HandheldCompanion.Managers
             return GetGameArtPath(gameId, libraryType, imageId.ToString(), extension);
         }
 
-        private static int GetDecodePixelWidth(LibraryType libraryType)
+        private static (int decodeWidth, int decodeHeight) GetDecodeConstraint(string path, LibraryType libraryType)
         {
-            if (libraryType.HasFlag(LibraryType.thumbnails)) return 80;
-            if (libraryType.HasFlag(LibraryType.logo)) return 150;
-            if (libraryType.HasFlag(LibraryType.cover)) return 250;
-            if (libraryType.HasFlag(LibraryType.artwork)) return 400;
-            return 250;
+            int cap = libraryType.HasFlag(LibraryType.thumbnails) ? 150
+                    : libraryType.HasFlag(LibraryType.cover) ? 300
+                    : libraryType.HasFlag(LibraryType.artwork) ? 900
+                    : libraryType.HasFlag(LibraryType.logo) ? 300
+                    : 0;
+
+            if (cap <= 0)
+                return (0, 0);
+
+            // Read only the image header to obtain natural dimensions without
+            // decoding any pixel data — a fast, near-zero-cost I/O operation.
+            using (FileStream stream = File.OpenRead(path))
+            {
+                BitmapFrame frame = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.None).Frames[0];
+                int nw = frame.PixelWidth;
+                int nh = frame.PixelHeight;
+
+                // Only apply the cap when the longer axis actually exceeds it;
+                // images already within bounds are decoded at natural size.
+                if (nw >= nh)
+                    return nw > cap ? (cap, 0) : (0, 0);
+                else
+                    return nh > cap ? (0, cap) : (0, 0);
+            }
         }
 
         public BitmapImage? GetGameArt(long gameId, LibraryType libraryType, string imageId, string extension)
@@ -120,14 +139,16 @@ namespace HandheldCompanion.Managers
                     return null;
             }
 
-            int decodeWidth = GetDecodePixelWidth(libraryType);
             return _imageCache.GetOrAdd(fileName, path =>
             {
+                (int decodeWidth, int decodeHeight) = GetDecodeConstraint(path, libraryType);
+
                 var bmp = new BitmapImage();
                 bmp.BeginInit();
                 bmp.CacheOption = BitmapCacheOption.OnLoad;
                 bmp.UriSource = new Uri(path);
                 bmp.DecodePixelWidth = decodeWidth;
+                bmp.DecodePixelHeight = decodeHeight;
                 bmp.EndInit();
                 bmp.Freeze();
                 return bmp;
