@@ -246,7 +246,7 @@ namespace HandheldCompanion.Platforms.Misc
                     GPUMemoryDedicatedChanged?.Invoke(GPUMemoryDedicated);
                 }
             }
-            else if (sensor.Name == "D3D Dedicated Memory Shared")
+            else if (sensor.Name == "D3D Shared Memory Used")
             {
                 float value = (float)sensor.Value / 1024.0f; // MB to GB
                 if (GPUMemoryShared != value)
@@ -267,7 +267,7 @@ namespace HandheldCompanion.Platforms.Misc
                 if (GPUMemoryDedicatedTotal != value)
                     GPUMemoryDedicatedTotal = value;
             }
-            else if (sensor.Name == "D3D Dedicated Memory Total")
+            else if (sensor.Name == "D3D Shared Memory Total")
             {
                 float value = (float)sensor.Value / 1024.0f; // MB to GB
                 if (GPUMemorySharedTotal != value)
@@ -438,9 +438,13 @@ namespace HandheldCompanion.Platforms.Misc
         public float? GetMemoryAvailable() => computer?.IsMemoryEnabled ?? false ? MemoryAvailable : null;
         public float? GetMemoryTotal() => GetMemoryUsage() + GetMemoryAvailable();
 
-        private void HandleMemory(IHardware cpu)
+        private void HandleMemory(IHardware memory)
         {
-            foreach (var sensor in cpu.Sensors)
+            // Only read physical RAM; skip VirtualMemory (page file) hardware
+            if (memory.Name != "Total Memory")
+                return;
+
+            foreach (var sensor in memory.Sensors)
             {
                 // May crash the app when Value is null, better to check first
                 if (!sensor.Value.HasValue || sensor.Value == 0)

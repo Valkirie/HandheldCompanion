@@ -5,6 +5,7 @@ using RTSSSharedMemoryNET;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Timers;
 
@@ -378,7 +379,7 @@ public struct OverlayEntryElement
             _ => "0.##"    // Default format (no leading zeros, up to 2 decimals)
         };
 
-        return value.ToString(format);
+        return value.ToString(format, CultureInfo.InvariantCulture);
     }
 }
 
