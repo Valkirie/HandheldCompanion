@@ -844,6 +844,13 @@ namespace HandheldCompanion.ViewModels
             set { if (value != _SelectedPowerProfileName) { _SelectedPowerProfileName = value; OnPropertyChanged(nameof(SelectedPowerProfileName)); } }
         }
 
+        private string _CurrentProfileName = string.Empty;
+        public string CurrentProfileName
+        {
+            get => _CurrentProfileName;
+            set { if (value != _CurrentProfileName) { _CurrentProfileName = value; OnPropertyChanged(nameof(CurrentProfileName)); } }
+        }
+
         private string _ProfileArguments = string.Empty;
         public string ProfileArguments
         {
@@ -2674,6 +2681,7 @@ namespace HandheldCompanion.ViewModels
                     AcceleroMultiplier = SelectedProfile.AccelerometerMultiplier;
 
                     ProfileEnabled = IsQuickTools ? !SelectedProfile.Default : SelectedProfile.Enabled;
+                    CurrentProfileName = SelectedProfile.Name;
                     ProfileArguments = SelectedProfile.Arguments;
                     ProfileLaunchString = SelectedProfile.LaunchString;
 

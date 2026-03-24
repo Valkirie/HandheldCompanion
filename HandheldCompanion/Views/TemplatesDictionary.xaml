@@ -199,54 +199,275 @@
 
     <DataTemplate x:Key="LibraryTemplateWide" DataType="{x:Type viewmodels:ProfileViewModel}">
         <Grid x:Name="CardRoot">
-        <Button
-            x:Name="ImageContainer"
-            Padding="0"
-            BorderThickness="0"
-            CacheMode="BitmapCache"
-            Command="{Binding Navigate}"
-            IsEnabled="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
-            Tag="{Binding}">
+            <Button
+                x:Name="ImageContainer"
+                Padding="0"
+                BorderThickness="0"
+                CacheMode="BitmapCache"
+                Command="{Binding Navigate}"
+                IsEnabled="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                Tag="{Binding}">
 
-            <Button.Style>
-                <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
-                    <Style.Triggers>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Opacity" Value="0.20" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
+                <Button.Style>
+                    <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+                        <Style.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.20" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
 
-            <Button.Template>
-                <ControlTemplate TargetType="Button">
-                    <Border
-                        x:Name="Root"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        SnapsToDevicePixels="True">
-                        <Grid x:Name="RootGrid">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="60" />
-                            </Grid.RowDefinitions>
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{DynamicResource ControlCornerRadius}"
+                            SnapsToDevicePixels="True">
+                            <Grid x:Name="RootGrid">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="60" />
+                                </Grid.RowDefinitions>
 
-                            <ui:ProgressRing
-                                Grid.Row="0"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Panel.ZIndex="999"
-                                IsIndeterminate="True"
-                                Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                <ui:ProgressRing
+                                    Grid.Row="0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Panel.ZIndex="999"
+                                    IsIndeterminate="True"
+                                    Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                            <Border Grid.Row="0" ClipToBounds="True">
-                                <Grid>
+                                <Border Grid.Row="0" ClipToBounds="True">
+                                    <Grid>
+                                        <Image
+                                            x:Name="MainImage"
+                                            RenderTransformOrigin="0.5,0.5"
+                                            Source="{Binding Artwork}"
+                                            Stretch="UniformToFill">
+                                            <Image.RenderTransform>
+                                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                                            </Image.RenderTransform>
+                                            <Image.Effect>
+                                                <effects:BloomEffect BloomIntensity="0" BloomSaturation="0.2" />
+                                            </Image.Effect>
+                                        </Image>
+
+                                        <Image
+                                            x:Name="LogoImage"
+                                            Margin="50"
+                                            RenderTransformOrigin="0.5,0.5"
+                                            Source="{Binding Logo}"
+                                            Stretch="Uniform" />
+                                    </Grid>
+                                </Border>
+
+                                <Grid Grid.Row="1" Margin="12">
+                                    <Viewbox
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Stretch="None">
+                                        <StackPanel>
+                                            <TextBlock
+                                                Style="{StaticResource BaseTextBlockStyle}"
+                                                Text="{Binding Name}"
+                                                TextWrapping="NoWrap" />
+                                            <TextBlock
+                                                Style="{StaticResource BodyTextBlockStyle}"
+                                                Text="{Binding Description}"
+                                                TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Viewbox>
+                                </Grid>
+
+                                <Image
+                                    Width="32"
+                                    Height="32"
+                                    Margin="4"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    Source="{Binding Platform, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DrawingImageToImageSourceConverter}}"
+                                    Stretch="Uniform" />
+                            </Grid>
+
+                            <!--  Visual states MUST live on the template root  -->
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="MainImage"
+                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                To="1.0"
+                                                Duration="0:0:0.1" />
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="MainImage"
+                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                To="1.0"
+                                                Duration="0:0:0.1" />
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="MainImage"
+                                                Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                                To="0"
+                                                Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="MainImage"
+                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                To="1.05"
+                                                Duration="0:0:0.1" />
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="MainImage"
+                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                To="1.05"
+                                                Duration="0:0:0.1" />
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="MainImage"
+                                                Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                                To="0.4"
+                                                Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <VisualState x:Name="Focused">
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="MainImage"
+                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                To="1.05"
+                                                Duration="0:0:0.1" />
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="MainImage"
+                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                To="1.05"
+                                                Duration="0:0:0.1" />
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="MainImage"
+                                                Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                                To="0.4"
+                                                Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <Button
+                Margin="0,0,0,60"
+                Padding="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Panel.ZIndex="100"
+                BorderThickness="0"
+                Command="{Binding ToggleProcessCommand}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsMouseOver, ElementName=CardRoot}" Value="True" />
+                                    <Condition Binding="{Binding CanToggleProcess}" Value="True" />
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="PlayBorder"
+                            Width="64"
+                            Height="64"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Background="#AA000000"
+                            CornerRadius="32">
+                            <ui:FontIcon
+                                x:Name="PlayGlyph"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                FontSize="28"
+                                Foreground="White"
+                                Glyph="&#xE102;" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="PlayBorder" Property="Background" Value="#CC000000" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="PlayBorder" Property="Background" Value="#EE000000" />
+                            </Trigger>
+                            <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                <Setter TargetName="PlayGlyph" Property="Glyph" Value="&#xE15B;" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="LibraryTemplate" DataType="{x:Type viewmodels:ProfileViewModel}">
+        <Grid x:Name="CardRoot">
+            <Button
+                x:Name="ImageContainer"
+                Padding="0"
+                BorderThickness="0"
+                CacheMode="BitmapCache"
+                Command="{Binding Navigate}"
+                IsEnabled="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                Tag="{Binding}">
+
+                <Button.Style>
+                    <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+                        <Style.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.20" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{DynamicResource ControlCornerRadius}"
+                            SnapsToDevicePixels="True">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="60" />
+                                </Grid.RowDefinitions>
+
+                                <ui:ProgressRing
+                                    Grid.Row="0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Panel.ZIndex="999"
+                                    IsIndeterminate="True"
+                                    Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                                <Border Grid.Row="0" ClipToBounds="True">
                                     <Image
                                         x:Name="MainImage"
                                         RenderTransformOrigin="0.5,0.5"
-                                        Source="{Binding Artwork}"
+                                        Source="{Binding Cover}"
                                         Stretch="UniformToFill">
                                         <Image.RenderTransform>
                                             <ScaleTransform ScaleX="1" ScaleY="1" />
@@ -255,554 +476,333 @@
                                             <effects:BloomEffect BloomIntensity="0" BloomSaturation="0.2" />
                                         </Image.Effect>
                                     </Image>
+                                </Border>
 
-                                    <Image
-                                        x:Name="LogoImage"
-                                        Margin="50"
-                                        RenderTransformOrigin="0.5,0.5"
-                                        Source="{Binding Logo}"
-                                        Stretch="Uniform" />
+                                <Grid Grid.Row="1" Margin="12">
+                                    <Viewbox
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Stretch="None">
+                                        <StackPanel>
+                                            <TextBlock
+                                                Style="{StaticResource BaseTextBlockStyle}"
+                                                Text="{Binding Name}"
+                                                TextWrapping="NoWrap" />
+                                            <TextBlock
+                                                Style="{StaticResource BodyTextBlockStyle}"
+                                                Text="{Binding Description}"
+                                                TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Viewbox>
                                 </Grid>
-                            </Border>
 
-                            <Grid Grid.Row="1" Margin="12">
-                                <Viewbox
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Stretch="None">
-                                    <StackPanel>
-                                        <TextBlock
-                                            Style="{StaticResource BaseTextBlockStyle}"
-                                            Text="{Binding Name}"
-                                            TextWrapping="NoWrap" />
-                                        <TextBlock
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{Binding Description}"
-                                            TextWrapping="Wrap" />
-                                    </StackPanel>
-                                </Viewbox>
-                            </Grid>
-
-                            <Image
-                                Width="32"
-                                Height="32"
-                                Margin="4"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Bottom"
-                                Source="{Binding Platform, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DrawingImageToImageSourceConverter}}"
-                                Stretch="Uniform" />
-                        </Grid>
-
-                        <!--  Visual states MUST live on the template root  -->
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                            To="1.0"
-                                            Duration="0:0:0.1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                            To="1.0"
-                                            Duration="0:0:0.1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                            To="0"
-                                            Duration="0:0:0.1" />
-                                    </Storyboard>
-                                </VisualState>
-
-                                <VisualState x:Name="MouseOver">
-                                    <Storyboard>
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                            To="1.05"
-                                            Duration="0:0:0.1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                            To="1.05"
-                                            Duration="0:0:0.1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                            To="0.4"
-                                            Duration="0:0:0.1" />
-                                    </Storyboard>
-                                </VisualState>
-
-                                <VisualState x:Name="Focused">
-                                    <Storyboard>
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                            To="1.05"
-                                            Duration="0:0:0.1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                            To="1.05"
-                                            Duration="0:0:0.1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                            To="0.4"
-                                            Duration="0:0:0.1" />
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                    </Border>
-                </ControlTemplate>
-            </Button.Template>
-        </Button>
-        <Button
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Margin="0,0,0,60"
-            Panel.ZIndex="100"
-            Padding="0"
-            BorderThickness="0"
-            Command="{Binding ToggleProcessCommand}">
-            <Button.Style>
-                <Style TargetType="Button">
-                    <Setter Property="Visibility" Value="Collapsed" />
-                    <Style.Triggers>
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding IsMouseOver, ElementName=CardRoot}" Value="True" />
-                                <Condition Binding="{Binding CanToggleProcess}" Value="True" />
-                            </MultiDataTrigger.Conditions>
-                            <MultiDataTrigger.Setters>
-                                <Setter Property="Visibility" Value="Visible" />
-                            </MultiDataTrigger.Setters>
-                        </MultiDataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
-            <Button.Template>
-                <ControlTemplate TargetType="Button">
-                    <Border
-                        x:Name="PlayBorder"
-                        Width="64"
-                        Height="64"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        CornerRadius="32"
-                        Background="#AA000000">
-                        <ui:FontIcon
-                            x:Name="PlayGlyph"
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            FontSize="28"
-                            Foreground="White"
-                            Glyph="&#xE102;" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PlayBorder" Property="Background" Value="#CC000000" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="PlayBorder" Property="Background" Value="#EE000000" />
-                        </Trigger>
-                        <DataTrigger Binding="{Binding IsRunning}" Value="True">
-                            <Setter TargetName="PlayGlyph" Property="Glyph" Value="&#xE15B;" />
-                        </DataTrigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Button.Template>
-        </Button>
-        </Grid>
-    </DataTemplate>
-
-    <DataTemplate x:Key="LibraryTemplate" DataType="{x:Type viewmodels:ProfileViewModel}">
-        <Grid x:Name="CardRoot">
-        <Button
-            x:Name="ImageContainer"
-            Padding="0"
-            BorderThickness="0"
-            CacheMode="BitmapCache"
-            Command="{Binding Navigate}"
-            IsEnabled="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
-            Tag="{Binding}">
-
-            <Button.Style>
-                <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
-                    <Style.Triggers>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Opacity" Value="0.20" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
-
-            <Button.Template>
-                <ControlTemplate TargetType="Button">
-                    <Border
-                        x:Name="Root"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        SnapsToDevicePixels="True">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="60" />
-                            </Grid.RowDefinitions>
-
-                            <ui:ProgressRing
-                                Grid.Row="0"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Panel.ZIndex="999"
-                                IsIndeterminate="True"
-                                Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                            <Border Grid.Row="0" ClipToBounds="True">
                                 <Image
-                                    x:Name="MainImage"
-                                    RenderTransformOrigin="0.5,0.5"
-                                    Source="{Binding Cover}"
-                                    Stretch="UniformToFill">
-                                    <Image.RenderTransform>
-                                        <ScaleTransform ScaleX="1" ScaleY="1" />
-                                    </Image.RenderTransform>
-                                    <Image.Effect>
-                                        <effects:BloomEffect BloomIntensity="0" BloomSaturation="0.2" />
-                                    </Image.Effect>
-                                </Image>
-                            </Border>
-
-                            <Grid Grid.Row="1" Margin="12">
-                                <Viewbox
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Stretch="None">
-                                    <StackPanel>
-                                        <TextBlock
-                                            Style="{StaticResource BaseTextBlockStyle}"
-                                            Text="{Binding Name}"
-                                            TextWrapping="NoWrap" />
-                                        <TextBlock
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="{Binding Description}"
-                                            TextWrapping="Wrap" />
-                                    </StackPanel>
-                                </Viewbox>
+                                    Width="32"
+                                    Height="32"
+                                    Margin="4"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    Source="{Binding Platform, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DrawingImageToImageSourceConverter}}"
+                                    Stretch="Uniform" />
                             </Grid>
 
-                            <Image
-                                Width="32"
-                                Height="32"
-                                Margin="4"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Bottom"
-                                Source="{Binding Platform, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DrawingImageToImageSourceConverter}}"
-                                Stretch="Uniform" />
-                        </Grid>
+                            <!--  Visual states MUST live on the template root  -->
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="MainImage"
+                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                To="1.0"
+                                                Duration="0:0:0.1" />
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="MainImage"
+                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                To="1.0"
+                                                Duration="0:0:0.1" />
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="MainImage"
+                                                Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                                To="0"
+                                                Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </VisualState>
 
-                        <!--  Visual states MUST live on the template root  -->
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                            To="1.0"
-                                            Duration="0:0:0.1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                            To="1.0"
-                                            Duration="0:0:0.1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                            To="0"
-                                            Duration="0:0:0.1" />
-                                    </Storyboard>
-                                </VisualState>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="MainImage"
+                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                To="1.05"
+                                                Duration="0:0:0.1" />
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="MainImage"
+                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                To="1.05"
+                                                Duration="0:0:0.1" />
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="MainImage"
+                                                Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                                To="0.4"
+                                                Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </VisualState>
 
-                                <VisualState x:Name="MouseOver">
-                                    <Storyboard>
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                            To="1.05"
-                                            Duration="0:0:0.1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                            To="1.05"
-                                            Duration="0:0:0.1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                            To="0.4"
-                                            Duration="0:0:0.1" />
-                                    </Storyboard>
-                                </VisualState>
-
-                                <VisualState x:Name="Focused">
-                                    <Storyboard>
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                            To="1.05"
-                                            Duration="0:0:0.1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                            To="1.05"
-                                            Duration="0:0:0.1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                            To="0.4"
-                                            Duration="0:0:0.1" />
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                    </Border>
-                </ControlTemplate>
-            </Button.Template>
-        </Button>
-        <Button
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Margin="0,0,0,60"
-            Panel.ZIndex="100"
-            Padding="0"
-            BorderThickness="0"
-            Command="{Binding ToggleProcessCommand}">
-            <Button.Style>
-                <Style TargetType="Button">
-                    <Setter Property="Visibility" Value="Collapsed" />
-                    <Style.Triggers>
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding IsMouseOver, ElementName=CardRoot}" Value="True" />
-                                <Condition Binding="{Binding CanToggleProcess}" Value="True" />
-                            </MultiDataTrigger.Conditions>
-                            <MultiDataTrigger.Setters>
-                                <Setter Property="Visibility" Value="Visible" />
-                            </MultiDataTrigger.Setters>
-                        </MultiDataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
-            <Button.Template>
-                <ControlTemplate TargetType="Button">
-                    <Border
-                        x:Name="PlayBorder"
-                        Width="64"
-                        Height="64"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        CornerRadius="32"
-                        Background="#AA000000">
-                        <ui:FontIcon
-                            x:Name="PlayGlyph"
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            FontSize="28"
-                            Foreground="White"
-                            Glyph="&#xE102;" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PlayBorder" Property="Background" Value="#CC000000" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="PlayBorder" Property="Background" Value="#EE000000" />
-                        </Trigger>
-                        <DataTrigger Binding="{Binding IsRunning}" Value="True">
-                            <Setter TargetName="PlayGlyph" Property="Glyph" Value="&#xE15B;" />
-                        </DataTrigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Button.Template>
-        </Button>
+                                    <VisualState x:Name="Focused">
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="MainImage"
+                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                To="1.05"
+                                                Duration="0:0:0.1" />
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="MainImage"
+                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                To="1.05"
+                                                Duration="0:0:0.1" />
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="MainImage"
+                                                Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
+                                                To="0.4"
+                                                Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <Button
+                Margin="0,0,0,60"
+                Padding="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Panel.ZIndex="100"
+                BorderThickness="0"
+                Command="{Binding ToggleProcessCommand}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsMouseOver, ElementName=CardRoot}" Value="True" />
+                                    <Condition Binding="{Binding CanToggleProcess}" Value="True" />
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="PlayBorder"
+                            Width="64"
+                            Height="64"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Background="#AA000000"
+                            CornerRadius="32">
+                            <ui:FontIcon
+                                x:Name="PlayGlyph"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                FontSize="28"
+                                Foreground="White"
+                                Glyph="&#xE102;" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="PlayBorder" Property="Background" Value="#CC000000" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="PlayBorder" Property="Background" Value="#EE000000" />
+                            </Trigger>
+                            <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                <Setter TargetName="PlayGlyph" Property="Glyph" Value="&#xE15B;" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </Grid>
     </DataTemplate>
 
     <DataTemplate x:Key="LibraryTemplateList" DataType="{x:Type viewmodels:ProfileViewModel}">
         <Grid x:Name="CardRoot">
-        <Button
-            Height="64"
-            Padding="0"
-            HorizontalAlignment="Stretch"
-            HorizontalContentAlignment="Stretch"
-            BorderThickness="0"
-            Command="{Binding Navigate}"
-            IsEnabled="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
-            Tag="{Binding}">
-            <Button.Style>
-                <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
-                    <Style.Triggers>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Opacity" Value="0.20" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
+            <Button
+                Height="64"
+                Padding="0"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                BorderThickness="0"
+                Command="{Binding Navigate}"
+                IsEnabled="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                Tag="{Binding}">
+                <Button.Style>
+                    <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+                        <Style.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.20" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
 
-            <Grid HorizontalAlignment="Stretch">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="172" />
-                    <ColumnDefinition Width="4" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="172" />
+                        <ColumnDefinition Width="4" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                <Border ClipToBounds="True" CornerRadius="{DynamicResource ControlCornerRadius}">
-                    <Grid>
-                        <Image
-                            Source="{Binding Artwork}"
-                            Stretch="UniformToFill"
-                            StretchDirection="Both" />
-                        <ui:ProgressRing
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            IsIndeterminate="True"
-                            Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    </Grid>
-                </Border>
+                    <Border ClipToBounds="True" CornerRadius="{DynamicResource ControlCornerRadius}">
+                        <Grid>
+                            <Image
+                                Source="{Binding Artwork}"
+                                Stretch="UniformToFill"
+                                StretchDirection="Both" />
+                            <ui:ProgressRing
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                IsIndeterminate="True"
+                                Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        </Grid>
+                    </Border>
 
-                <Border
-                    x:Name="FavoriteAccentBar"
-                    Grid.Column="1"
-                    Width="4"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Stretch"
-                    Panel.ZIndex="1"
-                    Background="{DynamicResource AccentAAFillColorDefaultBrush}">
-                    <Border.Style>
-                        <Style TargetType="Border">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsLiked}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Border.Style>
-                </Border>
-
-                <StackPanel
-                    Grid.Column="2"
-                    Margin="8,0,0,0"
-                    VerticalAlignment="Center">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <ui:FontIcon
-                            Margin="0,0,6,0"
-                            Foreground="{DynamicResource AccentAAFillColorDefaultBrush}"
-                            Glyph="&#xe735;"
-                            Visibility="{Binding IsLiked, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                        <TextBlock
-                            Grid.Column="1"
-                            Style="{StaticResource BaseTextBlockStyle}"
-                            Text="{Binding Name}"
-                            TextTrimming="CharacterEllipsis"
-                            TextWrapping="NoWrap" />
-                    </Grid>
-                    <TextBlock
-                        Text="{Binding Description}"
-                        TextTrimming="CharacterEllipsis"
-                        TextWrapping="NoWrap">
-                        <TextBlock.Style>
-                            <Style BasedOn="{StaticResource BodyTextBlockStyle}" TargetType="TextBlock">
-                                <Setter Property="Visibility" Value="Visible" />
+                    <Border
+                        x:Name="FavoriteAccentBar"
+                        Grid.Column="1"
+                        Width="4"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Stretch"
+                        Panel.ZIndex="1"
+                        Background="{DynamicResource AccentAAFillColorDefaultBrush}">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility" Value="Collapsed" />
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Description}" Value="">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Description}" Value="{x:Null}">
-                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    <DataTrigger Binding="{Binding IsLiked}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
-                </StackPanel>
-
-                <Image
-                    Grid.Column="3"
-                    Width="24"
-                    Height="24"
-                    Margin="0,0,12,0"
-                    VerticalAlignment="Center"
-                    Source="{Binding Platform, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DrawingImageToImageSourceConverter}}"
-                    Stretch="Uniform" />
-            </Grid>
-        </Button>
-        <Button
-            Width="172"
-            Height="64"
-            HorizontalAlignment="Left"
-            Panel.ZIndex="100"
-            Padding="0"
-            BorderThickness="0"
-            Command="{Binding ToggleProcessCommand}">
-            <Button.Style>
-                <Style TargetType="Button">
-                    <Setter Property="Visibility" Value="Collapsed" />
-                    <Style.Triggers>
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding IsMouseOver, ElementName=CardRoot}" Value="True" />
-                                <Condition Binding="{Binding CanToggleProcess}" Value="True" />
-                            </MultiDataTrigger.Conditions>
-                            <MultiDataTrigger.Setters>
-                                <Setter Property="Visibility" Value="Visible" />
-                            </MultiDataTrigger.Setters>
-                        </MultiDataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
-            <Button.Template>
-                <ControlTemplate TargetType="Button">
-                    <Border
-                        x:Name="PlayBorder"
-                        Width="44"
-                        Height="44"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        CornerRadius="22"
-                        Background="#AA000000">
-                        <ui:FontIcon
-                            x:Name="PlayGlyph"
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            FontSize="20"
-                            Foreground="White"
-                            Glyph="&#xE102;" />
+                        </Border.Style>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PlayBorder" Property="Background" Value="#CC000000" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="PlayBorder" Property="Background" Value="#EE000000" />
-                        </Trigger>
-                        <DataTrigger Binding="{Binding IsRunning}" Value="True">
-                            <Setter TargetName="PlayGlyph" Property="Glyph" Value="&#xE15B;" />
-                        </DataTrigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Button.Template>
-        </Button>
+
+                    <StackPanel
+                        Grid.Column="2"
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <ui:FontIcon
+                                Margin="0,0,6,0"
+                                Foreground="{DynamicResource AccentAAFillColorDefaultBrush}"
+                                Glyph="&#xe735;"
+                                Visibility="{Binding IsLiked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                            <TextBlock
+                                Grid.Column="1"
+                                Style="{StaticResource BaseTextBlockStyle}"
+                                Text="{Binding Name}"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
+                        </Grid>
+                        <TextBlock
+                            Text="{Binding Description}"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="NoWrap">
+                            <TextBlock.Style>
+                                <Style BasedOn="{StaticResource BodyTextBlockStyle}" TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Description}" Value="">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Description}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <Image
+                        Grid.Column="3"
+                        Width="24"
+                        Height="24"
+                        Margin="0,0,12,0"
+                        VerticalAlignment="Center"
+                        Source="{Binding Platform, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DrawingImageToImageSourceConverter}}"
+                        Stretch="Uniform" />
+                </Grid>
+            </Button>
+            <Button
+                Width="172"
+                Height="64"
+                Padding="0"
+                HorizontalAlignment="Left"
+                Panel.ZIndex="100"
+                BorderThickness="0"
+                Command="{Binding ToggleProcessCommand}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsMouseOver, ElementName=CardRoot}" Value="True" />
+                                    <Condition Binding="{Binding CanToggleProcess}" Value="True" />
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="PlayBorder"
+                            Width="44"
+                            Height="44"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Background="#AA000000"
+                            CornerRadius="22">
+                            <ui:FontIcon
+                                x:Name="PlayGlyph"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                FontSize="20"
+                                Foreground="White"
+                                Glyph="&#xE102;" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="PlayBorder" Property="Background" Value="#CC000000" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="PlayBorder" Property="Background" Value="#EE000000" />
+                            </Trigger>
+                            <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                <Setter TargetName="PlayGlyph" Property="Glyph" Value="&#xE15B;" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </Grid>
     </DataTemplate>
 

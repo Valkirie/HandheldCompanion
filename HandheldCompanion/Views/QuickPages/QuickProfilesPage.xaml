@@ -23,7 +23,10 @@
     <ikw:SimpleStackPanel IsEnabled="{Binding HasSelectedProfile, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="8">
 
         <!--  Header  -->
-        <ui:SettingsExpander Name="ProcessCard" IsEnabled="{Binding IsProcessCardEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+        <ui:SettingsExpander
+            Name="ProcessCard"
+            d:IsExpanded="True"
+            IsEnabled="{Binding IsProcessCardEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
             <ui:SettingsExpander.HeaderIcon>
                 <Image
                     Name="ProfileIcon"
@@ -60,7 +63,7 @@
                             Name="CurrentProfileName"
                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                             Style="{StaticResource CaptionTextBlockStyle}"
-                            Text="{l:Static resx:Resources.QuickProfilesPage_CurrentProfileDefault}"
+                            Text="{Binding CurrentProfileName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             TextWrapping="NoWrap" />
                     </ui:SettingsCard.Description>
 
