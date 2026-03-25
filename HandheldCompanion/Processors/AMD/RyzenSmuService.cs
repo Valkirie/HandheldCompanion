@@ -867,13 +867,13 @@ namespace HandheldCompanion.Processors.AMD
             {
                 case CpuCodeName.RavenRidge:
                 case CpuCodeName.RavenRidge2:
-                    //case CpuCodeName.Picasso:
-                    //case CpuCodeName.Dali:
+                case CpuCodeName.Picasso:
+                case CpuCodeName.Dali:
                     return 0x1A;
 
                 case CpuCodeName.Renoir:
                 case CpuCodeName.Lucienne:
-                //case CpuCodeName.Cezanne:
+                case CpuCodeName.Cezanne:
                 case CpuCodeName.Vangogh:
                 case CpuCodeName.Rembrandt:
                 case CpuCodeName.Mendocino:
@@ -901,13 +901,13 @@ namespace HandheldCompanion.Processors.AMD
             {
                 case CpuCodeName.RavenRidge:
                 case CpuCodeName.RavenRidge2:
-                    //case CpuCodeName.Picasso:
-                    //case CpuCodeName.Dali:
+                case CpuCodeName.Picasso:
+                case CpuCodeName.Dali:
                     return 0x1B;
 
                 case CpuCodeName.Renoir:
                 case CpuCodeName.Lucienne:
-                //case CpuCodeName.Cezanne:
+                case CpuCodeName.Cezanne:
                 case CpuCodeName.Vangogh:
                 case CpuCodeName.Rembrandt:
                 case CpuCodeName.Mendocino:
@@ -935,13 +935,13 @@ namespace HandheldCompanion.Processors.AMD
             {
                 case CpuCodeName.RavenRidge:
                 case CpuCodeName.RavenRidge2:
-                    //case CpuCodeName.Picasso:
-                    //case CpuCodeName.Dali:
+                case CpuCodeName.Picasso:
+                case CpuCodeName.Dali:
                     return 0x1C;
 
                 case CpuCodeName.Renoir:
                 case CpuCodeName.Lucienne:
-                //case CpuCodeName.Cezanne:
+                case CpuCodeName.Cezanne:
                 case CpuCodeName.Vangogh:
                 case CpuCodeName.Rembrandt:
                 case CpuCodeName.Mendocino:
@@ -969,7 +969,7 @@ namespace HandheldCompanion.Processors.AMD
             {
                 case CpuCodeName.Renoir:
                 case CpuCodeName.Lucienne:
-                    //case CpuCodeName.Cezanne:
+                case CpuCodeName.Cezanne:
                     return 0x55;
 
                 case CpuCodeName.Vangogh:
@@ -999,7 +999,7 @@ namespace HandheldCompanion.Processors.AMD
             {
                 case CpuCodeName.Renoir:
                 case CpuCodeName.Lucienne:
-                    //case CpuCodeName.Cezanne:
+                case CpuCodeName.Cezanne:
                     return 0x54;
 
                 case CpuCodeName.Vangogh:
@@ -1029,7 +1029,7 @@ namespace HandheldCompanion.Processors.AMD
             {
                 case CpuCodeName.Renoir:
                 case CpuCodeName.Lucienne:
-                    //case CpuCodeName.Cezanne:
+                case CpuCodeName.Cezanne:
                     return 0x64;
 
                 case CpuCodeName.Vangogh:
@@ -1050,8 +1050,8 @@ namespace HandheldCompanion.Processors.AMD
             {
                 case CpuCodeName.RavenRidge:
                 case CpuCodeName.RavenRidge2:
-                    //case CpuCodeName.Picasso:
-                    //case CpuCodeName.Dali:
+                case CpuCodeName.Picasso:
+                case CpuCodeName.Dali:
                     return 0x47;
             }
 
@@ -1064,8 +1064,8 @@ namespace HandheldCompanion.Processors.AMD
             {
                 case CpuCodeName.RavenRidge:
                 case CpuCodeName.RavenRidge2:
-                    //case CpuCodeName.Picasso:
-                    //case CpuCodeName.Dali:
+                case CpuCodeName.Picasso:
+                case CpuCodeName.Dali:
                     return 0x46;
             }
 
@@ -1078,7 +1078,7 @@ namespace HandheldCompanion.Processors.AMD
             {
                 case CpuCodeName.Renoir:
                 case CpuCodeName.Lucienne:
-                //case CpuCodeName.Cezanne:
+                case CpuCodeName.Cezanne:
                 case CpuCodeName.Vangogh:
                 case CpuCodeName.Rembrandt:
                 case CpuCodeName.Mendocino:
