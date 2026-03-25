@@ -510,7 +510,7 @@ public static class PerformanceManager
         PowerProfile profile = ManagerFactory.powerProfileManager.GetDefault();
         RequestTDP(profile.TDPOverrideValues, immediate);
 
-        if (profile.TDPOverrideValues is not null)
+        if (profile.TDPOverrideValues is not null && profile.TDPOverrideValues.Length > 0)
             AutoTDP = profile.TDPOverrideValues[0];
     }
 
@@ -549,8 +549,6 @@ public static class PerformanceManager
             {
                 bool TDPdone = false;
                 bool MSRdone = true;
-                bool forcedUpdate = false;
-                double damper = 0.0;
                 double unclampedProcessValueFPS = 0.0;
 
                 // todo: Store fps for data gathering from multiple points (OSD, Performance)
@@ -575,7 +573,6 @@ public static class PerformanceManager
                 if (!AutoTDPFirstRun)
                 {
                     AutoTDP += TDPAdjustment + AutoTDPDamper(processValueFPS);
-                    damper = AutoTDPDamper(processValueFPS);
                 }
                 else
                     AutoTDPFirstRun = false;
@@ -622,7 +619,7 @@ public static class PerformanceManager
 
                     if (TDPslow != 0.0d && TDPfast != 0.0d)
                         // only request an update if current limit is different than stored
-                        if (CurrentTDP[(int)PowerType.MsrSlow] != TDPslow || CurrentTDP[(int)PowerType.MsrFast] != TDPfast || forcedUpdate)
+                        if (CurrentTDP[(int)PowerType.MsrSlow] != TDPslow || CurrentTDP[(int)PowerType.MsrFast] != TDPfast)
                         {
                             MSRdone = false;
                             RequestMSR(TDPslow, TDPfast);
@@ -726,6 +723,9 @@ public static class PerformanceManager
                     // Check if CPU core count has changed and apply if needed
                     if (currentProfile.CPUCoreEnabled)
                         RequestCPUCoreCount(currentProfile.CPUCoreCount);
+
+                    // Check if CPU core parking mode has changed and apply if needed
+                    RequestCoreParkingMode(currentProfile.CPUParkingMode);
 
                     // Check if active power shceme has changed and apply if needed
                     RequestPowerMode(currentProfile.OSPowerMode);
@@ -967,8 +967,8 @@ public static class PerformanceManager
 
     private static async void RequestTDP(double[] values, bool immediate = false)
     {
-        // Handle null or empty array scenario
-        if (values == null || values.Length == 0)
+        // Handle null or insufficient array scenario
+        if (values == null || values.Length <= (int)PowerType.Fast)
             return;
 
         for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
@@ -1012,13 +1012,25 @@ public static class PerformanceManager
     private static void RequestPowerMode(Guid guid)
     {
         if (PowerGetEffectiveOverlayScheme(out Guid activeScheme) == 0)
+        {
             if (activeScheme == guid)
+            {
+                // Scheme is already correct; sync currentPowerMode if it drifted (e.g. on first call at startup)
+                if (currentPowerMode != guid)
+                {
+                    currentPowerMode = guid;
+                    int idx = Array.IndexOf(PowerModes, guid);
+                    if (idx != -1)
+                        PowerModeChanged?.Invoke(idx);
+                }
                 return;
+            }
+        }
 
-        LogManager.LogDebug("User requested power scheme: {0}", currentPowerMode);
+        LogManager.LogDebug("User requested power scheme: {0}", guid);
 
-        if (PowerSetActiveOverlayScheme(currentPowerMode) != 0)
-            LogManager.LogWarning("Failed to set requested power scheme: {0}", currentPowerMode);
+        if (PowerSetActiveOverlayScheme(guid) != 0)
+            LogManager.LogWarning("Failed to set requested power scheme: {0}", guid);
         else
         {
             currentPowerMode = guid;
