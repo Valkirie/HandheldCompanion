@@ -384,9 +384,6 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            // update current device cTDP
-            IDevice.GetCurrent().cTDP[1] = value;
-
             ManagerFactory.settingsManager.SetProperty("ConfigurableTDPOverrideUp", value);
         }
 
@@ -400,9 +397,6 @@ namespace HandheldCompanion.Views.Pages
 
             if (!IsLoaded)
                 return;
-
-            // update current device cTDP
-            IDevice.GetCurrent().cTDP[0] = value;
 
             ManagerFactory.settingsManager.SetProperty("ConfigurableTDPOverrideDown", value);
         }
