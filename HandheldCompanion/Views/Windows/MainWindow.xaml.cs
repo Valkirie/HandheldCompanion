@@ -106,7 +106,7 @@ public partial class MainWindow : GamepadWindow
     private Rect preFullscreenBounds;
     private FullScreenExperienceMonitor fullScreenExperienceMonitor;
 
-    public static SplashScreen SplashScreen;
+    public static SplashScreenHost SplashScreen;
 
     public static UISettings uiSettings;
 
@@ -124,7 +124,7 @@ public partial class MainWindow : GamepadWindow
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
     {
         // initialize splash screen
-        SplashScreen = new SplashScreen();
+        SplashScreen = new SplashScreenHost();
         DataContext = new MainWindowViewModel();
 
 #if !DEBUG
