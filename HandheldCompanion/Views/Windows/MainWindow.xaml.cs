@@ -80,6 +80,7 @@ public partial class MainWindow : GamepadWindow
 
     private bool appClosing;
     private readonly NotifyIcon notifyIcon;
+    private readonly ContextMenuStrip trayContextMenu;
     private bool NotifyInTaskbar;
     public string prevNavItemTag = string.Empty;
 
@@ -113,6 +114,8 @@ public partial class MainWindow : GamepadWindow
     private const int WM_QUERYENDSESSION = 0x0011;
     private const int WM_DISPLAYCHANGE = 0x007e;
     private const int WM_DEVICECHANGE = 0x0219;
+    private const int TrayMenuMargin = 8;
+    private const int TrayMenuCursorPadding = 20;
 
     public static Version LastVersion => Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
     public static Version CurrentVersion => Version.Parse(fileVersionInfo?.FileVersion ?? "0.0.0.0");
@@ -162,15 +165,22 @@ public partial class MainWindow : GamepadWindow
         Directory.SetCurrentDirectory(CurrentPath);
 
         // initialize notifyIcon
+        trayContextMenu = new ContextMenuStrip
+        {
+            ShowCheckMargin = false,
+            ShowImageMargin = true,
+            DropShadowEnabled = true
+        };
+
         notifyIcon = new NotifyIcon
         {
             Text = Title,
             Icon = System.Drawing.Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location),
-            Visible = false,
-            ContextMenuStrip = new ContextMenuStrip()
+            Visible = false
         };
 
         notifyIcon.DoubleClick += (sender, e) => { ToggleState(); };
+        notifyIcon.MouseUp += NotifyIcon_MouseUp;
 
         // Build initial tray menu (will be updated when ProfileManager initializes)
         BuildTrayMenu();
@@ -426,13 +436,12 @@ public partial class MainWindow : GamepadWindow
             Tag = tag
         };
         menuItemMainWindow.Click += MenuItem_Click;
-        notifyIcon.ContextMenuStrip.Items.Add(menuItemMainWindow);
+        trayContextMenu.Items.Add(menuItemMainWindow);
     }
 
     private void AddNotifyIconSeparator()
     {
-        var separator = new ToolStripSeparator();
-        notifyIcon.ContextMenuStrip.Items.Add(separator);
+        trayContextMenu.Items.Add(new ToolStripSeparator());
     }
 
     /// <summary>
@@ -443,11 +452,12 @@ public partial class MainWindow : GamepadWindow
     {
         UIHelper.TryInvoke(() =>
         {
-            notifyIcon.ContextMenuStrip.Items.Clear();
+            trayContextMenu.Items.Clear();
 
             // Add separator placeholder (will be shown/hidden based on liked profiles)
-            profileSeparator = new ToolStripSeparator { Visible = false };
-            notifyIcon.ContextMenuStrip.Items.Add(profileSeparator);
+            profileSeparator = new ToolStripSeparator();
+            profileSeparator.Visible = false;
+            trayContextMenu.Items.Add(profileSeparator);
 
             // Add standard menu items
             AddNotifyIconItem(Properties.Resources.MainWindow_MainWindow, "MainWindow");
@@ -495,7 +505,7 @@ public partial class MainWindow : GamepadWindow
                     break;
             }
 
-            notifyIcon.ContextMenuStrip.Items.Insert(insertIndex, menuItem);
+            trayContextMenu.Items.Insert(insertIndex, menuItem);
             profileMenuItems[profile.Guid] = menuItem;
 
             // Show separator since we have at least one liked profile
@@ -515,7 +525,7 @@ public partial class MainWindow : GamepadWindow
         {
             if (profileMenuItems.TryGetValue(profile.Guid, out var menuItem))
             {
-                notifyIcon.ContextMenuStrip.Items.Remove(menuItem);
+                trayContextMenu.Items.Remove(menuItem);
                 profileMenuItems.Remove(profile.Guid);
                 menuItem.Dispose();
             }
@@ -634,6 +644,7 @@ public partial class MainWindow : GamepadWindow
                     }
                 }
             }
+
             return;
         }
 
@@ -651,6 +662,73 @@ public partial class MainWindow : GamepadWindow
                 Close();
                 break;
         }
+    }
+
+    private void NotifyIcon_MouseUp(object? sender, System.Windows.Forms.MouseEventArgs e)
+    {
+        if (e.Button != MouseButtons.Right)
+            return;
+
+        ShowTrayMenu();
+    }
+
+    private void ShowTrayMenu()
+    {
+        UIHelper.TryInvoke(() =>
+        {
+            if (!trayContextMenu.Items.OfType<ToolStripItem>().Any(item => item.Available))
+                return;
+
+            if (trayContextMenu.Visible)
+                trayContextMenu.Close();
+
+            var location = GetTrayMenuLocation(trayContextMenu);
+            trayContextMenu.Show(location.X, location.Y);
+        });
+    }
+
+    private static System.Drawing.Point GetTrayMenuLocation(ContextMenuStrip contextMenuStrip)
+    {
+        System.Drawing.Point cursorPosition = System.Windows.Forms.Cursor.Position;
+        Screen screen = Screen.FromPoint(cursorPosition);
+        System.Drawing.Rectangle workingArea = screen.WorkingArea;
+        System.Drawing.Size preferredSize = contextMenuStrip.GetPreferredSize(System.Drawing.Size.Empty);
+
+        int maxX = Math.Max(workingArea.Left + TrayMenuMargin, workingArea.Right - preferredSize.Width - TrayMenuMargin);
+        int maxY = Math.Max(workingArea.Top + TrayMenuMargin, workingArea.Bottom - preferredSize.Height - TrayMenuMargin);
+
+        return GetTaskbarEdge(screen) switch
+        {
+            TaskbarEdge.Top => new System.Drawing.Point(
+                Math.Clamp(cursorPosition.X - preferredSize.Width + TrayMenuCursorPadding, workingArea.Left + TrayMenuMargin, maxX),
+                workingArea.Top + TrayMenuMargin),
+            TaskbarEdge.Left => new System.Drawing.Point(
+                workingArea.Left + TrayMenuMargin,
+                Math.Clamp(cursorPosition.Y - TrayMenuCursorPadding, workingArea.Top + TrayMenuMargin, maxY)),
+            TaskbarEdge.Right => new System.Drawing.Point(
+                workingArea.Right - preferredSize.Width - TrayMenuMargin,
+                Math.Clamp(cursorPosition.Y - TrayMenuCursorPadding, workingArea.Top + TrayMenuMargin, maxY)),
+            _ => new System.Drawing.Point(
+                Math.Clamp(cursorPosition.X - preferredSize.Width + TrayMenuCursorPadding, workingArea.Left + TrayMenuMargin, maxX),
+                workingArea.Bottom - preferredSize.Height - TrayMenuMargin),
+        };
+    }
+
+    private static TaskbarEdge GetTaskbarEdge(Screen screen)
+    {
+        System.Drawing.Rectangle bounds = screen.Bounds;
+        System.Drawing.Rectangle workingArea = screen.WorkingArea;
+
+        if (workingArea.Top > bounds.Top)
+            return TaskbarEdge.Top;
+
+        if (workingArea.Left > bounds.Left)
+            return TaskbarEdge.Left;
+
+        if (workingArea.Right < bounds.Right)
+            return TaskbarEdge.Right;
+
+        return TaskbarEdge.Bottom;
     }
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -685,8 +763,8 @@ public partial class MainWindow : GamepadWindow
         // hide the startup overlay — home page is rendered and ready
         ((MainWindowViewModel)DataContext).IsInitializing = false;
 
-        // home page is ready, display main window
-        notifyIcon.Visible = true;
+        // home page is ready; only show tray icon when the window is minimized
+        notifyIcon.Visible = WindowState == WindowState.Minimized;
 
         string TelemetryApproved = ManagerFactory.settingsManager.GetString("TelemetryApproved");
         if (string.IsNullOrEmpty(TelemetryApproved))
@@ -899,6 +977,7 @@ public partial class MainWindow : GamepadWindow
                 menuItem.Dispose();
             profileMenuItems.Clear();
 
+            trayContextMenu.Dispose();
             notifyIcon.Visible = false;
             notifyIcon.Dispose();
         });
@@ -1253,6 +1332,14 @@ public partial class MainWindow : GamepadWindow
     }
 
     private const string HomeKey = "LibraryPage";
+
+    private enum TaskbarEdge
+    {
+        Left,
+        Top,
+        Right,
+        Bottom
+    }
 
     private async void navView_Loaded(object sender, RoutedEventArgs e)
     {

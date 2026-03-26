@@ -1,7 +1,6 @@
 using HandheldCompanion.Controls;
 using HandheldCompanion.Converters;
 using HandheldCompanion.ViewModels;
-using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;

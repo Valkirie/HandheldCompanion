@@ -1,10 +1,10 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="clr-namespace:HandheldCompanion.Behaviors"
     xmlns:chelper="clr-namespace:iNKORE.UI.WPF.Modern.Controls.Helpers;assembly=iNKORE.UI.WPF.Modern"
     xmlns:cmdHC="clr-namespace:HandheldCompanion.Commands.Functions.HC"
     xmlns:cmdWIN="clr-namespace:HandheldCompanion.Commands.Functions.Windows"
-    xmlns:behaviors="clr-namespace:HandheldCompanion.Behaviors"
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:effects="clr-namespace:Microsoft.Expression.Media.Effects;assembly=Microsoft.Expression.Effects"
@@ -264,9 +264,9 @@
                                         <Image
                                             x:Name="MainImage"
                                             RenderTransformOrigin="0.5,0.5"
-                                            Style="{StaticResource LibraryImageFadeStyle}"
                                             Source="{Binding Artwork, NotifyOnTargetUpdated=True}"
-                                            Stretch="UniformToFill">
+                                            Stretch="UniformToFill"
+                                            Style="{StaticResource LibraryImageFadeStyle}">
                                             <Image.RenderTransform>
                                                 <ScaleTransform ScaleX="1" ScaleY="1" />
                                             </Image.RenderTransform>
@@ -279,9 +279,9 @@
                                             x:Name="LogoImage"
                                             Margin="50"
                                             RenderTransformOrigin="0.5,0.5"
-                                            Style="{StaticResource LibraryImageFadeStyle}"
                                             Source="{Binding Logo, NotifyOnTargetUpdated=True}"
-                                            Stretch="Uniform" />
+                                            Stretch="Uniform"
+                                            Style="{StaticResource LibraryImageFadeStyle}" />
                                     </Grid>
                                 </Border>
 
@@ -487,9 +487,9 @@
                                     <Image
                                         x:Name="MainImage"
                                         RenderTransformOrigin="0.5,0.5"
-                                        Style="{StaticResource LibraryImageFadeStyle}"
                                         Source="{Binding Cover, NotifyOnTargetUpdated=True}"
-                                        Stretch="UniformToFill">
+                                        Stretch="UniformToFill"
+                                        Style="{StaticResource LibraryImageFadeStyle}">
                                         <Image.RenderTransform>
                                             <ScaleTransform ScaleX="1" ScaleY="1" />
                                         </Image.RenderTransform>
@@ -685,10 +685,10 @@
                     <Border ClipToBounds="True" CornerRadius="{DynamicResource ControlCornerRadius}">
                         <Grid>
                             <Image
-                                Style="{StaticResource LibraryImageFadeStyle}"
                                 Source="{Binding Artwork, NotifyOnTargetUpdated=True}"
                                 Stretch="UniformToFill"
-                                StretchDirection="Both" />
+                                StretchDirection="Both"
+                                Style="{StaticResource LibraryImageFadeStyle}" />
                             <ui:ProgressRing
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
