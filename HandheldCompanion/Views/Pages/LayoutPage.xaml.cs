@@ -381,7 +381,26 @@ public partial class LayoutPage : Page
     private void navView_Loaded(object sender, RoutedEventArgs e)
     {
         // Add handler for ContentFrame navigation.
+        ContentFrame.Navigated -= On_Navigated;
         ContentFrame.Navigated += On_Navigated;
+
+        if (ContentFrame.Content is not null)
+        {
+            navView.IsBackEnabled = ContentFrame.CanGoBack;
+
+            if (ContentFrame.SourcePageType is not null)
+            {
+                string currentPageName = ContentFrame.CurrentSourcePageType.Name;
+                var currentNavViewItem = navView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(n => n.Tag is not null && n.Tag.Equals(currentPageName));
+                if (currentNavViewItem is not null)
+                    navView.SelectedItem = currentNavViewItem;
+            }
+
+            if (parentNavView is not null)
+                parentNavView.IsBackEnabled = MainWindow.GetCurrent()?.ContentFrame.CanGoBack == true;
+
+            return;
+        }
 
         // NavView doesn't load any page by default, so load home page.
         navView.SelectedItem = navView.MenuItems[0];
@@ -391,16 +410,32 @@ public partial class LayoutPage : Page
         // here to load the home page.
         preNavItemTag = "ButtonsPage";
         NavView_Navigate(preNavItemTag);
+
+        if (parentNavView is not null)
+            parentNavView.IsBackEnabled = MainWindow.GetCurrent()?.ContentFrame.CanGoBack == true;
+    }
+
+    public bool TryGoBack()
+    {
+        if (!ContentFrame.CanGoBack)
+            return false;
+
+        ContentFrame.GoBack();
+        return true;
     }
 
     private void On_Navigated(object sender, NavigationEventArgs e)
     {
         navView.IsBackEnabled = ContentFrame.CanGoBack;
 
+        if (parentNavView is not null)
+            parentNavView.IsBackEnabled = ContentFrame.CanGoBack || MainWindow.GetCurrent()?.ContentFrame.CanGoBack == true;
+
         if (ContentFrame.SourcePageType is not null)
         {
             var preNavPageType = ContentFrame.CurrentSourcePageType;
             var preNavPageName = preNavPageType.Name;
+            preNavItemTag = preNavPageName;
 
             var NavViewItem = navView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(n => n.Tag is not null && n.Tag.Equals(preNavPageName));
 

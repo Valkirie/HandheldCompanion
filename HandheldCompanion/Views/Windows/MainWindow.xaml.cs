@@ -1387,13 +1387,16 @@ public partial class MainWindow : GamepadWindow
 
     private bool TryGoBack()
     {
-        if (!ContentFrame.CanGoBack)
-            return false;
-
         // Don't go back if the nav pane is overlayed.
         if (navView.IsPaneOpen &&
             (navView.DisplayMode == NavigationViewDisplayMode.Compact ||
              navView.DisplayMode == NavigationViewDisplayMode.Minimal))
+            return false;
+
+        if (ContentFrame.Content is LayoutPage currentLayoutPage && currentLayoutPage.TryGoBack())
+            return true;
+
+        if (!ContentFrame.CanGoBack)
             return false;
 
         ContentFrame.GoBack();
@@ -1452,6 +1455,8 @@ public partial class MainWindow : GamepadWindow
 
     private void On_Navigated(object sender, NavigationEventArgs e)
     {
+        navView.IsBackEnabled = ContentFrame.CanGoBack;
+
         if (ContentFrame.SourcePageType is not null)
         {
             CurrentPageName = ContentFrame.CurrentSourcePageType.Name;
