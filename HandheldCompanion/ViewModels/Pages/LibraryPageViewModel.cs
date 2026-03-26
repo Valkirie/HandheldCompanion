@@ -516,7 +516,7 @@ namespace HandheldCompanion.ViewModels
                 if (existingVm is null)
                 {
                     // Not yet in list, add
-                    Profiles.SafeAdd(new ProfileViewModel(profile, false));
+                    Profiles.SafeAdd(new ProfileViewModel(profile, false, true));
                 }
                 else
                 {

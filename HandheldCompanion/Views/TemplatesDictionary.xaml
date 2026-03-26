@@ -4,6 +4,7 @@
     xmlns:chelper="clr-namespace:iNKORE.UI.WPF.Modern.Controls.Helpers;assembly=iNKORE.UI.WPF.Modern"
     xmlns:cmdHC="clr-namespace:HandheldCompanion.Commands.Functions.HC"
     xmlns:cmdWIN="clr-namespace:HandheldCompanion.Commands.Functions.Windows"
+    xmlns:behaviors="clr-namespace:HandheldCompanion.Behaviors"
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:effects="clr-namespace:Microsoft.Expression.Media.Effects;assembly=Microsoft.Expression.Effects"
@@ -31,6 +32,23 @@
     <converters:TypeToVisibilityConverter x:Key="TypeToVisibilityConverter" />
     <converters:ActionTypeIndexToNameConverter x:Key="ActionTypeIndexToNameConverter" />
     <converters:ActionDisplayConverter x:Key="ActionDisplayConverter" />
+
+    <Style x:Key="LibraryImageFadeStyle" TargetType="Image">
+        <Setter Property="Opacity" Value="1" />
+        <Style.Triggers>
+            <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetProperty="Opacity"
+                            From="0.35"
+                            To="1"
+                            Duration="0:0:0.18" />
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
 
     <DataTemplate x:Key="HotkeyTemplate" DataType="{x:Type viewmodels:HotkeyViewModel}">
         <ui:SettingsCard Description="{Binding Description, Mode=OneWay}" Header="{Binding Name, Mode=OneWay}">
@@ -198,7 +216,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="LibraryTemplateWide" DataType="{x:Type viewmodels:ProfileViewModel}">
-        <Grid x:Name="CardRoot">
+        <Grid x:Name="CardRoot" behaviors:LibraryItemVisibilityBehavior.TrackVisibility="True">
             <Button
                 x:Name="ImageContainer"
                 Padding="0"
@@ -246,7 +264,8 @@
                                         <Image
                                             x:Name="MainImage"
                                             RenderTransformOrigin="0.5,0.5"
-                                            Source="{Binding Artwork}"
+                                            Style="{StaticResource LibraryImageFadeStyle}"
+                                            Source="{Binding Artwork, NotifyOnTargetUpdated=True}"
                                             Stretch="UniformToFill">
                                             <Image.RenderTransform>
                                                 <ScaleTransform ScaleX="1" ScaleY="1" />
@@ -260,7 +279,8 @@
                                             x:Name="LogoImage"
                                             Margin="50"
                                             RenderTransformOrigin="0.5,0.5"
-                                            Source="{Binding Logo}"
+                                            Style="{StaticResource LibraryImageFadeStyle}"
+                                            Source="{Binding Logo, NotifyOnTargetUpdated=True}"
                                             Stretch="Uniform" />
                                     </Grid>
                                 </Border>
@@ -420,7 +440,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="LibraryTemplate" DataType="{x:Type viewmodels:ProfileViewModel}">
-        <Grid x:Name="CardRoot">
+        <Grid x:Name="CardRoot" behaviors:LibraryItemVisibilityBehavior.TrackVisibility="True">
             <Button
                 x:Name="ImageContainer"
                 Padding="0"
@@ -467,7 +487,8 @@
                                     <Image
                                         x:Name="MainImage"
                                         RenderTransformOrigin="0.5,0.5"
-                                        Source="{Binding Cover}"
+                                        Style="{StaticResource LibraryImageFadeStyle}"
+                                        Source="{Binding Cover, NotifyOnTargetUpdated=True}"
                                         Stretch="UniformToFill">
                                         <Image.RenderTransform>
                                             <ScaleTransform ScaleX="1" ScaleY="1" />
@@ -633,7 +654,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="LibraryTemplateList" DataType="{x:Type viewmodels:ProfileViewModel}">
-        <Grid x:Name="CardRoot">
+        <Grid x:Name="CardRoot" behaviors:LibraryItemVisibilityBehavior.TrackVisibility="True">
             <Button
                 Height="64"
                 Padding="0"
@@ -664,7 +685,8 @@
                     <Border ClipToBounds="True" CornerRadius="{DynamicResource ControlCornerRadius}">
                         <Grid>
                             <Image
-                                Source="{Binding Artwork}"
+                                Style="{StaticResource LibraryImageFadeStyle}"
+                                Source="{Binding Artwork, NotifyOnTargetUpdated=True}"
                                 Stretch="UniformToFill"
                                 StretchDirection="Both" />
                             <ui:ProgressRing

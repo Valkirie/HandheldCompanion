@@ -11,11 +11,13 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using static HandheldCompanion.Managers.LibraryManager;
 
 namespace HandheldCompanion.ViewModels
@@ -29,6 +31,9 @@ namespace HandheldCompanion.ViewModels
 
         public readonly bool IsQuickTools;
         public bool IsMainPage => !IsQuickTools;
+        private readonly bool deferVisualLoading;
+        private bool areVisualsVisible = true;
+        private CancellationTokenSource? visualsLoadCancellationTokenSource;
 
         private Profile _Profile;
         public Profile Profile
@@ -50,20 +55,106 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private void ApplyPlaceholderImages()
+        {
+            Cover = LibraryResources.MissingCover;
+            Artwork = LibraryResources.MissingArtwork;
+            Logo = null;
+        }
+
         private void RefreshImages()
         {
+            CancelPendingVisualLoad();
+
+            if (deferVisualLoading && !areVisualsVisible)
+            {
+                ApplyPlaceholderImages();
+                return;
+            }
+
             if (_Profile.LibraryEntry is null)
             {
-                Cover = LibraryResources.MissingCover;
-                Artwork = LibraryResources.MissingArtwork;
-                Logo = null;
+                ApplyPlaceholderImages();
                 return;
             }
 
             long id = _Profile.LibraryEntry.Id;
-            Cover = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.cover, _Profile.LibraryEntry.GetCoverId(), _Profile.LibraryEntry.GetCoverExtension(false));
-            Artwork = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.artwork, _Profile.LibraryEntry.GetArtworkId(), _Profile.LibraryEntry.GetArtworkExtension(false));
-            Logo = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.logo, _Profile.LibraryEntry.GetLogoId(), _Profile.LibraryEntry.GetLogoExtension(false));
+            long coverId = _Profile.LibraryEntry.GetCoverId();
+            string coverExtension = _Profile.LibraryEntry.GetCoverExtension(false);
+            long artworkId = _Profile.LibraryEntry.GetArtworkId();
+            string artworkExtension = _Profile.LibraryEntry.GetArtworkExtension(false);
+            long logoId = _Profile.LibraryEntry.GetLogoId();
+            string logoExtension = _Profile.LibraryEntry.GetLogoExtension(false);
+
+            CancellationTokenSource cancellationTokenSource = new();
+            visualsLoadCancellationTokenSource = cancellationTokenSource;
+
+            _ = LoadImagesAsync(id, coverId, coverExtension, artworkId, artworkExtension, logoId, logoExtension, cancellationTokenSource);
+        }
+
+        private async Task LoadImagesAsync(long id, long coverId, string coverExtension, long artworkId, string artworkExtension, long logoId, string logoExtension, CancellationTokenSource cancellationTokenSource)
+        {
+            try
+            {
+                CancellationToken cancellationToken = cancellationTokenSource.Token;
+
+                (BitmapImage? cover, BitmapImage? artwork, BitmapImage? logo) = await Task.Run(() =>
+                {
+                    BitmapImage? cover = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.cover, coverId, coverExtension);
+                    BitmapImage? artwork = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.artwork, artworkId, artworkExtension);
+                    BitmapImage? logo = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.logo, logoId, logoExtension);
+                    return (cover, artwork, logo);
+                }, cancellationToken).ConfigureAwait(false);
+
+                if (cancellationToken.IsCancellationRequested || !ReferenceEquals(visualsLoadCancellationTokenSource, cancellationTokenSource))
+                    return;
+
+                await UIHelper.TryInvokeAsync(() =>
+                {
+                    if (cancellationToken.IsCancellationRequested || !ReferenceEquals(visualsLoadCancellationTokenSource, cancellationTokenSource))
+                        return;
+
+                    Cover = cover;
+                    Artwork = artwork;
+                    Logo = logo;
+                }, DispatcherPriority.Render).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private void CancelPendingVisualLoad()
+        {
+            CancellationTokenSource? cancellationTokenSource = visualsLoadCancellationTokenSource;
+            visualsLoadCancellationTokenSource = null;
+
+            if (cancellationTokenSource is null)
+                return;
+
+            try
+            {
+                cancellationTokenSource.Cancel();
+            }
+            catch
+            {
+            }
+            finally
+            {
+                cancellationTokenSource.Dispose();
+            }
+        }
+
+        public void SetVisualsVisible(bool isVisible)
+        {
+            if (!deferVisualLoading)
+                return;
+
+            if (areVisualsVisible == isVisible)
+                return;
+
+            areVisualsVisible = isVisible;
+            RefreshImages();
         }
 
         public override string ToString()
@@ -176,10 +267,12 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public ProfileViewModel(Profile profile, bool isQuickTools)
+        public ProfileViewModel(Profile profile, bool isQuickTools, bool deferVisualLoading = false)
         {
-            Profile = profile;
             IsQuickTools = isQuickTools;
+            this.deferVisualLoading = deferVisualLoading;
+            areVisualsVisible = !deferVisualLoading;
+            Profile = profile;
 
             ManagerFactory.processManager.ProcessStarted += ProcessManager_ProcessStarted;
             ManagerFactory.processManager.ProcessStopped += ProcessManager_ProcessStopped;
@@ -346,6 +439,9 @@ namespace HandheldCompanion.ViewModels
 
         public override void Dispose()
         {
+            SetVisualsVisible(false);
+            CancelPendingVisualLoad();
+
             ManagerFactory.processManager.ProcessStarted -= ProcessManager_ProcessStarted;
             ManagerFactory.processManager.ProcessStopped -= ProcessManager_ProcessStopped;
 
