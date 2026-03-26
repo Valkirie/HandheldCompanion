@@ -43,6 +43,7 @@ public static class OSDManager
     public static OSD OnScreenDisplay => OnScreenDisplays.FirstOrDefault(o => o.Key == OnScreenAppEntry.ProcessId).Value;
     public static AppEntry OnScreenAppEntry;
     private static List<string> Content = new();
+    private static readonly OverlayManager _overlayManager = new();
 
     static OSDManager()
     {
@@ -214,11 +215,10 @@ public static class OSDManager
 
     private static string Draw(int processId)
     {
-        OverlayManager overlayManager = new();
-        Content = [];
+        Content.Clear();
         try
         {
-            var config = overlayManager.GetConfig(OverlayLevel);
+            var config = _overlayManager.GetConfig(OverlayLevel);
             if (config is null)
             {
                 goto Exit;

@@ -111,6 +111,7 @@ namespace HandheldCompanion.Utils
 
         // ---------- Steering helpers ----------
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Steering(float DeviceAngle, float DeviceAngleMax, float ToThePowerOf, float DeadzoneAngle)
         {
             float result = AngleToJoystickPos(DeviceAngle, DeviceAngleMax, DeadzoneAngle);
@@ -118,6 +119,7 @@ namespace HandheldCompanion.Utils
             return -(result * SHORT_MAX_F);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float AngleToJoystickPos(float Angle, float DeviceAngleMax, float DeadzoneAngle)
         {
             float result = ((MathF.Abs(Angle) - DeadzoneAngle) / (DeviceAngleMax - DeadzoneAngle)) * DeviceAngleMax;
@@ -125,9 +127,10 @@ namespace HandheldCompanion.Utils
             return (Angle < 0f) ? -result : result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float DirectionRespectingPowerOf(float JoystickPos, float Power)
         {
-            float result = (float)Math.Pow(Math.Abs(JoystickPos), Power);
+            float result = MathF.Pow(MathF.Abs(JoystickPos), Power);
             return (JoystickPos < 0f) ? -result : result;
         }
 
@@ -216,6 +219,7 @@ namespace HandheldCompanion.Utils
         /// <summary>
         /// Convenience overload: deadzones as percentages [0..100].
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 CrossDeadzoneMapping(Vector2 thumbValue, int xDeadzonePercent, int yDeadzonePercent)
             => CrossDeadzoneMapping(thumbValue, xDeadzonePercent / 100f, yDeadzonePercent / 100f);
 
@@ -414,32 +418,24 @@ namespace HandheldCompanion.Utils
         public static DeflectionDirection GetDeflectionDirection(Vector2 vector, float threshold)
         {
             if (vector.LengthSquared() < threshold * threshold)
-            {
                 return 0;
-            }
 
-            double angle = Math.Atan2(vector.Y, vector.X) * (180.0 / Math.PI);
-            double shiftedAngle = angle + 22.5;
+            float angle = MathF.Atan2(vector.Y, vector.X) * RAD2DEG;
+            float shiftedAngle = angle + 22.5f;
             if (shiftedAngle < 0)
-            {
-                shiftedAngle += 360;
-            }
+                shiftedAngle += 360f;
 
-            int sector = (int)(shiftedAngle / 45.0);
-
-            var directions = new[]
+            return ((int)(shiftedAngle / 45f)) switch
             {
-                DeflectionDirection.Right,
-                DeflectionDirection.Up | DeflectionDirection.Right,
-                DeflectionDirection.Up,
-                DeflectionDirection.Up | DeflectionDirection.Left,
-                DeflectionDirection.Left,
-                DeflectionDirection.Down | DeflectionDirection.Left,
-                DeflectionDirection.Down,
-                DeflectionDirection.Down | DeflectionDirection.Right
+                0 => DeflectionDirection.Right,
+                1 => DeflectionDirection.Up | DeflectionDirection.Right,
+                2 => DeflectionDirection.Up,
+                3 => DeflectionDirection.Up | DeflectionDirection.Left,
+                4 => DeflectionDirection.Left,
+                5 => DeflectionDirection.Down | DeflectionDirection.Left,
+                6 => DeflectionDirection.Down,
+                _ => DeflectionDirection.Down | DeflectionDirection.Right,
             };
-
-            return directions[sector];
         }
     }
 }

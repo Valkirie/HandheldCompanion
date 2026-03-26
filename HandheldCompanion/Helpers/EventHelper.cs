@@ -14,15 +14,18 @@ namespace HandheldCompanion.Helpers
             Delegate[] invocation = handlers.GetInvocationList();
 
             // Single thread-pool hop; iterate all handlers on that worker.
-            ThreadPool.UnsafeQueueUserWorkItem(static s =>
-            {
-                var (inv, st, mapped) = ((Delegate[], ControllerState, bool))s!;
-                for (int i = 0; i < inv.Length; i++)
+            // Generic overload avoids boxing the ValueTuple state.
+            ThreadPool.UnsafeQueueUserWorkItem(
+                static s =>
                 {
-                    var h = (InputsUpdatedEventHandler)inv[i];
-                    try { h(st, mapped); } catch { /* swallow or metric */ }
-                }
-            }, (invocation, state, isMapped), preferLocal: true);
+                    for (int i = 0; i < s.inv.Length; i++)
+                    {
+                        var h = (InputsUpdatedEventHandler)s.inv[i];
+                        try { h(s.st, s.mapped); } catch { /* swallow or metric */ }
+                    }
+                },
+                (inv: invocation, st: state, mapped: isMapped),
+                preferLocal: true);
         }
     }
 

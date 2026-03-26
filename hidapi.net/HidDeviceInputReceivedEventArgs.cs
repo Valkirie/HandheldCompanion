@@ -12,5 +12,12 @@ namespace hidapi
             Device = device;
             Buffer = (byte[])buffer.Clone();
         }
+
+        // For pre-allocated instances inside HidDevice — takes ownership, no clone.
+        internal HidDeviceInputReceivedEventArgs(HidDevice device, byte[] ownedBuffer, bool _)
+        {
+            Device = device;
+            Buffer = ownedBuffer;
+        }
     }
 }

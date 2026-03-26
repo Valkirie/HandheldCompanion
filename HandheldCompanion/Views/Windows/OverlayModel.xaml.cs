@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Timers;
-using System.Windows.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -46,7 +45,8 @@ public partial class OverlayModel : OverlayWindow
 
     private OverlayModelMode Modelmode;
 
-    private Transform3DGroup Transform3DGroupModelPrev = new();
+    private static readonly ButtonFlags[] ButtonFlagsValues = Enum.GetValues<ButtonFlags>();
+    private volatile bool _isVisible;
 
     private float ShoulderButtonsAngleDegLeftPrev;
     private float ShoulderButtonsAngleDegRightPrev;
@@ -282,6 +282,7 @@ public partial class OverlayModel : OverlayWindow
         UIHelper.TryInvoke(() =>
         {
             this.Visibility = visibility;
+            _isVisible = visibility == Visibility.Visible;
         });
     }
 
@@ -293,6 +294,7 @@ public partial class OverlayModel : OverlayWindow
             switch (Visibility)
             {
                 case Visibility.Visible:
+                    _isVisible = false;
                     UpdateTimer.Stop();
                     Hide();
                     break;
@@ -300,6 +302,7 @@ public partial class OverlayModel : OverlayWindow
                 case Visibility.Hidden:
                     if (CurrentModel is null)
                         UpdateModel();
+                    _isVisible = true;
                     UpdateTimer.Start();
                     try { Show(); } catch { /* ItemsRepeater might have a NaN DesiredSize */ }
                     break;
@@ -314,12 +317,12 @@ public partial class OverlayModel : OverlayWindow
     private RotateTransform3D DeviceRotateTransformFaceCameraY;
     private RotateTransform3D DeviceRotateTransformFaceCameraZ;
 
-    private static MadgwickAHRS madgwickAHRS;
+    private MadgwickAHRS madgwickAHRS;
 
     public void UpdateReport(ControllerState Inputs, GamepadMotion gamepadMotion, float deltaSeconds)
     {
         // Update only if 3D overlay is visible
-        if (Visibility != Visibility.Visible)
+        if (!_isVisible)
             return;
 
         this.Inputs = Inputs;
@@ -329,7 +332,7 @@ public partial class OverlayModel : OverlayWindow
             return;
 
         // Reset device pose if all facebuttons are pressed at the same time
-        if (Inputs.ButtonState.Buttons.Intersect(resetFlags).Count() == 4)
+        if (resetFlags.All(f => Inputs.ButtonState[f]))
             ResetModelPose(gamepadMotion);
 
         // Rotate for different coordinate system of 3D model and motion algorithm
@@ -373,19 +376,37 @@ public partial class OverlayModel : OverlayWindow
 
     private void DrawModel(object? sender, EventArgs e)
     {
-        // Skip if we don't have a model
-        if (CurrentModel is null)
+        // Skip if we don't have a model or overlay is not visible
+        if (CurrentModel is null || !_isVisible)
             return;
-
-        // Update only if 3D overlay is visible
-        if (Visibility != Visibility.Visible)
-            return;
-
-        HighLightButtons();
 
         // UI thread
         UIHelper.TryInvoke(() =>
         {
+            // Snapshot current model to avoid race conditions during model switches
+            IModel model = CurrentModel;
+            if (model is null)
+                return;
+
+            // Color buttons based on pressed state
+            foreach (ButtonFlags button in ButtonFlagsValues)
+            {
+                if (!model.ButtonMap.TryGetValue(button, out var buttonModels))
+                    continue;
+
+                foreach (Model3DGroup model3DGroup in buttonModels)
+                {
+                    GeometryModel3D? model3D = model3DGroup.Children[0] as GeometryModel3D;
+                    if (model3D is null || model3D.Material is not DiffuseMaterial)
+                        continue;
+
+                    bool hasButton = Inputs.ButtonState is not null && Inputs.ButtonState[button];
+                    model3D.Material = hasButton ?
+                        model3D.BackMaterial = model.HighlightMaterials[model3DGroup] :
+                        model3D.BackMaterial = model.DefaultMaterials[model3DGroup];
+                }
+            }
+
             // Define transformation group for model
             var Transform3DGroupModel = new Transform3DGroup();
 
@@ -435,12 +456,7 @@ public partial class OverlayModel : OverlayWindow
                 Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraZ);
             }
 
-            // Transform model group if there are any changes
-            if (Transform3DGroupModel != Transform3DGroupModelPrev)
-            {
-                ModelVisual3D.Content.Transform = Transform3DGroupModel;
-                Transform3DGroupModelPrev = Transform3DGroupModel;
-            }
+            ModelVisual3D.Content.Transform = Transform3DGroupModel;
 
             // Upward rotation for shoulder buttons angle to compensate for visiblity
             float modelPoseXDeg = 0.0f;
@@ -470,104 +486,59 @@ public partial class OverlayModel : OverlayWindow
             {
                 ShoulderButtonsAngleDeg = Math.Clamp(90.0f - 1 * modelPoseXDeg, 90.0f, 180.0f);
             }
-            else if (modelPoseXDeg >= 0 && modelPoseXDeg <= 45.0f)
+            else if (modelPoseXDeg <= 45.0f)
             {
                 ShoulderButtonsAngleDeg = 90.0f - 2 * modelPoseXDeg;
-            }
-            else if (modelPoseXDeg < 45.0f)
-            {
-                ShoulderButtonsAngleDeg = 0.0f;
             }
 
             // Update shoulder buttons left, rotate into view angle, trigger angle and trigger gradient color
             UpdateShoulderButtons(
-                ref CurrentModel.LeftShoulderTrigger,
+                ref model.LeftShoulderTrigger,
                 ref TriggerAngleShoulderLeft,
-                CurrentModel.TriggerMaxAngleDeg,
+                model.TriggerMaxAngleDeg,
                 AxisFlags.L2,
                 ShoulderButtonsAngleDeg,
                 ref ShoulderTriggerAngleLeftPrev,
                 ref ShoulderButtonsAngleDegLeftPrev,
-                CurrentModel.DefaultMaterials[CurrentModel.LeftShoulderTrigger],
-                CurrentModel.HighlightMaterials
+                model.DefaultMaterials[model.LeftShoulderTrigger],
+                model.HighlightMaterials
             );
 
             // Update shoulder buttons right, rotate into view angle, trigger angle and trigger gradient color
             UpdateShoulderButtons(
-                ref CurrentModel.RightShoulderTrigger,
+                ref model.RightShoulderTrigger,
                 ref TriggerAngleShoulderRight,
-                CurrentModel.TriggerMaxAngleDeg,
+                model.TriggerMaxAngleDeg,
                 AxisFlags.R2,
                 ShoulderButtonsAngleDeg,
                 ref ShoulderTriggerAngleRightPrev,
                 ref ShoulderButtonsAngleDegRightPrev,
-                CurrentModel.DefaultMaterials[CurrentModel.RightShoulderTrigger],
-                CurrentModel.HighlightMaterials
+                model.DefaultMaterials[model.RightShoulderTrigger],
+                model.HighlightMaterials
             );
 
             // Update left joystick
             UpdateJoystick(
                 AxisFlags.LeftStickX,
                 AxisFlags.LeftStickY,
-                CurrentModel.LeftThumbRing,
-                CurrentModel.LeftThumb,
-                CurrentModel.JoystickRotationPointCenterLeftMillimeter,
-                CurrentModel.JoystickMaxAngleDeg,
-                CurrentModel.DefaultMaterials,
-                CurrentModel.HighlightMaterials);
+                model.LeftThumbRing,
+                model.LeftThumb,
+                model.JoystickRotationPointCenterLeftMillimeter,
+                model.JoystickMaxAngleDeg,
+                model.DefaultMaterials,
+                model.HighlightMaterials);
 
             // Update right joystick
             UpdateJoystick(
                 AxisFlags.RightStickX,
                 AxisFlags.RightStickY,
-                CurrentModel.RightThumbRing,
-                CurrentModel.RightThumb,
-                CurrentModel.JoystickRotationPointCenterRightMillimeter,
-                CurrentModel.JoystickMaxAngleDeg,
-                CurrentModel.DefaultMaterials,
-                CurrentModel.HighlightMaterials);
+                model.RightThumbRing,
+                model.RightThumb,
+                model.JoystickRotationPointCenterRightMillimeter,
+                model.JoystickMaxAngleDeg,
+                model.DefaultMaterials,
+                model.HighlightMaterials);
         }, DispatcherPriority.Render);
-    }
-
-    private void HighLightButtons()
-    {
-        // Color buttons based on pressed state
-        foreach (var button in (ButtonFlags[])Enum.GetValues(typeof(ButtonFlags)))
-        {
-            // Check if the button exists for model, if not, exit foreach
-            if (!CurrentModel.ButtonMap.ContainsKey(button))
-                continue;
-
-            // Execute the following code on the UI thread
-            UIHelper.TryInvoke(() =>
-            {
-                // Todo, there is a bug here when switching 3D overlay type that
-                // things are checked from a controller that does not exist or opposite
-                // Need to interlock this highlight button thing to not be called when changing controllers?
-                // Alternatively, could be an issue with the UI thread still doing it's thing, so stop first?
-                // Reproduce by switching several times
-                // "System.Collections.Generic.KeyNotFoundException: 'The given key 'Special' was not present in the dictionary.'
-
-                // Iterate over each 3D model associated with the current button
-                foreach (Model3DGroup model3DGroup in CurrentModel.ButtonMap[button])
-                {
-                    GeometryModel3D model3D = (GeometryModel3D)model3DGroup.Children.FirstOrDefault();
-
-                    // Skip if there is no 3D model or if we are dealing with non diffuse material
-                    if (model3D is null || model3D.Material is not DiffuseMaterial)
-                        continue;
-
-                    // Update the model material based on the button state
-                    // If the button is pressed, use the highlight material;
-                    // otherwise, use the default material
-                    bool hasButton = Inputs.ButtonState is not null && Inputs.ButtonState[button];
-
-                    model3D.Material = hasButton ?
-                    model3D.BackMaterial = CurrentModel.HighlightMaterials[model3DGroup] :
-                    model3D.BackMaterial = CurrentModel.DefaultMaterials[model3DGroup];
-                }
-            }, DispatcherPriority.Render);
-        }
     }
 
     private DiffuseMaterial GradientHighlight(Material defaultMaterial, Material highlightMaterial, float factor)
@@ -606,7 +577,9 @@ public partial class OverlayModel : OverlayWindow
     Dictionary<Model3DGroup, Material> defaultMaterials,
     Dictionary<Model3DGroup, Material> highlightMaterials)
     {
-        GeometryModel3D geometryModel3D = thumbRing.Children[0] as GeometryModel3D;
+        GeometryModel3D? geometryModel3D = thumbRing.Children[0] as GeometryModel3D;
+        if (geometryModel3D is null)
+            return;
 
         float X = Inputs.AxisState is not null ? Inputs.AxisState[stickX] : 0.0f;
         float Y = Inputs.AxisState is not null ? Inputs.AxisState[stickY] : 0.0f;
@@ -621,14 +594,14 @@ public partial class OverlayModel : OverlayWindow
                 Math.Abs(1 * X / short.MaxValue),
                 Math.Abs(1 * Y / short.MaxValue));
 
-            geometryModel3D.Material = GradientHighlight(
+            geometryModel3D?.Material = GradientHighlight(
                 defaultMaterials[thumbRing],
                 highlightMaterials[thumbRing],
                 gradientFactor);
         }
         else
         {
-            geometryModel3D.Material = defaultMaterials[thumbRing];
+            geometryModel3D?.Material = defaultMaterials[thumbRing];
         }
 
         // Define and compute rotation angles
@@ -704,17 +677,19 @@ public partial class OverlayModel : OverlayWindow
         Dictionary<Model3DGroup, Material> highlightMaterials)
     {
         GeometryModel3D? geometryModel3D = shoulderTriggerModel.Children[0] as GeometryModel3D;
-        byte triggerValue = (byte)(Inputs.AxisState is not null ? (Inputs.AxisState[triggerFlag] / (float)byte.MaxValue) : 0.0f);
+        if (geometryModel3D is null)
+            return;
+
+        float triggerValue = Inputs.AxisState is not null ? (Inputs.AxisState[triggerFlag] / (float)byte.MaxValue) : 0.0f;
 
         // Adjust trigger color gradient based on amount of pull
         if (triggerValue > 0)
         {
-            float gradientFactor = 1.0f * triggerValue;
-            geometryModel3D.Material = GradientHighlight(defaultMaterial, highlightMaterials[shoulderTriggerModel], gradientFactor);
+            geometryModel3D?.Material = GradientHighlight(defaultMaterial, highlightMaterials[shoulderTriggerModel], triggerValue);
         }
         else
         {
-            geometryModel3D.Material = defaultMaterial;
+            geometryModel3D?.Material = defaultMaterial;
         }
 
         // Determine trigger angle pull in degree

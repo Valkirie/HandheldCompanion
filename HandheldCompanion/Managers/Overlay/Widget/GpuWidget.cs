@@ -4,10 +4,9 @@ namespace HandheldCompanion.Managers.Overlay.Widget;
 
 public class GpuWidget : IWidget
 {
-    private readonly GPU? _gpu = GPUManager.GetCurrent();
-
     public void Build(OverlayEntry entry, short? level = null)
     {
+        GPU? _gpu = GPUManager.GetCurrent();
         if (_gpu == null)
         {
             return;

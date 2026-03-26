@@ -395,10 +395,10 @@ namespace HandheldCompanion.ViewModels
 
         public OverlayPageViewModel()
         {
-            updateTimer = new Timer(updateInterval) { Enabled = true };
+            updateTimer = new Timer(updateInterval) { Enabled = false };
             updateTimer.Elapsed += UpdateTimer_Elapsed;
 
-            framerateTimer = new Timer(framerateInterval) { Enabled = true };
+            framerateTimer = new Timer(framerateInterval) { Enabled = false };
             framerateTimer.Elapsed += FramerateTimer_Elapsed;
 
             CPUName = IDevice.GetCurrent().Processor;
@@ -683,8 +683,24 @@ namespace HandheldCompanion.ViewModels
             GPUPower = (float)Math.Round((float)value);
         }
 
+        public void OnNavigatedTo()
+        {
+            updateTimer.Start();
+            framerateTimer.Start();
+        }
+
+        public void OnNavigatedFrom()
+        {
+            updateTimer.Stop();
+            framerateTimer.Stop();
+        }
+
         public override void Dispose()
         {
+            updateTimer.Stop();
+            updateTimer.Dispose();
+            framerateTimer.Stop();
+            framerateTimer.Dispose();
             ManagerFactory.gpuManager.Hooked -= GPUManager_Hooked;
             ManagerFactory.gpuManager.Initialized -= GpuManager_Initialized;
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;

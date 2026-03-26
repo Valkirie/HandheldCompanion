@@ -1,4 +1,3 @@
-using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Managers.Overlay;
 using HandheldCompanion.Managers.Overlay.Strategy;
 using System;
@@ -8,9 +7,7 @@ namespace HandheldCompanion.Managers;
 
 public class OverlayManager
 {
-    private readonly GPU? _gpu = GPUManager.GetCurrent();
-
-    private readonly Dictionary<int, IOverlayStrategy> _configs = new()
+    private static readonly Dictionary<int, IOverlayStrategy> _configs = new()
     {
         { 0, new DisabledStrategy() },
         { 1, new MinimalStrategy() },
@@ -22,17 +19,8 @@ public class OverlayManager
 
     public string? GetConfig(int level)
     {
-        if (_configs.Count == 0)
-        {
-            return null;
-        }
-
-        if (!_configs.ContainsKey(level))
-        {
+        if (!_configs.TryGetValue(level, out var config))
             throw new InvalidOperationException("Unknown overlay level " + level);
-        }
-
-        _configs.TryGetValue(level, out var config);
 
         return config?.GetConfig();
     }

@@ -11,13 +11,15 @@ namespace hidapi
     {
         private ushort _vid, _pid, _inputBufferLen;
         private byte[] _buffer;
+        private byte[] _writeBuffer;
+        private byte[] _readReturnBuffer;
         private short _mi;
         private IntPtr _deviceHandle;
         private object _lock = new object();
         private bool _reading = false;
         private bool _halting = false;
         private Thread _readThread;
-        private long MillisecondsSinceEpoch => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        private HidDeviceInputReceivedEventArgs _eventArgs;
         public bool IsDeviceValid => _deviceHandle != IntPtr.Zero;
         public bool Reading => _reading;
         public Func<HidDeviceInputReceivedEventArgs, Task> OnInputReceived;
@@ -28,6 +30,9 @@ namespace hidapi
             _pid = productId;
             _inputBufferLen = inputBufferLen;
             _buffer = new byte[inputBufferLen];
+            _writeBuffer = new byte[inputBufferLen];
+            _readReturnBuffer = new byte[inputBufferLen];
+            _eventArgs = new HidDeviceInputReceivedEventArgs(this, new byte[inputBufferLen], true);
             _mi = mi;
         }
 
@@ -59,25 +64,38 @@ namespace hidapi
                 IntPtr devEnum = HidApiNative.hid_enumerate(_vid, _pid);
                 IntPtr deviceInfo = devEnum;
 
-                while (deviceInfo != IntPtr.Zero)
+                try
                 {
-                    HidDeviceInfo hidDeviceInfo = new HidDeviceInfo(deviceInfo);
-                    if (_mi != -1 && _mi != GetMI(hidDeviceInfo.Path))
-                        goto next;
-
-                    _deviceHandle = HidApiNative.hid_open_path(hidDeviceInfo.Path);
-                    if (_deviceHandle != IntPtr.Zero)
+                    while (deviceInfo != IntPtr.Zero)
                     {
-                        ushort inputReportLength = GetInputReportByteLength(hidDeviceInfo.Path);
-                        if (inputReportLength == _inputBufferLen)
-                            break;
-                    }
+                        HidDeviceInfo hidDeviceInfo = new HidDeviceInfo(deviceInfo);
+                        if (_mi != -1 && _mi != GetMI(hidDeviceInfo.Path))
+                            goto next;
 
-                next:
-                    deviceInfo = hidDeviceInfo.NextDevicePtr;
+                        _deviceHandle = HidApiNative.hid_open_path(hidDeviceInfo.Path);
+                        if (_deviceHandle != IntPtr.Zero)
+                        {
+                            try
+                            {
+                                ushort inputReportLength = GetInputReportByteLength(hidDeviceInfo.Path);
+                                if (inputReportLength == _inputBufferLen)
+                                    break;
+                            }
+                            catch { }
+
+                            HidApiNative.hid_close(_deviceHandle);
+                            _deviceHandle = IntPtr.Zero;
+                        }
+
+                    next:
+                        deviceInfo = hidDeviceInfo.NextDevicePtr;
+                    }
+                }
+                finally
+                {
+                    HidApiNative.hid_free_enumeration(devEnum);
                 }
 
-                HidApiNative.hid_free_enumeration(devEnum);
                 return _deviceHandle != IntPtr.Zero;
             }
         }
@@ -126,7 +144,8 @@ namespace hidapi
             lock (_lock)
             {
                 int length = HidApiNative.hid_read_timeout(_deviceHandle, _buffer, (uint)_buffer.Length, timeout);
-                return _buffer;
+                Buffer.BlockCopy(_buffer, 0, _readReturnBuffer, 0, _buffer.Length);
+                return _readReturnBuffer;
             }
         }
 
@@ -159,16 +178,12 @@ namespace hidapi
                 byte[] response = new byte[_inputBufferLen + 1];
 
                 int err = HidApiNative.hid_send_feature_report(_deviceHandle, request_full, (uint)(_inputBufferLen + 1));
-                /*
                 if (err < 0)
                     throw new Exception($"Could not send report to hid device. Error: {err}");
-                */
 
                 err = HidApiNative.hid_get_feature_report(_deviceHandle, response, (uint)(_inputBufferLen + 1));
-                /*
                 if (err < 0)
                     throw new Exception($"Could not get report from hid device. Error: {err}");
-                */
 
                 return response;
             }
@@ -184,9 +199,10 @@ namespace hidapi
 
             lock (_lock)
             {
-                Array.Copy(data, _buffer, data.Length);
+                Array.Clear(_writeBuffer, 0, _writeBuffer.Length);
+                Array.Copy(data, _writeBuffer, data.Length);
 
-                int err = HidApiNative.hid_write(_deviceHandle, _buffer, (uint)_buffer.Length);
+                int err = HidApiNative.hid_write(_deviceHandle, _writeBuffer, (uint)_writeBuffer.Length);
                 if (err < 0)
                     throw new Exception($"Failed to write to HID device. Error: {err}");
             }
@@ -196,13 +212,23 @@ namespace hidapi
         {
             while (_reading && !_halting)
             {
-                int len = Read(_buffer);
-                if (len > 0 && OnInputReceived != null)
-                    _ = OnInputReceived(new HidDeviceInputReceivedEventArgs(this, _buffer));
-                else if (len == 0)
-                    continue;
-                else
-                    EndRead();
+                try
+                {
+                    int len = Read(_buffer);
+                    if (len > 0 && OnInputReceived != null)
+                    {
+                        Buffer.BlockCopy(_buffer, 0, _eventArgs.Buffer, 0, _buffer.Length);
+                        _ = OnInputReceived(_eventArgs);
+                    }
+                    else if (len < 0)
+                    {
+                        _reading = false;
+                    }
+                }
+                catch
+                {
+                    _reading = false;
+                }
             }
         }
 
