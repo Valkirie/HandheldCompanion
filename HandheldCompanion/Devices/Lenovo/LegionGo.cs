@@ -101,6 +101,27 @@ public class LegionGo : IDevice
         }
     }
 
+    protected uint[] GetFanTable()
+    {
+        try
+        {
+            return WMI.Call<uint[]>("root\\WMI",
+                "SELECT * FROM LENOVO_FAN_METHOD",
+                "Fan_Get_Table",
+                new() 
+                { 
+                    { "FanID", 1 },
+                    { "SensorID", 0 }
+                },
+                pdc => (uint[])pdc["FanTable"].Value);
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Error in GetFanTable: {0}", ex.Message);
+            return new uint[10];
+        }
+    }
+
     protected void SetFanTable(FanTable fanTable)
     {
         try
@@ -346,6 +367,7 @@ public class LegionGo : IDevice
     private FanTable defaultFanTable = new([44, 48, 55, 60, 71, 79, 87, 87, 100, 100]);
     protected override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
+        uint[] temp = GetFanTable();
         if (profile.FanProfile.fanMode != FanMode.Hardware)
         {
             // default fanTable is ushort[] { 44, 48, 55, 60, 71, 79, 87, 87, 100, 100 }
