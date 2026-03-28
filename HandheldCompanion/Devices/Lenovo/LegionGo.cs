@@ -367,11 +367,15 @@ public class LegionGo : IDevice
     private FanTable defaultFanTable = new([44, 48, 55, 60, 71, 79, 87, 87, 100, 100]);
     protected override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
-        uint[] temp = GetFanTable();
+        // get current fan mode and set it to the desired one if different
+        // this has to happen before we try setting custom fan/TDP ?
+        int currentFanMode = GetSmartFanMode();
+        if (Enum.IsDefined(typeof(LegionMode), profile.OEMPowerMode) && currentFanMode != profile.OEMPowerMode)
+            SetSmartFanMode(profile.OEMPowerMode);
+
+        uint[] currentFanSpeeds = GetFanTable();
         if (profile.FanProfile.fanMode != FanMode.Hardware)
         {
-            // default fanTable is ushort[] { 44, 48, 55, 60, 71, 79, 87, 87, 100, 100 }
-
             // prepare array of fan speeds
             ushort[] fanSpeeds = profile.FanProfile.fanSpeeds.Skip(1).Take(10).Select(speed => (ushort)speed).ToArray();
             FanTable fanTable = new(fanSpeeds);
@@ -385,11 +389,6 @@ public class LegionGo : IDevice
             // todo: check if custom was applied before ?
             SetFanTable(defaultFanTable);
         }
-
-        // get current fan mode and set it to the desired one if different
-        int currentFanMode = GetSmartFanMode();
-        if (Enum.IsDefined(typeof(LegionMode), profile.OEMPowerMode) && currentFanMode != profile.OEMPowerMode)
-            SetSmartFanMode(profile.OEMPowerMode);
     }
 
     private void ControllerManager_ControllerPlugged(IController Controller, bool IsPowerCycling)
