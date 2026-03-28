@@ -245,7 +245,7 @@ public static class LibraryItemVisibilityBehavior
             if (e.VerticalChange == 0 && e.HorizontalChange == 0 && e.ViewportHeightChange == 0 && e.ViewportWidthChange == 0)
                 return;
 
-            ScheduleRefresh();
+            ScheduleRefresh(immediate: true);
         }
 
         private void ScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)

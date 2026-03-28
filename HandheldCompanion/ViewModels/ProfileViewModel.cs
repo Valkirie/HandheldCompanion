@@ -35,6 +35,17 @@ namespace HandheldCompanion.ViewModels
         private readonly bool deferVisualLoading;
         private bool areVisualsVisible = true;
         private CancellationTokenSource? visualsLoadCancellationTokenSource;
+        private ImageRequestKey? currentImageRequestKey;
+        private bool visualsLoaded;
+
+        private readonly record struct ImageRequestKey(
+            long Id,
+            long CoverId,
+            string CoverExtension,
+            long ArtworkId,
+            string ArtworkExtension,
+            long LogoId,
+            string LogoExtension);
 
         private Profile _Profile;
         public Profile Profile
@@ -61,39 +72,53 @@ namespace HandheldCompanion.ViewModels
             Cover = LibraryResources.MissingCover;
             Artwork = LibraryResources.MissingArtwork;
             Logo = null;
+            visualsLoaded = false;
         }
 
         private void RefreshImages()
         {
-            CancelPendingVisualLoad();
-
             if (deferVisualLoading && !areVisualsVisible)
             {
+                CancelPendingVisualLoad();
                 ApplyPlaceholderImages();
                 return;
             }
 
             if (_Profile.LibraryEntry is null)
             {
+                CancelPendingVisualLoad();
+                currentImageRequestKey = null;
                 ApplyPlaceholderImages();
                 return;
             }
 
-            long id = _Profile.LibraryEntry.Id;
-            long coverId = _Profile.LibraryEntry.GetCoverId();
-            string coverExtension = _Profile.LibraryEntry.GetCoverExtension(false);
-            long artworkId = _Profile.LibraryEntry.GetArtworkId();
-            string artworkExtension = _Profile.LibraryEntry.GetArtworkExtension(false);
-            long logoId = _Profile.LibraryEntry.GetLogoId();
-            string logoExtension = _Profile.LibraryEntry.GetLogoExtension(false);
+            ImageRequestKey nextRequestKey = new(
+                _Profile.LibraryEntry.Id,
+                _Profile.LibraryEntry.GetCoverId(),
+                _Profile.LibraryEntry.GetCoverExtension(false),
+                _Profile.LibraryEntry.GetArtworkId(),
+                _Profile.LibraryEntry.GetArtworkExtension(false),
+                _Profile.LibraryEntry.GetLogoId(),
+                _Profile.LibraryEntry.GetLogoExtension(false));
+
+            if (currentImageRequestKey == nextRequestKey && visualsLoaded)
+                return;
+
+            bool requestChanged = currentImageRequestKey != nextRequestKey;
+            currentImageRequestKey = nextRequestKey;
+
+            CancelPendingVisualLoad();
+
+            if (requestChanged)
+                ApplyPlaceholderImages();
 
             CancellationTokenSource cancellationTokenSource = new();
             visualsLoadCancellationTokenSource = cancellationTokenSource;
 
-            _ = LoadImagesAsync(id, coverId, coverExtension, artworkId, artworkExtension, logoId, logoExtension, cancellationTokenSource);
+            _ = LoadImagesAsync(nextRequestKey, cancellationTokenSource);
         }
 
-        private async Task LoadImagesAsync(long id, long coverId, string coverExtension, long artworkId, string artworkExtension, long logoId, string logoExtension, CancellationTokenSource cancellationTokenSource)
+        private async Task LoadImagesAsync(ImageRequestKey requestKey, CancellationTokenSource cancellationTokenSource)
         {
             try
             {
@@ -101,23 +126,28 @@ namespace HandheldCompanion.ViewModels
 
                 (BitmapImage? cover, BitmapImage? artwork, BitmapImage? logo) = await Task.Run(() =>
                 {
-                    BitmapImage? cover = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.cover, coverId, coverExtension);
-                    BitmapImage? artwork = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.artwork, artworkId, artworkExtension);
-                    BitmapImage? logo = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.logo, logoId, logoExtension);
+                    BitmapImage? cover = ManagerFactory.libraryManager.GetGameArt(requestKey.Id, LibraryType.cover, requestKey.CoverId, requestKey.CoverExtension);
+                    BitmapImage? artwork = ManagerFactory.libraryManager.GetGameArt(requestKey.Id, LibraryType.artwork, requestKey.ArtworkId, requestKey.ArtworkExtension);
+                    BitmapImage? logo = ManagerFactory.libraryManager.GetGameArt(requestKey.Id, LibraryType.logo, requestKey.LogoId, requestKey.LogoExtension);
                     return (cover, artwork, logo);
                 }, cancellationToken).ConfigureAwait(false);
 
-                if (cancellationToken.IsCancellationRequested || !ReferenceEquals(visualsLoadCancellationTokenSource, cancellationTokenSource))
+                if (cancellationToken.IsCancellationRequested ||
+                    !ReferenceEquals(visualsLoadCancellationTokenSource, cancellationTokenSource) ||
+                    currentImageRequestKey != requestKey)
                     return;
 
                 await UIHelper.TryInvokeAsync(() =>
                 {
-                    if (cancellationToken.IsCancellationRequested || !ReferenceEquals(visualsLoadCancellationTokenSource, cancellationTokenSource))
+                    if (cancellationToken.IsCancellationRequested ||
+                        !ReferenceEquals(visualsLoadCancellationTokenSource, cancellationTokenSource) ||
+                        currentImageRequestKey != requestKey)
                         return;
 
                     Cover = cover;
                     Artwork = artwork;
                     Logo = logo;
+                    visualsLoaded = true;
                 }, DispatcherPriority.Render).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
