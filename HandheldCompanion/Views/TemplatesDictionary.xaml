@@ -260,6 +260,8 @@
                                     <Grid>
                                         <Image
                                             x:Name="MainImage"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
                                             RenderTransformOrigin="0.5,0.5"
                                             Source="{Binding Artwork, NotifyOnTargetUpdated=True}"
                                             Stretch="UniformToFill"
@@ -378,61 +380,96 @@
                     </ControlTemplate>
                 </Button.Template>
             </Button>
-            <Button
-                Margin="0,0,0,60"
-                Padding="0"
+
+            <StackPanel
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Panel.ZIndex="100"
-                BorderThickness="0"
-                Command="{Binding ToggleProcessCommand}">
-                <Button.Style>
-                    <Style TargetType="Button">
+                Orientation="Horizontal">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
                         <Setter Property="Visibility" Value="Collapsed" />
                         <Style.Triggers>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding IsMouseOver, ElementName=CardRoot}" Value="True" />
-                                    <Condition Binding="{Binding CanToggleProcess}" Value="True" />
-                                </MultiDataTrigger.Conditions>
-                                <MultiDataTrigger.Setters>
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </MultiDataTrigger.Setters>
-                            </MultiDataTrigger>
+                            <DataTrigger Binding="{Binding IsMouseOver, ElementName=CardRoot}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
-                </Button.Style>
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border
-                            x:Name="PlayBorder"
-                            Width="64"
-                            Height="64"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Background="#AA000000"
-                            CornerRadius="32">
-                            <ui:FontIcon
-                                x:Name="PlayGlyph"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                FontSize="28"
-                                Foreground="White"
-                                Glyph="&#xE102;" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="PlayBorder" Property="Background" Value="#CC000000" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="PlayBorder" Property="Background" Value="#EE000000" />
-                            </Trigger>
-                            <DataTrigger Binding="{Binding IsRunning}" Value="True">
-                                <Setter TargetName="PlayGlyph" Property="Glyph" Value="&#xE15B;" />
-                            </DataTrigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
+                </StackPanel.Style>
+                <Button
+                    Padding="0"
+                    BorderThickness="0"
+                    Command="{Binding ToggleProcessCommand}"
+                    IsEnabled="{Binding CanToggleProcess}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                                x:Name="PlayBorder"
+                                Width="64"
+                                Height="64"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Background="#AA000000"
+                                CornerRadius="32">
+                                <ui:FontIcon
+                                    x:Name="PlayGlyph"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontSize="28"
+                                    Foreground="White"
+                                    Glyph="&#xE102;" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="PlayBorder" Property="Background" Value="#CC000000" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="PlayBorder" Property="Background" Value="#EE000000" />
+                                </Trigger>
+                                <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                    <Setter TargetName="PlayGlyph" Property="Glyph" Value="&#xE15B;" />
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <ToggleButton
+                    Margin="6,0,0,0"
+                    Padding="0"
+                    BorderThickness="0"
+                    Command="{Binding ToggleFavoriteCommand}"
+                    IsChecked="{Binding IsLiked, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border
+                                x:Name="PlayBorder"
+                                Width="64"
+                                Height="64"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Background="#AA000000"
+                                CornerRadius="32">
+                                <ui:FontIcon
+                                    x:Name="PlayGlyph"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontSize="28"
+                                    Foreground="White"
+                                    Glyph="&#xe734;" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="PlayBorder" Property="Background" Value="#CC000000" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="PlayBorder" Property="Background" Value="#EE000000" />
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="PlayGlyph" Property="Glyph" Value="&#xe735;" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+                </ToggleButton>
+            </StackPanel>
         </Grid>
     </DataTemplate>
 
@@ -483,6 +520,8 @@
                                 <Border Grid.Row="0" ClipToBounds="True">
                                     <Image
                                         x:Name="MainImage"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
                                         RenderTransformOrigin="0.5,0.5"
                                         Source="{Binding Cover, NotifyOnTargetUpdated=True}"
                                         Stretch="UniformToFill"
@@ -592,61 +631,96 @@
                     </ControlTemplate>
                 </Button.Template>
             </Button>
-            <Button
-                Margin="0,0,0,60"
-                Padding="0"
+
+            <StackPanel
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Panel.ZIndex="100"
-                BorderThickness="0"
-                Command="{Binding ToggleProcessCommand}">
-                <Button.Style>
-                    <Style TargetType="Button">
+                Orientation="Horizontal">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
                         <Setter Property="Visibility" Value="Collapsed" />
                         <Style.Triggers>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding IsMouseOver, ElementName=CardRoot}" Value="True" />
-                                    <Condition Binding="{Binding CanToggleProcess}" Value="True" />
-                                </MultiDataTrigger.Conditions>
-                                <MultiDataTrigger.Setters>
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </MultiDataTrigger.Setters>
-                            </MultiDataTrigger>
+                            <DataTrigger Binding="{Binding IsMouseOver, ElementName=CardRoot}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
-                </Button.Style>
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border
-                            x:Name="PlayBorder"
-                            Width="64"
-                            Height="64"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Background="#AA000000"
-                            CornerRadius="32">
-                            <ui:FontIcon
-                                x:Name="PlayGlyph"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                FontSize="28"
-                                Foreground="White"
-                                Glyph="&#xE102;" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="PlayBorder" Property="Background" Value="#CC000000" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="PlayBorder" Property="Background" Value="#EE000000" />
-                            </Trigger>
-                            <DataTrigger Binding="{Binding IsRunning}" Value="True">
-                                <Setter TargetName="PlayGlyph" Property="Glyph" Value="&#xE15B;" />
-                            </DataTrigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
+                </StackPanel.Style>
+                <Button
+                    Padding="0"
+                    BorderThickness="0"
+                    Command="{Binding ToggleProcessCommand}"
+                    IsEnabled="{Binding CanToggleProcess}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                                x:Name="PlayBorder"
+                                Width="64"
+                                Height="64"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Background="#AA000000"
+                                CornerRadius="32">
+                                <ui:FontIcon
+                                    x:Name="PlayGlyph"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontSize="28"
+                                    Foreground="White"
+                                    Glyph="&#xE102;" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="PlayBorder" Property="Background" Value="#CC000000" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="PlayBorder" Property="Background" Value="#EE000000" />
+                                </Trigger>
+                                <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                    <Setter TargetName="PlayGlyph" Property="Glyph" Value="&#xE15B;" />
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <ToggleButton
+                    Margin="6,0,0,0"
+                    Padding="0"
+                    BorderThickness="0"
+                    Command="{Binding ToggleFavoriteCommand}"
+                    IsChecked="{Binding IsLiked, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border
+                                x:Name="PlayBorder"
+                                Width="64"
+                                Height="64"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Background="#AA000000"
+                                CornerRadius="32">
+                                <ui:FontIcon
+                                    x:Name="PlayGlyph"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontSize="28"
+                                    Foreground="White"
+                                    Glyph="&#xe734;" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="PlayBorder" Property="Background" Value="#CC000000" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="PlayBorder" Property="Background" Value="#EE000000" />
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="PlayGlyph" Property="Glyph" Value="&#xe735;" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+                </ToggleButton>
+            </StackPanel>
         </Grid>
     </DataTemplate>
 
@@ -682,6 +756,9 @@
                     <Border ClipToBounds="True" CornerRadius="{DynamicResource ControlCornerRadius}">
                         <Grid>
                             <Image
+                                x:Name="MainImage"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
                                 Source="{Binding Artwork, NotifyOnTargetUpdated=True}"
                                 Stretch="UniformToFill"
                                 StretchDirection="Both"
@@ -767,61 +844,96 @@
                         Stretch="Uniform" />
                 </Grid>
             </Button>
-            <Button
-                Width="172"
-                Height="64"
-                Padding="0"
-                HorizontalAlignment="Left"
+
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
                 Panel.ZIndex="100"
-                BorderThickness="0"
-                Command="{Binding ToggleProcessCommand}">
-                <Button.Style>
-                    <Style TargetType="Button">
+                Orientation="Horizontal">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
                         <Setter Property="Visibility" Value="Collapsed" />
                         <Style.Triggers>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding IsMouseOver, ElementName=CardRoot}" Value="True" />
-                                    <Condition Binding="{Binding CanToggleProcess}" Value="True" />
-                                </MultiDataTrigger.Conditions>
-                                <MultiDataTrigger.Setters>
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </MultiDataTrigger.Setters>
-                            </MultiDataTrigger>
+                            <DataTrigger Binding="{Binding IsMouseOver, ElementName=CardRoot}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
-                </Button.Style>
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border
-                            x:Name="PlayBorder"
-                            Width="44"
-                            Height="44"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Background="#AA000000"
-                            CornerRadius="22">
-                            <ui:FontIcon
-                                x:Name="PlayGlyph"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                FontSize="20"
-                                Foreground="White"
-                                Glyph="&#xE102;" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="PlayBorder" Property="Background" Value="#CC000000" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="PlayBorder" Property="Background" Value="#EE000000" />
-                            </Trigger>
-                            <DataTrigger Binding="{Binding IsRunning}" Value="True">
-                                <Setter TargetName="PlayGlyph" Property="Glyph" Value="&#xE15B;" />
-                            </DataTrigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
+                </StackPanel.Style>
+                <Button
+                    Padding="0"
+                    BorderThickness="0"
+                    Command="{Binding ToggleProcessCommand}"
+                    IsEnabled="{Binding CanToggleProcess}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                                x:Name="PlayBorder"
+                                Width="44"
+                                Height="44"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Background="#AA000000"
+                                CornerRadius="22">
+                                <ui:FontIcon
+                                    x:Name="PlayGlyph"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontSize="20"
+                                    Foreground="White"
+                                    Glyph="&#xE102;" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="PlayBorder" Property="Background" Value="#CC000000" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="PlayBorder" Property="Background" Value="#EE000000" />
+                                </Trigger>
+                                <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                    <Setter TargetName="PlayGlyph" Property="Glyph" Value="&#xE15B;" />
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <ToggleButton
+                    Margin="6,0,0,0"
+                    Padding="0"
+                    BorderThickness="0"
+                    Command="{Binding ToggleFavoriteCommand}"
+                    IsChecked="{Binding IsLiked, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border
+                                x:Name="PlayBorder"
+                                Width="44"
+                                Height="44"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Background="#AA000000"
+                                CornerRadius="22">
+                                <ui:FontIcon
+                                    x:Name="PlayGlyph"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontSize="20"
+                                    Foreground="White"
+                                    Glyph="&#xe734;" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="PlayBorder" Property="Background" Value="#CC000000" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="PlayBorder" Property="Background" Value="#EE000000" />
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="PlayGlyph" Property="Glyph" Value="&#xe735;" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+                </ToggleButton>
+            </StackPanel>
         </Grid>
     </DataTemplate>
 

@@ -26,6 +26,7 @@ namespace HandheldCompanion.ViewModels
     {
         public ICommand StartProcessCommand { get; private set; }
         public ICommand ToggleProcessCommand { get; private set; }
+        public ICommand ToggleFavoriteCommand { get; private set; }
         public ICommand Navigate { get; private set; }
         public ICommand OpenLayout { get; private set; }
 
@@ -375,6 +376,13 @@ namespace HandheldCompanion.ViewModels
 
                 if (IsAvailable)
                     StartProcessCommand.Execute(false);
+            });
+
+            ToggleFavoriteCommand = new DelegateCommand(() =>
+            {
+                Profile.IsLiked = !Profile.IsLiked;
+                OnPropertyChanged(nameof(IsLiked));
+                ManagerFactory.profileManager.UpdateOrCreateProfile(Profile);
             });
 
             Navigate = new DelegateCommand(async () =>
