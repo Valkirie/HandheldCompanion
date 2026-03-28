@@ -323,10 +323,7 @@ public abstract class IDevice
 
     protected virtual void QueryPowerProfile()
     {
-        // manage events
-        ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
-
-        // raise events
+        // apply current profile once the device is open and ready
         PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
     }
 
@@ -350,6 +347,14 @@ public abstract class IDevice
         }
     }
 
+    public virtual void ApplyPowerProfile(PowerProfile profile, UpdateSource source)
+    {
+        if (profile is null || !IsOpen)
+            return;
+
+        PowerProfileManager_Applied(profile, source);
+    }
+
     public virtual void Close()
     {
         // disable fan control
@@ -367,7 +372,6 @@ public abstract class IDevice
 
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
-        ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
         ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
         VirtualManager.ControllerSelected -= VirtualManager_ControllerSelected;
         ManagerFactory.deviceManager.UsbDeviceArrived -= GenericDeviceUpdated;

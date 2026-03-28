@@ -232,6 +232,9 @@ namespace HandheldCompanion.Managers
                 // update current profile
                 currentProfile = powerProfile;
 
+                // apply device-specific power profile behavior before other subscribers
+                IDevice.GetCurrent().ApplyPowerProfile(powerProfile, source);
+
                 Applied?.Invoke(powerProfile, source);
 
                 LogManager.LogInformation("Power profile {0} applied", powerProfile.Name);
@@ -326,7 +329,12 @@ namespace HandheldCompanion.Managers
                 // warn owner
                 bool isCurrent = profile.Guid == currentProfile?.Guid;
                 if (isCurrent)
+                {
+                    // apply device-specific power profile behavior before other subscribers
+                    IDevice.GetCurrent().ApplyPowerProfile(profile, source);
+
                     Applied?.Invoke(profile, source);
+                }
             }
 
             // serialize profile
