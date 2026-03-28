@@ -229,7 +229,7 @@ namespace HandheldCompanion.Actions
         {
             if (StartDelay <= 0) return true;
 
-            // TimerManager has a minimum 10 ms tick; if StartDelay is shorter, add one tick period.
+            // TimerManager is quantized by its configured tick period; if StartDelay is shorter, add one tick period.
             int period = TimerManager.GetPeriod();
             float effectiveDelay = StartDelay < period ? period + StartDelay : StartDelay;
 

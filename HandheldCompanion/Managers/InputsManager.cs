@@ -87,7 +87,7 @@ public static class InputsManager
     static InputsManager()
     {
         BufferFlushTimer = new PrecisionTimer();
-        BufferFlushTimer.SetInterval(new Action(ReleaseKeyboardBuffer), TIME_FLUSH, false, 0, TimerMode.OneShot, true);
+        ConfigureBufferFlushTimer(TIME_FLUSH);
 
         InitGlobalHook();
 
@@ -225,7 +225,12 @@ public static class InputsManager
         if (timer.IsRunning())
             timer.Stop();
 
-        timer.SetPeriod(interval);
+        ConfigureBufferFlushTimer(interval);
+    }
+
+    private static void ConfigureBufferFlushTimer(short interval)
+    {
+        BufferFlushTimer.SetInterval(new Action(ReleaseKeyboardBuffer), interval, false, interval, TimerMode.OneShot, true);
     }
 
     private static KeyEventArgsExt prevKeyEvent = new(Keys.None);

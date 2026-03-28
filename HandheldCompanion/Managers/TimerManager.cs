@@ -45,7 +45,7 @@ public static class TimerManager
 
         // (re)create timer
         MasterTimer = new PrecisionTimer();
-        MasterTimer.SetInterval(new Action(DoWork), MasterInterval, false, 0, TimerMode.Periodic, true);
+        ConfigureMasterTimer();
         MasterTimer.Start();
 
         Stopwatch.Start();
@@ -88,9 +88,19 @@ public static class TimerManager
                         break;
                 }
 
-                MasterTimer?.SetInterval(new Action(DoWork), MasterInterval, false, 0, TimerMode.Periodic, true);
+                ConfigureMasterTimer();
                 break;
         }
+    }
+
+    private static void ConfigureMasterTimer()
+    {
+        MasterTimer?.SetInterval(new Action(DoWork), MasterInterval, false, GetTimerResolution(), TimerMode.Periodic, true);
+    }
+
+    private static int GetTimerResolution()
+    {
+        return Math.Max(1, MasterInterval);
     }
 
     private static void SettingsManager_Initialized()
