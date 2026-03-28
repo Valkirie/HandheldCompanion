@@ -94,7 +94,20 @@ namespace HandheldCompanion.ViewModels
 
         public double CPUCoreMaximum => MotherboardInfo.NumberOfCores;
 
-        public bool SupportsSoftwareFanMode => IDevice.GetCurrent().Capabilities.HasFlag(Devices.DeviceCapabilities.FanControl);
+        public bool SupportsSoftwareFanMode
+        {
+            get
+            {
+                if (!IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.FanControl))
+                    return false;
+
+                if (IDevice.GetCurrent() is HandheldCompanion.Devices.LegionGo)
+                    return SelectedPreset.OEMPowerMode == 0xFF;
+
+                return true;
+            }
+        }
+
         public bool SupportsIntelEnduranceGaming => GPUManager.GetCurrent() is IntelGPU intelGPU && intelGPU.HasEnduranceGaming(out _, out _, out _);
 
         // Platform Manager
