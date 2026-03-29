@@ -29,6 +29,7 @@ namespace HandheldCompanion.ViewModels
         public ICommand ToggleFavoriteCommand { get; private set; }
         public ICommand Navigate { get; private set; }
         public ICommand OpenLayout { get; private set; }
+        public ICommand OpenExecutableLocation { get; private set; }
 
         public readonly bool IsQuickTools;
         public bool IsMainPage => !IsQuickTools;
@@ -62,6 +63,7 @@ namespace HandheldCompanion.ViewModels
                 // refresh all properties
                 OnPropertyChanged(string.Empty);
                 OnPropertyChanged(nameof(Name));
+                OnPropertyChanged(nameof(CanOpenExecutableLocation));
 
                 RefreshImages();
             }
@@ -73,6 +75,75 @@ namespace HandheldCompanion.ViewModels
             Artwork = LibraryResources.MissingArtwork;
             Logo = null;
             visualsLoaded = false;
+        }
+
+        private static bool HasDisplayArtwork(BitmapImage? image)
+        {
+            if (image is null || image == LibraryResources.MissingArtwork)
+                return false;
+
+            string? uri = image.UriSource?.ToString();
+            return !string.IsNullOrEmpty(uri) || image.StreamSource is not null;
+        }
+
+        private static bool HasDisplayLogo(BitmapImage? image)
+        {
+            if (image is null)
+                return false;
+
+            string? uri = image.UriSource?.ToString();
+            return !string.IsNullOrEmpty(uri) || image.StreamSource is not null;
+        }
+
+        private BitmapImage? GetLaunchDialogArtwork()
+        {
+            if (HasDisplayArtwork(Artwork))
+                return Artwork;
+
+            if (_Profile.LibraryEntry is null)
+                return null;
+
+            BitmapImage? artwork = ManagerFactory.libraryManager.GetGameArt(
+                _Profile.LibraryEntry.Id,
+                LibraryType.artwork,
+                _Profile.LibraryEntry.GetArtworkId(),
+                _Profile.LibraryEntry.GetArtworkExtension(false));
+
+            return HasDisplayArtwork(artwork) ? artwork : null;
+        }
+
+        private BitmapImage? GetLaunchDialogLogo()
+        {
+            if (HasDisplayLogo(Logo))
+                return Logo;
+
+            if (_Profile.LibraryEntry is null)
+                return null;
+
+            BitmapImage? logo = ManagerFactory.libraryManager.GetGameArt(
+                _Profile.LibraryEntry.Id,
+                LibraryType.logo,
+                _Profile.LibraryEntry.GetLogoId(),
+                _Profile.LibraryEntry.GetLogoExtension(false));
+
+            return HasDisplayLogo(logo) ? logo : null;
+        }
+
+        private Dialog CreateLaunchDialog(Window owner)
+        {
+            BitmapImage? artwork = GetLaunchDialogArtwork();
+            BitmapImage? logo = GetLaunchDialogLogo();
+
+            if (IsQuickTools)
+            {
+                OverlayQuickTools quickTools = OverlayQuickTools.GetCurrent();
+                ((OverlayQuickToolsViewModel)quickTools.DataContext).LaunchProfileDialog.Update(Name, Description, artwork, logo);
+                return new Dialog(owner, quickTools.LaunchProfileContentDialog);
+            }
+
+            MainWindow mainWindow = MainWindow.GetCurrent();
+            ((MainWindowViewModel)mainWindow.DataContext).LaunchProfileDialog.Update(Name, Description, artwork, logo);
+            return new Dialog(owner, mainWindow.LaunchProfileContentDialog);
         }
 
         private void RefreshImages()
@@ -208,6 +279,7 @@ namespace HandheldCompanion.ViewModels
         public bool IsAvailable => _Profile.CanExecute && !ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
         public bool CanStopProcess => IsRunning;
         public bool CanToggleProcess => IsAvailable || CanStopProcess;
+        public bool CanOpenExecutableLocation => !_Profile.ErrorCode.HasFlag(ProfileErrorCode.MissingPath);
 
         private bool _IsBusy;
         public bool IsBusy
@@ -310,10 +382,12 @@ namespace HandheldCompanion.ViewModels
 
             StartProcessCommand = new DelegateCommand<bool>(async runAsAdmin =>
             {
+                Window owner = isQuickTools ? OverlayQuickTools.GetCurrent() : MainWindow.GetCurrent();
+
                 // localize me
-                Dialog dialog = new Dialog(isQuickTools ? OverlayQuickTools.GetCurrent() : MainWindow.GetCurrent())
+                Dialog dialog = new Dialog(owner)
                 {
-                    Title = "Launching",
+                    Title = string.Empty,
                     Content = "The system cannot find the file specified.",
                     PrimaryButtonText = Properties.Resources.ProfilesPage_OK,
                     CanClose = true,
@@ -332,12 +406,15 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 // localize me
-                dialog.UpdateContent("Please wait while we initialize the application.");
+                dialog = CreateLaunchDialog(owner);
+                dialog.Title = string.Empty;
                 dialog.PrimaryButtonText = string.Empty;
+                dialog.SecondaryButtonText = string.Empty;
+                dialog.CloseButtonText = string.Empty;
                 dialog.CanClose = false;
 
                 // display dialog
-                dialog.ShowAsync();
+                _ = dialog.ShowAsync();
 
                 try
                 {
@@ -463,6 +540,23 @@ namespace HandheldCompanion.ViewModels
                 MainWindow.layoutPage.UpdateLayoutTemplate(layoutTemplate);
                 MainWindow.NavView_Navigate(MainWindow.layoutPage);
             });
+
+            OpenExecutableLocation = new DelegateCommand(() =>
+            {
+                if (!CanOpenExecutableLocation)
+                    return;
+
+                string? directory = Path.GetDirectoryName(Profile.Path);
+                if (string.IsNullOrWhiteSpace(directory) || !Directory.Exists(directory))
+                    return;
+
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "explorer.exe",
+                    Arguments = $"/select,\"{Profile.Path}\"",
+                    UseShellExecute = true,
+                });
+            });
         }
 
         private void ProcessManager_ProcessStarted(ProcessEx processEx, bool OnStartup)
@@ -486,6 +580,7 @@ namespace HandheldCompanion.ViewModels
             // dispose commands
             StartProcessCommand = null;
             OpenLayout = null;
+            OpenExecutableLocation = null;
 
             base.Dispose();
         }

@@ -23,20 +23,34 @@ namespace HandheldCompanion.Misc
         public string CloseButtonText { get; set; } = string.Empty;
         public bool CanClose { get; set; } = true;
 
-        public Dialog(Window owner)
+        public Dialog(Window owner, ContentDialog dialog = null)
         {
             _owner = owner ?? throw new ArgumentNullException(nameof(owner));
 
-            switch (owner.Tag as string)
+            if (dialog is not null)
             {
-                default:
-                case "MainWindow":
-                    _dialog = MainWindow.GetCurrent().ContentDialog;
-                    break;
-                case "QuickTools":
-                    _dialog = OverlayQuickTools.GetCurrent().ContentDialog;
-                    break;
+                _dialog = dialog;
             }
+            else
+            {
+                switch (owner.Tag as string)
+                {
+                    default:
+                    case "MainWindow":
+                        _dialog = MainWindow.GetCurrent().ContentDialog;
+                        break;
+                    case "QuickTools":
+                        _dialog = OverlayQuickTools.GetCurrent().ContentDialog;
+                        break;
+                }
+            }
+
+            Title = _dialog.Title?.ToString() ?? string.Empty;
+            Content = _dialog.Content;
+            DefaultButton = _dialog.DefaultButton;
+            PrimaryButtonText = _dialog.PrimaryButtonText;
+            SecondaryButtonText = _dialog.SecondaryButtonText;
+            CloseButtonText = _dialog.CloseButtonText;
 
             _dialog.Closing += OnDialogClosing;
         }

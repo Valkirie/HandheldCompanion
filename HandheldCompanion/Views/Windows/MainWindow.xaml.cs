@@ -246,6 +246,9 @@ public partial class MainWindow : GamepadWindow
         gamepadFocusManager = new(this, ContentFrame);
     }
 
+    public ContentDialog LaunchProfileContentDialog => FindName("LaunchProfileDialog") as ContentDialog
+        ?? throw new InvalidOperationException("LaunchProfileDialog was not found.");
+
     /// <summary>
     /// Runs on a background thread: sensor pull, device hardware init, and all manager starts.
     /// The device singleton is already constructed before this is called, so Capabilities and

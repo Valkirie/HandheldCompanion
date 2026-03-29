@@ -126,6 +126,18 @@ namespace HandheldCompanion.ViewModels
             }
 
             // manage events
+            switch (ManagerFactory.profileManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.profileManager.Initialized += ProfileManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryProfiles();
+                    break;
+            }
+
+            // manage events
             ManagerFactory.profileManager.Updated += ProfileManager_Updated;
             ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
 
@@ -148,6 +160,20 @@ namespace HandheldCompanion.ViewModels
         private void ProcessManager_Initialized()
         {
             QueryForeground();
+        }
+
+        private void QueryProfiles()
+        {
+            foreach (Profile profile in ManagerFactory.profileManager.GetProfiles(true).Where(profile => !profile.Default && profile.IsLiked))
+                ProfileManager_Updated(profile, UpdateSource.Background, false);
+
+            OnPropertyChanged(nameof(TotalPages));
+            UIHelper.TryInvoke(RefreshPage);
+        }
+
+        private void ProfileManager_Initialized()
+        {
+            QueryProfiles();
         }
 
         private void ProfileManager_Deleted(Profile profile)
@@ -246,6 +272,7 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.processManager.ProcessStarted -= ProcessStarted;
             ManagerFactory.processManager.ProcessStopped -= ProcessStopped;
             ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
+            ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
             ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
             ManagerFactory.profileManager.Deleted -= ProfileManager_Deleted;
 

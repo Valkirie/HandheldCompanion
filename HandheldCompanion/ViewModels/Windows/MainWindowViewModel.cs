@@ -10,6 +10,8 @@ namespace HandheldCompanion.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {
+        public LaunchProfileDialogViewModel LaunchProfileDialog { get; } = new();
+
         private bool _isInfoBarOpen;
         private string _infoBarMessage;
         private string _infoBarTitle;

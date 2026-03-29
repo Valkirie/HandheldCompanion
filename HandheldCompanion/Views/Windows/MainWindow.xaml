@@ -9,6 +9,7 @@
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Title="{l:Static resx:Resources.MainWindow_HandheldCompanion}"
@@ -259,6 +260,63 @@
                     </ui:InfoBar>
 
                     <ui:ContentDialog Name="ContentDialog" />
+                    <ui:ContentDialog x:Name="LaunchProfileDialog" Title="">
+                        <ui:ContentDialog.Resources>
+                            <SolidColorBrush x:Key="ContentDialogBackground" Color="Transparent" />
+                            <SolidColorBrush x:Key="ContentDialogSmokeFill" Color="Transparent" />
+                            <SolidColorBrush x:Key="ContentDialogTopOverlay" Color="Transparent" />
+                            <SolidColorBrush x:Key="ContentDialogBorderBrush" Color="Transparent" />
+                            <SolidColorBrush x:Key="ContentDialogSeparatorBorderBrush" Color="Transparent" />
+                            <SolidColorBrush x:Key="ContentDialogLightDismissOverlayBackground" Color="Transparent" />
+                            <Thickness x:Key="ContentDialogPadding">0</Thickness>
+                            <Thickness x:Key="ContentDialogContentMargin">0</Thickness>
+                            <Thickness x:Key="ContentDialogContentScrollViewerMargin">0</Thickness>
+                            <Thickness x:Key="ContentDialogTitleMargin">0</Thickness>
+                            <Thickness x:Key="ContentDialogCommandSpaceMargin">0</Thickness>
+                            <Thickness x:Key="ContentDialogSeparatorThickness">0</Thickness>
+                        </ui:ContentDialog.Resources>
+
+                        <Border
+                            Width="540"
+                            Height="270"
+                            Background="{Binding LaunchProfileDialog.BackgroundBrush}"
+                            CornerRadius="12">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <Image
+                                    Height="110"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Source="{Binding LaunchProfileDialog.Logo}"
+                                    Stretch="Uniform"
+                                    Visibility="{Binding LaunchProfileDialog.HasLogo, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                                <Border
+                                    Grid.Row="1"
+                                    Padding="16,12"
+                                    Background="#FF3A3A3A"
+                                    CornerRadius="0,0,12,12">
+                                    <StackPanel>
+                                        <TextBlock
+                                            Style="{StaticResource BaseTextBlockStyle}"
+                                            Text="{Binding LaunchProfileDialog.ProfileName}"
+                                            TextAlignment="Left"
+                                            TextWrapping="Wrap" />
+                                        <TextBlock
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{Binding LaunchProfileDialog.ProfileDescription}"
+                                            TextAlignment="Left"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </ui:ContentDialog>
+
                     <ui:ScrollViewerEx
                         x:Name="scrollViewer"
                         VerticalAlignment="Stretch"

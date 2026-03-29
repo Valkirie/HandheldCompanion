@@ -139,6 +139,9 @@ public partial class OverlayQuickTools : GamepadWindow
         gamepadFocusManager = new(this, ContentFrame);
     }
 
+    public ContentDialog LaunchProfileContentDialog => FindName("LaunchProfileDialog") as ContentDialog
+        ?? throw new InvalidOperationException("LaunchProfileDialog was not found.");
+
     protected virtual void QuerySettings()
     {
         // manage events
