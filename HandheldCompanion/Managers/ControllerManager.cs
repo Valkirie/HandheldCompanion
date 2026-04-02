@@ -832,10 +832,6 @@ public static class ControllerManager
                     {
                         switch (details.GetVendorID())
                         {
-                            default:
-                                try { controller = new XInputController(details); } catch { }
-                                break;
-
                             // Asus
                             case "0x0B05":
                                 {
@@ -902,10 +898,17 @@ public static class ControllerManager
                         }
                     }
 
-                    if (controller == null)
-                    {
-                        LogManager.LogWarning("Unsupported XInput controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
-                        return;
+                    if (controller is null)
+                    {                        
+                        try 
+                        { 
+                            controller = new XInputController(details); 
+                        }
+                        catch 
+                        {
+                            LogManager.LogWarning("Unsupported XInput controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
+                            return;
+                        }
                     }
 
                     while (!controller.IsReady && controller.IsConnected())
