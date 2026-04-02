@@ -364,7 +364,7 @@ public class LegionGo : IDevice
         base.SettingsManager_SettingValueChanged(name, value, temporary);
     }
 
-    private FanTable defaultFanTable = new([44, 48, 55, 60, 71, 79, 87, 87, 100, 100]);
+    private FanTable defaultFanTable = new([27, 29, 32, 36, 40, 45, 52, 55, 59, 63]);
     protected override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
         // get current fan mode and set it to the desired one if different
