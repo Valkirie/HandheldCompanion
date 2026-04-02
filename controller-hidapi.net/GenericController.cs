@@ -14,6 +14,7 @@ namespace controller_hidapi.net
 
         public bool Reading => _hidDevice.Reading;
         public bool IsDeviceValid => _hidDevice.IsDeviceValid;
+        public ushort DeviceVersion => _hidDevice.ReleaseNumber;
 
         public event OnControllerInputReceivedEventHandler OnControllerInputReceived;
         public delegate void OnControllerInputReceivedEventHandler(byte[] Data);

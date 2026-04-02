@@ -61,19 +61,19 @@ namespace HandheldCompanion.Controllers.Lenovo
             Wireless = 3,
         }
 
-        private const byte FRONT_IDX = 18;
-        private const byte BACK_IDX = 20;
-        private const byte EXTRA_IDX = 21;
-        private const byte SCROLL_IDX = 25;
-        private const byte TOUCH_IDX = 26;
+        private byte FRONT_IDX = 18;
+        private byte BACK_IDX = 20;
+        private byte EXTRA_IDX = 21;
+        private byte SCROLL_IDX = 25;
+        private byte TOUCH_IDX = 26;
 
-        private const byte LCONTROLLER_STATE_IDX = 12;
-        private const byte LCONTROLLER_ACCE_IDX = 35;
-        private const byte LCONTROLLER_GYRO_IDX = 41;
+        private byte LCONTROLLER_STATE_IDX = 12;
+        private byte LCONTROLLER_ACCE_IDX = 35;
+        private byte LCONTROLLER_GYRO_IDX = 41;
 
-        private const byte RCONTROLLER_STATE_IDX = 13;
-        private const byte RCONTROLLER_ACCE_IDX = 48;
-        private const byte RCONTROLLER_GYRO_IDX = 54;
+        private byte RCONTROLLER_STATE_IDX = 13;
+        private byte RCONTROLLER_ACCE_IDX = 48;
+        private byte RCONTROLLER_GYRO_IDX = 54;
 
         private controller_hidapi.net.LegionController Controller;
         private byte[] data = new byte[64];
@@ -182,6 +182,12 @@ namespace HandheldCompanion.Controllers.Lenovo
 
             // create controller
             Controller = new(details.VendorID, details.ProductID);
+
+            switch(Controller.DeviceVersion)
+            {
+                case 256: // as of 04/02/2026
+                    break;
+            }
 
             // open controller as we need to check if it's ready by polling the hiddevice
             Open();

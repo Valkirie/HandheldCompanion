@@ -20,8 +20,10 @@ namespace hidapi
         private bool _halting = false;
         private Thread _readThread;
         private HidDeviceInputReceivedEventArgs _eventArgs;
+        private ushort _releaseNumber;
         public bool IsDeviceValid => _deviceHandle != IntPtr.Zero;
         public bool Reading => _reading;
+        public ushort ReleaseNumber => _releaseNumber;
         public Func<HidDeviceInputReceivedEventArgs, Task> OnInputReceived;
 
         public HidDevice(ushort vendorId, ushort productId, ushort inputBufferLen = 64, short mi = -1)
@@ -79,7 +81,10 @@ namespace hidapi
                             {
                                 ushort inputReportLength = GetInputReportByteLength(hidDeviceInfo.Path);
                                 if (inputReportLength == _inputBufferLen)
+                                {
+                                    _releaseNumber = hidDeviceInfo.ReleaseNumber;
                                     break;
+                                }
                             }
                             catch { }
 

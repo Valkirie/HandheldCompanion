@@ -24,6 +24,7 @@ namespace hidapi
 
         public IntPtr NextDevicePtr => _infoStruct.next;
         public HidDeviceInfo NextDevice => _infoStruct.next != IntPtr.Zero ? new HidDeviceInfo(_infoStruct.next) : null;
+        public ushort ReleaseNumber => _infoStruct.release_number;
 
     }
 }
