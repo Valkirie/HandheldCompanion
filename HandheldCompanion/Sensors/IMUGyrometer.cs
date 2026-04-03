@@ -105,9 +105,13 @@ public class IMUGyrometer : IMUSensor
 
     private void ReadingChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
     {
+        IDevice device = IDevice.GetCurrent();
+        var gyrometerAxisSwap = device.GyrometerAxisSwap;
+        Vector3 gyrometerAxis = device.GyrometerAxis;
+
         foreach (char axis in reading_axis.Keys)
         {
-            switch (IDevice.GetCurrent().GyrometerAxisSwap[axis])
+            switch (gyrometerAxisSwap[axis])
             {
                 default:
                 case 'X':
@@ -125,9 +129,9 @@ public class IMUGyrometer : IMUSensor
             }
         }
 
-        reading.reading.X = (float)reading_axis['X'] * IDevice.GetCurrent().GyrometerAxis.X;
-        reading.reading.Y = (float)reading_axis['Y'] * IDevice.GetCurrent().GyrometerAxis.Y;
-        reading.reading.Z = (float)reading_axis['Z'] * IDevice.GetCurrent().GyrometerAxis.Z;
+        reading.reading.X = (float)reading_axis['X'] * gyrometerAxis.X;
+        reading.reading.Y = (float)reading_axis['Y'] * gyrometerAxis.Y;
+        reading.reading.Z = (float)reading_axis['Z'] * gyrometerAxis.Z;
         reading.timestamp = args.Reading.Timestamp.DateTime.TimeOfDay.TotalMilliseconds;
 
         base.ReadingChanged();

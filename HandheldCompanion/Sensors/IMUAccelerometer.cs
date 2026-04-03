@@ -102,9 +102,13 @@ public class IMUAccelerometer : IMUSensor
 
     private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
     {
+        IDevice device = IDevice.GetCurrent();
+        var accelerometerAxisSwap = device.AccelerometerAxisSwap;
+        Vector3 accelerometerAxis = device.AccelerometerAxis;
+
         foreach (char axis in reading_axis.Keys)
         {
-            switch (IDevice.GetCurrent().AccelerometerAxisSwap[axis])
+            switch (accelerometerAxisSwap[axis])
             {
                 default:
                 case 'X':
@@ -119,9 +123,9 @@ public class IMUAccelerometer : IMUSensor
             }
         }
 
-        reading.reading.X = (float)reading_axis['X'] * IDevice.GetCurrent().AccelerometerAxis.X;
-        reading.reading.Y = (float)reading_axis['Y'] * IDevice.GetCurrent().AccelerometerAxis.Y;
-        reading.reading.Z = (float)reading_axis['Z'] * IDevice.GetCurrent().AccelerometerAxis.Z;
+        reading.reading.X = (float)reading_axis['X'] * accelerometerAxis.X;
+        reading.reading.Y = (float)reading_axis['Y'] * accelerometerAxis.Y;
+        reading.reading.Z = (float)reading_axis['Z'] * accelerometerAxis.Z;
         reading.timestamp = args.Reading.Timestamp.DateTime.TimeOfDay.TotalMilliseconds;
 
         base.ReadingChanged();

@@ -453,7 +453,7 @@ namespace HandheldCompanion.Actions
         protected static bool IsShiftAllowed(ShiftSlot current, ShiftSlot required, bool matchAny)
         {
             // Any flag → always enabled
-            if (required.HasFlag(ShiftSlot.Any)) return true;
+            if ((required & ShiftSlot.Any) != 0) return true;
 
             // None → only when no shift is active
             if (required == ShiftSlot.None) return current == ShiftSlot.None;

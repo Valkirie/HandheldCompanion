@@ -429,14 +429,14 @@ namespace HandheldCompanion.Platforms.Misc
 
         private float HandleCPU_Clock(ISensor sensor, float currentHighest)
         {
-            if (sensor.Name.StartsWith("CPU Core #") || sensor.Name.StartsWith("Core #"))
+            if (sensor.Name.StartsWith("CPU Core #", StringComparison.Ordinal) || sensor.Name.StartsWith("Core #", StringComparison.Ordinal))
             {
                 float value = (float)sensor.Value;
                 if (value > currentHighest)
                 {
                     if (CPUClock != value)
                     {
-                        CPUClock = (float)sensor.Value;
+                        CPUClock = value;
                         CPUClockChanged?.Invoke(CPUClock);
                     }
                     return value;

@@ -61,27 +61,41 @@ namespace HandheldCompanion.Watchers
         #region executables
         protected IEnumerable<Process> GetProcesses()
         {
-            Process[] processes = Process.GetProcesses();
-            foreach (Process process in processes)
+            foreach (string name in executableNames)
             {
-                if (executableNames.Any(name => process.ProcessName.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
+                Process[] matches = Process.GetProcessesByName(name);
+                foreach (Process process in matches)
                     yield return process;
             }
         }
 
         public bool HasProcesses()
         {
-            return GetProcesses().Any();
+            foreach (string name in executableNames)
+            {
+                Process[] matches = Process.GetProcessesByName(name);
+                bool found = matches.Length > 0;
+                foreach (Process p in matches)
+                    p.Dispose();
+                if (found)
+                    return true;
+            }
+            return false;
         }
 
         private void KillProcesses()
         {
             foreach (Process process in GetProcesses())
             {
-                if (process.HasExited)
-                    continue;
-
-                process.Kill();
+                try
+                {
+                    if (!process.HasExited)
+                        process.Kill();
+                }
+                finally
+                {
+                    process.Dispose();
+                }
             }
         }
         #endregion
@@ -131,32 +145,63 @@ namespace HandheldCompanion.Watchers
         #endregion
 
         #region services
-        protected IEnumerable<ServiceController> GetServices()
+        protected List<ServiceController> GetServices()
         {
-            ServiceController[] services = ServiceController.GetServices();
+            List<ServiceController> result = new();
             foreach (string serviceName in serviceNames)
             {
-                if (services.Any(s => serviceNames.Contains(s.ServiceName)))
+                ServiceController sc = new ServiceController(serviceName);
+                try
                 {
-                    ServiceController serviceController = new ServiceController(serviceName);
-                    yield return serviceController;
+                    // Accessing Status will throw if the service does not exist
+                    _ = sc.Status;
+                    result.Add(sc);
+                }
+                catch (InvalidOperationException)
+                {
+                    sc.Dispose();
                 }
             }
+            return result;
         }
 
         public bool HasRunningServices()
         {
-            return GetServices().Any(service => service.Status == ServiceControllerStatus.Running);
+            foreach (string serviceName in serviceNames)
+            {
+                ServiceController sc = new ServiceController(serviceName);
+                try
+                {
+                    if (sc.Status == ServiceControllerStatus.Running)
+                        return true;
+                }
+                catch (InvalidOperationException)
+                {
+                    // service does not exist
+                }
+                finally
+                {
+                    sc.Dispose();
+                }
+            }
+            return false;
         }
 
         private void DisableServices()
         {
             foreach (ServiceController service in GetServices())
             {
-                ServiceUtils.ChangeStartMode(service, ServiceStartMode.Disabled, out string error);
+                try
+                {
+                    ServiceUtils.ChangeStartMode(service, ServiceStartMode.Disabled, out string error);
 
-                if (service.Status != ServiceControllerStatus.Stopped)
-                    service.Stop();
+                    if (service.Status != ServiceControllerStatus.Stopped)
+                        service.Stop();
+                }
+                finally
+                {
+                    service.Dispose();
+                }
             }
         }
 
@@ -164,10 +209,17 @@ namespace HandheldCompanion.Watchers
         {
             foreach (ServiceController service in GetServices())
             {
-                ServiceUtils.ChangeStartMode(service, ServiceStartMode.Automatic, out string error);
+                try
+                {
+                    ServiceUtils.ChangeStartMode(service, ServiceStartMode.Automatic, out string error);
 
-                if (service.Status != ServiceControllerStatus.Running)
-                    service.Start();
+                    if (service.Status != ServiceControllerStatus.Running)
+                        service.Start();
+                }
+                finally
+                {
+                    service.Dispose();
+                }
             }
         }
         #endregion

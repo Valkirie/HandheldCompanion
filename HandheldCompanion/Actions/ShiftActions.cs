@@ -18,11 +18,10 @@ namespace HandheldCompanion.Actions
     [Serializable]
     public sealed class ShiftActions : ButtonActions
     {
-        public ShiftSlot ShiftSlot = ShiftSlot.ShiftA;
-
         public ShiftActions()
         {
             actionType = ActionType.Shift;
+            ShiftSlot = ShiftSlot.ShiftA;
 
             // Shift keys are not interruptable, toggleable, or turboable
             HasInterruptable = false;

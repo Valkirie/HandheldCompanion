@@ -163,7 +163,8 @@ public class LayoutManager : IManager
 
         layoutTimer.Stop();
 
-        desktopLayout.Updated -= DesktopLayout_Updated;
+        desktopLayout?.Updated -= DesktopLayout_Updated;
+        defaultLayout?.Updated -= DefaultLayout_Updated;
         layoutWatcher.Created -= LayoutWatcher_Template;
         layoutWatcher.Changed -= LayoutWatcher_Template;
 
@@ -171,6 +172,7 @@ public class LayoutManager : IManager
         ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+        ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
         UIGamepad.GotFocus -= GamepadFocusManager_FocusChanged;
         UIGamepad.LostFocus -= GamepadFocusManager_FocusChanged;
         ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
@@ -216,10 +218,13 @@ public class LayoutManager : IManager
             CheckProfileLayout();
     }
 
-    private void DesktopLayout_Updated(Layout layout)
+    private void DesktopLayout_Updated(Layout? layout)
     {
+        if (layout is null) return;
+
         SerializeLayout(layout, desktopLayoutFile);
         desktopLayout = layout;
+
         CheckProfileLayout();
     }
 
@@ -254,7 +259,7 @@ public class LayoutManager : IManager
     }
 
     /// <summary>Selects the appropriate layout for Auto mode.</summary>
-    private Layout ResolveAutoLayout()
+    private Layout? ResolveAutoLayout()
     {
         if (UIGamepad.HasFocus() && defaultLayout is not null)
             return defaultLayout;
@@ -264,7 +269,7 @@ public class LayoutManager : IManager
                        || process.IsGame()
                        || process.Filter == ProcessEx.ProcessFilter.HandheldCompanion;
 
-        return useProfile ? profileLayout : desktopLayout!;
+        return useProfile ? profileLayout : desktopLayout;
     }
 
     private void SetActiveLayout(Layout layout)
@@ -322,8 +327,12 @@ public class LayoutManager : IManager
             return;
         }
 
-        // TODO: implement deduplication
-        Templates.Add(layoutTemplate);
+        int existingIndex = Templates.FindIndex(t => t.Guid == layoutTemplate.Guid);
+        if (existingIndex >= 0)
+            Templates[existingIndex] = layoutTemplate;
+        else
+            Templates.Add(layoutTemplate);
+
         Updated?.Invoke(layoutTemplate);
     }
 
@@ -364,8 +373,10 @@ public class LayoutManager : IManager
     {
         lock (updateLock)
         {
+            IEnumerable<ButtonFlags> allButtons = ButtonState.AllButtons.Union(IDevice.GetCurrent().OEMButtons);
+
             // Buttons: append default-layout actions where the current layout inherits
-            foreach (ButtonFlags flag in ButtonState.AllButtons.Union(IDevice.GetCurrent().OEMButtons))
+            foreach (ButtonFlags flag in allButtons)
             {
                 if (!currentLayout.ButtonLayout.TryGetValue(flag, out var actions)) continue;
                 if (!actions.Any(a => a is InheritActions)) continue;

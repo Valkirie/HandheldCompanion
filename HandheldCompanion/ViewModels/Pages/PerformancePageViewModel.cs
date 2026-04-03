@@ -494,8 +494,8 @@ namespace HandheldCompanion.ViewModels
         #region Main Window specific Bindings
 
         public Func<double, string> Formatter { get; private set; }
-        public Func<double, string> TempTickFormatter => v => $"{v * 10:N0} °C";    // bottom axis ticks: 0,10,...100
-        public Func<double, string> CpuXAxisFormatter => v => Math.Abs(v - CpuTempX) < 0.0001 ? $"{CpuTempX * 10:N2} °C" : string.Empty;    // top axis precise label
+        public Func<double, string> TempTickFormatter { get; } = v => $"{v * 10:N0} °C";    // bottom axis ticks: 0,10,...100
+        public Func<double, string> CpuXAxisFormatter { get; private set; }    // top axis precise label
 
         private int _dragIndex = -1;
         private bool _isDragging;
@@ -671,6 +671,7 @@ namespace HandheldCompanion.ViewModels
             IsQuickTools = isQuickTools;
 
             Formatter = x => x.ToString("N2");
+            CpuXAxisFormatter = v => Math.Abs(v - CpuTempX) < 0.0001 ? $"{CpuTempX * 10:N2} °C" : string.Empty;
 
             #region General Setup
 

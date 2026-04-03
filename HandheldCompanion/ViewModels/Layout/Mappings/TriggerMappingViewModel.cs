@@ -96,7 +96,7 @@ namespace HandheldCompanion.ViewModels
             get
             {
                 if (Action is null) return 1; // Default to always enabled
-                if (Action.ShiftSlot.HasFlag(ShiftSlot.Any)) return 1; // Always enabled
+                if ((Action.ShiftSlot & ShiftSlot.Any) != 0) return 1; // Always enabled
                 if (Action.ShiftSlot == ShiftSlot.None) return 0; // Disabled on shift
 
                 // Check if it's OR mode or strict mode
@@ -141,7 +141,7 @@ namespace HandheldCompanion.ViewModels
 
         public override bool ShiftA
         {
-            get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftA);
+            get => Action is not null && (Action.ShiftSlot & ShiftSlot.ShiftA) != 0;
             set
             {
                 if (Action is null || value == ShiftA) return;
@@ -154,7 +154,7 @@ namespace HandheldCompanion.ViewModels
 
         public override bool ShiftB
         {
-            get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftB);
+            get => Action is not null && (Action.ShiftSlot & ShiftSlot.ShiftB) != 0;
             set
             {
                 if (Action is null || value == ShiftB) return;
@@ -167,7 +167,7 @@ namespace HandheldCompanion.ViewModels
 
         public override bool ShiftC
         {
-            get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftC);
+            get => Action is not null && (Action.ShiftSlot & ShiftSlot.ShiftC) != 0;
             set
             {
                 if (Action is null || value == ShiftC) return;
@@ -180,7 +180,7 @@ namespace HandheldCompanion.ViewModels
 
         public override bool ShiftD
         {
-            get => Action is not null && Action.ShiftSlot.HasFlag(ShiftSlot.ShiftD);
+            get => Action is not null && (Action.ShiftSlot & ShiftSlot.ShiftD) != 0;
             set
             {
                 if (Action is null || value == ShiftD) return;
