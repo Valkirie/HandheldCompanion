@@ -161,8 +161,14 @@ public class XInputController : IController
 
     public static UserIndex TryGetUserIndex(PnPDetails details)
     {
-        List<PnPDetails> tempList = ManagerFactory.deviceManager.PnPDevices.Values.Where(device => device.isXInput).OrderBy(device => device.XInputUserIndex).OrderBy(device => device.XInputDeviceIdx).ToList();
-        return (UserIndex)tempList.IndexOf(details);
+        List<PnPDetails> tempList = ManagerFactory.deviceManager.PnPDevices.Values
+            .Where(device => device.isXInput)
+            .OrderBy(device => device.XInputUserIndex)
+            .ThenBy(device => device.XInputDeviceIdx)
+            .ToList();
+
+        int index = tempList.IndexOf(details);
+        return index >= 0 && index < MaxControllers ? (UserIndex)index : SharpDX.XInput.UserIndex.Any;
     }
 
     public virtual void AttachController(byte userIndex)

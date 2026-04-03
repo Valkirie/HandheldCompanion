@@ -338,8 +338,8 @@ public static class ControllerManager
     {
         while (pumpThreadRunning)
         {
-            // check controller events every 500ms; this is used by SDLController to detect disconnections and hotplug events
-            if (SDL.WaitEventTimeout(out SDL.Event e, 500))
+            // check controller events every 1000ms; this is used by SDLController to detect disconnections and hotplug events
+            if (SDL.WaitEventTimeout(out SDL.Event e, 1000))
             {
                 switch ((SDL.EventType)e.Type)
                 {
@@ -1525,7 +1525,7 @@ public static class ControllerManager
                 .Where(c => !c.IsDummy())
                 .Select(async controller =>
                 {
-                    byte index = await DeviceManager.GetXInputIndexAsync(controller.GetContainerPath(), true).ConfigureAwait(false);
+                    byte index = await DeviceManager.GetXInputIndexAsync(controller.GetContainerPath()).ConfigureAwait(false);
                     if (index == byte.MaxValue)
                         index = (byte)XInputController.TryGetUserIndex(controller.Details);
 
@@ -1731,12 +1731,11 @@ public static class ControllerManager
             return true;
         }
 
-        // Physical XInput controller present — find the one in slot 1 and push it away.
+        // Physical XInput controller present — find any physical controller, prioritizing lower slots.
         XInputController? pController = null;
-        for (int idx = 0; idx <= 4; idx++)
+        foreach (UserIndex slot in new[] { UserIndex.One, UserIndex.Two, UserIndex.Three, UserIndex.Four, UserIndex.Any })
         {
-            if (idx == 4) idx = byte.MaxValue;
-            pController = GetControllerFromSlot<XInputController>((UserIndex)idx, true);
+            pController = GetControllerFromSlot<XInputController>(slot, true);
             if (pController is not null)
                 break;
         }
