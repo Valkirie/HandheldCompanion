@@ -255,13 +255,13 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="NJsonSchema.Annotations" Version="11.5.2" />
     <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
-    <PackageReference Include="PixiEditor.ColorPicker" Version="3.4.2.2" />
+    <PackageReference Include="PixiEditor.ColorPicker" Version="3.4.2.3" />
     <PackageReference Include="PrecisionTimer.NET" Version="3.0.0.7" />
     <PackageReference Include="protobuf-net" Version="3.2.56" />
     <PackageReference Include="protobuf-net.Core" Version="3.3.0-g6785ecbb35" />
     <PackageReference Include="RAMSPDToolkit-NDD" Version="1.5.0" />
     <PackageReference Include="SDL3-CS" Version="3.4.2" />
-    <PackageReference Include="Sentry" Version="6.2.0" />
+    <PackageReference Include="Sentry" Version="6.3.0" />
     <PackageReference Include="SharpDX" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
     <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
@@ -270,7 +270,7 @@
     <PackageReference Include="System.IO.Ports" Version="10.0.5" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.5" />
     <PackageReference Include="System.Text.Json" Version="10.0.5" />
-    <PackageReference Include="WindowsAPICodePack" Version="8.0.14" />
+    <PackageReference Include="WindowsAPICodePack" Version="8.0.15" />
     <PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
     <PackageReference Include="WindowsInput" Version="6.4.1" />
     <PackageReference Include="WpfScreenHelper" Version="2.1.1" />

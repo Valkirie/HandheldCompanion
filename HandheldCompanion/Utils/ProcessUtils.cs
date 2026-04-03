@@ -2,6 +2,7 @@
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -340,7 +341,10 @@ public static class ProcessUtils
     {
         // Speical handling needs for UWP to get the child window process
         private const string UWPFrameHostApp = "ApplicationFrameHost.exe";
-        private readonly byte UWPattempt;
+        private const int HostedProcessRetryCount = 3;
+        private const int HostedProcessRetryDelayMs = 50;
+        private static readonly TimeSpan HostedProcessCacheLifetime = TimeSpan.FromSeconds(2);
+        private static readonly ConcurrentDictionary<IntPtr, HostedProcessCacheEntry> HostedProcessesCache = new();
 
         public FindHostedProcess(IntPtr hWnd)
         {
@@ -350,32 +354,43 @@ public static class ProcessUtils
                     return;
 
                 uint processId = (uint)WinAPI.GetWindowProcessId(hWnd);
-
-                // try and get the process
-                _realProcess = ProcessDiagnosticInfo.TryGetForProcessId(processId);
-
-                // failed to retrieve process
-                if (_realProcess is null)
-                {
-                    // use Levenshtein to find the process with closest name
-                    Process process = FindProcessByWindowName(hWnd);
-                    if (process is not null)
-                        processId = (uint)process.Id;
-
-                    // try and get the process (once more)
-                    _realProcess = ProcessDiagnosticInfo.TryGetForProcessId(processId);
-                }
-
-                if (_realProcess is null)
+                if (processId == 0)
                     return;
 
-                // Get real process
-                while (_realProcess.ExecutableFileName == UWPFrameHostApp && UWPattempt < 10)
+                if (TryGetCachedProcess(hWnd, processId, out ProcessDiagnosticInfo cachedProcess))
                 {
-                    EnumChildWindows(hWnd, ChildWindowCallback, IntPtr.Zero);
-                    UWPattempt++;
-                    Thread.Sleep(250);
+                    _realProcess = cachedProcess;
+                    return;
                 }
+
+                // try and get the process
+                _realProcess = TryGetProcess(processId);
+
+                // Get real process for UWP frame host windows
+                if (_realProcess is not null && _realProcess.ExecutableFileName == UWPFrameHostApp)
+                {
+                    for (int attempt = 0; attempt < HostedProcessRetryCount && _realProcess?.ExecutableFileName == UWPFrameHostApp; attempt++)
+                    {
+                        EnumChildWindows(hWnd, ChildWindowCallback, IntPtr.Zero);
+
+                        if (_realProcess?.ExecutableFileName != UWPFrameHostApp)
+                            break;
+
+                        Thread.Sleep(HostedProcessRetryDelayMs);
+                    }
+                }
+
+                // failed to retrieve process or still on the frame host
+                if (_realProcess is null || _realProcess.ExecutableFileName == UWPFrameHostApp)
+                {
+                    // use Levenshtein to find the process with closest name only as a last resort
+                    Process process = FindProcessByWindowName(hWnd);
+                    if (process is not null)
+                        _realProcess = TryGetProcess((uint)process.Id) ?? _realProcess;
+                }
+
+                if (_realProcess is not null)
+                    HostedProcessesCache[hWnd] = new HostedProcessCacheEntry(_realProcess, processId, Environment.TickCount64);
             }
             catch
             {
@@ -388,12 +403,62 @@ public static class ProcessUtils
         private bool ChildWindowCallback(IntPtr hWnd, IntPtr lparam)
         {
             uint processId = (uint)WinAPI.GetWindowProcessId(hWnd);
-            ProcessDiagnosticInfo childProcess = ProcessDiagnosticInfo.TryGetForProcessId(processId);
+            if (processId == 0)
+                return true;
+
+            ProcessDiagnosticInfo childProcess = TryGetProcess(processId);
+            if (childProcess is null)
+                return true;
 
             if (childProcess.ExecutableFileName != UWPFrameHostApp)
+            {
                 _realProcess = childProcess;
+                return false;
+            }
 
             return true;
+        }
+
+        private static ProcessDiagnosticInfo TryGetProcess(uint processId)
+        {
+            try
+            {
+                return ProcessDiagnosticInfo.TryGetForProcessId(processId);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static bool TryGetCachedProcess(IntPtr hWnd, uint processId, out ProcessDiagnosticInfo process)
+        {
+            process = null;
+
+            if (!HostedProcessesCache.TryGetValue(hWnd, out HostedProcessCacheEntry cacheEntry))
+                return false;
+
+            if (Environment.TickCount64 - cacheEntry.Timestamp > HostedProcessCacheLifetime.TotalMilliseconds)
+            {
+                HostedProcessesCache.TryRemove(hWnd, out _);
+                return false;
+            }
+
+            if (cacheEntry.WindowProcessId != processId)
+            {
+                HostedProcessesCache.TryRemove(hWnd, out _);
+                return false;
+            }
+
+            process = cacheEntry.Process;
+            return process is not null;
+        }
+
+        private sealed class HostedProcessCacheEntry(ProcessDiagnosticInfo process, uint windowProcessId, long timestamp)
+        {
+            public ProcessDiagnosticInfo Process { get; } = process;
+            public uint WindowProcessId { get; } = windowProcessId;
+            public long Timestamp { get; } = timestamp;
         }
     }
 

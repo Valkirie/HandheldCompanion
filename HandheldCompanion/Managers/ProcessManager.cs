@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Automation;
 using Windows.System.Diagnostics;
@@ -37,6 +38,9 @@ public class ProcessManager : IManager
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool UnhookWinEvent(IntPtr hWinEventHook);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
     #endregion
 
     // Declare the WinEventDelegate
@@ -244,20 +248,24 @@ public class ProcessManager : IManager
             if (sender is AutomationElement senderElement)
             {
                 int processId = 0;
+                string className = string.Empty;
 
                 try
                 {
                     processId = senderElement.Current.ProcessId;
+                    className = senderElement.Current.ClassName ?? string.Empty;
                 }
                 catch
                 {
                     // Automation failed to retrieve process id
                 }
 
-                // is this a hosted process
-                ProcessDiagnosticInfo? processInfo = new ProcessUtils.FindHostedProcess(senderElement.Current.NativeWindowHandle)._realProcess;
-                if (processInfo != null)
-                    processId = (int)processInfo.ProcessId;
+                if (className == "ApplicationFrameWindow")
+                {
+                    ProcessDiagnosticInfo? processInfo = new ProcessUtils.FindHostedProcess(senderElement.Current.NativeWindowHandle)._realProcess;
+                    if (processInfo is not null)
+                        processId = (int)processInfo.ProcessId;
+                }
 
                 // skip if we couldn't find a process id
                 if (processId == 0)
@@ -286,7 +294,7 @@ public class ProcessManager : IManager
                 if (element is null)
                     return false;
 
-                int processId = element.Current.NativeWindowHandle;
+                int processId = element.Current.ProcessId;
 
                 ProcessDiagnosticInfo? processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
                 if (processInfo != null)
@@ -303,6 +311,39 @@ public class ProcessManager : IManager
         }
 
         return true;
+    }
+
+    private static string GetWindowClassName(IntPtr hWnd)
+    {
+        const int nChars = 256;
+        StringBuilder buffer = new(nChars);
+        return GetClassName(hWnd, buffer, nChars) > 0 ? buffer.ToString() : string.Empty;
+    }
+
+    private static bool TryGetAutomationElement(IntPtr hWnd, out AutomationElement element)
+    {
+        element = null;
+
+        try
+        {
+            Task<AutomationElement> task = Task.Run(() => AutomationElement.FromHandle(hWnd));
+            if (!task.Wait(TimeSpan.FromSeconds(5)))
+            {
+                task.ContinueWith(t => { _ = t.Exception; }, TaskContinuationOptions.OnlyOnFaulted);
+                return false;
+            }
+
+            element = task.Result;
+            return element is not null;
+        }
+        catch (COMException)
+        {
+            return false;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     public static ProcessEx GetCurrent()
@@ -348,40 +389,15 @@ public class ProcessManager : IManager
         currenthWnd = hWnd;
 
         AutomationElement? element = null;
-        int processId = 0;
+        int processId = GetWindowProcessId(hWnd);
+        string className = GetWindowClassName(hWnd);
 
-        try
+        if (className == "ApplicationFrameWindow")
         {
-            // Run the call to AutomationElement.FromHandle in a separate task
-            Task<AutomationElement> task = Task.Run(() => AutomationElement.FromHandle(hWnd));
-            if (!task.Wait(TimeSpan.FromSeconds(5)))
-            {
-                // Observe any eventual exception to prevent UnobservedTaskException
-                task.ContinueWith(t => { _ = t.Exception; }, TaskContinuationOptions.OnlyOnFaulted);
-                return;
-            }
-
-            // get element
-            element = task.Result;
-
-            // get processId
-            processId = element?.Current.ProcessId ?? 0;
+            ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
+            if (processInfo is not null)
+                processId = (int)processInfo.ProcessId;
         }
-        catch (COMException)
-        {
-            // Operation timed out
-        }
-        catch
-        {
-            // Automation failed to retrieve process id
-        }
-
-        if (element is null)
-            return;
-
-        ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
-        if (processInfo is not null)
-            processId = (int)processInfo.ProcessId;
 
         // failed to retrieve process
         if (processId == 0)
@@ -389,18 +405,23 @@ public class ProcessManager : IManager
 
         try
         {
-            if (!Processes.ContainsKey(processId))
-                if (!CreateOrUpdateProcess(processId, element))
+            if (!Processes.TryGetValue(processId, out ProcessEx? process))
+            {
+                if (!TryGetAutomationElement(hWnd, out element))
                     return;
 
-            if (!Processes.TryGetValue(processId, out ProcessEx? process))
+                if (!CreateOrUpdateProcess(processId, element))
+                    return;
+            }
+
+            if (!Processes.TryGetValue(processId, out process))
                 return;
 
             // store previous process
             ProcessEx prevProcess = currentProcess;
 
             // get filter
-            ProcessFilter filter = GetFilter(process.Executable, process.Path, string.Empty, element?.Current.ClassName ?? string.Empty);
+            ProcessFilter filter = GetFilter(process.Executable, process.Path, string.Empty, className);
 
             switch (filter)
             {

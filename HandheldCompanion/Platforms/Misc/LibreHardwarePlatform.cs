@@ -9,11 +9,20 @@ namespace HandheldCompanion.Platforms.Misc
 {
     public class LibreHardwarePlatform : IPlatform
     {
+        private const int MinimumCpuPollingInterval = 500;
+        private const int MinimumGpuPollingInterval = 500;
+        private const int MinimumMemoryPollingInterval = 2000;
+        private const int MinimumBatteryPollingInterval = 5000;
+
         private Computer computer;
         private bool computerOpened;
 
         private Timer updateTimer;
         private int updateInterval = 1000;
+        private long lastCpuUpdateTick;
+        private long lastGpuUpdateTick;
+        private long lastMemoryUpdateTick;
+        private long lastBatteryUpdateTick;
 
         // CPU
         private float? CPULoad;
@@ -157,8 +166,17 @@ namespace HandheldCompanion.Platforms.Misc
 
             lock (updateLock)
             {
+                long now = Environment.TickCount64;
+                bool shouldUpdateCpu = ShouldUpdateHardware(now, ref lastCpuUpdateTick, MinimumCpuPollingInterval);
+                bool shouldUpdateGpu = ShouldUpdateHardware(now, ref lastGpuUpdateTick, MinimumGpuPollingInterval);
+                bool shouldUpdateMemory = ShouldUpdateHardware(now, ref lastMemoryUpdateTick, MinimumMemoryPollingInterval);
+                bool shouldUpdateBattery = ShouldUpdateHardware(now, ref lastBatteryUpdateTick, MinimumBatteryPollingInterval);
+
                 foreach (IHardware? hardware in computer.Hardware)
                 {
+                    if (!ShouldUpdateHardware(hardware, shouldUpdateCpu, shouldUpdateGpu, shouldUpdateMemory, shouldUpdateBattery))
+                        continue;
+
                     try { hardware.Update(); } catch { /* keep going */ }
 
                     switch (hardware.HardwareType)
@@ -180,6 +198,32 @@ namespace HandheldCompanion.Platforms.Misc
                     }
                 }
             }
+        }
+
+        private int GetPollingInterval(int minimumInterval)
+        {
+            return Math.Max(updateInterval, minimumInterval);
+        }
+
+        private bool ShouldUpdateHardware(long now, ref long lastUpdateTick, int minimumInterval)
+        {
+            if (lastUpdateTick != 0 && now - lastUpdateTick < GetPollingInterval(minimumInterval))
+                return false;
+
+            lastUpdateTick = now;
+            return true;
+        }
+
+        private static bool ShouldUpdateHardware(IHardware hardware, bool shouldUpdateCpu, bool shouldUpdateGpu, bool shouldUpdateMemory, bool shouldUpdateBattery)
+        {
+            return hardware.HardwareType switch
+            {
+                HardwareType.Cpu => shouldUpdateCpu,
+                HardwareType.GpuNvidia or HardwareType.GpuAmd or HardwareType.GpuIntel => shouldUpdateGpu,
+                HardwareType.Memory => shouldUpdateMemory,
+                HardwareType.Battery => shouldUpdateBattery,
+                _ => false,
+            };
         }
 
         #region gpu updates
