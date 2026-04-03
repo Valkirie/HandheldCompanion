@@ -5,7 +5,6 @@ using HandheldCompanion.Processors;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -666,19 +665,24 @@ public static class PerformanceManager
 
             // First wait for three seconds of stable FPS arount target, then perform small dip
             // Reduction only happens if average FPS is on target or slightly below
+            double avg3 = AverageFPSHistory(3);
             if (AutoTDPFPSSetpointMetCounter >= 3 && AutoTDPFPSSetpointMetCounter < 6 &&
-                FPSSetpoint - 0.5 <= FPSHistory.Take(3).Average() && FPSHistory.Take(3).Average() <= FPSSetpoint + 0.1)
+                FPSSetpoint - 0.5 <= avg3 && avg3 <= FPSSetpoint + 0.1)
             {
                 AutoTDPFPSSmallDipCounter++;
                 Modifier = FPSSetpoint + 0.5 - FPSActual;
             }
             // After three small dips, perform larger dip 
             // Reduction only happens if average FPS is on target or slightly below
-            else if (AutoTDPFPSSmallDipCounter >= 3 &&
-                     FPSSetpoint - 0.5 <= FPSHistory.Average() && FPSHistory.Average() <= FPSSetpoint + 0.1)
+            else
             {
-                Modifier = FPSSetpoint + 1.5 - FPSActual;
-                AutoTDPFPSSetpointMetCounter = 6;
+                double avgAll = AverageFPSHistory(FPSHistory.Length);
+                if (AutoTDPFPSSmallDipCounter >= 3 &&
+                    FPSSetpoint - 0.5 <= avgAll && avgAll <= FPSSetpoint + 0.1)
+                {
+                    Modifier = FPSSetpoint + 1.5 - FPSActual;
+                    AutoTDPFPSSetpointMetCounter = 6;
+                }
             }
         }
         // Perform dips until FPS is outside of limits around target
@@ -690,6 +694,14 @@ public static class PerformanceManager
         }
 
         return Modifier;
+    }
+
+    private static double AverageFPSHistory(int count)
+    {
+        double sum = 0;
+        for (int i = 0; i < count; i++)
+            sum += FPSHistory[i];
+        return sum / count;
     }
 
     private static double AutoTDPDamper(double FPSActual)
@@ -1049,7 +1061,7 @@ public static class PerformanceManager
          * 1: Prefer heterogeneous scheduling (allows mixed cores based on scheduling hints)
          * 2: Prefer E-cores exclusively (favor efficiency and battery life)
          * 3: Prefer P-cores exclusively (favor performance at all costs)
-         
+
          * HETEROGENEOUS_THREAD_SCHEDULING_POLICY and HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY values: These settings instruct Windows Scheduler about how aggressively it should favor either core type for regular or short-lived threads:
          * 1: Strongly Prefer P-Cores (high-performance cores only)
          * 2: Prefer P-Cores (favor P-Cores but allow E-Cores occasionally)
@@ -1058,34 +1070,39 @@ public static class PerformanceManager
          * 5: No specific preference (Windows decides automatically)
          */
 
+        uint policyAC, policyDC, threadAC, threadDC, shortAC, shortDC;
         switch (coreParkingMode)
         {
             case CoreParkingMode.AllCoresPrefPCore:
-                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_POLICY, 1U, 1U);
-                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_THREAD_SCHEDULING_POLICY, 2U, 2U);
-                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY, 2U, 2U);
+                policyAC = policyDC = 1U; threadAC = threadDC = 2U; shortAC = shortDC = 2U;
                 break;
             case CoreParkingMode.AllCoresPrefECore:
-                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_POLICY, 1U, 1U);
-                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_THREAD_SCHEDULING_POLICY, 4U, 4U);
-                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY, 4U, 4U);
+                policyAC = policyDC = 1U; threadAC = threadDC = 4U; shortAC = shortDC = 4U;
                 break;
             case CoreParkingMode.OnlyPCore:
-                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_POLICY, 3U, 3U);
-                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_THREAD_SCHEDULING_POLICY, 1U, 1U);
-                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY, 1U, 1U);
+                policyAC = policyDC = 3U; threadAC = threadDC = 1U; shortAC = shortDC = 1U;
                 break;
             case CoreParkingMode.OnlyECore:
-                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_POLICY, 2U, 2U);
-                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_THREAD_SCHEDULING_POLICY, 3U, 3U);
-                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY, 3U, 3U);
+                policyAC = policyDC = 2U; threadAC = threadDC = 3U; shortAC = shortDC = 3U;
                 break;
             default:
-                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_POLICY, 0U, 0U);
-                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_THREAD_SCHEDULING_POLICY, 5U, 5U);
-                PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY, 5U, 5U);
+                policyAC = policyDC = 0U; threadAC = threadDC = 5U; shortAC = shortDC = 5U;
                 break;
         }
+
+        // Are the values already correct?
+        uint[] curPolicy = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_POLICY);
+        uint[] curThread = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_THREAD_SCHEDULING_POLICY);
+        uint[] curShort  = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY);
+
+        if (curPolicy[0] == policyAC && curPolicy[1] == policyDC &&
+            curThread[0] == threadAC && curThread[1] == threadDC &&
+            curShort[0]  == shortAC  && curShort[1]  == shortDC)
+            return;
+
+        PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_POLICY, policyAC, policyDC);
+        PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_THREAD_SCHEDULING_POLICY, threadAC, threadDC);
+        PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY, shortAC, shortDC);
 
         LogManager.LogDebug("User requested Core Parking Mode: {0}", coreParkingMode);
     }
