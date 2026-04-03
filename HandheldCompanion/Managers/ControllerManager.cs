@@ -1518,7 +1518,7 @@ public static class ControllerManager
         await slotStateSemaphore.WaitAsync().ConfigureAwait(false);
         try
         {
-            var seenSlots = new HashSet<byte>();
+            var slotOwners = new Dictionary<byte, XInputController>();
             var newInvalid = new List<XInputController>();
 
             var tasks = GetControllers<XInputController>()
@@ -1529,12 +1529,30 @@ public static class ControllerManager
                     if (index == byte.MaxValue)
                         index = (byte)XInputController.TryGetUserIndex(controller.Details);
 
+                    // Skip controllers whose slot could not be determined —
+                    // they must not be attached (UserIndex.Any cross-talk) or
+                    // counted as duplicates (false-positive triggering FixDuplicateSlots).
+                    if (index == byte.MaxValue)
+                        return;
+
                     controller.AttachController(index);
 
-                    lock (seenSlots)
+                    lock (slotOwners)
                     {
-                        if (!seenSlots.Add(index))
-                            lock (newInvalid) { newInvalid.Add(controller); }
+                        if (slotOwners.TryGetValue(index, out var firstOwner))
+                        {
+                            // Mark both the original occupant and the new arrival as invalid.
+                            lock (newInvalid)
+                            {
+                                if (!newInvalid.Contains(firstOwner))
+                                    newInvalid.Add(firstOwner);
+                                newInvalid.Add(controller);
+                            }
+                        }
+                        else
+                        {
+                            slotOwners[index] = controller;
+                        }
                     }
                 });
 
@@ -1667,11 +1685,27 @@ public static class ControllerManager
             VirtualManager.Suspend(false);
             Thread.Sleep(1000);
             VirtualManager.Resume(false);
+
+            // Wait for the virtual controller to actually reconnect before
+            // cycling physical controllers — otherwise the freed slot can
+            // be immediately reclaimed by a physical device.
+            WaitUntil(
+                () => GetVirtualControllers<XInputController>().Any(),
+                TimeSpan.FromSeconds(4));
         }
 
         foreach (IController controller in InvalidSlotAssignments)
+        {
             if (!controller.IsVirtual())
+            {
                 controller.CyclePort();
+
+                // Allow the device to fully disappear before cycling the next
+                // one — rapid back-to-back cycles can cause re-enumeration
+                // collisions in the USB stack.
+                Thread.Sleep(500);
+            }
+        }
     }
 
     /// <summary>
@@ -1716,6 +1750,17 @@ public static class ControllerManager
             return false;
 
         SuspendController(pController.GetContainerInstanceId());
+
+        // Wait for the suspended controller to actually vacate its slot before
+        // manipulating the virtual controller — otherwise it may still occupy the
+        // slot when the virtual controller is recreated.
+        byte suspendedSlot = pController.UserIndex;
+        if (suspendedSlot != byte.MaxValue)
+        {
+            WaitUntil(
+                () => GetControllerFromSlot<XInputController>((UserIndex)suspendedSlot, true) is null,
+                TimeSpan.FromSeconds(4));
+        }
 
         // Remove virtual controller to free slot 1.
         VirtualManager.SetControllerMode(HIDmode.NoController);

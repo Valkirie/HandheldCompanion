@@ -167,6 +167,10 @@ public class XInputController : IController
 
     public virtual void AttachController(byte userIndex)
     {
+        // Never create Controller(UserIndex.Any) — it reads input from any connected device
+        if (userIndex == byte.MaxValue)
+            return;
+
         if (UserIndex == userIndex)
             return;
 

@@ -603,7 +603,7 @@ public class DeviceManager : IManager
                 deviceEx.XInputDeviceIdx = GetDeviceIndex(deviceEx.baseContainerDevicePath);
 
                 if (deviceEx.EnumeratorName.Equals("USB", StringComparison.InvariantCultureIgnoreCase))
-                    deviceEx.XInputUserIndex = await GetXInputIndexAsync(deviceEx.baseContainerDevicePath, false).ConfigureAwait(false);
+                    deviceEx.XInputUserIndex = await GetXInputIndexAsync(deviceEx.baseContainerDevicePath).ConfigureAwait(false);
 
                 if (deviceEx.XInputUserIndex == byte.MaxValue)
                     deviceEx.XInputUserIndex = (byte)XInputController.TryGetUserIndex(deviceEx);
@@ -816,31 +816,35 @@ public class DeviceManager : IManager
         return string.Empty;
     }
 
-    public static async Task<byte> GetXInputIndexAsync(string symLink, bool UIthread)
+    public static async Task<byte> GetXInputIndexAsync(string symLink)
     {
         const int maxAttempts = 4;
-        byte ledState = 0;
+
+        using SafeFileHandle handle = CreateFileW(symLink, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
+        if (handle.IsInvalid)
+            return byte.MaxValue;
+
+        byte[] request = new byte[] { 0x01, 0x01, 0x00 };
+        byte[] response = new byte[3];
 
         for (int i = 0; i < maxAttempts; i++)
         {
-            using (SafeFileHandle handle = CreateFileW(symLink, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero))
+            uint returned = 0;
+            if (DeviceIoControl(handle, IOCTL_XUSB_GET_LED_STATE, request, request.Length, response, response.Length, ref returned, IntPtr.Zero))
             {
-                if (handle.IsInvalid)
+                byte ledState = response[2];
+                if (ledState >= 2 && ledState <= 9)
+                    return XINPUT_LED_TO_PORT_MAP[ledState];
+
+                // LED states 10-15 are non-transitional animations (rotate, blink, etc.)
+                // that will never resolve to a valid port — exit immediately instead of
+                // wasting up to 3 seconds on futile retries.
+                if (ledState >= 10)
                     return byte.MaxValue;
-
-                byte[] request = new byte[] { 0x01, 0x01, 0x00 };
-                byte[] response = new byte[3];
-                uint returned = 0;
-
-                if (DeviceIoControl(handle, IOCTL_XUSB_GET_LED_STATE, request, request.Length, response, response.Length, ref returned, IntPtr.Zero))
-                {
-                    ledState = response[2];
-                    if (ledState >= 2 && ledState <= 9)
-                        return XINPUT_LED_TO_PORT_MAP[ledState];
-                }
             }
 
-            await Task.Delay(1000).ConfigureAwait(false);
+            if (i < maxAttempts - 1)
+                await Task.Delay(1000).ConfigureAwait(false);
         }
 
         return byte.MaxValue;
