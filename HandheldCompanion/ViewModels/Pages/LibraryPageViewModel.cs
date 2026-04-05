@@ -8,18 +8,17 @@ using GameLib.Plugin.Rockstar.Model;
 using GameLib.Plugin.Steam.Model;
 using GameLib.Plugin.Ubisoft.Model;
 using HandheldCompanion.Extensions;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Views;
-using HandheldCompanion.Views.Pages;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -166,10 +165,17 @@ namespace HandheldCompanion.ViewModels
             { typeof(EAGame), GamePlatform.EADesktop },
         };
 
-        private LibraryPage LibraryPage;
-        public LibraryPageViewModel(LibraryPage libraryPage)
+        private readonly SynchronizationContext _uiContext;
+
+        /// <summary>
+        /// Raised when the ItemsSource on the items control needs to be re-bound
+        /// as a workaround for iNKORE ItemsRepeater not observing ICollectionView changes.
+        /// </summary>
+        public event Action? ItemsSourceRefreshRequested;
+
+        public LibraryPageViewModel()
         {
-            this.LibraryPage = libraryPage;
+            _uiContext = SynchronizationContext.Current!;
 
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(Profiles, _collectionLock);
@@ -379,7 +385,7 @@ namespace HandheldCompanion.ViewModels
             Version LastVersion = Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
             if (LastVersion < Version.Parse(Settings.VersionLibraryManager))
             {
-                UIHelper.TryInvoke(() => { RefreshMetadataCommand.Execute(null); });
+                _uiContext.Post(_ => RefreshMetadataCommand.Execute(null), null);
             }
 
             // raise events
@@ -411,7 +417,7 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
 
             // Bind the repeater to the sorted view BEFORE any profiles arrive so cards can render incrementally rather than all at once after the bulk load completes
-            UIHelper.TryInvoke(() => UpdateSorting());
+            _uiContext.Post(_ => UpdateSorting(), null);
 
             foreach (Profile profile in ManagerFactory.profileManager.GetProfiles())
             {
@@ -464,16 +470,7 @@ namespace HandheldCompanion.ViewModels
             }
 
             // Workaround for iNKORE ItemsRepeater not observing ICollectionView changes
-            try
-            {
-                if (LibraryPage.profilesRepeater is not null)
-                {
-                    LibraryPage.profilesRepeater.ItemsSource = null;
-                    LibraryPage.profilesRepeater.ItemsSource = ProfilesView;
-                }
-            }
-            catch (NullReferenceException) { }
-            catch { }
+            ItemsSourceRefreshRequested?.Invoke();
 
             OnPropertyChanged(nameof(HasLiked));
         }
@@ -484,15 +481,14 @@ namespace HandheldCompanion.ViewModels
             if (profile.Default)
                 return;
 
-            ProfileViewModel? foundProfile;
             lock (_collectionLock)
             {
-                foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
-            }
-            if (foundProfile is not null)
-            {
-                Profiles.SafeRemove(foundProfile);
-                foundProfile.Dispose();
+                ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
+                if (foundProfile is not null)
+                {
+                    Profiles.Remove(foundProfile);
+                    foundProfile.Dispose();
+                }
             }
         }
 
@@ -504,33 +500,32 @@ namespace HandheldCompanion.ViewModels
 
             bool shouldShow = profile.ShowInLibrary;
 
-            // find based on guid
-            ProfileViewModel? existingVm;
             lock (_collectionLock)
             {
-                existingVm = Profiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid);
-            }
+                // find based on guid
+                ProfileViewModel? existingVm = Profiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid);
 
-            if (shouldShow)
-            {
-                if (existingVm is null)
+                if (shouldShow)
                 {
-                    // Not yet in list, add
-                    Profiles.SafeAdd(new ProfileViewModel(profile, false, true));
+                    if (existingVm is null)
+                    {
+                        // Not yet in list, add
+                        Profiles.Add(new ProfileViewModel(profile, false, true));
+                    }
+                    else
+                    {
+                        // Already in list, only update
+                        existingVm.Profile = profile;
+                    }
                 }
                 else
                 {
-                    // Already in list, only update
-                    existingVm.Profile = profile;
-                }
-            }
-            else
-            {
-                if (existingVm is not null)
-                {
-                    // Remove from list and dispose
-                    Profiles.SafeRemove(existingVm);
-                    existingVm.Dispose();
+                    if (existingVm is not null)
+                    {
+                        // Remove from list and dispose
+                        Profiles.Remove(existingVm);
+                        existingVm.Dispose();
+                    }
                 }
             }
         }
@@ -551,15 +546,7 @@ namespace HandheldCompanion.ViewModels
             ProfilesView.Filter = o => o is ProfileViewModel vm && MatchesSearchFilter(vm);
 
             // Workaround for iNKORE ItemsRepeater not observing ICollectionView changes
-            try
-            {
-                if (LibraryPage.profilesRepeater is not null)
-                {
-                    LibraryPage.profilesRepeater.ItemsSource = null;
-                    LibraryPage.profilesRepeater.ItemsSource = ProfilesView;
-                }
-            }
-            catch { }
+            ItemsSourceRefreshRequested?.Invoke();
         }
 
         private bool MatchesSearchFilter(ProfileViewModel profile)

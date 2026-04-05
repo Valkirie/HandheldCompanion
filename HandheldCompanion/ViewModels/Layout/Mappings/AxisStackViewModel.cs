@@ -93,19 +93,22 @@ namespace HandheldCompanion.ViewModels
 
         public override void AddMapping()
         {
-            AxisMappings.SafeAdd(new AxisMappingViewModel(this, _flag));
+            lock (_collectionLock)
+                AxisMappings.Add(new AxisMappingViewModel(this, _flag));
         }
 
         public AxisMappingViewModel AddMappingAndReturn()
         {
             var newMapping = new AxisMappingViewModel(this, _flag);
-            AxisMappings.SafeAdd(newMapping);
+            lock (_collectionLock)
+                AxisMappings.Add(newMapping);
             return newMapping;
         }
 
         public override void RemoveMapping(MappingViewModel mapping)
         {
-            AxisMappings.SafeRemove((AxisMappingViewModel)mapping);
+            lock (_collectionLock)
+                AxisMappings.Remove((AxisMappingViewModel)mapping);
             mapping.Dispose();
         }
 
@@ -143,7 +146,12 @@ namespace HandheldCompanion.ViewModels
                     newMapping.SetAction(action, false);
                 }
 
-                AxisMappings.ReplaceWith(newMappings);
+                lock (_collectionLock)
+                {
+                    AxisMappings.Clear();
+                    foreach (var m in newMappings)
+                        AxisMappings.Add(m);
+                }
             }
             else if (AxisMappings.Count != 0)
             {

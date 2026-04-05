@@ -91,19 +91,22 @@ namespace HandheldCompanion.ViewModels
 
         public override void AddMapping()
         {
-            TriggerMappings.SafeAdd(new TriggerMappingViewModel(this, _flag));
+            lock (_collectionLock)
+                TriggerMappings.Add(new TriggerMappingViewModel(this, _flag));
         }
 
         public TriggerMappingViewModel AddMappingAndReturn()
         {
             var newMapping = new TriggerMappingViewModel(this, _flag);
-            TriggerMappings.SafeAdd(newMapping);
+            lock (_collectionLock)
+                TriggerMappings.Add(newMapping);
             return newMapping;
         }
 
         public override void RemoveMapping(MappingViewModel mapping)
         {
-            TriggerMappings.SafeRemove((TriggerMappingViewModel)mapping);
+            lock (_collectionLock)
+                TriggerMappings.Remove((TriggerMappingViewModel)mapping);
             mapping.Dispose();
         }
 
@@ -141,7 +144,12 @@ namespace HandheldCompanion.ViewModels
                     newMapping.SetAction(action, false);
                 }
 
-                TriggerMappings.ReplaceWith(newMappings);
+                lock (_collectionLock)
+                {
+                    TriggerMappings.Clear();
+                    foreach (var m in newMappings)
+                        TriggerMappings.Add(m);
+                }
             }
             else if (TriggerMappings.Count != 0)
             {

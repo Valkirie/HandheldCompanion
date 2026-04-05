@@ -1,5 +1,4 @@
-﻿using HandheldCompanion.Helpers;
-using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Views;
@@ -208,18 +207,11 @@ namespace HandheldCompanion.ViewModels
                     currentImageRequestKey != requestKey)
                     return;
 
-                await UIHelper.TryInvokeAsync(() =>
-                {
-                    if (cancellationToken.IsCancellationRequested ||
-                        !ReferenceEquals(visualsLoadCancellationTokenSource, cancellationTokenSource) ||
-                        currentImageRequestKey != requestKey)
-                        return;
-
-                    Cover = cover;
-                    Artwork = artwork;
-                    Logo = logo;
-                    visualsLoaded = true;
-                }, DispatcherPriority.Render).ConfigureAwait(false);
+                // BitmapImages from GetGameArt are frozen (thread-safe), assign directly
+                Cover = cover;
+                Artwork = artwork;
+                Logo = logo;
+                visualsLoaded = true;
             }
             catch (OperationCanceledException)
             {
@@ -416,6 +408,9 @@ namespace HandheldCompanion.ViewModels
                 // display dialog
                 _ = dialog.ShowAsync();
 
+                // capture the UI context so background work can post back to hide the dialog
+                var syncContext = SynchronizationContext.Current;
+
                 try
                 {
                     // set profile as favorite
@@ -440,7 +435,7 @@ namespace HandheldCompanion.ViewModels
                                 MainWindow.GetCurrent().SetState(WindowState.Minimized);
 
                             // hide the dialog
-                            UIHelper.TryInvoke(() => dialog.Hide());
+                            syncContext?.Post(_ => dialog.Hide(), null);
 
                             // Wait until none of the known executables are running
                             while (ProcessManager.GetProcesses().Any(p => execs.Contains(p.Path)))
@@ -455,7 +450,7 @@ namespace HandheldCompanion.ViewModels
                 finally
                 {
                     // always hide the dialog
-                    UIHelper.TryInvoke(() => { dialog.Hide(); });
+                    syncContext?.Post(_ => dialog.Hide(), null);
                 }
             });
 

@@ -87,28 +87,39 @@ namespace HandheldCompanion.ViewModels
             if (hotkey.IsInternal)
                 return;
 
-            HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
-            if (foundHotkey is null)
+            lock (_collectionLock)
             {
-                if (hotkey.IsPinned)
-                    HotkeysList.SafeInsert(hotkey.PinIndex, new HotkeyViewModel(hotkey));
-            }
-            else
-            {
-                if (hotkey.IsPinned)
-                    foundHotkey.Hotkey = hotkey;
+                HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
+                if (foundHotkey is null)
+                {
+                    if (hotkey.IsPinned)
+                    {
+                        int index = hotkey.PinIndex;
+                        if (index > HotkeysList.Count || index < 0)
+                            index = HotkeysList.Count;
+                        HotkeysList.Insert(index, new HotkeyViewModel(hotkey));
+                    }
+                }
                 else
-                    HotkeysManager_Deleted(hotkey);
+                {
+                    if (hotkey.IsPinned)
+                        foundHotkey.Hotkey = hotkey;
+                    else
+                        HotkeysManager_Deleted(hotkey);
+                }
             }
         }
 
         private void HotkeysManager_Deleted(Hotkey hotkey)
         {
-            HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
-            if (foundHotkey is not null)
+            lock (_collectionLock)
             {
-                HotkeysList.SafeRemove(foundHotkey);
-                foundHotkey.Dispose();
+                HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
+                if (foundHotkey is not null)
+                {
+                    HotkeysList.Remove(foundHotkey);
+                    foundHotkey.Dispose();
+                }
             }
         }
     }

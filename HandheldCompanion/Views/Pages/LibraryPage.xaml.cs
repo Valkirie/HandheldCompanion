@@ -17,7 +17,9 @@ public partial class LibraryPage : Page
     public LibraryPage()
     {
         Tag = "about";
-        DataContext = new LibraryPageViewModel(this);
+        var vm = new LibraryPageViewModel();
+        vm.ItemsSourceRefreshRequested += OnItemsSourceRefreshRequested;
+        DataContext = vm;
         InitializeComponent();
         Loaded += LibraryPage_Loaded;
         Unloaded += LibraryPage_Unloaded;
@@ -86,6 +88,24 @@ public partial class LibraryPage : Page
             libraryPageViewModel.PropertyChanged -= LibraryPageViewModel_PropertyChanged;
 
         libraryPageViewModel = null;
+    }
+
+    private void OnItemsSourceRefreshRequested()
+    {
+        // Workaround for iNKORE ItemsRepeater not observing ICollectionView changes
+        Dispatcher.Invoke(() =>
+        {
+            try
+            {
+                if (profilesRepeater is not null)
+                {
+                    var source = profilesRepeater.ItemsSource;
+                    profilesRepeater.ItemsSource = null;
+                    profilesRepeater.ItemsSource = source;
+                }
+            }
+            catch { }
+        });
     }
 
     private void LibraryPageViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)

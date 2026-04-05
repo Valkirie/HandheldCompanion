@@ -217,7 +217,8 @@ namespace HandheldCompanion.ViewModels
             InputsManager.StoppedListening += InputsManager_StoppedListening;
 
             // store hotkey to manager
-            HotkeysList.SafeAdd(new HotkeyViewModel(GyroHotkey));
+            lock (_collectionLock)
+                HotkeysList.Add(new HotkeyViewModel(GyroHotkey));
             ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
         }
 
@@ -236,11 +237,14 @@ namespace HandheldCompanion.ViewModels
             GyroHotkey = hotkey;
 
             // update hotkey UI
-            HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
-            if (foundHotkey is null)
-                HotkeysList.SafeAdd(new HotkeyViewModel(hotkey));
-            else
-                foundHotkey.Hotkey = hotkey;
+            lock (_collectionLock)
+            {
+                HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
+                if (foundHotkey is null)
+                    HotkeysList.Add(new HotkeyViewModel(hotkey));
+                else
+                    foundHotkey.Hotkey = hotkey;
+            }
 
             Update();
         }
@@ -310,7 +314,12 @@ namespace HandheldCompanion.ViewModels
                     }
                 }
 
-                Targets.ReplaceWith(targets);
+                lock (_collectionLock)
+                {
+                    Targets.Clear();
+                    foreach (var t in targets)
+                        Targets.Add(t);
+                }
                 SelectedTarget = matchingTargetVm ?? Targets.First();
             }
             else if (actionType == ActionType.Mouse)
@@ -343,7 +352,12 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 // Update list and selected target
-                Targets.ReplaceWith(targets);
+                lock (_collectionLock)
+                {
+                    Targets.Clear();
+                    foreach (var t in targets)
+                        Targets.Add(t);
+                }
                 SelectedTarget = matchingTargetVm ?? Targets.First();
             }
             else if (actionType == ActionType.Inherit)

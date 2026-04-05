@@ -27,11 +27,14 @@ namespace HandheldCompanion.ViewModels
             if (hotkey.ButtonFlags != gyroButtonFlags)
                 return;
 
-            HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
-            if (foundHotkey is null)
-                HotkeysList.SafeAdd(new HotkeyViewModel(hotkey));
-            else
-                foundHotkey.Hotkey = hotkey;
+            lock (_collectionLock)
+            {
+                HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
+                if (foundHotkey is null)
+                    HotkeysList.Add(new HotkeyViewModel(hotkey));
+                else
+                    foundHotkey.Hotkey = hotkey;
+            }
         }
 
         private void InputsManager_StartedListening(ButtonFlags buttonFlags, InputsChordTarget chordTarget)

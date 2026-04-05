@@ -137,7 +137,7 @@
                                 DisplayMemberPath="Text"
                                 ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
                                 ItemsSource="{Binding ProfilePickerCollectionViewDC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                SelectedIndex="{Binding SelectedPresetIndexDC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                SelectedItem="{Binding SelectedPickerDC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 SelectedValuePath="Text">
                                 <ComboBox.GroupStyle>
                                     <GroupStyle>
@@ -164,7 +164,7 @@
                                 DisplayMemberPath="Text"
                                 ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
                                 ItemsSource="{Binding ProfilePickerCollectionViewAC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                SelectedIndex="{Binding SelectedPresetIndexAC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                SelectedItem="{Binding SelectedPickerAC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 SelectedValuePath="Text">
                                 <ComboBox.GroupStyle>
                                     <GroupStyle>

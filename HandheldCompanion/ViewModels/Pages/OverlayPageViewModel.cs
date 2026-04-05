@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.GraphicsProcessingUnit;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
@@ -537,21 +536,18 @@ namespace HandheldCompanion.ViewModels
             // get path
             string path = processEx != null ? processEx.Path : string.Empty;
 
-            UIHelper.TryInvoke(() =>
-            {
-                ProcessIcon = processEx?.ProcessIcon;
+            ProcessIcon = processEx?.ProcessIcon;
 
-                if (processEx is null)
-                {
-                    ProcessName = Properties.Resources.QuickProfilesPage_Waiting;
-                    ProcessPath = string.Empty;
-                }
-                else
-                {
-                    ProcessName = processEx.Executable;
-                    ProcessPath = processEx.Path;
-                }
-            });
+            if (processEx is null)
+            {
+                ProcessName = Properties.Resources.QuickProfilesPage_Waiting;
+                ProcessPath = string.Empty;
+            }
+            else
+            {
+                ProcessName = processEx.Executable;
+                ProcessPath = processEx.Path;
+            }
         }
 
         private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)

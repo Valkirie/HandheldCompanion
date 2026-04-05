@@ -1394,77 +1394,53 @@ namespace HandheldCompanion.ViewModels
 
         #region PowerProfile
         private PowerProfile _selectedPresetDC;
-        public PowerProfile SelectedPresetDC
+        public PowerProfile SelectedPresetDC => _selectedPresetDC;
+
+        private ProfilesPickerViewModel _selectedPickerDC;
+        public ProfilesPickerViewModel SelectedPickerDC
         {
-            get => _selectedPresetDC;
+            get => _selectedPickerDC;
             set
             {
-                if (_selectedPresetDC != value)
+                if (_selectedPickerDC != value)
                 {
-                    _selectedPresetDC = value;
-                    ProfilesPickerViewModel profilesPickerViewModel = ProfilePicker.First(p => p.LinkedPresetId == _selectedPresetDC.Guid);
-                    _selectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(profilesPickerViewModel);
+                    _selectedPickerDC = value;
+                    OnPropertyChanged(nameof(SelectedPickerDC));
 
-                    // Only update profile if we're not loading from it
-                    if (!isLoadingProfile)
-                        PowerProfile_Selected(_selectedPresetDC, false);
+                    if (value?.LinkedPresetId != null)
+                    {
+                        _selectedPresetDC = ManagerFactory.powerProfileManager.GetProfile(value.LinkedPresetId.Value);
+                        OnPropertyChanged(nameof(SelectedPresetDC));
 
-                    OnPropertyChanged(nameof(SelectedPresetDC));
-                    OnPropertyChanged(nameof(SelectedPresetIndexDC));
-                }
-            }
-        }
-
-        private int _selectedPresetIndexDC;
-        public int SelectedPresetIndexDC
-        {
-            get => _selectedPresetIndexDC;
-            set
-            {
-                if (value != _selectedPresetIndexDC && value >= 0 && value < ProfilePickerCollectionViewDC.Count)
-                {
-                    _selectedPresetIndexDC = value;
-                    ProfilesPickerViewModel profilesPickerViewModel = ProfilePickerCollectionViewDC.GetItemAt(_selectedPresetIndexDC) as ProfilesPickerViewModel;
-                    SelectedPresetDC = ManagerFactory.powerProfileManager.GetProfile(profilesPickerViewModel.LinkedPresetId.Value);
-                    OnPropertyChanged(nameof(SelectedPresetIndexDC));
+                        if (!isLoadingProfile)
+                            PowerProfile_Selected(_selectedPresetDC, false);
+                    }
                 }
             }
         }
 
         private PowerProfile _selectedPresetAC;
-        public PowerProfile SelectedPresetAC
+        public PowerProfile SelectedPresetAC => _selectedPresetAC;
+
+        private ProfilesPickerViewModel _selectedPickerAC;
+        public ProfilesPickerViewModel SelectedPickerAC
         {
-            get => _selectedPresetAC;
+            get => _selectedPickerAC;
             set
             {
-                if (_selectedPresetAC != value)
+                if (_selectedPickerAC != value)
                 {
-                    _selectedPresetAC = value;
-                    ProfilesPickerViewModel profilesPickerViewModel = ProfilePicker.First(p => p.LinkedPresetId == _selectedPresetAC.Guid);
-                    _selectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(profilesPickerViewModel);
+                    _selectedPickerAC = value;
+                    OnPropertyChanged(nameof(SelectedPickerAC));
 
-                    // Only update profile if we're not loading from it
-                    if (!isLoadingProfile)
-                        PowerProfile_Selected(_selectedPresetAC, true);
+                    if (value?.LinkedPresetId != null)
+                    {
+                        _selectedPresetAC = ManagerFactory.powerProfileManager.GetProfile(value.LinkedPresetId.Value);
+                        OnPropertyChanged(nameof(SelectedPresetAC));
 
-                    OnPropertyChanged(nameof(SelectedPresetAC));
-                    OnPropertyChanged(nameof(SelectedPresetIndexAC));
-                }
-            }
-        }
-
-        private int _selectedPresetIndexAC;
-        public int SelectedPresetIndexAC
-        {
-            get => _selectedPresetIndexAC;
-            set
-            {
-                if (value != _selectedPresetIndexAC && value >= 0 && value < ProfilePickerCollectionViewAC.Count)
-                {
-                    _selectedPresetIndexAC = value;
-                    ProfilesPickerViewModel profilesPickerViewModel = ProfilePickerCollectionViewAC.GetItemAt(_selectedPresetIndexAC) as ProfilesPickerViewModel;
-                    SelectedPresetAC = ManagerFactory.powerProfileManager.GetProfile(profilesPickerViewModel.LinkedPresetId.Value);
-                    OnPropertyChanged(nameof(SelectedPresetIndexAC));
+                        if (!isLoadingProfile)
+                            PowerProfile_Selected(_selectedPresetAC, true);
+                    }
                 }
             }
         }
@@ -1645,11 +1621,12 @@ namespace HandheldCompanion.ViewModels
             BindingOperations.EnableCollectionSynchronization(ProfilePicker, _collectionLock);
             BindingOperations.EnableCollectionSynchronization(LibraryPickers, _collectionLock2);
             BindingOperations.EnableCollectionSynchronization(ProfileExecutables, _collectionLock3);
-            BindingOperations.EnableCollectionSynchronization(HotkeysList, _collectionLock3);
-            BindingOperations.EnableCollectionSynchronization(MainProfiles, _collectionLock);
-            BindingOperations.EnableCollectionSynchronization(SubProfiles, _collectionLock);
-            BindingOperations.EnableCollectionSynchronization(FramerateLimits, _collectionLock);
-            BindingOperations.EnableCollectionSynchronization(IntegerScalingDividers, _collectionLock);
+            BindingOperations.EnableCollectionSynchronization(HotkeysList, _collectionLock4);
+            BindingOperations.EnableCollectionSynchronization(MainProfiles, _collectionLock5);
+            BindingOperations.EnableCollectionSynchronization(SubProfiles, _collectionLock5);
+            BindingOperations.EnableCollectionSynchronization(FramerateLimits, _collectionLock6);
+            BindingOperations.EnableCollectionSynchronization(IntegerScalingDividers, _collectionLock6);
+            BindingOperations.EnableCollectionSynchronization(AllWindows, _collectionLock7);
 
             ProfilePickerCollectionViewDC = new ListCollectionView(ProfilePicker);
             ProfilePickerCollectionViewDC.GroupDescriptions.Add(new PropertyGroupDescription("Header"));
@@ -1787,8 +1764,11 @@ namespace HandheldCompanion.ViewModels
                     entries = entries.OrderByDescending(entry => entry.Family);
                     entries = entries.OrderBy(entry => entry.Name);
 
-                    foreach (LibraryEntry entry in entries)
-                        LibraryPickers.SafeAdd(new(entry));
+                    lock (_collectionLock2)
+                    {
+                        foreach (LibraryEntry entry in entries)
+                            LibraryPickers.Add(new(entry));
+                    }
 
                     if (SelectedProfile?.LibraryEntry is not null && entries.Contains(SelectedProfile.LibraryEntry))
                         SelectedLibraryEntry = SelectedProfile.LibraryEntry;
@@ -2005,15 +1985,12 @@ namespace HandheldCompanion.ViewModels
 
         private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
         {
-            UIHelper.TryInvoke(() =>
-            {
-                // QuickTools: show the currently applied power profile name
-                // ProfilesPage: show the selected profile's power profile for the current AC/DC state
-                if (IsQuickTools)
-                    SelectedPowerProfileName = profile.Name;
-                else
-                    UpdateSelectedPowerProfileName();
-            });
+            // QuickTools: show the currently applied power profile name
+            // ProfilesPage: show the selected profile's power profile for the current AC/DC state
+            if (IsQuickTools)
+                SelectedPowerProfileName = profile.Name;
+            else
+                UpdateSelectedPowerProfileName();
         }
 
         private void QueryPowerProfile()
@@ -2021,11 +1998,17 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.powerProfileManager.Updated += PowerProfileManager_Updated;
             ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
 
-            UIHelper.TryInvoke(() =>
+            foreach (PowerProfile powerProfile in ManagerFactory.powerProfileManager.profiles.Values)
+                PowerProfileManager_Updated(powerProfile, UpdateSource.Creation);
+
+            // If a profile was already selected before power profiles were loaded,
+            // the initial UpdatePowerProfileSelections() found ProfilePicker empty.
+            // Re-apply now that it's populated.
+            if (SelectedProfile != null)
             {
-                foreach (PowerProfile powerProfile in ManagerFactory.powerProfileManager.profiles.Values)
-                    PowerProfileManager_Updated(powerProfile, UpdateSource.Creation);
-            });
+                UpdatePowerProfileSelections();
+                UpdateSelectedPowerProfileName();
+            }
         }
 
         private void PowerProfileManager_Initialized()
@@ -2043,9 +2026,9 @@ namespace HandheldCompanion.ViewModels
                     ProfilePicker.Remove(foundPreset);
 
                     if (SelectedPresetAC?.Guid == foundPreset.LinkedPresetId)
-                        SelectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
+                        SelectedPickerAC = ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty);
                     if (SelectedPresetDC?.Guid == foundPreset.LinkedPresetId)
-                        SelectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty));
+                        SelectedPickerDC = ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty);
                 }
             }
         }
@@ -2078,37 +2061,34 @@ namespace HandheldCompanion.ViewModels
             if (isLoadingProfile)
                 return;
 
-            UIHelper.TryInvoke(() =>
+            switch (AC)
             {
-                switch (AC)
-                {
-                    case false:
-                        SelectedProfile.PowerProfiles[(int)PowerLineStatus.Offline] = powerProfile.Guid;
-                        break;
-                    case true:
-                        SelectedProfile.PowerProfiles[(int)PowerLineStatus.Online] = powerProfile.Guid;
-                        break;
-                }
-            });
+                case false:
+                    SelectedProfile.PowerProfiles[(int)PowerLineStatus.Offline] = powerProfile.Guid;
+                    break;
+                case true:
+                    SelectedProfile.PowerProfiles[(int)PowerLineStatus.Online] = powerProfile.Guid;
+                    break;
+            }
             UpdateProfile();
         }
 
         private void MultimediaManager_Initialized()
         {
-            UIHelper.TryBeginInvoke(() =>
+            try
             {
-                try
+                DesktopScreen desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
+                if (desktopScreen is not null)
                 {
-                    DesktopScreen desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
-                    if (desktopScreen is not null)
+                    lock (_collectionLock6)
                     {
                         IntegerScalingDividers.Clear();
                         foreach (var screenDivider in desktopScreen.screenDividers)
                             IntegerScalingDividers.Add(new ScreenDividerViewModel(screenDivider));
                     }
                 }
-                catch { }
-            });
+            }
+            catch { }
         }
 
         private void GPUManager_Hooked(GPU GPU)
@@ -2157,14 +2137,11 @@ namespace HandheldCompanion.ViewModels
 
         private void UpdateGraphicsSettingsUI()
         {
-            UIHelper.TryInvoke(() =>
-            {
-                OnPropertyChanged(nameof(HasRSRSupport));
-                OnPropertyChanged(nameof(HasAFMFSupport));
-                OnPropertyChanged(nameof(HasGPUScalingSupport));
-                OnPropertyChanged(nameof(HasIntegerScalingSupport));
-                OnPropertyChanged(nameof(HasScalingModeSupport));
-            });
+            OnPropertyChanged(nameof(HasRSRSupport));
+            OnPropertyChanged(nameof(HasAFMFSupport));
+            OnPropertyChanged(nameof(HasGPUScalingSupport));
+            OnPropertyChanged(nameof(HasIntegerScalingSupport));
+            OnPropertyChanged(nameof(HasScalingModeSupport));
         }
 
         private void OnRSRStateChanged(bool Supported, bool Enabled, int Sharpness)
@@ -2205,10 +2182,7 @@ namespace HandheldCompanion.ViewModels
 
         private void RTSS_Updated(PlatformStatus status)
         {
-            UIHelper.TryInvoke(() =>
-            {
-                IsRTSSReady = status == PlatformStatus.Ready || status == PlatformStatus.Started;
-            });
+            IsRTSSReady = status == PlatformStatus.Ready || status == PlatformStatus.Started;
         }
 
         private void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
@@ -2217,23 +2191,23 @@ namespace HandheldCompanion.ViewModels
             {
                 List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
 
-                UIHelper.TryInvoke(() =>
-                {
-                    // Store the current selection before clearing (if any)
-                    int? currentSelectedLimit = SelectedFrameLimit?.FrameLimit.limit;
+                // Store the current selection before clearing (if any)
+                int? currentSelectedLimit = SelectedFrameLimit?.FrameLimit.limit;
 
+                lock (_collectionLock6)
+                {
                     FramerateLimits.Clear();
                     foreach (ScreenFramelimit frameLimit in frameLimits)
                         FramerateLimits.Add(new ScreenFramelimitViewModel(frameLimit));
+                }
 
-                    // Restore the selection if we had one
-                    if (currentSelectedLimit.HasValue && FramerateLimits.Any())
-                    {
-                        var matchingLimit = FramerateLimits.FirstOrDefault(vm => vm.FrameLimit.limit == currentSelectedLimit.Value);
-                        if (matchingLimit != null)
-                            SelectedFrameLimit = matchingLimit;
-                    }
-                });
+                // Restore the selection if we had one
+                if (currentSelectedLimit.HasValue && FramerateLimits.Any())
+                {
+                    var matchingLimit = FramerateLimits.FirstOrDefault(vm => vm.FrameLimit.limit == currentSelectedLimit.Value);
+                    if (matchingLimit != null)
+                        SelectedFrameLimit = matchingLimit;
+                }
             }
             catch { }
         }
@@ -2335,7 +2309,7 @@ namespace HandheldCompanion.ViewModels
         {
             UIHelper.TryBeginInvoke(() =>
             {
-                lock (_collectionLock)
+                lock (_collectionLock5)
                 {
                     if (isLoadingProfile)
                         return;
@@ -2556,11 +2530,14 @@ namespace HandheldCompanion.ViewModels
 
             ClearWindows();
 
-            AllWindows.SafeClear();
-            if (SelectedProfile != null)
+            lock (_collectionLock7)
             {
-                foreach (var kvp in SelectedProfile.WindowsSettings)
-                    AllWindows.SafeAdd(new WindowListItemViewModel(kvp.Key, kvp.Value));
+                AllWindows.Clear();
+                if (SelectedProfile != null)
+                {
+                    foreach (var kvp in SelectedProfile.WindowsSettings)
+                        AllWindows.Add(new WindowListItemViewModel(kvp.Key, kvp.Value));
+                }
             }
 
             OnPropertyChanged(nameof(HasAnyWindows));
@@ -2595,15 +2572,18 @@ namespace HandheldCompanion.ViewModels
         /// </summary>
         private void RefreshProfileExecutables()
         {
-            ProfileExecutables.SafeClear();
-            if (SelectedProfile != null)
+            lock (_collectionLock3)
             {
-                foreach (string path in SelectedProfile.Executables)
-                    ProfileExecutables.SafeAdd(path);
+                ProfileExecutables.Clear();
+                if (SelectedProfile != null)
+                {
+                    foreach (string path in SelectedProfile.Executables)
+                        ProfileExecutables.Add(path);
 
-                var idx = SelectedProfile.Executables.IndexOf(SelectedProfile.Path);
-                if (ProfileExecutables.Count > 0 && idx == -1) idx = 0;
-                ProfileExecutablesIdx = (ProfileExecutables.Count == 0) ? -1 : Math.Min(idx, ProfileExecutables.Count - 1);
+                    var idx = SelectedProfile.Executables.IndexOf(SelectedProfile.Path);
+                    if (ProfileExecutables.Count > 0 && idx == -1) idx = 0;
+                    ProfileExecutablesIdx = (ProfileExecutables.Count == 0) ? -1 : Math.Min(idx, ProfileExecutables.Count - 1);
+                }
             }
         }
 
@@ -2636,78 +2616,76 @@ namespace HandheldCompanion.ViewModels
 
             using (new LoadingScope(this))
             {
-                UIHelper.TryInvoke(() =>
+                GPUScalingEnabled = SelectedProfile.GPUScaling;
+                RSREnabled = SelectedProfile.RSREnabled;
+                RSRValue = SelectedProfile.RSRSharpness;
+                IntegerScalingEnabled = SelectedProfile.IntegerScalingEnabled;
+                RISEnabled = SelectedProfile.RISEnabled;
+                RISValue = SelectedProfile.RISSharpness;
+
+                if (SelectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions? gyroActions))
                 {
-                    GPUScalingEnabled = SelectedProfile.GPUScaling;
-                    RSREnabled = SelectedProfile.RSREnabled;
-                    RSRValue = SelectedProfile.RSRSharpness;
-                    IntegerScalingEnabled = SelectedProfile.IntegerScalingEnabled;
-                    RISEnabled = SelectedProfile.RISEnabled;
-                    RISValue = SelectedProfile.RISSharpness;
-
-                    if (SelectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions? gyroActions))
+                    if (gyroActions is AxisActions axisActions)
                     {
-                        if (gyroActions is AxisActions axisActions)
-                        {
-                            AntiDeadzoneValue = axisActions.AxisAntiDeadZone;
-                            GyroWeightValue = axisActions.gyroWeight;
+                        AntiDeadzoneValue = axisActions.AxisAntiDeadZone;
+                        GyroWeightValue = axisActions.gyroWeight;
 
-                            OutputMode = axisActions.Axis switch
-                            {
-                                AxisLayoutFlags.LeftStick => (int)MotionOutput.LeftStick,
-                                AxisLayoutFlags.RightStick => (int)MotionOutput.RightStick,
-                                _ => (int)MotionOutput.RightStick
-                            };
-                        }
-                        else if (gyroActions is MouseActions mouseActions)
+                        OutputMode = axisActions.Axis switch
                         {
-                            OutputMode = (int)MotionOutput.MoveCursor;
-                        }
-
-                        if (gyroActions is GyroActions gyroAction)
-                        {
-                            InputMode = (int)gyroAction.MotionInput;
-                            MotionMode = (int)gyroAction.MotionMode;
-                        }
+                            AxisLayoutFlags.LeftStick => (int)MotionOutput.LeftStick,
+                            AxisLayoutFlags.RightStick => (int)MotionOutput.RightStick,
+                            _ => (int)MotionOutput.RightStick
+                        };
                     }
-                    else
+                    else if (gyroActions is MouseActions mouseActions)
                     {
-                        OutputMode = (int)MotionOutput.Disabled;
+                        OutputMode = (int)MotionOutput.MoveCursor;
                     }
 
-                    SensitivityXValue = SelectedProfile.MotionSensivityX;
-                    SensitivityYValue = SelectedProfile.MotionSensivityY;
-                    GyroMultiplier = SelectedProfile.GyrometerMultiplier;
-                    AcceleroMultiplier = SelectedProfile.AccelerometerMultiplier;
-
-                    ProfileEnabled = IsQuickTools ? !SelectedProfile.Default : SelectedProfile.Enabled;
-                    CurrentProfileName = SelectedProfile.Name;
-                    ProfileArguments = SelectedProfile.Arguments;
-                    ProfileLaunchString = SelectedProfile.LaunchString;
-
-                    if (FramerateLimits.Any())
+                    if (gyroActions is GyroActions gyroAction)
                     {
-                        var desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
-                        if (desktopScreen != null)
-                        {
-                            ScreenFramelimit closest = desktopScreen.GetClosest(SelectedProfile.FramerateValue);
-                            SelectedFrameLimit = FramerateLimits.FirstOrDefault(vm => vm.FrameLimit.limit == closest.limit);
-                        }
+                        InputMode = (int)gyroAction.MotionInput;
+                        MotionMode = (int)gyroAction.MotionMode;
                     }
+                }
+                else
+                {
+                    OutputMode = (int)MotionOutput.Disabled;
+                }
 
-                    UpdatePowerProfileIndices();
-                    UpdateSelectedPowerProfileName();
-                    UpdateControlsEnabledState();
-                    NotifyWrapperProperties();
-                });
+                SensitivityXValue = SelectedProfile.MotionSensivityX;
+                SensitivityYValue = SelectedProfile.MotionSensivityY;
+                GyroMultiplier = SelectedProfile.GyrometerMultiplier;
+                AcceleroMultiplier = SelectedProfile.AccelerometerMultiplier;
+
+                ProfileEnabled = IsQuickTools ? !SelectedProfile.Default : SelectedProfile.Enabled;
+                CurrentProfileName = SelectedProfile.Name;
+                ProfileArguments = SelectedProfile.Arguments;
+                ProfileLaunchString = SelectedProfile.LaunchString;
+
+                if (FramerateLimits.Any())
+                {
+                    var desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
+                    if (desktopScreen != null)
+                    {
+                        ScreenFramelimit closest = desktopScreen.GetClosest(SelectedProfile.FramerateValue);
+                        SelectedFrameLimit = FramerateLimits.FirstOrDefault(vm => vm.FrameLimit.limit == closest.limit);
+                    }
+                }
+
+                UpdatePowerProfileSelections();
+                UpdateSelectedPowerProfileName();
+                UpdateControlsEnabledState();
+                NotifyWrapperProperties();
             }
         }
 
         /// <summary>
-        /// Updates power profile indices from the selected profile.
-        /// Separated to reduce complexity in UpdateUI.
+        /// Updates power profile selections from the selected profile.
+        /// Uses SelectedItem (SelectedPickerDC/AC) instead of indices to avoid
+        /// race conditions when collections are modified from background threads.
         /// </summary>
-        private void UpdatePowerProfileIndices()
+        private void UpdatePowerProfileSelections()
         {
             if (SelectedProfile.PowerProfiles.ContainsKey((int)PowerLineStatus.Offline))
             {
@@ -2716,9 +2694,9 @@ namespace HandheldCompanion.ViewModels
                 if (pickerViewModel != null)
                 {
                     _selectedPresetDC = ManagerFactory.powerProfileManager.GetProfile(offlineGuid);
-                    _selectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(pickerViewModel);
+                    _selectedPickerDC = pickerViewModel;
                     OnPropertyChanged(nameof(SelectedPresetDC));
-                    OnPropertyChanged(nameof(SelectedPresetIndexDC));
+                    OnPropertyChanged(nameof(SelectedPickerDC));
                 }
             }
 
@@ -2729,9 +2707,9 @@ namespace HandheldCompanion.ViewModels
                 if (pickerViewModel != null)
                 {
                     _selectedPresetAC = ManagerFactory.powerProfileManager.GetProfile(onlineGuid);
-                    _selectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(pickerViewModel);
+                    _selectedPickerAC = pickerViewModel;
                     OnPropertyChanged(nameof(SelectedPresetAC));
-                    OnPropertyChanged(nameof(SelectedPresetIndexAC));
+                    OnPropertyChanged(nameof(SelectedPickerAC));
                 }
             }
         }
@@ -2811,7 +2789,7 @@ namespace HandheldCompanion.ViewModels
             if (SelectedMainProfile is null)
                 return;
 
-            lock (_collectionLock)
+            lock (_collectionLock5)
             {
                 try
                 {
@@ -2825,11 +2803,8 @@ namespace HandheldCompanion.ViewModels
 
                     Profile profileToSelect = profiles.ElementAtOrDefault(selectedIndex) ?? SelectedMainProfile;
 
-                    UIHelper.TryInvoke(() =>
-                    {
-                        SafeUpdateSubProfiles(profiles, profileToSelect);
-                        SelectedProfile = profileToSelect;
-                    });
+                    SafeUpdateSubProfiles(profiles, profileToSelect);
+                    SelectedProfile = profileToSelect;
                 }
                 catch { }
             }
@@ -2837,11 +2812,14 @@ namespace HandheldCompanion.ViewModels
 
         private void SelectedProcess_WindowAttached_Merged(ProcessWindow processWindow)
         {
-            var item = AllWindows.FirstOrDefault(w => w.Hwnd == processWindow.Hwnd && w.Hwnd != 0);
-            if (item is null)
-                AllWindows.SafeAdd(item = new WindowListItemViewModel(processWindow));
-            else
-                item.UpdateFrom(processWindow);
+            lock (_collectionLock7)
+            {
+                var item = AllWindows.FirstOrDefault(w => w.Hwnd == processWindow.Hwnd && w.Hwnd != 0);
+                if (item is null)
+                    AllWindows.Add(item = new WindowListItemViewModel(processWindow));
+                else
+                    item.UpdateFrom(processWindow);
+            }
 
             OnPropertyChanged(nameof(HasAnyWindows));
         }
@@ -2857,7 +2835,8 @@ namespace HandheldCompanion.ViewModels
 
         private void ClearWindows()
         {
-            AllWindows.SafeClear();
+            lock (_collectionLock7)
+                AllWindows.Clear();
 
             if (selectedProcess is not null)
             {
@@ -2872,7 +2851,8 @@ namespace HandheldCompanion.ViewModels
             LibraryCoversIndex = -1;
             LibraryLogosIndex = -1;
             SelectedLibraryIndex = -1;
-            LibraryPickers.SafeClear();
+            lock (_collectionLock2)
+                LibraryPickers.Clear();
 
             // Notify that library entries have been cleared
             OnPropertyChanged(nameof(HasLibraryEntry));
@@ -2952,27 +2932,24 @@ namespace HandheldCompanion.ViewModels
                 currentProcess = processEx;
                 string path = currentProcess is not null ? currentProcess.Path : string.Empty;
 
-                UIHelper.TryInvoke(() =>
+                if (currentProcess is null || currentProcess.Filter != ProcessFilter.Allowed)
                 {
-                    if (currentProcess is null || currentProcess.Filter != ProcessFilter.Allowed)
-                    {
-                        ProcessIcon = null;
-                        IsProcessCardEnabled = false;
-                        ProcessName = Properties.Resources.QuickProfilesPage_Waiting;
-                        ProcessPath = string.Empty;
-                        IsProcessPathVisible = false;
-                        IsSubProfilesVisible = false;
-                    }
-                    else
-                    {
-                        ProcessIcon = currentProcess?.ProcessIcon;
-                        IsProcessCardEnabled = true;
-                        ProcessName = currentProcess?.Executable ?? string.Empty;
-                        ProcessPath = path;
-                        IsProcessPathVisible = true;
-                        IsSubProfilesVisible = true;
-                    }
-                });
+                    ProcessIcon = null;
+                    IsProcessCardEnabled = false;
+                    ProcessName = Properties.Resources.QuickProfilesPage_Waiting;
+                    ProcessPath = string.Empty;
+                    IsProcessPathVisible = false;
+                    IsSubProfilesVisible = false;
+                }
+                else
+                {
+                    ProcessIcon = currentProcess?.ProcessIcon;
+                    IsProcessCardEnabled = true;
+                    ProcessName = currentProcess?.Executable ?? string.Empty;
+                    ProcessPath = path;
+                    IsProcessPathVisible = true;
+                    IsSubProfilesVisible = true;
+                }
 
                 if (IsQuickTools)
                 {
@@ -3008,11 +2985,11 @@ namespace HandheldCompanion.ViewModels
 
             GyroHotkey = hotkey;
 
-            lock (_collectionLock3)
+            lock (_collectionLock4)
             {
                 HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
                 if (foundHotkey is null)
-                    HotkeysList.SafeAdd(new HotkeyViewModel(hotkey));
+                    HotkeysList.Add(new HotkeyViewModel(hotkey));
                 else
                     foundHotkey.Hotkey = hotkey;
             }
@@ -3054,10 +3031,7 @@ namespace HandheldCompanion.ViewModels
             if (SelectedProfile is null)
                 return;
 
-            UIHelper.TryInvoke(() =>
-            {
-                SelectedProfile.LayoutTitle = layoutTemplate.Name;
-            });
+            SelectedProfile.LayoutTitle = layoutTemplate.Name;
 
             SelectedProfile.Layout.ButtonLayout = layoutTemplate.Layout.ButtonLayout;
             SelectedProfile.Layout.AxisLayout = layoutTemplate.Layout.AxisLayout;
@@ -3084,8 +3058,8 @@ namespace HandheldCompanion.ViewModels
             {
                 lock (_collectionLock)
                 {
-                    SelectedPresetIndexAC = ProfilePickerCollectionViewAC.IndexOf(ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == powerProfileAC.Guid));
-                    SelectedPresetIndexDC = ProfilePickerCollectionViewDC.IndexOf(ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == powerProfileDC.Guid));
+                    SelectedPickerAC = ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == powerProfileAC.Guid);
+                    SelectedPickerDC = ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == powerProfileDC.Guid);
                 }
             });
         }

@@ -50,11 +50,14 @@ namespace HandheldCompanion.ViewModels.Pages
             if (notification.IsInternal)
                 return;
 
-            NotificationViewModel? foundNotification = Notifications.FirstOrDefault(n => n.Notification == notification || n.Notification.Guid == notification.Guid);
-            if (foundNotification is not null)
+            lock (_collectionLock)
             {
-                Notifications.SafeRemove(foundNotification);
-                foundNotification.Dispose();
+                NotificationViewModel? foundNotification = Notifications.FirstOrDefault(n => n.Notification == notification || n.Notification.Guid == notification.Guid);
+                if (foundNotification is not null)
+                {
+                    Notifications.Remove(foundNotification);
+                    foundNotification.Dispose();
+                }
             }
 
             OnPropertyChanged(nameof(HasNotifications));
@@ -65,11 +68,14 @@ namespace HandheldCompanion.ViewModels.Pages
             if (notification.IsInternal)
                 return;
 
-            NotificationViewModel? foundNotification = Notifications.FirstOrDefault(n => n.Notification == notification || n.Notification.Guid == notification.Guid);
-            if (foundNotification is null)
-                Notifications.SafeAdd(new NotificationViewModel(notification));
-            else
-                foundNotification.Notification = notification;
+            lock (_collectionLock)
+            {
+                NotificationViewModel? foundNotification = Notifications.FirstOrDefault(n => n.Notification == notification || n.Notification.Guid == notification.Guid);
+                if (foundNotification is null)
+                    Notifications.Add(new NotificationViewModel(notification));
+                else
+                    foundNotification.Notification = notification;
+            }
 
             OnPropertyChanged(nameof(HasNotifications));
         }

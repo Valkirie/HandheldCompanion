@@ -186,24 +186,30 @@ namespace HandheldCompanion.ViewModels
 
         private void Process_WindowAttached(ProcessWindow processWindow)
         {
-            WindowListItemViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow?.Hwnd == processWindow.Hwnd);
-            if (foundWindow is null)
+            lock (_collectionLock)
             {
-                ProcessWindows.SafeAdd(new WindowListItemViewModel(processWindow));
-            }
-            else
-            {
-                foundWindow.ProcessWindow = processWindow;
+                WindowListItemViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow?.Hwnd == processWindow.Hwnd);
+                if (foundWindow is null)
+                {
+                    ProcessWindows.SafeAdd(new WindowListItemViewModel(processWindow));
+                }
+                else
+                {
+                    foundWindow.ProcessWindow = processWindow;
+                }
             }
         }
 
         private void Process_WindowDetached(ProcessWindow processWindow)
         {
-            WindowListItemViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow?.Hwnd == processWindow.Hwnd);
-            if (foundWindow is not null)
+            lock (_collectionLock)
             {
-                ProcessWindows.SafeRemove(foundWindow);
-                foundWindow.Dispose();
+                WindowListItemViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow?.Hwnd == processWindow.Hwnd);
+                if (foundWindow is not null)
+                {
+                    ProcessWindows.SafeRemove(foundWindow);
+                    foundWindow.Dispose();
+                }
             }
         }
 

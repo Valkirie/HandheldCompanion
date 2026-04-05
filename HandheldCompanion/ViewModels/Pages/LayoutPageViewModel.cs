@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Controllers;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Views.Pages;
@@ -46,16 +45,12 @@ namespace HandheldCompanion.ViewModels
 
         private void SettingsManager_SettingValueChanged(string? name, object value, bool temporary)
         {
-            // UI thread
-            UIHelper.TryInvoke(() =>
+            switch (name)
             {
-                switch (name)
-                {
-                    case "LayoutFilterOnDevice":
-                        RefreshLayoutList();
-                        break;
-                }
-            });
+                case "LayoutFilterOnDevice":
+                    RefreshLayoutList();
+                    break;
+            }
         }
 
         private void ControllerManager_ControllerSelected(IController controller)
@@ -83,7 +78,7 @@ namespace HandheldCompanion.ViewModels
                 LayoutTemplateViewModel? foundPreset = layoutList.FirstOrDefault(p => p.Guid == layoutTemplate.Guid);
                 if (foundPreset is not null)
                 {
-                    index = layoutList.IndexOf(foundPreset);
+                    // index = layoutList.IndexOf(foundPreset);
                     foundPreset = new(layoutTemplate);
                 }
                 else

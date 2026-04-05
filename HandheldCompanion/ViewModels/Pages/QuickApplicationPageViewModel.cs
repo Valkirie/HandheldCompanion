@@ -1,9 +1,9 @@
 ﻿using HandheldCompanion.Extensions;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels.Commands;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
@@ -81,16 +81,22 @@ namespace HandheldCompanion.ViewModels
 
         private void RefreshPage()
         {
-            PagedProfiles.Clear();
+            List<ProfileViewModel> items;
+            lock (_collectionLock2)
+            {
+                items = Profiles
+                    .OrderByDescending(p => p.LastUsed)
+                    .Skip(SelectedPageIndex * PageSize)
+                    .Take(PageSize)
+                    .ToList();
+            }
 
-            // order all profiles by LastUsed (newest first)
-            var items = Profiles
-                .OrderByDescending(p => p.LastUsed)
-                .Skip(SelectedPageIndex * PageSize)
-                .Take(PageSize);
-
-            foreach (var vm in items)
-                PagedProfiles.Add(vm);
+            lock (_collectionLock3)
+            {
+                PagedProfiles.Clear();
+                foreach (var vm in items)
+                    PagedProfiles.Add(vm);
+            }
         }
 
         public bool IsReady => ManagerFactory.processManager.IsReady;
@@ -100,6 +106,8 @@ namespace HandheldCompanion.ViewModels
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(Processes, _collectionLock);
             BindingOperations.EnableCollectionSynchronization(Profiles, _collectionLock2);
+            BindingOperations.EnableCollectionSynchronization(PagedProfiles, _collectionLock3);
+
             Profiles.CollectionChanged += (s, e) =>
             {
                 OnPropertyChanged(nameof(TotalPages));
@@ -168,7 +176,7 @@ namespace HandheldCompanion.ViewModels
                 ProfileManager_Updated(profile, UpdateSource.Background, false);
 
             OnPropertyChanged(nameof(TotalPages));
-            UIHelper.TryInvoke(RefreshPage);
+            RefreshPage();
         }
 
         private void ProfileManager_Initialized()
@@ -182,15 +190,23 @@ namespace HandheldCompanion.ViewModels
             if (profile.Default)
                 return;
 
-            ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
-            if (foundProfile is not null)
+            bool removed = false;
+            lock (_collectionLock2)
             {
-                Profiles.SafeRemove(foundProfile);
-                foundProfile.Dispose();
+                ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
+                if (foundProfile is not null)
+                {
+                    Profiles.Remove(foundProfile);
+                    foundProfile.Dispose();
+                    removed = true;
+                }
+            }
 
+            if (removed)
+            {
                 // re-compute pages
                 OnPropertyChanged(nameof(TotalPages));
-                UIHelper.TryInvoke(RefreshPage);
+                RefreshPage();
             }
         }
 
@@ -204,23 +220,26 @@ namespace HandheldCompanion.ViewModels
             if (profile.Default)
                 return;
 
-            ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
-            if (foundProfile is null)
+            lock (_collectionLock2)
             {
-                if (profile.IsLiked)
-                    Profiles.SafeAdd(new ProfileViewModel(profile, true));
-            }
-            else
-            {
-                if (profile.IsLiked)
-                    foundProfile.Profile = profile;
+                ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
+                if (foundProfile is null)
+                {
+                    if (profile.IsLiked)
+                        Profiles.Add(new ProfileViewModel(profile, true));
+                }
                 else
-                    ProfileManager_Deleted(profile);
+                {
+                    if (profile.IsLiked)
+                        foundProfile.Profile = profile;
+                    else
+                        ProfileManager_Deleted(profile);
+                }
             }
 
             // re-compute pages
             OnPropertyChanged(nameof(TotalPages));
-            UIHelper.TryInvoke(RefreshPage);
+            RefreshPage();
         }
 
         private void OnRadioButtonChecked(object parameter)
@@ -234,11 +253,14 @@ namespace HandheldCompanion.ViewModels
             if (processEx is null)
                 return;
 
-            ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
-            if (foundProcess is not null)
+            lock (_collectionLock)
             {
-                Processes.SafeRemove(foundProcess);
-                foundProcess.Dispose();
+                ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
+                if (foundProcess is not null)
+                {
+                    Processes.Remove(foundProcess);
+                    foundProcess.Dispose();
+                }
             }
         }
 
@@ -254,15 +276,18 @@ namespace HandheldCompanion.ViewModels
                     return;
             }
 
-            ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
-            if (foundProcess is null)
+            lock (_collectionLock)
             {
-                Processes.SafeAdd(new ProcessExViewModel(processEx, true));
-            }
-            else
-            {
-                // Some apps might have the process come in twice, update the process on the viewmodel
-                foundProcess.Process = processEx;
+                ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
+                if (foundProcess is null)
+                {
+                    Processes.Add(new ProcessExViewModel(processEx, true));
+                }
+                else
+                {
+                    // Some apps might have the process come in twice, update the process on the viewmodel
+                    foundProcess.Process = processEx;
+                }
             }
         }
 

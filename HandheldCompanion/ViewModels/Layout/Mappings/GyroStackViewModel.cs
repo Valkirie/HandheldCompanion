@@ -72,12 +72,14 @@ namespace HandheldCompanion.ViewModels
 
         public override void AddMapping()
         {
-            GyroMappings.SafeAdd(new GyroMappingViewModel(_flag));
+            lock (_collectionLock)
+                GyroMappings.Add(new GyroMappingViewModel(_flag));
         }
 
         public override void RemoveMapping(MappingViewModel mapping)
         {
-            GyroMappings.SafeRemove((GyroMappingViewModel)mapping);
+            lock (_collectionLock)
+                GyroMappings.Remove((GyroMappingViewModel)mapping);
             mapping.Dispose();
         }
 
@@ -115,7 +117,12 @@ namespace HandheldCompanion.ViewModels
                     newMapping.SetAction(action, false);
                 }
 
-                GyroMappings.ReplaceWith(newMappings);
+                lock (_collectionLock)
+                {
+                    GyroMappings.Clear();
+                    foreach (var m in newMappings)
+                        GyroMappings.Add(m);
+                }
             }
         }
     }

@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Controllers;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using System.Windows.Input;
@@ -107,11 +106,16 @@ namespace HandheldCompanion.ViewModels
             GlyphFontFamily = glyphIconInfo.FontFamily;
             GlyphFontSize = glyphIconInfo.FontSize;
 
-            // UI thread
-            UIHelper.TryInvoke(() =>
+            if (glyphIconInfo.Color.HasValue)
             {
-                GlyphForeground = glyphIconInfo.Color.HasValue ? new SolidColorBrush(glyphIconInfo.Color.Value) : null;
-            });
+                var brush = new SolidColorBrush(glyphIconInfo.Color.Value);
+                brush.Freeze();
+                GlyphForeground = brush;
+            }
+            else
+            {
+                GlyphForeground = null;
+            }
         }
 
         public override void Dispose()

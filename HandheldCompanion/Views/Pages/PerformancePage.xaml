@@ -19,6 +19,14 @@
     KeepAlive="True"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <CollectionViewSource x:Key="ProfilePickerViewSource" Source="{Binding ProfilePickerItems}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Header" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+    </Page.Resources>
+
     <Grid Name="MainGrid" Margin="20">
         <ikw:SimpleStackPanel Spacing="8">
 
@@ -64,8 +72,8 @@
                                 VerticalAlignment="Center"
                                 DisplayMemberPath="Text"
                                 ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
-                                ItemsSource="{Binding ProfilePickerCollectionView, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                SelectedIndex="{Binding SelectedPresetIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                ItemsSource="{Binding Source={StaticResource ProfilePickerViewSource}}"
+                                SelectedItem="{Binding SelectedPresetPicker, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 SelectedValuePath="Text">
                                 <ComboBox.GroupStyle>
                                     <GroupStyle>

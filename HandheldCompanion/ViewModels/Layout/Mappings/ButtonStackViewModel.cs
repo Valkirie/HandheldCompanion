@@ -102,19 +102,22 @@ namespace HandheldCompanion.ViewModels
         public override void AddMapping()
         {
             var newMapping = new ButtonMappingViewModel(this, _flag);
-            ButtonMappings.SafeAdd(newMapping);
+            lock (_collectionLock)
+                ButtonMappings.Add(newMapping);
         }
 
         public ButtonMappingViewModel AddMappingAndReturn()
         {
             var newMapping = new ButtonMappingViewModel(this, _flag);
-            ButtonMappings.SafeAdd(newMapping);
+            lock (_collectionLock)
+                ButtonMappings.Add(newMapping);
             return newMapping;
         }
 
         public override void RemoveMapping(MappingViewModel mapping)
         {
-            ButtonMappings.SafeRemove((ButtonMappingViewModel)mapping);
+            lock (_collectionLock)
+                ButtonMappings.Remove((ButtonMappingViewModel)mapping);
             mapping.Dispose();
         }
 
@@ -152,7 +155,12 @@ namespace HandheldCompanion.ViewModels
                     newMapping.SetAction(action, false);
                 }
 
-                ButtonMappings.ReplaceWith(newMappings);
+                lock (_collectionLock)
+                {
+                    ButtonMappings.Clear();
+                    foreach (var m in newMappings)
+                        ButtonMappings.Add(m);
+                }
             }
             else if (ButtonMappings.Count != 0)
             {

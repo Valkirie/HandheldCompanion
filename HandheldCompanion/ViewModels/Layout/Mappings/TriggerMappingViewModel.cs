@@ -254,7 +254,12 @@ namespace HandheldCompanion.ViewModels
                         matchingTargetVm = mappingTargetVm;
                 }
 
-                Targets.ReplaceWith(targets);
+                lock (_collectionLock)
+                {
+                    Targets.Clear();
+                    foreach (var t in targets)
+                        Targets.Add(t);
+                }
                 SelectedTarget = matchingTargetVm ?? Targets.First();
             }
             else if (actionType == ActionType.Keyboard)
@@ -271,7 +276,12 @@ namespace HandheldCompanion.ViewModels
                     };
                 }
 
-                Targets.ReplaceWith(_keyboardKeysTargets);
+                lock (_collectionLock)
+                {
+                    Targets.Clear();
+                    foreach (var t in _keyboardKeysTargets)
+                        Targets.Add(t);
+                }
                 SelectedTarget = _keyboardKeysTargets.FirstOrDefault(e => e.Tag.Equals(((KeyboardActions)Action).Key)) ?? _keyboardKeysTargets.First();
             }
             else if (actionType == ActionType.Mouse)
@@ -303,7 +313,12 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 // Update list and selected target
-                Targets.ReplaceWith(targets);
+                lock (_collectionLock)
+                {
+                    Targets.Clear();
+                    foreach (var t in targets)
+                        Targets.Add(t);
+                }
                 SelectedTarget = matchingTargetVm ?? Targets.First();
             }
             else if (actionType == ActionType.Trigger)
@@ -331,7 +346,12 @@ namespace HandheldCompanion.ViewModels
                         matchingTargetVm = mappingTargetVm;
                 }
 
-                Targets.ReplaceWith(targets);
+                lock (_collectionLock)
+                {
+                    Targets.Clear();
+                    foreach (var t in targets)
+                        Targets.Add(t);
+                }
                 SelectedTarget = matchingTargetVm ?? Targets.First();
             }
             else if (actionType == ActionType.Shift)
@@ -354,7 +374,12 @@ namespace HandheldCompanion.ViewModels
                         matchingTargetVm = mappingTargetVm;
                 }
 
-                Targets.ReplaceWith(targets);
+                lock (_collectionLock)
+                {
+                    Targets.Clear();
+                    foreach (var t in targets)
+                        Targets.Add(t);
+                }
                 SelectedTarget = matchingTargetVm ?? Targets.First();
             }
             else if (actionType == ActionType.Inherit)

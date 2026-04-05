@@ -21,6 +21,14 @@
     KeepAlive="True"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <CollectionViewSource x:Key="FunctionItemsViewSource" Source="{Binding FunctionItems}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Category" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+    </Page.Resources>
+
     <Grid Margin="20">
         <ikw:SimpleStackPanel Spacing="10">
 
@@ -71,7 +79,7 @@
                     Visibility="{Binding CommandTypeIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1}">
                     <ComboBox
                         Width="290"
-                        ItemsSource="{Binding FunctionCollectionView}"
+                        ItemsSource="{Binding Source={StaticResource FunctionItemsViewSource}}"
                         SelectedIndex="{Binding FunctionIndex, Mode=TwoWay}">
                         <ComboBox.GroupStyle>
                             <GroupStyle>

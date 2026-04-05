@@ -270,7 +270,7 @@
     <PackageReference Include="System.IO.Ports" Version="10.0.5" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.5" />
     <PackageReference Include="System.Text.Json" Version="10.0.5" />
-    <PackageReference Include="WindowsAPICodePack" Version="8.0.15" />
+    <PackageReference Include="WindowsAPICodePack" Version="8.0.15.1" />
     <PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
     <PackageReference Include="WindowsInput" Version="6.4.1" />
     <PackageReference Include="WpfScreenHelper" Version="2.1.1" />
@@ -2425,9 +2425,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="WinRing0x64.sys">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Xinput1_4_2.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

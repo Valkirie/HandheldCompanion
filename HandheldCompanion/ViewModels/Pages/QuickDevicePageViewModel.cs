@@ -1,5 +1,4 @@
 using HandheldCompanion.Devices;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
@@ -273,7 +272,7 @@ namespace HandheldCompanion.ViewModels
 
             // Enable collection synchronization for cross-thread access
             BindingOperations.EnableCollectionSynchronization(Resolutions, _collectionLock);
-            BindingOperations.EnableCollectionSynchronization(Frequencies, _collectionLock);
+            BindingOperations.EnableCollectionSynchronization(Frequencies, _collectionLock2);
 
             // Initialize device capabilities
             IDevice currentDevice = IDevice.GetCurrent();
@@ -432,45 +431,46 @@ namespace HandheldCompanion.ViewModels
 
         private void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
         {
-            UIHelper.TryInvoke(() =>
+            isLoadingDisplay = true;
+            try
             {
-                isLoadingDisplay = true;
-                try
+                lock (_collectionLock)
                 {
                     Resolutions.Clear();
                     foreach (ScreenResolution resolution in screen.screenResolutions)
                         Resolutions.Add(resolution);
                 }
-                finally
-                {
-                    isLoadingDisplay = false;
-                }
-            });
+            }
+            finally
+            {
+                isLoadingDisplay = false;
+            }
         }
 
         private void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
         {
-            UIHelper.TryInvoke(() =>
+            isLoadingDisplay = true;
+            try
             {
-                isLoadingDisplay = true;
-                try
+                // Don't change display settings if profile has integer scaling enabled
+                Profile? currentProfile = ManagerFactory.profileManager.GetCurrent();
+                if (currentProfile is not null && currentProfile.IntegerScalingEnabled)
                 {
-                    // Don't change display settings if profile has integer scaling enabled
-                    Profile? currentProfile = ManagerFactory.profileManager.GetCurrent();
-                    if (currentProfile is not null && currentProfile.IntegerScalingEnabled)
-                    {
-                        ProfileManager_Applied(currentProfile, UpdateSource.Background);
-                        return;
-                    }
+                    ProfileManager_Applied(currentProfile, UpdateSource.Background);
+                    return;
+                }
 
-                    if (resolution != SelectedResolution)
-                    {
-                        SelectedResolution = resolution;
-                        UpdateFrequenciesForResolution(resolution);
-                    }
+                if (resolution != SelectedResolution)
+                {
+                    SelectedResolution = resolution;
+                    UpdateFrequenciesForResolution(resolution);
+                }
 
-                    // Select current frequency
-                    int screenFrequency = desktopScreen.GetCurrentFrequency();
+                // Select current frequency
+                int screenFrequency = desktopScreen.GetCurrentFrequency();
+
+                lock (_collectionLock2)
+                {
                     foreach (ScreenFrequencyViewModel item in Frequencies)
                     {
                         if (item.Frequency == screenFrequency)
@@ -480,11 +480,11 @@ namespace HandheldCompanion.ViewModels
                         }
                     }
                 }
-                finally
-                {
-                    isLoadingDisplay = false;
-                }
-            });
+            }
+            finally
+            {
+                isLoadingDisplay = false;
+            }
         }
 
         private void UpdateFrequenciesForResolution(ScreenResolution resolution)
@@ -492,18 +492,21 @@ namespace HandheldCompanion.ViewModels
             // Store current selection before clearing
             int? currentSelectedFrequency = SelectedFrequency?.Frequency;
 
-            Frequencies.Clear();
-            foreach (int frequency in resolution.Frequencies.Keys)
+            lock (_collectionLock2)
             {
-                Frequencies.Add(new ScreenFrequencyViewModel(frequency));
-            }
+                Frequencies.Clear();
+                foreach (int frequency in resolution.Frequencies.Keys)
+                {
+                    Frequencies.Add(new ScreenFrequencyViewModel(frequency));
+                }
 
-            // Restore selection if it exists in the new list
-            if (currentSelectedFrequency.HasValue && Frequencies.Any())
-            {
-                var matchingFrequency = Frequencies.FirstOrDefault(f => f.Frequency == currentSelectedFrequency.Value);
-                if (matchingFrequency != null)
-                    SelectedFrequency = matchingFrequency;
+                // Restore selection if it exists in the new list
+                if (currentSelectedFrequency.HasValue && Frequencies.Any())
+                {
+                    var matchingFrequency = Frequencies.FirstOrDefault(f => f.Frequency == currentSelectedFrequency.Value);
+                    if (matchingFrequency != null)
+                        SelectedFrequency = matchingFrequency;
+                }
             }
         }
 
@@ -537,20 +540,17 @@ namespace HandheldCompanion.ViewModels
 
         private void UpdateDisplayOverrideUI(Profile profile)
         {
-            UIHelper.TryInvoke(() =>
+            isLoadingDisplay = true;
+            try
             {
-                isLoadingDisplay = true;
-                try
-                {
-                    var canChangeDisplay = !profile.IntegerScalingEnabled;
-                    IsDisplayStackEnabled = canChangeDisplay;
-                    ResolutionOverrideStackVisibility = canChangeDisplay ? Visibility.Collapsed : Visibility.Visible;
-                }
-                finally
-                {
-                    isLoadingDisplay = false;
-                }
-            });
+                var canChangeDisplay = !profile.IntegerScalingEnabled;
+                IsDisplayStackEnabled = canChangeDisplay;
+                ResolutionOverrideStackVisibility = canChangeDisplay ? Visibility.Collapsed : Visibility.Visible;
+            }
+            finally
+            {
+                isLoadingDisplay = false;
+            }
         }
 
         private void ProfileManager_Discarded(Profile profile, bool swapped, Profile nextProfile)
@@ -561,19 +561,16 @@ namespace HandheldCompanion.ViewModels
 
             if (profile.IntegerScalingEnabled)
             {
-                UIHelper.TryInvoke(() =>
+                isLoadingDisplay = true;
+                try
                 {
-                    isLoadingDisplay = true;
-                    try
-                    {
-                        IsDisplayStackEnabled = true;
-                        ResolutionOverrideStackVisibility = Visibility.Collapsed;
-                    }
-                    finally
-                    {
-                        isLoadingDisplay = false;
-                    }
-                });
+                    IsDisplayStackEnabled = true;
+                    ResolutionOverrideStackVisibility = Visibility.Collapsed;
+                }
+                finally
+                {
+                    isLoadingDisplay = false;
+                }
 
                 // Restore default resolution by reapplying current selection
                 if (profile.IntegerScalingDivider != 1 && SelectedResolution != null)
@@ -587,45 +584,39 @@ namespace HandheldCompanion.ViewModels
 
         private void NightLight_Toggled(bool enabled)
         {
-            UIHelper.TryInvoke(() =>
+            isLoadingDisplay = true;
+            try
             {
-                isLoadingDisplay = true;
-                try
-                {
-                    IsNightLightEnabled = enabled;
-                }
-                finally
-                {
-                    isLoadingDisplay = false;
-                }
-            });
+                IsNightLightEnabled = enabled;
+            }
+            finally
+            {
+                isLoadingDisplay = false;
+            }
         }
 
         private void SettingsManager_SettingValueChanged(string? name, object value, bool temporary)
         {
-            UIHelper.TryInvoke(() =>
+            isLoadingDisplay = true;
+            try
             {
-                isLoadingDisplay = true;
-                try
+                switch (name)
                 {
-                    switch (name)
-                    {
-                        case "LEDSettingsEnabled":
-                            IsDynamicLightingEnabled = Convert.ToBoolean(value);
-                            break;
-                        case "AYANEOFlipScreenEnabled":
-                            AYANEOFlipScreenEnabled = Convert.ToBoolean(value);
-                            break;
-                        case "AYANEOFlipScreenBrightness":
-                            AYANEOFlipScreenBrightness = Convert.ToDouble(value);
-                            break;
-                    }
+                    case "LEDSettingsEnabled":
+                        IsDynamicLightingEnabled = Convert.ToBoolean(value);
+                        break;
+                    case "AYANEOFlipScreenEnabled":
+                        AYANEOFlipScreenEnabled = Convert.ToBoolean(value);
+                        break;
+                    case "AYANEOFlipScreenBrightness":
+                        AYANEOFlipScreenBrightness = Convert.ToDouble(value);
+                        break;
                 }
-                finally
-                {
-                    isLoadingDisplay = false;
-                }
-            });
+            }
+            finally
+            {
+                isLoadingDisplay = false;
+            }
         }
 
         private async void HandleAYANEOFlipScreenToggle(bool enabled)

@@ -95,16 +95,12 @@ namespace HandheldCompanion.ViewModels
             lock (_collectionLock)
             {
                 foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
+                if (foundHotkey is null)
+                    HotkeysList.Add(new HotkeyViewModel(hotkey));
+                else
+                    foundHotkey.Hotkey = hotkey;
             }
 
-            if (foundHotkey is null)
-            {
-                HotkeysList.SafeAdd(new HotkeyViewModel(hotkey));
-            }
-            else
-            {
-                foundHotkey.Hotkey = hotkey;
-            }
             OnPropertyChanged(nameof(HotkeysList));
         }
 
@@ -114,36 +110,36 @@ namespace HandheldCompanion.ViewModels
             lock (_collectionLock)
             {
                 foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
+                if (foundHotkey is not null)
+                {
+                    HotkeysList.Remove(foundHotkey);
+                    foundHotkey.Dispose();
+                }
             }
 
-            if (foundHotkey is not null)
-            {
-                HotkeysList.SafeRemove(foundHotkey);
-                foundHotkey.Dispose();
-            }
             OnPropertyChanged(nameof(HotkeysList));
         }
 
         private void InputsManager_StartedListening(ButtonFlags buttonFlags, InputsChordTarget chordTarget)
         {
-            HotkeyViewModel hotkeyViewModel;
+            HotkeyViewModel? foundHotkey;
             lock (_collectionLock)
             {
-                hotkeyViewModel = HotkeysList.FirstOrDefault(h => h.Hotkey.ButtonFlags == buttonFlags);
+                foundHotkey = HotkeysList.FirstOrDefault(h => h.Hotkey.ButtonFlags == buttonFlags);
             }
 
-            hotkeyViewModel?.SetListening(true, chordTarget);
+            foundHotkey?.SetListening(true, chordTarget);
         }
 
         private void InputsManager_StoppedListening(ButtonFlags buttonFlags, InputsChord storedChord)
         {
-            HotkeyViewModel hotkeyViewModel;
+            HotkeyViewModel? foundHotkey;
             lock (_collectionLock)
             {
-                hotkeyViewModel = HotkeysList.FirstOrDefault(h => h.Hotkey.ButtonFlags == buttonFlags);
+                foundHotkey = HotkeysList.FirstOrDefault(h => h.Hotkey.ButtonFlags == buttonFlags);
             }
 
-            hotkeyViewModel?.SetListening(false, storedChord.chordTarget);
+            foundHotkey?.SetListening(false, storedChord.chordTarget);
         }
 
         public override void Dispose()

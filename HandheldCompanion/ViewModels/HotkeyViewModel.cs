@@ -36,7 +36,9 @@ namespace HandheldCompanion.ViewModels
         public ObservableCollection<FontIconViewModel> ButtonGlyphs { get; set; } = [];
 
         private List<Type> _functionTypes;
-        public ListCollectionView FunctionCollectionView { get; set; }
+
+        // Expose shared function items for XAML CollectionViewSource binding
+        public ObservableCollection<ComboBoxItemViewModel> FunctionItems => _sharedFunctionItems;
 
         // Shared across all instances – built once to avoid repeated Activator.CreateInstance
         private static readonly object _sharedDataLock = new();
@@ -629,16 +631,8 @@ namespace HandheldCompanion.ViewModels
         {
             Hotkey = hotkey;
 
-            // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(ButtonGlyphs, _collectionLock);
-
             EnsureSharedFunctionData();
             _functionTypes = _sharedFunctionTypes!;
-            UIHelper.TryInvoke(() =>
-            {
-                FunctionCollectionView = new ListCollectionView(_sharedFunctionItems);
-                FunctionCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
-            });
 
             DefineButtonCommand = new DelegateCommand(async () =>
             {
@@ -740,68 +734,78 @@ namespace HandheldCompanion.ViewModels
 
         protected void UpdateController(IController controller)
         {
-            // UI thread
-            UIHelper.TryInvoke(() =>
+            var newValues = new List<MappingTargetViewModel>();
+
+            if (controller is not null)
             {
-                ButtonCommandsValues.Clear();
-
-                if (controller is null) return;
-
                 foreach (var button in controller.GetTargetButtons())
                 {
-                    ButtonCommandsValues.Add(new MappingTargetViewModel
+                    newValues.Add(new MappingTargetViewModel
                     {
                         Tag = button,
                         Content = controller.GetButtonName(button)
                     });
                 }
+            }
 
+            UIHelper.TryBeginInvoke(() =>
+            {
+                ButtonCommandsValues.Clear();
+                foreach (var value in newValues)
+                    ButtonCommandsValues.Add(value);
                 OnPropertyChanged(nameof(ButtonCommandsValues));
             });
         }
 
         public void DrawChords()
         {
-            foreach (FontIconViewModel FontIconViewModel in ButtonGlyphs.ToList())
-                ButtonGlyphs.SafeRemove(FontIconViewModel);
-
             IController controller = ControllerManager.GetTargetOrDefault();
 
-            // UI thread
-            UIHelper.TryInvoke(() =>
+            // Build new glyphs locally, then swap onto UI thread via UIHelper.
+            var newGlyphs = new List<FontIconViewModel>();
+
+            foreach (ButtonFlags buttonFlags in Hotkey.inputsChord.ButtonState.Buttons)
             {
-                foreach (ButtonFlags buttonFlags in Hotkey.inputsChord.ButtonState.Buttons)
+                string glyphString = string.Empty;
+                string glyphFont = string.Empty;
+
+                Color? color = controller.GetGlyphColor(buttonFlags);
+                Brush? glyphColor = null;
+                if (color.HasValue)
                 {
-                    string glyphString = string.Empty;
-                    string glyphFont = string.Empty;
-
-                    Color? color = controller.GetGlyphColor(buttonFlags);
-                    Brush? glyphColor = color.HasValue ? new SolidColorBrush(color.Value) : null;
-
-                    switch (buttonFlags)
-                    {
-                        case ButtonFlags.OEM1:
-                        case ButtonFlags.OEM2:
-                        case ButtonFlags.OEM3:
-                        case ButtonFlags.OEM4:
-                        case ButtonFlags.OEM5:
-                        case ButtonFlags.OEM6:
-                        case ButtonFlags.OEM7:
-                        case ButtonFlags.OEM8:
-                        case ButtonFlags.OEM9:
-                        case ButtonFlags.OEM10:
-                            glyphString = IDevice.GetCurrent().GetGlyph(buttonFlags);
-                            glyphFont = IDevice.GetCurrent().GetFontFamily(buttonFlags);
-                            break;
-                        default:
-                            glyphString = controller.GetGlyph(buttonFlags);
-                            glyphFont = controller.GetFontFamily(buttonFlags);
-                            break;
-                    }
-
-                    FontIconViewModel fontIcon = new(Hotkey, this, glyphString, glyphColor, glyphFont);
-                    ButtonGlyphs.SafeAdd(fontIcon);
+                    glyphColor = new SolidColorBrush(color.Value);
+                    glyphColor.Freeze();
                 }
+
+                switch (buttonFlags)
+                {
+                    case ButtonFlags.OEM1:
+                    case ButtonFlags.OEM2:
+                    case ButtonFlags.OEM3:
+                    case ButtonFlags.OEM4:
+                    case ButtonFlags.OEM5:
+                    case ButtonFlags.OEM6:
+                    case ButtonFlags.OEM7:
+                    case ButtonFlags.OEM8:
+                    case ButtonFlags.OEM9:
+                    case ButtonFlags.OEM10:
+                        glyphString = IDevice.GetCurrent().GetGlyph(buttonFlags);
+                        glyphFont = IDevice.GetCurrent().GetFontFamily(buttonFlags);
+                        break;
+                    default:
+                        glyphString = controller.GetGlyph(buttonFlags);
+                        glyphFont = controller.GetFontFamily(buttonFlags);
+                        break;
+                }
+
+                newGlyphs.Add(new FontIconViewModel(Hotkey, this, glyphString, glyphColor, glyphFont));
+            }
+
+            UIHelper.TryBeginInvoke(() =>
+            {
+                ButtonGlyphs.Clear();
+                foreach (var glyph in newGlyphs)
+                    ButtonGlyphs.Add(glyph);
             });
 
             switch (Hotkey.command.commandType)
@@ -839,13 +843,10 @@ namespace HandheldCompanion.ViewModels
                             name = cmd.Name;
                         }
 
-                        UIHelper.TryInvoke(() =>
-                        {
-                            Name = name;
-                            Description = cmd.Description;
-                            OnPropertyChanged(nameof(FontFamily));
-                            OnPropertyChanged(nameof(Glyph));
-                        });
+                        Name = name;
+                        Description = cmd.Description;
+                        OnPropertyChanged(nameof(FontFamily));
+                        OnPropertyChanged(nameof(Glyph));
                     });
                     return;
                 }

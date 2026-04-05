@@ -209,13 +209,13 @@
                                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                                 <Setter Property="Margin" Value="0" />
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding DataContext.IsListView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True">
+                                    <DataTrigger Binding="{Binding DataContext.IsListView, ElementName=About}" Value="True">
                                         <Setter Property="Margin" Value="0,0,0,6" />
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding IsLiked}" Value="True">
                                         <Setter Property="controls:JustifiedWrapPanel.ItemSpan" Value="3" />
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding DataContext.IsWideView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True">
+                                    <DataTrigger Binding="{Binding DataContext.IsWideView, ElementName=About}" Value="True">
                                         <Setter Property="controls:JustifiedWrapPanel.ItemSpan" Value="3" />
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -234,7 +234,7 @@
                                                 <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
                                                         <Condition Binding="{Binding IsLiked}" Value="True" />
-                                                        <Condition Binding="{Binding DataContext.IsGridView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True" />
+                                                        <Condition Binding="{Binding DataContext.IsGridView, ElementName=About}" Value="True" />
                                                     </MultiDataTrigger.Conditions>
                                                     <Setter Property="ContentTemplate" Value="{StaticResource LibraryTemplateWide}" />
                                                 </MultiDataTrigger>
@@ -242,17 +242,17 @@
                                                 <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
                                                         <Condition Binding="{Binding IsLiked}" Value="False" />
-                                                        <Condition Binding="{Binding DataContext.IsGridView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True" />
+                                                        <Condition Binding="{Binding DataContext.IsGridView, ElementName=About}" Value="True" />
                                                     </MultiDataTrigger.Conditions>
                                                     <Setter Property="ContentTemplate" Value="{StaticResource LibraryTemplate}" />
                                                 </MultiDataTrigger>
                                                 <!--  List template for non-favorites (when in list view)  -->
-                                                <DataTrigger Binding="{Binding DataContext.IsListView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True">
+                                                <DataTrigger Binding="{Binding DataContext.IsListView, ElementName=About}" Value="True">
                                                     <Setter Property="ContentTemplate" Value="{StaticResource LibraryTemplateList}" />
                                                     <Setter Property="Height" Value="64" />
                                                 </DataTrigger>
                                                 <!--  Wide view: all items use wide template regardless of IsLiked  -->
-                                                <DataTrigger Binding="{Binding DataContext.IsWideView, RelativeSource={RelativeSource AncestorType=Page}}" Value="True">
+                                                <DataTrigger Binding="{Binding DataContext.IsWideView, ElementName=About}" Value="True">
                                                     <Setter Property="ContentTemplate" Value="{StaticResource LibraryTemplateWide}" />
                                                 </DataTrigger>
                                             </Style.Triggers>
