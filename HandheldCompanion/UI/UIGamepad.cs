@@ -735,8 +735,18 @@ namespace HandheldCompanion.Managers
                 {
                     // get current focused element
                     Control focusedElement = GetFocusedElement();
-                    if (focusedElement is null || !focusedElement.IsEnabled || !focusedElement.IsVisible)
+                    if (focusedElement is null || !focusedElement.IsVisible)
                         return;
+
+                    // If the focused control is disabled, redirect focus to the nearest enabled
+                    // control so the user can continue navigating instead of being stuck.
+                    if (!focusedElement.IsEnabled)
+                    {
+                        Control fallback = WPFUtils.GetTopLeftControl<Control>(gamepadWindow.controlElements);
+                        if (fallback is not null)
+                            Focus(fallback);
+                        return;
+                    }
 
                     string elementType = focusedElement.GetType().Name;
 
