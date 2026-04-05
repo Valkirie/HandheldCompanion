@@ -49,8 +49,8 @@ namespace HandheldCompanion.Managers
         private static readonly SemaphoreSlim controllerLock = new SemaphoreSlim(1, 1);
         private static List<IXbox360Controller> temporaryControllers = new();
 
-        public static ushort VendorId = 0x28E;
-        public static ushort ProductId = 0x45E;
+        public static ushort VendorId = 0x45E;
+        public static ushort ProductId = 0x28E;
 
         public static bool IsInitialized;
 

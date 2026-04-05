@@ -820,6 +820,15 @@ public class DeviceManager : IManager
     {
         const int maxAttempts = 4;
 
+        // new method: try to get user index directly from OpenXInput
+        if (OpenXInput.IsAvailable)
+        {
+            uint result = OpenXInput.GetUserIndex(symLink, out byte userIndex);
+            if (result == OpenXInput.ERROR_SUCCESS)
+                return userIndex;
+        }
+
+        // old method: query LED state and map back to port (works because the LED state reflects the assigned port)
         using SafeFileHandle handle = CreateFileW(symLink, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
         if (handle.IsInvalid)
             return byte.MaxValue;

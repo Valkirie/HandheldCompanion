@@ -1,7 +1,9 @@
-﻿using Nefarius.Utilities.DeviceManagement.Extensions;
+﻿using HandheldCompanion.Managers;
+using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace HandheldCompanion;
 
@@ -117,10 +119,26 @@ public class PnPDetails
 
     public bool CyclePort()
     {
-        UsbPnPDevice device = GetUsbPnPDevice();
+        UsbPnPDevice? device = GetUsbPnPDevice();
 
         if (device is not null)
-            try { device.CyclePort(); return true; } catch { }
+        {
+            if (device.IsVirtual())
+            {
+                VirtualManager.Suspend(false);
+                Thread.Sleep(1000);
+                VirtualManager.Resume(false);
+                return true;
+            }
+            else
+            {
+                try
+                {
+                    device.CyclePort();
+                    return true;
+                } catch { }
+            }
+        }
 
         return false;
     }

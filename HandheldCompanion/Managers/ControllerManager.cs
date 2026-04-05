@@ -1639,14 +1639,41 @@ public static class ControllerManager
                     return;
                 }
 
-                if (probe.HasInvalidControllers)
-                    FixDuplicateSlots(probe);
-
-                if (probe.EnsureVirtualSlot1 && !probe.VirtualInSlot1)
+                if (probe.HasInvalidControllers || (probe.EnsureVirtualSlot1 && !probe.VirtualInSlot1))
                 {
-                    bool shouldContinue = FixVirtualSlot(probe);
-                    if (!shouldContinue)
-                        break;
+                    /*
+                    if (OpenXInput.IsAvailable)
+                    {
+                        XInputController? virtualController = GetVirtualControllers<XInputController>().FirstOrDefault();
+                        if (virtualController is not null && AssignXInputSlot(virtualController, 0))
+                        {
+                            MarkControllerManagementSuccess();
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        if (probe.HasInvalidControllers)
+                            FixDuplicateSlots(probe);
+
+                        if (probe.EnsureVirtualSlot1 && !probe.VirtualInSlot1)
+                        {
+                            bool shouldContinue = FixVirtualSlot(probe);
+                            if (!shouldContinue)
+                                break;
+                        }
+                    }
+                    */
+
+                    if (probe.HasInvalidControllers)
+                        FixDuplicateSlots(probe);
+
+                    if (probe.EnsureVirtualSlot1 && !probe.VirtualInSlot1)
+                    {
+                        bool shouldContinue = FixVirtualSlot(probe);
+                        if (!shouldContinue)
+                            break;
+                    }
                 }
 
                 // Give Windows a moment to settle, then re-probe.
@@ -1672,6 +1699,37 @@ public static class ControllerManager
             Interlocked.Exchange(ref watchdogStarted, 0);
             watchdogThread = null;
         }
+    }
+
+    /// <summary>
+    /// Assigns <paramref name="controller"/> to <paramref name="targetSlot"/> via OpenXInput,
+    /// then power-cycles the moved controller and any controller displaced from that slot
+    /// so that running applications refresh their XInput slot bookkeeping.
+    /// </summary>
+    /// <returns>True on success; false if the SetUserIndex call failed.</returns>
+    public static bool AssignXInputSlot(XInputController controller, byte targetSlot)
+    {
+        if (controller.UserIndex == targetSlot)
+            return true;
+
+        // Snapshot the current occupant of targetSlot before the swap.
+        XInputController? displaced =
+            GetControllerFromSlot<XInputController>((UserIndex)targetSlot, true) ??
+            GetControllerFromSlot<XInputController>((UserIndex)targetSlot, false);
+
+        uint result = OpenXInput.SetUserIndex(controller.GetContainerPath(), targetSlot, false);
+        if (result != OpenXInput.ERROR_SUCCESS)
+            return false;
+
+        // Cycle the displaced controller first so it vacates the target slot on the bus
+        // before the moved controller reconnects under the new index.
+        if (displaced is not null && !ReferenceEquals(displaced, controller))
+            displaced.CyclePort();
+
+        // Cycle the moved controller — forces running apps to see it in its new slot.
+        controller.CyclePort();
+
+        return true;
     }
 
     /// <summary>
