@@ -105,7 +105,6 @@ Name: en; MessagesFile: "compiler:Default.isl"
 Source: "{#SourcePath}\redist\netcorecheck.exe"; Flags: dontcopy noencryption
 Source: "{#SourcePath}\redist\netcorecheck_x64.exe"; Flags: dontcopy noencryption
 Source: "{#SourcePath}\redist\PawnIO_setup.exe"; Flags: dontcopy noencryption
-Source: "{#SourcePath}\redist\xinput1_4.dll"; Flags: dontcopy noencryption
 #endif
 Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\win-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#SourcePath}\Certificate.pfx"; DestDir: "{tmp}"; Flags: deleteafterinstall
@@ -277,101 +276,12 @@ begin
   Log('Add-MpPreference exit=' + IntToStr(ExitCode));
 end;
 
-// ---------------------------------------------------------------------------
-// XInput1_4 replacement
-// Takes ownership of the System32 copy, backs it up, then deploys our own.
-// If the DLL is locked by a running process, the replacement is scheduled via
-// MoveFileEx(MOVEFILE_DELAY_UNTIL_REBOOT) so Windows swaps it at next boot.
-// ---------------------------------------------------------------------------
-procedure DeployXinput1_4;
-var
-  SysDir, TargetDll, BackupDll, StagedDll: String;
-  PS1, PSBody: String;
-  ResultCode: Integer;
-begin
-  SysDir    := ExpandConstant('{sys}');
-  TargetDll := SysDir + '\xinput1_4.dll';
-  BackupDll := SysDir + '\xinput1_4.dll.bak';
-  // Persistent staging path: survives until the next reboot (unlike {tmp})
-  StagedDll := ExpandConstant('{app}') + '\xinput1_4_staged.dll';
-
-  Log('DeployXinput1_4: target=' + TargetDll);
-
-  // Stage our replacement to {app} so it is still on disk after a reboot
-  ExtractTemporaryFile('xinput1_4.dll');
-  if not FileCopy(ExpandConstant('{tmp}\xinput1_4.dll'), StagedDll, False) then
-  begin
-    Log('ERROR: could not stage xinput1_4.dll to ' + StagedDll + ' — aborting.');
-    Exit;
-  end;
-
-  if FileExists(TargetDll) then
-  begin
-    // Take full ownership of the protected System32 file
-    Exec('takeown.exe', '/f "' + TargetDll + '"',
-         '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-    Log('takeown exit=' + IntToStr(ResultCode));
-
-    // Grant Administrators full control so we can read/write it
-    Exec('icacls.exe', '"' + TargetDll + '" /grant Administrators:F',
-         '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-    Log('icacls exit=' + IntToStr(ResultCode));
-
-    // Back up the original — reading a locked DLL is allowed by Windows
-    if FileCopy(TargetDll, BackupDll, False) then
-      Log('Backup created: ' + BackupDll)
-    else
-      Log('Warning: backup could not be written to ' + BackupDll);
-  end
-  else
-    Log('DeployXinput1_4: no existing DLL in System32, skipping backup.');
-
-  // --- Attempt 1: direct overwrite ---
-  if FileCopy(StagedDll, TargetDll, False) then
-  begin
-    Log('xinput1_4.dll deployed successfully to ' + TargetDll);
-    DeleteFile(StagedDll);   // clean up; no longer needed
-    Exit;
-  end;
-
-  // --- Attempt 2: DLL is memory-mapped — schedule swap at next boot ---
-  Log('xinput1_4.dll is in use; scheduling pending replacement via MoveFileEx.');
-
-  PS1 := ExpandConstant('{tmp}\deploy_xinput.ps1');
-  PSBody :=
-    'Add-Type -TypeDefinition @"'                                              + #13#10 +
-    'using System;'                                                            + #13#10 +
-    'using System.Runtime.InteropServices;'                                    + #13#10 +
-    'public class WinApi {'                                                    + #13#10 +
-    '  [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]' + #13#10 +
-    '  public static extern bool MoveFileEx(string src, string dst, uint flags);'   + #13#10 +
-    '}'                                                                        + #13#10 +
-    '"@'                                                                       + #13#10 +
-    // 0x5 = MOVEFILE_REPLACE_EXISTING | MOVEFILE_DELAY_UNTIL_REBOOT
-    // Backup is already on disk; just schedule staged DLL -> target at boot
-    '$ok = [WinApi]::MoveFileEx("' + StagedDll + '", "' + TargetDll + '", 0x5)' + #13#10 +
-    'if (-not $ok) { [System.Console]::Error.WriteLine("MoveFileEx failed: " + [System.Runtime.InteropServices.Marshal]::GetLastWin32Error()) }' + #13#10;
-
-  SaveStringToFile(PS1, PSBody, False);
-  Exec('powershell.exe',
-       '-ExecutionPolicy Bypass -WindowStyle Hidden -File "' + PS1 + '"',
-       '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-  Log('Pending rename scheduled; powershell exit=' + IntToStr(ResultCode));
-
-  // Mark for reboot so the wizard informs the user
-  Dependency_NeedRestart := True;
-  Log('A reboot is required to complete xinput1_4.dll deployment.');
-end;
-
 procedure CurStepChanged(CurStep: TSetupStep);
 var
   DestFile: String;
 begin
   if CurStep = ssPostInstall then
   begin
-    // Deploy our XInput1_4 replacement into System32
-    DeployXinput1_4;
-
     DestFile := ExpandConstant('{app}\gamecontrollerdb.txt');
     Dependency_DownloadPage.Clear;
     Dependency_DownloadPage.Add('{#GameControllerDBDownloadLink}', 'gamecontrollerdb.txt', '');

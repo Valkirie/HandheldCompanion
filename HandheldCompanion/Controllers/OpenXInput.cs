@@ -28,8 +28,7 @@ namespace HandheldCompanion.Controllers
             try
             {
                 IntPtr lib = NativeLibrary.Load("xinput1_4.dll");
-                return NativeLibrary.TryGetExport(lib, "OpenXInputGetUserIndex", out _) &&
-                       NativeLibrary.TryGetExport(lib, "OpenXInputSetUserIndex", out _);
+                return NativeLibrary.TryGetExport(lib, "OpenXInputGetUserIndex", out _);
             }
             catch
             {
@@ -51,16 +50,16 @@ namespace HandheldCompanion.Controllers
             [MarshalAs(UnmanagedType.LPWStr)] string lpDevicePath,
             byte dwUserIndex, bool powerDownOnChange);
 
-        [DllImport("OpenXinput.dll", CallingConvention = CallingConvention.Winapi, ExactSpelling = true)]
+        [DllImport(DllName, CallingConvention = CallingConvention.Winapi, ExactSpelling = true)]
         private static extern uint OpenXInputRefreshMappings();
 
-        [DllImport("OpenXinput.dll", CallingConvention = CallingConvention.StdCall, ExactSpelling = true, CharSet = CharSet.Unicode)]
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall, ExactSpelling = true, CharSet = CharSet.Unicode)]
         private static extern uint OpenXInputGetDevicePath(
             uint dwUserIndex,
             IntPtr pDevicePath,   // NULL to query required size
             ref uint pCount);
 
-        [DllImport("OpenXinput.dll", CallingConvention = CallingConvention.StdCall, ExactSpelling = true, CharSet = CharSet.Unicode)]
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall, ExactSpelling = true, CharSet = CharSet.Unicode)]
         private static extern uint OpenXInputGetDevicePath(
             uint dwUserIndex,
             StringBuilder pDevicePath,

@@ -826,6 +826,8 @@ public class DeviceManager : IManager
             uint result = OpenXInput.GetUserIndex(symLink, out byte userIndex);
             if (result == OpenXInput.ERROR_SUCCESS)
                 return userIndex;
+            else
+                return byte.MaxValue;
         }
 
         // old method: query LED state and map back to port (works because the LED state reflects the assigned port)
