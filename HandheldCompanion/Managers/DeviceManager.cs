@@ -805,13 +805,9 @@ public class DeviceManager : IManager
         uint size = 520;                 // max chars in buffer (incl. terminating \0)
         StringBuilder sb = new StringBuilder((int)size);
 
-        uint hr = XInputController.XInputGetDevicePath(userIndex, sb, ref size);
-        if (hr == 0) // ERROR_SUCCESS
-        {
-            string newPath = sb.ToString();
-            if (!string.IsNullOrEmpty(newPath))
-                return newPath;
-        }
+        string? result = OpenXInput.GetDevicePath(userIndex);
+        if (!string.IsNullOrEmpty(result))
+            return result;
 
         return string.Empty;
     }
