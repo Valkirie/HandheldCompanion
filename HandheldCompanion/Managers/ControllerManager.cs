@@ -93,6 +93,12 @@ public static class ControllerManager
     private static int ControllerManagementAttempts = 0;
     private const int ControllerManagementMaxAttempts = 4;
 
+    // Consecutive watchdog failure tracking – prevents infinite retry loops at boot
+    // when XInput slot assignments are not yet stable. After MaxConsecutiveWatchdogFailures
+    // failed runs the mode is switched to Manual, which never auto-triggers the watchdog.
+    private static int consecutiveWatchdogFailures = 0;
+    private const int MaxConsecutiveWatchdogFailures = 3;
+
     private static readonly DummyXbox360Controller dummyXbox360 = new();
     private static readonly DummyDualShock4Controller dummyDualShock4 = new();
     public static bool HasTargetController => GetTarget() != null;
@@ -518,19 +524,22 @@ public static class ControllerManager
                             return;
                         }
 
+                        string baseContainerDeviceInstanceId = details.baseContainerDeviceInstanceId;
+                        bool wasPowerCycling = PowerCyclers.TryGetValue(baseContainerDeviceInstanceId, out var powerCycling) && powerCycling;
+
                         controller.IsBusy = false;
 
-                        Controllers[details.baseContainerDeviceInstanceId] = controller;
+                        Controllers[baseContainerDeviceInstanceId] = controller;
                         SDLControllers[deviceIndex] = (SDLController)controller;
 
                         LogManager.LogInformation("SDL controller {0} plugged", controller.ToString());
                         ControllerPlugged?.Invoke(controller, false);
 
-                        if (!(PowerCyclers.TryGetValue(path, out var isCycling) && isCycling))
-                            ShowDetectedToast(controller, isCycling);
+                        if (!wasPowerCycling)
+                            ShowDetectedToast(controller, wasPowerCycling);
 
                         PickTargetController();
-                        PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
+                        PowerCyclers.TryRemove(baseContainerDeviceInstanceId, out _);
                     }
                     finally { }
                 }
@@ -705,19 +714,21 @@ public static class ControllerManager
                         return;
                     }
 
+                    string baseContainerDeviceInstanceId = controller.GetContainerInstanceId();
+                    bool wasPowerCycling = PowerCyclers.TryGetValue(baseContainerDeviceInstanceId, out var powerCycling) && powerCycling;
+
                     controller.IsBusy = false;
 
-                    string path = controller.GetContainerInstanceId();
-                    Controllers[path] = controller;
+                    Controllers[baseContainerDeviceInstanceId] = controller;
 
                     LogManager.LogInformation("Generic controller {0} plugged", controller.ToString());
-                    ControllerPlugged?.Invoke(controller, PowerCyclers.TryGetValue(path, out var pc) && pc);
+                    ControllerPlugged?.Invoke(controller, false);
 
-                    if (!(PowerCyclers.TryGetValue(path, out var isCycling) && isCycling))
-                        ShowDetectedToast(controller, isCycling);
+                    if (!wasPowerCycling)
+                        ShowDetectedToast(controller, wasPowerCycling);
 
                     PickTargetController();
-                    PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
+                    PowerCyclers.TryRemove(baseContainerDeviceInstanceId, out _);
                 }
                 catch { }
                 finally { }
@@ -921,19 +932,21 @@ public static class ControllerManager
                         return;
                     }
 
+                    string baseContainerDeviceInstanceId = details.baseContainerDeviceInstanceId;
+                    bool wasPowerCycling = PowerCyclers.TryGetValue(baseContainerDeviceInstanceId, out var powerCycling) && powerCycling;
+
                     controller.IsBusy = false;
 
-                    string path = details.baseContainerDeviceInstanceId;
-                    Controllers[path] = controller;
+                    Controllers[baseContainerDeviceInstanceId] = controller;
 
                     LogManager.LogInformation("XInput controller {0} plugged", controller.ToString());
-                    ControllerPlugged?.Invoke(controller, PowerCyclers.TryGetValue(path, out var pc) && pc);
+                    ControllerPlugged?.Invoke(controller, false);
 
-                    if (!(PowerCyclers.TryGetValue(path, out var isCycling) && isCycling))
-                        ShowDetectedToast(controller, isCycling);
+                    if (!wasPowerCycling)
+                        ShowDetectedToast(controller, wasPowerCycling);
 
                     PickTargetController();
-                    PowerCyclers.TryRemove(controller.GetContainerInstanceId(), out _);
+                    PowerCyclers.TryRemove(baseContainerDeviceInstanceId, out _);
                 }
                 catch { }
                 finally { }
@@ -1207,6 +1220,10 @@ public static class ControllerManager
                         modeInt = parsed;
 
                     slotManagementMode = (ControllerSlotManagementMode)Math.Max(0, Math.Min(1, modeInt));
+
+                    // Reset failure counter so re-enabling Automatic mode gets fresh attempts.
+                    if (slotManagementMode == ControllerSlotManagementMode.Automatic)
+                        consecutiveWatchdogFailures = 0;
                 }
                 break;
 
@@ -1320,11 +1337,19 @@ public static class ControllerManager
 
     private static void ControllerManager_ControllerPlugged(IController controller, bool isPowerCycling)
     {
+        // Events caused by our own power-cycling (watchdog / hide) are not real topology changes.
+        if (isPowerCycling)
+            return;
+
         _ = Task.Run(HandleControllerTopologyChangedAsync);
     }
 
     private static void ControllerManager_ControllerUnplugged(IController controller, bool isPowerCycling, bool wasTarget)
     {
+        // Events caused by our own power-cycling (watchdog / hide) are not real topology changes.
+        if (isPowerCycling)
+            return;
+
         _ = Task.Run(HandleControllerTopologyChangedAsync);
     }
 
@@ -1412,7 +1437,10 @@ public static class ControllerManager
     private static void StartWatchdog(SlotFixTrigger trigger, bool resetAttempts)
     {
         if (resetAttempts)
-            ControllerManagementAttempts = 0;
+        {
+            Interlocked.Exchange(ref ControllerManagementAttempts, 0);
+            consecutiveWatchdogFailures = 0;
+        }
 
         // If a run is already active, do not start another one.
         if (Interlocked.Exchange(ref watchdogStarted, 1) == 1)
@@ -1457,7 +1485,7 @@ public static class ControllerManager
             LogManager.LogInformation("XInput controller {0} force unplugged", controller.ToString());
             ControllerUnplugged?.Invoke(controller, false, WasTarget);
 
-            PowerCyclers.TryRemove(controller.GetInstanceId(), out _);
+            PowerCyclers.TryRemove(baseContainerDeviceInstanceId, out _);
             Controllers.TryRemove(baseContainerDeviceInstanceId, out _);
 
             controller.Gone();
@@ -1499,13 +1527,15 @@ public static class ControllerManager
             if (watchdogThreadRunning)
                 continue;
 
-            SlotProbeResult probe = ProbeSlotsAsync().GetAwaiter().GetResult();
-
             // Update UI state continuously so the Manual fallback button is available even if a toast was ignored.
+            SlotProbeResult probe = ProbeSlotsAsync().GetAwaiter().GetResult();
             SetSlotIssueState(probe.NeedsFix, probe.Reason);
 
             if (!probe.NeedsFix)
+            {
+                MarkControllerManagementSuccess();
                 continue;
+            }
 
             // Automatic mode can still self-heal from polling (no toast).
             if (slotManagementMode == ControllerSlotManagementMode.Automatic)
@@ -1624,12 +1654,12 @@ public static class ControllerManager
     {
         try
         {
-            ControllerManagementAttempts = 0;
+            Interlocked.Exchange(ref ControllerManagementAttempts, 0);
             UpdateStatus(ControllerManagerStatus.Busy);
 
             for (int i = 0; i < ControllerManagementMaxAttempts && watchdogThreadRunning; i++)
             {
-                ControllerManagementAttempts = i + 1;
+                Interlocked.Exchange(ref ControllerManagementAttempts, i + 1);
                 UpdateStatus(ControllerManagerStatus.Busy);
 
                 SlotProbeResult probe = ProbeSlotsAsync().GetAwaiter().GetResult();
@@ -1855,13 +1885,26 @@ public static class ControllerManager
         // Successful slot fix: clear the issue flag used by UI/manual mode.
         SetSlotIssueState(false, string.Empty);
 
+        consecutiveWatchdogFailures = 0;
+
         UpdateStatus(ControllerManagerStatus.Succeeded);
-        ControllerManagementAttempts = 0;
+        Interlocked.Exchange(ref ControllerManagementAttempts, 0);
     }
 
     private static void FinalizeFailedRun()
     {
         ResumeControllers();
+
+        Interlocked.Increment(ref consecutiveWatchdogFailures);
+
+        // After repeated failures, fall back to Manual mode to stop the automatic retry loop.
+        // The user can re-enable Automatic mode from the UI once the system has settled.
+        if (consecutiveWatchdogFailures >= MaxConsecutiveWatchdogFailures &&
+            slotManagementMode == ControllerSlotManagementMode.Automatic)
+        {
+            slotManagementMode = ControllerSlotManagementMode.Manual;
+            ManagerFactory.settingsManager.SetProperty("ControllerSlotManagementMode", (int)ControllerSlotManagementMode.Manual);
+        }
 
         try
         {
@@ -1871,13 +1914,17 @@ public static class ControllerManager
         catch { }
 
         UpdateStatus(ControllerManagerStatus.Failed);
-        ControllerManagementAttempts = 0;
+        Interlocked.Exchange(ref ControllerManagementAttempts, 0);
     }
 
     private static Notification ManagerBusy = new("Controller Manager", "Controllers order is being adjusted, your gamepad might become irresponsive for a few seconds.") { IsInternal = true };
 
     private static void UpdateStatus(ControllerManagerStatus status)
     {
+        // skip if already correct
+        if (managerStatus == status)
+            return;
+
         switch (status)
         {
             case ControllerManagerStatus.Busy:
@@ -2218,11 +2265,14 @@ public static class ControllerManager
                 case "USB":
                     {
                         string InfPath = DriverStore.GetDriverFromDriverStore(baseContainerDeviceInstanceId);
-                        if (!string.IsNullOrEmpty(InfPath) && pnPDriver?.InfPath != InfPath)
+                        if (!string.IsNullOrEmpty(InfPath))
                         {
-                            // restore drivers
-                            pnPDevice.RemoveAndSetup();
-                            pnPDevice.InstallCustomDriver(InfPath, out bool rebootRequired);
+                            if (pnPDriver?.InfPath != InfPath)
+                            {
+                                // restore drivers
+                                pnPDevice.RemoveAndSetup();
+                                pnPDevice.InstallCustomDriver(InfPath, out bool rebootRequired);
+                            }
 
                             // remove device from store
                             DriverStore.RemoveFromDriverStore(baseContainerDeviceInstanceId);
