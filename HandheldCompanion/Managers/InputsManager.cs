@@ -348,6 +348,9 @@ public static class InputsManager
 
         if (args.IsKeyDown)
         {
+            KeyboardChord matchedOEMChord = null;
+            bool hotkeyMatched = false;
+
             // check if key is used by OEM chords
             foreach (KeyboardChord? pair in IDevice.GetCurrent().OEMChords)
             {
@@ -360,15 +363,9 @@ public static class InputsManager
                 {
                     KeyUsed[args.IsKeyDown] = true;
                     KeyIndexOEM[args.IsKeyDown]++;
-
-                    // increase interval as we're expecting the next chord key
-                    SetInterval(BufferFlushTimer, pair.flushInterval);
-
-                    break; // leave loop
+                    matchedOEMChord = pair;
+                    break;
                 }
-
-                // restore default interval
-                SetInterval(BufferFlushTimer, TIME_FLUSH);
             }
 
             // check if key is used by hotkey chords
@@ -385,15 +382,38 @@ public static class InputsManager
                 {
                     KeyUsed[args.IsKeyDown] = true;
                     KeyIndexHotkey[args.IsKeyDown]++;
-
-                    // increase interval as we're expecting a new chord key
-                    SetInterval(BufferFlushTimer, TIME_FLUSH_HOTKEY);
-
-                    break; // leave loop
+                    hotkeyMatched = true;
+                    break;
                 }
+            }
 
-                // restore default human interval (31ms)
-                SetInterval(BufferFlushTimer, TIME_FLUSH_HUMAN);
+            // Detect broken chord sequences: we were mid-chord but current key didn't advance it
+            bool chordBroken = false;
+            if (matchedOEMChord is null && KeyIndexOEM[args.IsKeyDown] > 0)
+            {
+                KeyIndexOEM[args.IsKeyDown] = 0;
+                chordBroken = true;
+            }
+            if (!hotkeyMatched && KeyIndexHotkey[args.IsKeyDown] > 0)
+            {
+                KeyIndexHotkey[args.IsKeyDown] = 0;
+                chordBroken = true;
+            }
+
+            // Determine flush interval once after both loops so they never overwrite each other
+            if (matchedOEMChord is not null || hotkeyMatched)
+            {
+                short flushInterval = TIME_FLUSH;
+                if (matchedOEMChord is not null)
+                    flushInterval = Math.Max(flushInterval, matchedOEMChord.flushInterval);
+                if (hotkeyMatched)
+                    flushInterval = Math.Max(flushInterval, TIME_FLUSH_HOTKEY);
+                SetInterval(BufferFlushTimer, flushInterval);
+            }
+            else if (chordBroken)
+            {
+                // chord broke — flush buffered keys as fast as possible
+                SetInterval(BufferFlushTimer, TIME_FLUSH);
             }
 
             // if key is used or previous key was, we need to maintain key(s) order
@@ -478,6 +498,13 @@ public static class InputsManager
                     }
                 }
             }
+            else if (chordBroken && BufferKeys[args.IsKeyDown].Count > 0)
+            {
+                // Chord broke and buffer still has keys from the failed sequence —
+                // suppress this key too so buffered keys replay in correct order
+                args.SuppressKeyPress = true;
+                BufferKeys[args.IsKeyDown].Add(args);
+            }
         }
         else if (BufferKeys[true].Count != 0)
         {
@@ -502,7 +529,8 @@ public static class InputsManager
         }
 
     Done:
-        BufferFlushTimer.Start();
+        if (BufferKeys[true].Count > 0 || BufferKeys[false].Count > 0)
+            BufferFlushTimer.Start();
     }
 
     private static void ReleaseKeyboardBuffer()
