@@ -21,11 +21,10 @@ namespace HandheldCompanion.Views.Pages;
 /// </summary>
 public partial class ControllerPage : Page
 {
-    private bool _hasSlotIssue;
 
     public ControllerPage()
     {
-        DataContext = new ControllerPageViewModel(this);
+        DataContext = new ControllerPageViewModel();
         InitializeComponent();
 
         cB_HidModeDInputItem.Visibility = VJoyTarget.IsInstalled() ? Visibility.Visible : Visibility.Collapsed;
@@ -34,13 +33,6 @@ public partial class ControllerPage : Page
 
         // manage events
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        ControllerManager.StatusChanged += ControllerManager_Working;
-        ControllerManager.SlotIssueChanged += ControllerManager_SlotIssueChanged;
-        ManagerFactory.profileManager.Applied += ProfileManager_Applied;
-
-        // Initialize current state
-        _hasSlotIssue = ControllerManager.HasSlotIssue;
-        UpdateSlotFixButton();
     }
 
     public ControllerPage(string Tag) : this()
@@ -48,24 +40,6 @@ public partial class ControllerPage : Page
         this.Tag = Tag;
     }
 
-    private void ProfileManager_Applied(Profile profile, UpdateSource source)
-    {
-        // UI thread
-        UIHelper.TryInvoke(() =>
-        {
-            // disable virtual controller combobox if profile is not default or set to default controller
-            if (!profile.Default && profile.HID != HIDmode.NotSelected)
-            {
-                cB_HidMode.IsEnabled = false;
-                HintsHIDManagedByProfile.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                cB_HidMode.IsEnabled = true;
-                HintsHIDManagedByProfile.Visibility = Visibility.Collapsed;
-            }
-        });
-    }
     private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
     {
         // UI thread
@@ -85,23 +59,11 @@ public partial class ControllerPage : Page
                 case "HIDvibrateonconnect":
                     Toggle_Vibrate.IsOn = Convert.ToBoolean(value);
                     break;
-                case "ControllerSlotManagementMode":
-                    {
-                        if (!int.TryParse(Convert.ToString(value, CultureInfo.InvariantCulture), out int mode))
-                            mode = 0;
-
-                        mode = Math.Max(0, Math.Min(1, mode));
-                        cB_ControllerSlotManagementMode.SelectedIndex = mode;
-
-                        UpdateSlotFixButton();
-                    }
-                    break;
                 case "VibrationStrength":
                     SliderStrength.Value = Convert.ToDouble(value);
                     break;
                 case "SteamControllerMode":
                     cB_SCModeController.SelectedIndex = Convert.ToInt32(value);
-                    ControllerRefresh();
                     break;
                 case "SteamControllerRumbleInterval":
                     SliderInterval.Value = Convert.ToDouble(value);
@@ -121,57 +83,11 @@ public partial class ControllerPage : Page
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
     {
-        UpdateSlotFixButton();
     }
 
     public void Page_Closed()
     {
-        ControllerManager.SlotIssueChanged -= ControllerManager_SlotIssueChanged;
         ((ControllerPageViewModel)DataContext).Dispose();
-    }
-
-    private void ControllerManager_SlotIssueChanged(bool hasIssue, string reason)
-    {
-        _hasSlotIssue = hasIssue;
-        UpdateSlotFixButton();
-    }
-
-    private void UpdateSlotFixButton()
-    {
-        // UI thread (async to prevent blocking event callers)
-        UIHelper.TryBeginInvoke(() =>
-        {
-            bool isManual = cB_ControllerSlotManagementMode.SelectedIndex == 0;
-            b_SlotFixNow.Visibility = (isManual && _hasSlotIssue) ? Visibility.Visible : Visibility.Collapsed;
-        });
-    }
-
-    private void ControllerManager_Working(ControllerManagerStatus status, int attempts)
-    {
-        // UI thread
-        UIHelper.TryInvoke(async () =>
-        {
-            switch (status)
-            {
-                case ControllerManagerStatus.Busy:
-                    ControllerSettings.IsEnabled = false;
-                    ScanHardwareCard.IsEnabled = false;
-                    break;
-
-                case ControllerManagerStatus.Succeeded:
-                    ControllerSettings.IsEnabled = true;
-                    ScanHardwareCard.IsEnabled = true;
-                    break;
-
-                case ControllerManagerStatus.Failed:
-                    ControllerSettings.IsEnabled = true;
-                    ScanHardwareCard.IsEnabled = true;
-                    break;
-            }
-
-            // here ?
-            ControllerRefresh();
-        });
     }
 
     private string GetResourceString(string baseKey, int attempts)
@@ -193,32 +109,6 @@ public partial class ControllerPage : Page
         textBlock.Inlines.Add(new Run { Text = description });
 
         return textBlock;
-    }
-
-    public void ControllerRefresh()
-    {
-        IController targetController = ControllerManager.GetTarget();
-        bool hasPhysical = ControllerManager.HasPhysicalController<IController>();
-        bool hasVirtual = ControllerManager.HasVirtualController<IController>();
-        bool hasTarget = targetController != null;
-
-        bool isPlugged = hasPhysical && hasTarget;
-        bool isHidden = targetController is not null && targetController.IsHidden();
-
-        // UI thread
-        UIHelper.TryInvoke(() =>
-        {
-            PhysicalDevices.Visibility = hasPhysical ? Visibility.Visible : Visibility.Collapsed;
-            WarningNoPhysical.Visibility = !hasPhysical ? Visibility.Visible : Visibility.Collapsed;
-
-            // hint: Has physical controller hidden, but no virtual controller
-            VirtualDevices.Visibility = hasVirtual ? Visibility.Visible : Visibility.Collapsed;
-            WarningNoVirtual.Visibility = isHidden && !hasVirtual ? Visibility.Visible : Visibility.Collapsed;
-
-            // hint: Has physical controller not hidden, and virtual controller
-            bool hasDualInput = isPlugged && !isHidden && hasVirtual;
-            HintsNotMuted.Visibility = hasDualInput ? Visibility.Visible : Visibility.Collapsed;
-        });
     }
 
     private void cB_HidMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -249,8 +139,6 @@ public partial class ControllerPage : Page
             return;
 
         ManagerFactory.settingsManager.SetProperty("ControllerSlotManagementMode", cB_ControllerSlotManagementMode.SelectedIndex);
-
-        UpdateSlotFixButton();
     }
 
     private void b_SlotFixNow_Click(object sender, RoutedEventArgs e)

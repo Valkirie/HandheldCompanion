@@ -592,7 +592,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to virtual controller is managed by profile.
+        ///   Looks up a localized string similar to Virtual controller is managed by profile.
         /// </summary>
         public static string ControllerPage_HIDManagedByProfileWarning {
             get {
@@ -678,6 +678,15 @@ namespace HandheldCompanion.Properties {
         public static string ControllerPage_NoPhysicalControllerDetectedWarning {
             get {
                 return ResourceManager.GetString("ControllerPage_NoPhysicalControllerDetectedWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You may want to plug a physical controller or trigger a rescan..
+        /// </summary>
+        public static string ControllerPage_NoPhysicalControllerDetectedWarningDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_NoPhysicalControllerDetectedWarningDesc", resourceCulture);
             }
         }
         
@@ -966,6 +975,24 @@ namespace HandheldCompanion.Properties {
         public static string ControllerPage_VibrationStrengthDesc {
             get {
                 return ResourceManager.GetString("ControllerPage_VibrationStrengthDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Virtual controller is not occupying XInput slot 1. Some games may not detect it correctly..
+        /// </summary>
+        public static string ControllerPage_VirtualControllerNotOnSlot1Desc {
+            get {
+                return ResourceManager.GetString("ControllerPage_VirtualControllerNotOnSlot1Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Virtual controller not on slot 1.
+        /// </summary>
+        public static string ControllerPage_VirtualControllerNotOnSlot1Warning {
+            get {
+                return ResourceManager.GetString("ControllerPage_VirtualControllerNotOnSlot1Warning", resourceCulture);
             }
         }
         

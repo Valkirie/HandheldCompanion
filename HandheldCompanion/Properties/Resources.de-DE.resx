@@ -2451,9 +2451,6 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="ControllerPage_HIDManagedByProfileDesc" xml:space="preserve">
     <value>The virtual controller type is being managed by the currently applied game profile.</value>
   </data>
-  <data name="ControllerPage_HIDManagedByProfileWarning" xml:space="preserve">
-    <value>virtual controller is managed by profile</value>
-  </data>
   <data name="Hint_CoreIsolationCheck" xml:space="preserve">
     <value>Core isolation features are turned on</value>
   </data>

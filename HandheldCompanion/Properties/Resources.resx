@@ -1323,6 +1323,12 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="ControllerPage_NoVirtualControllerWarning" xml:space="preserve">
     <value>No virtual controller detected</value>
   </data>
+  <data name="ControllerPage_VirtualControllerNotOnSlot1Warning" xml:space="preserve">
+    <value>Virtual controller not on slot 1</value>
+  </data>
+  <data name="ControllerPage_VirtualControllerNotOnSlot1Desc" xml:space="preserve">
+    <value>Virtual controller is not occupying XInput slot 1. Some games may not detect it correctly.</value>
+  </data>
   <data name="ControllerPage_PhysicalControllerHiddenAction" xml:space="preserve">
     <value>You might want to unmute your virtual controller or unhide your physical controller.</value>
   </data>
@@ -2506,7 +2512,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>The virtual controller type is being managed by the currently applied game profile.</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileWarning" xml:space="preserve">
-    <value>virtual controller is managed by profile</value>
+    <value>Virtual controller is managed by profile</value>
   </data>
   <data name="Hint_CoreIsolationCheck" xml:space="preserve">
     <value>Core isolation features are turned on</value>
@@ -4130,5 +4136,8 @@ Thank you for using HC and helping us make it better.</value>
   </data>
   <data name="MainWindow_Open" xml:space="preserve">
     <value>Open</value>
+  </data>
+  <data name="ControllerPage_NoPhysicalControllerDetectedWarningDesc" xml:space="preserve">
+    <value>You may want to plug a physical controller or trigger a rescan.</value>
   </data>
 </root>

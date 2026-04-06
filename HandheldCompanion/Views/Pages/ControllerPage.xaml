@@ -41,7 +41,10 @@
             </Image.OpacityMask>
         </Image>
 
-        <ikw:SimpleStackPanel Spacing="8">
+        <ikw:SimpleStackPanel
+            Name="ControllerStack"
+            IsEnabled="{Binding ScanHardwareCardEnabled}"
+            Spacing="8">
             <!--  Virtual devices  -->
             <DockPanel>
                 <TextBlock
@@ -55,7 +58,6 @@
                     Text="{l:Static resx:Resources.ControllerPage_VirtualDevicesDesc}" />
             </DockPanel>
             <ikw:SimpleStackPanel Spacing="3">
-                <!--  TODO: Add WarningNoVirtual ?  -->
 
                 <ui:InfoBar
                     Name="HintsHIDManagedByProfile"
@@ -63,7 +65,8 @@
                     IsClosable="False"
                     IsOpen="True"
                     Message="{l:Static resx:Resources.ControllerPage_HIDManagedByProfileDesc}"
-                    Severity="Error" />
+                    Severity="Warning"
+                    Visibility="{Binding HIDManagedByProfileVisibility}" />
 
                 <ui:InfoBar
                     Name="WarningNoVirtual"
@@ -71,14 +74,34 @@
                     IsClosable="False"
                     IsOpen="True"
                     Message="{l:Static resx:Resources.ControllerPage_NoVirtualControllerDesc}"
-                    Severity="Error" />
+                    Severity="Error"
+                    Visibility="{Binding WarningNoVirtualVisibility}" />
+
+                <ui:InfoBar
+                    Name="WarningVirtualNotSlot1"
+                    Title="{l:Static resx:Resources.ControllerPage_VirtualControllerNotOnSlot1Warning}"
+                    IsClosable="False"
+                    IsOpen="True"
+                    Message="{l:Static resx:Resources.ControllerPage_VirtualControllerNotOnSlot1Desc}"
+                    Severity="Warning"
+                    Visibility="{Binding WarningVirtualNotSlot1Visibility}">
+                    <ui:InfoBar.ActionButton>
+                        <Button
+                            Click="b_SlotFixNow_Click"
+                            Style="{DynamicResource AccentButtonStyle}"
+                            ToolTip="Adjust controllers order"
+                            Visibility="{Binding SlotFixNowVisibility}">
+                            Adjust order
+                        </Button>
+                    </ui:InfoBar.ActionButton>
+                </ui:InfoBar>
 
                 <ItemsControl
                     Name="VirtualDevices"
                     d:Visibility="Visible"
                     ItemTemplate="{StaticResource ControllerTemplate}"
                     ItemsSource="{Binding VirtualControllers}"
-                    Visibility="Collapsed">
+                    Visibility="{Binding VirtualDevicesVisibility}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
@@ -105,7 +128,9 @@
                     Title="{l:Static resx:Resources.ControllerPage_NoPhysicalControllerDetectedWarning}"
                     IsClosable="False"
                     IsOpen="True"
-                    Severity="Error" />
+                    Message="{l:Static resx:Resources.ControllerPage_NoPhysicalControllerDetectedWarningDesc}"
+                    Severity="Error"
+                    Visibility="{Binding WarningNoPhysicalVisibility}" />
 
                 <ui:InfoBar
                     Name="HintsNotMuted"
@@ -113,14 +138,15 @@
                     IsClosable="False"
                     IsOpen="True"
                     Message="{l:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenDesc}"
-                    Severity="Error" />
+                    Severity="Error"
+                    Visibility="{Binding HintsNotMutedVisibility}" />
 
                 <ItemsControl
                     Name="PhysicalDevices"
                     d:Visibility="Visible"
                     ItemTemplate="{StaticResource ControllerTemplate}"
                     ItemsSource="{Binding PhysicalControllers}"
-                    Visibility="Collapsed">
+                    Visibility="{Binding PhysicalDevicesVisibility}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
@@ -156,7 +182,10 @@
                         <ui:FontIcon Glyph="&#xE7FC;" />
                     </ui:SettingsCard.HeaderIcon>
 
-                    <ComboBox Name="cB_HidMode" SelectionChanged="cB_HidMode_SelectionChanged">
+                    <ComboBox
+                        Name="cB_HidMode"
+                        IsEnabled="{Binding HidModeEnabled}"
+                        SelectionChanged="cB_HidMode_SelectionChanged">
                         <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_Xbox360Controller}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_DualShock4Controller}" />
                         <ComboBoxItem Name="cB_HidModeDInputItem" Content="{l:Static resx:Resources.Enum_HIDmode_vJoyController}" />
@@ -202,22 +231,13 @@
 
                     <StackPanel Orientation="Horizontal">
                         <!--  Manual MUST be index 0 (default), Automatic index 1  -->
-                        <ComboBox Name="cB_ControllerSlotManagementMode" SelectionChanged="cB_ControllerSlotManagementMode_SelectionChanged">
+                        <ComboBox
+                            Name="cB_ControllerSlotManagementMode"
+                            SelectedIndex="{Binding ControllerSlotManagementModeIndex, Mode=OneWay}"
+                            SelectionChanged="cB_ControllerSlotManagementMode_SelectionChanged">
                             <ComboBoxItem Content="Manual" />
                             <ComboBoxItem Content="Automatic" />
                         </ComboBox>
-
-                        <!--  Backup action when toast was ignored (Manual mode only)  -->
-                        <Button
-                            Name="b_SlotFixNow"
-                            Margin="6,0,0,0"
-                            d:Visibility="Visible"
-                            Click="b_SlotFixNow_Click"
-                            Style="{DynamicResource AccentButtonStyle}"
-                            ToolTip="Adjust controllers order"
-                            Visibility="Collapsed">
-                            Adjust order
-                        </Button>
                     </StackPanel>
                 </ui:SettingsCard>
             </ikw:SimpleStackPanel>

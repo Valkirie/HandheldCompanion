@@ -85,6 +85,7 @@ public static class ControllerManager
 
     // Slot issue state (for UI + manual fallback)
     public static bool HasSlotIssue { get; private set; }
+    public static bool HasVirtualSlot1Issue { get; private set; }
     public static string SlotIssueReason { get; private set; } = string.Empty;
 
     // Status toast debounce
@@ -1331,6 +1332,7 @@ public static class ControllerManager
             return;
 
         HasSlotIssue = hasIssue;
+        HasVirtualSlot1Issue = hasIssue && reason == "Virtual controller is not occupying slot 1.";
         SlotIssueReason = reason;
         SlotIssueChanged?.Invoke(hasIssue, reason);
     }
