@@ -34,7 +34,6 @@ public static class InputsManager
     #endregion
 
     private const short TIME_FLUSH = 5;             // default interval between buffer flush
-    private const short TIME_FLUSH_EXTENDED = 150;  // extended buffer flush interval when expecting another chord key
     private const short TIME_FLUSH_HUMAN = 35;      // default interval between buffer flush when typing
     private const short TIME_FLUSH_HOTKEY = 150;    // extended buffer flush interval when expecting another chord key
     private const short TIME_NEXT = 500;            // default interval before submitting output keys used in combo
@@ -362,8 +361,8 @@ public static class InputsManager
                     KeyUsed[args.IsKeyDown] = true;
                     KeyIndexOEM[args.IsKeyDown]++;
 
-                    // increase interval as we're expecting a new chord key
-                    SetInterval(BufferFlushTimer, TIME_FLUSH_EXTENDED);
+                    // increase interval as we're expecting the next chord key
+                    SetInterval(BufferFlushTimer, pair.flushInterval);
 
                     break; // leave loop
                 }

@@ -80,13 +80,15 @@ namespace HandheldCompanion.Devices
             OEMChords.Add(new KeyboardChord("Desktop",
                 [KeyCode.LWin, KeyCode.D],
                 [KeyCode.LWin, KeyCode.D],
-                true
+                true,
+                flushInterval: 10
             ));
 
             OEMChords.Add(new KeyboardChord("Page",
                 [KeyCode.LControl, KeyCode.LMenu, KeyCode.Tab],
                 [KeyCode.LControl, KeyCode.LMenu, KeyCode.Tab],
-                true
+                true,
+                flushInterval: 10
             ));
 
             // device specific layout

@@ -15,12 +15,14 @@ public class KeyboardChord
 
     public string name;
     public bool silenced;
+    public short flushInterval;
     public ButtonState state = new();
 
-    public KeyboardChord(string name, List<KeyCode> chordDown = null, List<KeyCode> chordUP = null, bool silenced = false, ButtonFlags button = ButtonFlags.None)
+    public KeyboardChord(string name, List<KeyCode> chordDown = null, List<KeyCode> chordUP = null, bool silenced = false, ButtonFlags button = ButtonFlags.None, short flushInterval = 20)
     {
         this.name = name;
         this.silenced = silenced;
+        this.flushInterval = flushInterval;
         state[button] = true;
 
         if (chordDown is not null)
