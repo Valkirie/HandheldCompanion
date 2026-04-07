@@ -297,7 +297,7 @@ namespace HandheldCompanion.Managers
         }
 
         private static readonly object tempControllersLock = new();
-        public static int CreateTemporaryControllers()
+        public static int CreateTemporaryControllers(int maxCount = int.MaxValue)
         {
             if (vClient is null)
                 return 0;
@@ -310,9 +310,11 @@ namespace HandheldCompanion.Managers
                 if (!controller.IsConnected) availableSlots++;
             }
 
+            // cap to the requested maximum
+            int toCreate = Math.Min(availableSlots, maxCount);
             int created = 0;
 
-            for (int i = 0; i < availableSlots; i++)
+            for (int i = 0; i < toCreate; i++)
             {
                 try
                 {

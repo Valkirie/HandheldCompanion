@@ -1683,9 +1683,9 @@ public static class ControllerManager
             Interlocked.Exchange(ref ControllerManagementAttempts, 0);
             UpdateStatus(ControllerManagerStatus.Busy);
 
-            for (int i = 0; i < ControllerManagementMaxAttempts && watchdogThreadRunning; i++)
+            for (int attempt = 1; attempt <= ControllerManagementMaxAttempts && watchdogThreadRunning; attempt++)
             {
-                Interlocked.Exchange(ref ControllerManagementAttempts, i + 1);
+                Interlocked.Exchange(ref ControllerManagementAttempts, attempt);
                 UpdateStatus(ControllerManagerStatus.Busy);
 
                 SlotProbeResult probe = ProbeSlotsAsync().GetAwaiter().GetResult();
@@ -1726,7 +1726,7 @@ public static class ControllerManager
 
                     if (probe.EnsureVirtualSlot1 && !probe.VirtualInSlot1)
                     {
-                        bool shouldContinue = FixVirtualSlot(probe);
+                        bool shouldContinue = FixVirtualSlot(probe, attempt);
                         if (!shouldContinue)
                             break;
                     }
@@ -1827,7 +1827,8 @@ public static class ControllerManager
     /// Ensures the virtual Xbox 360 controller occupies slot 1.
     /// Returns false if the run should be aborted (e.g. a busy wireless controller is blocking).
     /// </summary>
-    private static bool FixVirtualSlot(SlotProbeResult probe)
+    /// <param name="attempt">1-based attempt index used to decide the temporary-controller strategy.</param>
+    private static bool FixVirtualSlot(SlotProbeResult probe, int attempt)
     {
         if (!HasPhysicalController<XInputController>())
         {
@@ -1880,12 +1881,18 @@ public static class ControllerManager
         VirtualManager.SetControllerMode(HIDmode.NoController);
         WaitUntil(() => !GetVirtualControllers<XInputController>().Any(), TimeSpan.FromSeconds(4));
 
-        // Temporarily fill slots so the physical controller cannot reclaim slot 1.
-        int usedSlots = VirtualManager.CreateTemporaryControllers();
-        WaitUntil(() => GetVirtualControllers<XInputController>().Count() >= usedSlots, TimeSpan.FromSeconds(4));
+        // On the first attempt, try with a single temporary controller (lighter/faster).
+        // If that fails, subsequent attempts fill all available slots (up to 4).
+        if (attempt > 1)
+        {
+            // Temporarily fill slots so the physical controller cannot reclaim slot 1.
+            int usedSlots = VirtualManager.CreateTemporaryControllers(XInputController.MaxControllers);
+            WaitUntil(() => GetVirtualControllers<XInputController>().Count() >= usedSlots, TimeSpan.FromSeconds(4));
 
-        VirtualManager.DisposeTemporaryControllers();
-        WaitUntil(() => GetVirtualControllers<XInputController>().Count() <= usedSlots, TimeSpan.FromSeconds(4));
+            // Dismount all virtual controllers.
+            VirtualManager.DisposeTemporaryControllers();
+            WaitUntil(() => GetVirtualControllers<XInputController>().Count() <= usedSlots, TimeSpan.FromSeconds(4));
+        }
 
         // Re-register the main virtual controller; it should now claim slot 1.
         VirtualManager.SetControllerMode(HIDmode.Xbox360Controller);
