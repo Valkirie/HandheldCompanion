@@ -1554,7 +1554,7 @@ public static class ControllerManager
             var newInvalid = new List<XInputController>();
 
             var tasks = GetControllers<XInputController>()
-                .Where(c => !c.IsDummy())
+                .Where(c => !c.IsDummy() && !c.IsBusy)
                 .Select(async controller =>
                 {
                     byte index = await DeviceManager.GetXInputIndexAsync(controller.GetContainerPath()).ConfigureAwait(false);
