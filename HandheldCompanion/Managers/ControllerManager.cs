@@ -1998,51 +1998,51 @@ public static class ControllerManager
     private static bool ConnectOnPlug => ManagerFactory.settingsManager.GetBoolean("ConnectOnPlug");
     private static void PickTimer_Elapsed(object? sender, ElapsedEventArgs e)
     {
-        lock (targetLock)
+        // Snapshot targetController once to guard against concurrent nulling between null-checks and method calls.
+        // SetTargetController handles its own atomicity under targetLock.
+        IController? current = targetController;
+        IEnumerable<IController> controllers = GetPhysicalControllers<IController>();
+
+        // Pick the most recently arrived external or wireless controller
+        IController? latestExternalController = controllers
+            .Where(c => c.IsExternal() || c.IsWireless())
+            .OrderByDescending(c => c.GetLastArrivalDate())
+            .FirstOrDefault();
+
+        // Pick the internal controller (built-in, non-removable)
+        IController? internalController = controllers.FirstOrDefault(c => c.IsInternal());
+
+        // Default: keep current target (reassigned below if a better candidate exists)
+        string deviceInstanceId = current?.GetContainerInstanceId() ?? string.Empty;
+
+        // If the user disabled auto-connect and already has a real controller, don't change anything.
+        // (branches below are skipped via else-if chain)
+        if (!ConnectOnPlug && current is not null && !current.IsDummy())
         {
-            IEnumerable<IController> controllers = GetPhysicalControllers<IController>();
-
-            // Pick the most recently arrived external or wireless controller
-            IController? latestExternalController = controllers
-                .Where(c => c.IsExternal() || c.IsWireless())
-                .OrderByDescending(c => c.GetLastArrivalDate())
-                .FirstOrDefault();
-
-            // Pick the internal controller (built-in, non-removable)
-            IController? internalController = controllers.FirstOrDefault(c => c.IsInternal());
-
-            // Default: keep current target (reassigned below if a better candidate exists)
-            string deviceInstanceId = targetController?.GetContainerInstanceId() ?? string.Empty;
-
-            // If the user disabled auto-connect and already has a real controller, don't change anything.
-            // (branches below are skipped via else-if chain)
-            if (!ConnectOnPlug && targetController is not null && !targetController.IsDummy())
-            {
-                // deviceInstanceId already holds the current target — nothing to do
-            }
-            // Auto-connect to the most recently arrived external/wireless controller.
-            // ConnectOnPlug is intentionally not checked here: if we reach this branch,
-            // targetController is null or a dummy (branch 1 already guards the "keep current" case),
-            // so we must always pick the best available replacement regardless of ConnectOnPlug.
-            else if (latestExternalController is not null)
-            {
-                // If the current target is already an external/wireless controller, keep it —
-                // we don't want to switch away when a second external controller is plugged in.
-                if (targetController is not null && (targetController.IsWireless() || targetController.IsExternal()))
-                    deviceInstanceId = targetController.GetContainerInstanceId();
-                else
-                    deviceInstanceId = latestExternalController.GetContainerInstanceId();
-            }
-            // Fallback: use the internal (built-in) controller if no external is available
-            else if (internalController is not null)
-            {
-                deviceInstanceId = internalController.GetContainerInstanceId();
-            }
-
-            // Check if the chosen controller is power cycling
-            PowerCyclers.TryGetValue(deviceInstanceId, out bool isPowerCycling);
-            SetTargetController(deviceInstanceId, isPowerCycling);
+            // deviceInstanceId already holds the current target — nothing to do
         }
+        // Auto-connect to the most recently arrived external/wireless controller.
+        // ConnectOnPlug is intentionally not checked here: if we reach this branch,
+        // current is null or a dummy (branch 1 already guards the "keep current" case),
+        // so we must always pick the best available replacement regardless of ConnectOnPlug.
+        else if (latestExternalController is not null)
+        {
+            // If the current target is already an external/wireless controller, keep it —
+            // we don't want to switch away when a second external controller is plugged in.
+            if (current is not null && (current.IsWireless() || current.IsExternal()))
+                deviceInstanceId = current.GetContainerInstanceId();
+            else
+                deviceInstanceId = latestExternalController.GetContainerInstanceId();
+        }
+        // Fallback: use the internal (built-in) controller if no external is available
+        else if (internalController is not null)
+        {
+            deviceInstanceId = internalController.GetContainerInstanceId();
+        }
+
+        // Check if the chosen controller is power cycling
+        PowerCyclers.TryGetValue(deviceInstanceId, out bool isPowerCycling);
+        SetTargetController(deviceInstanceId, isPowerCycling);
     }
 
     private static void ClearTargetController()
@@ -2092,6 +2092,8 @@ public static class ControllerManager
     {
         IController? selectedController = null;
         ControllerSelectedEventHandler? selectedHandlers = null;
+        IController? controllerToHide = null;
+        bool hideWithPowerCycle = false;
 
         lock (targetLock)
         {
@@ -2132,8 +2134,14 @@ public static class ControllerManager
                         powerCycle = !((LegionController)targetController).IsWireless();
                     }
 
+                    // Capture for post-lock call: Hide() -> CyclePort() can block for seconds
+                    // and fires IsBusy which dispatches to the UI thread — invoking it while
+                    // holding targetLock deadlocks if the UI thread is also waiting for the lock.
                     if (!targetController.IsHidden())
-                        targetController.Hide(powerCycle);
+                    {
+                        controllerToHide = targetController;
+                        hideWithPowerCycle = powerCycle;
+                    }
                 }
             }
 
@@ -2162,6 +2170,10 @@ public static class ControllerManager
             selectedController = targetController;
             selectedHandlers = ControllerSelected;
         }
+
+        // Hide() -> CyclePort() blocks for up to 3 s (Bluetooth) and fires IsBusy/StateChanged
+        // which marshals OnPropertyChanged to the UI thread. Must run after releasing targetLock.
+        controllerToHide?.Hide(hideWithPowerCycle);
 
         try
         {
