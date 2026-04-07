@@ -408,6 +408,7 @@ public static class ControllerManager
         });
     }
 
+    #region SDL
     private static void SDL_GamepadAdded(uint deviceIndex)
     {
         var addTask = Task.Run(async () =>
@@ -605,7 +606,9 @@ public static class ControllerManager
 
         sdlRemovalInProgress[deviceIndex] = removeTask;
     }
+    #endregion
 
+    #region HidDevice
     private static void HidDeviceArrived(PnPDetails details, Guid InterfaceGuid)
     {
         var key = details.baseContainerDeviceInstanceId;
@@ -804,7 +807,9 @@ public static class ControllerManager
 
         hidRemovalInProgress[key] = removeTask;
     }
+    #endregion
 
+    #region XUsbDevice
     private static void XUsbDeviceArrived(PnPDetails details, Guid InterfaceGuid)
     {
         var key = details.baseContainerDeviceInstanceId;
@@ -1026,6 +1031,7 @@ public static class ControllerManager
 
         xusbRemovalInProgress[key] = removeTask;
     }
+    #endregion
 
     public static void Stop()
     {
