@@ -401,7 +401,7 @@ public class ClawA1M : IDevice
         }
     }
 
-    private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
+    private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool WasPowerCycling)
     {
         if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
             Device_Inserted(true);

@@ -237,7 +237,7 @@ namespace HandheldCompanion.Devices.Zotac
                 Device_Inserted(true);
         }
 
-        private void ControllerManager_ControllerUnplugged(Controllers.IController Controller, bool IsPowerCycling, bool WasTarget)
+        private void ControllerManager_ControllerUnplugged(Controllers.IController Controller, bool WasPowerCycling, bool WasTarget)
         {
             // hack, force rescan
             if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))

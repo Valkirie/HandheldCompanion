@@ -391,7 +391,7 @@ public class LegionGo : IDevice
         }
     }
 
-    private void ControllerManager_ControllerPlugged(IController Controller, bool IsPowerCycling)
+    private void ControllerManager_ControllerPlugged(IController Controller, bool WasPowerCycling)
     {
         if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
             Device_Inserted(true);

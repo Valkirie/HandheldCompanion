@@ -384,7 +384,7 @@ namespace HandheldCompanion.ViewModels
             HidModeEnabled = !managedByProfile;
         }
 
-        private void ControllerPlugged(IController Controller, bool IsPowerCycling)
+        private void ControllerPlugged(IController Controller, bool WasPowerCycling)
         {
             ObservableCollection<ControllerViewModel> controllers = Controller.IsVirtual() ? VirtualControllers : PhysicalControllers;
             object lockObj = Controller.IsVirtual() ? _collectionLock2 : _collectionLock;

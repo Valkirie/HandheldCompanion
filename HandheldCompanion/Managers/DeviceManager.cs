@@ -578,6 +578,13 @@ public class DeviceManager : IManager
     private readonly ConcurrentDictionary<string, Task> hidArrivalInProgress = new();
     private readonly ConcurrentDictionary<string, Task> hidRemovalInProgress = new();
 
+    /// <summary>
+    /// Maximum time an arrival/removal task waits for its counterpart before
+    /// proceeding anyway. Prevents deadlocks when both fire concurrently for
+    /// the same device during a power cycle.
+    /// </summary>
+    private static readonly TimeSpan CrossWaitTimeout = TimeSpan.FromSeconds(5);
+
     private void XUsbDevice_DeviceArrived(DeviceEventArgs obj)
     {
         var instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
@@ -589,9 +596,9 @@ public class DeviceManager : IManager
 
         var arrivalTask = Task.Run(async () =>
         {
-            // If a removal is running for this device, wait it out first.
+            // If a removal is running for this device, wait it out first (with timeout to avoid deadlock).
             if (removalInProgress.TryGetValue(instanceId, out var pendingRemoval))
-                try { await pendingRemoval.ConfigureAwait(false); } catch { }
+                try { await pendingRemoval.WaitAsync(CrossWaitTimeout).ConfigureAwait(false); } catch { }
 
             try
             {
@@ -633,9 +640,9 @@ public class DeviceManager : IManager
 
         var removalTask = Task.Run(async () =>
         {
-            // If an arrival is still running for this device, wait it out first.
+            // If an arrival is still running for this device, wait it out first (with timeout to avoid deadlock).
             if (arrivalInProgress.TryGetValue(instanceId, out var pending))
-                try { await pending.ConfigureAwait(false); } catch { }
+                try { await pending.WaitAsync(CrossWaitTimeout).ConfigureAwait(false); } catch { }
 
             try
             {
@@ -670,9 +677,9 @@ public class DeviceManager : IManager
 
         var arrivalTask = Task.Run(async () =>
         {
-            // If a removal is running for this device, wait it out first.
+            // If a removal is running for this device, wait it out first (with timeout to avoid deadlock).
             if (hidRemovalInProgress.TryGetValue(instanceId, out var pendingRemoval))
-                try { await pendingRemoval.ConfigureAwait(false); } catch { }
+                try { await pendingRemoval.WaitAsync(CrossWaitTimeout).ConfigureAwait(false); } catch { }
 
             try
             {
@@ -703,9 +710,9 @@ public class DeviceManager : IManager
 
         var removalTask = Task.Run(async () =>
         {
-            // If an arrival is still running for this device, wait it out first.
+            // If an arrival is still running for this device, wait it out first (with timeout to avoid deadlock).
             if (hidArrivalInProgress.TryGetValue(instanceId, out var pending))
-                try { await pending.ConfigureAwait(false); } catch { }
+                try { await pending.WaitAsync(CrossWaitTimeout).ConfigureAwait(false); } catch { }
 
             try
             {

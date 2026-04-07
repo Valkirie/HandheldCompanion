@@ -53,10 +53,18 @@ public static class ControllerManager
     private static readonly ConcurrentDictionary<uint, Task> sdlArrivalInProgress = new();
     private static readonly ConcurrentDictionary<uint, Task> sdlRemovalInProgress = new();
 
+    /// <summary>
+    /// Maximum time an arrival/removal task waits for its counterpart before
+    /// proceeding anyway. Prevents deadlocks when both fire concurrently for
+    /// the same device during a power cycle.
+    /// </summary>
+    private static readonly TimeSpan CrossWaitTimeout = TimeSpan.FromSeconds(5);
+
     private static Thread watchdogThread;
     private static bool watchdogThreadRunning;
     private static readonly object watchdogLock = new();
     private static int watchdogStarted;
+    private static volatile bool watchdogSettling;
     private static Thread pumpThread;
     private static bool pumpThreadRunning;
 
@@ -413,9 +421,9 @@ public static class ControllerManager
     {
         var addTask = Task.Run(async () =>
         {
-            // If a removal is running for this SDL slot, wait it out first
+            // If a removal is running for this SDL slot, wait it out first (with timeout to avoid deadlock)
             if (sdlRemovalInProgress.TryGetValue(deviceIndex, out var pendingRemove))
-                try { await pendingRemove.ConfigureAwait(false); } catch { /* swallow */ }
+                try { await pendingRemove.WaitAsync(CrossWaitTimeout).ConfigureAwait(false); } catch { /* swallow */ }
 
             try
             {
@@ -535,13 +543,12 @@ public static class ControllerManager
                         SDLControllers[deviceIndex] = (SDLController)controller;
 
                         LogManager.LogInformation("SDL controller {0} plugged", controller.ToString());
-                        ControllerPlugged?.Invoke(controller, false);
+                        ControllerPlugged?.Invoke(controller, wasPowerCycling);
 
                         if (!wasPowerCycling)
                             ShowDetectedToast(controller, wasPowerCycling);
 
                         PickTargetController();
-                        PowerCyclers.TryRemove(baseContainerDeviceInstanceId, out _);
                     }
                     finally { }
                 }
@@ -559,9 +566,9 @@ public static class ControllerManager
     {
         var removeTask = Task.Run(async () =>
         {
-            // If add is still running, wait before removing
+            // If add is still running, wait before removing (with timeout to avoid deadlock)
             if (sdlArrivalInProgress.TryGetValue(deviceIndex, out var pendingAdd))
-                try { await pendingAdd.ConfigureAwait(false); } catch { }
+                try { await pendingAdd.WaitAsync(CrossWaitTimeout).ConfigureAwait(false); } catch { }
 
             try
             {
@@ -615,9 +622,9 @@ public static class ControllerManager
 
         var addTask = Task.Run(async () =>
         {
-            // If a removal is running for this device, wait it out
+            // If a removal is running for this device, wait it out (with timeout to avoid deadlock)
             if (hidRemovalInProgress.TryGetValue(key, out var pendingRemove))
-                try { await pendingRemove.ConfigureAwait(false); } catch { }
+                try { await pendingRemove.WaitAsync(CrossWaitTimeout).ConfigureAwait(false); } catch { }
 
             try
             {
@@ -726,13 +733,12 @@ public static class ControllerManager
                     Controllers[baseContainerDeviceInstanceId] = controller;
 
                     LogManager.LogInformation("Generic controller {0} plugged", controller.ToString());
-                    ControllerPlugged?.Invoke(controller, false);
+                    ControllerPlugged?.Invoke(controller, wasPowerCycling);
 
                     if (!wasPowerCycling)
                         ShowDetectedToast(controller, wasPowerCycling);
 
                     PickTargetController();
-                    PowerCyclers.TryRemove(baseContainerDeviceInstanceId, out _);
                 }
                 catch { }
                 finally { }
@@ -752,9 +758,9 @@ public static class ControllerManager
 
         var removeTask = Task.Run(async () =>
         {
-            // If add is still running for this HID device, wait before removing
+            // If add is still running for this HID device, wait before removing (with timeout to avoid deadlock)
             if (hidArrivalInProgress.TryGetValue(key, out var pendingAdd))
-                try { await pendingAdd.ConfigureAwait(false); } catch { }
+                try { await pendingAdd.WaitAsync(CrossWaitTimeout).ConfigureAwait(false); } catch { }
 
             try
             {
@@ -816,9 +822,9 @@ public static class ControllerManager
 
         var addTask = Task.Run(async () =>
         {
-            // If a removal is running for this controller, wait first
+            // If a removal is running for this controller, wait first (with timeout to avoid deadlock)
             if (xusbRemovalInProgress.TryGetValue(key, out var pendingRemove))
-                try { await pendingRemove.ConfigureAwait(false); } catch { }
+                try { await pendingRemove.WaitAsync(CrossWaitTimeout).ConfigureAwait(false); } catch { }
 
             try
             {
@@ -946,13 +952,12 @@ public static class ControllerManager
                     Controllers[baseContainerDeviceInstanceId] = controller;
 
                     LogManager.LogInformation("XInput controller {0} plugged", controller.ToString());
-                    ControllerPlugged?.Invoke(controller, false);
+                    ControllerPlugged?.Invoke(controller, wasPowerCycling);
 
                     if (!wasPowerCycling)
                         ShowDetectedToast(controller, wasPowerCycling);
 
                     PickTargetController();
-                    PowerCyclers.TryRemove(baseContainerDeviceInstanceId, out _);
                 }
                 catch { }
                 finally { }
@@ -972,9 +977,9 @@ public static class ControllerManager
 
         var removeTask = Task.Run(async () =>
         {
-            // If add is still running for this controller, wait before removing
+            // If add is still running for this controller, wait before removing (with timeout to avoid deadlock)
             if (xusbArrivalInProgress.TryGetValue(key, out var pendingAdd))
-                try { await pendingAdd.ConfigureAwait(false); } catch { }
+                try { await pendingAdd.WaitAsync(CrossWaitTimeout).ConfigureAwait(false); } catch { }
 
             try
             {
@@ -1373,6 +1378,10 @@ public static class ControllerManager
         if (watchdogThreadRunning)
             return;
 
+        // Avoid re-triggering while controllers are still settling from a recent watchdog run.
+        if (watchdogSettling)
+            return;
+
         SlotProbeResult probe = await ProbeSlotsAsync().ConfigureAwait(false);
         SetSlotIssueState(probe.NeedsFix, probe.Reason);
 
@@ -1448,6 +1457,7 @@ public static class ControllerManager
         {
             Interlocked.Exchange(ref ControllerManagementAttempts, 0);
             consecutiveWatchdogFailures = 0;
+            watchdogSettling = false;
         }
 
         // If a run is already active, do not start another one.
@@ -1534,6 +1544,14 @@ public static class ControllerManager
             // If a slot-fix run is active, do not interfere.
             if (watchdogThreadRunning)
                 continue;
+
+            // Wait for all power-cycled controllers to settle before probing again.
+            if (watchdogSettling)
+            {
+                if (PowerCyclers.IsEmpty)
+                    watchdogSettling = false;
+                continue;
+            }
 
             // Update UI state continuously so the Manual fallback button is available even if a toast was ignored.
             SlotProbeResult probe = ProbeSlotsAsync().GetAwaiter().GetResult();
@@ -1733,6 +1751,7 @@ public static class ControllerManager
         }
         finally
         {
+            watchdogSettling = true;
             watchdogThreadRunning = false;
             Interlocked.Exchange(ref watchdogStarted, 0);
             watchdogThread = null;
@@ -1895,7 +1914,11 @@ public static class ControllerManager
 
         consecutiveWatchdogFailures = 0;
 
-        UpdateStatus(ControllerManagerStatus.Succeeded);
+        // Only transition to Succeeded if a slot-fix run was actively in progress (Busy).
+        // Avoids a spurious "succeeded" toast at startup when no issue existed yet.
+        if (managerStatus == ControllerManagerStatus.Busy)
+            UpdateStatus(ControllerManagerStatus.Succeeded);
+
         Interlocked.Exchange(ref ControllerManagementAttempts, 0);
     }
 
@@ -2049,6 +2072,19 @@ public static class ControllerManager
         // Check if the chosen controller is power cycling
         PowerCyclers.TryGetValue(deviceInstanceId, out bool isPowerCycling);
         SetTargetController(deviceInstanceId, isPowerCycling);
+
+        // Clear power-cycling flags for controllers that have finished their cycle
+        // (IsBusy == false) or whose entry is orphaned (no longer in Controllers).
+        foreach (string key in PowerCyclers.Keys)
+        {
+            if (!Controllers.TryGetValue(key, out IController controller) || !controller.IsBusy)
+                PowerCyclers.TryRemove(key, out _);
+        }
+
+        // Once all power-cycled controllers have settled, clear the settling flag
+        // so the slot monitor and topology handlers can resume normal operation.
+        if (watchdogSettling && PowerCyclers.IsEmpty)
+            watchdogSettling = false;
     }
 
     private static void ClearTargetController()
@@ -2192,20 +2228,6 @@ public static class ControllerManager
     {
         try
         {
-            // get controller
-            if (Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
-            {
-                // edge-case
-                if (controller is XboxAdaptiveController xboxController)
-                {
-                    // set status
-                    controller.IsBusy = true;
-                    PowerCyclers[baseContainerDeviceInstanceId] = true;
-
-                    return xboxController.Disable();
-                }
-            }
-
             PnPDevice pnPDevice = null;
 
             Task timeout = Task.Delay(TimeSpan.FromSeconds(3));
@@ -2226,23 +2248,40 @@ public static class ControllerManager
             }
             catch { }
 
-            string enumerator = pnPDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
-            switch (enumerator)
+            // get controller
+            if (Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
             {
-                case "USB":
-                    if (!string.IsNullOrEmpty(pnPDriver?.InfPath))
+                // Mark as power-cycling BEFORE installing null driver or cycling the port.
+                // InstallNullDriver can trigger PnP removal events; without this flag the
+                // removal handler would destroy the controller entry prematurely.
+                controller.IsBusy = true;
+                PowerCyclers[baseContainerDeviceInstanceId] = true;
+
+                if (controller is XboxAdaptiveController xboxController)
+                {
+                    return xboxController.Disable();
+                }
+                else
+                {
+                    string enumerator = pnPDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName) ?? string.Empty;
+                    switch (enumerator)
                     {
-                        // store driver to collection
-                        DriverStore.AddOrUpdateDriverStore(baseContainerDeviceInstanceId, pnPDriver.InfPath);
+                        case "USB":
+                            if (!string.IsNullOrEmpty(pnPDriver?.InfPath))
+                            {
+                                // store driver to collection
+                                DriverStore.AddOrUpdateDriverStore(baseContainerDeviceInstanceId, pnPDriver.InfPath);
 
-                        // install empty drivers
-                        pnPDevice.InstallNullDriver(out bool rebootRequired);
+                                // install empty drivers
+                                pnPDevice.InstallNullDriver(out bool rebootRequired);
+                            }
+                            break;
                     }
-                    break;
-            }
+                }
 
-            // cycle controller
-            return controller?.CyclePort() ?? false;
+                // cycle controller
+                return controller.CyclePort();
+            }
         }
         catch { }
 
@@ -2426,7 +2465,7 @@ public static class ControllerManager
     #region events
 
     public static event ControllerPluggedEventHandler ControllerPlugged;
-    public delegate void ControllerPluggedEventHandler(IController Controller, bool IsPowerCycling);
+    public delegate void ControllerPluggedEventHandler(IController Controller, bool WasPowerCycling);
 
     public static event ControllerUnpluggedEventHandler ControllerUnplugged;
     public delegate void ControllerUnpluggedEventHandler(IController Controller, bool IsPowerCycling, bool WasTarget);

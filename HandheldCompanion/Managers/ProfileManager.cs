@@ -1073,7 +1073,7 @@ public class ProfileManager : IManager
         }
     }
 
-    private void ControllerManager_ControllerPlugged(IController Controller, bool IsPowerCycling)
+    private void ControllerManager_ControllerPlugged(IController Controller, bool WasPowerCycling)
     {
         // we're only interest in virtual, XInput controllers
         if (Controller is not XInputController || !Controller.IsVirtual())
