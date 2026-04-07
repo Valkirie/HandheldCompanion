@@ -314,8 +314,10 @@ namespace HandheldCompanion.ViewModels
 
                 await Task.Delay(2000).ConfigureAwait(false);
 
-                // force (re)scan
-                ControllerManager.Rescan();
+                // force (re)scan — run on a background thread; RefreshXInputAsync internally
+                // does multiple round-trips with up to 7 s of retries per device, so calling
+                // it synchronously here would block the UI for several seconds.
+                await Task.Run(ControllerManager.Rescan).ConfigureAwait(false);
 
                 // clear flags
                 _isScanning = false;

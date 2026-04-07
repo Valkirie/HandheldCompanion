@@ -197,14 +197,13 @@ namespace HandheldCompanion.ViewModels
                 // update flag
                 ManufacturerAppBusy = true;
 
-                if (value)
+                _ = Task.Run(() =>
                 {
-                    manufacturerWatcher?.Enable();
-                }
-                else
-                {
-                    manufacturerWatcher?.Disable();
-                }
+                    if (value)
+                        manufacturerWatcher?.Enable();
+                    else
+                        manufacturerWatcher?.Disable();
+                });
             }
         }
 
