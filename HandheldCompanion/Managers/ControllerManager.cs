@@ -1881,6 +1881,7 @@ public static class ControllerManager
             // Fallback: use the internal (built-in) controller if no external is available
             else if (internalController is not null)
             {
+                // Fallback: if no external/wireless controller is available, use an internal controller (if present)
                 deviceInstanceId = internalController.GetContainerInstanceId();
             }
 
@@ -2086,6 +2087,14 @@ public static class ControllerManager
     {
         try
         {
+            // get controller
+            if (Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
+            {
+                // edge-case
+                if (controller is XboxAdaptiveController xboxController)
+                    return xboxController.Enable();
+            }
+
             PnPDevice pnPDevice = null;
 
             Task timeout = Task.Delay(TimeSpan.FromSeconds(3));

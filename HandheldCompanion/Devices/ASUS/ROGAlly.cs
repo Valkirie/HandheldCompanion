@@ -641,6 +641,8 @@ public class ROGAlly : IDevice
             device.WriteFeatureData(commitReset3of4, 64);
             device.WriteFeatureData(commitReset4of4, 64);
         }
+
+        return false;
     }
 
     public bool XBoxController(bool disabled)

@@ -794,14 +794,20 @@ namespace HandheldCompanion.Managers
                         {
                             Focus(toggleButton);
 
-                            // specific scenario
-                            if (toggleButton.Name.Equals("ExpanderHeader"))
+                            if (toggleButton.IsEnabled)
                             {
-                                Expander Expander = WPFUtils.FindParent<Expander>(toggleButton);
-                                if (Expander is not null)
+                                // execute command
+                                toggleButton.Command?.Execute(toggleButton.CommandParameter);
+
+                                // specific scenario
+                                if (toggleButton.Name.Equals("ExpanderHeader"))
                                 {
-                                    // set state
-                                    Expander.IsExpanded = !Expander.IsExpanded;
+                                    Expander Expander = WPFUtils.FindParent<Expander>(toggleButton);
+                                    if (Expander is not null)
+                                    {
+                                        // set state
+                                        Expander.IsExpanded = !Expander.IsExpanded;
+                                    }
                                 }
                             }
                             else if (toggleButton is RadioButton radioButton)
@@ -1176,6 +1182,15 @@ namespace HandheldCompanion.Managers
                             Page previousPage = _navigationHistory.Pop();
                             MainWindow.NavView_Navigate(previousPage);
                             return;
+                        }
+                        // Special handling for LayoutItemPage: always navigate back to LayoutPage when B is pressed
+                        else if (gamepadPage is not null && gamepadPage.GetType().Name == "LayoutItemPage" && !IsQuicktools)
+                        {
+                            if (MainWindow.layoutPage is not null)
+                            {
+                                MainWindow.NavView_Navigate(MainWindow.layoutPage);
+                                return;
+                            }
                         }
                         else if (prevNavigation is not null)
                             Focus(prevNavigation);

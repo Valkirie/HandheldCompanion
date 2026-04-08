@@ -56,6 +56,23 @@ namespace HandheldCompanion.Actions
         private double moveToPrevY = 0;
         private bool moveToRestorePending = false;
 
+        public double MoveToX = 0;
+        public double MoveToY = 0;
+        public bool MoveToPrevious = true;
+        private double MoveToPreviousX = 0;
+        private double MoveToPreviousY = 0;
+        private bool MoveToPreviousPending = false;
+
+        // runtime variables
+        private float accelMemory = 0.0f;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static float Smooth01(float x)
+        {
+            x = Math.Clamp(x, 0f, 1f);
+            return x * x * (3f - 2f * x);
+        }
+
         public MouseActions()
         {
             actionType = ActionType.Mouse;
@@ -324,6 +341,45 @@ namespace HandheldCompanion.Actions
             if (touched == isTouched) return false;
             isTouched = touched;
             return isTouched;
+        }
+
+        private void ExecuteAxisMoveTo(AxisLayout layout, bool touched, ShiftSlot shiftSlot, float delta)
+        {
+            bool newTouch = IsNewTouch(touched);
+
+            outVector = layout.vector;
+            base.Execute(layout, shiftSlot, delta);
+
+            // Check if axis has moved beyond threshold
+            float threshold = motionThreshold / short.MaxValue;
+            bool hasMovement = outVector.Length() > threshold;
+
+            if (hasMovement && !IsCursorDown)
+            {
+                // Trigger MoveTo on movement
+                IsCursorDown = true;
+
+                // Store current mouse position if restore is enabled
+                if (MoveToPrevious && !MoveToPreviousPending)
+                {
+                    MoveToPreviousX = MouseSimulator.MouseX;
+                    MoveToPreviousY = MouseSimulator.MouseY;
+                    MoveToPreviousPending = true;
+                }
+
+                MouseSimulator.MoveTo(MoveToX, MoveToY);
+            }
+            else if (!hasMovement && IsCursorDown)
+            {
+                // Restore previous position when axis returns to center
+                IsCursorDown = false;
+
+                if (MoveToPrevious && MoveToPreviousPending)
+                {
+                    MouseSimulator.MoveTo(MoveToPreviousX, MoveToPreviousY);
+                    MoveToPreviousPending = false;
+                }
+            }
         }
     }
 }
