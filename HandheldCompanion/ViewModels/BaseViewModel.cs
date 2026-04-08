@@ -11,6 +11,10 @@ namespace HandheldCompanion.ViewModels
         public event PropertyChangedEventHandler? PropertyChanged;
         private bool _disposed = false; // Track whether Dispose has been called
 
+        protected readonly object _collectionLock = new object();
+        protected readonly object _collectionLock2 = new object();
+        protected readonly object _collectionLock3 = new object();
+
         ~BaseViewModel()
         {
             Dispose(false);

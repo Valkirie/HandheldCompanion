@@ -13,6 +13,7 @@ namespace HandheldCompanion.ViewModels
     {
         public ObservableCollection<LibraryVisualViewModel> LibraryCovers { get; } = [];
         public ObservableCollection<LibraryVisualViewModel> LibraryArtworks { get; } = [];
+        public ObservableCollection<LibraryVisualViewModel> LibraryLogos { get; } = [];
 
         private LibraryEntry _LibEntry;
         public LibraryEntry LibEntry
@@ -36,8 +37,9 @@ namespace HandheldCompanion.ViewModels
         public LibraryEntryViewModel(LibraryEntry libraryEntry)
         {
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(LibraryCovers, new object());
-            BindingOperations.EnableCollectionSynchronization(LibraryArtworks, new object());
+            BindingOperations.EnableCollectionSynchronization(LibraryCovers, _collectionLock);
+            BindingOperations.EnableCollectionSynchronization(LibraryArtworks, _collectionLock2);
+            BindingOperations.EnableCollectionSynchronization(LibraryLogos, _collectionLock3);
 
             LibEntry = libraryEntry;
 
@@ -47,12 +49,13 @@ namespace HandheldCompanion.ViewModels
                     LibraryCovers.Add(new(this, grid.Id, Path.GetExtension(grid.FullImageUrl), Path.GetExtension(grid.ThumbnailImageUrl)));
                 foreach (SteamGridDbHero hero in steamEntry.Heroes)
                     LibraryArtworks.Add(new(this, hero.Id, Path.GetExtension(hero.FullImageUrl), Path.GetExtension(hero.ThumbnailImageUrl)));
+                foreach (SteamGridDbLogo logo in steamEntry.Logos)
+                    LibraryLogos.Add(new(this, logo.Id, Path.GetExtension(logo.FullImageUrl), Path.GetExtension(logo.ThumbnailImageUrl)));
             }
             else if (LibEntry is IGDBEntry IGDB)
             {
                 if (IGDB.Cover is not null)
                     LibraryCovers.Add(new(this, IGDB.Cover.Id.HasValue ? IGDB.Cover.Id.Value : 0, Path.GetExtension(IGDB.Cover.Url)));
-
                 foreach (Artwork artwork in IGDB.Artworks)
                     LibraryArtworks.Add(new(this, artwork.Id.Value, Path.GetExtension(artwork.Url)));
             }

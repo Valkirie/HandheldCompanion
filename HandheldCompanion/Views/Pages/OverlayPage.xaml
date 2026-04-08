@@ -117,7 +117,6 @@
                             Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
-                            IsEnabled="{Binding IsRunningRTSS, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             SelectionChanged="OnScreenDisplayLevel_SelectionChanged">
                             <Label Content="{l:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Disabled}" />
                             <Label Content="{l:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Minimal}" />

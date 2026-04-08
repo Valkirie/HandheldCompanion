@@ -4,16 +4,14 @@ var
   UninstallSecondPage: TNewNotebookPage;
   UninstallBackButton: TNewButton;
   UninstallNextButton: TNewButton;
-  checkListBox: TNewCheckListBox;
-  keepAllCheck, profilesCheck, hotkeysCheck, applicationSettingsCheck:integer;
   keepVigemCheckbox, keepHidHideCheckbox: TNewCheckBox;
 
 procedure UpdateUninstallWizard;
 begin
   if UninstallProgressForm.InnerNotebook.ActivePage = UninstallFirstPage then
   begin
-    UninstallProgressForm.PageNameLabel.Caption := 'Select Settings To Be Kept';
-    UninstallProgressForm.PageDescriptionLabel.Caption := 'Which items are to be kept?';
+    UninstallProgressForm.PageNameLabel.Caption := 'Settings';
+    UninstallProgressForm.PageDescriptionLabel.Caption := 'Choose what to do with your stored settings.';
   end
   else
   if UninstallProgressForm.InnerNotebook.ActivePage = UninstallSecondPage then
@@ -63,12 +61,6 @@ begin
   UpdateUninstallWizard;
 end;
 
-procedure onClickCheckListBox(Sender: TObject);   
-begin
-
-end;
-       
-
 procedure InitializeUninstallProgressForm();
 var
   PageText: TNewStaticText;
@@ -95,20 +87,15 @@ begin
     PageText.ShowAccelChar := False;
     PageText.Caption := 'Press Next to proceed with uninstallation.'; 
 
-    checkListBox := TNewCheckListBox.Create(UninstallFirstPage);
-    checkListBox.Parent := UninstallFirstPage;
-    checkListBox.Left := UninstallProgressForm.StatusLabel.Left;
-    checkListBox.Top := PageText.Top + PageText.height + 16;
-    checkListBox.Width := 450;
-    checkListBox.Height := ScaleY(97);
-    checkListBox.Flat := True;
-    keepAllCheck:= checkListBox.AddCheckBox('Keep all', '', 0, True, True, True, True, nil);
-    profilesCheck:= checkListBox.AddCheckBox('Keep profiles', '', 1, True, True, False, True, nil);
-    hotkeysCheck:= checkListBox.AddCheckBox('Keep hotkeys', '', 1, True, True, False,True, nil);
-    applicationSettingsCheck:= checkListBox.AddCheckBox('Keep settings', '', 1, True, True, False,True, nil);
-    checkListBox.onClick:= @onClickCheckListBox;   
+    deleteSettingsCheckbox := TNewCheckBox.Create(UninstallFirstPage);
+    deleteSettingsCheckbox.Parent := UninstallFirstPage;
+    deleteSettingsCheckbox.Left := UninstallProgressForm.StatusLabel.Left;
+    deleteSettingsCheckbox.Top := PageText.Top + PageText.Height + 16;
+    deleteSettingsCheckbox.Width := 450;
+    deleteSettingsCheckbox.Caption := 'Delete all settings and user data';
+    deleteSettingsCheckbox.Checked := False;
   
-    UninstallProgressForm.InnerNotebook.ActivePage := UninstallFirstPage;    
+    UninstallProgressForm.InnerNotebook.ActivePage := UninstallFirstPage;
 
     PageNameLabel := UninstallProgressForm.PageNameLabel.Caption;
     PageDescriptionLabel := UninstallProgressForm.PageDescriptionLabel.Caption;

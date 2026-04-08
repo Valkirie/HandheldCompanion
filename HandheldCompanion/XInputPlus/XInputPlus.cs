@@ -79,17 +79,9 @@ public static class XInputPlus
     private static readonly string XInputPlus_Injectorx86 = Path.Combine(XInputPlus_InjectorDir, "XInputPlusInjector.dll");
     private static readonly string XInputPlus_Injectorx64 = Path.Combine(XInputPlus_InjectorDir, "XInputPlusInjector64.dll");
 
-    // XInputPlus XInput/DInput x86
-    private static readonly string XInputPlus_x86Dir = Path.Combine(XInputPlusDir, "x86");
-    private static readonly string XInputPlus_XInputx86 = Path.Combine(XInputPlus_x86Dir, "xinput1_3.dl_");
-    private static readonly string XInputPlus_DInputx86 = Path.Combine(XInputPlus_x86Dir, "dinput.dl_");
-    private static readonly string XInputPlus_DInput8x86 = Path.Combine(XInputPlus_x86Dir, "dinput8.dl_");
-
-    // XInputPlus XInput/Dinput x64
-    private static readonly string XInputPlus_x64Dir = Path.Combine(XInputPlusDir, "x64");
-    private static readonly string XInputPlus_XInputx64 = Path.Combine(XInputPlus_x64Dir, "xinput1_3.dl_");
-    private static readonly string XInputPlus_DInputx64 = Path.Combine(XInputPlus_x64Dir, "dinput.dl_");
-    private static readonly string XInputPlus_DInput8x64 = Path.Combine(XInputPlus_x64Dir, "dinput8.dl_");
+    // XInputPlus XInput wrapper paths (used by the injector; extracted lazily on demand)
+    private static readonly string XInputPlus_XInputx86 = Path.Combine(XInputPlusDir, "x86", "xinput1_3.dl_");
+    private static readonly string XInputPlus_XInputx64 = Path.Combine(XInputPlusDir, "x64", "xinput1_3.dl_");
 
     private static readonly string IniContent = Resources.XInputPlus;
 
@@ -98,20 +90,13 @@ public static class XInputPlus
         ManagerFactory.processManager.ProcessStarted += ProcessManager_ProcessStarted;
     }
 
-    // this should be handled by the installer at some point.
-    public static void ExtractXInputPlusLibraries()
+    // Extracts the injector and wrapper DLLs needed for injection mode.
+    // Called lazily immediately before injection rather than at startup.
+    private static void EnsureInjectorFiles()
     {
-        if (!Directory.Exists(XInputPlusDir))
-            Directory.CreateDirectory(XInputPlusDir);
-
-        if (!Directory.Exists(XInputPlus_InjectorDir))
-            Directory.CreateDirectory(XInputPlus_InjectorDir);
-
-        if (!Directory.Exists(XInputPlus_x86Dir))
-            Directory.CreateDirectory(XInputPlus_x86Dir);
-
-        if (!Directory.Exists(XInputPlus_x64Dir))
-            Directory.CreateDirectory(XInputPlus_x64Dir);
+        Directory.CreateDirectory(XInputPlus_InjectorDir);
+        Directory.CreateDirectory(Path.GetDirectoryName(XInputPlus_XInputx86));
+        Directory.CreateDirectory(Path.GetDirectoryName(XInputPlus_XInputx64));
 
         if (!File.Exists(XInputPlus_Injectorx86))
             File.WriteAllBytes(XInputPlus_Injectorx86, Resources.XInputPlusInjector);
@@ -124,8 +109,6 @@ public static class XInputPlus
 
         if (!File.Exists(XInputPlus_XInputx64))
             File.WriteAllBytes(XInputPlus_XInputx64, Resources.xinput1_x64);
-
-        // todo: add support for xinputplus dinput libraries
     }
 
     private static async void ProcessManager_ProcessStarted(ProcessEx processEx, bool OnStartup)
@@ -150,6 +133,7 @@ public static class XInputPlus
             }
 
             bool x64bit = Is64bitProcess(processEx.Process);
+            EnsureInjectorFiles();
             WriteXInputPlusINI(XInputPlus_InjectorDir, x64bit);
             InjectXInputPlus(processEx.Process, x64bit);
         }
@@ -166,15 +150,15 @@ public static class XInputPlus
             LoaderDLL32 = XInputPlus_Injectorx86,
             LoaderDLL64 = XInputPlus_Injectorx64,
             XInputDLL32 = XInputPlus_XInputx86,
-            DInputDLL32 = XInputPlus_DInputx86,                         // unused
-            DInput8DLL32 = XInputPlus_DInput8x86,                       // unused
+            DInputDLL32 = string.Empty,                                 // unused
+            DInput8DLL32 = string.Empty,                                // unused
             XInputDLL64 = XInputPlus_XInputx64,
-            DInputDLL64 = XInputPlus_DInputx64,                         // unused
-            DInput8DLL64 = XInputPlus_DInput8x64,                       // unused
-            TargetProgram = string.Empty,                                         // Internal use
+            DInputDLL64 = string.Empty,                                 // unused
+            DInput8DLL64 = string.Empty,                                // unused
+            TargetProgram = string.Empty,                               // Internal use
             LoaderDir = XInputPlus_InjectorDir,                         // "XInputPlus.ini" in this folder is used
             HookChildProcess = false,
-            Launched = false                                           // Internal use
+            Launched = false                                            // Internal use
         };
 
         // Write Unmanaged Struct to MemoryMappedFile
@@ -249,7 +233,9 @@ public static class XInputPlus
             return false;
         }
 
-        // prepare dll files
+        // wrapper data lives in resources; no pre-extraction needed
+        byte[] wrapperData = x64bit ? Resources.xinput1_x64 : Resources.xinput1_x86;
+
         try
         {
             for (var i = 0; i < 5; i++)
@@ -267,31 +253,25 @@ public static class XInputPlus
                 bool dllexist = File.Exists(XInputPlusDLLTargetPath);
                 bool backexist = File.Exists(XInputPlusDLLTargetBackPath);
 
-                byte[] inputData = { 0 };
-
                 // check CRC32
-                if (dllexist) inputData = File.ReadAllBytes(XInputPlusDLLTargetPath);
+                byte[] inputData = dllexist ? File.ReadAllBytes(XInputPlusDLLTargetPath) : [0];
                 uint crc = Crc32Algorithm.Compute(inputData);
                 bool is_x360ce = CRCs[x64bit] == crc;
-
-                // pull data from dll
-                string XInputPlusDLLSrcPath = x64bit ? XInputPlus_XInputx64 : XInputPlus_XInputx86;
 
                 if (dllexist && is_x360ce) continue; // skip to next file
 
                 if (!dllexist)
                 {
-                    //File.WriteAllBytes(dllpath, outputData);
-                    File.Copy(XInputPlusDLLSrcPath, XInputPlusDLLTargetPath);
+                    File.WriteAllBytes(XInputPlusDLLTargetPath, wrapperData);
                 }
-                else if (dllexist && !is_x360ce)
+                else // dllexist && !is_x360ce
                 {
                     // create backup of current dll
                     if (!backexist)
                         File.Move(XInputPlusDLLTargetPath, XInputPlusDLLTargetBackPath, true);
 
                     // deploy wrapper
-                    File.Copy(XInputPlusDLLSrcPath, XInputPlusDLLTargetPath, true);
+                    File.WriteAllBytes(XInputPlusDLLTargetPath, wrapperData);
                 }
             }
 

@@ -3,6 +3,7 @@ using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
 using System;
@@ -26,6 +27,8 @@ public partial class ControllerPage : Page
     {
         DataContext = new ControllerPageViewModel(this);
         InitializeComponent();
+
+        cB_HidModeDInputItem.Visibility = VJoyTarget.IsInstalled() ? Visibility.Visible : Visibility.Collapsed;
 
         SteamDeckPanel.Visibility = IDevice.GetCurrent() is SteamDeck ? Visibility.Visible : Visibility.Collapsed;
 
@@ -135,8 +138,8 @@ public partial class ControllerPage : Page
 
     private void UpdateSlotFixButton()
     {
-        // UI thread
-        UIHelper.TryInvoke(() =>
+        // UI thread (async to prevent blocking event callers)
+        UIHelper.TryBeginInvoke(() =>
         {
             bool isManual = cB_ControllerSlotManagementMode.SelectedIndex == 0;
             b_SlotFixNow.Visibility = (isManual && _hasSlotIssue) ? Visibility.Visible : Visibility.Collapsed;
@@ -226,9 +229,7 @@ public partial class ControllerPage : Page
         // only change HIDmode setting if current profile is default or set to default controller
         var currentProfile = ManagerFactory.profileManager.GetCurrent();
         if (currentProfile.Default || currentProfile.HID == HIDmode.NotSelected)
-        {
             ManagerFactory.settingsManager.SetProperty("HIDmode", cB_HidMode.SelectedIndex);
-        }
     }
 
     private void cB_ServiceSwitch_SelectionChanged(object sender, SelectionChangedEventArgs e)

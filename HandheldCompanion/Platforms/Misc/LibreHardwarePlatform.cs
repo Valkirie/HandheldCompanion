@@ -1,5 +1,6 @@
 using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using LibreHardwareMonitor.Hardware;
 using System;
 using System.Timers;
@@ -9,6 +10,7 @@ namespace HandheldCompanion.Platforms.Misc
     public class LibreHardwarePlatform : IPlatform
     {
         private Computer computer;
+        private bool computerOpened;
 
         private Timer updateTimer;
         private int updateInterval = 1000;
@@ -87,17 +89,34 @@ namespace HandheldCompanion.Platforms.Misc
             if (computer is not null)
             {
                 // open computer, slow task
-                computer.Open();
+                try
+                {
+                    computer.Open();
+                    computerOpened = true;
+                }
+                catch
+                {
+                    LogManager.LogError("LibreHardwareMonitor computer.Open() failed");
+                    computerOpened = false;
+                }
 
                 // prevent sensor from being stored to memory for too long
+                var window = new TimeSpan(0, 0, 10);
                 foreach (var hardware in computer.Hardware)
-                    foreach (var sensor in hardware.Sensors)
-                        sensor.ValuesTimeWindow = new(0, 0, 10);
+                    ApplyValuesTimeWindow(hardware, window);
             }
 
             updateTimer?.Start();
 
             return base.Start();
+        }
+
+        private static void ApplyValuesTimeWindow(IHardware hardware, TimeSpan window)
+        {
+            foreach (var sensor in hardware.Sensors)
+                sensor.ValuesTimeWindow = window;
+            foreach (var subHardware in hardware.SubHardware)
+                ApplyValuesTimeWindow(subHardware, window);
         }
 
         private void SettingsManager_Initialized()
@@ -124,7 +143,8 @@ namespace HandheldCompanion.Platforms.Misc
             // wait until all tasks are complete
             lock (updateLock)
             {
-                computer?.Close();
+                computerOpened = false;
+                try { computer.Close(); } catch { }
             }
 
             return base.Stop(kill);
@@ -132,12 +152,14 @@ namespace HandheldCompanion.Platforms.Misc
 
         private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
+            if (!computerOpened || computer is null)
+                return;
+
             lock (updateLock)
             {
-                // pull temperature sensor
                 foreach (IHardware? hardware in computer.Hardware)
                 {
-                    try { hardware.Update(); } catch { }
+                    try { hardware.Update(); } catch { /* keep going */ }
 
                     switch (hardware.HardwareType)
                     {

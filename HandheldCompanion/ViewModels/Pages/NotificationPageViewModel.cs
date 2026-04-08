@@ -15,7 +15,7 @@ namespace HandheldCompanion.ViewModels.Pages
         public NotificationPageViewModel()
         {
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(Notifications, new object());
+            BindingOperations.EnableCollectionSynchronization(Notifications, _collectionLock);
 
             // manage events
             ManagerFactory.notificationManager.Added += NotificationManager_Added;

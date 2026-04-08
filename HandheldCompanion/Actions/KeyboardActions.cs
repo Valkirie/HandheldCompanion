@@ -13,11 +13,11 @@ namespace HandheldCompanion.Actions
     {
         public VirtualKeyCode Key;
 
-        // runtime variables
-        private bool IsKeyDown = false;
-        private KeyCode[] pressed;
+        // Runtime
+        private bool isKeyDown = false;
+        private KeyCode[] modifiersPressed;
 
-        // settings
+        // Settings
         public ModifierSet Modifiers = ModifierSet.None;
 
         public KeyboardActions()
@@ -33,20 +33,17 @@ namespace HandheldCompanion.Actions
         }
 
         /// <summary>
-        /// Use shared toggle state from KeyboardSimulator.
-        /// This allows multiple bindings targeting the same key to share toggle state,
-        /// and detects when the key is released externally (by user or other app).
+        /// Shares toggle state across all bindings targeting the same key, and detects
+        /// external key releases (e.g. the user physically pressing the key).
         /// </summary>
         protected override (bool useShared, bool toggleState) GetSharedToggleState(bool risingEdge)
         {
-            // First, check current state (this also detects external key releases)
-            bool currentState = KeyboardSimulator.GetToggleState(Key);
+            bool state = KeyboardSimulator.GetToggleState(Key);
 
-            // Flip toggle on rising edge (button press)
             if (risingEdge)
-                currentState = KeyboardSimulator.FlipToggle(Key);
+                state = KeyboardSimulator.FlipToggle(Key);
 
-            return (true, currentState);
+            return (true, state);
         }
 
         public override void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot, float delta)
@@ -55,24 +52,24 @@ namespace HandheldCompanion.Actions
 
             if (outBool)
             {
-                if (IsKeyDown) return;
-                IsKeyDown = true;
+                if (isKeyDown) return;
+                isKeyDown = true;
 
-                pressed = ModifierMap[Modifiers];
-                KeyboardSimulator.KeyDown(pressed);
+                modifiersPressed = ModifierMap[Modifiers];
+                KeyboardSimulator.KeyDown(modifiersPressed);
                 KeyboardSimulator.KeyDown(Key);
 
-                SetHaptic(button, false);
+                SetHaptic(button, released: false);
             }
             else
             {
-                if (!IsKeyDown) return;
-                IsKeyDown = false;
+                if (!isKeyDown) return;
+                isKeyDown = false;
 
                 KeyboardSimulator.KeyUp(Key);
-                KeyboardSimulator.KeyUp(pressed);
+                KeyboardSimulator.KeyUp(modifiersPressed);
 
-                SetHaptic(button, true);
+                SetHaptic(button, released: true);
             }
         }
 
@@ -81,7 +78,7 @@ namespace HandheldCompanion.Actions
             outVector = layout.vector;
             base.Execute(layout, shiftSlot, delta);
 
-            if (outVector == Vector2.Zero && !IsKeyDown)
+            if (outVector == Vector2.Zero && !isKeyDown)
                 return;
 
             var direction = InputUtils.GetDeflectionDirection(outVector, motionThreshold);

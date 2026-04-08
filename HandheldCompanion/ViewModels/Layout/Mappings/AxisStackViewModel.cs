@@ -38,7 +38,7 @@ namespace HandheldCompanion.ViewModels
             _touchpad = touchpad;
 
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(AxisMappings, new object());
+            BindingOperations.EnableCollectionSynchronization(AxisMappings, _collectionLock);
 
             AxisMappings.Add(new AxisMappingViewModel(this, flag));
             AxisMappings.CollectionChanged += AxisMappings_CollectionChanged;

@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
@@ -29,7 +30,7 @@ namespace HandheldCompanion.ViewModels
         public HotkeyPageViewModel()
         {
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(HotkeysList, new object());
+            BindingOperations.EnableCollectionSynchronization(HotkeysList, _collectionLock);
 
             // manage events
             ManagerFactory.hotkeysManager.Updated += HotkeysManager_Updated;
@@ -63,7 +64,13 @@ namespace HandheldCompanion.ViewModels
         private void ControllerManager_ControllerSelected(Controllers.IController Controller)
         {
             // (re)draw chords on controller update
-            foreach (HotkeyViewModel hotkeyViewModel in HotkeysList.ToList())
+            List<HotkeyViewModel> hotkeyViewModels;
+            lock (_collectionLock)
+            {
+                hotkeyViewModels = HotkeysList.ToList();
+            }
+
+            foreach (HotkeyViewModel hotkeyViewModel in hotkeyViewModels)
                 hotkeyViewModel.DrawChords();
         }
 
@@ -74,7 +81,8 @@ namespace HandheldCompanion.ViewModels
 
         private void QueryHotkeys()
         {
-            foreach (Hotkey hotkey in ManagerFactory.hotkeysManager.GetHotkeys())
+            List<Hotkey> hotkeys = ManagerFactory.hotkeysManager.GetHotkeys().ToList();
+            foreach (Hotkey hotkey in hotkeys)
                 HotkeysManager_Updated(hotkey);
         }
 
@@ -83,7 +91,12 @@ namespace HandheldCompanion.ViewModels
             if (hotkey.IsInternal)
                 return;
 
-            HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
+            HotkeyViewModel? foundHotkey;
+            lock (_collectionLock)
+            {
+                foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
+            }
+
             if (foundHotkey is null)
             {
                 HotkeysList.SafeAdd(new HotkeyViewModel(hotkey));
@@ -97,7 +110,12 @@ namespace HandheldCompanion.ViewModels
 
         private void HotkeysManager_Deleted(Hotkey hotkey)
         {
-            HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
+            HotkeyViewModel? foundHotkey;
+            lock (_collectionLock)
+            {
+                foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
+            }
+
             if (foundHotkey is not null)
             {
                 HotkeysList.SafeRemove(foundHotkey);
@@ -108,13 +126,23 @@ namespace HandheldCompanion.ViewModels
 
         private void InputsManager_StartedListening(ButtonFlags buttonFlags, InputsChordTarget chordTarget)
         {
-            HotkeyViewModel hotkeyViewModel = HotkeysList.Where(h => h.Hotkey.ButtonFlags == buttonFlags).FirstOrDefault();
+            HotkeyViewModel hotkeyViewModel;
+            lock (_collectionLock)
+            {
+                hotkeyViewModel = HotkeysList.FirstOrDefault(h => h.Hotkey.ButtonFlags == buttonFlags);
+            }
+
             hotkeyViewModel?.SetListening(true, chordTarget);
         }
 
         private void InputsManager_StoppedListening(ButtonFlags buttonFlags, InputsChord storedChord)
         {
-            HotkeyViewModel hotkeyViewModel = HotkeysList.Where(h => h.Hotkey.ButtonFlags == buttonFlags).FirstOrDefault();
+            HotkeyViewModel hotkeyViewModel;
+            lock (_collectionLock)
+            {
+                hotkeyViewModel = HotkeysList.FirstOrDefault(h => h.Hotkey.ButtonFlags == buttonFlags);
+            }
+
             hotkeyViewModel?.SetListening(false, storedChord.chordTarget);
         }
 

@@ -20,6 +20,10 @@ namespace HandheldCompanion.Managers
         private static GyroActions gyroAction = new();
         private static Inclination inclination = new();
 
+        // Accumulates displacement across frames for velocity mode
+        // Allows fast movements to spread across multiple frames without losing precision
+        private static Vector2 accumulatedDisplacement = Vector2.Zero;
+
         public static event SettingsMode0EventHandler SettingsMode0Update;
         public delegate void SettingsMode0EventHandler(Vector3 gyrometer);
 
@@ -46,10 +50,10 @@ namespace HandheldCompanion.Managers
             IsInitialized = false;
         }
 
-        public static void UpdateReport(ControllerState controllerState, GamepadMotion gamepadMotion)
+        public static void UpdateReport(ControllerState controllerState, GamepadMotion gamepadMotion, float delta = 0.016f)
         {
             SetupMotion(controllerState, gamepadMotion);
-            ProcessMotion(controllerState, gamepadMotion);
+            ProcessMotion(controllerState, gamepadMotion, delta);
         }
 
         private static ref Vector3 GetGyroRef(Dictionary<SensorState, Vector3> dictionary, SensorState state)
@@ -185,7 +189,7 @@ namespace HandheldCompanion.Managers
 
         // this function is used for advanced motion calculations used by
         // gyro to joy/mouse mappings and by UI that configures them
-        private static void ProcessMotion(ControllerState controllerState, GamepadMotion gamepadMotion)
+        private static void ProcessMotion(ControllerState controllerState, GamepadMotion gamepadMotion, float delta)
         {
             // TODO: handle this race condition gracefully. LayoutManager might be updating currentlayout as we land here
             Layout currentLayout = ManagerFactory.layoutManager.GetCurrent();
@@ -244,6 +248,9 @@ namespace HandheldCompanion.Managers
             {
                 controllerState.AxisState[AxisFlags.GyroX] = 0;
                 controllerState.AxisState[AxisFlags.GyroY] = 0;
+
+                // Reset accumulator when motion is disabled to prevent drift
+                accumulatedDisplacement = Vector2.Zero;
                 return;
             }
 
@@ -252,7 +259,7 @@ namespace HandheldCompanion.Managers
             switch (gyroAction.MotionInput)
             {
                 case MotionInput.LocalSpace:
-                    output = new Vector2(controllerState.GyroState.GetGyroscope(SensorState.Default).Z - controllerState.GyroState.GetGyroscope(SensorState.Default).Y, controllerState.GyroState.GetGyroscope(SensorState.Default).X);
+                    output = new Vector2(controllerState.GyroState.GetGyroscope(SensorState.Default).Z, controllerState.GyroState.GetGyroscope(SensorState.Default).X);
                     break;
                 case MotionInput.PlayerSpace:
                     gamepadMotion.GetPlayerSpaceGyro(out float playerX, out float playerY, 1.41f);
@@ -285,13 +292,52 @@ namespace HandheldCompanion.Managers
             if (controllerState.ButtonState.Contains(currentProfile.AimingSightsTrigger))
                 output *= currentProfile.AimingSightsMultiplier;
 
+            // apply velocity-based scaling if enabled
+            if (gyroAction.VelocityMode == GyroVelocityMode.Velocity && gyroAction.MotionInput != MotionInput.JoystickSteering)
+            {
+                // Calculate intended displacement from angular velocity
+                // Normalize to 60 FPS baseline (delta * 60) so existing sensitivity values still work
+                Vector2 intendedDisplacement = output * delta * 60.0f * gyroAction.VelocityScale;
+
+                // Add to accumulator (preserves displacement that couldn't fit in previous frames)
+                accumulatedDisplacement += intendedDisplacement;
+
+                // Use accumulated displacement instead of raw output
+                output = accumulatedDisplacement;
+            }
+            else
+            {
+                // Default mode: reset accumulator to prevent interference
+                accumulatedDisplacement = Vector2.Zero;
+            }
+
             // apply sensivity
             if (gyroAction.MotionInput != MotionInput.JoystickSteering)
                 output = new Vector2(output.X * currentProfile.GetSensitivityX(), output.Y * currentProfile.GetSensitivityY());
 
+            // Clamp to output range
+            short outputX = (short)Math.Clamp(output.X, short.MinValue, short.MaxValue);
+            short outputY = (short)Math.Clamp(output.Y, short.MinValue, short.MaxValue);
+
+            // Consume what we successfully output from the accumulator (before sensitivity was applied)
+            if (gyroAction.VelocityMode == GyroVelocityMode.Velocity && gyroAction.MotionInput != MotionInput.JoystickSteering)
+            {
+                // Calculate how much raw displacement was consumed (reverse the sensitivity multiplication)
+                float consumedX = outputX / currentProfile.GetSensitivityX();
+                float consumedY = outputY / currentProfile.GetSensitivityY();
+
+                accumulatedDisplacement.X -= consumedX;
+                accumulatedDisplacement.Y -= consumedY;
+
+                // Apply decay AFTER consumption to prevent draining useful displacement
+                // This naturally dissipates small residual values while preserving large flicks
+                const float decayFactor = 0.90f; // 10% decay per frame
+                accumulatedDisplacement *= decayFactor;
+            }
+
             // fill the final calculated state for further use in the remapper
-            controllerState.AxisState[AxisFlags.GyroX] = (short)Math.Clamp(output.X, short.MinValue, short.MaxValue);
-            controllerState.AxisState[AxisFlags.GyroY] = (short)Math.Clamp(output.Y, short.MinValue, short.MaxValue);
+            controllerState.AxisState[AxisFlags.GyroX] = outputX;
+            controllerState.AxisState[AxisFlags.GyroY] = outputY;
         }
     }
 }

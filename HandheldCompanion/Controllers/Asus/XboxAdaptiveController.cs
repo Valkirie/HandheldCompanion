@@ -20,7 +20,7 @@ namespace HandheldCompanion.Controllers.MSI
         public bool Disable()
         {
             if (IDevice.GetCurrent() is ROGAlly rogAlly)
-                rogAlly.XBoxController(true);
+                return rogAlly.XBoxController(true);
             return false;
         }
     }

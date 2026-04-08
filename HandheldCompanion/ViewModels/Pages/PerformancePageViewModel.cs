@@ -647,7 +647,7 @@ namespace HandheldCompanion.ViewModels
         public PerformancePageViewModel(bool isQuickTools)
         {
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(_profilePickerItems, new object());
+            BindingOperations.EnableCollectionSynchronization(_profilePickerItems, _collectionLock);
 
             ProfilePickerCollectionView = new ListCollectionView(_profilePickerItems);
             ProfilePickerCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Header"));
@@ -770,27 +770,13 @@ namespace HandheldCompanion.ViewModels
 
             CreatePresetCommand = new DelegateCommand(() =>
             {
-                // Get the count of profiles that are not default, then start with +1 of that
-                int count = ManagerFactory.powerProfileManager.profiles.Values.Count(p => !p.IsDefault());
-                int idx = count + 1;
+                string profileName = ManagerFactory.powerProfileManager.GetProfileName(Resources.PowerProfileManualName);
 
-                // Create a base name for the new profile
-                string baseName = Resources.PowerProfileManualName;
-
-                // Check for duplicates and increment the index
-                while (ManagerFactory.powerProfileManager.profiles.Values.Any(p => p.Name == string.Format(baseName, idx)))
-                    idx++;
-
-                // Format the name with the updated index
-                string name = string.Format(baseName, idx);
-
-                // Create the new power profile
-                PowerProfile powerProfile = new PowerProfile(name, Resources.PowerProfileManualDescription)
+                PowerProfile powerProfile = new(profileName, Resources.PowerProfileManualDescription)
                 {
                     TDPOverrideValues = IDevice.GetCurrent().nTDP
                 };
 
-                // Update or create the profile
                 ManagerFactory.powerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);
             });
 
@@ -994,12 +980,6 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // raise events
-            /*
-             * case "ConfigurableTDPOverride":
-             * case "ConfigurableTDPOverrideDown":
-             * case "ConfigurableTDPOverrideUp":
-            */
-
             OnPropertyChanged("ConfigurableTDPOverride");
             OnPropertyChanged("ConfigurableTDPOverrideDown");
             OnPropertyChanged("ConfigurableTDPOverrideUp");

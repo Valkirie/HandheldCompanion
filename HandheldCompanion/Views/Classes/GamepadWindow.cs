@@ -14,13 +14,26 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Threading;
 using WpfScreenHelper;
 
 namespace HandheldCompanion.Views.Classes
 {
     public class GamepadWindow : Window
     {
-        public List<Control> controlElements => currentDialog is not null ? WPFUtils.GetElementsFromPopup<Control>(frameworkElements) : frameworkElements.OfType<Control>().ToList();
+        // When a ContentDialog or a DropDownButton flyout is open, restrict navigation to
+        // only the controls that live inside that popup / dialog.
+        public DropDownButton? currentFlyoutButton;
+
+        public List<Control> controlElements =>
+            currentDialog is not null
+                // ContentDialog (iNKORE) is hosted in the window's AdornerLayer overlay.
+                // Its C# instance is never a visual node, so we identify its controls by
+                // walking each element's visual parent chain until we hit AdornerLayer.
+                ? WPFUtils.GetElementsFromAdornerLayer<Control>(frameworkElements)
+                : currentFlyoutButton is not null
+                    ? WPFUtils.GetElementsFromPopup<Control>(frameworkElements)
+                    : frameworkElements.OfType<Control>().ToList();
         public List<FrameworkElement> frameworkElements
         {
             get
@@ -57,6 +70,9 @@ namespace HandheldCompanion.Views.Classes
         private bool WMPaintPending = false;
         private DateTime prevDraw = DateTime.MinValue;
 
+        protected readonly DispatcherTimer _navDebounceTimer;
+        protected string _pendingNavTag = string.Empty;
+
         [DllImport("dwmapi.dll")]
         private static extern int DwmFlush();
 
@@ -67,7 +83,18 @@ namespace HandheldCompanion.Views.Classes
             IsVisibleChanged += Window_VisibleChanged;
 
             WMPaintTimer.Elapsed += WMPaintTimer_Elapsed;
+
+            _navDebounceTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
+            _navDebounceTimer.Tick += NavDebounceTimer_Tick;
         }
+
+        private void NavDebounceTimer_Tick(object? sender, EventArgs e)
+        {
+            _navDebounceTimer.Stop();
+            ApplyPendingNavigation(_pendingNavTag);
+        }
+
+        protected virtual void ApplyPendingNavigation(string navItemTag) { }
 
         protected virtual void Window_VisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {

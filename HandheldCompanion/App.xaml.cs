@@ -14,6 +14,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
@@ -181,85 +182,114 @@ public partial class App : Application
     /// <param name="args">Details about the launch request and process.</param>
     protected override void OnStartup(StartupEventArgs args)
     {
-        // get current assembly
-        Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
-        FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
-
-        // Set environment variables
-        Environment.SetEnvironmentVariable("LOG_PATH", LogsPath);
-        Environment.SetEnvironmentVariable("COMPlus_legacyCorruptedStateExceptionsPolicy", "1");
-
-        // initialize log
-        LogManager.Initialize(ApplicationName);
-        LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
-
-        using (Process process = Process.GetCurrentProcess())
+        try
         {
-            Process[] processes = Process.GetProcessesByName(process.ProcessName);
-            if (processes.Length > 1)
+            // get current assembly
+            Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
+
+            // Set environment variables
+            Environment.SetEnvironmentVariable("LOG_PATH", LogsPath);
+            Environment.SetEnvironmentVariable("COMPlus_legacyCorruptedStateExceptionsPolicy", "1");
+
+            // initialize log
+            LogManager.Initialize(ApplicationName);
+            LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
+
+            using (Process process = Process.GetCurrentProcess())
             {
-                using (Process prevProcess = processes[0])
+                Process[] processes = Process.GetProcessesByName(process.ProcessName);
+                if (processes.Length > 1)
                 {
-                    // Find the window by its title
-                    IntPtr hWnd = FindWindow(null, $"Handheld Companion ({fileVersionInfo.FileVersion})");
-                    if (hWnd == IntPtr.Zero || !prevProcess.Responding)
+                    using (Process prevProcess = processes[0])
                     {
-                        MessageBox.Show("Another instance of Handheld Companion is already running.\n\nPlease close the other instance and try again.", "Error");
+                        // Find the window by its title
+                        IntPtr hWnd = FindWindow(null, $"Handheld Companion ({fileVersionInfo.FileVersion})");
+                        if (hWnd == IntPtr.Zero || !prevProcess.Responding)
+                        {
+                            MessageBox.Show("Another instance of Handheld Companion is already running.\n\nPlease close the other instance and try again.", "Error");
+                            process.Kill();
+                            return;
+                        }
+
+                        // Bring previous window to foreground, kill self
+                        ProcessUtils.ShowWindow(hWnd, (int)ProcessUtils.ShowWindowCommands.Normal);
+                        ProcessUtils.SetForegroundWindow(hWnd);
                         process.Kill();
                         return;
                     }
-
-                    // Bring previous window to foreground, kill self
-                    ProcessUtils.ShowWindow(hWnd, (int)ProcessUtils.ShowWindowCommands.Normal);
-                    ProcessUtils.SetForegroundWindow(hWnd);
-                    process.Kill();
-                    return;
                 }
             }
+
+            MigrateSettings();
+
+            // define culture settings
+            string currentCultureString = ManagerFactory.settingsManager.GetString("CurrentCulture");
+            CultureInfo culture;
+            if (string.IsNullOrEmpty(currentCultureString))
+            {
+                culture = CultureInfo.CurrentCulture;
+            }
+            else
+            {
+                culture = new CultureInfo(currentCultureString);
+            }
+
+            while (culture is not null)
+            {
+                if (TranslationSource.ValidCultures.Contains(culture)) break;
+
+                // if we're already at the top of the chain, bail out
+                if (culture.Equals(CultureInfo.InvariantCulture) || culture.Equals(culture.Parent))
+                    break;
+
+                culture = culture.Parent;
+            }
+
+            if (culture is null || !TranslationSource.ValidCultures.Contains(culture))
+                culture = new CultureInfo("en-US");
+
+            TranslationSource.Instance.CurrentCulture = culture;
+
+            // handle exceptions nicely
+            var currentDomain = default(AppDomain);
+            currentDomain = AppDomain.CurrentDomain;
+            // Handler for unhandled exceptions.
+            currentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            // Handler for exceptions in threads behind forms.
+            System.Windows.Forms.Application.ThreadException += Application_ThreadException;
+            // Handler for exceptions in dispatcher.
+            DispatcherUnhandledException += App_DispatcherUnhandledException;
+            // Handler for unobserved task exceptions (async/await).
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+
+            MainWindow = new MainWindow(fileVersionInfo, CurrentAssembly);
+            MainWindow.Show();
         }
-
-        MigrateSettings();
-
-        // define culture settings
-        string currentCultureString = ManagerFactory.settingsManager.GetString("CurrentCulture");
-        CultureInfo culture;
-        if (string.IsNullOrEmpty(currentCultureString))
+        catch (Exception ex)
         {
-            culture = CultureInfo.CurrentCulture;
+            // Critical startup exception - log and show error before crashing
+            try
+            {
+                LogManager.LogCritical("Fatal startup exception: {0}\t{1}", ex.Message, ex.StackTrace);
+                if (ex.InnerException != null)
+                    LogManager.LogCritical("Inner exception: {0}\t{1}", ex.InnerException.Message, ex.InnerException.StackTrace);
+            }
+            catch { /* ignore logging errors */ }
+
+            try
+            {
+                MessageBox.Show(
+                    $"A fatal error occurred during startup:\n\n{ex.Message}\n\nPlease check the logs for more details.",
+                    "Fatal Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+            catch { /* ignore message box errors */ }
+
+            // Re-throw to ensure app terminates
+            throw;
         }
-        else
-        {
-            culture = new CultureInfo(currentCultureString);
-        }
-
-        while (culture is not null)
-        {
-            if (TranslationSource.ValidCultures.Contains(culture)) break;
-
-            // if we're already at the top of the chain, bail out
-            if (culture.Equals(CultureInfo.InvariantCulture) || culture.Equals(culture.Parent))
-                break;
-
-            culture = culture.Parent;
-        }
-
-        if (culture is null || !TranslationSource.ValidCultures.Contains(culture))
-            culture = new CultureInfo("en-US");
-
-        TranslationSource.Instance.CurrentCulture = culture;
-
-        // handle exceptions nicely
-        var currentDomain = default(AppDomain);
-        currentDomain = AppDomain.CurrentDomain;
-        // Handler for unhandled exceptions.
-        currentDomain.UnhandledException += CurrentDomain_UnhandledException;
-        // Handler for exceptions in threads behind forms.
-        System.Windows.Forms.Application.ThreadException += Application_ThreadException;
-        // Handler for exceptions in dispatcher.
-        DispatcherUnhandledException += App_DispatcherUnhandledException;
-
-        MainWindow = new MainWindow(fileVersionInfo, CurrentAssembly);
-        MainWindow.Show();
     }
 
     private void MigrateSettings()
@@ -357,8 +387,34 @@ public partial class App : Application
             LogManager.LogCritical(ex.Message + "\t" + ex.StackTrace);
 
         // If you want to avoid the application from crashing:
-        Handled:
+    Handled:
         e.Handled = true;
+    }
+
+    private void TaskScheduler_UnobservedTaskException(object? sender, System.Threading.Tasks.UnobservedTaskExceptionEventArgs e)
+    {
+        Exception ex = e.Exception;
+
+        // send to sentry
+        bool IsSentryEnabled = ManagerFactory.settingsManager.GetBoolean("TelemetryEnabled");
+        if (SentrySdk.IsEnabled && IsSentryEnabled)
+            SentrySdk.CaptureException(ex);
+
+        // Log all inner exceptions from the AggregateException
+        if (ex is AggregateException aggEx)
+        {
+            foreach (var innerEx in aggEx.InnerExceptions)
+            {
+                LogManager.LogCritical("Unobserved Task Exception: {0}\t{1}", innerEx.Message, innerEx.StackTrace);
+            }
+        }
+        else
+        {
+            LogManager.LogCritical("Unobserved Task Exception: {0}\t{1}", ex.Message, ex.StackTrace);
+        }
+
+        // Mark the exception as observed to prevent app crash
+        e.SetObserved();
     }
 
     private void InitializeSentry()

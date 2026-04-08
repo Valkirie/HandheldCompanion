@@ -13,6 +13,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using System.Windows.Threading;
 using NumQuaternion = System.Numerics.Quaternion;
 using NumVector3 = System.Numerics.Vector3;
 
@@ -524,7 +525,7 @@ public partial class OverlayModel : OverlayWindow
                 CurrentModel.JoystickMaxAngleDeg,
                 CurrentModel.DefaultMaterials,
                 CurrentModel.HighlightMaterials);
-        });
+        }, DispatcherPriority.Render);
     }
 
     private void HighLightButtons()
@@ -564,7 +565,7 @@ public partial class OverlayModel : OverlayWindow
                     model3D.BackMaterial = CurrentModel.HighlightMaterials[model3DGroup] :
                     model3D.BackMaterial = CurrentModel.DefaultMaterials[model3DGroup];
                 }
-            });
+            }, DispatcherPriority.Render);
         }
     }
 

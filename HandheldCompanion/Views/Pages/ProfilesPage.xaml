@@ -8,6 +8,7 @@
     xmlns:managers="clr-namespace:HandheldCompanion.Managers;assembly=HandheldCompanion"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Profiles"
@@ -17,43 +18,18 @@
     d:DesignHeight="4000"
     d:DesignWidth="1000"
     KeepAlive="True"
-    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
-        <Image
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Opacity="0"
-            Source="{Binding Artwork, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
-            Stretch="Uniform">
-            <Image.Triggers>
-                <EventTrigger RoutedEvent="Binding.TargetUpdated">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <!--  fade in from 0->1 in 300ms  -->
-                            <DoubleAnimation
-                                Storyboard.TargetProperty="Opacity"
-                                From="0"
-                                To="0.6"
-                                Duration="0:0:0.3" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-            </Image.Triggers>
-            <Image.OpacityMask>
-                <RadialGradientBrush Center="0.8,0.4" GradientOrigin="0.8,0.4" RadiusX="0.8" RadiusY="1.2">
-                    <GradientStop Offset="0.0" Color="{DynamicResource MaskGradientStartColor}" />
-                    <GradientStop Offset="0.4" Color="{DynamicResource MaskGradientEndColor}" />
-                </RadialGradientBrush>
-            </Image.OpacityMask>
-        </Image>
-
         <StackPanel>
             <ui:ContentDialog
                 Name="IGGBDialog"
                 CloseButtonText="Close"
-                IsEnabled="{Binding IsLibraryConnected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                DefaultButton="Primary"
+                IsEnabled="{Binding IsLibraryConnected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                IsPrimaryButtonEnabled="{Binding CanApplyLibrary, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                PrimaryButtonCommand="{Binding DownloadLibrary}"
+                PrimaryButtonText="Apply">
                 <Grid>
                     <ui:ProgressRing
                         Panel.ZIndex="1"
@@ -123,47 +99,77 @@
                             </StackPanel>
 
                             <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding HasLibraryEntry, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Preview" />
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="120" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
 
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="120" />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Cover" />
+                                            <ui:FlipView
+                                                x:Name="FlipViewCovers"
+                                                Height="180"
+                                                HorizontalAlignment="Stretch"
+                                                ItemsSource="{Binding LibraryCovers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                SelectedIndex="{Binding LibraryCoversIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <ui:FlipView.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Image
+                                                            HorizontalAlignment="Center"
+                                                            Source="{Binding Image, Mode=OneWay}"
+                                                            Stretch="UniformToFill" />
+                                                    </DataTemplate>
+                                                </ui:FlipView.ItemTemplate>
+                                            </ui:FlipView>
 
-                                    <StackPanel Grid.Column="0">
-                                        <ui:FlipView
-                                            x:Name="FlipViewCovers"
-                                            Height="180"
-                                            HorizontalAlignment="Stretch"
-                                            ItemsSource="{Binding LibraryCovers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                            SelectedIndex="{Binding LibraryCoversIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                            <ui:FlipView.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Image
-                                                        HorizontalAlignment="Center"
-                                                        Source="{Binding Image, Mode=OneWay}"
-                                                        Stretch="UniformToFill" />
-                                                </DataTemplate>
-                                            </ui:FlipView.ItemTemplate>
-                                        </ui:FlipView>
+                                            <ui:PipsPager
+                                                Margin="0,10,0,0"
+                                                HorizontalAlignment="Center"
+                                                IsEnabled="False"
+                                                MaxVisiblePips="6"
+                                                NextButtonVisibility="Collapsed"
+                                                NumberOfPages="{Binding LibraryCovers.Count}"
+                                                PreviousButtonVisibility="Collapsed"
+                                                SelectedPageIndex="{Binding SelectedIndex, ElementName=FlipViewCovers, Mode=TwoWay}" />
+                                        </StackPanel>
 
-                                        <ui:PipsPager
-                                            Margin="0,10,0,0"
-                                            HorizontalAlignment="Center"
-                                            IsEnabled="False"
-                                            MaxVisiblePips="6"
-                                            NextButtonVisibility="Collapsed"
-                                            NumberOfPages="{Binding LibraryCovers.Count}"
-                                            PreviousButtonVisibility="Collapsed"
-                                            SelectedPageIndex="{Binding SelectedIndex, ElementName=FlipViewCovers, Mode=TwoWay}" />
-                                    </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Logo" />
+                                            <ui:FlipView
+                                                x:Name="FlipViewLogos"
+                                                Height="180"
+                                                ItemsSource="{Binding LibraryLogos, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                SelectedIndex="{Binding LibraryLogosIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <ui:FlipView.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Image
+                                                            Margin="32"
+                                                            HorizontalAlignment="Center"
+                                                            Source="{Binding Image, Mode=OneWay}"
+                                                            Stretch="Uniform" />
+                                                    </DataTemplate>
+                                                </ui:FlipView.ItemTemplate>
+                                            </ui:FlipView>
 
-                                    <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                            <ui:PipsPager
+                                                Margin="0,10,0,0"
+                                                HorizontalAlignment="Center"
+                                                IsEnabled="False"
+                                                MaxVisiblePips="6"
+                                                NextButtonVisibility="Collapsed"
+                                                NumberOfPages="{Binding LibraryLogos.Count}"
+                                                PreviousButtonVisibility="Collapsed"
+                                                SelectedPageIndex="{Binding SelectedIndex, ElementName=FlipViewLogos, Mode=TwoWay}" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Artwork" />
                                         <ui:FlipView
                                             x:Name="FlipViewArtworks"
                                             Height="180"
-                                            HorizontalAlignment="Stretch"
                                             ItemsSource="{Binding LibraryArtworks, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                             SelectedIndex="{Binding LibraryArtworksIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                             <ui:FlipView.ItemTemplate>
@@ -186,14 +192,8 @@
                                             PreviousButtonVisibility="Collapsed"
                                             SelectedPageIndex="{Binding SelectedIndex, ElementName=FlipViewArtworks, Mode=TwoWay}" />
                                     </StackPanel>
-                                </Grid>
+                                </StackPanel>
 
-                                <Button
-                                    HorizontalAlignment="Stretch"
-                                    Command="{Binding DownloadLibrary}"
-                                    Content="Update metadata"
-                                    IsEnabled="{Binding HasLibraryEntry, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Style="{DynamicResource AccentButtonStyle}" />
                             </ikw:SimpleStackPanel>
                         </ikw:SimpleStackPanel>
                     </ikw:SimpleStackPanel>
@@ -204,12 +204,13 @@
                 Name="ProfileRenameDialog"
                 CloseButtonClick="ProfileRenameDialog_CloseButtonClick"
                 CloseButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Cancel}"
+                DefaultButton="Primary"
                 PrimaryButtonClick="ProfileRenameDialog_PrimaryButtonClick"
                 PrimaryButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Rename}">
                 <ikw:SimpleStackPanel MinWidth="500" Spacing="12">
                     <ikw:SimpleStackPanel Spacing="3">
                         <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_ProfileRenamingDialogue_Name}" />
-                        <TextBox Name="tB_ProfileName" HorizontalAlignment="Stretch" />
+                        <TextBox x:Name="ProfileNameTextBox" HorizontalAlignment="Stretch" />
                     </ikw:SimpleStackPanel>
                 </ikw:SimpleStackPanel>
             </ui:ContentDialog>
@@ -218,13 +219,14 @@
                 Name="SubProfileRenameDialog"
                 CloseButtonClick="SubProfileRenameDialog_CloseButtonClick"
                 CloseButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Cancel}"
+                DefaultButton="Primary"
                 PrimaryButtonClick="SubProfileRenameDialog_PrimaryButtonClick"
                 PrimaryButtonText="{l:Static resx:Resources.ProfilesPage_Dialogue_Rename}">
                 <ikw:SimpleStackPanel MinWidth="500" Spacing="12">
                     <ikw:SimpleStackPanel Spacing="3">
                         <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ProfilesPage_SubProfileRenamingDialogue_Name}" />
                         <TextBox
-                            Name="tb_SubProfileName"
+                            x:Name="SubProfileNameTextBox"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center" />
                     </ikw:SimpleStackPanel>
@@ -232,7 +234,10 @@
             </ui:ContentDialog>
 
             <Border>
-                <ikw:SimpleStackPanel Name="StackPanel_Profiles" Spacing="8">
+                <ikw:SimpleStackPanel
+                    Name="StackPanel_Profiles"
+                    IsEnabled="{Binding HasSelectedProfile, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    Spacing="8">
                     <ikw:SimpleStackPanel Spacing="3">
 
                         <!--  Profile picker  -->
@@ -274,19 +279,31 @@
                                     </Grid.ColumnDefinitions>
 
                                     <ComboBox
-                                        Name="cB_Profiles"
+                                        Name="SelectMainProfileComboBox"
                                         Grid.Column="0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
-                                        SelectionChanged="cB_Profiles_SelectionChanged" />
+                                        DisplayMemberPath="Name"
+                                        ItemsSource="{Binding MainProfilesView, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        ScrollViewer.CanContentScroll="True"
+                                        SelectedItem="{Binding SelectedMainProfileViewModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        VirtualizingPanel.IsVirtualizing="True"
+                                        VirtualizingPanel.VirtualizationMode="Recycling">
+                                        <ComboBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel />
+                                            </ItemsPanelTemplate>
+                                        </ComboBox.ItemsPanel>
+                                    </ComboBox>
 
                                     <!--  Rename profile  -->
                                     <Button
-                                        Name="b_ProfileRename"
+                                        Name="RenameProfileButton"
                                         Grid.Column="1"
                                         Margin="6,0,0,0"
                                         VerticalAlignment="Center"
-                                        Click="b_ProfileRename_Click">
+                                        Command="{Binding RenameProfileCommand}"
+                                        IsEnabled="{Binding IsProfileManagementEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe712;" />
                                     </Button>
 
@@ -295,18 +312,19 @@
                                         Grid.Column="2"
                                         Margin="6,0,0,0"
                                         VerticalAlignment="Center"
-                                        Click="b_CreateProfile_Click"
+                                        Command="{Binding CreateProfileCommand}"
                                         Style="{DynamicResource AccentButtonStyle}">
                                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe710;" />
                                     </Button>
 
                                     <!--  Delete profile  -->
                                     <Button
-                                        Name="b_DeleteProfile"
+                                        Name="DeleteProfileButton"
                                         Grid.Column="3"
                                         Margin="6,0,0,0"
                                         VerticalAlignment="Center"
-                                        Click="b_DeleteProfile_Click">
+                                        Command="{Binding DeleteProfileCommand}"
+                                        IsEnabled="{Binding IsProfileManagementEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe738;" />
                                     </Button>
                                 </Grid>
@@ -317,27 +335,211 @@
                             Name="WarningInfoBar"
                             d:Visibility="Visible"
                             IsClosable="False"
-                            IsOpen="True"
+                            IsOpen="{Binding HasWarning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            Message="{Binding WarningMessage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             Severity="Warning"
-                            Visibility="Collapsed" />
+                            Visibility="{Binding HasWarning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </ikw:SimpleStackPanel>
+
+                    <Grid
+                        Name="ArtworkBanner"
+                        Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}, Converter={StaticResource WidthToAspectHeightConverter}, ConverterParameter=0.22}"
+                        MinHeight="245"
+                        MaxHeight="320"
+                        HorizontalAlignment="Stretch"
+                        ClipToBounds="True"
+                        Visibility="{Binding Artwork, Converter={StaticResource HasArtworkConverter}}">
+                        <Rectangle>
+                            <Rectangle.Fill>
+                                <ImageBrush
+                                    AlignmentX="Center"
+                                    AlignmentY="Center"
+                                    ImageSource="{Binding Artwork, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
+                                    Stretch="UniformToFill" />
+                            </Rectangle.Fill>
+                            <Rectangle.Triggers>
+                                <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <!--  fade in from 0->1 in 300ms  -->
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="Opacity"
+                                                From="0"
+                                                To="1.0"
+                                                Duration="0:0:0.3" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Rectangle.Triggers>
+                        </Rectangle>
+
+                        <Image
+                            MaxWidth="420"
+                            MaxHeight="128"
+                            Margin="32,0,0,32"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom"
+                            Source="{Binding Logo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
+                            Stretch="Uniform">
+                            <Image.Triggers>
+                                <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <!--  fade in from 0->1 in 300ms  -->
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="Opacity"
+                                                From="0"
+                                                To="1.0"
+                                                Duration="0:0:0.3" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Image.Triggers>
+                        </Image>
+                    </Grid>
 
                     <!--  Profile details  -->
                     <Expander
                         Name="ProfileDetailsExpander"
                         d:IsExpanded="True"
-                        Header="Profile details">
-                        <!--
+                        IsEnabled="{Binding IsProfileDetailsExpanderEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                         <Expander.Header>
-                            <Button
-                                Name="b_Play"
-                                Width="200"
-                                Command="{Binding LaunchExecutable}"
-                                Content="{l:Static resx:Resources.ProfilesPage_Play}"
-                                Style="{DynamicResource AccentButtonStyle}"
-                                Visibility="Collapsed" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    Grid.Column="0"
+                                    VerticalAlignment="Center"
+                                    Text="Profile details" />
+
+                                <ui:DropDownButton
+                                    Grid.Column="1"
+                                    MinWidth="140"
+                                    HorizontalAlignment="Right"
+                                    Style="{DynamicResource AccentButtonStyle}"
+                                    Visibility="Collapsed">
+                                    <ui:DropDownButton.Content>
+                                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                            <ui:FontIcon FontSize="16" Glyph="&#xE768;" />
+                                            <TextBlock Text="{l:Static resx:Resources.ProfilesPage_ProcessControl}" />
+                                        </ikw:SimpleStackPanel>
+                                    </ui:DropDownButton.Content>
+                                    <ui:DropDownButton.Flyout>
+                                        <ui:MenuFlyout Placement="BottomEdgeAlignedRight">
+                                            <!--  Launch Process  -->
+                                            <MenuItem
+                                                Command="{Binding LaunchProfileProcessCommand}"
+                                                Header="{l:Static resx:Resources.ProfilesPage_Play}"
+                                                IsEnabled="{Binding CanLaunchProcess, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.Icon>
+                                                    <ui:FontIcon Glyph="&#xE768;" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+
+                                            <!--  Suspend Process  -->
+                                            <MenuItem
+                                                Command="{Binding SuspendProcessCommand}"
+                                                Header="{l:Static resx:Resources.ProfilesPage_SuspendProcess}"
+                                                IsEnabled="{Binding CanSuspendProcess, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.Icon>
+                                                    <ui:FontIcon Glyph="&#xE769;" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+
+                                            <!--  Resume Process  -->
+                                            <MenuItem
+                                                Command="{Binding ResumeProcessCommand}"
+                                                Header="{l:Static resx:Resources.ProfilesPage_ResumeProcess}"
+                                                IsEnabled="{Binding CanResumeProcess, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.Icon>
+                                                    <ui:FontIcon Glyph="&#xE768;" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+
+                                            <Separator />
+
+                                            <!--  Kill Process  -->
+                                            <MenuItem
+                                                Command="{Binding KillProcessCommand}"
+                                                Header="{l:Static resx:Resources.ProfilesPage_StopProcess}"
+                                                IsEnabled="{Binding CanKillProcess, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.Icon>
+                                                    <ui:FontIcon Foreground="{DynamicResource SystemFillColorCriticalBrush}" Glyph="&#xE71A;" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ui:MenuFlyout>
+                                    </ui:DropDownButton.Flyout>
+                                </ui:DropDownButton>
+
+                                <ikw:SimpleStackPanel
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    Orientation="Horizontal"
+                                    Spacing="3">
+                                    <Button
+                                        MinWidth="100"
+                                        Command="{Binding ToggleProfileProcessCommand}"
+                                        IsEnabled="{Binding CanToggleProfileProcess, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Style="{DynamicResource AccentButtonStyle}">
+                                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                            <ui:FontIcon>
+                                                <ui:FontIcon.Style>
+                                                    <Style TargetType="ui:FontIcon">
+                                                        <Setter Property="Glyph" Value="&#xf5b0;" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsProfileProcessRunning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                                                <Setter Property="Glyph" Value="&#xee95;" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </ui:FontIcon.Style>
+                                            </ui:FontIcon>
+
+                                            <TextBlock>
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text" Value="{l:Static resx:Resources.ProfilesPage_Play}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsProfileProcessRunning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                                                <Setter Property="Text" Value="{l:Static resx:Resources.ProfilesPage_StopProcess}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </ikw:SimpleStackPanel>
+                                    </Button>
+
+                                    <Button
+                                        VerticalAlignment="Stretch"
+                                        Command="{Binding OpenControllerLayoutCommand}"
+                                        Tag="Navigation">
+                                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" />
+                                    </Button>
+
+                                    <ToggleButton
+                                        Name="ToggleFavoriteButton"
+                                        VerticalAlignment="Stretch"
+                                        IsChecked="{Binding IsLiked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                        <ui:FontIcon>
+                                            <ui:FontIcon.Style>
+                                                <Style TargetType="ui:FontIcon">
+                                                    <Setter Property="Glyph" Value="&#xe734;" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsLiked, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                                            <Setter Property="Glyph" Value="&#xe735;" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ui:FontIcon.Style>
+                                        </ui:FontIcon>
+                                    </ToggleButton>
+                                </ikw:SimpleStackPanel>
+                            </Grid>
                         </Expander.Header>
-                        -->
                         <ikw:SimpleStackPanel Spacing="3">
                             <!--  Path  -->
                             <Grid>
@@ -362,12 +564,13 @@
 
                                 <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
-                                        Name="tB_ProfilePath"
+                                        Name="ProfilePathTextBox"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
                                         BorderThickness="1"
                                         IsEnabled="False"
-                                        IsReadOnly="True" />
+                                        IsReadOnly="True"
+                                        Text="{Binding ProfilePath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </DockPanel>
                             </Grid>
 
@@ -394,11 +597,11 @@
 
                                 <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
-                                        Name="tB_ProfileArguments"
+                                        Name="ProfileArgumentsTextBox"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
                                         BorderThickness="1"
-                                        TextChanged="tB_ProfileArguments_TextChanged" />
+                                        Text="{Binding ProfileArguments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </DockPanel>
                             </Grid>
 
@@ -425,11 +628,11 @@
 
                                 <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
-                                        Name="tB_ProfileLaunchString"
+                                        Name="ProfileLaunchStringTextBox"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
                                         BorderThickness="1"
-                                        TextChanged="tB_ProfileLaunchString_TextChanged" />
+                                        Text="{Binding ProfileLaunchString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </DockPanel>
                             </Grid>
 
@@ -466,48 +669,48 @@
                                         </Grid.ColumnDefinitions>
 
                                         <ComboBox
-                                            Name="cb_SubProfilePicker"
+                                            Name="SelectSubProfileComboBox"
                                             Grid.Column="0"
                                             HorizontalAlignment="Stretch"
                                             VerticalAlignment="Center"
-                                            SelectionChanged="cb_SubProfilePicker_SelectionChanged" />
-
-                                        <ToggleButton
-                                            Name="b_ProfileLike"
-                                            Grid.Column="1"
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            Click="b_ProfileLike_Click">
-                                            <Grid>
-                                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEB52;" />
-                                            </Grid>
-                                        </ToggleButton>
+                                            DisplayMemberPath="Name"
+                                            ItemsSource="{Binding SubProfilesView, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                            ScrollViewer.CanContentScroll="True"
+                                            SelectedItem="{Binding SelectedSubProfileViewModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            VirtualizingPanel.IsVirtualizing="True"
+                                            VirtualizingPanel.VirtualizationMode="Recycling">
+                                            <ComboBox.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <VirtualizingStackPanel />
+                                                </ItemsPanelTemplate>
+                                            </ComboBox.ItemsPanel>
+                                        </ComboBox>
 
                                         <Button
-                                            Name="b_SubProfileRename"
+                                            Name="RenameSubProfileButton"
                                             Grid.Column="2"
                                             Margin="6,0,0,0"
                                             VerticalAlignment="Center"
-                                            Click="b_SubProfileRename_Click">
+                                            Command="{Binding RenameSubProfileCommand}">
                                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe712;" />
                                         </Button>
 
                                         <Button
-                                            Name="b_SubProfileCreate"
+                                            Name="CreateSubProfileButton"
                                             Grid.Column="3"
                                             Margin="6,0,0,0"
                                             VerticalAlignment="Center"
-                                            Click="b_SubProfileCreate_Click"
+                                            Command="{Binding CreateSubProfileCommand}"
                                             Style="{DynamicResource AccentButtonStyle}">
                                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe710;" />
                                         </Button>
 
                                         <Button
-                                            Name="b_SubProfileDelete"
+                                            Name="DeleteSubProfileButton"
                                             Grid.Column="4"
                                             Margin="6,0,0,0"
                                             VerticalAlignment="Center"
-                                            Click="b_SubProfileDelete_Click">
+                                            Command="{Binding DeleteSubProfileCommand}">
                                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe738;" />
                                         </Button>
                                     </Grid>
@@ -573,55 +776,6 @@
                         </ikw:SimpleStackPanel>
                     </Expander>
 
-                    <ikw:SimpleStackPanel
-                        Name="ProfileDetails"
-                        Spacing="3"
-                        Visibility="Collapsed">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="8*" MinWidth="200" />
-                            </Grid.ColumnDefinitions>
-
-                            <ikw:SimpleStackPanel Spacing="3">
-                                <Border
-                                    Height="237"
-                                    Padding="15,12,12,12"
-                                    BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                                    CornerRadius="{DynamicResource ControlCornerRadius}">
-                                    <Border.Background>
-                                        <ImageBrush
-                                            AlignmentY="Center"
-                                            ImageSource="{Binding Cover, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
-                                            Stretch="UniformToFill" />
-                                    </Border.Background>
-                                    <Border.Triggers>
-                                        <EventTrigger RoutedEvent="Binding.TargetUpdated">
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <!--  fade in from 0->1 in 300ms  -->
-                                                    <DoubleAnimation
-                                                        Storyboard.TargetProperty="Opacity"
-                                                        From="0"
-                                                        To="1"
-                                                        Duration="0:0:0.3" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </EventTrigger>
-                                    </Border.Triggers>
-                                </Border>
-                            </ikw:SimpleStackPanel>
-
-                            <Border
-                                Grid.Column="1"
-                                Margin="6,0,0,0"
-                                Padding="15,12,12,12"
-                                Background="{DynamicResource ExpanderHeaderBackground}"
-                                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                                CornerRadius="{DynamicResource ControlCornerRadius}" />
-                        </Grid>
-                    </ikw:SimpleStackPanel>
-
                     <!--  Global settings  -->
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Global settings" />
                     <ikw:SimpleStackPanel Name="StackGlobalSettings" Spacing="3">
@@ -634,18 +788,22 @@
                                 <ui:FontIcon Glyph="&#xE7EE;" />
                             </ui:SettingsCard.HeaderIcon>
 
-                            <ui:ToggleSwitch Name="Toggle_EnableProfile" Toggled="Toggle_EnableProfile_Toggled" />
+                            <ui:ToggleSwitch
+                                x:Name="EnableProfileToggle"
+                                IsEnabled="{Binding IsProfileEnabledToggleEnabled}"
+                                IsOn="{Binding ProfileEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </ui:SettingsCard>
 
                         <ui:SettingsCard
                             Name="SettingsCardControllerPassthrough"
                             Description="{l:Static resx:Resources.ProfilesPage_WhitelistDesc}"
-                            Header="{l:Static resx:Resources.ProfilesPage_Whitelist}">
+                            Header="{l:Static resx:Resources.ProfilesPage_Whitelist}"
+                            IsEnabled="{Binding IsControllerPassthroughEnabled, Mode=OneWay}">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xe7b3;" />
                             </ui:SettingsCard.HeaderIcon>
 
-                            <ui:ToggleSwitch Name="cB_Whitelist" Toggled="cB_Whitelist_Checked" />
+                            <ui:ToggleSwitch x:Name="WhitelistToggle" IsOn="{Binding ProfileWhitelisted, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </ui:SettingsCard>
                     </ikw:SimpleStackPanel>
 
@@ -656,7 +814,7 @@
                         <!--  Controller layout  -->
                         <ui:SettingsCard
                             Name="SettingsCardControllerLayout"
-                            Click="ControllerSettingsButton_Click"
+                            Command="{Binding OpenControllerLayoutCommand}"
                             Description="{l:Static resx:Resources.ProfilesPage_ControllerLayoutDesc}"
                             Header="{l:Static resx:Resources.ProfilesPage_ControllerLayout}"
                             IsClickEnabled="True"
@@ -672,22 +830,11 @@
                                 <ui:FontIcon Glyph="&#xE7FC;" />
                             </ui:SettingsCard.HeaderIcon>
 
-                            <ComboBox
-                                x:Name="cB_EmulatedController"
-                                SelectedIndex="0"
-                                SelectionChanged="cB_EmulatedController_Changed">
-                                <ComboBoxItem
-                                    Name="cB_EmulatedController_disabled"
-                                    Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDefault}"
-                                    Tag="-1" />
-                                <ComboBoxItem
-                                    Name="cB_EmulatedController_Xbox"
-                                    Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerXbox}"
-                                    Tag="0" />
-                                <ComboBoxItem
-                                    Name="cB_EmulatedController_DS4"
-                                    Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDS4}"
-                                    Tag="1" />
+                            <ComboBox x:Name="EmulatedControllerComboBox" SelectedIndex="{Binding HIDModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBoxItem Name="EmulatedControllerDefaultItem" Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDefault}" />
+                                <ComboBoxItem Name="EmulatedControllerXboxItem" Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerXbox}" />
+                                <ComboBoxItem Name="EmulatedControllerDS4Item" Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDS4}" />
+                                <ComboBoxItem Name="EmulatedControllerDInputItem" Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllervJoy}" />
                             </ComboBox>
                         </ui:SettingsCard>
 
@@ -697,19 +844,16 @@
                                 <ui:FontIcon Glyph="&#xe90f;" />
                             </ui:SettingsCard.HeaderIcon>
 
-                            <ComboBox
-                                Name="cB_Wrapper"
-                                SelectedIndex="0"
-                                SelectionChanged="cB_Wrapper_SelectionChanged">
-                                <ComboBoxItem Name="cB_Wrapper_Disabled" Content="{l:Static resx:Resources.ProfilesPage_Wrapper_Disabled}" />
+                            <ComboBox x:Name="WrapperComboBox" SelectedIndex="{Binding XInputPlusIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBoxItem Name="WrapperDisabledItem" Content="{l:Static resx:Resources.ProfilesPage_Wrapper_Disabled}" />
                                 <ComboBoxItem
-                                    Name="cB_Wrapper_Injection"
+                                    Name="WrapperInjectionItem"
                                     Content="{l:Static resx:Resources.ProfilesPage_Wrapper_Injection}"
-                                    IsEnabled="False" />
+                                    IsEnabled="{Binding IsWrapperInjectionEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                 <ComboBoxItem
-                                    Name="cB_Wrapper_Redirection"
+                                    Name="WrapperRedirectionItem"
                                     Content="{l:Static resx:Resources.ProfilesPage_Wrapper_Redirection}"
-                                    IsEnabled="False" />
+                                    IsEnabled="{Binding IsWrapperRedirectionEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                             </ComboBox>
                         </ui:SettingsCard>
                     </ikw:SimpleStackPanel>
@@ -730,11 +874,11 @@
                                 Name="SelectedPowerProfileName"
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                 Style="{StaticResource BodyTextBlockStyle}"
-                                Text="{l:Static resx:Resources.PowerProfileDefaultName}" />
+                                Text="{Binding SelectedPowerProfileName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
 
                             <ui:SettingsExpander.Items>
                                 <ui:SettingsCard
-                                    Click="PowerProfileOnBatteryMore_Click"
+                                    Command="{Binding OpenPowerProfileOnBatteryCommand}"
                                     Header="On battery"
                                     IsClickEnabled="True"
                                     Tag="Navigation">
@@ -744,24 +888,11 @@
                                         ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
                                         ItemsSource="{Binding ProfilePickerCollectionViewDC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                         SelectedIndex="{Binding SelectedPresetIndexDC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        SelectedValuePath="Text">
-                                        <ComboBox.GroupStyle>
-                                            <GroupStyle>
-                                                <GroupStyle.HeaderTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock
-                                                            Margin="4,0,0,0"
-                                                            Style="{StaticResource BaseTextBlockStyle}"
-                                                            Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                    </DataTemplate>
-                                                </GroupStyle.HeaderTemplate>
-                                            </GroupStyle>
-                                        </ComboBox.GroupStyle>
-                                    </ComboBox>
+                                        SelectedValuePath="Text" />
                                 </ui:SettingsCard>
 
                                 <ui:SettingsCard
-                                    Click="PowerProfilePluggedMore_Click"
+                                    Command="{Binding OpenPowerProfilePluggedCommand}"
                                     Header="Plugged in"
                                     IsClickEnabled="True"
                                     Tag="Navigation">
@@ -771,20 +902,7 @@
                                         ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
                                         ItemsSource="{Binding ProfilePickerCollectionViewAC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                         SelectedIndex="{Binding SelectedPresetIndexAC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        SelectedValuePath="Text">
-                                        <ComboBox.GroupStyle>
-                                            <GroupStyle>
-                                                <GroupStyle.HeaderTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock
-                                                            Margin="4,0,0,0"
-                                                            Style="{StaticResource BaseTextBlockStyle}"
-                                                            Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                    </DataTemplate>
-                                                </GroupStyle.HeaderTemplate>
-                                            </GroupStyle>
-                                        </ComboBox.GroupStyle>
-                                    </ComboBox>
+                                        SelectedValuePath="Text" />
                                 </ui:SettingsCard>
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>
@@ -801,19 +919,16 @@
                             d:IsExpanded="True"
                             Description="{l:Static resx:Resources.ProfilesPage_GPUScalingDesc}"
                             Header="{l:Static resx:Resources.ProfilesPage_GPUScaling}"
-                            IsEnabled="False">
+                            IsEnabled="{Binding HasGPUScalingSupport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                             <ui:SettingsExpander.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xe9a6;" />
                             </ui:SettingsExpander.HeaderIcon>
 
-                            <ui:ToggleSwitch
-                                Name="GPUScalingToggle"
-                                IsOn="{Binding GPUScalingEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                Toggled="GPUScaling_Toggled" />
+                            <ui:ToggleSwitch x:Name="GPUScalingToggle" IsOn="{Binding GPUScalingEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                             <ui:SettingsExpander.Items>
                                 <ui:SettingsCard Header="{l:Static resx:Resources.ProfilesPage_ScalingMode}" IsEnabled="{Binding GPUScalingEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <ComboBox Name="GPUScalingComboBox" SelectionChanged="GPUScalingComboBox_SelectionChanged">
+                                    <ComboBox x:Name="GPUScalingComboBox" SelectedIndex="{Binding ScalingModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                         <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_ScalingMode_PreserveAspectRatio}" />
                                         <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_ScalingMode_FullPanel}" />
                                         <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_ScalingMode_Center}" IsEnabled="{Binding RSREnabled, Converter={StaticResource InvertBooleanConverter}}" />
@@ -829,13 +944,13 @@
                             d:Visibility="Visible"
                             Description="{l:Static resx:Resources.ProfilesPage_AFMFDesc}"
                             Header="{l:Static resx:Resources.ProfilesPage_AFMF}"
-                            IsEnabled="False"
-                            Visibility="Collapsed">
+                            IsEnabled="{Binding HasAFMFSupport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            Visibility="{Binding IsAMDGPU, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xe91b;" />
                             </ui:SettingsCard.HeaderIcon>
 
-                            <ui:ToggleSwitch Name="AFMFToggle" Toggled="AFMFToggle_Toggled" />
+                            <ui:ToggleSwitch x:Name="AFMFToggle" IsOn="{Binding AFMFEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </ui:SettingsCard>
 
                         <!--  (AMD: RSR)  -->
@@ -846,16 +961,13 @@
                             d:Visibility="Visible"
                             Description="{l:Static resx:Resources.ProfilesPage_RSRDesc}"
                             Header="{l:Static resx:Resources.ProfilesPage_RSR}"
-                            IsEnabled="False"
-                            Visibility="Collapsed">
+                            IsEnabled="{Binding HasRSRSupport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            Visibility="{Binding IsAMDGPU, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <ui:SettingsExpander.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xE80A;" />
                             </ui:SettingsExpander.HeaderIcon>
 
-                            <ui:ToggleSwitch
-                                Name="RSRToggle"
-                                IsOn="{Binding RSREnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                Toggled="RSRToggle_Toggled" />
+                            <ui:ToggleSwitch x:Name="RSRToggle" IsOn="{Binding RSREnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                             <ui:SettingsExpander.Items>
                                 <ui:SettingsCard
@@ -886,7 +998,6 @@
                                             TickFrequency="5"
                                             TickPlacement="BottomRight"
                                             ToolTip="{Binding Value, StringFormat={}{0:N0}%, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            ValueChanged="RSRSlider_ValueChanged"
                                             Value="{Binding RSRValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     </DockPanel>
                                 </ui:SettingsCard>
@@ -900,15 +1011,12 @@
                             d:IsExpanded="True"
                             Description="{l:Static resx:Resources.ProfilesPage_ISDesc}"
                             Header="{l:Static resx:Resources.ProfilesPage_IS}"
-                            IsEnabled="False">
+                            IsEnabled="{Binding HasIntegerScalingSupport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                             <ui:SettingsExpander.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xeb3c;" />
                             </ui:SettingsExpander.HeaderIcon>
 
-                            <ui:ToggleSwitch
-                                Name="IntegerScalingToggle"
-                                IsOn="{Binding IntegerScalingEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                Toggled="IntegerScalingToggle_Toggled" />
+                            <ui:ToggleSwitch x:Name="IntegerScalingToggle" IsOn="{Binding IntegerScalingEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                             <ui:SettingsExpander.Items>
                                 <ui:SettingsCard
@@ -916,7 +1024,10 @@
                                     Header="{l:Static resx:Resources.ProfilesPage_ResolutionScale}"
                                     IsEnabled="{Binding IntegerScalingEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
 
-                                    <ComboBox Name="IntegerScalingComboBox" SelectionChanged="IntegerScalingComboBox_SelectionChanged" />
+                                    <ComboBox
+                                        Name="IntegerScalingComboBox"
+                                        ItemsSource="{Binding IntegerScalingDividers}"
+                                        SelectedIndex="{Binding IntegerScalingDividerIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </ui:SettingsCard>
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>
@@ -928,15 +1039,12 @@
                             d:IsExpanded="True"
                             Description="{l:Static resx:Resources.ProfilesPage_ImageSharpeningDesc}"
                             Header="{l:Static resx:Resources.ProfilesPage_ImageSharpening}"
-                            IsEnabled="False">
+                            IsEnabled="{Binding HasGPUScalingSupport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                             <ui:SettingsExpander.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xed63;" />
                             </ui:SettingsExpander.HeaderIcon>
 
-                            <ui:ToggleSwitch
-                                Name="RISToggle"
-                                IsOn="{Binding RISEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                Toggled="RISToggle_Toggled" />
+                            <ui:ToggleSwitch x:Name="RISToggle" IsOn="{Binding RISEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                             <ui:SettingsExpander.Items>
                                 <ui:SettingsCard
@@ -967,7 +1075,6 @@
                                             TickFrequency="5"
                                             TickPlacement="BottomRight"
                                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            ValueChanged="RISSlider_ValueChanged"
                                             Value="{Binding RISValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     </DockPanel>
                                 </ui:SettingsCard>
@@ -980,12 +1087,15 @@
                             d:IsEnabled="True"
                             Description="{l:Static resx:Resources.ProfilesPage_FramerateLimitDesc}"
                             Header="{l:Static resx:Resources.ProfilesPage_FramerateLimit}"
-                            IsEnabled="False">
+                            IsEnabled="{Binding IsRTSSReady, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xe8b2;" />
                             </ui:SettingsCard.HeaderIcon>
 
-                            <ComboBox Name="cB_Framerate" SelectionChanged="cB_Framerate_SelectionChanged" />
+                            <ComboBox
+                                Name="FramerateLimitComboBox"
+                                ItemsSource="{Binding FramerateLimits}"
+                                SelectedItem="{Binding SelectedFrameLimit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </ui:SettingsCard>
                     </ikw:SimpleStackPanel>
 
@@ -999,7 +1109,7 @@
                             Command="{Binding DisplayLibrary}"
                             Header="{l:Static resx:Resources.ProfilesPage_LibraryDownload}"
                             IsClickEnabled="True"
-                            IsEnabled="{Binding IsLibraryConnected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            IsEnabled="{Binding IsLibrarySettingsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             Tag="Navigation">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xE8F1;" />
@@ -1010,7 +1120,7 @@
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xe7b3;" />
                             </ui:SettingsCard.HeaderIcon>
-                            <ui:ToggleSwitch Name="Toggle_ShowInLibrary" Toggled="ShowInLibrary_Toggled" />
+                            <ui:ToggleSwitch x:Name="ShowInLibraryToggle" IsOn="{Binding ShowInLibrary, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </ui:SettingsCard>
                     </ikw:SimpleStackPanel>
 
@@ -1039,7 +1149,7 @@
                                             IsReadOnly="True"
                                             Text="{Binding GyroMultiplier, StringFormat={}{0:N1}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                         <Slider
-                                            x:Name="tb_ProfileGyroValue"
+                                            x:Name="GyroMultiplierSlider"
                                             Width="200"
                                             Margin="6,0,0,0"
                                             VerticalAlignment="Center"
@@ -1051,7 +1161,6 @@
                                             TickFrequency="0.1"
                                             TickPlacement="BottomRight"
                                             ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            ValueChanged="tb_ProfileGyroValue_ValueChanged"
                                             Value="{Binding GyroMultiplier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     </DockPanel>
                                 </ui:SettingsCard>
@@ -1067,7 +1176,7 @@
                                             IsReadOnly="True"
                                             Text="{Binding AcceleroMultiplier, StringFormat={}{0:N1}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                         <Slider
-                                            x:Name="tb_ProfileAcceleroValue"
+                                            x:Name="AcceleroMultiplierSlider"
                                             Width="200"
                                             Margin="6,0,0,0"
                                             VerticalAlignment="Center"
@@ -1080,25 +1189,15 @@
                                             TickFrequency="0.1"
                                             TickPlacement="BottomRight"
                                             ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            ValueChanged="tb_ProfileAcceleroValue_ValueChanged"
                                             Value="{Binding AcceleroMultiplier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     </DockPanel>
                                 </ui:SettingsCard>
 
                                 <!--  Gyro steering axis  -->
                                 <ui:SettingsCard Description="{l:Static resx:Resources.ProfilesPage_GyroSteeringAxisDesc}" Header="{l:Static resx:Resources.ProfilesPage_GyroSteeringAxis}">
-                                    <ComboBox Name="cB_GyroSteering" SelectionChanged="cB_GyroSteering_SelectionChanged">
+                                    <ComboBox x:Name="GyroSteeringComboBox" SelectedIndex="{Binding SteeringAxisIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                         <ComboBoxItem>
-                                            <!--  HorizontalAlignment has to be set to Left, it'll bug otherwise !?  -->
-                                            <ikw:SimpleStackPanel
-                                                HorizontalAlignment="Left"
-                                                Orientation="Horizontal"
-                                                Spacing="3">
-                                                <ui:FontIcon Glyph="&#xE8B4;" />
-                                                <Label Content="{l:Static resx:Resources.ProfilesPage_Yaw}" />
-                                            </ikw:SimpleStackPanel>
-                                        </ComboBoxItem>
-                                        <ComboBoxItem>
+                                            <!--  Roll = 0  -->
                                             <ikw:SimpleStackPanel
                                                 HorizontalAlignment="Left"
                                                 Orientation="Horizontal"
@@ -1108,6 +1207,17 @@
                                             </ikw:SimpleStackPanel>
                                         </ComboBoxItem>
                                         <ComboBoxItem>
+                                            <!--  Yaw = 1  -->
+                                            <ikw:SimpleStackPanel
+                                                HorizontalAlignment="Left"
+                                                Orientation="Horizontal"
+                                                Spacing="3">
+                                                <ui:FontIcon Glyph="&#xE8B4;" />
+                                                <Label Content="{l:Static resx:Resources.ProfilesPage_Yaw}" />
+                                            </ikw:SimpleStackPanel>
+                                        </ComboBoxItem>
+                                        <ComboBoxItem>
+                                            <!--  Auto = 2  -->
                                             <ikw:SimpleStackPanel
                                                 HorizontalAlignment="Left"
                                                 Orientation="Horizontal"
@@ -1121,18 +1231,16 @@
 
                                 <ui:SettingsCard ContentAlignment="Left">
                                     <CheckBox
-                                        Name="cB_InvertHorizontal"
-                                        Checked="cB_InvertHorizontal_Checked"
+                                        Name="InvertHorizontalCheckBox"
                                         Content="{l:Static resx:Resources.ProfilesPage_InvertHorizontalAxis}"
-                                        Unchecked="cB_InvertHorizontal_Checked" />
+                                        IsChecked="{Binding MotionInvertHorizontal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </ui:SettingsCard>
 
                                 <ui:SettingsCard ContentAlignment="Left">
                                     <CheckBox
-                                        Name="cB_InvertVertical"
-                                        Checked="cB_InvertVertical_Checked"
+                                        Name="InvertVerticalCheckBox"
                                         Content="{l:Static resx:Resources.ProfilesPage_InvertVerticalAxis}"
-                                        Unchecked="cB_InvertVertical_Checked" />
+                                        IsChecked="{Binding MotionInvertVertical, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </ui:SettingsCard>
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>
@@ -1140,7 +1248,7 @@
                         <!--  TODO: Move this to layout page  -->
                         <ui:SettingsCard
                             Name="MotionControlAdditional"
-                            Click="b_AdditionalSettings_Click"
+                            Command="{Binding OpenAdditionalSettingsCommand}"
                             Header="{l:Static resx:Resources.ProfilesPage_AdditionalSettings}"
                             IsClickEnabled="True"
                             Tag="Navigation" />
@@ -1154,19 +1262,17 @@
                                 <!--  Suspend on overlay  -->
                                 <ui:SettingsCard ContentAlignment="Left">
                                     <CheckBox
-                                        Name="CheckBox_SuspendOnQT"
-                                        Checked="CheckBox_SuspendOnQT_Toggled"
+                                        Name="SuspendOnOverlayCheckBox"
                                         Content="{l:Static resx:Resources.ProfilesPage_SuspendOnOverlay}"
-                                        Unchecked="CheckBox_SuspendOnQT_Toggled" />
+                                        IsChecked="{Binding SuspendOnQT, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </ui:SettingsCard>
 
                                 <!--  Suspend on sleep/resume  -->
                                 <ui:SettingsCard ContentAlignment="Left">
                                     <CheckBox
-                                        Name="CheckBox_SuspendOnStandby"
-                                        Checked="CheckBox_SuspendOnStandby_Toggled"
+                                        Name="SuspendOnSleepCheckBox"
                                         Content="{l:Static resx:Resources.ProfilesPage_SuspendOnSleep}"
-                                        Unchecked="CheckBox_SuspendOnStandby_Toggled" />
+                                        IsChecked="{Binding SuspendOnSleep, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </ui:SettingsCard>
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>
@@ -1234,7 +1340,7 @@
                                 <ui:FontIcon Glyph="&#xe740;" />
                             </ui:SettingsCard.HeaderIcon>
 
-                            <ui:ToggleSwitch Name="UseFullscreenOptimizations" Toggled="UseFullscreenOptimizations_Toggled" />
+                            <ui:ToggleSwitch x:Name="UseFullscreenOptimizations" IsOn="{Binding FullScreenOptimization, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </ui:SettingsCard>
 
                         <!--  High DPI awareness  -->
@@ -1243,7 +1349,7 @@
                                 <ui:FontIcon Glyph="&#xe799;" />
                             </ui:SettingsCard.HeaderIcon>
 
-                            <ui:ToggleSwitch Name="UseHighDPIAwareness" Toggled="UseHighDPIAwareness_Toggled" />
+                            <ui:ToggleSwitch x:Name="UseHighDPIAwareness" IsOn="{Binding HighDPIAware, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </ui:SettingsCard>
                     </ikw:SimpleStackPanel>
                 </ikw:SimpleStackPanel>

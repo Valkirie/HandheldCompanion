@@ -32,7 +32,6 @@ namespace HandheldCompanion.ViewModels
     {
         public ObservableCollection<ProfileViewModel> Profiles { get; set; } = [];
         public ListCollectionView ProfilesView { get; }
-        public ListCollectionView FavoritesView { get; }
 
         private bool _sortAscending => ManagerFactory.settingsManager.GetBoolean("LibrarySortAscending");
         public bool SortAscending
@@ -66,9 +65,47 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private int _viewMode => ManagerFactory.settingsManager.GetInt("LibraryViewMode");
+        public int ViewMode
+        {
+            get => _viewMode;
+            set
+            {
+                int currentValue = ManagerFactory.settingsManager.GetInt("LibraryViewMode");
+                if (value != currentValue)
+                {
+                    ManagerFactory.settingsManager.SetProperty("LibraryViewMode", value);
+                    OnPropertyChanged(nameof(ViewMode));
+                    OnPropertyChanged(nameof(IsGridView));
+                    OnPropertyChanged(nameof(IsListView));
+                    OnPropertyChanged(nameof(IsWideView));
+                }
+            }
+        }
+
+        public bool IsGridView => ViewMode == 0;
+        public bool IsListView => ViewMode == 1;
+        public bool IsWideView => ViewMode == 2;
+
+        private string _searchText = string.Empty;
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                if (_searchText != value)
+                {
+                    _searchText = value;
+                    OnPropertyChanged(nameof(SearchText));
+                    UpdateFiltering();
+                }
+            }
+        }
+
         public bool HasLiked => Profiles.Any(p => p.IsLiked);
 
         public ICommand ToggleSortCommand { get; }
+        public ICommand ToggleViewModeCommand { get; }
         public ICommand RefreshMetadataCommand { get; }
         public ICommand ScanLibraryCommand { get; }
 
@@ -102,6 +139,20 @@ namespace HandheldCompanion.ViewModels
 
         public bool IsLibraryConnected => ManagerFactory.libraryManager.IsConnected;
 
+        private bool _isInitializing;
+        public bool IsInitializing
+        {
+            get => _isInitializing;
+            private set
+            {
+                if (_isInitializing != value)
+                {
+                    _isInitializing = value;
+                    OnPropertyChanged(nameof(IsInitializing));
+                }
+            }
+        }
+
         private Dictionary<Type, GamePlatform> keyValuePairs = new Dictionary<Type, GamePlatform>()
         {
             { typeof(BattleNetGame), GamePlatform.BattleNet },
@@ -121,24 +172,34 @@ namespace HandheldCompanion.ViewModels
             this.LibraryPage = libraryPage;
 
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(Profiles, new object());
+            BindingOperations.EnableCollectionSynchronization(Profiles, _collectionLock);
 
-            ProfilesView = new ListCollectionView(Profiles);
-            ProfilesView.IsLiveSorting = true;
-            ProfilesView.IsLiveGrouping = true;
-            ProfilesView.IsLiveFiltering = true;
-
-            FavoritesView = new ListCollectionView(Profiles);
-            FavoritesView.IsLiveSorting = true;
-            FavoritesView.IsLiveGrouping = true;
-            FavoritesView.IsLiveFiltering = true;
-            FavoritesView.Filter = o => o is ProfileViewModel vm && vm.IsLiked;
-
-            UpdateSorting();
+            ProfilesView = new ListCollectionView(Profiles)
+            {
+                IsLiveSorting = true,
+                IsLiveFiltering = true,
+                Filter = o => o is ProfileViewModel vm && MatchesSearchFilter(vm)
+            };
 
             ToggleSortCommand = new DelegateCommand(() =>
             {
                 SortAscending = !SortAscending;
+            });
+
+            ToggleViewModeCommand = new DelegateCommand(() =>
+            {
+                switch (ViewMode)
+                {
+                    case 0:
+                        ViewMode = 1;
+                        break;
+                    case 1:
+                        ViewMode = 2;
+                        break;
+                    case 2:
+                        ViewMode = 0;
+                        break;
+                }
             });
 
             RefreshMetadataCommand = new DelegateCommand(async () =>
@@ -281,6 +342,9 @@ namespace HandheldCompanion.ViewModels
                 }
             });
 
+            // show spinner until profiles are loaded for the first time
+            _isInitializing = !ManagerFactory.profileManager.Status.HasFlag(ManagerStatus.Initialized);
+
             // raise events
             switch (ManagerFactory.profileManager.Status)
             {
@@ -346,14 +410,19 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.profileManager.Updated += ProfileManager_Updated;
             ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
 
-            // Load only the ones that should be shown
-            foreach (Profile profile in ManagerFactory.profileManager.GetProfiles().Where(p => !p.Default))
+            // Bind the repeater to the sorted view BEFORE any profiles arrive so cards can render incrementally rather than all at once after the bulk load completes
+            UIHelper.TryInvoke(() => UpdateSorting());
+
+            foreach (Profile profile in ManagerFactory.profileManager.GetProfiles())
             {
                 ProfileManager_Updated(profile, UpdateSource.Background, false);
 
                 foreach (Profile subProfile in ManagerFactory.profileManager.GetSubProfilesFromProfile(profile))
                     ProfileManager_Updated(subProfile, UpdateSource.Background, false);
             }
+
+            // Hide the spinner once every card has been dispatched to the UI
+            IsInitializing = false;
         }
 
         private void ProfileManager_Initialized()
@@ -366,8 +435,13 @@ namespace HandheldCompanion.ViewModels
             ListSortDirection direction = SortAscending ? ListSortDirection.Ascending : ListSortDirection.Descending;
 
             ProfilesView.SortDescriptions.Clear();
-            FavoritesView.SortDescriptions.Clear();
+            ProfilesView.LiveSortingProperties.Clear();
 
+            // Always sort favorites first (descending IsLiked = favorites on top)
+            ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.IsLiked), ListSortDirection.Descending));
+            ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.IsLiked));
+
+            // Then apply secondary sort based on user selection
             switch (SortTarget)
             {
                 default:
@@ -376,34 +450,26 @@ namespace HandheldCompanion.ViewModels
                     ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.Name));
                     break;
                 case 1:
-                    ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.DateCreated), direction));
-                    ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.DateCreated));
-                    break;
-                case 2:
-                    ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.LastUsed), direction));
-                    ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.LastUsed));
-                    break;
-                case 3:
                     ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.PlatformType), direction));
                     ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.PlatformType));
                     break;
+                case 2:
+                    ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.DateCreated), direction));
+                    ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.DateCreated));
+                    break;
+                case 3:
+                    ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.LastUsed), direction));
+                    ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.LastUsed));
+                    break;
             }
 
-            // hack to get ICollectionView to comply with ItemsRepeater
+            // Workaround for iNKORE ItemsRepeater not observing ICollectionView changes
             try
             {
-                // ProfilesView.Refresh();
-                if (LibraryPage.ProfilesRepeater is not null)
+                if (LibraryPage.profilesRepeater is not null)
                 {
-                    LibraryPage.ProfilesRepeater.ItemsSource = null;
-                    LibraryPage.ProfilesRepeater.ItemsSource = ProfilesView;
-                }
-
-                // FavoritesView.Refresh();
-                if (LibraryPage.FavoritesRepeater is not null)
-                {
-                    LibraryPage.FavoritesRepeater.ItemsSource = null;
-                    LibraryPage.FavoritesRepeater.ItemsSource = FavoritesView;
+                    LibraryPage.profilesRepeater.ItemsSource = null;
+                    LibraryPage.profilesRepeater.ItemsSource = ProfilesView;
                 }
             }
             catch (NullReferenceException) { }
@@ -418,14 +484,16 @@ namespace HandheldCompanion.ViewModels
             if (profile.Default)
                 return;
 
-            ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
+            ProfileViewModel? foundProfile;
+            lock (_collectionLock)
+            {
+                foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
+            }
             if (foundProfile is not null)
             {
                 Profiles.SafeRemove(foundProfile);
                 foundProfile.Dispose();
             }
-
-            UIHelper.TryInvoke(UpdateSorting);
         }
 
         private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
@@ -437,7 +505,11 @@ namespace HandheldCompanion.ViewModels
             bool shouldShow = profile.ShowInLibrary;
 
             // find based on guid
-            ProfileViewModel? existingVm = Profiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid);
+            ProfileViewModel? existingVm;
+            lock (_collectionLock)
+            {
+                existingVm = Profiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid);
+            }
 
             if (shouldShow)
             {
@@ -461,8 +533,6 @@ namespace HandheldCompanion.ViewModels
                     existingVm.Dispose();
                 }
             }
-
-            UIHelper.TryInvoke(UpdateSorting);
         }
 
         public override void Dispose()
@@ -474,6 +544,31 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.libraryManager.NetworkAvailabilityChanged -= LibraryManager_NetworkAvailabilityChanged;
 
             base.Dispose();
+        }
+
+        private void UpdateFiltering()
+        {
+            ProfilesView.Filter = o => o is ProfileViewModel vm && MatchesSearchFilter(vm);
+
+            // Workaround for iNKORE ItemsRepeater not observing ICollectionView changes
+            try
+            {
+                if (LibraryPage.profilesRepeater is not null)
+                {
+                    LibraryPage.profilesRepeater.ItemsSource = null;
+                    LibraryPage.profilesRepeater.ItemsSource = ProfilesView;
+                }
+            }
+            catch { }
+        }
+
+        private bool MatchesSearchFilter(ProfileViewModel profile)
+        {
+            if (string.IsNullOrWhiteSpace(SearchText))
+                return true;
+
+            return profile.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                   profile.Profile.Executable.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

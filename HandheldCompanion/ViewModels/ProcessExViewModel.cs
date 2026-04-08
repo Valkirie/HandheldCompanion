@@ -1,6 +1,8 @@
 ﻿using HandheldCompanion.Extensions;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Shared;
 using HandheldCompanion.ViewModels.Misc;
+using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
@@ -15,9 +17,6 @@ namespace HandheldCompanion.ViewModels
 {
     public class ProcessExViewModel : BaseViewModel
     {
-        public QuickApplicationsPageViewModel PageViewModel;
-
-        private readonly object _processWindowsSyncLock = new object();
         public ObservableCollection<WindowListItemViewModel> ProcessWindows { get; set; } = [];
 
         private ProcessEx _process;
@@ -89,16 +88,27 @@ namespace HandheldCompanion.ViewModels
         public bool FullScreenOptimization => !Process.FullScreenOptimization;
         public bool HighDPIAware => !Process.HighDPIAware;
 
+        public bool IsRunning => Process?.Process != null && !Process.Process.HasExited;
+        public bool CanSuspend => IsRunning && !IsSuspended;
+        public bool CanResume => IsRunning && IsSuspended;
+
+        public ICommand SuspendProcessCommand { get; private set; }
+        public ICommand ResumeProcessCommand { get; private set; }
         public ICommand KillProcessCommand { get; private set; }
 
-        public ProcessExViewModel(ProcessEx process, QuickApplicationsPageViewModel pageViewModel)
+        public readonly bool IsQuickTools;
+        public bool IsMainPage => !IsQuickTools;
+
+        public ProcessExViewModel(ProcessEx process, bool isQuickTools)
         {
             Process = process;
             Process.WindowAttached += Process_WindowAttached;
             Process.WindowDetached += Process_WindowDetached;
 
+            IsQuickTools = isQuickTools;
+
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(ProcessWindows, _processWindowsSyncLock);
+            BindingOperations.EnableCollectionSynchronization(ProcessWindows, _collectionLock);
 
             foreach (ProcessWindow processWindow in Process.ProcessWindows.Values)
             {
@@ -108,21 +118,59 @@ namespace HandheldCompanion.ViewModels
                 Process_WindowAttached(processWindow);
             }
 
-            PageViewModel = pageViewModel;
+            SuspendProcessCommand = new DelegateCommand(async () =>
+            {
+                try
+                {
+                    bool success = await Managers.ProcessManager.SuspendProcess(Process);
+                    if (success)
+                    {
+                        OnPropertyChanged(nameof(IsSuspended));
+                        OnPropertyChanged(nameof(CanSuspend));
+                        OnPropertyChanged(nameof(CanResume));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogManager.LogError("Failed to suspend process: {0}", ex.Message);
+                }
+            });
+
+            ResumeProcessCommand = new DelegateCommand(async () =>
+            {
+                try
+                {
+                    bool success = await Managers.ProcessManager.ResumeProcess(Process);
+                    if (success)
+                    {
+                        OnPropertyChanged(nameof(IsSuspended));
+                        OnPropertyChanged(nameof(CanSuspend));
+                        OnPropertyChanged(nameof(CanResume));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogManager.LogError("Failed to resume process: {0}", ex.Message);
+                }
+            });
 
             KillProcessCommand = new DelegateCommand(async () =>
             {
-                Dialog dialog = new Dialog(OverlayQuickTools.GetCurrent())
+                Dialog dialog = new Dialog(isQuickTools ? OverlayQuickTools.GetCurrent() : MainWindow.GetCurrent());
+                if (dialog == null)
                 {
-                    Title = "Terminate application",
-                    Content = string.Format("Do you want to end the application '{0}'?", Executable),
-                    DefaultButton = ContentDialogButton.Close,
-                    CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
-                    PrimaryButtonText = Properties.Resources.ProfilesPage_Yes,
-                };
+                    LogManager.LogWarning("Cannot show kill process dialog: no loaded window available");
+                    return;
+                }
+
+                dialog.Title = "Terminate application";
+                dialog.Content = string.Format("Do you want to end the application '{0}'?", Executable);
+                dialog.DefaultButton = ContentDialogButton.Close;
+                dialog.CloseButtonText = Properties.Resources.ProfilesPage_Cancel;
+                dialog.PrimaryButtonText = Properties.Resources.ProfilesPage_Yes;
 
                 Task<ContentDialogResult> dialogTask = dialog.ShowAsync();
-                await dialogTask; // sync call
+                await dialogTask;
 
                 switch (dialogTask.Result)
                 {
@@ -138,7 +186,7 @@ namespace HandheldCompanion.ViewModels
 
         private void Process_WindowAttached(ProcessWindow processWindow)
         {
-            WindowListItemViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow.Hwnd == processWindow.Hwnd);
+            WindowListItemViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow?.Hwnd == processWindow.Hwnd);
             if (foundWindow is null)
             {
                 ProcessWindows.SafeAdd(new WindowListItemViewModel(processWindow));
@@ -151,7 +199,7 @@ namespace HandheldCompanion.ViewModels
 
         private void Process_WindowDetached(ProcessWindow processWindow)
         {
-            WindowListItemViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow.Hwnd == processWindow.Hwnd);
+            WindowListItemViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow?.Hwnd == processWindow.Hwnd);
             if (foundWindow is not null)
             {
                 ProcessWindows.SafeRemove(foundWindow);
@@ -173,6 +221,9 @@ namespace HandheldCompanion.ViewModels
         {
             // Property Changed is called here as processes are refreshed at an interval
             OnPropertyChanged(nameof(IsSuspended));
+            OnPropertyChanged(nameof(IsRunning));
+            OnPropertyChanged(nameof(CanSuspend));
+            OnPropertyChanged(nameof(CanResume));
             OnPropertyChanged(nameof(FullScreenOptimization));
             OnPropertyChanged(nameof(HighDPIAware));
         }
@@ -186,21 +237,15 @@ namespace HandheldCompanion.ViewModels
                 _process.WindowDetached -= Process_WindowDetached;
             }
 
-            // Take a snapshot of the children and clear the live collection
-            WindowListItemViewModel[] windowsSnapshot;
-            lock (_processWindowsSyncLock)
-            {
-                windowsSnapshot = ProcessWindows.ToArray();
-                ProcessWindows.SafeClear();    // direct Clear, not SafeClear
-            }
-
-            // Dispose each window from the snapshot (outside the lock)
-            foreach (WindowListItemViewModel processWindow in windowsSnapshot)
+            // Dispose each window from a snapshot
+            foreach (WindowListItemViewModel processWindow in ProcessWindows.ToArray())
                 processWindow.Dispose();
+
+            // clear windows
+            ProcessWindows.SafeClear();
 
             // dispose commands
             KillProcessCommand = null;
-            PageViewModel = null;
             _process = null;
 
             base.Dispose();

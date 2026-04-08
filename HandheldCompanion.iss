@@ -19,7 +19,7 @@
 #define InstallerVersion        "0.2"
 #define MyAppSetupName         "Handheld Companion"
 #define MyBuildId              "HandheldCompanion"
-#define MyAppVersion           "0.28.4.6"
+#define MyAppVersion           "0.28.6.4"
 #define MyAppPublisher         "BenjaminLSR"
 #define MyAppCopyright         "Copyright © BenjaminLSR"
 #define MyAppURL               "https://github.com/Valkirie/HandheldCompanion"
@@ -51,6 +51,7 @@
 #define ViGemDownloadLink      "https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe"
 #define RtssDownloadLink       "https://github.com/Valkirie/HandheldCompanion/raw/main/redist/RTSSSetup737.exe"
 #define PawnIODownloadLink     "https://github.com/namazso/PawnIO.Setup/releases/latest/download/PawnIO_setup.exe"
+#define GameControllerDBDownloadLink "https://raw.githubusercontent.com/mdqinc/SDL_GameControllerDB/refs/heads/master/gamecontrollerdb.txt"
 
 ; Registry  
 #define RegAppsPath            "SOFTWARE\" + MyAppSetupName + "\"
@@ -62,14 +63,16 @@
   #define DotNetX86DownloadLink "https://builds.dotnet.microsoft.com/dotnet/WindowsDesktop/10.0.0/windowsdesktop-runtime-10.0.0-win-x86.exe"
 #endif
 
-; Windows 10
-#define WindowsVersion         "10.0.22621"
+; Windows 10 (2004+)
+#define WindowsVersion         "10.0.19041"
 
 AllowNoIcons=yes
 AppName={#MyAppSetupName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppSetupName} {#MyAppVersion}
 AppCopyright={#MyAppCopyright}
+; Only allow the installer to run on x64-compatible systems and enable 64-bit install mode
+ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
@@ -161,6 +164,8 @@ var
   Dependency_NeedRestart, Dependency_ForceX86: Boolean;
   Dependency_DownloadPage: TDownloadWizardPage;
   SettingsPage: TInputOptionWizardPage;
+  CoreIsolationPromptNeeded: Boolean;
+  deleteSettingsCheckbox: TNewCheckBox;
 
 // Forward declarations
 procedure Dependency_Add(const Filename, Parameters, Title, URL, Checksum: String; const ForceSuccess: Boolean); forward;
@@ -183,6 +188,42 @@ function BoolToStr(Value: Boolean): String; forward;
 
 function NextButtonClick(CurPageID: Integer): Boolean; forward;
 procedure DisableCoreIsolation; forward;
+function GetRegDwordOrDefault(const SubKey, ValueName: String; const Default: Cardinal): Cardinal; forward;
+function IsCoreIsolationDisableRequired: Boolean; forward;
+
+function GetRegDwordOrDefault(const SubKey, ValueName: String; const Default: Cardinal): Cardinal;
+var
+  Value: Cardinal;
+begin
+  if RegQueryDWordValue(HKLM, SubKey, ValueName, Value) then
+    Result := Value
+  else
+    Result := Default;
+end;
+
+function IsCoreIsolationDisableRequired: Boolean;
+var
+  HVCIEnabled, BlocklistEnabled: Cardinal;
+begin
+  HVCIEnabled := GetRegDwordOrDefault(
+    'SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity',
+    'Enabled',
+    1
+  );
+
+  BlocklistEnabled := GetRegDwordOrDefault(
+    'SYSTEM\CurrentControlSet\Control\CI\Config',
+    'VulnerableDriverBlocklistEnable',
+    1
+  );
+
+  Result := (HVCIEnabled <> 0) or (BlocklistEnabled <> 0);
+  Log(
+    'Core isolation state: HVCI=' + IntToStr(HVCIEnabled) +
+    ' Blocklist=' + IntToStr(BlocklistEnabled) +
+    ' disableRequired=' + BoolToStr(Result)
+  );
+end;
 
 procedure InitializeWizard;
 begin
@@ -192,18 +233,23 @@ begin
     nil
   );
 
-  // --- Generic “Optional Settings” page on Welcome ---
-  SettingsPage := CreateInputOptionPage(
-    wpWelcome,
-    'Installation Options',                             // Caption
-    'Optional Features',                                // Description
-    'Select any optional settings you wish to apply before continuing:',  // SubCaption
-    False,                                              // Exclusive = False → checkboxes
-    False                                               // ListBox = False → simple list
-  );
-  // Core Isolation option
-  SettingsPage.Add('Disable Windows Core Isolation (Recommended)');
-  SettingsPage.Values[0] := False;  // unchecked by default
+  CoreIsolationPromptNeeded := IsCoreIsolationDisableRequired();
+
+  if CoreIsolationPromptNeeded then
+  begin
+    // --- Generic “Optional Settings” page on Welcome ---
+    SettingsPage := CreateInputOptionPage(
+      wpWelcome,
+      'Installation Options',                             // Caption
+      'Optional Features',                                // Description
+      'Select any optional settings you wish to apply before continuing:',  // SubCaption
+      False,                                              // Exclusive = False → checkboxes
+      False                                               // ListBox = False → simple list
+    );
+    // Core Isolation option
+    SettingsPage.Add('Disable Windows Core Isolation (Recommended)');
+    SettingsPage.Values[0] := False;  // unchecked by default
+  end;
 end;
 
 procedure AddDefenderExclusions_Simple();
@@ -230,13 +276,27 @@ begin
   Log('Add-MpPreference exit=' + IntToStr(ExitCode));
 end;
 
-{
 procedure CurStepChanged(CurStep: TSetupStep);
+var
+  DestFile: String;
 begin
   if CurStep = ssPostInstall then
-    AddDefenderExclusions_Simple();
+  begin
+    DestFile := ExpandConstant('{app}\gamecontrollerdb.txt');
+    Dependency_DownloadPage.Clear;
+    Dependency_DownloadPage.Add('{#GameControllerDBDownloadLink}', 'gamecontrollerdb.txt', '');
+    Dependency_DownloadPage.SetText('Downloading SDL Game Controller Database...', 'This database enables correct gamepad recognition for hundreds of controllers.');
+    Dependency_DownloadPage.Show;
+    try
+      Dependency_DownloadPage.Download;
+      FileCopy(ExpandConstant('{tmp}\gamecontrollerdb.txt'), DestFile, False);
+      Log('gamecontrollerdb.txt downloaded and placed at: ' + DestFile);
+    except
+      Log('Failed to download gamecontrollerdb.txt: ' + GetExceptionMessage);
+    end;
+    Dependency_DownloadPage.Hide;
+  end;
 end;
-}
 
 procedure CurPageChanged(CurPageID: Integer);
 begin
@@ -250,7 +310,7 @@ end;
 function NextButtonClick(CurPageID: Integer): Boolean;
 begin
   Result := True;  // allow wizard to proceed
-  if CurPageID = SettingsPage.ID then
+  if CoreIsolationPromptNeeded and (CurPageID = SettingsPage.ID) then
     if SettingsPage.Values[0] then
       DisableCoreIsolation();
 end;
@@ -259,26 +319,53 @@ end;
 procedure DisableCoreIsolation;
 var
   ResultCode: Integer;
+  HVCIEnabled, BlocklistEnabled: Cardinal;
+  AnyChange: Boolean;
 begin
-  // Hypervisor Enforced Code Integrity
-  Exec('reg.exe',
-    'add "HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" ' +
-    '/v Enabled /t REG_DWORD /d 0 /f',
-    '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+  HVCIEnabled := GetRegDwordOrDefault(
+    'SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity',
+    'Enabled',
+    1
+  );
 
-  // Vulnerable Driver Blocklist
-  Exec('reg.exe',
-    'add "HKLM\SYSTEM\CurrentControlSet\Control\CI\Config" ' +
-    '/v VulnerableDriverBlocklistEnable /t REG_DWORD /d 0 /f',
-    '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+  BlocklistEnabled := GetRegDwordOrDefault(
+    'SYSTEM\CurrentControlSet\Control\CI\Config',
+    'VulnerableDriverBlocklistEnable',
+    1
+  );
 
-  // Control Flow Guard
-  Exec('powershell.exe',
-    '-NoProfile -ExecutionPolicy Bypass -Command "Set-ProcessMitigation -System -Disable CFG"',
-    '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+  AnyChange := False;
 
-  // mark for single reboot at end
-  Dependency_NeedRestart := True;
+  if HVCIEnabled <> 0 then
+  begin
+    Exec('reg.exe',
+      'add "HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" ' +
+      '/v Enabled /t REG_DWORD /d 0 /f',
+      '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+    AnyChange := True;
+  end;
+
+  if BlocklistEnabled <> 0 then
+  begin
+    Exec('reg.exe',
+      'add "HKLM\SYSTEM\CurrentControlSet\Control\CI\Config" ' +
+      '/v VulnerableDriverBlocklistEnable /t REG_DWORD /d 0 /f',
+      '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+    AnyChange := True;
+  end;
+
+  if AnyChange then
+  begin
+    // Control Flow Guard
+    Exec('powershell.exe',
+      '-NoProfile -ExecutionPolicy Bypass -Command "Set-ProcessMitigation -System -Disable CFG"',
+      '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+
+    // mark for single reboot at end
+    Dependency_NeedRestart := True;
+  end
+  else
+    Log('Core isolation is already disabled; no reboot requested.');
 end;
 
 function NeedRestart: Boolean;
@@ -294,6 +381,30 @@ var
   PrepareToInstallResult: String;
 begin
   Log('***Enter PrepareToInstall()***');
+
+  // Kill any running RTSS-related processes before installing dependencies
+  if IsProcessRunning('{#EncoderServerExe}') or
+     IsProcessRunning('{#EncoderServer64Exe}') or
+     IsProcessRunning('{#RTSSHooksLoaderExe}') or
+     IsProcessRunning('{#RTSSHooksLoader64Exe}') or
+     IsProcessRunning('{#RtssExe}') then
+  begin
+    Dependency_DownloadPage.Show;
+    Dependency_DownloadPage.SetText('Stopping RivaTuner Statistics Server processes...', '');
+    Dependency_DownloadPage.SetProgress(0, 5);
+    StopProcess('{#EncoderServerExe}');
+    Dependency_DownloadPage.SetProgress(1, 5);
+    StopProcess('{#EncoderServer64Exe}');
+    Dependency_DownloadPage.SetProgress(2, 5);
+    StopProcess('{#RTSSHooksLoaderExe}');
+    Dependency_DownloadPage.SetProgress(3, 5);
+    StopProcess('{#RTSSHooksLoader64Exe}');
+    Dependency_DownloadPage.SetProgress(4, 5);
+    StopProcess('{#RtssExe}');
+    Dependency_DownloadPage.SetProgress(5, 5);
+    Dependency_DownloadPage.Hide;
+  end;
+
   Log('Restart needed: ' + BoolToStr(NeedsRestart));
   PrepareToInstallResult := Dependency_PrepareToInstall(NeedsRestart);
   Log('Result: ' + PrepareToInstallResult);
@@ -319,28 +430,9 @@ var
 begin
   if CurUninstallStep = usUninstall then
   begin
-    if not(checkListBox.checked[keepAllCheck]) then
-    begin
-      if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}\profiles')) then
-        DelTree(ExpandConstant('{localappdata}\{#MyBuildId}\profiles'), True, True, True);
-      if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}\hotkeys')) then
-        DelTree(ExpandConstant('{localappdata}\{#MyBuildId}\hotkeys'), True, True, True);
-      DelTree(ExpandConstant('{localappdata}\{#MyBuildId}'), True, True, True);
-      Exit;
-    end
-    else
-    begin
-      if not(checkListBox.checked[profilesCheck]) then
-        if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}\profiles')) then
-          DelTree(ExpandConstant('{localappdata}\{#MyBuildId}\profiles'), True, True, True);
-
-      if not(checkListBox.checked[hotkeysCheck]) then
-        if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}\hotkeys')) then
-          DelTree(ExpandConstant('{localappdata}\{#MyBuildId}\hotkeys'), True, True, True);
-
-      if not(checkListBox.checked[applicationSettingsCheck]) then
+    if deleteSettingsCheckbox.Checked then
+      if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}')) then
         DelTree(ExpandConstant('{localappdata}\{#MyBuildId}'), True, True, True);
-    end;
 
     if not(keepHidhideCheckbox.Checked) then
       uninstallHidHide();
@@ -713,13 +805,6 @@ begin
     '{#RtssName}',
     '{#RtssDownloadLink}',
     '', True, True);
-
-  StopProcess('{#EncoderServer64Exe}');
-  StopProcess('{#RTSSHooksLoader64Exe}');
-  StopProcess('{#EncoderServerExe}');
-  StopProcess('{#RTSSHooksLoaderExe}');
-  if IsProcessRunning('{#RtssExe}') then
-    StopProcess('{#RtssExe}');
 end;
 
 procedure Dependency_AddPawnIO;

@@ -2,7 +2,6 @@
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
-using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
@@ -24,6 +23,7 @@ namespace HandheldCompanion.ViewModels
     public class ProfileViewModel : BaseViewModel
     {
         public ICommand StartProcessCommand { get; private set; }
+        public ICommand ToggleProcessCommand { get; private set; }
         public ICommand Navigate { get; private set; }
         public ICommand OpenLayout { get; private set; }
 
@@ -38,13 +38,33 @@ namespace HandheldCompanion.ViewModels
             {
                 // todo: we need to check if _hotkey != value but this will return false because this is a pointer
                 // I've implemented all required Clone() functions but not sure where to call them
+                if (value != _Profile)
+                {
+                    _Profile = value;
 
-                _Profile = value;
+                    // refresh all properties
+                    OnPropertyChanged(string.Empty);
+                    OnPropertyChanged(nameof(Name));
+                }
 
-                // refresh all properties
-                OnPropertyChanged(string.Empty);
-                OnPropertyChanged(nameof(Name));
+                RefreshImages();
             }
+        }
+
+        private void RefreshImages()
+        {
+            if (_Profile.LibraryEntry is null)
+            {
+                Cover = LibraryResources.MissingCover;
+                Artwork = LibraryResources.MissingArtwork;
+                Logo = null;
+                return;
+            }
+
+            long id = _Profile.LibraryEntry.Id;
+            Cover = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.cover, _Profile.LibraryEntry.GetCoverId(), _Profile.LibraryEntry.GetCoverExtension(false));
+            Artwork = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.artwork, _Profile.LibraryEntry.GetArtworkId(), _Profile.LibraryEntry.GetArtworkExtension(false));
+            Logo = ManagerFactory.libraryManager.GetGameArt(id, LibraryType.logo, _Profile.LibraryEntry.GetLogoId(), _Profile.LibraryEntry.GetLogoExtension(false));
         }
 
         public override string ToString()
@@ -53,7 +73,8 @@ namespace HandheldCompanion.ViewModels
         }
 
         public string Name => _Profile.Name;
-        public string Description => _Profile.GetOwnerName();
+        public int SortOrder => _Profile.IsSubProfile ? 1 : 0;
+        public string Description => _Profile.IsSubProfile ? _Profile.GetOwnerName() : _Profile.PlatformType.ToString();
 
         public DateTime DateCreated => _Profile.DateCreated;
         public DateTime DateModified => _Profile.DateModified;
@@ -62,7 +83,10 @@ namespace HandheldCompanion.ViewModels
 
         public GamePlatform PlatformType => _Profile.PlatformType;
 
+        public bool IsRunning => ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
         public bool IsAvailable => _Profile.CanExecute && !ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
+        public bool CanStopProcess => IsRunning;
+        public bool CanToggleProcess => IsAvailable || CanStopProcess;
 
         private bool _IsBusy;
         public bool IsBusy
@@ -78,25 +102,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public ImageSource Icon
-        {
-            get
-            {
-                // todo: use Profile.ErrorCode instead (MissingExecutable | MissingPath)
-                if (!string.IsNullOrEmpty(Profile.Path) && File.Exists(Profile.Path))
-                {
-                    Icon? icon = System.Drawing.Icon.ExtractAssociatedIcon(Profile.Path);
-                    {
-                        if (icon is not null)
-                        {
-                            ImageSource imgSource = icon.ToImageSource();
-                            return icon.ToImageSource();
-                        }
-                    }
-                }
-                return null;
-            }
-        }
+        public ImageSource? Icon => _Profile.Icon;
 
         public Image Platform
         {
@@ -129,48 +135,45 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public BitmapImage Cover
+        private BitmapImage? _cover;
+        public BitmapImage? Cover
         {
-            get
+            get => _cover;
+            set
             {
-                if (Profile.LibraryEntry is null)
-                    return LibraryResources.MissingCover;
-
-                long id = Profile.LibraryEntry.Id;
-                long imageId = Profile.LibraryEntry.GetCoverId();
-                string imageExtension = Profile.LibraryEntry.GetCoverExtension(false);
-
-                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.cover, imageId, imageExtension);
+                if (_cover != value)
+                {
+                    _cover = value;
+                    OnPropertyChanged(nameof(Cover));
+                }
             }
         }
 
-        public BitmapImage Artwork
+        private BitmapImage? _artwork;
+        public BitmapImage? Artwork
         {
-            get
+            get => _artwork;
+            set
             {
-                if (Profile.LibraryEntry is null)
-                    return null;
-
-                long id = Profile.LibraryEntry.Id;
-                long imageId = Profile.LibraryEntry.GetArtworkId();
-                string imageExtension = Profile.LibraryEntry.GetArtworkExtension(false);
-
-                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.artwork, imageId, imageExtension);
+                if (_artwork != value)
+                {
+                    _artwork = value;
+                    OnPropertyChanged(nameof(Artwork));
+                }
             }
         }
 
-        public BitmapImage Logo
+        private BitmapImage? _logo;
+        public BitmapImage? Logo
         {
-            get
+            get => _logo;
+            set
             {
-                if (Profile.LibraryEntry is null)
-                    return null;
-
-                long id = Profile.LibraryEntry.Id;
-                long imageId = Profile.LibraryEntry.GetLogoId();
-                string imageExtension = Profile.LibraryEntry.GetLogoExtension(false);
-
-                return ManagerFactory.libraryManager.GetGameArt(id, LibraryType.logo, imageId, imageExtension);
+                if (_logo != value)
+                {
+                    _logo = value;
+                    OnPropertyChanged(nameof(Logo));
+                }
             }
         }
 
@@ -220,16 +223,7 @@ namespace HandheldCompanion.ViewModels
 
                     await Task.Run(async () =>
                     {
-                        ProcessStartInfo psi = new ProcessStartInfo
-                        {
-                            FileName = !string.IsNullOrEmpty(profile.LaunchString) ? profile.LaunchString : Profile.Executable,
-                            WorkingDirectory = Directory.GetParent(Profile.Path)?.FullName ?? string.Empty,
-                            Arguments = Profile.Arguments,
-                            UseShellExecute = true,
-                            Verb = runAsAdmin ? "runas" : string.Empty,
-                        };
-
-                        using (Process? process = Process.Start(psi))
+                        using (Process? process = profile.Launch(runAsAdmin))
                         {
                             // failed to start the process
                             if (process == null)
@@ -265,28 +259,47 @@ namespace HandheldCompanion.ViewModels
                 }
             });
 
+            ToggleProcessCommand = new DelegateCommand(async () =>
+            {
+                if (CanStopProcess)
+                {
+                    ProcessEx? processEx = ProcessManager.GetProcesses().FirstOrDefault(p => p.Path.Equals(Profile.Path));
+                    if (processEx is not null)
+                    {
+                        ProcessExViewModel processViewModel = new(processEx, IsQuickTools);
+                        try
+                        {
+                            processViewModel.KillProcessCommand.Execute(null);
+                        }
+                        finally
+                        {
+                            // Don't dispose - let the async command complete
+                            // processViewModel.Dispose();
+                        }
+                    }
+
+                    return;
+                }
+
+                if (IsAvailable)
+                    StartProcessCommand.Execute(false);
+            });
+
             Navigate = new DelegateCommand(async () =>
             {
                 var page = MainWindow.profilesPage;
 
-                // pick the profile to select in the main combobox
+                // Set the selected main profile via ViewModel (MVVM)
                 Profile target = Profile.IsSubProfile
                     ? ManagerFactory.profileManager.GetParent(Profile)
                     : Profile;
 
-                // find a matching instance in the ComboBox (in case instances differ)
-                Profile? match = page.cB_Profiles.Items
-                    .OfType<Profile>()
-                    .FirstOrDefault(p => p.Guid == target.Guid);
+                // Use ViewModel instead of direct control access
+                page.viewModel.SelectedMainProfile = target;
 
-                if (match is not null)
-                    page.cB_Profiles.SelectedItem = match;
-
-                // subprofile picker: select current subprofile or reset
+                // Set selected sub-profile
                 if (Profile.IsSubProfile)
-                    page.cb_SubProfilePicker.SelectedItem = Profile;
-                else
-                    page.cb_SubProfilePicker.SelectedIndex = 0;
+                    page.viewModel.SelectedProfile = Profile;
 
                 MainWindow.GetCurrent().NavigateToPage("ProfilesPage");
             });
@@ -295,24 +308,17 @@ namespace HandheldCompanion.ViewModels
             {
                 var page = MainWindow.profilesPage;
 
-                // pick the profile to select in the main combobox
+                // Set the selected main profile via ViewModel (MVVM)
                 Profile target = Profile.IsSubProfile
                     ? ManagerFactory.profileManager.GetParent(Profile)
                     : Profile;
 
-                // find a matching instance in the ComboBox (in case instances differ)
-                Profile? match = page.cB_Profiles.Items
-                    .OfType<Profile>()
-                    .FirstOrDefault(p => p.Guid == target.Guid);
+                // Use ViewModel instead of direct control access
+                page.viewModel.SelectedMainProfile = target;
 
-                if (match is not null)
-                    page.cB_Profiles.SelectedItem = match;
-
-                // subprofile picker: select current subprofile or reset
+                // Set selected sub-profile
                 if (Profile.IsSubProfile)
-                    page.cb_SubProfilePicker.SelectedItem = Profile;
-                else
-                    page.cb_SubProfilePicker.SelectedIndex = 0;
+                    page.viewModel.SelectedProfile = Profile;
 
                 // prepare layout editor
                 LayoutTemplate layoutTemplate = new(target.Layout)
@@ -354,7 +360,12 @@ namespace HandheldCompanion.ViewModels
         private void ProcessManager_Changes(string path)
         {
             if (path.Equals(Profile.Path))
+            {
+                OnPropertyChanged(nameof(IsRunning));
                 OnPropertyChanged(nameof(IsAvailable));
+                OnPropertyChanged(nameof(CanStopProcess));
+                OnPropertyChanged(nameof(CanToggleProcess));
+            }
         }
     }
 }

@@ -8,8 +8,13 @@ using HandheldCompanion.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Windows.Media;
 using WpfScreenHelper.Enum;
 using static HandheldCompanion.Utils.XInputPlusUtils;
 
@@ -35,8 +40,8 @@ public enum UpdateSource
     QuickProfilesCreation = 4,
     Creation = 8,
     Serializer = 16,
-    ProfilesPageUpdateOnly = 32,
-    LibraryUpdate = 64,
+    LibraryUpdate = 32,
+    QuickProfilesEnable = 64,
 }
 
 public enum SteeringAxis
@@ -68,7 +73,7 @@ public class ProcessWindowSettings
 }
 
 [Serializable]
-public partial class Profile : ICloneable, IComparable
+public partial class Profile : ICloneable, IComparable, INotifyPropertyChanged
 {
     [JsonIgnore]
     public const int SensivityArraySize = 49; // x + 1 (hidden)
@@ -101,11 +106,38 @@ public partial class Profile : ICloneable, IComparable
         }
     }
 
-    public string Name { get; set; } = string.Empty;
+    private string _name = string.Empty;
+    public string Name
+    {
+        get => _name;
+        set
+        {
+            if (_name != value)
+            {
+                _name = value;
+                OnPropertyChanged();
+            }
+        }
+    }
     public string Path { get; set; } = string.Empty;
     public string Arguments { get; set; } = string.Empty;
     [JsonIgnore]
     public string FileName { get; set; } = string.Empty;
+
+    [JsonIgnore]
+    public ImageSource? Icon
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(Path) && File.Exists(Path))
+            {
+                Icon? icon = System.Drawing.Icon.ExtractAssociatedIcon(Path);
+                if (icon is not null)
+                    return icon.ToImageSource();
+            }
+            return null;
+        }
+    }
 
     public bool IsSubProfile { get; set; }
     public bool IsFavoriteSubProfile { get; set; }
@@ -118,7 +150,7 @@ public partial class Profile : ICloneable, IComparable
     public DateTime LastUsed { get; set; } = DateTime.MinValue;
 
     // Library
-    public LibraryEntry LibraryEntry { get; set; }
+    public LibraryEntry? LibraryEntry { get; set; }
     public bool ShowInLibrary { get; set; } = true;
 
     // GameLib
@@ -294,6 +326,13 @@ public partial class Profile : ICloneable, IComparable
         return Name;
     }
 
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
     public List<string> GetExecutables(bool addMain)
     {
         List<string> execs = new(Executables);
@@ -302,5 +341,30 @@ public partial class Profile : ICloneable, IComparable
             execs.Add(Path);
 
         return execs;
+    }
+
+    /// <summary>
+    /// Launches the profile's executable with its configured arguments and working directory.
+    /// </summary>
+    /// <param name="runAsAdmin">If true, launches with administrator privileges.</param>
+    /// <returns>The started Process, or null if launch failed.</returns>
+    public Process? Launch(bool runAsAdmin = false)
+    {
+        if (string.IsNullOrEmpty(Path))
+            throw new InvalidOperationException("Profile path is not set.");
+
+        if (!File.Exists(Path))
+            throw new FileNotFoundException($"Profile executable not found: {Path}");
+
+        ProcessStartInfo psi = new ProcessStartInfo
+        {
+            FileName = !string.IsNullOrEmpty(LaunchString) ? LaunchString : Executable,
+            WorkingDirectory = Directory.GetParent(Path)?.FullName ?? string.Empty,
+            Arguments = Arguments,
+            UseShellExecute = true,
+            Verb = runAsAdmin ? "runas" : string.Empty
+        };
+
+        return Process.Start(psi);
     }
 }

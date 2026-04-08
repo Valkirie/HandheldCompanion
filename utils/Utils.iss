@@ -47,15 +47,15 @@ begin
 
   // Normalize and build full path to driver
   installLocation := RemoveQuotes(installLocation);
-  driverPath := AddBackslash(installLocation) + 'PawnIO.sys';
+  driverPath := AddBackslash(installLocation) + 'PawnIOLib.dll';
 
   if FileExists(driverPath) then
   begin
-    Log('PawnIO.sys found at: ' + driverPath);
+    Log('PawnIOLib.dll found at: ' + driverPath);
     Result := True;
   end
   else
-    Log('PawnIO.sys NOT found at: ' + driverPath);
+    Log('PawnIOLib.dll NOT found at: ' + driverPath);
 end;
 
 

@@ -19,8 +19,21 @@ public class XboxROGAlly : ROGAlly
         GfxClock = new double[] { 100, 1800 };
         CpuClock = 3800;
 
-        // overwrite ROGAlly default gyrometer axis settings
         GyrometerAxis = new Vector3(1.0f, 1.0f, -1.0f);
+        GyrometerAxisSwap = new SortedDictionary<char, char>
+        {
+            { 'X', 'X' },
+            { 'Y', 'Z' },
+            { 'Z', 'Y' }
+        };
+
+        AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
+        AccelerometerAxisSwap = new SortedDictionary<char, char>
+        {
+            { 'X', 'X' },
+            { 'Y', 'Z' },
+            { 'Z', 'Y' }
+        };
 
         // overwrite ROGAlly default power profiles
         Dictionary<Guid, double[]> tdpOverrides = new Dictionary<Guid, double[]>

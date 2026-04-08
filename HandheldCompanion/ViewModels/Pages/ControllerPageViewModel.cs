@@ -78,8 +78,8 @@ namespace HandheldCompanion.ViewModels
             this.controllerPage = controllerPage;
 
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(PhysicalControllers, new object());
-            BindingOperations.EnableCollectionSynchronization(VirtualControllers, new object());
+            BindingOperations.EnableCollectionSynchronization(PhysicalControllers, _collectionLock);
+            BindingOperations.EnableCollectionSynchronization(VirtualControllers, _collectionLock2);
 
             // manage events
             ControllerManager.ControllerPlugged += ControllerPlugged;

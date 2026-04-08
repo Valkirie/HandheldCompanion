@@ -2149,6 +2149,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Emulated DInput controller.
+        /// </summary>
+        public static string Enum_HIDmode_vJoyController {
+            get {
+                return ResourceManager.GetString("Enum_HIDmode_vJoyController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Emulated XBOX 360 controller.
         /// </summary>
         public static string Enum_HIDmode_Xbox360Controller {
@@ -6560,6 +6569,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string MainWindow_Close {
+            get {
+                return ResourceManager.GetString("MainWindow_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close navigation.
         /// </summary>
         public static string MainWindow_CloseNavigation {
@@ -6596,7 +6614,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Main Window.
+        ///   Looks up a localized string similar to Handheld Companion.
         /// </summary>
         public static string MainWindow_MainWindow {
             get {
@@ -6700,6 +6718,15 @@ namespace HandheldCompanion.Properties {
         public static string MainWindow_OK {
             get {
                 return ResourceManager.GetString("MainWindow_OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open.
+        /// </summary>
+        public static string MainWindow_Open {
+            get {
+                return ResourceManager.GetString("MainWindow_Open", resourceCulture);
             }
         }
         
@@ -7977,7 +8004,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Manual mode: {0}.
+        ///   Looks up a localized string similar to Manual mode {0}.
         /// </summary>
         public static string PowerProfileManualName {
             get {
@@ -8661,6 +8688,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Emulated DInput controller.
+        /// </summary>
+        public static string ProfilesPage_EmulatedControllervJoy {
+            get {
+                return ResourceManager.GetString("ProfilesPage_EmulatedControllervJoy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Emulated XBOX 360 controller.
         /// </summary>
         public static string ProfilesPage_EmulatedControllerXbox {
@@ -9174,6 +9210,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Process control.
+        /// </summary>
+        public static string ProfilesPage_ProcessControl {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ProcessControl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Arguments.
         /// </summary>
         public static string ProfilesPage_ProfileArguments {
@@ -9345,6 +9390,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Resume.
+        /// </summary>
+        public static string ProfilesPage_ResumeProcess {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ResumeProcess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Roll.
         /// </summary>
         public static string ProfilesPage_Roll {
@@ -9498,6 +9552,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Stop.
+        /// </summary>
+        public static string ProfilesPage_StopProcess {
+            get {
+                return ResourceManager.GetString("ProfilesPage_StopProcess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Style of input.
         /// </summary>
         public static string ProfilesPage_StyleofInput {
@@ -9593,6 +9656,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_SuspendOnSleepDesc {
             get {
                 return ResourceManager.GetString("ProfilesPage_SuspendOnSleepDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suspend.
+        /// </summary>
+        public static string ProfilesPage_SuspendProcess {
+            get {
+                return ResourceManager.GetString("ProfilesPage_SuspendProcess", resourceCulture);
             }
         }
         

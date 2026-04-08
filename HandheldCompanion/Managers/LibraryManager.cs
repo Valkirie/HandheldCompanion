@@ -6,6 +6,7 @@ using HandheldCompanion.Shared;
 using IGDB;
 using IGDB.Models;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace HandheldCompanion.Managers
     {
         // GameArt
         public static BitmapImage MissingCover = new BitmapImage(new Uri("pack://application:,,,/Resources/MissingCover.png"));
+        public static BitmapImage MissingArtwork = new BitmapImage(new Uri("pack://application:,,,/Resources/MissingArtwork.png"));
         public static BitmapImage Xbox360Big = new BitmapImage(new Uri("pack://application:,,,/Resources/controller_0_big.png"));
         public static BitmapImage DualShock4Big = new BitmapImage(new Uri("pack://application:,,,/Resources/controller_1_big.png"));
     }
@@ -61,6 +63,8 @@ namespace HandheldCompanion.Managers
         private IGDBClient IGDBClient;
         private SteamGridDb steamGridDb;
 
+        private readonly ConcurrentDictionary<string, BitmapImage> _imageCache = new();
+
         public bool HasIGDBClient => IGDBClient != null;
         public bool HasSteamGridDb => steamGridDb != null;
 
@@ -92,7 +96,7 @@ namespace HandheldCompanion.Managers
             return GetGameArtPath(gameId, libraryType, imageId.ToString(), extension);
         }
 
-        public BitmapImage GetGameArt(long gameId, LibraryType libraryType, string imageId, string extension)
+        public BitmapImage? GetGameArt(long gameId, LibraryType libraryType, string imageId, string extension)
         {
             string fileName = GetGameArtPath(gameId, libraryType, imageId, extension);
             if (!File.Exists(fileName))
@@ -100,17 +104,26 @@ namespace HandheldCompanion.Managers
                 if (libraryType.HasFlag(LibraryType.cover))
                     return LibraryResources.MissingCover;
                 else if (libraryType.HasFlag(LibraryType.artwork))
-                    return LibraryResources.MissingCover;
+                    return LibraryResources.MissingArtwork;
                 else if (libraryType.HasFlag(LibraryType.thumbnails))
                     return LibraryResources.MissingCover;
                 else if (libraryType.HasFlag(LibraryType.logo))
                     return null;
             }
 
-            return new BitmapImage(new Uri(fileName));
+            return _imageCache.GetOrAdd(fileName, path =>
+            {
+                var bmp = new BitmapImage();
+                bmp.BeginInit();
+                bmp.CacheOption = BitmapCacheOption.OnLoad;
+                bmp.UriSource = new Uri(path);
+                bmp.EndInit();
+                bmp.Freeze();
+                return bmp;
+            });
         }
 
-        public BitmapImage GetGameArt(long gameId, LibraryType libraryType, long imageId, string extension)
+        public BitmapImage? GetGameArt(long gameId, LibraryType libraryType, long imageId, string extension)
         {
             return GetGameArt(gameId, libraryType, imageId.ToString(), extension);
         }
@@ -208,20 +221,37 @@ namespace HandheldCompanion.Managers
                             SteamGridDbGrid[]? grids = await steamGridDb.GetGridsByGameIdAsync(
                                 gameId: game.Id,
                                 types: SteamGridDbTypes.Static,
-                                styles: SteamGridDbStyles.Alternate | SteamGridDbStyles.None | SteamGridDbStyles.Material,
-                                dimensions: SteamGridDbDimensions.W600H900,
+                                styles: SteamGridDbStyles.AllGrids,
+                                dimensions: SteamGridDbDimensions.AllGrids,
                                 formats: SteamGridDbFormats.Png | SteamGridDbFormats.Jpeg);
+                            grids = grids
+                                .Where(g => !g.IsLocked)
+                                .OrderByDescending(g => g.Style == SteamGridDbStyles.Official)
+                                .ThenByDescending(g => g.Upvotes)
+                                .ToArray();
 
                             SteamGridDbHero[]? heroes = await steamGridDb.GetHeroesByGameIdAsync(
                                 gameId: game.Id,
                                 types: SteamGridDbTypes.Static,
-                                styles: SteamGridDbStyles.Alternate | SteamGridDbStyles.None | SteamGridDbStyles.Material,
-                                dimensions: SteamGridDbDimensions.W1920H620,
+                                styles: SteamGridDbStyles.AllHeroes,
+                                dimensions: SteamGridDbDimensions.AllHeroes,
                                 formats: SteamGridDbFormats.Png | SteamGridDbFormats.Jpeg);
+                            heroes = heroes
+                                .Where(h => !h.IsLocked)
+                                .OrderByDescending(h => h.Style == SteamGridDbStyles.Official)
+                                .ThenByDescending(h => h.Upvotes)
+                                .ToArray();
 
                             SteamGridDbLogo[]? logos = await steamGridDb.GetLogosByGameIdAsync(
                                 gameId: game.Id,
+                                types: SteamGridDbTypes.Static,
+                                styles: SteamGridDbStyles.AllLogos,
                                 formats: SteamGridDbFormats.Png);
+                            logos = logos
+                                .Where(l => !l.IsLocked)
+                                .OrderByDescending(l => l.Style == SteamGridDbStyles.Official)
+                                .ThenByDescending(l => l.Upvotes)
+                                .ToArray();
 
                             // Skip if no visuals are available
                             if (grids.Length == 0 && heroes.Length == 0)
@@ -232,9 +262,9 @@ namespace HandheldCompanion.Managers
                                 Heroes = heroes,
                                 Grids = grids,
                                 Logos = logos,
-                                Hero = heroes.FirstOrDefault(h => h.Style == SteamGridDbStyles.Official),
-                                Grid = grids.FirstOrDefault(g => g.Style == SteamGridDbStyles.Official),
-                                Logo = logos.FirstOrDefault(l => l.Style == SteamGridDbStyles.Official),
+                                Hero = heroes.FirstOrDefault(),
+                                Grid = grids.FirstOrDefault(),
+                                Logo = logos.FirstOrDefault(),
                             };
 
                             lock (entries)
@@ -274,7 +304,7 @@ namespace HandheldCompanion.Managers
             return GetGame(games, name);
         }
 
-        public LibraryEntry GetGame(IEnumerable<LibraryEntry> entries, string name)
+        public LibraryEntry? GetGame(IEnumerable<LibraryEntry> entries, string name)
         {
             if (entries == null || entries.Count() == 0)
                 return null;
@@ -282,7 +312,7 @@ namespace HandheldCompanion.Managers
             // Clean the input name and convert to lowercase for case-insensitive comparison.
             string cleanedName = RemoveSpecialCharacters(name).ToLowerInvariant();
 
-            LibraryEntry bestEntry = entries.FirstOrDefault();
+            LibraryEntry? bestEntry = entries.FirstOrDefault();
             int bestScore = 999;
 
             foreach (LibraryEntry game in entries)
@@ -362,13 +392,11 @@ namespace HandheldCompanion.Managers
 
         public async Task<bool> DownloadGameArt(SteamGridEntry entry, int index, LibraryType libraryType)
         {
-            SteamGridDbObject[] objects = libraryType.HasFlag(LibraryType.cover) ? entry.Grids : entry.Heroes;
+            SteamGridDbObject[] objects = libraryType.HasFlag(LibraryType.cover) ? entry.Grids : libraryType.HasFlag(LibraryType.artwork) ? entry.Heroes : entry.Logos;
             if (index < 0 || index >= objects.Length)
                 return false;
 
-            return await DownloadGameArt(entry.Id,
-                libraryType.HasFlag(LibraryType.cover) ? entry.Grids[index] : entry.Heroes[index],
-                libraryType);
+            return await DownloadGameArt(entry.Id, libraryType.HasFlag(LibraryType.cover) ? entry.Grids[index] : libraryType.HasFlag(LibraryType.artwork) ? entry.Heroes[index] : entry.Logos[index], libraryType);
         }
 
         public async Task<bool> DownloadGameArt(long gameId, SteamGridDbObject entry, LibraryType libraryType)
@@ -464,9 +492,7 @@ namespace HandheldCompanion.Managers
                 libraryType, false);
             */
 
-            return await DownloadGameArt(entry.Id,
-                libraryType.HasFlag(LibraryType.cover) ? entry.Cover : entry.Artworks[index],
-                libraryType, false);
+            return await DownloadGameArt(entry.Id, libraryType.HasFlag(LibraryType.cover) ? entry.Cover : entry.Artworks[index], libraryType, false);
         }
 
         /* long gameId, string imageName, long? imageId, LibraryType libraryType, bool preview */
@@ -618,35 +644,50 @@ namespace HandheldCompanion.Managers
             if (profile.Default)
                 return;
 
-            LibraryEntry entry;
-            if (profile.LibraryEntry is SteamGridEntry || profile.LibraryEntry is IGDBEntry)
+            // update status
+            ProfileStatusChanged?.Invoke(profile, ManagerStatus.Busy);
+
+            // update variables
+            LibraryEntry? entry = profile.LibraryEntry ?? null;
+            long entryId = entry?.Id ?? 0;
+            long coverId = entry?.GetCoverId() ?? 0;
+            long artworkId = entry?.GetArtworkId() ?? 0;
+            long logoId = entry?.GetLogoId() ?? 0;
+
+            // retrieve library entry
+            IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid, profile.Name);
+
+            if (entryId == 0)
             {
-                entry = profile.LibraryEntry;
+                // pick most relevant entry
+                entry = ManagerFactory.libraryManager.GetGame(entries, profile.Name);
+
+                // update variables
+                coverId = entry?.GetCoverId() ?? 0;
+                artworkId = entry?.GetArtworkId() ?? 0;
+                logoId = entry?.GetLogoId() ?? 0;
             }
             else
             {
-                // update status
-                ProfileStatusChanged?.Invoke(profile, ManagerStatus.Busy);
-
-                IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid, profile.Name);
-                entry = ManagerFactory.libraryManager.GetGame(entries, profile.Name);
-
-                // update status
-                ProfileStatusChanged?.Invoke(profile, ManagerStatus.None);
+                // update entry
+                entry = entries.FirstOrDefault(e => e.Id == entryId);
             }
+
+            // update status
+            ProfileStatusChanged?.Invoke(profile, ManagerStatus.None);
 
             // failed to retrieve a library entry
             if (entry is null)
                 return;
 
             // download arts
-            await UpdateProfileArts(profile, entry);
+            await UpdateProfileArts(profile, entry, (int)coverId, (int)artworkId, (int)logoId);
 
             // update profile
             ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.LibraryUpdate);
         }
 
-        public async Task UpdateProfileArts(Profile profile, LibraryEntry entry, int coverIndex = 0, int artworkIndex = 0)
+        public async Task UpdateProfileArts(Profile profile, LibraryEntry entry, int coverId = 0, int artworkId = 0, int logoId = 0)
         {
             // update status
             ProfileStatusChanged?.Invoke(profile, ManagerStatus.Busy);
@@ -654,25 +695,19 @@ namespace HandheldCompanion.Managers
             // update library entry
             if (entry is SteamGridEntry Steam)
             {
-                if (Steam.Grid is null || coverIndex != 0)
-                {
-                    if (Steam.Grids?.Length > coverIndex)
-                        Steam.Grid = Steam.Grids[coverIndex];
-                }
+                if (Steam.Grid is null || coverId != 0)
+                    Steam.Grid = Steam.Grids.FirstOrDefault(g => g.Id == coverId);
 
-                if (Steam.Hero is null || artworkIndex != 0)
-                {
-                    if (Steam.Heroes?.Length > artworkIndex)
-                        Steam.Hero = Steam.Heroes[artworkIndex];
-                }
+                if (Steam.Hero is null || artworkId != 0)
+                    Steam.Hero = Steam.Heroes.FirstOrDefault(h => h.Id == artworkId);
+
+                if (Steam.Logo is null || logoId != 0)
+                    Steam.Logo = Steam.Logos.FirstOrDefault(l => l.Id == logoId);
             }
             else if (entry is IGDBEntry IGDB)
             {
-                if (IGDB.Artwork is null || artworkIndex != 0)
-                {
-                    if (IGDB.Artworks?.Count > artworkIndex)
-                        IGDB.Artwork = IGDB.Artworks[artworkIndex];
-                }
+                if (IGDB.Artwork is null || artworkId != 0)
+                    IGDB.Artwork = IGDB.Artworks.FirstOrDefault(a => a.Id == artworkId);
             }
 
             // update target entry and name

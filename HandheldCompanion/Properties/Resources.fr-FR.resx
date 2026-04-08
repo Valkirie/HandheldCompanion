@@ -2173,9 +2173,6 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
   <data name="MainWindow_Exit" xml:space="preserve">
     <value>Quitter</value>
   </data>
-  <data name="MainWindow_MainWindow" xml:space="preserve">
-    <value>Fenêtre principale</value>
-  </data>
   <data name="MainWindow_Navigate" xml:space="preserve">
     <value>Naviguer</value>
   </data>
@@ -2304,9 +2301,6 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
   </data>
   <data name="PowerProfileManualDescription" xml:space="preserve">
     <value>Réglages personnalisés de la puissance et de la vitesse du ventilateur.</value>
-  </data>
-  <data name="PowerProfileManualName" xml:space="preserve">
-    <value>Mode manuel : {0}</value>
   </data>
   <data name="PowerProfileROGAllyBetterPerformanceDesc" xml:space="preserve">
     <value>Équilibre entre performances, température et acoustique, adapté à toutes les situations.</value>

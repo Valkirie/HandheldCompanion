@@ -34,7 +34,7 @@ public class GPDWinMax2 : IDevice
             { 'Y', 'Z' },
             { 'Z', 'X' }
         };
-        AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
+        AccelerometerAxis = new Vector3(-1.0f, 1.0f, 1.0f);
         AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },

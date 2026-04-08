@@ -54,8 +54,8 @@ namespace HandheldCompanion.Actions
     public enum PressType
     {
         Short = 0,
-        Long = 1, // hold for x ms and get an action
-        Hold = 2, // press and hold the command for x ms
+        Long = 1, // hold for x ms then fire
+        Hold = 2, // hold the action for x ms
         Double = 3,
     }
 
@@ -81,31 +81,32 @@ namespace HandheldCompanion.Actions
     {
         public static readonly Dictionary<ModifierSet, KeyCode[]> ModifierMap = new()
         {
-            { ModifierSet.None,             Array.Empty<KeyCode>() },
-            { ModifierSet.Shift,            new [] { KeyCode.LShift } },
-            { ModifierSet.Control,          new [] { KeyCode.LControl } },
-            { ModifierSet.Alt,              new [] { KeyCode.LMenu } },
-            { ModifierSet.ShiftControl,     new [] { KeyCode.LShift, KeyCode.LControl } },
-            { ModifierSet.ShiftAlt,         new [] { KeyCode.LShift, KeyCode.LMenu } },
-            { ModifierSet.ControlAlt,       new [] { KeyCode.LControl, KeyCode.LMenu } },
-            { ModifierSet.ShiftControlAlt,  new [] { KeyCode.LShift, KeyCode.LControl, KeyCode.LMenu } },
-            { ModifierSet.Windows,          new [] { KeyCode.LWin } },
+            { ModifierSet.None,            Array.Empty<KeyCode>() },
+            { ModifierSet.Shift,           new[] { KeyCode.LShift } },
+            { ModifierSet.Control,         new[] { KeyCode.LControl } },
+            { ModifierSet.Alt,             new[] { KeyCode.LMenu } },
+            { ModifierSet.ShiftControl,    new[] { KeyCode.LShift, KeyCode.LControl } },
+            { ModifierSet.ShiftAlt,        new[] { KeyCode.LShift, KeyCode.LMenu } },
+            { ModifierSet.ControlAlt,      new[] { KeyCode.LControl, KeyCode.LMenu } },
+            { ModifierSet.ShiftControlAlt, new[] { KeyCode.LShift, KeyCode.LControl, KeyCode.LMenu } },
+            { ModifierSet.Windows,         new[] { KeyCode.LWin } },
         };
 
+        // --- Core state ---
         public ActionType actionType = ActionType.Disabled;
         public PressType pressType = PressType.Short;
         public ActionState actionState = ActionState.Stopped;
 
-        // Replaces boxed Value/prevValue
-        protected bool outBool;      // current output for button-like actions
-        protected bool prevBool;     // last input state for edge detection
-
+        protected bool outBool;
+        protected bool prevBool;
         protected Vector2 outVector = new();
         protected Vector2 prevVector = new();
 
-        public float ActionTimer = 200.0f;   // default value for steam
-        public float PressTimer = -1.0f;     // -1 inactive, >= 0 active
+        // --- Timing ---
+        public float ActionTimer = 200.0f;  // base duration threshold (ms)
+        public float PressTimer = -1.0f;   // -1 = inactive, ≥ 0 = counting
 
+        // --- Features ---
         [JsonProperty("HasTurbo")]
         public bool HasTurbo = false;
         [JsonProperty("HasToggle")]
@@ -114,57 +115,47 @@ namespace HandheldCompanion.Actions
         public bool HasInterruptable = true;
         public float TurboDelay = 30.0f;
 
-        // Delay before action triggers (in ms)
+        // --- Start delay ---
         [JsonProperty("StartDelay")]
         public float StartDelay = 0.0f;
-        [JsonIgnore]
-        private float StartDelayTimer = -1.0f;  // -1 inactive, >= 0 counting
-        [JsonIgnore]
-        private bool StartDelayRisingEdge = false;  // Remember if delay was started by a rising edge
+        [JsonIgnore] private float StartDelayTimer = -1.0f;  // -1 = inactive
+        [JsonIgnore] private bool StartDelayRisingEdge = false;  // consumed by toggle logic
 
-        [JsonIgnore]
-        private bool IsToggled = false;
-        [JsonIgnore]
-        private bool IsTurboed = false;
-        private float TurboCountdown = 0.0f;     // countdown (ms) before flipping
+        // --- Toggle / Turbo runtime ---
+        [JsonIgnore] private bool IsToggled = false;
+        [JsonIgnore] private bool IsTurboed = false;
+        private float TurboCountdown = 0.0f;
 
-        #region legacy
-        // legacy aliases: read old saves, map to new fields
-        [JsonProperty("IsTurbo")]
-        private bool Legacy_IsTurbo { set { HasTurbo = value; } }
-        [JsonProperty("IsToggle")]
-        private bool Legacy_IsToggle { set { HasToggle = value; } }
-        #endregion
+        // --- Double-tap counter ---
+        private int PressCount = 0;
 
-        private int PressCount = 0;     // used for double tap
-
+        // --- Shift gating ---
         [JsonConverter(typeof(ShiftSlotConverter))]
         public ShiftSlot ShiftSlot = ShiftSlot.Any;
+        public bool ShiftMatchAny = false; // false = exact, true = OR (any selected shift)
 
-        public bool ShiftMatchAny = false; // false = strict match, true = OR match (any selected shift)
-
+        // --- Haptics ---
         public HapticMode HapticMode = HapticMode.Off;
         public HapticStrength HapticStrength = HapticStrength.Low;
 
+        // --- Axis/motion ---
         public DeflectionDirection motionDirection = DeflectionDirection.None;
         public float motionThreshold = 4000;
-
-        // Axis-only shift mask flag to avoid sentinel assignments
         protected bool axisSlotDisabled;
+
+        // --- Legacy save compatibility ---
+        #region legacy
+        [JsonProperty("IsTurbo")] private bool Legacy_IsTurbo { set => HasTurbo = value; }
+        [JsonProperty("IsToggle")] private bool Legacy_IsToggle { set => HasToggle = value; }
+        #endregion
 
         public IActions() { }
 
         /// <summary>
-        /// Override in derived classes that use shared toggle state (e.g., KeyboardActions, MouseActions).
-        /// This allows multiple bindings targeting the same key/button to share toggle state.
-        /// Also enables detection of external releases (user physically pressing the key).
+        /// Override to share toggle state across bindings targeting the same key/button,
+        /// and to detect external releases. Default uses local toggle state.
         /// </summary>
-        /// <param name="risingEdge">True if this is a button press (rising edge)</param>
-        /// <returns>(useShared, toggleState) - if useShared is true, use the provided toggleState instead of local state</returns>
-        protected virtual (bool useShared, bool toggleState) GetSharedToggleState(bool risingEdge)
-        {
-            return (false, false); // Default: use local toggle state
-        }
+        protected virtual (bool useShared, bool toggleState) GetSharedToggleState(bool risingEdge) => (false, false);
 
         public virtual void SetHaptic(ButtonFlags button, bool released)
         {
@@ -175,13 +166,13 @@ namespace HandheldCompanion.Actions
             ControllerManager.GetTarget()?.SetHaptic(HapticStrength, button);
         }
 
-        // AxisFlags version: just compute shift-slot gating (no work)
+        /// <summary>AxisFlags version: computes shift-slot gating only.</summary>
         public virtual void Execute(AxisFlags axis, ShiftSlot shiftSlot, float delta)
         {
             axisSlotDisabled = !IsShiftAllowed(shiftSlot, ShiftSlot, ShiftMatchAny);
         }
 
-        // AxisLayout version: zero vector when masked to skip downstream work
+        /// <summary>AxisLayout version: zeroes the vector when the slot is masked.</summary>
         public virtual void Execute(AxisLayout layout, ShiftSlot shiftSlot, float delta)
         {
             if (!IsShiftAllowed(shiftSlot, ShiftSlot, ShiftMatchAny))
@@ -190,261 +181,298 @@ namespace HandheldCompanion.Actions
 
         public virtual void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot, float delta)
         {
+            // Suspended: block output without consuming edge state
             if (actionState == ActionState.Suspended)
             {
                 outBool = false;
                 prevBool = value;
                 return;
             }
-            else if (actionState == ActionState.Forced)
-            {
-                value = true;
-            }
 
-            // shift gating
+            // Forced: override input to pressed
+            if (actionState == ActionState.Forced)
+                value = true;
+
+            // Shift gating
             if (!IsShiftAllowed(shiftSlot, ShiftSlot, ShiftMatchAny))
                 value = false;
 
-            // Start delay logic - delays the action trigger by StartDelay ms
-            // Similar pattern to PressType.Hold: continues even after button release
-            // Note: TimerManager has minimum 10ms tick, so if StartDelay < 10ms, use tick period + StartDelay
-            if (StartDelay > 0)
+            // Start delay — may gate the action for a period before firing
+            if (!ProcessStartDelay(ref value, delta))
+                return;
+
+            // Press-type modifiers (Long / Hold / Double)
+            if (!ProcessPressType(ref value, delta))
+                return;
+
+            // Toggle and turbo modifiers
+            ProcessToggle(value);
+            ProcessTurbo(value, delta);
+
+            // Compose final output from active modifiers
+            outBool = (HasToggle, HasTurbo) switch
             {
-                int period = TimerManager.GetPeriod();
-                float effectiveDelay = (StartDelay < period) ? (period + StartDelay) : StartDelay;
+                (true, true) => IsToggled && IsTurboed,
+                (true, false) => IsToggled,
+                (false, true) => IsTurboed,
+                _ => value,
+            };
 
-                // Start timer on button press (edge detection)
-                // Remember that this was a rising edge for toggle logic later
-                if (value && !prevBool)
-                {
-                    StartDelayTimer = 0.0f;
-                    StartDelayRisingEdge = true;
-                }
+            prevBool = value;
+        }
 
-                // Timer is active: keep counting until delay reached
-                if (StartDelayTimer >= 0 && StartDelayTimer < effectiveDelay)
+        /// <summary>
+        /// Returns false (and suppresses output) while waiting for the start delay.
+        /// Modifies <paramref name="value"/> to true once the delay elapses.
+        /// </summary>
+        private bool ProcessStartDelay(ref bool value, float delta)
+        {
+            if (StartDelay <= 0) return true;
+
+            // TimerManager has a minimum 10 ms tick; if StartDelay is shorter, add one tick period.
+            int period = TimerManager.GetPeriod();
+            float effectiveDelay = StartDelay < period ? period + StartDelay : StartDelay;
+
+            // Begin countdown on rising edge
+            if (value && !prevBool)
+            {
+                StartDelayTimer = 0f;
+                StartDelayRisingEdge = true;
+            }
+
+            // Still waiting
+            if (StartDelayTimer >= 0 && StartDelayTimer < effectiveDelay)
+            {
+                StartDelayTimer += delta;
+                outBool = false;
+                return false;   // suppress — do not update prevBool
+            }
+
+            // Delay elapsed: fire and reset
+            if (StartDelayTimer >= effectiveDelay)
+            {
+                StartDelayTimer = -1f;
+                value = true;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Applies press-type modifiers. Returns false when the action should be suppressed
+        /// (e.g. still waiting for Long/Double threshold).
+        /// </summary>
+        private bool ProcessPressType(ref bool value, float delta)
+        {
+            return pressType switch
+            {
+                PressType.Long => ProcessLongPress(ref value, delta),
+                PressType.Hold => ProcessHoldPress(ref value, delta),
+                PressType.Double => ProcessDoublePress(ref value, delta),
+                _ => true,
+            };
+        }
+
+        /// <summary>
+        /// Suppresses output until the button has been held for <see cref="ActionTimer"/> ms.
+        /// If released early the state is Aborted and decays back over the same duration.
+        /// </summary>
+        private bool ProcessLongPress(ref bool value, float delta)
+        {
+            if (value)
+            {
+                actionState = ActionState.Running;
+                PressTimer += delta;
+
+                if (PressTimer < ActionTimer)
                 {
-                    StartDelayTimer += delta;
                     outBool = false;
-                    // Don't update prevBool here - it would lose the rising edge info
-                    return;
+                    prevBool = value;
+                    return false;   // still accumulating — suppress
                 }
 
-                // Delay elapsed: trigger once then reset
-                if (StartDelayTimer >= effectiveDelay)
-                {
-                    StartDelayTimer = -1.0f;  // Reset for next press
-                    value = true;  // Force trigger the action
-                    // Note: StartDelayRisingEdge will be consumed by toggle logic below
-                }
-            }
-
-            switch (pressType)
-            {
-                case PressType.Long:
-                    {
-                        if (value)
-                        {
-                            actionState = ActionState.Running;
-                            PressTimer += delta;
-
-                            if (PressTimer >= ActionTimer)
-                            {
-                                actionState = ActionState.Succeed;
-                            }
-                            else
-                            {
-                                outBool = false;
-                                prevBool = value;
-                                return;
-                            }
-                        }
-                        else
-                        {
-                            if (actionState == ActionState.Running)
-                            {
-                                actionState = ActionState.Aborted;
-                                PressTimer = Math.Max(50, PressTimer);
-                            }
-                            else if (actionState == ActionState.Succeed || actionState == ActionState.Stopped)
-                            {
-                                actionState = (actionState == ActionState.Succeed) ? ActionState.Stopped : actionState;
-                                PressTimer = -1;
-                            }
-
-                            if (actionState == ActionState.Aborted)
-                            {
-                                // keep Aborted for the time it was "running"
-                                if (PressTimer >= 0) PressTimer -= delta;
-                                else { actionState = ActionState.Stopped; PressTimer = -1; }
-                            }
-                        }
-                        break;
-                    }
-
-                case PressType.Hold:
-                    {
-                        if (value || (PressTimer <= ActionTimer && PressTimer >= 0))
-                        {
-                            actionState = ActionState.Running;
-                            PressTimer += delta;
-                            value = true; // simple bypass
-                        }
-                        else if (PressTimer >= ActionTimer)
-                        {
-                            actionState = ActionState.Stopped;
-                            PressTimer = -1;
-                        }
-                        break;
-                    }
-
-                case PressType.Double:
-                    {
-                        if (prevBool != value && value)
-                            PressCount++;
-
-                        switch (PressCount)
-                        {
-                            default:
-                                {
-                                    if (actionState != ActionState.Stopped)
-                                    {
-                                        PressTimer += delta;
-                                        if (PressTimer >= 50)
-                                        {
-                                            actionState = ActionState.Stopped;
-                                            PressCount = 0;
-                                            PressTimer = 0;
-                                        }
-                                    }
-                                    outBool = false;
-                                    prevBool = value;
-                                    return;
-                                }
-
-                            case 1:
-                                {
-                                    actionState = ActionState.Running;
-                                    PressTimer += delta;
-
-                                    if (PressTimer > ActionTimer)
-                                    {
-                                        actionState = ActionState.Aborted;
-                                        PressCount = 0;
-                                        PressTimer = 0;
-                                    }
-                                    outBool = false;
-                                    prevBool = value;
-                                    return;
-                                }
-
-                            case 2:
-                                {
-                                    if (PressTimer <= ActionTimer && value)
-                                    {
-                                        actionState = ActionState.Succeed;
-                                        PressCount = 2;
-                                        PressTimer = ActionTimer;
-                                    }
-                                    else
-                                    {
-                                        actionState = ActionState.Stopped;
-                                        PressCount = 0;
-                                        PressTimer = 0;
-                                    }
-                                    break;
-                                }
-                        }
-                        break;
-                    }
-            }
-
-            // Toggle
-            if (HasToggle)
-            {
-                // Rising edge: either normal edge detection OR delayed action that was started by rising edge
-                bool risingEdge = (prevBool != value && value) || StartDelayRisingEdge;
-                StartDelayRisingEdge = false;  // Consume the delayed rising edge
-
-                // Check if derived class provides shared toggle state
-                var (useShared, sharedState) = GetSharedToggleState(risingEdge);
-                if (useShared)
-                {
-                    IsToggled = sharedState;
-                }
-                else
-                {
-                    // Default local toggle behavior
-                    if (risingEdge) IsToggled = !IsToggled;
-                }
+                actionState = ActionState.Succeed;
             }
             else
             {
-                StartDelayRisingEdge = false;  // Clear even if toggle not enabled
-                IsToggled = false;
+                switch (actionState)
+                {
+                    case ActionState.Running:
+                        actionState = ActionState.Aborted;
+                        PressTimer = Math.Max(50, PressTimer);
+                        break;
+
+                    case ActionState.Succeed:
+                        actionState = ActionState.Stopped;
+                        PressTimer = -1;
+                        break;
+
+                    case ActionState.Stopped:
+                        PressTimer = -1;
+                        break;
+                }
+
+                if (actionState == ActionState.Aborted)
+                {
+                    if (PressTimer >= 0) PressTimer -= delta;
+                    else { actionState = ActionState.Stopped; PressTimer = -1; }
+                }
             }
 
-            // Turbo (countdown, no modulo)
-            if (HasTurbo)
+            return true;
+        }
+
+        /// <summary>
+        /// Keeps the action active for <see cref="ActionTimer"/> ms even after the button
+        /// is released (fire-and-hold pattern).
+        /// </summary>
+        private bool ProcessHoldPress(ref bool value, float delta)
+        {
+            bool timerActive = PressTimer >= 0 && PressTimer <= ActionTimer;
+
+            if (value || timerActive)
             {
-                if (value || IsToggled)
-                {
-                    TurboCountdown -= delta;
-                    if (TurboCountdown <= 0)
+                actionState = ActionState.Running;
+                PressTimer += delta;
+                value = true;    // keep output active while timer runs
+            }
+            else if (PressTimer > ActionTimer)
+            {
+                actionState = ActionState.Stopped;
+                PressTimer = -1;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Fires only when the button is pressed twice within <see cref="ActionTimer"/> ms.
+        /// Returns false while waiting for the second tap.
+        /// </summary>
+        private bool ProcessDoublePress(ref bool value, float delta)
+        {
+            // Count rising edges
+            if (prevBool != value && value)
+                PressCount++;
+
+            switch (PressCount)
+            {
+                // No tap in progress — tick decay timer so the state resets cleanly
+                default:
+                    if (actionState != ActionState.Stopped)
                     {
-                        IsTurboed = !IsTurboed;
-                        TurboCountdown += Math.Max(1, TurboDelay);
+                        PressTimer += delta;
+                        if (PressTimer >= 50)
+                        {
+                            actionState = ActionState.Stopped;
+                            PressCount = 0;
+                            PressTimer = 0;
+                        }
                     }
-                }
-                else
+                    outBool = false;
+                    prevBool = value;
+                    return false;
+
+                // First tap: wait for second tap within window
+                case 1:
+                    actionState = ActionState.Running;
+                    PressTimer += delta;
+
+                    if (PressTimer > ActionTimer)
+                    {
+                        actionState = ActionState.Aborted;
+                        PressCount = 0;
+                        PressTimer = 0;
+                    }
+                    outBool = false;
+                    prevBool = value;
+                    return false;
+
+                // Second tap within window: succeed; otherwise reset
+                case 2:
+                    if (PressTimer <= ActionTimer && value)
+                    {
+                        actionState = ActionState.Succeed;
+                        PressTimer = ActionTimer;
+                    }
+                    else
+                    {
+                        actionState = ActionState.Stopped;
+                        PressCount = 0;
+                        PressTimer = 0;
+                    }
+                    return true;
+            }
+        }
+
+        private void ProcessToggle(bool value)
+        {
+            if (!HasToggle)
+            {
+                StartDelayRisingEdge = false;
+                IsToggled = false;
+                return;
+            }
+
+            // A rising edge is either a fresh button press, or a delayed-start rising edge
+            bool risingEdge = (prevBool != value && value) || StartDelayRisingEdge;
+            StartDelayRisingEdge = false;   // consume
+
+            var (useShared, sharedState) = GetSharedToggleState(risingEdge);
+            if (useShared)
+                IsToggled = sharedState;
+            else if (risingEdge)
+                IsToggled = !IsToggled;
+        }
+
+        private void ProcessTurbo(bool value, float delta)
+        {
+            if (!HasTurbo)
+            {
+                IsTurboed = false;
+                return;
+            }
+
+            if (value || IsToggled)
+            {
+                TurboCountdown -= delta;
+                if (TurboCountdown <= 0)
                 {
-                    IsTurboed = false;
-                    TurboCountdown = TurboDelay;
+                    IsTurboed = !IsTurboed;
+                    TurboCountdown += Math.Max(1, TurboDelay);
                 }
             }
             else
             {
                 IsTurboed = false;
+                TurboCountdown = TurboDelay;
             }
-
-            // final outBool
-            if (HasToggle && HasTurbo) outBool = IsToggled && IsTurboed;
-            else if (HasToggle) outBool = IsToggled;
-            else if (HasTurbo) outBool = IsTurboed;
-            else outBool = value;
-
-            prevBool = value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected static bool IsShiftAllowed(ShiftSlot current, ShiftSlot required, bool matchAny)
         {
-            // Any flag means always enabled regardless of shift state
-            if (required.HasFlag(ShiftSlot.Any))
-                return true;
-            // None means only trigger when no shifts are pressed
-            if (required == ShiftSlot.None)
-                return current == ShiftSlot.None;
+            // Any flag → always enabled
+            if (required.HasFlag(ShiftSlot.Any)) return true;
 
-            // OR mode: trigger if ANY of the required shifts is active
+            // None → only when no shift is active
+            if (required == ShiftSlot.None) return current == ShiftSlot.None;
+
+            // OR mode: at least one required shift must be active
             if (matchAny)
             {
-                // Remove the Any flag if present for comparison
                 ShiftSlot requiredWithoutAny = required & ~ShiftSlot.Any;
-                // Check if any of the required shifts are active
                 return (current & requiredWithoutAny) != ShiftSlot.None;
             }
 
-            // Strict mode: require exact match
+            // Strict mode: exact match
             return current == required;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected static bool DirectionMatches(DeflectionDirection direction, DeflectionDirection mask)
-        {
-            return direction != DeflectionDirection.None && ((direction & mask) != 0);
-        }
+        protected static bool DirectionMatches(DeflectionDirection direction, DeflectionDirection mask) => direction != DeflectionDirection.None && (direction & mask) != 0;
 
+        //  Cloning
         public object Clone() => CloningHelper.DeepClone(this);
     }
 }

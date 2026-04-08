@@ -2159,9 +2159,6 @@
   <data name="MainWindow_Exit" xml:space="preserve">
     <value>종료</value>
   </data>
-  <data name="MainWindow_MainWindow" xml:space="preserve">
-    <value>메인 창</value>
-  </data>
   <data name="MainWindow_Navigate" xml:space="preserve">
     <value>탐색</value>
   </data>
@@ -2281,9 +2278,6 @@
   </data>
   <data name="PowerProfileManualDescription" xml:space="preserve">
     <value>사용자 정의 전원 및 팬 속도</value>
-  </data>
-  <data name="PowerProfileManualName" xml:space="preserve">
-    <value>수동 모드: {0}</value>
   </data>
   <data name="PowerProfileROGAllyBetterPerformanceDesc" xml:space="preserve">
     <value>모든 시나리오에서 성능, 온도 및 소음 균형 유지.</value>

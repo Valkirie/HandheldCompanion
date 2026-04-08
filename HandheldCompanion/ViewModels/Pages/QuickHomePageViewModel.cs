@@ -15,7 +15,7 @@ namespace HandheldCompanion.ViewModels
         public QuickHomePageViewModel()
         {
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(HotkeysList, new object());
+            BindingOperations.EnableCollectionSynchronization(HotkeysList, _collectionLock);
 
             // manage events
             ManagerFactory.hotkeysManager.Updated += HotkeysManager_Updated;

@@ -36,7 +36,7 @@ namespace HandheldCompanion.ViewModels
             _flag = flag;
 
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(TriggerMappings, new object());
+            BindingOperations.EnableCollectionSynchronization(TriggerMappings, _collectionLock);
 
             TriggerMappings.Add(new TriggerMappingViewModel(this, flag));
             TriggerMappings.CollectionChanged += TriggerMappings_CollectionChanged;

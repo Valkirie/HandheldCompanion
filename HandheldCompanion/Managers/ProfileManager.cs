@@ -89,12 +89,6 @@ public class ProfileManager : IManager
                 LayoutTitle = LayoutTemplate.DefaultLayout.Name,
             };
 
-            // get default power profiles
-            PowerProfile? betterPeformanceProfile = IDevice.GetCurrent().DevicePowerProfiles.FirstOrDefault(p => p.Guid == IDevice.BetterPerformanceGuid);
-            PowerProfile? bestPeformanceProfile = IDevice.GetCurrent().DevicePowerProfiles.FirstOrDefault(p => p.Guid == IDevice.BestPerformanceGuid);
-            defaultProfile.PowerProfiles[(int)PowerLineStatus.Offline] = betterPeformanceProfile?.Guid ?? Guid.Empty;
-            defaultProfile.PowerProfiles[(int)PowerLineStatus.Online] = bestPeformanceProfile?.Guid ?? Guid.Empty;
-
             UpdateOrCreateProfile(defaultProfile, UpdateSource.Creation);
         }
 
@@ -810,7 +804,8 @@ public class ProfileManager : IManager
             HidHide.UnregisterApplication(profile.Path);
 
             // Remove XInputPlus (extended compatibility)
-            XInputPlus.UnregisterApplication(profile);
+            if (profile.XInputPlus == XInputPlusMethod.Redirection)
+                XInputPlus.UnregisterApplication(profile);
 
             _ = profiles.TryRemove(profile.Guid, out Profile removedValue);
 
@@ -832,7 +827,7 @@ public class ProfileManager : IManager
             // todo: localize me
             ToastManager.SendToast($"{(profile.IsSubProfile ? "Subprofile" : "Profile")} {profile.Name} deleted");
 
-            LogManager.LogInformation($"Deleted {(profile.IsSubProfile ? "subprofile" : "profile")}: {0}", profilePath);
+            LogManager.LogInformation("Deleted {0}: {1}", (profile.IsSubProfile ? "subprofile" : "profile"), profilePath);
 
             // restore default profile
             if (isCurrent)
@@ -916,9 +911,10 @@ public class ProfileManager : IManager
                     profileToSanitize.ErrorCode |= ProfileErrorCode.MissingPermission;
             }
 
-            // todo: shouldn't we use path ?
-            if (ProcessManager.GetProcesses(profile.Executable).Any())
-                profile.ErrorCode |= ProfileErrorCode.Running;
+            // Skip the WinRT/COM process scan during the initial serializer pass;
+            // the foreground-changed event will set the Running flag correctly shortly after.
+            if (source != UpdateSource.Serializer && ProcessManager.GetProcesses(profileToSanitize.Executable).Any())
+                profileToSanitize.ErrorCode |= ProfileErrorCode.Running;
         }
 
         // check if profile power profile was deleted, if so, restore balanced
@@ -928,8 +924,9 @@ public class ProfileManager : IManager
             if (powerProfile == Guid.Empty)
                 continue;
 
-            if (!ManagerFactory.powerProfileManager.Contains(powerProfile))
-                profileToSanitize.PowerProfiles[idx] = Guid.Empty;
+            if (ManagerFactory.powerProfileManager.Status == ManagerStatus.Initialized)
+                if (!ManagerFactory.powerProfileManager.Contains(powerProfile))
+                    profileToSanitize.PowerProfiles[idx] = Guid.Empty;
         }
     }
 
@@ -947,6 +944,7 @@ public class ProfileManager : IManager
         bool isCurrent = source switch
         {
             UpdateSource.QuickProfilesCreation => true,
+            UpdateSource.QuickProfilesEnable => true,
             _ => IsCurrentProfile(profile)
         };
 
@@ -972,6 +970,18 @@ public class ProfileManager : IManager
                 default:
                     ManagerFactory.libraryManager.RefreshProfileArts(profile);
                     break;
+            }
+
+            // get default power profiles
+            if (profile.PowerProfiles[(int)PowerLineStatus.Offline] == Guid.Empty)
+            {
+                PowerProfile? betterPeformanceProfile = IDevice.GetCurrent().DevicePowerProfiles.FirstOrDefault(p => p.Guid == IDevice.BetterPerformanceGuid);
+                profile.PowerProfiles[(int)PowerLineStatus.Offline] = betterPeformanceProfile?.Guid ?? Guid.Empty;
+            }
+            if (profile.PowerProfiles[(int)PowerLineStatus.Online] == Guid.Empty)
+            {
+                PowerProfile? bestPeformanceProfile = IDevice.GetCurrent().DevicePowerProfiles.FirstOrDefault(p => p.Guid == IDevice.BestPerformanceGuid);
+                profile.PowerProfiles[(int)PowerLineStatus.Online] = bestPeformanceProfile?.Guid ?? Guid.Empty;
             }
         }
 
@@ -1025,13 +1035,10 @@ public class ProfileManager : IManager
 
     public bool UpdateProfileCloaking(Profile profile)
     {
-        switch (profile.ErrorCode)
-        {
-            case ProfileErrorCode.MissingExecutable:
-            case ProfileErrorCode.MissingPath:
-            case ProfileErrorCode.Default:
-                return false;
-        }
+        if (profile.ErrorCode.HasFlag(ProfileErrorCode.MissingExecutable) ||
+            profile.ErrorCode.HasFlag(ProfileErrorCode.MissingPath) ||
+            profile.ErrorCode.HasFlag(ProfileErrorCode.Default))
+            return false;
 
         switch (profile.Whitelisted)
         {
@@ -1045,14 +1052,15 @@ public class ProfileManager : IManager
 
     public bool UpdateProfileWrapper(Profile profile)
     {
-        switch (profile.ErrorCode)
-        {
-            case ProfileErrorCode.MissingPermission:
-            case ProfileErrorCode.MissingPath:
-            case ProfileErrorCode.Running:
-            case ProfileErrorCode.Default:
-                return false;
-        }
+        if (profile.ErrorCode.HasFlag(ProfileErrorCode.MissingPermission) ||
+            profile.ErrorCode.HasFlag(ProfileErrorCode.MissingPath) ||
+            profile.ErrorCode.HasFlag(ProfileErrorCode.Default))
+            return false;
+
+        // Redirection deploys DLLs into the game directory; can't do that while the process is running.
+        // Injection happens per process-start event, so Running is not a blocker there.
+        if (profile.ErrorCode.HasFlag(ProfileErrorCode.Running) && profile.XInputPlus == XInputPlusMethod.Redirection)
+            return false;
 
         switch (profile.XInputPlus)
         {

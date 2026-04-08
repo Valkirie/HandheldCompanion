@@ -18,7 +18,7 @@ namespace HandheldCompanion.ViewModels
         public LayoutPageViewModel(LayoutPage layoutPage)
         {
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(layoutList, new object());
+            BindingOperations.EnableCollectionSynchronization(layoutList, _collectionLock);
 
             // manage events
             ManagerFactory.layoutManager.Updated += LayoutManager_Updated;
@@ -77,7 +77,7 @@ namespace HandheldCompanion.ViewModels
 
         private void LayoutManager_Updated(LayoutTemplate layoutTemplate)
         {
-            lock (lockcollection)
+            lock (_collectionLock)
             {
                 int index;
                 LayoutTemplateViewModel? foundPreset = layoutList.FirstOrDefault(p => p.Guid == layoutTemplate.Guid);
@@ -95,7 +95,6 @@ namespace HandheldCompanion.ViewModels
             RefreshLayoutList();
         }
 
-        private object lockcollection = new();
         private void RefreshLayoutList()
         {
             // Get filter settings
@@ -104,7 +103,7 @@ namespace HandheldCompanion.ViewModels
             // Get current controller
             IController? controller = ControllerManager.GetTarget();
 
-            lock (lockcollection)
+            lock (_collectionLock)
             {
                 foreach (LayoutTemplateViewModel layoutTemplate in layoutList)
                 {

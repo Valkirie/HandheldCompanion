@@ -99,9 +99,10 @@ public class PlatformManager : IManager
 
     public static GamePlatform GetPlatform(ProcessEx proc)
     {
-        foreach (IPlatform platform in GamingPlatforms)
-            if (platform.IsRelated(proc))
-                return platform.PlatformType;
+        if (ManagerFactory.platformManager.Status == ManagerStatus.Initialized)
+            foreach (IPlatform platform in GamingPlatforms)
+                if (platform.IsRelated(proc))
+                    return platform.PlatformType;
 
         return GamePlatform.Generic;
     }

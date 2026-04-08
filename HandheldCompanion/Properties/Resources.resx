@@ -798,6 +798,18 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="ProfilesPage_Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
+  <data name="ProfilesPage_ProcessControl" xml:space="preserve">
+    <value>Process control</value>
+  </data>
+  <data name="ProfilesPage_SuspendProcess" xml:space="preserve">
+    <value>Suspend</value>
+  </data>
+  <data name="ProfilesPage_ResumeProcess" xml:space="preserve">
+    <value>Resume</value>
+  </data>
+  <data name="ProfilesPage_StopProcess" xml:space="preserve">
+    <value>Stop</value>
+  </data>
   <data name="Properties_Resources_ControllerPage_Disconnect" xml:space="preserve">
     <value>Disconnect</value>
   </data>
@@ -2182,7 +2194,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Exit</value>
   </data>
   <data name="MainWindow_MainWindow" xml:space="preserve">
-    <value>Main Window</value>
+    <value>Handheld Companion</value>
   </data>
   <data name="MainWindow_Navigate" xml:space="preserve">
     <value>Navigate</value>
@@ -2314,7 +2326,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>User-defined power and fan speed.</value>
   </data>
   <data name="PowerProfileManualName" xml:space="preserve">
-    <value>Manual mode: {0}</value>
+    <value>Manual mode {0}</value>
   </data>
   <data name="PowerProfileROGAllyBetterPerformanceDesc" xml:space="preserve">
     <value>Balances performance, temperature and acoustic for any scenario.</value>
@@ -4106,5 +4118,17 @@ Thank you for using HC and helping us make it better.</value>
   </data>
   <data name="SettingsPage_ThemesOptions" xml:space="preserve">
     <value>Themes options</value>
+  </data>
+  <data name="ProfilesPage_EmulatedControllervJoy" xml:space="preserve">
+    <value>Emulated DInput controller</value>
+  </data>
+  <data name="Enum_HIDmode_vJoyController" xml:space="preserve">
+    <value>Emulated DInput controller</value>
+  </data>
+  <data name="MainWindow_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="MainWindow_Open" xml:space="preserve">
+    <value>Open</value>
   </data>
 </root>

@@ -2167,9 +2167,6 @@
   <data name="MainWindow_Exit" xml:space="preserve">
     <value>Salir</value>
   </data>
-  <data name="MainWindow_MainWindow" xml:space="preserve">
-    <value>Ventana principal</value>
-  </data>
   <data name="MainWindow_Navigate" xml:space="preserve">
     <value>Navegar</value>
   </data>
@@ -2289,9 +2286,6 @@
   </data>
   <data name="PowerProfileManualDescription" xml:space="preserve">
     <value>User-defined power and fan speed.</value>
-  </data>
-  <data name="PowerProfileManualName" xml:space="preserve">
-    <value>Manual mode: {0}</value>
   </data>
   <data name="PowerProfileROGAllyBetterPerformanceDesc" xml:space="preserve">
     <value>Balances performance, temperature and acoustic for any scenario.</value>

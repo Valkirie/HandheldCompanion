@@ -2,6 +2,7 @@
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Utils;
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using static SDL3.SDL;
@@ -13,28 +14,32 @@ namespace HandheldCompanion.Controllers
     {
         public nint gamepad = IntPtr.Zero;
         public uint deviceIndex = 0;
-        public uint deviceProperties => GetGamepadProperties(this.gamepad);
 
-        public override bool IsConnected() => GamepadConnected(this.gamepad);
-        public override byte UserIndex => (byte)GetGamepadPlayerIndex(this.gamepad);
+        // Cached capabilities — read once in the constructor, never recomputed
+        public readonly uint deviceProperties;
+        public readonly GamepadType GamepadType;
 
-        private bool HasGyro => GamepadHasSensor(this.gamepad, SensorType.Gyro);
-        private bool HasAccel => GamepadHasSensor(this.gamepad, SensorType.Accel);
-        private bool HasMotion => HasGyro || HasAccel;
+        private readonly bool HasGyro;
+        private readonly bool HasAccel;
+        private readonly bool HasMotion;
 
-        private bool HasButton(GamepadButton button) => GamepadHasButton(this.gamepad, button);
-        private bool HasAxis(GamepadAxis axis) => GamepadHasAxis(this.gamepad, axis);
+        private readonly FrozenSet<GamepadButton> _supportedButtons = FrozenSet<GamepadButton>.Empty;
+        private readonly FrozenSet<GamepadAxis> _supportedAxes = FrozenSet<GamepadAxis>.Empty;
+        private bool HasButton(GamepadButton button) => _supportedButtons.Contains(button);
+        private bool HasAxis(GamepadAxis axis) => _supportedAxes.Contains(axis);
 
-        private bool HasTouchpad => GetTouchpads() != 0;
+        private readonly bool HasTouchpad;
         protected virtual int GetTouchpads() => GetNumGamepadTouchpads(this.gamepad);
         protected virtual int GetTouchpadFingers(int touchpad) => GetNumGamepadTouchpadFingers(this.gamepad, touchpad);
 
-        private bool HasMonoLed => GetBooleanProperty(deviceProperties, Props.GamepadCapMonoLedBoolean, false);
-        private bool HasRGBLed => GetBooleanProperty(deviceProperties, Props.GamepadCapRGBLedBoolean, false);
-        private bool HasPlayerLed => GetBooleanProperty(deviceProperties, Props.GamepadCapPlayerLedBoolean, false);
-        private bool HasRumble => GetBooleanProperty(deviceProperties, Props.GamepadCapRumbleBoolean, false);
-        private bool HasTriggerRumble => GetBooleanProperty(deviceProperties, Props.GamepadCapTriggerRumbleBoolean, false);
+        private readonly bool HasMonoLed;
+        private readonly bool HasRGBLed;
+        private readonly bool HasPlayerLed;
+        private readonly bool HasRumble;
+        private readonly bool HasTriggerRumble;
 
+        public override bool IsConnected() => GamepadConnected(this.gamepad);
+        public override byte UserIndex => (byte)GetGamepadPlayerIndex(this.gamepad);
         public override bool IsWireless() => GetGamepadConnectionState(this.gamepad) == JoystickConnectionState.Wireless;
 
         protected const byte TriggerThreshold = 60;
@@ -43,7 +48,8 @@ namespace HandheldCompanion.Controllers
         private readonly float freq = GetPerformanceFrequency();
 
         public SDLController()
-        { }
+        {
+        }
 
         public SDLController(nint gamepad, uint deviceIndex, PnPDetails details)
         {
@@ -52,6 +58,34 @@ namespace HandheldCompanion.Controllers
 
             this.gamepad = gamepad;
             this.deviceIndex = deviceIndex;
+
+            // Cache all capabilities once — avoids repeated SDL calls on every tick
+            deviceProperties = GetGamepadProperties(gamepad);
+            GamepadType = GetGamepadType(this.gamepad);
+
+            HasGyro = GamepadHasSensor(gamepad, SensorType.Gyro);
+            HasAccel = GamepadHasSensor(gamepad, SensorType.Accel);
+            HasMotion = HasGyro || HasAccel;
+
+            HasMonoLed = GetBooleanProperty(deviceProperties, Props.GamepadCapMonoLedBoolean, false);
+            HasRGBLed = GetBooleanProperty(deviceProperties, Props.GamepadCapRGBLedBoolean, false);
+            HasPlayerLed = GetBooleanProperty(deviceProperties, Props.GamepadCapPlayerLedBoolean, false);
+            HasRumble = GetBooleanProperty(deviceProperties, Props.GamepadCapRumbleBoolean, false);
+            HasTriggerRumble = GetBooleanProperty(deviceProperties, Props.GamepadCapTriggerRumbleBoolean, false);
+
+            HasTouchpad = GetTouchpads() != 0;
+
+            var buttons = new HashSet<GamepadButton>();
+            foreach (GamepadButton btn in Enum.GetValues<GamepadButton>())
+                if (GamepadHasButton(gamepad, btn))
+                    buttons.Add(btn);
+            _supportedButtons = buttons.ToFrozenSet();
+
+            var axes = new HashSet<GamepadAxis>();
+            foreach (GamepadAxis axis in Enum.GetValues<GamepadAxis>())
+                if (GamepadHasAxis(gamepad, axis))
+                    axes.Add(axis);
+            _supportedAxes = axes.ToFrozenSet();
 
             // prepare sensor
             SetGamepadSensorEnabled(gamepad, SensorType.Gyro, HasGyro);
@@ -92,8 +126,6 @@ namespace HandheldCompanion.Controllers
                     break;
             }
         }
-
-        public GamepadType GamepadType => GetGamepadType(this.gamepad);
 
         public override void AttachDetails(PnPDetails details)
         {
@@ -371,6 +403,43 @@ namespace HandheldCompanion.Controllers
                 gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
 
             base.Tick(ticks, delta);
+        }
+
+        public override string GetGlyph(ButtonFlags button)
+        {
+            string glyph = base.GetGlyph(button);
+            if (glyph.Equals(defaultGlyph))
+            {
+                // lazy, custom buttons
+                return button.ToString();
+            }
+
+            return glyph;
+        }
+
+        public override string GetGlyph(AxisFlags axis)
+        {
+            switch (axis)
+            {
+                case AxisFlags.L2:
+                    return "\u2196"; // LT
+                case AxisFlags.R2:
+                    return "\u2197"; // RT
+            }
+
+            return base.GetGlyph(axis);
+        }
+
+        public override string GetGlyph(AxisLayoutFlags axis)
+        {
+            string glyph = base.GetGlyph(axis);
+            if (glyph.Equals(defaultGlyph))
+            {
+                // lazy, custom buttons
+                return axis.ToString();
+            }
+
+            return glyph;
         }
 
         public override void Unplug()

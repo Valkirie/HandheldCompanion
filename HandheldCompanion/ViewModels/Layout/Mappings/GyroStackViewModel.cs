@@ -36,7 +36,7 @@ namespace HandheldCompanion.ViewModels
             _flag = flag;
 
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(GyroMappings, new object());
+            BindingOperations.EnableCollectionSynchronization(GyroMappings, _collectionLock);
 
             GyroMappings.Add(new GyroMappingViewModel(flag));
 

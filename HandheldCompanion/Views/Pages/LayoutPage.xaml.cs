@@ -64,8 +64,8 @@ public partial class LayoutPage : Page
 
     private void ControllerManager_ControllerSelected(IController Controller)
     {
-        // UI thread
-        UIHelper.TryInvoke(() =>
+        // UI thread (async to prevent blocking event callers)
+        UIHelper.TryBeginInvoke(() =>
         {
             L2.Glyph = Controller.GetGlyph(AxisFlags.L2);
             R2.Glyph = Controller.GetGlyph(AxisFlags.R2);
@@ -147,7 +147,8 @@ public partial class LayoutPage : Page
             {
                 case UpdateSource.QuickProfilesPage:
                     {
-                        if (ProfilesPage.selectedProfile.Name.Equals(profile.Name))
+                        if (ProfilesPage.selectedProfile != null &&
+                            ProfilesPage.selectedProfile.Name.Equals(profile.Name))
                             UpdateLayout(profile.Layout);
                     }
                     break;
@@ -204,18 +205,17 @@ public partial class LayoutPage : Page
         // This is a very important lock, it blocks backward events to the layout when
         // this is actually the backend that triggered the update. Notifications on higher
         // levels (pages and mappings) could potentially be blocked for optimization.
-        lock (updateLock)
+        UIHelper.TryBeginInvoke(() =>
         {
-            // Invoke Layout Updated to trigger ViewModel updates
-            LayoutUpdated?.Invoke(currentTemplate.Layout);
-
-            // UI thread
-            UIHelper.TryInvoke(() =>
+            lock (updateLock)
             {
+                // Invoke Layout Updated to trigger ViewModel updates
+                LayoutUpdated?.Invoke(currentTemplate.Layout);
+
                 // clear layout selection
                 cB_Layouts.SelectedValue = null;
-            });
-        }
+            }
+        });
     }
 
     private async void ButtonApplyLayout_Click(object sender, RoutedEventArgs e)

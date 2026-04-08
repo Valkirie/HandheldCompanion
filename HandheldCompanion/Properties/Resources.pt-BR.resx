@@ -2181,9 +2181,6 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="MainWindow_Exit" xml:space="preserve">
     <value>Sair</value>
   </data>
-  <data name="MainWindow_MainWindow" xml:space="preserve">
-    <value>Janela Principal</value>
-  </data>
   <data name="MainWindow_Navigate" xml:space="preserve">
     <value>Navegar</value>
   </data>
@@ -2312,9 +2309,6 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   </data>
   <data name="PowerProfileManualDescription" xml:space="preserve">
     <value>Energia e velocidade de ventoinhas definidas pelo usuário.</value>
-  </data>
-  <data name="PowerProfileManualName" xml:space="preserve">
-    <value>Modo Manual: {0}</value>
   </data>
   <data name="PowerProfileROGAllyBetterPerformanceDesc" xml:space="preserve">
     <value>Equilibra desempenho, temperatura e acústica para qualquer cenário.</value>

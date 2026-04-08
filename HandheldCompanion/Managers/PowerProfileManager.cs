@@ -293,6 +293,9 @@ namespace HandheldCompanion.Managers
                 return;
             }
 
+            // store fileName (needed for rename-safe serialization)
+            profile.FileName = Path.GetFileName(fileName);
+
             UpdateOrCreateProfile(profile, UpdateSource.Serializer);
         }
 
@@ -328,6 +331,38 @@ namespace HandheldCompanion.Managers
 
             // serialize profile
             SerializeProfile(profile);
+        }
+
+        public string GetProfileName(string nameTemplate)
+        {
+            string template = (nameTemplate ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(template))
+                template = "Manual mode {0}";
+
+            bool hasPlaceholder = template.Contains("{0}");
+
+            // Build a case-insensitive set of existing filenames (current + disk)
+            HashSet<string> existingFiles = new(StringComparer.OrdinalIgnoreCase);
+
+            foreach (PowerProfile p in profiles.Values)
+                existingFiles.Add(p.GetFileName());
+
+            foreach (string path in Directory.GetFiles(ManagerPath, "*.json", SearchOption.TopDirectoryOnly))
+                existingFiles.Add(Path.GetFileName(path));
+
+            int idx = 1;
+            while (true)
+            {
+                string candidateName = hasPlaceholder ? string.Format(template, idx) : $"{template} {idx}";
+                string candidateFile = $"{FileUtils.MakeValidFileName(candidateName)}.json";
+                if (string.IsNullOrWhiteSpace(candidateFile) || candidateFile.Equals(".json", StringComparison.OrdinalIgnoreCase))
+                    candidateFile = $"Manual mode {idx}.json";
+
+                if (!existingFiles.Contains(candidateFile))
+                    return candidateName;
+
+                idx++;
+            }
         }
 
         public bool Contains(Guid guid)
@@ -373,6 +408,9 @@ namespace HandheldCompanion.Managers
 
         public void SerializeProfile(PowerProfile profile)
         {
+            // prepare for writing
+            string profilePath = Path.Combine(ManagerPath, profile.GetFileName());
+
             // update profile version to current build
             profile.Version = MainWindow.CurrentVersion;
 
@@ -381,13 +419,23 @@ namespace HandheldCompanion.Managers
                 TypeNameHandling = TypeNameHandling.All
             });
 
-            // prepare for writing
-            var profilePath = Path.Combine(ManagerPath, profile.GetFileName());
-
             try
             {
+                // delete old file if fileName has changed (rename scenario)
+                if (!string.IsNullOrEmpty(profile.FileName) &&
+                    !profile.FileName.Equals(profile.GetFileName(), StringComparison.InvariantCultureIgnoreCase))
+                {
+                    string oldPath = Path.Combine(ManagerPath, profile.FileName);
+                    File.Delete(oldPath);
+                }
+
                 if (FileUtils.IsFileWritable(profilePath))
+                {
+                    // update profile filename
+                    profile.FileName = profile.GetFileName();
+
                     File.WriteAllText(profilePath, jsonString);
+                }
             }
             catch { }
         }

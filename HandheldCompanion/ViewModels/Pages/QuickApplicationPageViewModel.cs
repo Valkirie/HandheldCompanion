@@ -98,8 +98,8 @@ namespace HandheldCompanion.ViewModels
         public QuickApplicationsPageViewModel()
         {
             // Enable thread-safe access to the collection
-            BindingOperations.EnableCollectionSynchronization(Processes, new object());
-            BindingOperations.EnableCollectionSynchronization(Profiles, new object());
+            BindingOperations.EnableCollectionSynchronization(Processes, _collectionLock);
+            BindingOperations.EnableCollectionSynchronization(Profiles, _collectionLock2);
             Profiles.CollectionChanged += (s, e) =>
             {
                 OnPropertyChanged(nameof(TotalPages));
@@ -170,6 +170,10 @@ namespace HandheldCompanion.ViewModels
 
         private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
         {
+            // Serializer loads are handled in bulk after ProfileManager initializes.
+            if (source == UpdateSource.Serializer)
+                return;
+
             // ignore me
             if (profile.Default)
                 return;
@@ -227,7 +231,7 @@ namespace HandheldCompanion.ViewModels
             ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
             if (foundProcess is null)
             {
-                Processes.SafeAdd(new ProcessExViewModel(processEx, this));
+                Processes.SafeAdd(new ProcessExViewModel(processEx, true));
             }
             else
             {

@@ -148,7 +148,7 @@ end;
 
 //Stops process with name 'nameOfFile'
 //Stops parent process of the app and all child processes (e.g. javaw.exe)
-function stopProcess(nameOfFile:string):boolean;
+function stopProcessWithWait(nameOfFile: string; waitMs: Integer): boolean;
 var resultCode: integer;
 begin
   log('***Enter stopProcess()***');
@@ -165,14 +165,18 @@ begin
     log('XXX--Failed to stop "' +nameOfFile+ '". No program with this name could be found. ResultCode: ' +intToStr(resultCode)+  ' --XXX');
   end;
 
-  //Give process some time to stop
-  sleep(2000);
+  Sleep(waitMs);
   log('!!*Leave stopProcess()*!!');
+end;
+
+function stopProcess(nameOfFile: string): boolean;
+begin
+  Result := stopProcessWithWait(nameOfFile, 500);
 end;
 
 
 
-function stopProcessById(processId:string):boolean;
+function stopProcessByIdWithWait(processId: string; waitMs: Integer): boolean;
 var resultCode: integer;
 begin
   log('***Enter stopProcessById()***');
@@ -189,9 +193,13 @@ begin
     log('XXX--Failed to stop process with id "' +processId+ '". No process with this id could be found. ResultCode: ' +intToStr(resultCode)+  ' --XXX');
   end;
 
-  //Give process some time to stop
-  sleep(2000);
+  Sleep(waitMs);
   log('!!*Leave stopProcessById()*!!');
+end;
+
+function stopProcessById(processId: string): boolean;
+begin
+  Result := stopProcessByIdWithWait(processId, 500);
 end;
 
 

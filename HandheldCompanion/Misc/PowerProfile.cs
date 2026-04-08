@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
 using System;
-using System.IO;
-using System.Text.RegularExpressions;
 
 namespace HandheldCompanion.Misc
 {
@@ -58,18 +57,15 @@ namespace HandheldCompanion.Misc
         {
             Name = name;
             Description = description;
-
-            // Remove any invalid characters from the input
-            string invalidChars = Regex.Escape(new string(Path.GetInvalidFileNameChars()));
-            string output = Regex.Replace(name, "[" + invalidChars + "]", string.Empty);
-            output = output.Trim();
-
-            FileName = output;
         }
 
         public string GetFileName()
         {
-            return $"{FileName}.json";
+            string safe = FileUtils.MakeValidFileName(Name);
+            if (string.IsNullOrWhiteSpace(safe))
+                safe = "PowerProfile";
+
+            return $"{safe}.json";
         }
 
         public bool IsDefault()

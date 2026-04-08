@@ -159,6 +159,7 @@
                     <ComboBox Name="cB_HidMode" SelectionChanged="cB_HidMode_SelectionChanged">
                         <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_Xbox360Controller}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_DualShock4Controller}" />
+                        <ComboBoxItem Name="cB_HidModeDInputItem" Content="{l:Static resx:Resources.Enum_HIDmode_vJoyController}" />
                     </ComboBox>
                 </ui:SettingsCard>
 
@@ -185,9 +186,8 @@
                             LargeChange="10"
                             Maximum="100"
                             Minimum="0"
-                            SmallChange="5"
-                            TickFrequency="5"
-                            TickPlacement="BottomRight"
+                            SmallChange="1"
+                            TickFrequency="1"
                             ToolTip="{Binding Value, StringFormat={}{0:N0}%, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                             ValueChanged="SliderStrength_ValueChanged"
                             Value="100" />
@@ -216,7 +216,7 @@
                             Style="{DynamicResource AccentButtonStyle}"
                             ToolTip="Adjust controllers order"
                             Visibility="Collapsed">
-                            <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xec7a;" />
+                            Adjust order
                         </Button>
                     </StackPanel>
                 </ui:SettingsCard>
