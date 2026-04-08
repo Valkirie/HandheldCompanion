@@ -21,7 +21,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
@@ -34,7 +33,6 @@ using System.Windows.Navigation;
 using System.Windows.Shell;
 using Windows.UI.ViewManagement;
 using Control = System.Windows.Controls.Control;
-using Frame = System.Windows.Controls.Frame;
 using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
 using Page = System.Windows.Controls.Page;
 using RadioButton = System.Windows.Controls.RadioButton;
@@ -119,11 +117,6 @@ public partial class MainWindow : GamepadWindow
 
     private static bool StartMinimized => ManagerFactory.settingsManager.GetBoolean("StartMinimized");
     private static bool StartMaximized => ManagerFactory.settingsManager.GetBoolean("StartMaximized");
-    private static bool ShowSplashScreen => ManagerFactory.settingsManager.GetBoolean("ShowSplashScreen");
-
-    private static bool StartMinimized => ManagerFactory.settingsManager.GetBoolean("StartMinimized");
-    private static bool StartMaximized => ManagerFactory.settingsManager.GetBoolean("StartMaximized");
-    private static bool PreloadPages => ManagerFactory.settingsManager.GetBoolean("PreloadPages");
     private static bool ShowSplashScreen => ManagerFactory.settingsManager.GetBoolean("ShowSplashScreen");
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)

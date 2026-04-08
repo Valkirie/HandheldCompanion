@@ -209,6 +209,9 @@ public partial class LayoutPage : Page
         {
             lock (updateLock)
             {
+                // Invoke Layout Updated to trigger ViewModel updates
+                LayoutUpdated?.Invoke(currentTemplate.Layout);
+
                 // clear layout selection
                 cB_Layouts.SelectedValue = null;
             }

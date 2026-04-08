@@ -32,7 +32,6 @@ namespace HandheldCompanion.ViewModels
     {
         public ObservableCollection<ProfileViewModel> Profiles { get; set; } = [];
         public ListCollectionView ProfilesView { get; }
-        public ListCollectionView FavoritesView { get; }
 
         private bool _sortAscending => ManagerFactory.settingsManager.GetBoolean("LibrarySortAscending");
         public bool SortAscending
@@ -461,10 +460,6 @@ namespace HandheldCompanion.ViewModels
                 case 3:
                     ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.LastUsed), direction));
                     ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.LastUsed));
-                    break;
-                case 3:
-                    ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.PlatformType), direction));
-                    ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.PlatformType));
                     break;
             }
 

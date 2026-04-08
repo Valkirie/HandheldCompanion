@@ -610,6 +610,8 @@ public class LayoutManager : IManager
                             var xyOut = _axisXY[tA.Axis];
                             outputState.AxisState[xyOut.Y] = ClampByte(outputState.AxisState[xyOut.Y] + tA.GetValue());
                         }
+                        break;
+
                     case ActionType.Mouse:
                         if (action is MouseActions mA)
                             mA.Execute(layout, touched, shiftSlot, deltaMs);

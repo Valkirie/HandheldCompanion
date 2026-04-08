@@ -244,10 +244,6 @@ namespace HandheldCompanion.ViewModels
             // clear windows
             ProcessWindows.SafeClear();
 
-            // Dispose each window from the snapshot (outside the lock)
-            foreach (WindowListItemViewModel processWindow in windowsSnapshot)
-                processWindow.Dispose();
-
             // dispose commands
             KillProcessCommand = null;
             _process = null;

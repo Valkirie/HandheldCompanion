@@ -80,17 +80,6 @@ public partial class QuickProfilesPage : Page
             }.ShowAsync();
         };
 
-        switch (ManagerFactory.platformManager.Status)
-        {
-            default:
-            case ManagerStatus.Initializing:
-                ManagerFactory.platformManager.Initialized += PlatformManager_Initialized;
-                break;
-            case ManagerStatus.Initialized:
-                QueryPlatforms();
-                break;
-        }
-
         foreach (var mode in Enum.GetValues<MotionOutput>())
         {
             var comboBoxItem = new ComboBoxItem()
