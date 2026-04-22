@@ -16,7 +16,7 @@ namespace steam_hidapi.net
 
         public NeptuneController(ushort vid, ushort pid, short index) : base(vid, pid, index)
         {
-            _hidDevice = new HidDevice(_vid, _pid, 64, index)
+            _hidDevice = new HidDevice(_vid, _pid, 65, index)
             {
                 OnInputReceived = input =>
                 {
