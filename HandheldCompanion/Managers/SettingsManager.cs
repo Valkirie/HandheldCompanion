@@ -16,6 +16,10 @@ public static class Settings
     public static readonly string ConfigurableTDPOverrideDown = "ConfigurableTDPOverrideDown";
     public static readonly string ConfigurableTDPOverrideUp = "ConfigurableTDPOverrideUp";
 
+    public static readonly string LibraryPageEnabled = "LibraryPageEnabled";
+    public static readonly string PerformanceManagerEnabled = "PerformanceManagerEnabled";
+    public static readonly string GPUManagementEnabled = "GPUManagementEnabled";
+
     public static readonly string OnScreenDisplayRefreshRate = "OnScreenDisplayRefreshRate";
     public static readonly string OnScreenDisplayLevel = "OnScreenDisplayLevel";
     public static readonly string OnScreenDisplayTimeLevel = "OnScreenDisplayTimeLevel";
@@ -46,10 +50,10 @@ public enum LayoutModes
 
 public class SettingsManager : IManager
 {
-    public delegate void SettingValueChangedEventHandler(string name, object value, bool temporary);
-    public event SettingValueChangedEventHandler SettingValueChanged;
+    public delegate void SettingValueChangedEventHandler(string name, object? value, bool temporary);
+    public event SettingValueChangedEventHandler? SettingValueChanged;
 
-    private readonly Dictionary<string, object> Settings = [];
+    private readonly Dictionary<string, object?> Settings = [];
 
     public SettingsManager()
     {
@@ -83,7 +87,7 @@ public class SettingsManager : IManager
         base.Stop();
     }
 
-    public void SetProperty(string name, object value, bool force = false, bool temporary = false)
+    public void SetProperty(string name, object? value, bool force = false, bool temporary = false)
     {
         var prevValue = GetProperty(name, temporary);
 
@@ -96,7 +100,7 @@ public class SettingsManager : IManager
                         return;
                     break;
                 default:
-                    if (prevValue.ToString() == value.ToString() && !force)
+                    if (prevValue.ToString() == value?.ToString() && !force)
                         return;
                     break;
             }
@@ -127,7 +131,7 @@ public class SettingsManager : IManager
             if (Status.HasFlag(ManagerStatus.Initialized) || force)
                 SettingValueChanged?.Invoke(name, value, temporary);
 
-            LogManager.LogDebug("Settings {0} set to {1}", name, value);
+            LogManager.LogDebug("Settings {0} set to {1}", name, value ?? "null");
         }
         catch (Exception) { }
     }
@@ -207,9 +211,9 @@ public class SettingsManager : IManager
             default:
                 {
                     if (temporary && Settings.TryGetValue(name, out var property))
-                        return property;
+                        return property ?? false;
                     if (PropertyExists(name))
-                        return Properties.Settings.Default[name];
+                        return Properties.Settings.Default[name] ?? false;
 
                     return false;
                 }
@@ -218,56 +222,61 @@ public class SettingsManager : IManager
 
     public string GetString(string name, bool temporary = false)
     {
-        return Convert.ToString(GetProperty(name, temporary));
+        try { return Convert.ToString(GetProperty(name, temporary)) ?? string.Empty; }
+        catch { return string.Empty; }
     }
 
     public bool GetBoolean(string name, bool temporary = false)
     {
-        return Convert.ToBoolean(GetProperty(name, temporary));
+        try { return Convert.ToBoolean(GetProperty(name, temporary)); }
+        catch { return false; }
     }
 
     public Color GetColor(string name, bool temporary = false)
     {
-        // Conver color, which is stored as a HEX string to a color datatype
-        string hexColor = Convert.ToString(GetProperty(name, temporary));
+        try
+        {
+            string? hexColor = Convert.ToString(GetProperty(name, temporary));
+            if (hexColor is null)
+                return Colors.Transparent;
 
-        // Remove the '#' character and convert the remaining string to a 32-bit integer
-        var argbValue = int.Parse(hexColor.Substring(1), System.Globalization.NumberStyles.HexNumber);
-
-        // Extract alpha, red, green, and blue components
-        byte alpha = (byte)((argbValue >> 24) & 0xFF);
-        byte red = (byte)((argbValue >> 16) & 0xFF);
-        byte green = (byte)((argbValue >> 8) & 0xFF);
-        byte blue = (byte)(argbValue & 0xFF);
-
-        // Create a Color object from the extracted components
-        Color color = Color.FromArgb(alpha, red, green, blue);
-
-        return color;
+            int argbValue = int.Parse(hexColor.Substring(1), System.Globalization.NumberStyles.HexNumber);
+            return Color.FromArgb(
+                (byte)((argbValue >> 24) & 0xFF),
+                (byte)((argbValue >> 16) & 0xFF),
+                (byte)((argbValue >> 8) & 0xFF),
+                (byte)(argbValue & 0xFF));
+        }
+        catch { return Colors.Transparent; }
     }
 
     public int GetInt(string name, bool temporary = false)
     {
-        return Convert.ToInt32(GetProperty(name, temporary));
+        try { return Convert.ToInt32(GetProperty(name, temporary)); }
+        catch { return 0; }
     }
 
     public uint GetUInt(string name, bool temporary = false)
     {
-        return Convert.ToUInt32(GetProperty(name, temporary));
+        try { return Convert.ToUInt32(GetProperty(name, temporary)); }
+        catch { return 0u; }
     }
 
     public DateTime GetDateTime(string name, bool temporary = false)
     {
-        return Convert.ToDateTime(GetProperty(name, temporary));
+        try { return Convert.ToDateTime(GetProperty(name, temporary)); }
+        catch { return default; }
     }
 
     public double GetDouble(string name, bool temporary = false)
     {
-        return Convert.ToDouble(GetProperty(name, temporary));
+        try { return Convert.ToDouble(GetProperty(name, temporary)); }
+        catch { return 0d; }
     }
 
     public StringCollection GetStringCollection(string name, bool temporary = false)
     {
-        return (StringCollection)GetProperty(name, temporary);
+        try { return (StringCollection)GetProperty(name, temporary); }
+        catch { return []; }
     }
 }
