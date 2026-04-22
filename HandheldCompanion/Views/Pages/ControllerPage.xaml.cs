@@ -113,6 +113,9 @@ public partial class ControllerPage : Page
 
     private void cB_HidMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        if (!IsLoaded)
+            return;
+
         if (cB_HidMode.SelectedIndex == -1)
             return;
 
@@ -124,6 +127,9 @@ public partial class ControllerPage : Page
 
     private void cB_ServiceSwitch_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        if (!IsLoaded)
+            return;
+
         if (cB_HidMode.SelectedIndex == -1)
             return;
 
