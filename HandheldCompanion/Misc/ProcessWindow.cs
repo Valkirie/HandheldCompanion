@@ -2,6 +2,7 @@
 using HandheldCompanion.Utils;
 using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Automation;
 
 namespace HandheldCompanion.Misc
@@ -74,6 +75,7 @@ namespace HandheldCompanion.Misc
 
         private void OnClosed(object sender, AutomationEventArgs e)
         {
+            if (_disposed) return;
             Closed?.Invoke(this, EventArgs.Empty);
         }
 
@@ -84,18 +86,21 @@ namespace HandheldCompanion.Misc
 
         private void OnPropertyChanged(object sender, AutomationPropertyChangedEventArgs e)
         {
+            if (_disposed) return;
+
             try
             {
-                if (Element != null)
+                if (e.Property == AutomationElement.NameProperty)
                 {
-                    if (e.Property == AutomationElement.NameProperty)
-                    {
-                        RefreshName();
-                    }
-                    else if (e.Property == AutomationElement.BoundingRectangleProperty)
-                    {
-                        Refreshed?.Invoke(this, EventArgs.Empty);
-                    }
+                    // Run off the UIAutomation callback thread: GetWindowText sends WM_GETTEXT
+                    // cross-process, which blocks the calling thread until the target processes
+                    // the message. Blocking the UIA STA thread prevents it from pumping incoming
+                    // COM messages and can deadlock the target application on close.
+                    Task.Run(RefreshName);
+                }
+                else if (e.Property == AutomationElement.BoundingRectangleProperty)
+                {
+                    Refreshed?.Invoke(this, EventArgs.Empty);
                 }
             }
             catch { }
@@ -129,34 +134,57 @@ namespace HandheldCompanion.Misc
         {
             if (_disposed) return;
 
+            // Mark as disposed first to stop any concurrent callbacks.
+            _disposed = true;
+
             if (disposing)
             {
-                try
+                // Capture references before clearing them.
+                var localElement = Element;
+                var localPropertyHandle = propertyHandle;
+                var localEventHandler = eventHandler;
+
+                // Release the COM reference to the target window's accessibility provider
+                // as early as possible. Holding AutomationElement after the target window
+                // is destroyed can block the target process from completing COM cleanup.
+                Element = null;
+                propertyHandle = null;
+                eventHandler = null;
+
+                // Remove event handlers asynchronously (fire-and-forget).
+                //
+                // IMPORTANT: Do NOT use TaskWithTimeout(.Wait) here. This Dispose may be
+                // called from an UIAutomation event callback (OnClosed → Closed → Window_Closed
+                // → Dispose). The UIAutomation callback thread is a COM STA thread.
+                // Blocking it with a non-message-pumping wait (Task.Wait) prevents the STA
+                // from processing incoming COM SendMessage calls. If the target application
+                // (e.g. Dolphin) raises a UIAutomation event at the same moment, UIAutomation
+                // delivers it via COM SendMessage to this STA thread, which is now blocked.
+                // The target's UI thread then stalls waiting for HC to acknowledge — resulting
+                // in the target application appearing hung / unable to close.
+                if (localElement is not null)
                 {
-                    if (Element != null)
+                    Task.Run(() =>
                     {
-                        if (propertyHandle is not null)
-                            ProcessUtils.TaskWithTimeout(() =>
-                            Automation.RemoveAutomationPropertyChangedEventHandler(Element, propertyHandle),
-                            TimeSpan.FromSeconds(3));
+                        try
+                        {
+                            if (localPropertyHandle is not null)
+                                Automation.RemoveAutomationPropertyChangedEventHandler(localElement, localPropertyHandle);
+                        }
+                        catch { }
 
-                        if (eventHandler is not null)
-                            ProcessUtils.TaskWithTimeout(() =>
-                            Automation.RemoveAutomationEventHandler(
-                            WindowPattern.WindowClosedEvent,
-                            Element,
-                            eventHandler),
-                            TimeSpan.FromSeconds(3));
-                    }
+                        try
+                        {
+                            if (localEventHandler is not null)
+                                Automation.RemoveAutomationEventHandler(
+                                    WindowPattern.WindowClosedEvent,
+                                    localElement,
+                                    localEventHandler);
+                        }
+                        catch { }
+                    });
                 }
-                catch (ArgumentNullException) { }
-                catch { }
             }
-
-            // Clear references and mark as disposed
-            Element = null;
-            propertyHandle = null;
-            _disposed = true;
 
             Disposed?.Invoke(this, EventArgs.Empty);
         }
