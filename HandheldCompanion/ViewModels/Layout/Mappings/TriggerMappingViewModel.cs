@@ -1,7 +1,6 @@
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
-using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
@@ -282,7 +281,7 @@ namespace HandheldCompanion.ViewModels
                     foreach (var t in _keyboardKeysTargets)
                         Targets.Add(t);
                 }
-                SelectedTarget = _keyboardKeysTargets.FirstOrDefault(e => e.Tag.Equals(((KeyboardActions)Action).Key)) ?? _keyboardKeysTargets.First();
+                SelectedTarget = _keyboardKeysTargets.FirstOrDefault(e => Equals(e.Tag, ((KeyboardActions)Action).Key)) ?? _keyboardKeysTargets.First();
             }
             else if (actionType == ActionType.Mouse)
             {
@@ -357,7 +356,7 @@ namespace HandheldCompanion.ViewModels
             else if (actionType == ActionType.Shift)
             {
                 if (Action is null || Action is not ShiftActions)
-                    Action = new ShiftActions(ShiftSlot.ShiftA) { motionThreshold = Gamepad.TriggerThreshold, motionDirection = DeflectionDirection.Up };
+                    Action = new ShiftActions() { motionThreshold = Gamepad.TriggerThreshold, motionDirection = DeflectionDirection.Up };
 
                 MappingTargetViewModel? matchingTargetVm = null;
                 // Only show individual shift slots (A, B, C, D), not None or combined values
@@ -396,7 +395,7 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(TriggerDeadzoneVisibility));
         }
 
-        public override void OnPropertyChanged(string propertyName)
+        public override void OnPropertyChanged(string? propertyName)
         {
             switch (propertyName)
             {
@@ -417,23 +416,28 @@ namespace HandheldCompanion.ViewModels
             switch (Action.actionType)
             {
                 case ActionType.Button:
-                    ((ButtonActions)Action).Button = (ButtonFlags)SelectedTarget.Tag;
+                    if (SelectedTarget.Tag is ButtonFlags buttonFlags)
+                        ((ButtonActions)Action).Button = buttonFlags;
                     break;
 
                 case ActionType.Keyboard:
-                    ((KeyboardActions)Action).Key = (VirtualKeyCode)SelectedTarget.Tag;
+                    if (SelectedTarget.Tag is VirtualKeyCode virtualKeyCode)
+                        ((KeyboardActions)Action).Key = virtualKeyCode;
                     break;
 
                 case ActionType.Trigger:
-                    ((TriggerActions)Action).Axis = (AxisLayoutFlags)SelectedTarget.Tag;
+                    if (SelectedTarget.Tag is AxisLayoutFlags axisLayoutFlags)
+                        ((TriggerActions)Action).Axis = axisLayoutFlags;
                     break;
 
                 case ActionType.Mouse:
-                    ((MouseActions)Action).MouseType = (MouseActionsType)SelectedTarget.Tag;
+                    if (SelectedTarget.Tag is MouseActionsType mouseActionsType)
+                        ((MouseActions)Action).MouseType = mouseActionsType;
                     break;
 
                 case ActionType.Shift:
-                    ((ShiftActions)Action).ShiftSlot = (ShiftSlot)SelectedTarget.Tag;
+                    if (SelectedTarget.Tag is ShiftSlot shiftSlot)
+                        ((ShiftActions)Action).ShiftSlot = shiftSlot;
                     break;
             }
         }
