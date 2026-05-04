@@ -156,6 +156,8 @@ type
     Checksum: String;
     ForceSuccess: Boolean;
     RestartNeeded: Boolean;
+    UninstallBeforeInstall: Boolean;
+    UninstallDisplayName: String;
   end;
 
 var
@@ -169,7 +171,7 @@ var
 
 // Forward declarations
 procedure Dependency_Add(const Filename, Parameters, Title, URL, Checksum: String; const ForceSuccess: Boolean); forward;
-procedure Dependency_Add_With_Version(const Filename, NewVersion, InstalledVersion, Parameters, Title, URL, Checksum: String; const ForceSuccess, RestartNeeded: Boolean); forward;
+procedure Dependency_Add_With_Version(const Filename, NewVersion, InstalledVersion, Parameters, Title, URL, Checksum: String; const ForceSuccess, RestartNeeded, DoUninstallBefore: Boolean; const UninstallDisplayName: String); forward;
 function Dependency_PrepareToInstall(var NeedsRestart: Boolean): String; forward;
 function Dependency_UpdateReadyMemo(const Space, NewLine, MemoUserInfoInfo, MemoDirInfo, MemoTypeInfo, MemoComponentsInfo, MemoGroupInfo, MemoTasksInfo: String): String; forward;
 procedure Dependency_AddDotNet10Desktop; forward;
@@ -179,6 +181,7 @@ procedure Dependency_AddViGem; forward;
 procedure Dependency_AddRTSS; forward;
 procedure Dependency_AddPawnIO; forward;
 function BoolToStr(Value: Boolean): String; forward;
+function UninstallMsiByDisplayName(const DisplayName: String): Boolean; forward;
 
 #include "./utils/CompareVersions.iss"
 #include "./utils/ApiUtils.iss"
@@ -480,7 +483,6 @@ begin
   if not IsHidHideInstalled() then
   begin
     Dependency_AddHideHide;
-    uninstallHidHide();
   end
   else
   begin
@@ -489,7 +491,6 @@ begin
     begin
       Log('{#HidHideName} {#NewHidHideVersion} needs update.');
       Dependency_AddHideHide;
-      uninstallHidHide();
     end;
   end;
 #endif
@@ -498,7 +499,6 @@ begin
   if not IsViGemInstalled() then
   begin
     Dependency_AddViGem;
-    uninstallViGem();
   end
   else
   begin
@@ -507,7 +507,6 @@ begin
     begin
       Log('{#ViGemName} {#NewViGemVersion} needs update.');
       Dependency_AddViGem;
-      uninstallViGem();
     end;
   end;
 #endif
@@ -579,7 +578,7 @@ begin
   Dependency_List[DependencyCount] := Dependency;
 end;
 
-procedure Dependency_Add_With_Version(const Filename, NewVersion, InstalledVersion, Parameters, Title, URL, Checksum: String; const ForceSuccess, RestartNeeded: Boolean);
+procedure Dependency_Add_With_Version(const Filename, NewVersion, InstalledVersion, Parameters, Title, URL, Checksum: String; const ForceSuccess, RestartNeeded, DoUninstallBefore: Boolean; const UninstallDisplayName: String);
 var
   Dependency: TDependency_Entry;
   DependencyCount: Integer;
@@ -597,6 +596,8 @@ begin
   Dependency.Checksum := Checksum;
   Dependency.ForceSuccess := ForceSuccess;
   Dependency.RestartNeeded := RestartNeeded;
+  Dependency.UninstallBeforeInstall := DoUninstallBefore;
+  Dependency.UninstallDisplayName := UninstallDisplayName;
   DependencyCount := GetArrayLength(Dependency_List);
   SetArrayLength(Dependency_List, DependencyCount + 1);
   Dependency_List[DependencyCount] := Dependency;
@@ -651,6 +652,12 @@ begin
       begin
         Dependency_DownloadPage.SetText(Dependency_List[DependencyIndex].Title + ' ' + Dependency_List[DependencyIndex].NewVersion, '');
         Dependency_DownloadPage.SetProgress(DependencyIndex + 1, DependencyCount + 1);
+        if Dependency_List[DependencyIndex].UninstallBeforeInstall then
+        begin
+          Log('Uninstalling existing ' + Dependency_List[DependencyIndex].UninstallDisplayName + ' before installing new version...');
+          if not UninstallMsiByDisplayName(Dependency_List[DependencyIndex].UninstallDisplayName) then
+            Log('Warning: uninstall of ' + Dependency_List[DependencyIndex].UninstallDisplayName + ' did not succeed; proceeding with installation anyway.');
+        end;
         while True do
         begin
           ResultCode := 0;
@@ -768,7 +775,7 @@ begin
   if not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 10.0.0') then
     Dependency_Add_With_Version('windowsdesktop-runtime-10.0.0-win-' + Dependency_ArchSuffix + '.exe', '{#NewDotNetVersion}', RegGetInstalledVersion('{#DotNetName}'),
       '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
-      '{#DotNetName}', Dependency_String('{#DotNetX86DownloadLink}', '{#DotNetX64DownloadLink}'), '', False, False);
+      '{#DotNetName}', Dependency_String('{#DotNetX86DownloadLink}', '{#DotNetX64DownloadLink}'), '', False, False, False, '');
 end;
 
 procedure Dependency_AddDirectX;
@@ -777,7 +784,7 @@ begin
     '/q',
     '{#DirectXName}',
     '{#DirectXDownloadLink}',
-    '', True, False);
+    '', True, False, False, '');
 end;
 
 procedure Dependency_AddHideHide;
@@ -786,7 +793,7 @@ begin
     '/quiet /norestart',
     '{#HidHideName}',
     '{#HidHideDownloadLink}',
-    '', True, False);
+    '', True, False, True, 'HidHide');
 end;
 
 procedure Dependency_AddViGem;
@@ -795,7 +802,7 @@ begin
     '/quiet /norestart',
     '{#ViGemName}',
     '{#ViGemDownloadLink}',
-    '', True, True);
+    '', True, True, True, 'ViGEm Bus Driver');
 end;
 
 procedure Dependency_AddRTSS;
@@ -804,7 +811,7 @@ begin
     '/S',
     '{#RtssName}',
     '{#RtssDownloadLink}',
-    '', True, True);
+    '', True, True, False, '');
 end;
 
 procedure Dependency_AddPawnIO;
@@ -813,7 +820,7 @@ begin
     '-install -silent',
     '{#PawnIOName}',
     '{#PawnIODownloadLink}',
-    '', True, True);
+    '', True, True, False, '');
 end;
 
 function BoolToStr(Value: Boolean): String;

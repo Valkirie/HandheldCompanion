@@ -134,6 +134,32 @@ begin
 end;
 
 
+function UninstallMsiByDisplayName(const DisplayName: String): Boolean;
+var
+  uninstallCommand: String;
+  splittedCommand: TArrayOfString;
+  resultCode: Integer;
+begin
+  result := false;
+  uninstallCommand := regGetAppUninstallStringByDisplayName(DisplayName);
+  splittedCommand := splitString(uninstallCommand, ' ');
+  if (getArrayLength(splittedCommand) > 1) and not (splittedCommand[1] = '') then
+  begin
+    if ShellExec('', 'msiexec.exe', splittedCommand[1] + ' /qn /norestart', '', SW_SHOW, ewWaitUntilTerminated, resultCode) then
+    begin
+      log('Successfully executed ' + DisplayName + ' uninstaller');
+      if resultCode = 0 then
+      begin
+        log(DisplayName + ' uninstaller finished successfully');
+        result := true;
+      end
+      else
+        log(DisplayName + ' uninstaller failed with exit code ' + intToStr(resultCode));
+    end;
+  end;
+end;
+
+
 function uninstallHidHide():boolean;
 var
   uninstallCommand:string;
