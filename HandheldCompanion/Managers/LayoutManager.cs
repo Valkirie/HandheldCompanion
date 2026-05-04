@@ -103,7 +103,7 @@ public class LayoutManager : IManager
         desktopLayout = ProcessLayout(desktopFile);
         if (desktopLayout is null)
         {
-            desktopLayout = LayoutTemplate.DesktopLayout.Layout.Clone() as Layout;
+            desktopLayout = (Layout)LayoutTemplate.DesktopLayout.Layout.Clone();
             DesktopLayout_Updated(desktopLayout);
         }
 
@@ -212,7 +212,7 @@ public class LayoutManager : IManager
             ManagerFactory.settingsManager.SetProperty("LayoutMode", (int)LayoutModes.Desktop);
     }
 
-    private void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+    private void SettingsManager_SettingValueChanged(string? name, object? value, bool temporary)
     {
         if (name == "LayoutMode")
             CheckProfileLayout();
@@ -276,7 +276,11 @@ public class LayoutManager : IManager
     {
         lock (updateLock)
         {
-            currentLayout = layout.Clone() as Layout;
+            if (layout.Clone() is not Layout clonedLayout)
+                return;
+
+            currentLayout = clonedLayout;
+
             UpdateInherit();
             BuildPlans();
             LayoutChanged?.Invoke(currentLayout);
@@ -485,7 +489,7 @@ public class LayoutManager : IManager
             {
                 if (action is not ShiftActions shift) continue;
                 shift.Execute(button, pressed, shiftSlot, deltaMs);
-                if (shift.GetValue()) shiftSlot |= shift.ShiftSlot;
+                if (shift.GetValue()) shiftSlot |= shift.ActivationSlot;
             }
         }
 
@@ -504,7 +508,7 @@ public class LayoutManager : IManager
             {
                 if (action is not ShiftActions shift) continue;
                 shift.Execute(layout, shiftSlot, deltaMs);
-                if (shift.GetValue()) shiftSlot |= shift.ShiftSlot;
+                if (shift.GetValue()) shiftSlot |= shift.ActivationSlot;
             }
         }
 
