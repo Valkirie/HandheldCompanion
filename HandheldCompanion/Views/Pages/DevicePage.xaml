@@ -247,12 +247,43 @@
                 </ui:SettingsCard>
 
                 <!--  Go Back To Sleep  -->
-                <ui:SettingsCard
+                <ui:SettingsExpander
                     x:Name="GoBackToSleepCard"
                     Description="{l:Static resx:Resources.DevicePage_GoBackToSleepDesc}"
                     Header="{l:Static resx:Resources.DevicePage_GoBackToSleep}">
                     <ui:ToggleSwitch x:Name="Toggle_GoBackToSleep" Toggled="Toggle_GoBackToSleep_Toggled" />
-                </ui:SettingsCard>
+                    <ui:SettingsExpander.Items>
+                        <!--  Go back to sleep timeout  -->
+                        <ui:SettingsCard
+                            Description="{l:Static resx:Resources.DevicePage_GoBackToSleepTimeoutDesc}"
+                            Header="{l:Static resx:Resources.DevicePage_GoBackToSleepTimeout}"
+                            IsEnabled="{Binding ElementName=Toggle_GoBackToSleep, Path=IsOn}">
+                            <DockPanel>
+                                <TextBox
+                                    Height="31"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    HorizontalContentAlignment="Center"
+                                    IsReadOnly="True"
+                                    Text="{Binding ElementName=Slider_GoBackToSleepTimeout, Path=Value, StringFormat={}{0:N0}s}" />
+                                <Slider
+                                    x:Name="Slider_GoBackToSleepTimeout"
+                                    Width="200"
+                                    Margin="6,0,0,0"
+                                    IsMoveToPointEnabled="True"
+                                    IsSnapToTickEnabled="True"
+                                    LargeChange="5"
+                                    Maximum="60"
+                                    Minimum="5"
+                                    SmallChange="5"
+                                    TickFrequency="5"
+                                    TickPlacement="BottomRight"
+                                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                    ValueChanged="Slider_GoBackToSleepTimeout_ValueChanged" />
+                            </DockPanel>
+                        </ui:SettingsCard>
+                    </ui:SettingsExpander.Items>
+                </ui:SettingsExpander>
             </ikw:SimpleStackPanel>
 
             <!--  Security options  -->

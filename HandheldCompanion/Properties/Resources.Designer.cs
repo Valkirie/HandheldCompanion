@@ -1447,11 +1447,29 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to If the device wakes from Modern Standby for any reason other than the power button, it will be sent back to sleep..
+        ///   Looks up a localized string similar to If the device wakes from Modern Standby for an unintentional reason (e.g. joystick input or charger connected), it will be sent back to sleep..
         /// </summary>
         public static string DevicePage_GoBackToSleepDesc {
             get {
                 return ResourceManager.GetString("DevicePage_GoBackToSleepDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delay before sleeping.
+        /// </summary>
+        public static string DevicePage_GoBackToSleepTimeout {
+            get {
+                return ResourceManager.GetString("DevicePage_GoBackToSleepTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Number of seconds to wait after an unintentional wake before going back to sleep..
+        /// </summary>
+        public static string DevicePage_GoBackToSleepTimeoutDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_GoBackToSleepTimeoutDesc", resourceCulture);
             }
         }
         

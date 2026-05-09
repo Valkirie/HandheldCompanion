@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace HandheldCompanion.Platforms.Misc;
@@ -74,6 +75,7 @@ public sealed class WindowsPlatform : IPlatform
         // raise events
         SettingsManager_SettingValueChanged("EnhancedSleep", ManagerFactory.settingsManager.GetString("EnhancedSleep"), false);
         SettingsManager_SettingValueChanged("GoBackToSleep", ManagerFactory.settingsManager.GetString("GoBackToSleep"), false);
+        SettingsManager_SettingValueChanged("GoBackToSleepTimeout", ManagerFactory.settingsManager.GetInt("GoBackToSleepTimeout").ToString(), false);
     }
 
     private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary)
@@ -85,6 +87,10 @@ public sealed class WindowsPlatform : IPlatform
                 break;
             case "GoBackToSleep":
                 SetGoBackToSleep(Convert.ToBoolean(value));
+                break;
+            case "GoBackToSleepTimeout":
+                if (_monitor != null)
+                    _monitor.ResleepDelaySecs = Convert.ToInt32(value);
                 break;
         }
     }
@@ -126,6 +132,7 @@ public sealed class WindowsPlatform : IPlatform
                 if (enabled)
                 {
                     _monitor ??= new ModernStandbyResleepMonitor(ShouldResleepOnWakeReason);
+                    _monitor.ResleepDelaySecs = ManagerFactory.settingsManager.GetInt("GoBackToSleepTimeout");
                     _monitor.Start();
                 }
                 else
@@ -146,8 +153,13 @@ public sealed class WindowsPlatform : IPlatform
 
     private bool ShouldResleepOnWakeReason(ModernStandbyResleepMonitor.WakeReason reason)
     {
-        return reason != ModernStandbyResleepMonitor.WakeReason.PowerButton &&
-               reason != ModernStandbyResleepMonitor.WakeReason.FingerprintReader;
+        // Only resleep for known unintentional wake reasons.
+        // Using a whitelist ensures that unknown or unrecognized reason codes
+        // (which may occur on certain hardware, e.g. GPD WIN MAX 2 where the
+        // power button is also the fingerprint sensor) do not prevent the user
+        // from waking the device intentionally.
+        return reason == ModernStandbyResleepMonitor.WakeReason.Joystick ||
+               reason == ModernStandbyResleepMonitor.WakeReason.ChargerConnected;
     }
 
     private sealed class EnhancedSleepPolicy
@@ -322,9 +334,16 @@ public sealed class WindowsPlatform : IPlatform
         private readonly Func<WakeReason, bool> _shouldResleep;
 
         private EventLogWatcher? _watcher;
+        private CancellationTokenSource? _resleepCts;
 
         // Simple cooldown to avoid "wake, resleep, immediate wake, resleep ..." storms
         private long _lastResleepTicks;
+
+        /// <summary>
+        /// Number of seconds to wait after detecting an unintentional wake before sending
+        /// the system back to sleep. Defaults to 5 seconds.
+        /// </summary>
+        public int ResleepDelaySecs { get; set; } = 5;
 
         public enum WakeReason
         {
@@ -359,6 +378,9 @@ public sealed class WindowsPlatform : IPlatform
 
         public void Stop()
         {
+            _resleepCts?.Cancel();
+            _resleepCts = null;
+
             if (_watcher == null)
                 return;
 
@@ -396,8 +418,22 @@ public sealed class WindowsPlatform : IPlatform
 
                 Interlocked.Exchange(ref _lastResleepTicks, now);
 
-                LogManager.LogInformation("[GoBackToSleep] Wake reason is not intentional ({0}). Sending system back to sleep...", reason);
-                SuspendSystem();
+                int delaySecs = Math.Max(0, ResleepDelaySecs);
+                LogManager.LogInformation("[GoBackToSleep] Wake reason is not intentional ({0}). Going back to sleep in {1}s...", reason, delaySecs);
+
+                // Cancel any pending resleep and schedule a new one
+                _resleepCts?.Cancel();
+                _resleepCts = new CancellationTokenSource();
+                var token = _resleepCts.Token;
+
+                Task.Delay(TimeSpan.FromSeconds(delaySecs), token).ContinueWith(t =>
+                {
+                    if (t.IsCanceled)
+                        return;
+
+                    LogManager.LogInformation("[GoBackToSleep] Sending system back to sleep.");
+                    SuspendSystem();
+                }, TaskScheduler.Default);
             }
         }
 

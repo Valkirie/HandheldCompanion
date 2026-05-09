@@ -4162,7 +4162,13 @@ Thank you for using HC and helping us make it better.</value>
     <value>Go back to sleep</value>
   </data>
   <data name="DevicePage_GoBackToSleepDesc" xml:space="preserve">
-    <value>If the device wakes from Modern Standby for any reason other than the power button, it will be sent back to sleep.</value>
+    <value>If the device wakes from Modern Standby for an unintentional reason (e.g. joystick input or charger connected), it will be sent back to sleep.</value>
+  </data>
+  <data name="DevicePage_GoBackToSleepTimeout" xml:space="preserve">
+    <value>Delay before sleeping</value>
+  </data>
+  <data name="DevicePage_GoBackToSleepTimeoutDesc" xml:space="preserve">
+    <value>Number of seconds to wait after an unintentional wake before going back to sleep.</value>
   </data>
   <data name="ProfilesPage_Whitelist" xml:space="preserve">
     <value>Controller passthrough</value>

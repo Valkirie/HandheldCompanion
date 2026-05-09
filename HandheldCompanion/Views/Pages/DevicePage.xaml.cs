@@ -314,6 +314,9 @@ namespace HandheldCompanion.Views.Pages
                     case "GoBackToSleep":
                         Toggle_GoBackToSleep.IsOn = Convert.ToBoolean(value);
                         break;
+                    case "GoBackToSleepTimeout":
+                        Slider_GoBackToSleepTimeout.Value = Convert.ToInt32(value);
+                        break;
                 }
             });
         }
@@ -649,6 +652,14 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             ManagerFactory.settingsManager.SetProperty("GoBackToSleep", Toggle_GoBackToSleep.IsOn);
+        }
+
+        private void Slider_GoBackToSleepTimeout_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (!IsLoaded)
+                return;
+
+            ManagerFactory.settingsManager.SetProperty("GoBackToSleepTimeout", (int)Slider_GoBackToSleepTimeout.Value);
         }
 
         #region Sensor
