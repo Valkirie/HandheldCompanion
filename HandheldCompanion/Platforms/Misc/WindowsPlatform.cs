@@ -379,6 +379,7 @@ public sealed class WindowsPlatform : IPlatform
         public void Stop()
         {
             _resleepCts?.Cancel();
+            _resleepCts?.Dispose();
             _resleepCts = null;
 
             if (_watcher == null)
@@ -418,11 +419,12 @@ public sealed class WindowsPlatform : IPlatform
 
                 Interlocked.Exchange(ref _lastResleepTicks, now);
 
-                int delaySecs = Math.Max(0, ResleepDelaySecs);
+                int delaySecs = ResleepDelaySecs;
                 LogManager.LogInformation("[GoBackToSleep] Wake reason is not intentional ({0}). Going back to sleep in {1}s...", reason, delaySecs);
 
                 // Cancel any pending resleep and schedule a new one
                 _resleepCts?.Cancel();
+                _resleepCts?.Dispose();
                 _resleepCts = new CancellationTokenSource();
                 var token = _resleepCts.Token;
 
