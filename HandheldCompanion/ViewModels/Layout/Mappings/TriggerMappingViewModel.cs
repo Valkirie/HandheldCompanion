@@ -369,7 +369,7 @@ namespace HandheldCompanion.ViewModels
                     };
                     targets.Add(mappingTargetVm);
 
-                    if (shiftSlot == ((ShiftActions)Action).ShiftSlot)
+                    if (shiftSlot == ((ShiftActions)Action).ActivationSlot)
                         matchingTargetVm = mappingTargetVm;
                 }
 
@@ -437,7 +437,7 @@ namespace HandheldCompanion.ViewModels
 
                 case ActionType.Shift:
                     if (SelectedTarget.Tag is ShiftSlot shiftSlot)
-                        ((ShiftActions)Action).ShiftSlot = shiftSlot;
+                        ((ShiftActions)Action).ActivationSlot = shiftSlot;
                     break;
             }
         }
