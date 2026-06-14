@@ -101,9 +101,21 @@ namespace HandheldCompanion.ViewModels
             // The default await continuation resumes on the captured UI SynchronizationContext.
             ImageSource? source = await Task.Run(() => GetPlatformLogoSource(Platform));
 
-            _logoCache[Platform] = source;
+            // Only cache successful conversions; avoid caching null so subsequent calls after
+            // PlatformManager initializes can retry fetching the logo.
             if (source is not null)
+            {
+                _logoCache[Platform] = source;
                 Icon = new System.Windows.Controls.Image { Source = source, Width = 16, Height = 16, Stretch = Stretch.Uniform };
+            }
+        }
+
+        /// <summary>
+        /// Clears the platform logo cache. Call this when platforms (re)initialize to allow fresh logo lookups.
+        /// </summary>
+        public static void ClearLogoCache()
+        {
+            _logoCache.Clear();
         }
 
         private static ImageSource? GetPlatformLogoSource(GamePlatform platform)
