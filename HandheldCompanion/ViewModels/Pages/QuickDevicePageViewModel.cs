@@ -238,7 +238,15 @@ namespace HandheldCompanion.ViewModels
 
                     if (!isLoadingDisplay && value != null)
                     {
-                        UpdateFrequenciesForResolution(value);
+                        // Get current frequency from desktop screen before updating frequencies
+                        int? currentFrequency = null;
+                        DesktopScreen? desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
+                        if (desktopScreen != null)
+                        {
+                            currentFrequency = desktopScreen.GetCurrentFrequency();
+                        }
+
+                        UpdateFrequenciesForResolution(value, currentFrequency);
                         ApplyResolution();
                     }
                 }
@@ -512,11 +520,25 @@ namespace HandheldCompanion.ViewModels
                     Frequencies.Add(new ScreenFrequencyViewModel(frequency));
                 }
 
-                if (currentSelectedFrequency.HasValue && Frequencies.Any())
+                // Always select a frequency if available
+                if (Frequencies.Any())
                 {
-                    var matchingFrequency = Frequencies.FirstOrDefault(f => f.Frequency == currentSelectedFrequency.Value);
-                    if (matchingFrequency != null)
-                        SelectedFrequency = matchingFrequency;
+                    ScreenFrequencyViewModel? selectedFreq = null;
+
+                    // First, try to select matching frequency if we have a current one
+                    if (currentSelectedFrequency.HasValue)
+                    {
+                        selectedFreq = Frequencies.FirstOrDefault(f => f.Frequency == currentSelectedFrequency.Value);
+                    }
+
+                    // If no matching frequency found, select the first (highest) one
+                    if (selectedFreq == null)
+                    {
+                        selectedFreq = Frequencies.FirstOrDefault();
+                    }
+
+                    if (selectedFreq != null)
+                        SelectedFrequency = selectedFreq;
                 }
             }
         }
