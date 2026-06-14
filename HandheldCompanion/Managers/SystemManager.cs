@@ -62,6 +62,9 @@ public static class SystemManager
     private static SystemStatus previousSystemStatus = SystemStatus.SystemBooting;
     private static PowerLineStatus previousPowerLineStatus = PowerLineStatus.Offline;
 
+    // Used to suppress SystemStatusChanged when Modern Standby auto-resleep is triggered
+    private static bool _suppressNextSystemStatusChanged;
+
     public static bool IsInitialized;
 
     public static readonly SortedDictionary<string, string> PowerStatusIcon = new()
@@ -187,6 +190,15 @@ public static class SystemManager
         LogManager.LogInformation("{0} has stopped", "PowerManager");
     }
 
+    /// <summary>
+    /// Suppresses the next SystemStatusChanged event. Used when Modern Standby auto-resleep is triggered
+    /// to prevent managers from unnecessarily starting when the system immediately goes back to sleep.
+    /// </summary>
+    public static void SuppressNextSystemStatusChanged()
+    {
+        _suppressNextSystemStatusChanged = true;
+    }
+
     private static void OnPowerChange(object s, PowerModeChangedEventArgs e)
     {
         switch (e.Mode)
@@ -244,6 +256,15 @@ public static class SystemManager
         // only raise event is system status has changed
         if (previousSystemStatus == currentSystemStatus)
             return;
+
+        // Check if we should suppress this event (Modern Standby auto-resleep scenario)
+        if (_suppressNextSystemStatusChanged)
+        {
+            _suppressNextSystemStatusChanged = false;
+            LogManager.LogInformation("System status set to {0} (event suppressed for auto-resleep)", currentSystemStatus);
+            previousSystemStatus = currentSystemStatus;
+            return;
+        }
 
         LogManager.LogInformation("System status set to {0}", currentSystemStatus);
         SystemStatusChanged?.Invoke(currentSystemStatus, previousSystemStatus);

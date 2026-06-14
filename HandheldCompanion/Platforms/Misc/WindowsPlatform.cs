@@ -155,7 +155,9 @@ public sealed class WindowsPlatform : IPlatform
             _                                                         => null,
         };
 
-        return settingKey != null && ManagerFactory.settingsManager.GetBoolean(settingKey);
+        // Return true only if the setting does NOT exist or is explicitly disabled.
+        // When a setting is enabled (checked), it means the user wants to stay awake on that wake reason.
+        return settingKey == null || !ManagerFactory.settingsManager.GetBoolean(settingKey);
     }
 
     private sealed class EnhancedSleepPolicy
@@ -415,6 +417,11 @@ public sealed class WindowsPlatform : IPlatform
                 Interlocked.Exchange(ref _lastResleepTicks, now);
 
                 LogManager.LogInformation("[GoBackToSleep] Wake reason is not intentional ({0}). Sending system back to sleep...", reason);
+
+                // Suppress the next SystemStatusChanged event to prevent managers from starting
+                // when the system immediately goes back to sleep
+                SystemManager.SuppressNextSystemStatusChanged();
+
                 SuspendSystem();
             }
         }
