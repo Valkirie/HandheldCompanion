@@ -27,9 +27,9 @@ namespace HandheldCompanion.Misc
 
         public static readonly LayoutTemplate SteamControllerLayout = CreateSteamControllerLayout();
 
-        public static readonly LayoutTemplate GamepadMouseLayout = new("GamepadMouse", "HandheldCompanion", true, typeof(NeptuneController));
+        public static readonly LayoutTemplate GamepadMouseLayout = new("GamepadMouse", "HandheldCompanion", true, "NeptuneController");
 
-        public static readonly LayoutTemplate GamepadJoystickLayout = new("GamepadJoystick", "HandheldCompanion", true, typeof(NeptuneController));
+        public static readonly LayoutTemplate GamepadJoystickLayout = new("GamepadJoystick", "HandheldCompanion", true, "NeptuneController");
 
         public LayoutTemplate()
         {
@@ -126,7 +126,7 @@ namespace HandheldCompanion.Misc
             };
         }
 
-        private LayoutTemplate(string name, string description, string author, bool isInternal, Type? deviceType = null) : this()
+        private LayoutTemplate(string name, string description, string author, bool isInternal, string? deviceName = null) : this()
         {
             Name = name;
             Description = description;
@@ -134,14 +134,14 @@ namespace HandheldCompanion.Misc
             Product = string.Empty;
 
             IsInternal = isInternal;
-            ControllerType = deviceType;
+            DeviceName = deviceName;
 
             Layout = new Layout();
             Layout.FillDefault();
         }
 
-        private LayoutTemplate(string templateName, string author, bool isInternal, Type? deviceType = null) :
-            this(TranslationSource.Instance[$"LayoutTemplate_{templateName}"], TranslationSource.Instance[$"LayoutTemplate_{templateName}Desc"], author, isInternal, deviceType)
+        private LayoutTemplate(string templateName, string author, bool isInternal, string? deviceName = null) :
+            this(TranslationSource.Instance[$"LayoutTemplate_{templateName}"], TranslationSource.Instance[$"LayoutTemplate_{templateName}Desc"], author, isInternal, deviceName)
         {
             switch (templateName)
             {
@@ -286,7 +286,14 @@ namespace HandheldCompanion.Misc
         [JsonProperty] public string Executable { get; set; } = string.Empty;
         [JsonProperty] public bool IsInternal { get; set; } = false;
         [JsonProperty] public Layout Layout { get; set; } = new();
-        [JsonProperty] public Type? ControllerType { get; set; }
+
+        [Obsolete("Use DeviceName instead. This property is kept for backward compatibility with older serialized templates.")]
+        [JsonProperty("ControllerType")]
+        [JsonConverter(typeof(ControllerTypeJsonConverter))]
+        public Type? ControllerType { get; set; }
+
+        [JsonProperty]
+        public string? DeviceName { get; set; }
 
         public int CompareTo(object? obj)
         {

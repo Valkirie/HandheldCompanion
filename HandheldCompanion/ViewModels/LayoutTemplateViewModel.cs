@@ -36,16 +36,16 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private Type? _controllerType = null;
-        public Type? ControllerType
+        private string? _deviceName = null;
+        public string? DeviceName
         {
-            get => _layoutTemplate is not null ? _layoutTemplate.ControllerType : _controllerType;
+            get => _layoutTemplate is not null ? _layoutTemplate.DeviceName : _deviceName;
             set
             {
-                if (_controllerType != value)
+                if (_deviceName != value)
                 {
-                    _controllerType = value;
-                    OnPropertyChanged(nameof(ControllerType));
+                    _deviceName = value;
+                    OnPropertyChanged(nameof(DeviceName));
                 }
             }
         }

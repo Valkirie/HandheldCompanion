@@ -166,9 +166,9 @@ namespace HandheldCompanion.ViewModels
             {
                 foreach (LayoutTemplateViewModel layoutTemplate in layoutList)
                 {
-                    if (layoutTemplate.ControllerType is not null && FilterOnDevice)
+                    if (layoutTemplate.DeviceName is not null && FilterOnDevice)
                     {
-                        if (layoutTemplate.ControllerType != controller?.GetType())
+                        if (layoutTemplate.DeviceName != controller?.GetType().Name)
                         {
                             layoutTemplate.Visibility = Visibility.Collapsed;
                             continue;

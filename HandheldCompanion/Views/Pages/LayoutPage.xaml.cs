@@ -312,7 +312,7 @@ public partial class LayoutPage : Page
         {
             IController? target = ControllerManager.GetTarget();
             if (target is not null)
-                newLayout.ControllerType = target.GetType();
+                newLayout.DeviceName = target.GetType().Name;
         }
 
         ManagerFactory.layoutManager.SerializeLayoutTemplate(newLayout);
