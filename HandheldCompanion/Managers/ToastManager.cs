@@ -94,10 +94,10 @@ namespace HandheldCompanion.Managers
     public sealed class ToastComboItem
     {
         public string Id { get; set; } = "";
-        public string Label { get; set; } = "";
+        public string Content { get; set; } = "";
 
         public ToastComboItem() { }
-        public ToastComboItem(string id, string label) { Id = id; Label = label; }
+        public ToastComboItem(string id, string content) { Id = id; Content = content; }
     }
 
     /// <summary>A selection combobox to embed in a toast notification.</summary>
@@ -108,7 +108,7 @@ namespace HandheldCompanion.Managers
         /// <summary>Optional label shown above the combobox.</summary>
         public string Title { get; set; } = "";
         /// <summary>Id of the pre-selected item.</summary>
-        public string DefaultItemId { get; set; } = "";
+        public string DefaultSelectionBoxItemId { get; set; } = "";
         public List<ToastComboItem> Items { get; set; } = new();
     }
 
@@ -121,8 +121,10 @@ namespace HandheldCompanion.Managers
         public string Img { get; set; } = "icon";
         public bool IsHero { get; set; }
         public List<ToastAction> Actions { get; set; } = new();
-        /// <summary>If true, show as 'Important' scenario (kept here for future use). Currently we keep Default.</summary>
+        /// <summary>If true, shows toast as 'Important' scenario (longer duration, higher priority).</summary>
         public bool Important { get; set; }
+        /// <summary>Optional manager name (e.g., "ProfileManager", "ControllerManager") to group toasts by source; enables concurrent notifications.</summary>
+        public string? Manager { get; set; }
         /// <summary>Optional custom tag/group if you want multiple toasts; by default we reuse the single-tag replacement behavior.</summary>
         public string? Tag { get; set; }
         public string? Group { get; set; }
@@ -136,7 +138,7 @@ namespace HandheldCompanion.Managers
         private const string DefaultToastTag = "LatestToast";
 
         private static readonly ConcurrentQueue<ToastRequest> ToastQueue = new();
-        private static volatile int _isProcessing; // 0 = idle, 1 = processing
+        private static readonly SemaphoreSlim _queueSemaphore = new SemaphoreSlim(1, 1);
 
         private static ToastNotification? CurrentToastNotification;
 
@@ -146,6 +148,9 @@ namespace HandheldCompanion.Managers
 
         // Ephemeral action registry: token -> callback
         private static readonly ConcurrentDictionary<string, Action<IReadOnlyDictionary<string, string>>> ActionRegistry = new();
+
+        // Manager-based toast registry: manager name -> last sent request (for force-redisplay)
+        private static readonly ConcurrentDictionary<string, ToastRequest> ManagerToastRegistry = new();
 
         /// <summary>
         /// Raised when a toast button is clicked and carries a durable command.
@@ -172,6 +177,7 @@ namespace HandheldCompanion.Managers
                 Title = title,
                 Content = content,
                 Img = img,
+                Important = false,
                 IsHero = isHero,
                 Tag = DefaultToastTag,
                 Group = DefaultGroup
@@ -182,18 +188,35 @@ namespace HandheldCompanion.Managers
 
         /// <summary>
         /// New, typed API: send a toast with optional action buttons.
-        /// Replaces any currently showing toast when Tag/Group are not provided or match defaults.
+        /// For default Tag+Group (no Manager): displays immediately, replacing any current toast (single-instance).
+        /// For Manager-based grouping: displays alongside other manager groups (concurrent notifications).
+        /// For custom Tag+Group: queues independently for sequential display.
         /// </summary>
         public static bool SendToast(ToastRequest request)
         {
             if (!IsEnabled)
                 return false;
 
-            // Default to single-instance behavior unless caller overrides
+            // If Manager is specified, use manager-based Tag/Group for concurrent notifications
+            if (!string.IsNullOrWhiteSpace(request.Manager))
+            {
+                request.Tag = request.Manager;
+                request.Group = request.Manager;
+
+                // Store in manager registry for potential force-redisplay
+                ManagerToastRegistry[request.Manager] = request;
+
+                // Don't flush queue for manager-based toasts; let them queue independently
+                ToastQueue.Enqueue(request);
+                _ = ProcessToastQueue();
+                return true;
+            }
+
+            // Default to single-instance behavior (old behavior)
             request.Tag ??= DefaultToastTag;
             request.Group ??= DefaultGroup;
 
-            // Flush any pending items:
+            // Flush any pending items (single-instance only):
             while (ToastQueue.TryDequeue(out _)) { }
 
             // Remove previous toast from Action Center (same Tag+Group)
@@ -202,44 +225,89 @@ namespace HandheldCompanion.Managers
                 try { ToastNotificationManager.History.Remove(request.Tag, request.Group); }
                 catch { /* ignore */ }
                 finally { CurrentToastNotification = null; }
+                }
+
+                ToastQueue.Enqueue(request);
+                _ = ProcessToastQueue();
+
+                return true;
             }
 
-            ToastQueue.Enqueue(request);
-            _ = ProcessToastQueue();
-
-            return true;
-        }
-
-        private static async Task ProcessToastQueue()
-        {
-            // if already processing, bail (active loop will drain queue)
-            if (Interlocked.Exchange(ref _isProcessing, 1) == 1)
-                return;
-
-            try
+            /// <summary>
+            /// Force-redisplay a manager's last sent toast, bumping it to the front of the Action Center.
+            /// Useful for re-showing alerts (e.g., controller slot issues) when related events occur (e.g., profile applied).
+            /// </summary>
+            public static bool ForceRedisplayManagerToast(string managerName)
             {
-                while (ToastQueue.TryDequeue(out var toast))
+                return ForceRedisplayManagerToast(managerName, delayMs: 0);
+            }
+
+            /// <summary>
+            /// Force-redisplay a manager's last sent toast with optional delay for staggered display.
+            /// Delays help show multiple toasts sequentially so both are briefly visible on screen.
+            /// </summary>
+            /// <param name="managerName">The manager name to redisplay.</param>
+            /// <param name="delayMs">Delay in milliseconds before displaying (default 0). Suggested: 500-800ms for sequential display.</param>
+            public static bool ForceRedisplayManagerToast(string managerName, int delayMs = 0)
+            {
+                if (string.IsNullOrWhiteSpace(managerName) || !ManagerToastRegistry.TryGetValue(managerName, out var storedRequest))
+                    return false;
+
+                if (delayMs > 0)
                 {
-                    var dispatcher = System.Windows.Application.Current?.Dispatcher;
-                    if (dispatcher is null || dispatcher.CheckAccess())
+                    // Delay redisplay to allow previous toast to remain visible
+                    _ = Task.Delay(delayMs).ContinueWith(_ =>
                     {
-                        DisplayToast(toast);
-                    }
-                    else
+                        ToastQueue.Enqueue(storedRequest);
+                        _ = ProcessToastQueue();
+                    });
+                }
+                else
+                {
+                    // Re-enqueue the stored request to trigger a fresh display
+                    ToastQueue.Enqueue(storedRequest);
+                    _ = ProcessToastQueue();
+                }
+
+                return true;
+            }
+
+            private static async Task ProcessToastQueue()
+            {
+                // If already processing, don't start another loop (the existing one will drain everything)
+                if (!_queueSemaphore.Wait(0)) // Non-blocking check
+                    return;
+
+                try
+                {
+                    while (ToastQueue.TryDequeue(out var toast))
                     {
-                        await dispatcher.InvokeAsync(() => DisplayToast(toast), DispatcherPriority.ApplicationIdle);
+                        var dispatcher = System.Windows.Application.Current?.Dispatcher;
+                        if (dispatcher is null || dispatcher.CheckAccess())
+                        {
+                            DisplayToast(toast);
+                        }
+                        else
+                        {
+                            await dispatcher.InvokeAsync(() => DisplayToast(toast), DispatcherPriority.ApplicationIdle);
+                        }
                     }
                 }
-            }
-            catch
-            {
-                // never crash because of a toast
+                catch (Exception ex)
+                {
+                    // Log but never crash because of a toast
+                    LogManager.LogError("Toast processing error: {0}", ex.Message);
             }
             finally
             {
-                Volatile.Write(ref _isProcessing, 0);
-                if (!ToastQueue.IsEmpty)
+                _queueSemaphore.Release();
+
+                // If new items were added while we were releasing, process them
+                if (!ToastQueue.IsEmpty && _queueSemaphore.Wait(0))
+                {
+                    _queueSemaphore.Release();
                     _ = ProcessToastQueue();
+                }
             }
         }
 
@@ -270,13 +338,8 @@ namespace HandheldCompanion.Managers
             var builder = new ToastContentBuilder()
                 .AddText(request.Title)
                 .AddText(request.Content)
-                .AddText(request.Content2)
-                .AddAudio(new ToastAudio
-                {
-                    Silent = true,
-                    Src = new Uri("ms-winsoundevent:Notification.Default")
-                })
-                .SetToastScenario(ToastScenario.Default);
+                .AddText(request.Content2);
+                //.SetToastScenario(request.Important ? ToastScenario.Reminder : ToastScenario.Default);
 
             if (imageUri != null)
             {
@@ -290,10 +353,10 @@ namespace HandheldCompanion.Managers
                 var box = new ToastSelectionBox(combo.Id)
                 {
                     Title = combo.Title,
-                    DefaultSelectionBoxItemId = combo.DefaultItemId
+                    DefaultSelectionBoxItemId = combo.DefaultSelectionBoxItemId
                 };
                 foreach (var item in combo.Items)
-                    box.Items.Add(new ToastSelectionBoxItem(item.Id, item.Label));
+                    box.Items.Add(new ToastSelectionBoxItem(item.Id, item.Content));
                 builder.AddToastInput(box);
             }
 

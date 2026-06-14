@@ -178,12 +178,12 @@ public class ProfileManager : IManager
             switch (command)
             {
                 case "SetLayoutMode":
-                    if (args.TryGetValue("layoutMode", out string? modeStr) &&
-                        int.TryParse(modeStr, out int modeInt) &&
-                        Enum.IsDefined(typeof(LayoutModes), modeInt))
-                    {
-                        ManagerFactory.settingsManager.SetProperty("LayoutMode", modeInt);
-                    }
+                    if (args.TryGetValue("layoutMode", out string? modeStr) && int.TryParse(modeStr, out int modeInt) && Enum.IsDefined(typeof(LayoutModes), modeInt))
+                        ManagerFactory.settingsManager.SetProperty("LayoutMode", modeInt);                    
+                    break;
+
+                case "FixVirtualSlot1":
+                    ControllerManager.TriggerSlotFix(resetAttempts: false);
                     break;
             }
         }
@@ -363,19 +363,17 @@ public class ProfileManager : IManager
             string mainProfileName = profile.IsSubProfile ? GetParent(profile).Name : profile.Name;
             string subprofileName = profile.IsSubProfile ? profile.Name : string.Empty;
 
-            LogManager.LogInformation(profile.IsSubProfile ? "Subprofile {0} {1} applied" : "Profile {0} applied", mainProfileName, subprofileName);
-            ToastManager.SendToast(BuildProfileAppliedToast(profile, $"Profile {mainProfileName} applied", subprofileName));
+            LogManager.LogInformation(profile.IsSubProfile ? "Subprofile {0} - {1} applied" : "Profile {0} applied", mainProfileName, subprofileName);
+
+            ToastRequest profileToast = BuildProfileAppliedToast(profile, $"Profile {mainProfileName} applied", subprofileName);
+            ToastManager.SendToast(profileToast);
         }
     }
 
     private static ToastRequest BuildProfileAppliedToast(Profile profile, string title, string content)
     {
         LayoutModes current = (LayoutModes)ManagerFactory.settingsManager.GetInt("LayoutMode");
-
-        /*
-        List<string> controllerMessages = BuildControllerMessages(profile);
-        string content2 = controllerMessages.Count > 0 ? string.Join(Environment.NewLine, controllerMessages) : string.Empty;
-        */
+        bool hasSlotIssue = ControllerManager.HasVirtualSlot1Issue;
 
         // Try to get profile artwork for the toast hero image
         string imageToUse = "icon";
@@ -402,58 +400,52 @@ public class ProfileManager : IManager
             }
         }
 
-        return new ToastRequest
+        var actions = new List<ToastAction>
         {
-            Title = title,
-            Content = content ?? string.Empty,
-            Content2 = string.Empty,
-            Img = imageToUse,
-            IsHero = useAsHero,
-            SelectionBoxes =
-            [
-                new ToastComboInput
-                {
-                    Id = "layoutMode",
-                    Title = "Gamepad mode",
-                    DefaultItemId = ((int)current).ToString(),
-                    Items =
-                    [
-                        new ToastComboItem(((int)LayoutModes.Gamepad).ToString(),  "Gamepad"),
-                        new ToastComboItem(((int)LayoutModes.Desktop).ToString(), "Desktop"),
-                        new ToastComboItem(((int)LayoutModes.Auto).ToString(),    "Auto"),
-                    ]
-                }
-            ],
-            Actions =
-            [
-                new ToastAction
-                {
-                    Label = "Apply",
-                    Command = "SetLayoutMode",
-                }
-            ]
+            new ToastAction
+            {
+                Label = "Apply",
+                Command = "SetLayoutMode",
+            }
         };
-    }
 
-    private static List<string> BuildControllerMessages(Profile profile)
-    {
-        List<string> messages = [];
+        // If virtual controller slot issue exists, add a warning action button
+        if (hasSlotIssue)
+        {
+            actions.Add(new ToastAction
+            {
+                Label = "Fix Slot Issue",
+                Command = "FixVirtualSlot1",
+            });
+        }
 
-        /*
-        IController? virtualController = ControllerManager.GetVirtualControllers<IController>().FirstOrDefault();
-        if (virtualController is not null)
-            messages.Add("Virtual controller emulated");
-
-        IController? physicalController = ControllerManager.GetPhysicalControllers<IController>().FirstOrDefault();
-        if (physicalController is not null && physicalController.IsHidden())
-            messages.Add("Physical controller hidden");
-        */
-
-        if (ControllerManager.HasVirtualSlot1Issue)
-            messages.Add("Virtual controller is not on Slot 1");
-
-        return messages;
-    }
+            return new ToastRequest
+            {
+                Manager = "ProfileManager",
+                Title = title,
+                Content = content ?? string.Empty,
+                Content2 = hasSlotIssue ? Resources.ControllerPage_VirtualControllerNotOnSlot1Desc : string.Empty,
+                Img = imageToUse,
+                IsHero = useAsHero,
+                Important = hasSlotIssue,  // Mark as important if slot issue exists
+                SelectionBoxes =
+                [
+                    new ToastComboInput
+                    {
+                        Id = "layoutMode",
+                        Title = "Gamepad mode",
+                        DefaultSelectionBoxItemId = ((int)current).ToString(),
+                        Items =
+                        [
+                            new ToastComboItem(((int)LayoutModes.Gamepad).ToString(),  "Gamepad"),
+                            new ToastComboItem(((int)LayoutModes.Desktop).ToString(), "Desktop"),
+                            new ToastComboItem(((int)LayoutModes.Auto).ToString(),    "Auto"),
+                        ]
+                    }
+                ],
+                Actions = actions
+            };
+        }
 
     private void PowerProfileManager_Deleted(PowerProfile powerProfile)
     {
@@ -960,7 +952,12 @@ public class ProfileManager : IManager
 
             // send toast
             // todo: localize me
-            ToastManager.SendToast($"{(profile.IsSubProfile ? "Subprofile" : "Profile")} {profile.Name} deleted");
+            ToastManager.SendToast(new ToastRequest
+            {
+                Manager = "ProfileManager",
+                Title = (profile.IsSubProfile ? "Subprofile" : "Profile") + " deleted",
+                Content = profile.Name
+            });
 
             LogManager.LogInformation("Deleted {0}: {1}", (profile.IsSubProfile ? "subprofile" : "profile"), profilePath);
 
