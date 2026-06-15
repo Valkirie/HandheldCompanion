@@ -120,12 +120,12 @@ namespace HandheldCompanion.Managers
             // load a few variables
             HIDstatus = (HIDstatus)ManagerFactory.settingsManager.GetInt("HIDstatus");
 
-            SettingsManager_SettingValueChanged("VIIPERPort", ManagerFactory.settingsManager.GetInt("VIIPERPort"), false);
-            SettingsManager_SettingValueChanged("VIIPEREnabled", ManagerFactory.settingsManager.GetString("VIIPEREnabled"), false);
-            SettingsManager_SettingValueChanged("DSUport", ManagerFactory.settingsManager.GetInt("DSUport"), false);
-            SettingsManager_SettingValueChanged("DSUEnabled", ManagerFactory.settingsManager.GetString("DSUEnabled"), false);
-            SettingsManager_SettingValueChanged("HIDmode", selectedHIDMode, false);
-            SettingsManager_SettingValueChanged("HIDstatus", HIDstatus, false);
+            SettingsManager_SettingValueChanged("VIIPERPort", ManagerFactory.settingsManager.GetInt("VIIPERPort"), false, false);
+            SettingsManager_SettingValueChanged("VIIPEREnabled", ManagerFactory.settingsManager.GetString("VIIPEREnabled"), false, false);
+            SettingsManager_SettingValueChanged("DSUport", ManagerFactory.settingsManager.GetInt("DSUport"), false, false);
+            SettingsManager_SettingValueChanged("DSUEnabled", ManagerFactory.settingsManager.GetString("DSUEnabled"), false, false);
+            SettingsManager_SettingValueChanged("HIDmode", selectedHIDMode, false, false);
+            SettingsManager_SettingValueChanged("HIDstatus", HIDstatus, false, false);
         }
 
         public static async Task Stop()
@@ -171,7 +171,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static async void SettingsManager_SettingValueChanged(string name, object? value, bool temporary)
+        private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
         {
             switch (name)
             {

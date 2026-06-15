@@ -157,11 +157,11 @@ namespace HandheldCompanion.Controllers.Lenovo
 
         protected override void QuerySettings()
         {
-            SettingsManager_SettingValueChanged("LegionControllerGyroIndex", ManagerFactory.settingsManager.GetInt("LegionControllerGyroIndex"), false);
+            SettingsManager_SettingValueChanged("LegionControllerGyroIndex", ManagerFactory.settingsManager.GetInt("LegionControllerGyroIndex"), false, false);
             base.QuerySettings();
         }
 
-        protected override void SettingsManager_SettingValueChanged(string name, object? value, bool temporary)
+        protected override void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
         {
             switch (name)
             {
@@ -170,7 +170,7 @@ namespace HandheldCompanion.Controllers.Lenovo
                     break;
             }
 
-            base.SettingsManager_SettingValueChanged(name, value, temporary);
+            base.SettingsManager_SettingValueChanged(name, value, temporary, initializing);
         }
 
         public override void AttachDetails(PnPDetails details)

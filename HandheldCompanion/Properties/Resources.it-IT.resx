@@ -1330,12 +1330,6 @@
   <data name="LayoutPage_Dpad" xml:space="preserve">
     <value>Pad direzionale</value>
   </data>
-  <data name="LayoutPage_ExportCurrentController" xml:space="preserve">
-    <value>Esporta per il controller attuale</value>
-  </data>
-  <data name="LayoutPage_ExportLayout" xml:space="preserve">
-    <value>Esporta layout</value>
-  </data>
   <data name="LayoutPage_Gyro" xml:space="preserve">
     <value>Giroscopio</value>
   </data>

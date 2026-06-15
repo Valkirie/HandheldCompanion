@@ -50,7 +50,7 @@ public enum LayoutModes
 
 public class SettingsManager : IManager
 {
-    public delegate void SettingValueChangedEventHandler(string name, object? value, bool temporary);
+    public delegate void SettingValueChangedEventHandler(string name, object? value, bool temporary, bool initializing);
     public event SettingValueChangedEventHandler? SettingValueChanged;
 
     private readonly Dictionary<string, object?> Settings = [];
@@ -70,10 +70,7 @@ public class SettingsManager : IManager
 
         IOrderedEnumerable<SettingsProperty> properties = Properties.Settings.Default.Properties.Cast<SettingsProperty>().OrderBy(s => s.Name);
         foreach (var property in properties)
-            SettingValueChanged?.Invoke(property.Name, GetProperty(property.Name), false);
-
-        if (GetBoolean("FirstStart"))
-            SetProperty("FirstStart", false);
+            SettingValueChanged?.Invoke(property.Name, GetProperty(property.Name), false, Status.HasFlag(ManagerStatus.Initializing));
 
         base.Start();
     }
@@ -129,7 +126,7 @@ public class SettingsManager : IManager
 
             // raise event
             if (Status.HasFlag(ManagerStatus.Initialized) || force)
-                SettingValueChanged?.Invoke(name, value, temporary);
+                SettingValueChanged?.Invoke(name, value, temporary, false);
 
             LogManager.LogDebug("Settings {0} set to {1}", name, value ?? "null");
         }

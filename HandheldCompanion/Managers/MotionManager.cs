@@ -71,7 +71,7 @@ namespace HandheldCompanion.Managers
             sensorSelection = (SensorFamily)ManagerFactory.settingsManager.GetInt("SensorSelection");
         }
 
-        private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary)
+        private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
         {
             if (name == "SensorSelection")
                 sensorSelection = (SensorFamily)Convert.ToInt32(value);

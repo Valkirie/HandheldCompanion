@@ -1322,12 +1322,6 @@
   <data name="LayoutPage_Dpad" xml:space="preserve">
     <value>D패드</value>
   </data>
-  <data name="LayoutPage_ExportCurrentController" xml:space="preserve">
-    <value>현재 컨트롤러용 내보내기</value>
-  </data>
-  <data name="LayoutPage_ExportLayout" xml:space="preserve">
-    <value>레이아웃 내보내기</value>
-  </data>
   <data name="LayoutPage_Gyro" xml:space="preserve">
     <value>자이로</value>
   </data>

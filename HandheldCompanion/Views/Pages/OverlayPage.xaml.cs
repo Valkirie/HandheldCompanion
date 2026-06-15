@@ -61,28 +61,28 @@ public partial class OverlayPage : Page
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        SettingsManager_SettingValueChanged("OverlayModel", ManagerFactory.settingsManager.GetString("OverlayModel"), false);
-        SettingsManager_SettingValueChanged("OverlayControllerAlignment", ManagerFactory.settingsManager.GetString("OverlayControllerAlignment"), false);
-        SettingsManager_SettingValueChanged("OverlayControllerSize", ManagerFactory.settingsManager.GetString("OverlayControllerSize"), false);
-        SettingsManager_SettingValueChanged("OverlayRenderAntialiasing", ManagerFactory.settingsManager.GetString("OverlayRenderAntialiasing"), false);
-        SettingsManager_SettingValueChanged("OverlayTrackpadsSize", ManagerFactory.settingsManager.GetString("OverlayTrackpadsSize"), false);
-        SettingsManager_SettingValueChanged("OverlayFaceCamera", ManagerFactory.settingsManager.GetString("OverlayFaceCamera"), false);
-        SettingsManager_SettingValueChanged("OverlayControllerRestingPitch", ManagerFactory.settingsManager.GetString("OverlayControllerRestingPitch"), false);
-        SettingsManager_SettingValueChanged("OverlayTrackpadsAlignment", ManagerFactory.settingsManager.GetString("OverlayTrackpadsAlignment"), false);
-        SettingsManager_SettingValueChanged("OverlayTrackpadsOpacity", ManagerFactory.settingsManager.GetString("OverlayTrackpadsOpacity"), false);
-        SettingsManager_SettingValueChanged("OverlayControllerOpacity", ManagerFactory.settingsManager.GetString("OverlayControllerOpacity"), false);
-        SettingsManager_SettingValueChanged("OverlayControllerBackgroundColor", ManagerFactory.settingsManager.GetString("OverlayControllerBackgroundColor"), false);
-        SettingsManager_SettingValueChanged("OverlayControllerAlwaysOnTop", ManagerFactory.settingsManager.GetString("OverlayControllerAlwaysOnTop"), false);
-        SettingsManager_SettingValueChanged("OverlayControllerMotion", ManagerFactory.settingsManager.GetString("OverlayControllerMotion"), false);
-        SettingsManager_SettingValueChanged("OnScreenDisplayRefreshRate", ManagerFactory.settingsManager.GetString("OnScreenDisplayRefreshRate"), false);
-        SettingsManager_SettingValueChanged("OnScreenDisplayLevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayLevel"), false);
-        SettingsManager_SettingValueChanged("OnScreenDisplayTimeLevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayTimeLevel"), false);
-        SettingsManager_SettingValueChanged("OnScreenDisplayFPSLevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayFPSLevel"), false);
-        SettingsManager_SettingValueChanged("OnScreenDisplayCPULevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayCPULevel"), false);
-        SettingsManager_SettingValueChanged("OnScreenDisplayGPULevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayGPULevel"), false);
-        SettingsManager_SettingValueChanged("OnScreenDisplayRAMLevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayRAMLevel"), false);
-        SettingsManager_SettingValueChanged("OnScreenDisplayVRAMLevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayVRAMLevel"), false);
-        SettingsManager_SettingValueChanged("OnScreenDisplayBATTLevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayBATTLevel"), false);
+        SettingsManager_SettingValueChanged("OverlayModel", ManagerFactory.settingsManager.GetString("OverlayModel"), false, false);
+        SettingsManager_SettingValueChanged("OverlayControllerAlignment", ManagerFactory.settingsManager.GetString("OverlayControllerAlignment"), false, false);
+        SettingsManager_SettingValueChanged("OverlayControllerSize", ManagerFactory.settingsManager.GetString("OverlayControllerSize"), false, false);
+        SettingsManager_SettingValueChanged("OverlayRenderAntialiasing", ManagerFactory.settingsManager.GetString("OverlayRenderAntialiasing"), false, false);
+        SettingsManager_SettingValueChanged("OverlayTrackpadsSize", ManagerFactory.settingsManager.GetString("OverlayTrackpadsSize"), false, false);
+        SettingsManager_SettingValueChanged("OverlayFaceCamera", ManagerFactory.settingsManager.GetString("OverlayFaceCamera"), false, false);
+        SettingsManager_SettingValueChanged("OverlayControllerRestingPitch", ManagerFactory.settingsManager.GetString("OverlayControllerRestingPitch"), false, false);
+        SettingsManager_SettingValueChanged("OverlayTrackpadsAlignment", ManagerFactory.settingsManager.GetString("OverlayTrackpadsAlignment"), false, false);
+        SettingsManager_SettingValueChanged("OverlayTrackpadsOpacity", ManagerFactory.settingsManager.GetString("OverlayTrackpadsOpacity"), false, false);
+        SettingsManager_SettingValueChanged("OverlayControllerOpacity", ManagerFactory.settingsManager.GetString("OverlayControllerOpacity"), false, false);
+        SettingsManager_SettingValueChanged("OverlayControllerBackgroundColor", ManagerFactory.settingsManager.GetString("OverlayControllerBackgroundColor"), false, false);
+        SettingsManager_SettingValueChanged("OverlayControllerAlwaysOnTop", ManagerFactory.settingsManager.GetString("OverlayControllerAlwaysOnTop"), false, false);
+        SettingsManager_SettingValueChanged("OverlayControllerMotion", ManagerFactory.settingsManager.GetString("OverlayControllerMotion"), false, false);
+        SettingsManager_SettingValueChanged("OnScreenDisplayRefreshRate", ManagerFactory.settingsManager.GetString("OnScreenDisplayRefreshRate"), false, false);
+        SettingsManager_SettingValueChanged("OnScreenDisplayLevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayLevel"), false, false);
+        SettingsManager_SettingValueChanged("OnScreenDisplayTimeLevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayTimeLevel"), false, false);
+        SettingsManager_SettingValueChanged("OnScreenDisplayFPSLevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayFPSLevel"), false, false);
+        SettingsManager_SettingValueChanged("OnScreenDisplayCPULevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayCPULevel"), false, false);
+        SettingsManager_SettingValueChanged("OnScreenDisplayGPULevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayGPULevel"), false, false);
+        SettingsManager_SettingValueChanged("OnScreenDisplayRAMLevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayRAMLevel"), false, false);
+        SettingsManager_SettingValueChanged("OnScreenDisplayVRAMLevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayVRAMLevel"), false, false);
+        SettingsManager_SettingValueChanged("OnScreenDisplayBATTLevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayBATTLevel"), false, false);
     }
 
     private void QueryPlatforms()
@@ -117,7 +117,7 @@ public partial class OverlayPage : Page
         });
     }
 
-    private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary)
+    private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
     {
         if (temporary)
             return;

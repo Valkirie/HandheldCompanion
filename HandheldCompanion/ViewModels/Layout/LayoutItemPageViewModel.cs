@@ -119,7 +119,7 @@ namespace HandheldCompanion.ViewModels
             ActionType = inputType;
 
             // Update description based on action and target
-            if (_currentMapping.Action is not null && _currentMapping.SelectedTarget is not null)
+            if (_currentMapping.Action is not null)
             {
                 string actionType = _currentMapping.ActionTypeIndex switch
                 {
@@ -133,7 +133,10 @@ namespace HandheldCompanion.ViewModels
                     7 => "Inherit",
                     _ => "Unknown"
                 };
-                ActionDescription = $"{actionType}: {_currentMapping.SelectedTarget.Content}";
+
+                ActionDescription = $"{actionType}";
+                if (_currentMapping.SelectedTarget is not null)
+                    ActionDescription = $"{actionType}: {_currentMapping.SelectedTarget.Content}";
             }
             else
             {

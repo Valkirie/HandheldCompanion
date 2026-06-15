@@ -1344,12 +1344,6 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="LayoutPage_Dpad" xml:space="preserve">
     <value>Dpad</value>
   </data>
-  <data name="LayoutPage_ExportCurrentController" xml:space="preserve">
-    <value>Exportar para controle atual</value>
-  </data>
-  <data name="LayoutPage_ExportLayout" xml:space="preserve">
-    <value>Exportar layout</value>
-  </data>
   <data name="LayoutPage_Gyro" xml:space="preserve">
     <value>Gyro</value>
   </data>
@@ -2858,9 +2852,6 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   </data>
   <data name="DevicePage_SensorCalibration_Button" xml:space="preserve">
     <value>Calibrar</value>
-  </data>
-  <data name="LayoutPage_Export" xml:space="preserve">
-    <value>Exportar layout</value>
   </data>
   <data name="PerformancePage_CPUBoost_Aggressive" xml:space="preserve">
     <value>Agressivo</value>

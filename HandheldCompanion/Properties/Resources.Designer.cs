@@ -6263,7 +6263,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Export layout.
+        ///   Looks up a localized string similar to Export.
         /// </summary>
         public static string LayoutPage_Export {
             get {
@@ -6281,7 +6281,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Export layout.
+        ///   Looks up a localized string similar to Export.
         /// </summary>
         public static string LayoutPage_ExportLayout {
             get {
@@ -6448,6 +6448,15 @@ namespace HandheldCompanion.Properties {
         public static string LayoutPage_Profile {
             get {
                 return ResourceManager.GetString("LayoutPage_Profile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset layout.
+        /// </summary>
+        public static string LayoutPage_ResetLayout {
+            get {
+                return ResourceManager.GetString("LayoutPage_ResetLayout", resourceCulture);
             }
         }
         

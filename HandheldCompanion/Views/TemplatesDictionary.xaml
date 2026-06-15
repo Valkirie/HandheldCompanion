@@ -52,8 +52,7 @@
         </Style.Triggers>
     </Style>
 
-    <Style
-        x:Key="LibraryPrimaryActionMenuItemStyle"
+    <Style x:Key="LibraryPrimaryActionMenuItemStyle"
         BasedOn="{StaticResource {x:Type MenuItem}}"
         TargetType="MenuItem">
         <Setter Property="Header" Value="Play" />
@@ -63,6 +62,16 @@
             </DataTrigger>
         </Style.Triggers>
     </Style>
+
+    <ControlTemplate x:Key="LibraryManageMenuItemsTemplate" TargetType="MenuItem">
+        <MenuItem Header="Manage">
+            <MenuItem Command="{Binding OpenLayout}" Header="Edit controller layout" />
+            <MenuItem
+                Command="{Binding OpenExecutableLocation}"
+                Header="Open executable location"
+                IsEnabled="{Binding CanOpenExecutableLocation}" />
+        </MenuItem>
+    </ControlTemplate>
 
     <ContextMenu
         x:Key="LibraryActionContextMenu"

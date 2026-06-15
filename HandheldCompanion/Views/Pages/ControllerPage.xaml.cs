@@ -52,17 +52,17 @@ public partial class ControllerPage : Page
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        SettingsManager_SettingValueChanged("HIDcloakonconnect", ManagerFactory.settingsManager.GetString("HIDcloakonconnect"), false);
-        SettingsManager_SettingValueChanged("HIDuncloakonclose", ManagerFactory.settingsManager.GetString("HIDuncloakonclose"), false);
-        SettingsManager_SettingValueChanged("HIDuncloakondisconnect", ManagerFactory.settingsManager.GetString("HIDuncloakondisconnect"), false);
-        SettingsManager_SettingValueChanged("HIDvibrateonconnect", ManagerFactory.settingsManager.GetString("HIDvibrateonconnect"), false);
-        SettingsManager_SettingValueChanged("VibrationStrength", ManagerFactory.settingsManager.GetString("VibrationStrength"), false);
-        SettingsManager_SettingValueChanged("SteamControllerMode", ManagerFactory.settingsManager.GetString("SteamControllerMode"), false);
-        SettingsManager_SettingValueChanged("SteamControllerRumbleInterval", ManagerFactory.settingsManager.GetString("SteamControllerRumbleInterval"), false);
-        SettingsManager_SettingValueChanged("HIDmode", ManagerFactory.settingsManager.GetString("HIDmode"), false);
-        SettingsManager_SettingValueChanged("HIDstatus", ManagerFactory.settingsManager.GetString("HIDstatus"), false);
-        SettingsManager_SettingValueChanged("ControllerPlugBehavior", ManagerFactory.settingsManager.GetString("ControllerPlugBehavior"), false);
-        SettingsManager_SettingValueChanged("MasterInterval", ManagerFactory.settingsManager.GetString("MasterInterval"), false);
+        SettingsManager_SettingValueChanged("HIDcloakonconnect", ManagerFactory.settingsManager.GetString("HIDcloakonconnect"), false, false);
+        SettingsManager_SettingValueChanged("HIDuncloakonclose", ManagerFactory.settingsManager.GetString("HIDuncloakonclose"), false, false);
+        SettingsManager_SettingValueChanged("HIDuncloakondisconnect", ManagerFactory.settingsManager.GetString("HIDuncloakondisconnect"), false, false);
+        SettingsManager_SettingValueChanged("HIDvibrateonconnect", ManagerFactory.settingsManager.GetString("HIDvibrateonconnect"), false, false);
+        SettingsManager_SettingValueChanged("VibrationStrength", ManagerFactory.settingsManager.GetString("VibrationStrength"), false, false);
+        SettingsManager_SettingValueChanged("SteamControllerMode", ManagerFactory.settingsManager.GetString("SteamControllerMode"), false, false);
+        SettingsManager_SettingValueChanged("SteamControllerRumbleInterval", ManagerFactory.settingsManager.GetString("SteamControllerRumbleInterval"), false, false);
+        SettingsManager_SettingValueChanged("HIDmode", ManagerFactory.settingsManager.GetString("HIDmode"), false, false);
+        SettingsManager_SettingValueChanged("HIDstatus", ManagerFactory.settingsManager.GetString("HIDstatus"), false, false);
+        SettingsManager_SettingValueChanged("ControllerPlugBehavior", ManagerFactory.settingsManager.GetString("ControllerPlugBehavior"), false, false);
+        SettingsManager_SettingValueChanged("MasterInterval", ManagerFactory.settingsManager.GetString("MasterInterval"), false, false);
     }
 
     public ControllerPage(string Tag) : this()
@@ -70,7 +70,7 @@ public partial class ControllerPage : Page
         this.Tag = Tag;
     }
 
-    private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary)
+    private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
     {
         // UI thread
         UIHelper.TryInvoke(() =>

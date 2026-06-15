@@ -36,7 +36,7 @@ public partial class OverlayTrackpad : OverlayWindow
         rightInput = new TouchInput();
     }
 
-    private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary)
+    private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
     {
         // UI thread
         UIHelper.TryInvoke(() =>

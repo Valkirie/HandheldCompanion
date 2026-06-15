@@ -1324,12 +1324,6 @@
   <data name="LayoutPage_Dpad" xml:space="preserve">
     <value>方向鍵</value>
   </data>
-  <data name="LayoutPage_ExportCurrentController" xml:space="preserve">
-    <value>為當前手柄導出</value>
-  </data>
-  <data name="LayoutPage_ExportLayout" xml:space="preserve">
-    <value>導出布局</value>
-  </data>
   <data name="LayoutPage_Gyro" xml:space="preserve">
     <value>陀螺儀</value>
   </data>
@@ -2838,9 +2832,6 @@
   </data>
   <data name="DevicePage_SensorCalibration_Button" xml:space="preserve">
     <value>校準</value>
-  </data>
-  <data name="LayoutPage_Export" xml:space="preserve">
-    <value>匯出佈局</value>
   </data>
   <data name="PerformancePage_CPUBoost_Aggressive" xml:space="preserve">
     <value>激進</value>

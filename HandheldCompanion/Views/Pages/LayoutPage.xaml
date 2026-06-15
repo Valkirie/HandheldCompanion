@@ -2,6 +2,7 @@
     x:Class="HandheldCompanion.Views.Pages.LayoutPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="clr-namespace:HandheldCompanion.Behaviors"
     xmlns:controls="clr-namespace:HandheldCompanion.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
@@ -38,7 +39,28 @@
             </Image.OpacityMask>
         </Image>
 
-        <ikw:SimpleStackPanel Spacing="12">
+        <StackPanel>
+            <!--  Current layout info header  -->
+            <ikw:SimpleStackPanel
+                Margin="0,0,0,8"
+                Orientation="Horizontal"
+                Spacing="3">
+                <TextBlock
+                    behaviors:TextBlockUpperCase.IsUpperCase="True"
+                    Style="{StaticResource CapitalAccentTextBlockStyle}"
+                    Text="{Binding LayoutName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Margin="3,-1,3,0"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="•" />
+                <TextBlock
+                    Name="LayoutInfoDescription"
+                    MaxWidth="300"
+                    behaviors:TextBlockUpperCase.IsUpperCase="True"
+                    Style="{StaticResource CapitalAccentTextBlockStyle}"
+                    Text="{Binding LayoutDescription, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    TextWrapping="NoWrap" />
+            </ikw:SimpleStackPanel>
 
             <!--  Profile picker  -->
             <ikw:SimpleStackPanel
@@ -136,30 +158,80 @@
                                 IsEnabled="False"
                                 Style="{DynamicResource AccentButtonStyle}" />
 
-                            <!--  Export layout  -->
-                            <Button Name="ButtonLayoutSettings" Content="{l:Static resx:Resources.LayoutPage_Export}">
+                            <!--  Layout settings  -->
+                            <Button Name="ButtonLayoutSettingsEdit" VerticalAlignment="Stretch">
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" />
                                 <ui:FlyoutService.Flyout>
                                     <ui:Flyout
-                                        x:Name="LayoutFlyout"
+                                        x:Name="LayoutSettingsFlyout"
                                         AreOpenCloseAnimationsEnabled="True"
-                                        Opening="Flyout_Opening"
+                                        Opening="LayoutSettingsFlyout_Opening"
                                         Placement="Left">
                                         <ikw:SimpleStackPanel Width="400" Spacing="8">
-                                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.LayoutPage_ExportLayout}" />
+                                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Edit Layout Metadata" />
 
                                             <ikw:SimpleStackPanel Spacing="3">
                                                 <TextBox
                                                     Name="LayoutTitle"
                                                     HorizontalAlignment="Stretch"
-                                                    ui:ControlHelper.Header="{l:Static resx:Resources.LayoutPage_LayoutTitle}" />
+                                                    ui:ControlHelper.Header="{l:Static resx:Resources.LayoutPage_LayoutTitle}"
+                                                    Text="{Binding LayoutName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 <TextBox
                                                     Name="LayoutDescription"
                                                     HorizontalAlignment="Stretch"
-                                                    ui:ControlHelper.Header="{l:Static resx:Resources.LayoutPage_LayoutDesc}" />
+                                                    ui:ControlHelper.Header="{l:Static resx:Resources.LayoutPage_LayoutDesc}"
+                                                    Text="{Binding LayoutDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 <TextBox
                                                     Name="LayoutAuthor"
                                                     HorizontalAlignment="Stretch"
-                                                    ui:ControlHelper.Header="{l:Static resx:Resources.LayoutPage_LayoutAuthor}" />
+                                                    ui:ControlHelper.Header="{l:Static resx:Resources.LayoutPage_LayoutAuthor}"
+                                                    Text="{Binding LayoutAuthor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                                <!--  Separator  -->
+                                                <Separator
+                                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                                    BorderThickness="0,1,0,0"
+                                                    Opacity="0.25" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="5*" />
+                                                        <ColumnDefinition Width="0.5*" />
+                                                        <ColumnDefinition Width="5*" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <Button
+                                                        Name="LayoutSettingsConfirmButton"
+                                                        Grid.Column="0"
+                                                        HorizontalAlignment="Stretch"
+                                                        Click="LayoutSettingsConfirmButton_Click"
+                                                        Content="{l:Static resx:Resources.LayoutPage_Confirm}" />
+                                                    <Button
+                                                        Name="LayoutSettingsCancelButton"
+                                                        Grid.Column="2"
+                                                        HorizontalAlignment="Stretch"
+                                                        Click="LayoutSettingsCancelButton_Click"
+                                                        Content="{l:Static resx:Resources.LayoutPage_Cancel}" />
+                                                </Grid>
+                                            </ikw:SimpleStackPanel>
+                                        </ikw:SimpleStackPanel>
+                                    </ui:Flyout>
+                                </ui:FlyoutService.Flyout>
+                            </Button>
+
+                            <!--  Export layout  -->
+                            <Button Name="ButtonLayoutExport" VerticalAlignment="Stretch">
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEE71;" />
+                                <ui:FlyoutService.Flyout>
+                                    <ui:Flyout
+                                        x:Name="LayoutExportFlyout"
+                                        AreOpenCloseAnimationsEnabled="True"
+                                        Opening="ExportFlyout_Opening"
+                                        Placement="Left">
+                                        <ikw:SimpleStackPanel Width="400" Spacing="8">
+                                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.LayoutPage_ExportLayout}" />
+
+                                            <ikw:SimpleStackPanel Spacing="3">
                                                 <CheckBox x:Name="ExportForCurrent" Content="{l:Static resx:Resources.LayoutPage_ExportCurrentController}" />
                                                 <CheckBox
                                                     x:Name="SaveGameInfo"
@@ -187,10 +259,10 @@
                                                         Click="LayoutExportButton_Click"
                                                         Content="{l:Static resx:Resources.LayoutPage_Confirm}" />
                                                     <Button
-                                                        Name="LayoutCancelButton"
+                                                        Name="LayoutExportCancelButton"
                                                         Grid.Column="2"
                                                         HorizontalAlignment="Stretch"
-                                                        Click="LayoutCancelButton_Click"
+                                                        Click="LayoutExportCancelButton_Click"
                                                         Content="{l:Static resx:Resources.LayoutPage_Cancel}" />
                                                 </Grid>
                                             </ikw:SimpleStackPanel>
@@ -198,6 +270,13 @@
                                     </ui:Flyout>
                                 </ui:FlyoutService.Flyout>
                             </Button>
+
+                            <!--  Reset layout  -->
+                            <Button
+                                Name="ButtonResetLayout"
+                                Click="ButtonResetLayout_Click"
+                                Content="{l:Static resx:Resources.LayoutPage_ResetLayout}"
+                                Style="{DynamicResource AccentButtonStyle}" />
                         </ikw:SimpleStackPanel>
                     </Grid>
                 </ikw:SimpleStackPanel>
@@ -320,6 +399,6 @@
                     Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
                     HorizontalAlignment="Left" />
             </controls:AdaptiveNavigationView>
-        </ikw:SimpleStackPanel>
+        </StackPanel>
     </Grid>
 </Page>

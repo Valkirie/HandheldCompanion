@@ -167,7 +167,7 @@ public class MultimediaManager : IManager
         }
     }
 
-    private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary)
+    private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
     {
         // do something
     }

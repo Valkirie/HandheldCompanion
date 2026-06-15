@@ -160,7 +160,7 @@ public partial class LayoutPage : Page
         });
     }
 
-    private void SettingsManager_SettingValueChanged(string? name, object? value, bool temporary)
+    private void SettingsManager_SettingValueChanged(string? name, object? value, bool temporary, bool initializing)
     {
         // UI thread
         UIHelper.TryInvoke(() =>
@@ -201,6 +201,16 @@ public partial class LayoutPage : Page
     public void UpdateLayoutTemplate(LayoutTemplate layoutTemplate)
     {
         currentTemplate = layoutTemplate;
+
+        // Update ViewModel properties to reflect current template
+        var viewModel = DataContext as LayoutPageViewModel;
+        if (viewModel is not null)
+        {
+            viewModel.LayoutName = layoutTemplate.Name;
+            viewModel.LayoutDescription = layoutTemplate.Description;
+            viewModel.LayoutAuthor = layoutTemplate.Author;
+        }
+
         UpdatePages();
     }
 
@@ -257,6 +267,15 @@ public partial class LayoutPage : Page
                         currentTemplate.Description = layoutTemplate.Description;
                         currentTemplate.Guid = layoutTemplate.Guid; // not needed
 
+                        // Update ViewModel properties to reflect newly applied template
+                        var viewModel = DataContext as LayoutPageViewModel;
+                        if (viewModel is not null)
+                        {
+                            viewModel.LayoutName = layoutTemplate.Name;
+                            viewModel.LayoutDescription = layoutTemplate.Description;
+                            viewModel.LayoutAuthor = layoutTemplate.Author;
+                        }
+
                         // the whole layout has been updated without notification, trigger one
                         currentTemplate.Layout.UpdateLayout();
 
@@ -264,6 +283,57 @@ public partial class LayoutPage : Page
                     }
                     break;
             }
+        }
+    }
+
+    private async void ButtonResetLayout_Click(object sender, RoutedEventArgs e)
+    {
+        Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+        {
+            Title = "Reset layout",
+            Content = "Are you sure you want to reset the layout to its default configuration?",
+            DefaultButton = ContentDialogButton.Close,
+            CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
+            PrimaryButtonText = Properties.Resources.ProfilesPage_Yes
+        }.ShowAsync();
+
+        await dialogTask; // sync call
+
+        switch (dialogTask.Result)
+        {
+            case ContentDialogResult.Primary:
+                {
+                    // Get the current profile to determine if it's a default profile
+                    Profile currentProfile = ProfilesPage.selectedProfile;
+
+                    // Clear the layout
+                    currentTemplate.Layout.ButtonLayout.Clear();
+                    currentTemplate.Layout.AxisLayout.Clear();
+                    currentTemplate.Layout.GyroLayout.Clear();
+
+                    // Fill with appropriate defaults
+                    if (currentProfile.Default)
+                        currentTemplate.Layout.FillDefault();
+                    else
+                        currentTemplate.Layout.FillInherit();
+
+                    currentTemplate.Name = LayoutTemplate.DefaultLayout.Name;
+
+                    // Update ViewModel properties
+                    var viewModel = DataContext as LayoutPageViewModel;
+                    if (viewModel is not null)
+                    {
+                        viewModel.LayoutName = LayoutTemplate.DefaultLayout.Name;
+                        viewModel.LayoutDescription = LayoutTemplate.DefaultLayout.Description;
+                        viewModel.LayoutAuthor = LayoutTemplate.DefaultLayout.Author;
+                    }
+
+                    // Trigger layout update notification
+                    currentTemplate.Layout.UpdateLayout();
+
+                    UpdatePages();
+                }
+                break;
         }
     }
 
@@ -282,14 +352,18 @@ public partial class LayoutPage : Page
 
     private void LayoutExportButton_Click(object sender, RoutedEventArgs e)
     {
-        LayoutFlyout.Hide();
+        LayoutExportFlyout.Hide();
+
+        var viewModel = DataContext as LayoutPageViewModel;
+        if (viewModel is null)
+            return;
 
         LayoutTemplate newLayout = new()
         {
             Layout = currentTemplate.Layout,
-            Name = LayoutTitle.Text,
-            Description = LayoutDescription.Text,
-            Author = LayoutAuthor.Text,
+            Name = viewModel.LayoutName,
+            Description = viewModel.LayoutDescription,
+            Author = viewModel.LayoutAuthor,
             Executable = SaveGameInfo.IsChecked == true ? currentTemplate.Executable : "",
             Product = SaveGameInfo.IsChecked == true ? currentTemplate.Product : "",
             IsInternal = false
@@ -326,36 +400,74 @@ public partial class LayoutPage : Page
         }.ShowAsync();
     }
 
-    private void Flyout_Opening(object sender, object e)
+    private void ExportFlyout_Opening(object sender, object e)
     {
         if (currentTemplate.Executable == string.Empty && currentTemplate.Product == string.Empty)
             SaveGameInfo.IsChecked = SaveGameInfo.IsEnabled = false;
         else
             SaveGameInfo.IsChecked = SaveGameInfo.IsEnabled = true;
-
-        var separator = currentTemplate.Name.Length > 0 && currentTemplate.Product.Length > 0 ? " - " : "";
-
-        LayoutTitle.Text = $"{currentTemplate.Name}{separator}{currentTemplate.Product}";
-        LayoutDescription.Text = currentTemplate.Description;
-        LayoutAuthor.Text = currentTemplate.Author;
     }
 
     private void SaveGameInfo_Toggled(object sender, RoutedEventArgs e)
     {
-        if (SaveGameInfo.IsChecked == true)
+        // Checkboxes updated dynamically
+    }
+
+    private void LayoutSettingsFlyout_Opening(object sender, object e)
+    {
+        // Load current profile values into ViewModel properties
+        if (ProfilesPage.selectedProfile != null)
         {
-            var separator = currentTemplate.Name.Length > 0 && currentTemplate.Product.Length > 0 ? " - " : "";
-            LayoutTitle.Text = $"{currentTemplate.Name}{separator}{currentTemplate.Product}";
-        }
-        else
-        {
-            LayoutTitle.Text = $"{currentTemplate.Name}";
+            var viewModel = DataContext as LayoutPageViewModel;
+            if (viewModel is not null)
+            {
+                viewModel.LayoutName = ProfilesPage.selectedProfile.LayoutTitle;
+                viewModel.LayoutDescription = ProfilesPage.selectedProfile.LayoutDescription;
+                viewModel.LayoutAuthor = ProfilesPage.selectedProfile.LayoutAuthor;
+            }
         }
     }
 
-    private void LayoutCancelButton_Click(object sender, RoutedEventArgs e)
+    private void LayoutSettingsConfirmButton_Click(object sender, RoutedEventArgs e)
     {
-        LayoutFlyout.Hide();
+        // Save edited values to profile and close the flyout
+        if (ProfilesPage.selectedProfile != null)
+        {
+            var viewModel = DataContext as LayoutPageViewModel;
+            if (viewModel is not null)
+            {
+                ProfilesPage.selectedProfile.LayoutTitle = viewModel.LayoutName;
+                ProfilesPage.selectedProfile.LayoutDescription = viewModel.LayoutDescription;
+                ProfilesPage.selectedProfile.LayoutAuthor = viewModel.LayoutAuthor;
+
+                // Save the profile with changes
+                ManagerFactory.profileManager.UpdateOrCreateProfile(ProfilesPage.selectedProfile, UpdateSource.LayoutPage);
+            }
+        }
+
+        LayoutSettingsFlyout.Hide();
+    }
+
+    private void LayoutSettingsCancelButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Discard edits by reloading from profile
+        if (ProfilesPage.selectedProfile != null)
+        {
+            var viewModel = DataContext as LayoutPageViewModel;
+            if (viewModel is not null)
+            {
+                viewModel.LayoutName = ProfilesPage.selectedProfile.LayoutTitle;
+                viewModel.LayoutDescription = ProfilesPage.selectedProfile.LayoutDescription;
+                viewModel.LayoutAuthor = ProfilesPage.selectedProfile.LayoutAuthor;
+            }
+        }
+
+        LayoutSettingsFlyout.Hide();
+    }
+
+    private void LayoutExportCancelButton_Click(object sender, RoutedEventArgs e)
+    {
+        LayoutExportFlyout.Hide();
     }
 
     private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)

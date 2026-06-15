@@ -213,12 +213,12 @@ namespace HandheldCompanion.Devices.Zotac
         protected override void QuerySettings()
         {
             // raise events
-            SettingsManager_SettingValueChanged("ZotacGamingZoneVRAM", ManagerFactory.settingsManager.GetInt("ZotacGamingZoneVRAM"), false);
+            SettingsManager_SettingValueChanged("ZotacGamingZoneVRAM", ManagerFactory.settingsManager.GetInt("ZotacGamingZoneVRAM"), false, false);
 
             base.QuerySettings();
         }
 
-        protected override void SettingsManager_SettingValueChanged(string name, object? value, bool temporary)
+        protected override void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
         {
             switch (name)
             {
@@ -228,7 +228,7 @@ namespace HandheldCompanion.Devices.Zotac
                     break;
             }
 
-            base.SettingsManager_SettingValueChanged(name, value, temporary);
+            base.SettingsManager_SettingValueChanged(name, value, temporary, initializing);
         }
 
         private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)

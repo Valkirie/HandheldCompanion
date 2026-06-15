@@ -75,11 +75,11 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // raise events
-            SettingsManager_SettingValueChanged("LayoutFilterOnDevice", ManagerFactory.settingsManager.GetString("LayoutFilterOnDevice"), false);
+            SettingsManager_SettingValueChanged("LayoutFilterOnDevice", ManagerFactory.settingsManager.GetString("LayoutFilterOnDevice"), false, false);
             RefreshLayoutList();
         }
 
-        private void SettingsManager_SettingValueChanged(string? name, object? value, bool temporary)
+        private void SettingsManager_SettingValueChanged(string? name, object? value, bool temporary, bool initializing)
         {
             switch (name)
             {
@@ -110,6 +110,67 @@ namespace HandheldCompanion.ViewModels
                         return LibraryResources.SteamDeckBig;
                 }
             }
+        }
+
+        private string _layoutName = string.Empty;
+        public string LayoutName
+        {
+            get => _layoutName;
+            set
+            {
+                if (_layoutName != value)
+                {
+                    _layoutName = value;
+                    OnPropertyChanged(nameof(LayoutName));
+                }
+            }
+        }
+
+        private string _layoutDescription = string.Empty;
+        public string LayoutDescription
+        {
+            get => _layoutDescription;
+            set
+            {
+                if (_layoutDescription != value)
+                {
+                    _layoutDescription = value;
+                    OnPropertyChanged(nameof(LayoutDescription));
+                }
+            }
+        }
+
+        private string _layoutAuthor = string.Empty;
+        public string LayoutAuthor
+        {
+            get => _layoutAuthor;
+            set
+            {
+                if (_layoutAuthor != value)
+                {
+                    _layoutAuthor = value;
+                    OnPropertyChanged(nameof(LayoutAuthor));
+                }
+            }
+        }
+
+        // Export-specific properties map to the layout properties
+        public string ExportTitle
+        {
+            get => LayoutName;
+            set => LayoutName = value;
+        }
+
+        public string ExportDescription
+        {
+            get => LayoutDescription;
+            set => LayoutDescription = value;
+        }
+
+        public string ExportAuthor
+        {
+            get => LayoutAuthor;
+            set => LayoutAuthor = value;
         }
 
         private void VirtualManager_ControllerSelected(HIDmode mode)

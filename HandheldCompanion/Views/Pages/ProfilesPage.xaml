@@ -400,6 +400,7 @@
                             </Rectangle.Triggers>
                         </Rectangle>
 
+                        <!--
                         <Image
                             MaxWidth="420"
                             MaxHeight="128"
@@ -413,7 +414,6 @@
                                 <EventTrigger RoutedEvent="Binding.TargetUpdated">
                                     <BeginStoryboard>
                                         <Storyboard>
-                                            <!--  fade in from 0->1 in 300ms  -->
                                             <DoubleAnimation
                                                 Storyboard.TargetProperty="Opacity"
                                                 From="0"
@@ -424,28 +424,33 @@
                                 </EventTrigger>
                             </Image.Triggers>
                         </Image>
+                        -->
 
-                        <ikw:SimpleStackPanel Margin="28" Spacing="3">
+                        <ikw:SimpleStackPanel
+                            Margin="12,0,12,0"
+                            VerticalAlignment="Center"
+                            Spacing="3">
                             <TextBlock
                                 Style="{StaticResource TitleBoldTextBlockStyle}"
                                 Text="{Binding CurrentProfileName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                 TextWrapping="Wrap" />
+                            <!--
                             <TextBlock
-                                MaxWidth="500"
+                                MaxWidth="840"
                                 HorizontalAlignment="Left"
                                 Style="{StaticResource BodyTextBlockStyle}"
                                 Text="{Binding CurrentProfileDescription, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                 TextWrapping="Wrap" />
+                            -->
                         </ikw:SimpleStackPanel>
 
-                        <ikw:SimpleStackPanel
-                            Margin="28"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Bottom"
-                            Orientation="Horizontal"
-                            Spacing="3">
+                        <Grid
+                            Margin="12"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Bottom">
 
                             <!--  Play  -->
+                            <!--
                             <Button
                                 Height="48"
                                 MinWidth="150"
@@ -481,90 +486,111 @@
                                     </TextBlock>
                                 </ikw:SimpleStackPanel>
                             </Button>
+                            -->
 
-                            <ui:DropDownButton
-                                Height="48"
-                                MinWidth="150"
-                                Style="{DynamicResource AccentButtonStyle}">
-                                <ui:DropDownButton.Content>
-                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                        <ui:FontIcon FontSize="16" Glyph="{Binding ProfileProcessActionGlyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        <TextBlock Text="{Binding ProfileProcessActionText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </ikw:SimpleStackPanel>
-                                </ui:DropDownButton.Content>
-                                <ui:DropDownButton.Flyout>
-                                    <ui:MenuFlyout Placement="BottomEdgeAlignedRight">
-                                        <!--  Launch Process  -->
-                                        <MenuItem
-                                            Command="{Binding LaunchProfileProcessCommand}"
-                                            Header="{l:Static resx:Resources.ProfilesPage_Play}"
-                                            IsEnabled="{Binding CanLaunchProcess, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                            <MenuItem.Icon>
-                                                <ui:FontIcon Glyph="&#xf5b0;" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
+                            <ikw:SimpleStackPanel Spacing="8">
+                                <ui:DropDownButton
+                                    Height="48"
+                                    MinWidth="150"
+                                    Margin="12,0,0,0"
+                                    Style="{DynamicResource AccentButtonStyle}">
+                                    <ui:DropDownButton.Content>
+                                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                            <ui:FontIcon FontSize="16" Glyph="{Binding ProfileProcessActionGlyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBlock Text="{Binding ProfileProcessActionText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        </ikw:SimpleStackPanel>
+                                    </ui:DropDownButton.Content>
+                                    <ui:DropDownButton.Flyout>
+                                        <ui:MenuFlyout Placement="BottomEdgeAlignedRight">
+                                            <!--  Launch Process  -->
+                                            <MenuItem
+                                                Command="{Binding LaunchProfileProcessCommand}"
+                                                Header="{l:Static resx:Resources.ProfilesPage_Play}"
+                                                IsEnabled="{Binding CanLaunchProcess, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.Icon>
+                                                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Play}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
 
-                                        <!--  Suspend Process  -->
-                                        <MenuItem
-                                            Command="{Binding SuspendProfileProcessCommand}"
-                                            Header="{l:Static resx:Resources.ProfilesPage_SuspendProcess}"
-                                            IsEnabled="{Binding CanSuspendProcess, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                            <MenuItem.Icon>
-                                                <ui:FontIcon Glyph="&#xE769;" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
+                                            <!--  Suspend Process  -->
+                                            <MenuItem
+                                                Command="{Binding SuspendProfileProcessCommand}"
+                                                Header="{l:Static resx:Resources.ProfilesPage_SuspendProcess}"
+                                                IsEnabled="{Binding CanSuspendProcess, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.Icon>
+                                                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Pause}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
 
-                                        <!--  Resume Process  -->
-                                        <MenuItem
-                                            Command="{Binding ResumeProfileProcessCommand}"
-                                            Header="{l:Static resx:Resources.ProfilesPage_ResumeProcess}"
-                                            IsEnabled="{Binding CanResumeProcess, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                            <MenuItem.Icon>
-                                                <ui:FontIcon Glyph="&#xE768;" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
+                                            <!--  Resume Process  -->
+                                            <MenuItem
+                                                Command="{Binding ResumeProfileProcessCommand}"
+                                                Header="{l:Static resx:Resources.ProfilesPage_ResumeProcess}"
+                                                IsEnabled="{Binding CanResumeProcess, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.Icon>
+                                                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.PlaybackRate1x}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
 
-                                        <Separator />
+                                            <!--  Kill Process  -->
+                                            <MenuItem
+                                                Command="{Binding KillProfileProcessCommand}"
+                                                Header="{l:Static resx:Resources.ProfilesPage_StopProcess}"
+                                                IsEnabled="{Binding CanKillProcess, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.Icon>
+                                                    <ui:FontIcon Foreground="{DynamicResource SystemAccentColorLight2Brush}" Icon="{x:Static ui:SegoeFluentIcons.Stop}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ui:MenuFlyout>
+                                    </ui:DropDownButton.Flyout>
+                                </ui:DropDownButton>
 
-                                        <!--  Kill Process  -->
-                                        <MenuItem
-                                            Command="{Binding KillProfileProcessCommand}"
-                                            Header="{l:Static resx:Resources.ProfilesPage_StopProcess}"
-                                            IsEnabled="{Binding CanKillProcess, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                            <MenuItem.Icon>
-                                                <ui:FontIcon Foreground="{DynamicResource SystemFillColorCriticalBrush}" Glyph="&#xE71A;" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                    </ui:MenuFlyout>
-                                </ui:DropDownButton.Flyout>
-                            </ui:DropDownButton>
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemAccentColorLight2Brush}"
+                                    Style="{StaticResource BaseTextBlockStyle}"
+                                    Text="{Binding SelectedMainProfile.LayoutTitle, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </ikw:SimpleStackPanel>
 
-                            <Button
-                                VerticalAlignment="Stretch"
-                                Command="{Binding OpenControllerLayoutCommand}"
-                                Tag="Navigation">
-                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" />
-                            </Button>
+                            <ikw:SimpleStackPanel
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Orientation="Horizontal"
+                                Spacing="3">
+                                <Button
+                                    Name="ButtonProfileSettings"
+                                    Width="48"
+                                    Height="48"
+                                    Tag="Navigation">
+                                    <Button.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Name="MenuItemEditLayout" Header="Edit controller layout" />
+                                            <MenuItem Name="MenuItemOpenLocation" Header="Open executable location" />
+                                        </ContextMenu>
+                                    </Button.ContextMenu>
+                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" />
+                                </Button>
 
-                            <ToggleButton
-                                Name="ToggleFavoriteButton"
-                                VerticalAlignment="Stretch"
-                                IsChecked="{Binding IsLiked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                IsEnabled="{Binding IsProfileDetailsExpanderEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ui:FontIcon>
-                                    <ui:FontIcon.Style>
-                                        <Style TargetType="ui:FontIcon">
-                                            <Setter Property="Glyph" Value="&#xe734;" />
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsLiked, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                                                    <Setter Property="Glyph" Value="&#xe735;" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ui:FontIcon.Style>
-                                </ui:FontIcon>
-                            </ToggleButton>
-                        </ikw:SimpleStackPanel>
+                                <ToggleButton
+                                    Name="ToggleFavoriteButton"
+                                    Width="48"
+                                    Height="48"
+                                    IsChecked="{Binding IsLiked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    IsEnabled="{Binding IsProfileDetailsExpanderEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <ui:FontIcon>
+                                        <ui:FontIcon.Style>
+                                            <Style TargetType="ui:FontIcon">
+                                                <Setter Property="Glyph" Value="&#xe734;" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsLiked, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                                        <Setter Property="Glyph" Value="&#xe735;" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ui:FontIcon.Style>
+                                    </ui:FontIcon>
+                                </ToggleButton>
+                            </ikw:SimpleStackPanel>
+                        </Grid>
                     </Grid>
 
                     <ui:InfoBar
@@ -582,7 +608,7 @@
                             d:IsExpanded="True"
                             Header="Profile details"
                             IsEnabled="{Binding IsProfileDetailsExpanderEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ikw:SimpleStackPanel Spacing="3">
+                            <ikw:SimpleStackPanel Spacing="6">
                                 <!--  Path  -->
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -591,15 +617,10 @@
                                     </Grid.ColumnDefinitions>
 
                                     <DockPanel>
-                                        <ui:FontIcon
-                                            Height="40"
-                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                            Glyph="&#xED25;" />
+                                        <ui:FontIcon Glyph="&#xED25;" />
                                         <TextBlock
                                             Margin="12,0,0,0"
                                             VerticalAlignment="Center"
-                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                             Style="{StaticResource BodyTextBlockStyle}"
                                             Text="{l:Static resx:Resources.ProfilesPage_ProfilePath}" />
                                     </DockPanel>
@@ -624,15 +645,10 @@
                                     </Grid.ColumnDefinitions>
 
                                     <DockPanel>
-                                        <ui:FontIcon
-                                            Height="40"
-                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                            Glyph="&#xe712;" />
+                                        <ui:FontIcon Glyph="&#xe712;" />
                                         <TextBlock
                                             Margin="12,0,0,0"
                                             VerticalAlignment="Center"
-                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                             Style="{StaticResource BodyTextBlockStyle}"
                                             Text="{l:Static resx:Resources.ProfilesPage_ProfileArguments}" />
                                     </DockPanel>
@@ -655,15 +671,10 @@
                                     </Grid.ColumnDefinitions>
 
                                     <DockPanel>
-                                        <ui:FontIcon
-                                            Height="40"
-                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                            Glyph="&#xedb5;" />
+                                        <ui:FontIcon Glyph="&#xedb5;" />
                                         <TextBlock
                                             Margin="12,0,0,0"
                                             VerticalAlignment="Center"
-                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                             Style="{StaticResource BodyTextBlockStyle}"
                                             Text="{l:Static resx:Resources.ProfilesPage_ProfileLaunchString}" />
                                     </DockPanel>
@@ -686,15 +697,10 @@
                                     </Grid.ColumnDefinitions>
 
                                     <DockPanel>
-                                        <ui:FontIcon
-                                            Height="40"
-                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                            Glyph="&#xE81E;" />
+                                        <ui:FontIcon Glyph="&#xE81E;" />
                                         <TextBlock
                                             Margin="12,0,0,0"
                                             VerticalAlignment="Center"
-                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                             Style="{StaticResource BodyTextBlockStyle}"
                                             Text="{l:Static resx:Resources.ProfilesPage_SubProfiles}" />
                                     </DockPanel>
@@ -767,15 +773,10 @@
                                     </Grid.ColumnDefinitions>
 
                                     <DockPanel>
-                                        <ui:FontIcon
-                                            Height="40"
-                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                            Glyph="&#xe8a5;" />
+                                        <ui:FontIcon Glyph="&#xe8a5;" />
                                         <TextBlock
                                             Margin="12,0,0,0"
                                             VerticalAlignment="Center"
-                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                             Style="{StaticResource BodyTextBlockStyle}"
                                             Text="{l:Static resx:Resources.ProfilesPage_ProfileExecutables}" />
                                     </DockPanel>

@@ -1331,12 +1331,6 @@
   <data name="LayoutPage_Dpad" xml:space="preserve">
     <value>Dpad</value>
   </data>
-  <data name="LayoutPage_ExportCurrentController" xml:space="preserve">
-    <value>Export for current controller</value>
-  </data>
-  <data name="LayoutPage_ExportLayout" xml:space="preserve">
-    <value>Export layout</value>
-  </data>
   <data name="LayoutPage_Gyro" xml:space="preserve">
     <value>Gyro</value>
   </data>

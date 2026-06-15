@@ -118,10 +118,10 @@ public partial class OverlayQuickTools : GamepadWindow
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        SettingsManager_SettingValueChanged("QuickToolsLocation", ManagerFactory.settingsManager.GetString("QuickToolsLocation"), false);
-        SettingsManager_SettingValueChanged("QuickToolsAutoHide", ManagerFactory.settingsManager.GetString("QuickToolsAutoHide"), false);
-        SettingsManager_SettingValueChanged("QuickToolsDevicePath", ManagerFactory.settingsManager.GetString("QuickToolsDevicePath"), false);
-        SettingsManager_SettingValueChanged("QuickToolsSlideAnimation", ManagerFactory.settingsManager.GetString("QuickToolsSlideAnimation"), false);
+        SettingsManager_SettingValueChanged("QuickToolsLocation", ManagerFactory.settingsManager.GetString("QuickToolsLocation"), false, false);
+        SettingsManager_SettingValueChanged("QuickToolsAutoHide", ManagerFactory.settingsManager.GetString("QuickToolsAutoHide"), false, false);
+        SettingsManager_SettingValueChanged("QuickToolsDevicePath", ManagerFactory.settingsManager.GetString("QuickToolsDevicePath"), false, false);
+        SettingsManager_SettingValueChanged("QuickToolsSlideAnimation", ManagerFactory.settingsManager.GetString("QuickToolsSlideAnimation"), false, false);
     }
 
     protected virtual void SettingsManager_Initialized()
@@ -178,7 +178,7 @@ public partial class OverlayQuickTools : GamepadWindow
         return CurrentWindow;
     }
 
-    private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary)
+    private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
     {
         // UI thread
         UIHelper.TryInvoke(() =>

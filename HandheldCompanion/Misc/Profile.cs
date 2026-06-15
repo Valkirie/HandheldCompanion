@@ -42,6 +42,7 @@ public enum UpdateSource
     Serializer = 16,
     LibraryUpdate = 32,
     QuickProfilesEnable = 64,
+    LayoutPage = 128,
 }
 
 public enum SteeringAxis
@@ -191,6 +192,8 @@ public partial class Profile : ICloneable, IComparable, INotifyPropertyChanged
     public Version Version { get; set; } = new();
 
     public string LayoutTitle { get; set; } = string.Empty;
+    public string LayoutDescription { get; set; } = string.Empty;
+    public string LayoutAuthor { get; set; } = string.Empty;
     public Layout Layout { get; set; } = new();
 
     public bool Whitelisted { get; set; } // if true, can see through the HidHide cloak
@@ -279,6 +282,8 @@ public partial class Profile : ICloneable, IComparable, INotifyPropertyChanged
         // initialize layout
         Layout.FillInherit();
         LayoutTitle = LayoutTemplate.DefaultLayout.Name;
+        LayoutDescription = LayoutTemplate.DefaultLayout.Description;
+        LayoutAuthor = LayoutTemplate.DefaultLayout.Author;
 
         // enable the below variables when profile is created
         Enabled = true;

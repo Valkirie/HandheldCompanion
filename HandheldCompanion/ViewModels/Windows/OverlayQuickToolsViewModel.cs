@@ -71,7 +71,7 @@ namespace HandheldCompanion.ViewModels
             overlayQuickTools?.UpdateStyle();
         }
 
-        private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary)
+        private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
         {
             switch (name)
             {

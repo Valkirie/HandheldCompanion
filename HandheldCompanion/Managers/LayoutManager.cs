@@ -217,7 +217,7 @@ public class LayoutManager : IManager
             ManagerFactory.settingsManager.SetProperty("LayoutMode", (int)LayoutModes.Auto);
     }
 
-    private void SettingsManager_SettingValueChanged(string? name, object? value, bool temporary)
+    private void SettingsManager_SettingValueChanged(string? name, object? value, bool temporary, bool initializing)
     {
         if (name == "LayoutMode")
             CheckProfileLayout();

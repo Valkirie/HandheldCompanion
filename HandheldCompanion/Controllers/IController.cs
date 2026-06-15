@@ -161,7 +161,7 @@ namespace HandheldCompanion.Controllers
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
 
-        protected virtual void SettingsManager_SettingValueChanged(string name, object? value, bool temporary)
+        protected virtual void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
         { }
 
         protected virtual void SettingsManager_Initialized()

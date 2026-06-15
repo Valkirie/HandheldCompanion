@@ -115,7 +115,7 @@ namespace HandheldCompanion.Devices.AYANEO
         protected override void QuerySettings()
         {
             // raise events
-            SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetString("BatteryChargeLimit"), false);
+            SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetString("BatteryChargeLimit"), false, false);
 
             base.QuerySettings();
         }
@@ -133,7 +133,7 @@ namespace HandheldCompanion.Devices.AYANEO
             base.Close();
         }
 
-        protected override void SettingsManager_SettingValueChanged(string name, object value, bool temporary)
+        protected override void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
         {
             switch (name)
             {
@@ -153,7 +153,7 @@ namespace HandheldCompanion.Devices.AYANEO
                     break;
             }
 
-            base.SettingsManager_SettingValueChanged(name, value, temporary);
+            base.SettingsManager_SettingValueChanged(name, value, temporary, initializing);
         }
 
         private void PowerManager_RemainingChargePercentChanged(object? sender, object e)

@@ -1332,12 +1332,6 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="LayoutPage_Dpad" xml:space="preserve">
     <value>Steuerkreuz</value>
   </data>
-  <data name="LayoutPage_ExportCurrentController" xml:space="preserve">
-    <value>Für aktuellen Controller exportieren</value>
-  </data>
-  <data name="LayoutPage_ExportLayout" xml:space="preserve">
-    <value>Layout exportieren</value>
-  </data>
   <data name="LayoutPage_Gyro" xml:space="preserve">
     <value>Gyro</value>
   </data>

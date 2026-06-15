@@ -110,7 +110,7 @@ public partial class OverlayModel : OverlayWindow
         _modelTransformGroup.Children.Add(_importViewportCorrectionTransform);
     }
 
-    private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary)
+    private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
     {
         switch (name)
         {

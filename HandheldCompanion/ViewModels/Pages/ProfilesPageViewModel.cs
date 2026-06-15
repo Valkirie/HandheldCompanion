@@ -2325,7 +2325,7 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(PerformanceManagerEnabled));
         }
 
-        private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary)
+        private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
         {
             if (name == "GPUManagementEnabled")
                 OnPropertyChanged(nameof(GPUManagementEnabled));

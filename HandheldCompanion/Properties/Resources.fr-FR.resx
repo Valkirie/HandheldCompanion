@@ -1333,12 +1333,6 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
   <data name="LayoutPage_Dpad" xml:space="preserve">
     <value>Dpad</value>
   </data>
-  <data name="LayoutPage_ExportCurrentController" xml:space="preserve">
-    <value>Exporter pour le contrôleur actuel</value>
-  </data>
-  <data name="LayoutPage_ExportLayout" xml:space="preserve">
-    <value>Exporter la disposition</value>
-  </data>
   <data name="LayoutPage_Gyro" xml:space="preserve">
     <value>Gyro</value>
   </data>
@@ -2850,9 +2844,6 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
   </data>
   <data name="DevicePage_SensorCalibration_Button" xml:space="preserve">
     <value>Calibrer</value>
-  </data>
-  <data name="LayoutPage_Export" xml:space="preserve">
-    <value>Exporter la disposition</value>
   </data>
   <data name="PerformancePage_CPUBoost_Aggressive" xml:space="preserve">
     <value>Agressif</value>

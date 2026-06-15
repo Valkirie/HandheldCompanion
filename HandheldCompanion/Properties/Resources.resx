@@ -2914,7 +2914,10 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Calibrate</value>
   </data>
   <data name="LayoutPage_Export" xml:space="preserve">
-    <value>Export layout</value>
+    <value>Export</value>
+  </data>
+  <data name="LayoutPage_ResetLayout" xml:space="preserve">
+    <value>Reset layout</value>
   </data>
   <data name="PerformancePage_CPUBoost_Aggressive" xml:space="preserve">
     <value>Aggressive</value>

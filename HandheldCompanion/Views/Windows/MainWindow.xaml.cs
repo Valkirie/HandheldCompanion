@@ -566,7 +566,7 @@ public partial class MainWindow : GamepadWindow
     {
     }
 
-    private void MainWindow_SettingValueChanged(string name, object? value, bool temporary)
+    private void MainWindow_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
     {
         switch (name)
         {

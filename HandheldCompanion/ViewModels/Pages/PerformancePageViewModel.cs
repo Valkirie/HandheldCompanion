@@ -1256,7 +1256,7 @@ namespace HandheldCompanion.ViewModels
 
         #region Events
 
-        private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary)
+        private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
         {
             if (value is null)
                 return;

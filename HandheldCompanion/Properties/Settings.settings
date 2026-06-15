@@ -12,7 +12,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="CloseMinimises" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="MainWindowHeight" Type="System.Double" Scope="User">
       <Value Profile="(Default)">720</Value>
@@ -381,16 +381,16 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="GoBackToSleepOnPowerButton" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="GoBackToSleepOnFingerprintReader" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="GoBackToSleepOnJoystick" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="GoBackToSleepOnChargerConnected" Type="System.Boolean" Scope="User">
+    <Setting Name="GoBackToSleepOnFingerprintReader" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="GoBackToSleepOnJoystick" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="GoBackToSleepOnChargerConnected" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="MasterInterval" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
