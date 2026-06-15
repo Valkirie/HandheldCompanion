@@ -72,11 +72,11 @@ public sealed class WindowsPlatform : IPlatform
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        SettingsManager_SettingValueChanged("EnhancedSleep", ManagerFactory.settingsManager.GetString("EnhancedSleep"), false);
-        SettingsManager_SettingValueChanged("GoBackToSleep", ManagerFactory.settingsManager.GetString("GoBackToSleep"), false);
+        SettingsManager_SettingValueChanged("EnhancedSleep", ManagerFactory.settingsManager.GetString("EnhancedSleep"), false, false);
+        SettingsManager_SettingValueChanged("GoBackToSleep", ManagerFactory.settingsManager.GetString("GoBackToSleep"), false, false);
     }
 
-    private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary)
+    private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
     {
         switch (name)
         {
@@ -155,9 +155,7 @@ public sealed class WindowsPlatform : IPlatform
             _                                                         => null,
         };
 
-        // Return true only if the setting does NOT exist or is explicitly disabled.
-        // When a setting is enabled (checked), it means the user wants to stay awake on that wake reason.
-        return settingKey == null || !ManagerFactory.settingsManager.GetBoolean(settingKey);
+        return string.IsNullOrEmpty(settingKey) || ManagerFactory.settingsManager.GetBoolean(settingKey);
     }
 
     private sealed class EnhancedSleepPolicy
