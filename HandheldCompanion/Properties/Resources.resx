@@ -4189,19 +4189,19 @@ Thank you for using HC and helping us make it better.</value>
     <value>Go back to sleep</value>
   </data>
   <data name="DevicePage_GoBackToSleepDesc" xml:space="preserve">
-    <value>If the device wakes from Modern Standby for any reason other than the power button, it will be sent back to sleep.</value>
+    <value>Automatically send the device back to sleep if awakened from Modern Standby by selected wake reasons.</value>
   </data>
   <data name="DevicePage_GoBackToSleepOnPowerButtonDesc" xml:space="preserve">
-    <value>Woken by the power button.</value>
+    <value>Go back to sleep if awakened by the power button.</value>
   </data>
   <data name="DevicePage_GoBackToSleepOnFingerprintReaderDesc" xml:space="preserve">
-    <value>Woken by the fingerprint reader.</value>
+    <value>Go back to sleep if awakened by the fingerprint reader.</value>
   </data>
   <data name="DevicePage_GoBackToSleepOnJoystickDesc" xml:space="preserve">
-    <value>Woken by a joystick or controller input.</value>
+    <value>Go back to sleep if awakened by a joystick or controller input.</value>
   </data>
   <data name="DevicePage_GoBackToSleepOnChargerConnectedDesc" xml:space="preserve">
-    <value>Woken by a charger being connected.</value>
+    <value>Go back to sleep if awakened by a charger being connected.</value>
   </data>
   <data name="ProfilesPage_Whitelist" xml:space="preserve">
     <value>Controller passthrough</value>

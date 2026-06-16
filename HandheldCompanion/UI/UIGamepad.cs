@@ -10,6 +10,7 @@ using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls.Primitives;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -208,6 +209,83 @@ namespace HandheldCompanion.Managers
             TrackFocusedControl(control);
         }
 
+        private void SubscribeToAllFlyoutEvents()
+        {
+            // Find all buttons and drop-down buttons with flyouts and subscribe to their events
+            var buttons = WPFUtils.FindVisualChildren<Button>(gamepadWindow).ToList();
+            foreach (Button button in buttons)
+            {
+                if (button is DropDownButton) continue; // Handle DropDownButtons separately
+
+                FlyoutBase? flyout = FlyoutService.GetFlyout(button);
+                if (flyout is not null && !_subscribedFlyouts.Contains(flyout))
+                {
+                    SubscribeToFlyoutEvents(flyout, button);
+                }
+            }
+
+            // Also handle DropDownButtons
+            var dropDownButtons = WPFUtils.FindVisualChildren<DropDownButton>(gamepadWindow).ToList();
+            foreach (DropDownButton dropDownButton in dropDownButtons)
+            {
+                FlyoutBase? flyout = dropDownButton.Flyout;
+                if (flyout is not null && !_subscribedFlyouts.Contains(flyout))
+                {
+                    SubscribeToFlyoutEvents(flyout, dropDownButton);
+                }
+            }
+        }
+
+        private void SubscribeToFlyoutEvents(FlyoutBase flyout, Control button)
+        {
+            // Mark this flyout as subscribed to avoid duplicate handlers
+            _subscribedFlyouts.Add(flyout);
+
+            // Closed handler - fires every time the flyout closes
+            // NOTE: We do NOT unsubscribe from this event, so it persists across multiple open/close cycles
+            flyout.Closed += (s, e) =>
+            {
+                HasFlyoutOpen = false;
+                gamepadWindow.currentFlyout = null;
+                gamepadWindow.currentFlyoutButton = null;
+                flyoutMenuItems.Clear();
+                focusedFlyoutItem = null;
+                UIHelper.TryInvoke(() =>
+                {
+                    if (_focused[windowName] && gamepadWindow.currentDialog is null)
+                        Focus(button);
+                });
+            };
+
+            // Opened handler - fires every time the flyout opens
+            // NOTE: We do NOT unsubscribe from this event, so it persists across multiple open/close cycles
+            flyout.Opened += (s, e) =>
+            {
+                HasFlyoutOpen = true;
+                gamepadWindow.currentFlyout = flyout;
+                gamepadWindow.currentFlyoutButton = button as DropDownButton;
+                UIHelper.TryInvoke(() =>
+                {
+                    // For MenuFlyout (typically on DropDownButton), populate flyoutMenuItems
+                    if (button is DropDownButton dropDownButton && dropDownButton.Flyout is MenuFlyout menuFlyout)
+                    {
+                        flyoutMenuItems.Clear();
+                        flyoutMenuItems = WPFUtils.GetDirectMenuItems(menuFlyout);
+                        var firstItem = flyoutMenuItems.FirstOrDefault(m => m.IsEnabled && m.IsVisible);
+                        if (firstItem is not null)
+                            FocusFlyoutMenuItem(firstItem);
+                    }
+                    else
+                    {
+                        // For regular Flyout (on Button), focus the first focusable element
+                        Control? firstElement = WPFUtils.GetTopLeftControl<Control>(gamepadWindow.controlElements);
+                        if (firstElement is not null)
+                            Focus(firstElement);
+                    }
+                });
+            };
+        }
+
         public void Loaded()
         {
             this.scrollViewer = WPFUtils.FindVisualChild<ScrollViewer>(gamepadWindow);
@@ -215,6 +293,10 @@ namespace HandheldCompanion.Managers
 
             // will be resolved once the first Page is rendered
             this.pageNavigationView = null;
+
+            // Subscribe to all flyout open/close events to track currentFlyout
+            // This ensures currentFlyout is updated whether the flyout is opened by gamepad, mouse, or code
+            SubscribeToAllFlyoutEvents();
 
             // ContentRendered may have already fired before Loaded() was called (the page navigated and
             // rendered while windowNavigationView was still null), so _lastWindowNavigationItem was never
@@ -1054,6 +1136,7 @@ namespace HandheldCompanion.Managers
         private bool HasFlyoutOpen = false;
         private List<MenuItem> flyoutMenuItems = new();  // populated from MenuFlyout.Items when open
         private MenuItem? focusedFlyoutItem = null;        // tracks which item is highlighted
+        private HashSet<FlyoutBase> _subscribedFlyouts = new();  // tracks which flyouts we've already subscribed to
 
         private void FocusFlyoutMenuItem(MenuItem menuItem)
         {
@@ -1390,6 +1473,9 @@ namespace HandheldCompanion.Managers
 
                 // set rendering state
                 _rendered = true;
+
+                // Subscribe to all flyout open/close events in case new buttons with flyouts were rendered
+                SubscribeToAllFlyoutEvents();
             });
         }
 
@@ -1497,7 +1583,7 @@ namespace HandheldCompanion.Managers
 
         public Control? GetFocusedElement()
         {
-            // When a flyout is open, return the tracked popup item directly.
+            // When a MenuFlyout is open, return the tracked popup item directly.
             // Popup elements have no common visual ancestor with gamepadWindow,
             // so the FindCommonAncestor check below would incorrectly reset focus.
             if (HasFlyoutOpen && focusedFlyoutItem is not null)
@@ -1505,8 +1591,32 @@ namespace HandheldCompanion.Managers
 
             IInputElement FocusedElement = forcedFocus is not null ? forcedFocus : gamepadWindow.GetFocusedElement();
 
+            // If a regular Flyout is open, verify the focused element is within it.
+            // If not, reset focus to a control within the flyout.
+            if (gamepadWindow.currentFlyout is not null && FocusedElement is DependencyObject focusedDO)
+            {
+                // Check if the focused element is actually inside the flyout's content
+                bool isInFlyoutContent = false;
+                if (gamepadWindow.currentFlyout is Flyout standardFlyout && standardFlyout.Content is DependencyObject contentRoot)
+                {
+                    List<FrameworkElement> flyoutElements = WPFUtils.FindChildren(contentRoot);
+                    isInFlyoutContent = flyoutElements.Cast<DependencyObject>().Any(el => el == focusedDO);
+                }
+
+                if (!isInFlyoutContent)
+                {
+                    // Focused element is not in the flyout, reset to first element in flyout
+                    Control? flyoutElement = WPFUtils.GetTopLeftControl<Control>(gamepadWindow.controlElements);
+                    if (flyoutElement is not null)
+                    {
+                        FocusedElement = flyoutElement;
+                        forcedFocus = flyoutElement;
+                    }
+                }
+            }
+
             DependencyObject commonAncestor = VisualTreeHelperExtensions.FindCommonAncestor((DependencyObject)FocusedElement, gamepadWindow);
-            if (commonAncestor is null && forcedFocus is null)
+            if (commonAncestor is null && forcedFocus is null && gamepadWindow.currentFlyout is null)
             {
                 FocusManager.SetFocusedElement(gamepadWindow, GetTopLeftNavigableControl());
                 FocusedElement = FocusManager.GetFocusedElement(gamepadWindow);
@@ -1789,6 +1899,15 @@ namespace HandheldCompanion.Managers
         {
             if (focusedElement is Button button && focusedElement is not DropDownButton)
             {
+                FlyoutBase? flyout = FlyoutService.GetFlyout(button);
+                if (flyout is not null)
+                {
+                    // Flyout events are already subscribed to globally in SubscribeToAllFlyoutEvents()
+                    // Just show the flyout here
+                    flyout.ShowAt(button);
+                    return;
+                }
+
                 Focus(button);
 
                 if (focusedElement.Tag?.Equals("GoBack") == true && gamepadFrame.CanGoBack)
@@ -1926,40 +2045,8 @@ namespace HandheldCompanion.Managers
                 var flyout = dropDownButton.Flyout;
                 if (flyout is not null)
                 {
-                    EventHandler<object>? closedHandler = null;
-                    closedHandler = (s, e) =>
-                    {
-                        flyout.Closed -= closedHandler;
-                        HasFlyoutOpen = false;
-                        gamepadWindow.currentFlyoutButton = null;
-                        flyoutMenuItems.Clear();
-                        focusedFlyoutItem = null;
-                        UIHelper.TryInvoke(() =>
-                        {
-                            if (_focused[windowName] && gamepadWindow.currentDialog is null)
-                                Focus(dropDownButton);
-                        });
-                    };
-                    flyout.Closed += closedHandler;
-
-                    EventHandler<object>? openedHandler = null;
-                    openedHandler = (s, e) =>
-                    {
-                        flyout.Opened -= openedHandler;
-                        HasFlyoutOpen = true;
-                        gamepadWindow.currentFlyoutButton = dropDownButton;
-                        UIHelper.TryInvoke(() =>
-                        {
-                            flyoutMenuItems.Clear();
-                            if (dropDownButton.Flyout is MenuFlyout menuFlyout)
-                                flyoutMenuItems = WPFUtils.GetDirectMenuItems(menuFlyout);
-
-                            var firstItem = flyoutMenuItems.FirstOrDefault(m => m.IsEnabled && m.IsVisible);
-                            if (firstItem is not null)
-                                FocusFlyoutMenuItem(firstItem);
-                        });
-                    };
-                    flyout.Opened += openedHandler;
+                    // Flyout events are already subscribed to globally in SubscribeToAllFlyoutEvents()
+                    // Just show the flyout here
                     flyout.ShowAt(dropDownButton);
                 }
             }
@@ -2229,10 +2316,17 @@ namespace HandheldCompanion.Managers
                         if (HasFlyoutOpen && focusedElement is MenuItem focusedMenuItem && TryCloseFlyoutSubmenu(focusedMenuItem))
                             return;
 
-                        // close flyout, if any
+                        // close flyout, if any (DropDownButton)
                         if (HasFlyoutOpen && gamepadWindow.currentFlyoutButton?.Flyout is { } openFlyout)
                         {
                             openFlyout.Hide();
+                            return;
+                        }
+
+                        // close regular Flyout, if any
+                        if (gamepadWindow.currentFlyout is { } regularFlyout)
+                        {
+                            regularFlyout.Hide();
                             return;
                         }
 

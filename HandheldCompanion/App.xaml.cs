@@ -43,8 +43,10 @@ public partial class App : Application
     public static string CurrentExe => Environment.ProcessPath ?? string.Empty;
     public static string CurrentPath => AppDomain.CurrentDomain.BaseDirectory;
     private static FileVersionInfo? fileVersionInfo;
-    public static Version LastVersion => Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
+    public static Version LastVersion { get; private set; }
     public static Version CurrentVersion => Version.Parse(fileVersionInfo?.FileVersion ?? "0.0.0.0");
+    public static bool IsFirstStart { get; private set; }
+    private static Version WelcomeVersion = new Version("0.31.3.1");
 
     // Shared UI state
     public static UISettings uiSettings = null!;
@@ -208,19 +210,24 @@ public partial class App : Application
 
             SetupEnvironment();
 
-            // Read FirstStart before SettingsManager.Start() clears it to false.
-            bool firstStart = LastVersion == Version.Parse("0.0.0.0");
+            // Cache version info early before anything changes it
+            LastVersion = Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
+            IsFirstStart = LastVersion == Version.Parse("0.0.0.0");
             bool newUpdate = LastVersion != CurrentVersion;
             string exePath = CurrentExe;
 
             // Show the splash on the main UI thread — required by iNKORE's ThemeManager.
             SplashScreenHost splashScreen = new();
+
+#if !DEBUG
             if (ManagerFactory.settingsManager.GetBoolean("ShowSplashScreen"))
                 splashScreen.Show();
+#endif
 
             IDevice device = InitializeDevice(splashScreen);
 
-            if (firstStart)
+            // if first start or first time using this version, show the welcome screen
+            if (IsFirstStart || LastVersion < WelcomeVersion)
             {
                 ShutdownMode previousShutdownMode = ShutdownMode;
                 ShutdownMode = ShutdownMode.OnExplicitShutdown;
@@ -255,7 +262,7 @@ public partial class App : Application
 
             // Pages are guaranteed to exist because MainWindow construction (loadPages()) is complete.
             ManagerFactory.settingsManager.SetProperty("LastVersion", fileVersionInfo?.FileVersion);
-            Task.Run(() => StartNonUIInit(exePath, firstStart, newUpdate, splashScreen.SetStatus));
+            Task.Run(() => StartNonUIInit(exePath, IsFirstStart, newUpdate, splashScreen.SetStatus));
 
             if (!SystemManager.IsSessionInteractive())
                 MainWindow.Visibility = Visibility.Hidden;

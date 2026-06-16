@@ -556,19 +556,18 @@
                                 VerticalAlignment="Top"
                                 Orientation="Horizontal"
                                 Spacing="3">
-                                <Button
+                                <ui:DropDownButton
                                     Name="ButtonProfileSettings"
-                                    Width="48"
                                     Height="48"
                                     Tag="Navigation">
-                                    <Button.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Name="MenuItemEditLayout" Header="Edit controller layout" />
-                                            <MenuItem Name="MenuItemOpenLocation" Header="Open executable location" />
-                                        </ContextMenu>
-                                    </Button.ContextMenu>
+                                    <ui:DropDownButton.Flyout>
+                                        <ui:MenuFlyout Placement="Bottom">
+                                            <MenuItem Command="{Binding SelectedMainProfileViewModel.OpenLayout}" Header="Edit controller layout" />
+                                            <MenuItem Command="{Binding SelectedMainProfileViewModel.OpenExecutableLocation}" Header="Open executable location" />
+                                        </ui:MenuFlyout>
+                                    </ui:DropDownButton.Flyout>
                                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" />
-                                </Button>
+                                </ui:DropDownButton>
 
                                 <ToggleButton
                                     Name="ToggleFavoriteButton"

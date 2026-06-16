@@ -57,7 +57,6 @@ namespace HandheldCompanion.Devices.OneXPlayer
                 false, ButtonFlags.OEM6
                 ));
 
-            DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = false;
             DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM3] = true;
             DeviceHotkeys[typeof(MainWindowCommands)].InputsChordType = InputsChordType.Click;
             DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;

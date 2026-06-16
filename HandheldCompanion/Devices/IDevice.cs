@@ -207,6 +207,10 @@ public abstract class IDevice
         DeviceHotkeys[typeof(QuickToolsCommands)] = new Hotkey() { command = new QuickToolsCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED1 };
         DeviceHotkeys[typeof(MainWindowCommands)] = new Hotkey() { command = new MainWindowCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED2 };
         DeviceHotkeys[typeof(OnScreenKeyboardCommands)] = new Hotkey() { command = new OnScreenKeyboardCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED3 };
+
+        // prepare hotkeys
+        DeviceHotkeys[typeof(DesktopLayoutCommands)].inputsChord.ButtonState[ButtonFlags.LeftStickClick] = true;
+        DeviceHotkeys[typeof(DesktopLayoutCommands)].inputsChord.ButtonState[ButtonFlags.RightStickClick] = true;
     }
 
     public virtual bool Open()

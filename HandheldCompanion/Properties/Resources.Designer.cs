@@ -1528,7 +1528,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to If the device wakes from Modern Standby for any reason other than the power button, it will be sent back to sleep..
+        ///   Looks up a localized string similar to Automatically send the device back to sleep if awakened from Modern Standby by selected wake reasons..
         /// </summary>
         public static string DevicePage_GoBackToSleepDesc {
             get {
@@ -1537,7 +1537,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Woken by a charger being connected..
+        ///   Looks up a localized string similar to Go back to sleep if awakened by a charger being connected..
         /// </summary>
         public static string DevicePage_GoBackToSleepOnChargerConnectedDesc {
             get {
@@ -1546,7 +1546,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Woken by the fingerprint reader..
+        ///   Looks up a localized string similar to Go back to sleep if awakened by the fingerprint reader..
         /// </summary>
         public static string DevicePage_GoBackToSleepOnFingerprintReaderDesc {
             get {
@@ -1555,7 +1555,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Woken by a joystick or controller input..
+        ///   Looks up a localized string similar to Go back to sleep if awakened by a joystick or controller input..
         /// </summary>
         public static string DevicePage_GoBackToSleepOnJoystickDesc {
             get {
@@ -1564,7 +1564,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Woken by the power button..
+        ///   Looks up a localized string similar to Go back to sleep if awakened by the power button..
         /// </summary>
         public static string DevicePage_GoBackToSleepOnPowerButtonDesc {
             get {
@@ -6281,7 +6281,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Export.
+        ///   Looks up a localized string similar to Export layout.
         /// </summary>
         public static string LayoutPage_ExportLayout {
             get {

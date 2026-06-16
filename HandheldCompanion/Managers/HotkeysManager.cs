@@ -35,15 +35,13 @@ public class HotkeysManager : IManager
 
         base.PrepareStart();
 
-        bool IsFirstStart = App.LastVersion == Version.Parse("0.0.0.0");
-
         // process existing hotkeys
         string[] fileEntries = Directory.GetFiles(ManagerPath, "*.json", SearchOption.AllDirectories);
         foreach (string fileName in fileEntries)
             ProcessHotkey(fileName);
 
         // deploy device-default hotkeys during first start
-        if (IsFirstStart || fileEntries.Length == 0)
+        if (App.IsFirstStart || fileEntries.Length == 0)
         {
             foreach (KeyValuePair<Type, Hotkey> kvp in IDevice.GetCurrent().DeviceHotkeys)
             {

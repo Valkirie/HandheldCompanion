@@ -1,4 +1,5 @@
 ﻿using iNKORE.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -123,22 +124,55 @@ public static class WPFUtils
 
     private static double PrimaryAxisGap(Control source, Control target, Direction direction)
     {
-        var p = target.TranslatePoint(new Point(0, 0), source);
-        double x = Math.Round(p.X);
-        double y = Math.Round(p.Y);
-
-        switch (direction)
+        try
         {
-            case Direction.Left:
-                return Math.Max(0, -(x + target.ActualWidth));
-            case Direction.Right:
-                return Math.Max(0, x - source.ActualWidth);
-            case Direction.Up:
-                return Math.Max(0, -(y + target.ActualHeight));
-            case Direction.Down:
-                return Math.Max(0, y - source.ActualHeight);
-            default:
+            var p = target.TranslatePoint(new Point(0, 0), source);
+            double x = Math.Round(p.X);
+            double y = Math.Round(p.Y);
+
+            switch (direction)
+            {
+                case Direction.Left:
+                    return Math.Max(0, -(x + target.ActualWidth));
+                case Direction.Right:
+                    return Math.Max(0, x - source.ActualWidth);
+                case Direction.Up:
+                    return Math.Max(0, -(y + target.ActualHeight));
+                case Direction.Down:
+                    return Math.Max(0, y - source.ActualHeight);
+                default:
+                    return double.MaxValue;
+            }
+        }
+        catch
+        {
+            // Fallback: use screen coordinates for controls without shared ancestor (e.g., flyouts)
+            try
+            {
+                Point sourceScreenPos = source.PointToScreen(new Point(source.ActualWidth / 2, source.ActualHeight / 2));
+                Point targetScreenPos = target.PointToScreen(new Point(target.ActualWidth / 2, target.ActualHeight / 2));
+
+                double dx = targetScreenPos.X - sourceScreenPos.X;
+                double dy = targetScreenPos.Y - sourceScreenPos.Y;
+
+                switch (direction)
+                {
+                    case Direction.Left:
+                        return Math.Max(0, -dx - target.ActualWidth / 2);
+                    case Direction.Right:
+                        return Math.Max(0, dx - source.ActualWidth / 2);
+                    case Direction.Up:
+                        return Math.Max(0, -dy - target.ActualHeight / 2);
+                    case Direction.Down:
+                        return Math.Max(0, dy - source.ActualHeight / 2);
+                    default:
+                        return double.MaxValue;
+                }
+            }
+            catch
+            {
                 return double.MaxValue;
+            }
         }
     }
 
@@ -154,18 +188,41 @@ public static class WPFUtils
 
     private static double SecondaryAxisCenterOffset(Control source, Control target, Direction direction)
     {
-        var p = target.TranslatePoint(new Point(0, 0), source);
-        double targetCenterX = Math.Round(p.X + (target.ActualWidth / 2));
-        double targetCenterY = Math.Round(p.Y + (target.ActualHeight / 2));
-        double sourceCenterX = Math.Round(source.ActualWidth / 2);
-        double sourceCenterY = Math.Round(source.ActualHeight / 2);
-
-        return direction switch
+        try
         {
-            Direction.Left or Direction.Right => Math.Abs(targetCenterY - sourceCenterY),
-            Direction.Up or Direction.Down => Math.Abs(targetCenterX - sourceCenterX),
-            _ => 0
-        };
+            var p = target.TranslatePoint(new Point(0, 0), source);
+            double targetCenterX = Math.Round(p.X + (target.ActualWidth / 2));
+            double targetCenterY = Math.Round(p.Y + (target.ActualHeight / 2));
+            double sourceCenterX = Math.Round(source.ActualWidth / 2);
+            double sourceCenterY = Math.Round(source.ActualHeight / 2);
+
+            return direction switch
+            {
+                Direction.Left or Direction.Right => Math.Abs(targetCenterY - sourceCenterY),
+                Direction.Up or Direction.Down => Math.Abs(targetCenterX - sourceCenterX),
+                _ => 0
+            };
+        }
+        catch
+        {
+            // Fallback: use screen coordinates for controls without shared ancestor (e.g., flyouts)
+            try
+            {
+                Point sourceScreenCenter = source.PointToScreen(new Point(source.ActualWidth / 2, source.ActualHeight / 2));
+                Point targetScreenCenter = target.PointToScreen(new Point(target.ActualWidth / 2, target.ActualHeight / 2));
+
+                return direction switch
+                {
+                    Direction.Left or Direction.Right => Math.Abs(targetScreenCenter.Y - sourceScreenCenter.Y),
+                    Direction.Up or Direction.Down => Math.Abs(targetScreenCenter.X - sourceScreenCenter.X),
+                    _ => 0
+                };
+            }
+            catch
+            {
+                return double.MaxValue;
+            }
+        }
     }
 
     private static bool IsWithinSecondaryAxisCenterOffsetThreshold(Control source, Control target, Direction direction)
@@ -205,22 +262,53 @@ public static class WPFUtils
     // Returns 0 when the boxes touch or overlap.
     private static double SecondaryAxisGap(Control source, Control target, Direction direction)
     {
-        var p = target.TranslatePoint(new Point(0, 0), source);
-        double x = Math.Round(p.X);
-        double y = Math.Round(p.Y);
-
-        switch (direction)
+        try
         {
-            case Direction.Left:
-            case Direction.Right:
-                // Vertical gap between [0, source.H] and [y, y + target.H]
-                return Math.Max(0, Math.Max(y - source.ActualHeight, -(y + target.ActualHeight)));
-            case Direction.Up:
-            case Direction.Down:
-                // Horizontal gap between [0, source.W] and [x, x + target.W]
-                return Math.Max(0, Math.Max(x - source.ActualWidth, -(x + target.ActualWidth)));
-            default:
+            var p = target.TranslatePoint(new Point(0, 0), source);
+            double x = Math.Round(p.X);
+            double y = Math.Round(p.Y);
+
+            switch (direction)
+            {
+                case Direction.Left:
+                case Direction.Right:
+                    // Vertical gap between [0, source.H] and [y, y + target.H]
+                    return Math.Max(0, Math.Max(y - source.ActualHeight, -(y + target.ActualHeight)));
+                case Direction.Up:
+                case Direction.Down:
+                    // Horizontal gap between [0, source.W] and [x, x + target.W]
+                    return Math.Max(0, Math.Max(x - source.ActualWidth, -(x + target.ActualWidth)));
+                default:
+                    return double.MaxValue;
+            }
+        }
+        catch
+        {
+            // Fallback: use screen coordinates for controls without shared ancestor (e.g., flyouts)
+            try
+            {
+                Point sourceScreenPos = source.PointToScreen(new Point(0, 0));
+                Point targetScreenPos = target.PointToScreen(new Point(0, 0));
+
+                double dy = targetScreenPos.Y - sourceScreenPos.Y;
+                double dx = targetScreenPos.X - sourceScreenPos.X;
+
+                switch (direction)
+                {
+                    case Direction.Left:
+                    case Direction.Right:
+                        return Math.Max(0, Math.Max(dy - source.ActualHeight, -(dy + target.ActualHeight)));
+                    case Direction.Up:
+                    case Direction.Down:
+                        return Math.Max(0, Math.Max(dx - source.ActualWidth, -(dx + target.ActualWidth)));
+                    default:
+                        return double.MaxValue;
+                }
+            }
+            catch
+            {
                 return double.MaxValue;
+            }
         }
     }
 
@@ -397,9 +485,33 @@ public static class WPFUtils
 
     private static Rect GetBoundsRelativeTo(FrameworkElement ctrl, Visual relativeTo)
     {
-        return ctrl
-            .TransformToVisual(relativeTo)
-            .TransformBounds(new Rect(ctrl.RenderSize));
+        try
+        {
+            if (relativeTo is FrameworkElement relativeToElement)
+            {
+                // Get screen position of the control
+                Point ctrlScreenPos = ctrl.PointToScreen(new Point(0, 0));
+
+                // Get screen position of the reference element
+                Point refScreenPos = relativeToElement.PointToScreen(new Point(0, 0));
+
+                // Calculate offset in screen coordinates
+                double offsetX = ctrlScreenPos.X - refScreenPos.X;
+                double offsetY = ctrlScreenPos.Y - refScreenPos.Y;
+
+                // Create a rect in the reference element's coordinate space
+                return new Rect(offsetX, offsetY, ctrl.ActualWidth, ctrl.ActualHeight);
+            }
+        }
+        catch
+        {
+            try
+            {
+                return ctrl.TransformToVisual(relativeTo).TransformBounds(new Rect(ctrl.RenderSize));
+            }
+            catch {}
+        }
+        return Rect.Empty;
     }
 
     // core point-to-point measurer
@@ -726,7 +838,27 @@ public static class WPFUtils
     // Visual (not logical) traversal is required because MenuFlyout items live
     // inside a MenuPopup in the visual tree whose logical chain does not include Popup.
     public static List<T> GetElementsFromPopup<T>(List<FrameworkElement> elements) where T : FrameworkElement
-        => GetElementsByAncestor<T>(elements, p => p is Popup or ContentDialog);
+        => GetElementsByAncestor<T>(elements, p => p is Popup or ContentDialog or Flyout);
+
+    // Returns elements that are children of a Flyout's content.
+    // Used when currentFlyout is set to get only the controls inside the flyout.
+    public static List<T> GetElementsFromFlyout<T>(FlyoutBase? flyout) where T : FrameworkElement
+    {
+        List<T> result = [];
+
+        if (flyout is Flyout standardFlyout && standardFlyout.Content is DependencyObject contentRoot)
+        {
+            // Get all descendants of the flyout's content
+            List<FrameworkElement> contentChildren = FindChildren(contentRoot);
+            foreach (FrameworkElement child in contentChildren)
+            {
+                if (child is T typed)
+                    result.Add(typed);
+            }
+        }
+
+        return result;
+    }
 
     // Returns elements whose visual parent chain reaches an AdornerLayer before a
     // Window.  ContentDialog (iNKORE) is hosted in the window's adorner overlay: its

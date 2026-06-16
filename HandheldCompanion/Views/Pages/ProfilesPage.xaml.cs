@@ -102,40 +102,6 @@ public partial class ProfilesPage : Page
         UseFullscreenOptimizations.Toggled += ProfileProperty_Changed;
         UseHighDPIAwareness.Toggled += ProfileProperty_Changed;
         ShowInLibraryToggle.Toggled += ProfileProperty_Changed;
-
-        // Subscribe to profile settings button click
-        if (FindName("ButtonProfileSettings") is Button buttonProfileSettings)
-        {
-            buttonProfileSettings.Click += ButtonProfileSettings_Click;
-        }
-
-        // Subscribe to menu item clicks
-        if (FindName("MenuItemEditLayout") is MenuItem menuEditLayout)
-        {
-            menuEditLayout.Click += MenuItemEditLayout_Click;
-        }
-        if (FindName("MenuItemOpenLocation") is MenuItem menuOpenLocation)
-        {
-            menuOpenLocation.Click += MenuItemOpenLocation_Click;
-        }
-    }
-
-    private void ButtonProfileSettings_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button button && button.ContextMenu != null)
-        {
-            button.ContextMenu.IsOpen = true;
-        }
-    }
-
-    private void MenuItemEditLayout_Click(object sender, RoutedEventArgs e)
-    {
-        viewModel.SelectedMainProfileViewModel?.OpenLayout?.Execute(null);
-    }
-
-    private void MenuItemOpenLocation_Click(object sender, RoutedEventArgs e)
-    {
-        viewModel.SelectedMainProfileViewModel?.OpenExecutableLocation?.Execute(null);
     }
 
     private void ProfileProperty_Changed(object sender, RoutedEventArgs e)

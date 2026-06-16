@@ -493,10 +493,10 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool SteamControllerMode {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SteamControllerMode {
             get {
-                return ((bool)(this["SteamControllerMode"]));
+                return ((int)(this["SteamControllerMode"]));
             }
             set {
                 this["SteamControllerMode"] = value;

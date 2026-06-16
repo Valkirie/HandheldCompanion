@@ -3,6 +3,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,16 +24,16 @@ namespace HandheldCompanion.Views.Classes
         // When a ContentDialog or a DropDownButton flyout is open, restrict navigation to
         // only the controls that live inside that popup / dialog.
         public DropDownButton? currentFlyoutButton;
+        public FlyoutBase? currentFlyout;
 
-        public List<Control> controlElements =>
-            currentDialog is not null
-                // ContentDialog (iNKORE) is hosted in the window's AdornerLayer overlay.
-                // Its C# instance is never a visual node, so we identify its controls by
-                // walking each element's visual parent chain until we hit AdornerLayer.
-                ? WPFUtils.GetElementsFromAdornerLayer<Control>(frameworkElements)
-                : currentFlyoutButton is not null
-                    ? WPFUtils.GetElementsFromPopup<Control>(frameworkElements)
-                    : frameworkElements.OfType<Control>().ToList();
+        public List<Control> controlElements => currentDialog is not null
+            ? WPFUtils.GetElementsFromAdornerLayer<Control>(frameworkElements)
+            : currentFlyout is not null
+            ? WPFUtils.GetElementsFromFlyout<Control>(currentFlyout)
+            : currentFlyoutButton is not null
+            ? WPFUtils.GetElementsFromPopup<Control>(frameworkElements)
+            : frameworkElements.OfType<Control>().ToList();
+
         public List<FrameworkElement> frameworkElements
         {
             get

@@ -363,9 +363,11 @@ public static class ControllerManager
             mapped = mutedState;
         }
 
-        // Auto-raise pad touch flags when pad axes are non-zero, so downstream consumers don't require an explicit touch button mapping from the user.
-        mapped.ButtonState[ButtonFlags.LeftPadTouch] |= mapped.AxisState[AxisFlags.LeftPadX] != 0 || mapped.AxisState[AxisFlags.LeftPadY] != 0;
-        mapped.ButtonState[ButtonFlags.RightPadTouch] |= mapped.AxisState[AxisFlags.RightPadX] != 0 || mapped.AxisState[AxisFlags.RightPadY] != 0;
+        // Auto-raise pad touch flags when pad axes exceed deadzone, so downstream consumers don't require an explicit touch button mapping from the user.
+        // Use deadzone to prevent noise/drift from triggering unwanted input (e.g., phantom scrolling on DualShock4)
+        const short PAD_TOUCH_DEADZONE = 500;
+        mapped.ButtonState[ButtonFlags.LeftPadTouch] |= Math.Abs((int)mapped.AxisState[AxisFlags.LeftPadX]) > PAD_TOUCH_DEADZONE || Math.Abs((int)mapped.AxisState[AxisFlags.LeftPadY]) > PAD_TOUCH_DEADZONE;
+        mapped.ButtonState[ButtonFlags.RightPadTouch] |= Math.Abs((int)mapped.AxisState[AxisFlags.RightPadX]) > PAD_TOUCH_DEADZONE || Math.Abs((int)mapped.AxisState[AxisFlags.RightPadY]) > PAD_TOUCH_DEADZONE;
 
         DS4Touch.UpdateInputs(mapped);
         VirtualManager.UpdateInputs(mapped, gamepadMotion);

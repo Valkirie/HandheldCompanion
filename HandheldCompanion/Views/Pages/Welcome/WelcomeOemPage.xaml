@@ -56,10 +56,7 @@
                     Header="No supported OEM stack detected"
                     Visibility="{Binding NoOemStackVisibility}">
                     <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            Foreground="{DynamicResource SystemAccentColorLight2Brush}"
-                            Glyph="&#xE930;" />
+                        <ui:FontIcon Glyph="&#xEA39;" />
                     </ui:SettingsCard.HeaderIcon>
                 </ui:SettingsCard>
 

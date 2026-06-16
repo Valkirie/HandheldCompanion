@@ -85,14 +85,9 @@ public class SteamDeck : IDevice
         GfxClock = new double[] { 200, 2500 };
         CpuClock = 3500;
 
-        OEMChords.Add(new KeyboardChord("...",
-            [], [],
-            false, ButtonFlags.OEM1
-        ));
-
         // prepare hotkeys
         DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.Special] = true;
-        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
+        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.Special2] = true;
     }
 
     public override bool Open()
