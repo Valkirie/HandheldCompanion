@@ -15,6 +15,26 @@
     d:DesignWidth="1920"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <Style x:Key="FinishTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource TitleBoldTextBlockStyle}">
+            <Setter Property="Text" Value="You're ready to start." />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RestartRequired}" Value="True">
+                    <Setter Property="Text" Value="You're ready to (re)start." />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="FinishMessageStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlockStyle}">
+            <Setter Property="Text" Value="HC will save these choices and continue startup. You can revisit all options later from Settings." />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RestartRequired}" Value="True">
+                    <Setter Property="Text" Value="HC will save these choices and restart your device. You can revisit all options later from Settings." />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Page.Resources>
+
     <ikw:SimpleStackPanel
         MaxWidth="840"
         VerticalAlignment="Center"
@@ -25,14 +45,14 @@
             FontSize="96"
             Foreground="{DynamicResource SystemAccentColorLight2Brush}"
             Glyph="&#xE930;" />
+
         <TextBlock
             HorizontalAlignment="Center"
-            Style="{StaticResource TitleBoldTextBlockStyle}"
-            Text="You're ready to start."
+            Style="{StaticResource FinishTitleStyle}"
             TextWrapping="Wrap" />
+
         <TextBlock
-            Style="{StaticResource BodyTextBlockStyle}"
-            Text="HC will save these choices and continue startup. You can revisit all options later from Settings."
+            Style="{StaticResource FinishMessageStyle}"
             TextAlignment="Center"
             TextWrapping="Wrap" />
 

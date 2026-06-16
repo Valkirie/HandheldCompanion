@@ -35,15 +35,15 @@
 
             <ikw:SimpleStackPanel Spacing="3">
                 <ui:InfoBar
-                    Title="Reversible choice"
+                    Title="{Binding OemInfoBarTitle}"
                     IsOpen="True"
-                    Message="This can be restored later by HC restore logic or by enabling the OEM stack again."
-                    Severity="Informational"
+                    Message="{Binding OemInfoBarMessage}"
+                    Severity="Warning"
                     Visibility="{Binding OemStackVisibility}" />
 
                 <ui:SettingsCard Header="Let HC manage the device instead of the OEM utility" Visibility="{Binding OemStackVisibility}">
                     <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE711;" />
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Admin}" />
                     </ui:SettingsCard.HeaderIcon>
                     <ui:SettingsCard.Description>
                         <TextBlock Text="Prevent conflicting OEM software from starting while Handheld Companion manages your device." />
@@ -75,7 +75,7 @@
                     IsClosable="False"
                     IsOpen="{Binding RestartRequired}"
                     Message="Your changes require a restart to take effect. The device will restart when you close this setup."
-                    Severity="Warning" />
+                    Severity="Informational" />
             </ikw:SimpleStackPanel>
 
             <TextBlock

@@ -26,9 +26,9 @@ public class WelcomeViewModel : BaseViewModel
     private bool toastNotifications;
     private bool telemetryEnabled;
     private bool disableOemStack;
-    private bool initialDisableOemStack;
+    private bool oemStackChanged;
     private bool coreIsolation;
-    private bool initialCoreIsolation;
+    private bool coreIsolationChanged;
     private bool performanceManagerEnabled;
     private bool gpuManagementEnabled;
     private bool libraryPageEnabled;
@@ -38,6 +38,7 @@ public class WelcomeViewModel : BaseViewModel
 
     private readonly CoreIsolationWatcher? coreIsolationWatcher;
     private readonly BitmapImage _deviceImage;
+    private readonly Notifications.Notification? oemNotification;
 
     public WelcomeViewModel()
     {
@@ -74,8 +75,22 @@ public class WelcomeViewModel : BaseViewModel
         // device
         coreIsolationWatcher = new CoreIsolationWatcher();
         coreIsolation = coreIsolationWatcher.VulnerableDriverBlocklistEnable || coreIsolationWatcher.HypervisorEnforcedCodeIntegrityEnabled || coreIsolationWatcher.SmartAppControlEnabled;
-        initialDisableOemStack = disableOemStack;
-        initialCoreIsolation = coreIsolation;
+
+        HasOemStack = ISpaceWatcher.Create(device) is not null;
+
+        // Pull the current OEM stack state on startup
+        if (HasOemStack)
+        {
+            using ISpaceWatcher? watcher = ISpaceWatcher.Create(device);
+            if (watcher is not null)
+            {
+                // Store the notification for MVVM binding
+                oemNotification = watcher.notification;
+
+                // OEM stack is disabled if tasks/services/processes are enabled/running
+                disableOemStack = !watcher.HasEnabledTasks() && !watcher.HasRunningServices() && !watcher.HasProcesses();
+            }
+        }
 
         // components
         performanceManagerEnabled = ManagerFactory.settingsManager.GetBoolean("PerformanceManagerEnabled");
@@ -86,8 +101,6 @@ public class WelcomeViewModel : BaseViewModel
         mainWindowTheme = ManagerFactory.settingsManager.GetInt("MainWindowTheme");
         mainWindowBackdrop = ManagerFactory.settingsManager.GetInt("MainWindowBackdrop");
         welcomeWindowApplyNoise = ManagerFactory.settingsManager.GetBoolean("MainWindowApplyNoise");
-
-        HasOemStack = ISpaceWatcher.Create(device) is not null;
     }
 
     public string DeviceName => string.IsNullOrEmpty(MotherboardInfo.Product) ? "Generic device" : MotherboardInfo.Product;
@@ -144,6 +157,9 @@ public class WelcomeViewModel : BaseViewModel
     public bool HasOemStack { get; }
     public Visibility OemStackVisibility => HasOemStack ? Visibility.Visible : Visibility.Collapsed;
     public Visibility NoOemStackVisibility => HasOemStack ? Visibility.Collapsed : Visibility.Visible;
+
+    public string OemInfoBarTitle => oemNotification?.Title ?? "Reversible choice";
+    public string OemInfoBarMessage => oemNotification?.Message ?? "This can be restored later by HC restore logic or by enabling the OEM stack again.";
 
     public bool StartWithWindows
     {
@@ -245,6 +261,7 @@ public class WelcomeViewModel : BaseViewModel
             if (SetProperty(ref disableOemStack, value))
             {
                 ApplyOemSoftwareStack(value);
+                oemStackChanged = true;
                 OnPropertyChanged(nameof(RestartRequired));
             }
         }
@@ -258,12 +275,13 @@ public class WelcomeViewModel : BaseViewModel
             if (SetProperty(ref coreIsolation, value))
             {
                 ApplyCoreIsolation(value);
+                coreIsolationChanged = true;
                 OnPropertyChanged(nameof(RestartRequired));
             }
         }
     }
 
-    public bool RestartRequired => disableOemStack != initialDisableOemStack || coreIsolation != initialCoreIsolation;
+    public bool RestartRequired => oemStackChanged || coreIsolationChanged;
 
     public bool IsFirstPage
     {
