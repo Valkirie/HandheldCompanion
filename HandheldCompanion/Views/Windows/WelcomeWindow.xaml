@@ -64,9 +64,9 @@
 
         <Border
             Grid.Row="1"
-            Background="{DynamicResource ExpanderHeaderBackground}"
-            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-            BorderThickness="0,1,0,0">
+            Background="{DynamicResource NavigationViewContentBackground}"
+            BorderBrush="{DynamicResource NavigationViewContentGridBorderBrush}"
+            BorderThickness="{DynamicResource NavigationViewContentGridBorderThickness}">
             <Grid Margin="24,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
