@@ -9,197 +9,211 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels.Windows"
     Title="Device"
+    MaxWidth="1280"
     Margin="48"
+    VerticalAlignment="Center"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:WelcomeViewModel}"
     d:DesignHeight="1080"
     d:DesignWidth="1920"
     mc:Ignorable="d">
 
-    <Grid VerticalAlignment="Center">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*" />
             <ColumnDefinition Width="5*" />
         </Grid.ColumnDefinitions>
 
-        <ikw:SimpleStackPanel Spacing="18">
+        <StackPanel>
             <TextBlock
+                Margin="0,0,0,8"
                 behaviors:TextBlockUpperCase.IsUpperCase="True"
                 Style="{StaticResource CapitalAccentTextBlockStyle}"
                 Text="DETECTED DEVICE" />
-            <TextBlock
-                Style="{StaticResource TitleBoldTextBlockStyle}"
-                Text="{Binding DeviceName}"
-                TextWrapping="Wrap" />
-            <TextBlock
-                Style="{StaticResource BodyTextBlockStyle}"
-                Text="{Binding DeviceDetails}"
-                TextWrapping="Wrap" />
-            <Image
-                MaxWidth="520"
-                MaxHeight="260"
-                Margin="0,32,0,0"
-                HorizontalAlignment="Left"
-                Source="{Binding DeviceImage}"
-                Stretch="Uniform" />
-        </ikw:SimpleStackPanel>
 
-        <ikw:SimpleStackPanel Grid.Column="1" Spacing="18">
+            <ikw:SimpleStackPanel Spacing="8">
+                <TextBlock
+                    Style="{StaticResource SubtitleBoldTextBlockStyle}"
+                    Text="{Binding DeviceName}"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Text="{Binding DeviceDetails}"
+                    TextWrapping="Wrap" />
+
+                <Image
+                    MaxWidth="520"
+                    MaxHeight="260"
+                    Margin="0,32,0,0"
+                    HorizontalAlignment="Left"
+                    Source="{Binding DeviceImage}"
+                    Stretch="Uniform" />
+            </ikw:SimpleStackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Column="1">
             <TextBlock
+                Margin="0,0,0,8"
                 behaviors:TextBlockUpperCase.IsUpperCase="True"
                 Style="{StaticResource CapitalAccentTextBlockStyle}"
                 Text="WHAT YOU GET" />
-            <TextBlock
-                Style="{StaticResource SubtitleBoldTextBlockStyle}"
-                Text="Tailored for your hardware."
-                TextWrapping="Wrap" />
-            <TextBlock
-                Style="{StaticResource BodyTextBlockStyle}"
-                Text="HC detected your device and will load supported controls and integrations."
-                TextWrapping="Wrap" />
 
-            <ikw:SimpleStackPanel Spacing="3">
-                <ui:SettingsCard Description="Detected processor" Header="{Binding Processor}">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE950;" />
-                    </ui:SettingsCard.HeaderIcon>
-                </ui:SettingsCard>
-                <ui:SettingsCard Description="Power range" Header="{Binding TdpRange}">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7E8;" />
-                    </ui:SettingsCard.HeaderIcon>
-                </ui:SettingsCard>
-                <ui:SettingsCard Description="Allows HC to expose device fan controls when the hardware supports it." Header="Fan control">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE9CA;" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ui:FontIcon
-                        HorizontalAlignment="Center"
-                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                        FontSize="24">
-                        <ui:FontIcon.Style>
-                            <Style TargetType="ui:FontIcon">
-                                <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                                <Setter Property="Glyph" Value="&#xEA39;" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding HasFanControl}" Value="True">
-                                        <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight2Brush}" />
-                                        <Setter Property="Glyph" Value="&#xE930;" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ui:FontIcon.Style>
-                    </ui:FontIcon>
-                </ui:SettingsCard>
-                <ui:SettingsCard Header="Motion sensors / IMU">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE774;" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ui:SettingsCard.Description>
-                        <StackPanel>
-                            <TextBlock>
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding HasSensorName}" Value="True">
-                                                <Setter Property="Visibility" Value="Visible" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                                <Run Text="Detected sensor: " />
-                                <Run Text="{Binding SensorNames, Mode=OneWay}" />
-                            </TextBlock>
-                            <TextBlock Text="Motion support is available, but no sensor name was reported yet.">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding HasMotionSensorWithoutName}" Value="True">
-                                                <Setter Property="Visibility" Value="Visible" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                            <TextBlock Text="No supported IMU was detected for this device.">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding HasMotionSensor}" Value="False">
-                                                <Setter Property="Visibility" Value="Visible" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </StackPanel>
-                    </ui:SettingsCard.Description>
-                    <ui:FontIcon
-                        HorizontalAlignment="Center"
-                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                        FontSize="24">
-                        <ui:FontIcon.Style>
-                            <Style TargetType="ui:FontIcon">
-                                <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                                <Setter Property="Glyph" Value="&#xEA39;" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding HasMotionSensor}" Value="True">
-                                        <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight2Brush}" />
-                                        <Setter Property="Glyph" Value="&#xE930;" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ui:FontIcon.Style>
-                    </ui:FontIcon>
-                </ui:SettingsCard>
-                <ui:SettingsCard Description="Enables HC lighting controls for supported LEDs and RGB zones." Header="Lighting">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Lightbulb}" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ui:FontIcon
-                        HorizontalAlignment="Center"
-                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                        FontSize="24">
-                        <ui:FontIcon.Style>
-                            <Style TargetType="ui:FontIcon">
-                                <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                                <Setter Property="Glyph" Value="&#xEA39;" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding HasLighting}" Value="True">
-                                        <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight2Brush}" />
-                                        <Setter Property="Glyph" Value="&#xE930;" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ui:FontIcon.Style>
-                    </ui:FontIcon>
-                </ui:SettingsCard>
-                <ui:SettingsCard Description="Exposes supported charge limit and battery bypass options." Header="Battery controls">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEBA7;" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ui:FontIcon
-                        HorizontalAlignment="Center"
-                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                        FontSize="24">
-                        <ui:FontIcon.Style>
-                            <Style TargetType="ui:FontIcon">
-                                <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                                <Setter Property="Glyph" Value="&#xEA39;" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding HasBatteryControls}" Value="True">
-                                        <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight2Brush}" />
-                                        <Setter Property="Glyph" Value="&#xE930;" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ui:FontIcon.Style>
-                    </ui:FontIcon>
-                </ui:SettingsCard>
+            <ikw:SimpleStackPanel Spacing="28">
+                <ikw:SimpleStackPanel Spacing="8">
+                    <TextBlock
+                        Style="{StaticResource SubtitleBoldTextBlockStyle}"
+                        Text="Tailored for your hardware."
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Text="HC detected your device and will load supported controls and integrations."
+                        TextWrapping="Wrap" />
+                </ikw:SimpleStackPanel>
+
+                <!--  Settings  -->
+                <ikw:SimpleStackPanel Spacing="3">
+                    <ui:SettingsCard Description="Detected processor" Header="{Binding Processor}">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE950;" />
+                        </ui:SettingsCard.HeaderIcon>
+                    </ui:SettingsCard>
+                    <ui:SettingsCard Description="Power range" Header="{Binding TdpRange}">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7E8;" />
+                        </ui:SettingsCard.HeaderIcon>
+                    </ui:SettingsCard>
+                    <ui:SettingsCard Description="Allows HC to expose device fan controls when the hardware supports it." Header="Fan control">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE9CA;" />
+                        </ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon
+                            HorizontalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            FontSize="24">
+                            <ui:FontIcon.Style>
+                                <Style TargetType="ui:FontIcon">
+                                    <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                    <Setter Property="Glyph" Value="&#xEA39;" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasFanControl}" Value="True">
+                                            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight2Brush}" />
+                                            <Setter Property="Glyph" Value="&#xE930;" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ui:FontIcon.Style>
+                        </ui:FontIcon>
+                    </ui:SettingsCard>
+                    <ui:SettingsCard Header="Motion sensors / IMU">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE774;" />
+                        </ui:SettingsCard.HeaderIcon>
+                        <ui:SettingsCard.Description>
+                            <StackPanel>
+                                <TextBlock>
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasSensorName}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                    <Run Text="Detected sensor: " />
+                                    <Run Text="{Binding SensorNames, Mode=OneWay}" />
+                                </TextBlock>
+                                <TextBlock Text="Motion support is available, but no sensor name was reported yet.">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasMotionSensorWithoutName}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock Text="No supported IMU was detected for this device.">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasMotionSensor}" Value="False">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                        </ui:SettingsCard.Description>
+                        <ui:FontIcon
+                            HorizontalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            FontSize="24">
+                            <ui:FontIcon.Style>
+                                <Style TargetType="ui:FontIcon">
+                                    <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                    <Setter Property="Glyph" Value="&#xEA39;" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasMotionSensor}" Value="True">
+                                            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight2Brush}" />
+                                            <Setter Property="Glyph" Value="&#xE930;" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ui:FontIcon.Style>
+                        </ui:FontIcon>
+                    </ui:SettingsCard>
+                    <ui:SettingsCard Description="Enables HC lighting controls for supported LEDs and RGB zones." Header="Lighting">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Lightbulb}" />
+                        </ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon
+                            HorizontalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            FontSize="24">
+                            <ui:FontIcon.Style>
+                                <Style TargetType="ui:FontIcon">
+                                    <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                    <Setter Property="Glyph" Value="&#xEA39;" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasLighting}" Value="True">
+                                            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight2Brush}" />
+                                            <Setter Property="Glyph" Value="&#xE930;" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ui:FontIcon.Style>
+                        </ui:FontIcon>
+                    </ui:SettingsCard>
+                    <ui:SettingsCard Description="Exposes supported charge limit and battery bypass options." Header="Battery controls">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEBA7;" />
+                        </ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon
+                            HorizontalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            FontSize="24">
+                            <ui:FontIcon.Style>
+                                <Style TargetType="ui:FontIcon">
+                                    <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                    <Setter Property="Glyph" Value="&#xEA39;" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasBatteryControls}" Value="True">
+                                            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight2Brush}" />
+                                            <Setter Property="Glyph" Value="&#xE930;" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ui:FontIcon.Style>
+                        </ui:FontIcon>
+                    </ui:SettingsCard>
+                </ikw:SimpleStackPanel>
             </ikw:SimpleStackPanel>
-        </ikw:SimpleStackPanel>
+        </StackPanel>
     </Grid>
 </Page>

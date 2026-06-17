@@ -8,7 +8,9 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels.Windows"
     Title="Done"
+    MaxWidth="840"
     Margin="48"
+    VerticalAlignment="Center"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:WelcomeViewModel}"
     d:DesignHeight="1080"
@@ -16,7 +18,10 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <Style x:Key="FinishTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource TitleBoldTextBlockStyle}">
+        <Style
+            x:Key="FinishTitleStyle"
+            BasedOn="{StaticResource TitleBoldTextBlockStyle}"
+            TargetType="TextBlock">
             <Setter Property="Text" Value="You're ready to start." />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding RestartRequired}" Value="True">
@@ -25,20 +30,20 @@
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="FinishMessageStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlockStyle}">
-            <Setter Property="Text" Value="HC will save these choices and continue startup. You can revisit all options later from Settings." />
+        <Style
+            x:Key="FinishMessageStyle"
+            BasedOn="{StaticResource BodyTextBlockStyle}"
+            TargetType="TextBlock">
+            <Setter Property="Text" Value="HC will save these choices and continue startup. You can revisit all options later from the Settings page." />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding RestartRequired}" Value="True">
-                    <Setter Property="Text" Value="HC will save these choices and restart your device. You can revisit all options later from Settings." />
+                    <Setter Property="Text" Value="HC will save these choices and restart your device. You can revisit all options later from the Settings page." />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
     </Page.Resources>
 
-    <ikw:SimpleStackPanel
-        MaxWidth="840"
-        VerticalAlignment="Center"
-        Spacing="20">
+    <ikw:SimpleStackPanel Spacing="28">
         <ui:FontIcon
             HorizontalAlignment="Center"
             FontFamily="{DynamicResource SymbolThemeFontFamily}"
@@ -46,20 +51,15 @@
             Foreground="{DynamicResource SystemAccentColorLight2Brush}"
             Glyph="&#xE930;" />
 
-        <TextBlock
-            HorizontalAlignment="Center"
-            Style="{StaticResource FinishTitleStyle}"
-            TextWrapping="Wrap" />
-
-        <TextBlock
-            Style="{StaticResource FinishMessageStyle}"
-            TextAlignment="Center"
-            TextWrapping="Wrap" />
-
-        <ui:SettingsCard Description="Detected device" Header="{Binding DeviceName}">
-            <ui:SettingsCard.HeaderIcon>
-                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.XboxOneConsole}" />
-            </ui:SettingsCard.HeaderIcon>
-        </ui:SettingsCard>
+        <ikw:SimpleStackPanel Spacing="8">
+            <TextBlock
+                HorizontalAlignment="Center"
+                Style="{StaticResource FinishTitleStyle}"
+                TextWrapping="Wrap" />
+            <TextBlock
+                Style="{StaticResource FinishMessageStyle}"
+                TextAlignment="Center"
+                TextWrapping="Wrap" />
+        </ikw:SimpleStackPanel>
     </ikw:SimpleStackPanel>
 </Page>

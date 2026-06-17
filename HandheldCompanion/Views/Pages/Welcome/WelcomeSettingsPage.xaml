@@ -10,28 +10,37 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels.Windows"
     Title="Customize"
+    MaxWidth="1280"
     Margin="48"
+    VerticalAlignment="Center"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:WelcomeViewModel}"
     d:DesignHeight="1080"
     d:DesignWidth="1920"
     mc:Ignorable="d">
 
-    <Grid MaxWidth="840" VerticalAlignment="Center">
-        <ikw:SimpleStackPanel Spacing="18">
-            <TextBlock
-                behaviors:TextBlockUpperCase.IsUpperCase="True"
-                Style="{StaticResource CapitalAccentTextBlockStyle}"
-                Text="CUSTOMIZE THE EXPERIENCE" />
-            <TextBlock
-                Style="{StaticResource SubtitleBoldTextBlockStyle}"
-                Text="Confirm your defaults."
-                TextWrapping="Wrap" />
-            <TextBlock
-                Style="{StaticResource BodyTextBlockStyle}"
-                Text="Recommended choices are pre-set where HC already has defaults. You can fine-tune everything later in Settings."
-                TextWrapping="Wrap" />
+    <StackPanel>
+        <TextBlock
+            Margin="0,0,0,8"
+            behaviors:TextBlockUpperCase.IsUpperCase="True"
+            Style="{StaticResource CapitalAccentTextBlockStyle}"
+            Text="CUSTOMIZE THE EXPERIENCE" />
 
+        <ikw:SimpleStackPanel Spacing="28">
+
+            <!--  Header  -->
+            <ikw:SimpleStackPanel Spacing="8">
+                <TextBlock
+                    Style="{StaticResource SubtitleBoldTextBlockStyle}"
+                    Text="Confirm your defaults."
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Text="Recommended choices are pre-set where HC already has defaults. You can fine-tune everything later in Settings."
+                    TextWrapping="Wrap" />
+            </ikw:SimpleStackPanel>
+
+            <!--  Content  -->
             <ikw:SimpleStackPanel Spacing="3">
                 <ui:SettingsCard Description="Open Handheld Companion when Windows starts." Header="Launch HC at startup">
                     <ui:SettingsCard.HeaderIcon>
@@ -110,5 +119,5 @@
                 </ui:SettingsExpander>
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
-    </Grid>
+    </StackPanel>
 </Page>

@@ -9,45 +9,42 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels.Windows"
     Title="Welcome"
+    MaxWidth="840"
     Margin="48"
+    VerticalAlignment="Center"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:WelcomeViewModel}"
     d:DesignHeight="1080"
     d:DesignWidth="1920"
     mc:Ignorable="d">
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-
-        <ikw:SimpleStackPanel
-            MaxWidth="460"
-            VerticalAlignment="Center"
-            Orientation="Vertical"
-            Spacing="18">
-            <TextBlock
-                behaviors:TextBlockUpperCase.IsUpperCase="True"
-                Style="{StaticResource CapitalAccentTextBlockStyle}"
-                Text="hello there." />
-            <TextBlock
-                Style="{StaticResource TitleBoldTextBlockStyle}"
-                Text="Welcome to Handheld Companion."
-                TextWrapping="Wrap" />
-            <TextBlock
-                Style="{StaticResource BodyTextBlockStyle}"
-                Text="Over the next few steps, HC will confirm your detected device and prepare a few important defaults. You can change anything later from Settings."
-                TextWrapping="Wrap" />
-        </ikw:SimpleStackPanel>
-
+    <ikw:SimpleStackPanel Spacing="28">
         <TextBlock
-            Grid.Column="1"
-            VerticalAlignment="Center"
+            MaxWidth="420"
+            HorizontalAlignment="Center"
             FontSize="220"
             FontWeight="Black"
             Foreground="#FFFEB635"
             Text="HC"
             TextAlignment="Center" />
-    </Grid>
+
+        <ikw:SimpleStackPanel Spacing="8">
+            <TextBlock
+                Style="{StaticResource TitleBoldTextBlockStyle}"
+                Text="Welcome to Handheld Companion."
+                TextAlignment="Center"
+                TextWrapping="Wrap" />
+            <TextBlock
+                Style="{StaticResource BodyTextBlockStyle}"
+                Text="Over the next few steps, we'll prepare your device and a few important settings for a smooth handheld experience."
+                TextAlignment="Center"
+                TextWrapping="Wrap" />
+        </ikw:SimpleStackPanel>
+
+        <ui:SettingsCard Description="Detected device" Header="{Binding DeviceName}">
+            <ui:SettingsCard.HeaderIcon>
+                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.XboxOneConsole}" />
+            </ui:SettingsCard.HeaderIcon>
+        </ui:SettingsCard>
+    </ikw:SimpleStackPanel>
 </Page>

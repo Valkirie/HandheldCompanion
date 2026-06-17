@@ -11,28 +11,36 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels.Windows"
     Title="OEM stack"
+    MaxWidth="1280"
     Margin="48"
+    VerticalAlignment="Center"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:WelcomeViewModel}"
     d:DesignHeight="1080"
     d:DesignWidth="1920"
     mc:Ignorable="d">
 
-    <Grid MaxWidth="840" VerticalAlignment="Center">
-        <ikw:SimpleStackPanel Spacing="18">
-            <TextBlock
-                behaviors:TextBlockUpperCase.IsUpperCase="True"
-                Style="{StaticResource CapitalAccentTextBlockStyle}"
-                Text="oem software" />
-            <TextBlock
-                Style="{StaticResource SubtitleBoldTextBlockStyle}"
-                Text="Avoid device-control conflicts."
-                TextWrapping="Wrap" />
-            <TextBlock
-                Style="{StaticResource BodyTextBlockStyle}"
-                Text="Some manufacturer utilities can compete with HC for controls, services, tasks, buttons, or performance settings."
-                TextWrapping="Wrap" />
+    <StackPanel>
+        <TextBlock
+            Margin="0,0,0,8"
+            behaviors:TextBlockUpperCase.IsUpperCase="True"
+            Style="{StaticResource CapitalAccentTextBlockStyle}"
+            Text="oem software" />
 
+        <ikw:SimpleStackPanel Spacing="28">
+            <!--  Header  -->
+            <ikw:SimpleStackPanel Spacing="8">
+                <TextBlock
+                    Style="{StaticResource SubtitleBoldTextBlockStyle}"
+                    Text="Avoid device-control conflicts."
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Text="Some manufacturer utilities can compete with HC for controls, services, tasks, buttons, or performance settings."
+                    TextWrapping="Wrap" />
+            </ikw:SimpleStackPanel>
+
+            <!--  Content  -->
             <ikw:SimpleStackPanel Spacing="3">
                 <ui:InfoBar
                     Title="{Binding OemInfoBarTitle}"
@@ -75,30 +83,29 @@
                     Severity="Informational" />
             </ikw:SimpleStackPanel>
 
-            <TextBlock
-                behaviors:TextBlockUpperCase.IsUpperCase="True"
-                Style="{StaticResource CapitalAccentTextBlockStyle}"
-                Text="COMPONENTS" />
-            <ikw:SimpleStackPanel Spacing="3">
-                <ui:SettingsCard Description="Enable or disable all TDP, CPU and GPU frequency overrides managed by the performance manager" Header="Performance management">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.SpeedHigh}" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ui:ToggleSwitch IsOn="{Binding PerformanceManagerEnabled, Mode=TwoWay}" />
-                </ui:SettingsCard>
-                <ui:SettingsCard Description="Enable or disable GPU management settings such as RSR, Integer Scaling, AFMF and image sharpening" Header="GPU management">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.TVMonitor}" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ui:ToggleSwitch IsOn="{Binding GpuManagementEnabled, Mode=TwoWay}" />
-                </ui:SettingsCard>
-                <ui:SettingsCard Description="Enable or disable the built-in game library management. Disable this if you use your own library software" Header="Library management">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Library}" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ui:ToggleSwitch IsOn="{Binding LibraryPageEnabled, Mode=TwoWay}" />
-                </ui:SettingsCard>
+            <ikw:SimpleStackPanel Spacing="8">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Components" />
+                <ikw:SimpleStackPanel Spacing="3">
+                    <ui:SettingsCard Description="Enable or disable all TDP, CPU and GPU frequency overrides managed by the performance manager" Header="Performance management">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.SpeedHigh}" />
+                        </ui:SettingsCard.HeaderIcon>
+                        <ui:ToggleSwitch IsOn="{Binding PerformanceManagerEnabled, Mode=TwoWay}" />
+                    </ui:SettingsCard>
+                    <ui:SettingsCard Description="Enable or disable GPU management settings such as RSR, Integer Scaling, AFMF and image sharpening" Header="GPU management">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.TVMonitor}" />
+                        </ui:SettingsCard.HeaderIcon>
+                        <ui:ToggleSwitch IsOn="{Binding GpuManagementEnabled, Mode=TwoWay}" />
+                    </ui:SettingsCard>
+                    <ui:SettingsCard Description="Enable or disable the built-in game library management. Disable this if you use your own library software" Header="Library management">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Library}" />
+                        </ui:SettingsCard.HeaderIcon>
+                        <ui:ToggleSwitch IsOn="{Binding LibraryPageEnabled, Mode=TwoWay}" />
+                    </ui:SettingsCard>
+                </ikw:SimpleStackPanel>
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
-    </Grid>
+    </StackPanel>
 </Page>
