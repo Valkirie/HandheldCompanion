@@ -16,6 +16,7 @@ namespace HandheldCompanion.ViewModels.Windows;
 public class WelcomeViewModel : BaseViewModel
 {
     private readonly IDevice? device;
+    private readonly ISpaceWatcher? oemStackWatcher;
 
     private bool startWithWindows;
     private bool startMinimized;
@@ -76,20 +77,18 @@ public class WelcomeViewModel : BaseViewModel
         coreIsolationWatcher = new CoreIsolationWatcher();
         coreIsolation = coreIsolationWatcher.VulnerableDriverBlocklistEnable || coreIsolationWatcher.HypervisorEnforcedCodeIntegrityEnabled || coreIsolationWatcher.SmartAppControlEnabled;
 
-        HasOemStack = ISpaceWatcher.Create(device) is not null;
-
         // Pull the current OEM stack state on startup
-        if (HasOemStack)
+        oemStackWatcher = ISpaceWatcher.Create(device);
+        if (oemStackWatcher is not null)
         {
-            using ISpaceWatcher? watcher = ISpaceWatcher.Create(device);
-            if (watcher is not null)
-            {
-                // Store the notification for MVVM binding
-                oemNotification = watcher.notification;
+            // set flag
+            HasOemStack = true;
 
-                // OEM stack is disabled if tasks/services/processes are enabled/running
-                disableOemStack = !watcher.HasEnabledTasks() && !watcher.HasRunningServices() && !watcher.HasProcesses();
-            }
+            // Store the notification for MVVM binding
+            oemNotification = oemStackWatcher.notification;
+
+            // OEM stack is disabled if tasks/services/processes are enabled/running
+            disableOemStack = !oemStackWatcher.HasEnabledTasks() && !oemStackWatcher.HasRunningServices() && !oemStackWatcher.HasProcesses();
         }
 
         // components
@@ -422,11 +421,10 @@ public class WelcomeViewModel : BaseViewModel
             if (device is null)
                 return;
 
-            using ISpaceWatcher? watcher = ISpaceWatcher.Create(device);
             if (disable)
-                watcher?.Disable();
+                oemStackWatcher?.Disable();
             else
-                watcher?.Enable();
+                oemStackWatcher?.Enable();
         }
         catch (Exception ex)
         {
