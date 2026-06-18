@@ -203,9 +203,7 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                return (manufacturerWatcher?.HasProcesses() ?? false) ||
-                       (manufacturerWatcher?.HasEnabledTasks() ?? false) ||
-                       (manufacturerWatcher?.HasRunningServices() ?? false);
+                return manufacturerWatcher?.IsRunning ?? false;
             }
             set
             {

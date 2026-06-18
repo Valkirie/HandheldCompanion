@@ -86,6 +86,8 @@ namespace HandheldCompanion.Watchers
             return Create(IDevice.GetCurrent());
         }
 
+        public bool IsRunning => HasEnabledTasks() || HasRunningServices() || HasProcesses();
+
         #region executables
         protected IEnumerable<Process> GetProcesses()
         {

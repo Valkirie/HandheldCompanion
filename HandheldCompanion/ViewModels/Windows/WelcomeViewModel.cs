@@ -1,4 +1,5 @@
 using HandheldCompanion.Devices;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Watchers;
 using iNKORE.UI.WPF.Modern;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using WindowHelper = iNKORE.UI.WPF.Modern.Controls.Helpers.WindowHelper;
@@ -88,7 +90,7 @@ public class WelcomeViewModel : BaseViewModel
             oemNotification = oemStackWatcher.notification;
 
             // OEM stack is disabled if tasks/services/processes are enabled/running
-            disableOemStack = !oemStackWatcher.HasEnabledTasks() && !oemStackWatcher.HasRunningServices() && !oemStackWatcher.HasProcesses();
+            LoadOemStackStateAsync();
         }
 
         // components
@@ -100,6 +102,22 @@ public class WelcomeViewModel : BaseViewModel
         mainWindowTheme = ManagerFactory.settingsManager.GetInt("MainWindowTheme");
         mainWindowBackdrop = ManagerFactory.settingsManager.GetInt("MainWindowBackdrop");
         welcomeWindowApplyNoise = ManagerFactory.settingsManager.GetBoolean("MainWindowApplyNoise");
+    }
+
+    private async void LoadOemStackStateAsync()
+    {
+        if (oemStackWatcher is null)
+            return;
+
+        bool disabled = !await Task.Run(() => oemStackWatcher.IsRunning).ConfigureAwait(false);
+
+        UIHelper.TryBeginInvoke(() =>
+        {
+            if (oemStackChanged)
+                return;
+
+            SetProperty(ref disableOemStack, disabled);
+        });
     }
 
     public string DeviceName => string.IsNullOrEmpty(MotherboardInfo.Product) ? "Generic device" : MotherboardInfo.Product;

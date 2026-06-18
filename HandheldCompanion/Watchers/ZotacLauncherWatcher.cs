@@ -36,7 +36,7 @@ namespace HandheldCompanion.Watchers
 
         private void WatchdogTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            bool status = HasProcesses() || HasEnabledTasks() || HasRunningServices();
+            bool status = IsRunning;
             if (status != prevStatus)
             {
                 prevStatus = status;
