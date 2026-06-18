@@ -220,10 +220,12 @@
                             <ComboBox Name="MotionInputComboBox" SelectedIndex="{Binding InputMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </ui:SettingsCard>
 
-                        <ui:SettingsCard
-                            ContentAlignment="Vertical"
-                            Header="{l:Static resx:Resources.ProfilesPage_UMCMotionOnOff}"
-                            Visibility="{Binding OutputMode, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5}">
+                        <ui:SettingsCard Header="{l:Static resx:Resources.ProfilesPage_UMCMotionOnOff}" Visibility="{Binding OutputMode, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5}">
+
+                            <ui:SettingsCard.Resources>
+                                <sys:Double x:Key="SettingsCardWrapThreshold">476</sys:Double>
+                                <sys:Double x:Key="SettingsCardWrapNoIconThreshold">286</sys:Double>
+                            </ui:SettingsCard.Resources>
 
                             <ikw:SimpleStackPanel Spacing="3">
                                 <ComboBox
@@ -352,10 +354,13 @@
                         </ui:SettingsCard>
 
                         <ui:SettingsCard
-                            ContentAlignment="Vertical"
                             Description="{l:Static resx:Resources.ProfilesPage_UMCAntiDeadzoneDesc}"
                             Header="{l:Static resx:Resources.ProfilesPage_UMCAntiDeadzone}"
                             Visibility="{Binding OutputMode, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5}">
+                            <ui:SettingsCard.Resources>
+                                <sys:Double x:Key="SettingsCardWrapThreshold">476</sys:Double>
+                                <sys:Double x:Key="SettingsCardWrapNoIconThreshold">286</sys:Double>
+                            </ui:SettingsCard.Resources>
                             <DockPanel>
                                 <TextBox
                                     Height="31"
@@ -382,10 +387,13 @@
 
                         <!--  Gyrometer weight  -->
                         <ui:SettingsCard
-                            ContentAlignment="Vertical"
                             Description="Modify the gyrometer weight when applied against joystick movements"
                             Header="Gyrometer weight"
                             Visibility="{Binding OutputMode, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5}">
+                            <ui:SettingsCard.Resources>
+                                <sys:Double x:Key="SettingsCardWrapThreshold">476</sys:Double>
+                                <sys:Double x:Key="SettingsCardWrapNoIconThreshold">286</sys:Double>
+                            </ui:SettingsCard.Resources>
                             <DockPanel>
                                 <TextBox
                                     Height="31"
@@ -411,10 +419,11 @@
                         </ui:SettingsCard>
 
                         <!--  Horizontal sensitivity  -->
-                        <ui:SettingsCard
-                            ContentAlignment="Vertical"
-                            Header="Horizontal sensitivity"
-                            Visibility="{Binding OutputMode, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5}">
+                        <ui:SettingsCard Header="Horizontal sensitivity" Visibility="{Binding OutputMode, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5}">
+                            <ui:SettingsCard.Resources>
+                                <sys:Double x:Key="SettingsCardWrapThreshold">476</sys:Double>
+                                <sys:Double x:Key="SettingsCardWrapNoIconThreshold">286</sys:Double>
+                            </ui:SettingsCard.Resources>
                             <DockPanel>
                                 <TextBox
                                     Height="31"
@@ -443,10 +452,11 @@
                         </ui:SettingsCard>
 
                         <!--  Vertical sensitivity  -->
-                        <ui:SettingsCard
-                            ContentAlignment="Vertical"
-                            Header="Vertical sensitivity"
-                            Visibility="{Binding OutputMode, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5}">
+                        <ui:SettingsCard Header="Vertical sensitivity" Visibility="{Binding OutputMode, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5}">
+                            <ui:SettingsCard.Resources>
+                                <sys:Double x:Key="SettingsCardWrapThreshold">476</sys:Double>
+                                <sys:Double x:Key="SettingsCardWrapNoIconThreshold">286</sys:Double>
+                            </ui:SettingsCard.Resources>
                             <DockPanel>
                                 <TextBox
                                     Height="31"
@@ -528,11 +538,13 @@
 
                         <!--  RSR Value Slider  -->
                         <ui:SettingsCard
-                            ContentAlignment="Vertical"
                             Header="{l:Static resx:Resources.ProfilesPage_RSR}"
                             IsEnabled="{Binding RSREnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             Visibility="{Binding HasRSRSupport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-
+                            <ui:SettingsCard.Resources>
+                                <sys:Double x:Key="SettingsCardWrapThreshold">476</sys:Double>
+                                <sys:Double x:Key="SettingsCardWrapNoIconThreshold">286</sys:Double>
+                            </ui:SettingsCard.Resources>
                             <DockPanel>
                                 <TextBox
                                     Width="60"
@@ -668,10 +680,11 @@
                         </ui:SettingsCard>
 
                         <!--  RIS Value Slider  -->
-                        <ui:SettingsCard
-                            ContentAlignment="Vertical"
-                            Header="{l:Static resx:Resources.ProfilesPage_ImageSharpening}"
-                            Visibility="{Binding RISEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <ui:SettingsCard Header="{l:Static resx:Resources.ProfilesPage_ImageSharpening}" Visibility="{Binding RISEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <ui:SettingsCard.Resources>
+                                <sys:Double x:Key="SettingsCardWrapThreshold">476</sys:Double>
+                                <sys:Double x:Key="SettingsCardWrapNoIconThreshold">286</sys:Double>
+                            </ui:SettingsCard.Resources>
 
                             <DockPanel>
                                 <TextBox

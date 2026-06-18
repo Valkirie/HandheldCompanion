@@ -7,6 +7,7 @@
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="QuickPerformance"
@@ -388,6 +389,11 @@
                 <ui:SettingsCard.HeaderIcon>
                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe964;" />
                 </ui:SettingsCard.HeaderIcon>
+
+                <ui:SettingsCard.Resources>
+                    <sys:Double x:Key="SettingsCardWrapThreshold">476</sys:Double>
+                    <sys:Double x:Key="SettingsCardWrapNoIconThreshold">286</sys:Double>
+                </ui:SettingsCard.Resources>
 
                 <ComboBox
                     HorizontalAlignment="Stretch"

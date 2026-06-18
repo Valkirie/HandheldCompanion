@@ -395,6 +395,8 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public int FrameLimitMinimum => 10;
+
         private bool _isCustomFrameLimitSelected;
         public bool IsCustomFrameLimitSelected
         {
