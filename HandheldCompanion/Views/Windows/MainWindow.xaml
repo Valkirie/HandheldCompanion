@@ -116,14 +116,7 @@
             </ui:InfoBar.Style>
         </ui:InfoBar>
 
-        <ui:ProgressRing
-            Width="60"
-            Height="60"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Panel.ZIndex="1000"
-            IsActive="{Binding IsInitializing}"
-            Visibility="{Binding IsInitializing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <!--  UI: Add element to show we're loading ?  -->
 
         <ui:ContentDialog Name="ContentDialog" />
         <ui:ContentDialog x:Name="LaunchProfileDialog" Title="">

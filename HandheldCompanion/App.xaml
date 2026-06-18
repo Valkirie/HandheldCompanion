@@ -89,6 +89,8 @@
             <converters:WidthToAspectHeightConverter x:Key="WidthToAspectHeightConverter" />
             <converters:HasArtworkConverter x:Key="HasArtworkConverter" />
             <converters:MotionOutputToNameConverter x:Key="MotionOutputToNameConverter" />
+            <converters:IntToMotionOutputConverter x:Key="IntToMotionOutputConverter" />
+            <converters:IntToMotionInputConverter x:Key="IntToMotionInputConverter" />
 
             <math:MathConverter x:Key="Math" />
 

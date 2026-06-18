@@ -311,14 +311,7 @@
                                     <RowDefinition Height="60" />
                                 </Grid.RowDefinitions>
 
-                                <ui:ProgressRing
-                                    Grid.Row="0"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Panel.ZIndex="999"
-                                    IsActive="{Binding IsBusy}"
-                                    IsIndeterminate="{Binding IsBusy}"
-                                    Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                <!--  UI: Add element to show we're loading ?  -->
 
                                 <Border Grid.Row="0" ClipToBounds="True">
                                     <Grid>
@@ -486,14 +479,7 @@
                                     <RowDefinition Height="60" />
                                 </Grid.RowDefinitions>
 
-                                <ui:ProgressRing
-                                    Grid.Row="0"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Panel.ZIndex="999"
-                                    IsActive="{Binding IsBusy}"
-                                    IsIndeterminate="{Binding IsBusy}"
-                                    Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                <!--  UI: Add element to show we're loading ?  -->
 
                                 <Border Grid.Row="0" ClipToBounds="True">
                                     <Image
@@ -646,29 +632,6 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-
-                    <Border ClipToBounds="True" CornerRadius="{DynamicResource ControlCornerRadius}">
-                        <Grid>
-                            <ui:ProgressRing
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Panel.ZIndex="2"
-                                IsActive="{Binding IsBusy}"
-                                IsIndeterminate="{Binding IsBusy}"
-                                Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <!--
-                            <ui:InfoBadge
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Bottom"
-                                Panel.ZIndex="3"
-                                Visibility="{Binding IsLiked, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <ui:InfoBadge.IconSource>
-                                    <ui:FontIconSource Glyph="&#xe735;" />
-                                </ui:InfoBadge.IconSource>
-                            </ui:InfoBadge>
-                            -->
-                        </Grid>
-                    </Border>
 
                     <Image
                         Grid.Column="2"

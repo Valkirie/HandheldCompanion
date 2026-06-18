@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Shared;
+using HandheldCompanion.Helpers;
 using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.Collections.Concurrent;
@@ -282,15 +283,7 @@ namespace HandheldCompanion.Managers
                 {
                     while (ToastQueue.TryDequeue(out var toast))
                     {
-                        var dispatcher = System.Windows.Application.Current?.Dispatcher;
-                        if (dispatcher is null || dispatcher.CheckAccess())
-                        {
-                            DisplayToast(toast);
-                        }
-                        else
-                        {
-                            await dispatcher.InvokeAsync(() => DisplayToast(toast), DispatcherPriority.ApplicationIdle);
-                        }
+                        await UIHelper.TryInvokeAsync(() => DisplayToast(toast), DispatcherPriority.ApplicationIdle);
                     }
                 }
                 catch (Exception ex)
@@ -433,17 +426,6 @@ namespace HandheldCompanion.Managers
                 // Otherwise use durable command route
                 if (dict.TryGetValue("cmd", out var cmd) && !string.IsNullOrWhiteSpace(cmd))
                     CommandReceived?.Invoke(cmd!, dict);
-            }
-            catch { /* ignore */ }
-        }
-
-        private static void MarshalToUI(Action action)
-        {
-            try
-            {
-                var dispatcher = System.Windows.Application.Current?.Dispatcher;
-                if (dispatcher is null || dispatcher.CheckAccess()) action();
-                else dispatcher.Invoke(action, DispatcherPriority.Normal);
             }
             catch { /* ignore */ }
         }

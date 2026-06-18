@@ -37,7 +37,7 @@ namespace HandheldCompanion.ViewModels.Misc
                     HookLiveEvents(_processWindow);
                 }
 
-                RaiseAll();
+                RefreshBindings();
             }
         }
 
@@ -47,7 +47,7 @@ namespace HandheldCompanion.ViewModels.Misc
             private set
             {
                 _settings = value ?? new ProcessWindowSettings();
-                RaiseAll();
+                RefreshBindings();
             }
         }
 
@@ -197,6 +197,18 @@ namespace HandheldCompanion.ViewModels.Misc
             ProcessWindow = processWindow;
         }
 
+        private void RefreshBindings()
+        {
+            OnPropertyChanged(nameof(Name));
+            OnPropertyChanged(nameof(IsPresent));
+            OnPropertyChanged(nameof(Hwnd));
+            OnPropertyChanged(nameof(IsPrimaryScreen));
+            OnPropertyChanged(nameof(TargetDisplay));
+            OnPropertyChanged(nameof(TargetWindowPosition));
+            OnPropertyChanged(nameof(Borderless));
+            OnPropertyChanged(nameof(DeviceName));
+        }
+
         private void InitCommands()
         {
             BringProcessCommand = new DelegateCommand(async () =>
@@ -289,18 +301,12 @@ namespace HandheldCompanion.ViewModels.Misc
 
             OnPropertyChanged(nameof(Name));
             OnPropertyChanged(nameof(IsPrimaryScreen));
-            RaiseAll();
         }
 
         private void Process_Disposed(object? sender, EventArgs e)
         {
             // window went away -> keep saved settings and mark as not present
             ProcessWindow = null;
-        }
-
-        private void RaiseAll()
-        {
-            OnPropertyChanged(string.Empty); // full refresh for simplicity
         }
 
         public override void Dispose()

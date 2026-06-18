@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.ViewModels;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
@@ -28,10 +29,6 @@ namespace HandheldCompanion.Views.QuickPages
 
             // grab the *templates* from your XAML resources
             _tapTemplate = (Storyboard)TryFindResource("KeyTapAnimation");
-
-            _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
-            _timer.Tick += Timer_Tick;
-            _timer.Start();
         }
 
         // Layout modes
@@ -49,8 +46,7 @@ namespace HandheldCompanion.Views.QuickPages
             get => ((QuickKeyboardPageViewModel)DataContext).ShiftToggleLocked;
         }
 
-        // Original target window to restore focus
-        private readonly DispatcherTimer _timer;
+        // Event-driven keyboard layout detection (no polling)
         private IntPtr _lastHkl;
 
         // Physical scan-codes for default letter layout (dynamic per HKL)
@@ -97,18 +93,55 @@ namespace HandheldCompanion.Views.QuickPages
         // Page events
         private void Page_Loaded(object s, RoutedEventArgs e)
         {
-            Timer_Tick(s, e); // initial build
+            // Wait for ProcessManager to initialize before subscribing to foreground window events
+            switch (ManagerFactory.processManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.processManager.Initialized += ProcessManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryForeground();
+                    break;
+            }
         }
 
-        private void Page_Unloaded(object s, RoutedEventArgs e) => _timer.Stop();
-
-        // Poll Windows HKL changes
-        private void Timer_Tick(object? sender, EventArgs e)
+        private void Page_Unloaded(object s, RoutedEventArgs e)
         {
-            nint _targetHwnd = GetForegroundWindow();
-            if (_targetHwnd == IntPtr.Zero) return;
+            // Unsubscribe from all events to prevent memory leaks
+            ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
+            ManagerFactory.processManager.RawForeground -= ProcessManager_RawForeground;
+        }
 
-            uint tid = WinAPI.GetWindowThreadProcessId(_targetHwnd, out uint _);
+        private void ProcessManager_Initialized()
+        {
+            QueryForeground();
+        }
+
+        private void QueryForeground()
+        {
+            // Initial build for current foreground window
+            CheckKeyboardLayout();
+
+            // Subscribe to ProcessManager's RawForeground event
+            // This fires whenever the foreground window changes, instead of polling every 1000ms
+            ManagerFactory.processManager.RawForeground += ProcessManager_RawForeground;
+        }
+
+        // Event handler: called whenever foreground window changes
+        private void ProcessManager_RawForeground(IntPtr hWnd)
+        {
+            CheckKeyboardLayout();
+        }
+
+        // Check if keyboard layout changed and rebuild if needed
+        private void CheckKeyboardLayout()
+        {
+            nint targetHwnd = GetForegroundWindow();
+            if (targetHwnd == IntPtr.Zero)
+                return;
+
+            uint tid = WinAPI.GetWindowThreadProcessId(targetHwnd, out uint _);
             nint h = GetKeyboardLayout(tid);
             if (h != _lastHkl)
             {

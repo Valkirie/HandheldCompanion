@@ -1,7 +1,7 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.3.11520.95 d18.3
+VisualStudioVersion = 18.3.11520.95
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4A4F8C55-09C7-4B4C-9752-E2E05AF25E30}"
 	ProjectSection(SolutionItems) = preProject
@@ -17,6 +17,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "steam-hidapi.net", "steam-hidapi.net\steam-hidapi.net.csproj", "{F7283783-81EF-4CD2-BD86-598FE193C11F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "controller-hidapi.net", "controller-hidapi.net\controller-hidapi.net.csproj", "{62E9B011-2D07-4A7E-8C71-33A26A5E5B34}"
+EndProject
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

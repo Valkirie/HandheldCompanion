@@ -15,6 +15,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 using Windows.System.Power;
@@ -49,6 +50,7 @@ public partial class OverlayQuickTools : GamepadWindow
     private bool isClosing;
 
     private readonly DispatcherTimer clockUpdateTimer;
+    private string? _lastTimeString;
 
     public QuickHomePage homePage = null!;
     public QuickDevicePage devicePage = null!;
@@ -79,7 +81,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
         clockUpdateTimer = new DispatcherTimer
         {
-            Interval = TimeSpan.FromMilliseconds(500)
+            Interval = TimeSpan.FromSeconds(1)
         };
         clockUpdateTimer.Tick += UpdateTime;
 
@@ -533,6 +535,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
             case Visibility.Visible:
                 UpdateStyle();
+                UpdateTime(null, EventArgs.Empty);
 
                 InvokeGotGamepadWindowFocus();
                 clockUpdateTimer.Start();
@@ -561,8 +564,7 @@ public partial class OverlayQuickTools : GamepadWindow
             ToggleVisibility();
         else
         {
-            // close pages
-            devicePage.Close();
+            // Cleanup handled by page Unloaded events now
         }
     }
 
@@ -571,9 +573,7 @@ public partial class OverlayQuickTools : GamepadWindow
         isClosing = v;
         Close();
 
-        homePage.Close();
-        devicePage.Close();
-        profilesPage.Close();
+        // Page cleanup is now handled by Unloaded events
         applicationsPage.Close();
     }
 

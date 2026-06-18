@@ -53,8 +53,7 @@ namespace HandheldCompanion.Misc
                     Element,
                     TreeScope.Element,
                     propertyHandle,
-                    AutomationElement.NameProperty,
-                    AutomationElement.BoundingRectangleProperty);
+                    AutomationElement.NameProperty);
 
                 Automation.AddAutomationEventHandler(
                     WindowPattern.WindowClosedEvent,
@@ -96,10 +95,6 @@ namespace HandheldCompanion.Misc
                         // the message. Blocking the UIA STA thread prevents it from pumping incoming
                         // COM messages and can deadlock the target application on close.
                         Task.Run(RefreshName);
-                    }
-                    else if (e.Property == AutomationElement.BoundingRectangleProperty)
-                    {
-                        Refreshed?.Invoke(this, EventArgs.Empty);
                     }
                 }
             }

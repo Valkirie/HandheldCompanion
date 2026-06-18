@@ -1,5 +1,6 @@
 using HandheldCompanion.Devices;
 using HandheldCompanion.Devices.Lenovo;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
@@ -12,7 +13,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Threading;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Radios;
 
@@ -22,7 +22,8 @@ namespace HandheldCompanion.ViewModels
     {
         private QuickDevicePage? quickDevicePage;
         private IReadOnlyList<Radio>? radios;
-        private DispatcherTimer? radioTimer;
+        private Radio? wifiRadio;
+        private Radio? bluetoothRadio;
 
         // Flag to prevent circular updates when loading display settings into UI controls
         private bool isLoadingDisplay = false;
@@ -317,8 +318,8 @@ namespace HandheldCompanion.ViewModels
             // Setup manager events
             SetupManagerEvents();
 
-            // Start radio timer
-            InitializeRadioTimer();
+            // Query radio state on initialization and hook into StateChanged events
+            _ = InitializeRadioStateAsync();
         }
 
         private void SetupManagerEvents()
@@ -404,17 +405,7 @@ namespace HandheldCompanion.ViewModels
             ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
         }
 
-        private void InitializeRadioTimer()
-        {
-            radioTimer = new DispatcherTimer(DispatcherPriority.Background)
-            {
-                Interval = TimeSpan.FromSeconds(5) // Reduced frequency to improve performance
-            };
-            radioTimer.Tick += RadioTimer_Tick;
-            radioTimer.Start();
-        }
-
-        private async void RadioTimer_Tick(object? sender, EventArgs e)
+        private async Task InitializeRadioStateAsync()
         {
             try
             {
@@ -427,11 +418,21 @@ namespace HandheldCompanion.ViewModels
                     IsWiFiSupported = radios?.Any(r => r.Kind == RadioKind.WiFi) == true;
                     IsBluetoothSupported = radios?.Any(r => r.Kind == RadioKind.Bluetooth) == true;
 
-                    var wifi = radios?.FirstOrDefault(r => r.Kind == RadioKind.WiFi);
-                    var bt = radios?.FirstOrDefault(r => r.Kind == RadioKind.Bluetooth);
+                    wifiRadio = radios?.FirstOrDefault(r => r.Kind == RadioKind.WiFi);
+                    bluetoothRadio = radios?.FirstOrDefault(r => r.Kind == RadioKind.Bluetooth);
 
-                    IsWiFiEnabled = wifi?.State == RadioState.On;
-                    IsBluetoothEnabled = bt?.State == RadioState.On;
+                    UpdateRadioStates();
+
+                    // Hook into StateChanged events for event-driven updates
+                    if (wifiRadio != null)
+                    {
+                        wifiRadio.StateChanged += WiFiRadio_StateChanged;
+                    }
+
+                    if (bluetoothRadio != null)
+                    {
+                        bluetoothRadio.StateChanged += BluetoothRadio_StateChanged;
+                    }
                 }
                 finally
                 {
@@ -439,6 +440,28 @@ namespace HandheldCompanion.ViewModels
                 }
             }
             catch { }
+        }
+
+        private void UpdateRadioStates()
+        {
+            IsWiFiEnabled = wifiRadio?.State == RadioState.On;
+            IsBluetoothEnabled = bluetoothRadio?.State == RadioState.On;
+        }
+
+        private void WiFiRadio_StateChanged(Radio sender, object args)
+        {
+            UIHelper.TryBeginInvoke(() =>
+            {
+                IsWiFiEnabled = sender.State == RadioState.On;
+            });
+        }
+
+        private void BluetoothRadio_StateChanged(Radio sender, object args)
+        {
+            UIHelper.TryBeginInvoke(() =>
+            {
+                IsBluetoothEnabled = sender.State == RadioState.On;
+            });
         }
 
         private void QueryMedia()
@@ -792,11 +815,17 @@ namespace HandheldCompanion.ViewModels
                 ManagerFactory.profileManager.Discarded -= ProfileManager_Discarded;
                 NightLight.Toggled -= NightLight_Toggled;
 
-                if (radioTimer != null)
+                // Unhook from Radio StateChanged events
+                if (wifiRadio != null)
                 {
-                    radioTimer.Stop();
-                    radioTimer.Tick -= RadioTimer_Tick;
-                    radioTimer = null;
+                    wifiRadio.StateChanged -= WiFiRadio_StateChanged;
+                    wifiRadio = null;
+                }
+
+                if (bluetoothRadio != null)
+                {
+                    bluetoothRadio.StateChanged -= BluetoothRadio_StateChanged;
+                    bluetoothRadio = null;
                 }
 
                 radios = null;

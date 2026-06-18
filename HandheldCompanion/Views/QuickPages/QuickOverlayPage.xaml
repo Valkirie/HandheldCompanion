@@ -18,6 +18,8 @@
     d:DesignHeight="1200"
     d:DesignWidth="640"
     KeepAlive="True"
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded"
     mc:Ignorable="d">
 
     <ikw:SimpleStackPanel Spacing="28">
@@ -177,12 +179,16 @@
 
                         <StackPanel VerticalAlignment="Center">
                             <Grid>
-                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe964;" />
-                                <ui:ProgressRing
-                                    d:Value="50"
-                                    IsIndeterminate="False"
-                                    Value="{Binding CPULoad, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <ui:FontIcon
+                                    Height="31"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xe964;" />
+                                <ProgressBar
+                                    VerticalAlignment="Bottom"
+                                    Maximum="100"
+                                    Value="{Binding CPULoad, Mode=OneWay}" />
                             </Grid>
+
                             <DockPanel>
                                 <TextBlock
                                     MinWidth="20"
@@ -255,11 +261,14 @@
 
                         <StackPanel VerticalAlignment="Center" Visibility="{Binding HasGPULoad, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <Grid>
-                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe964;" />
-                                <ui:ProgressRing
-                                    d:Value="50"
-                                    IsIndeterminate="False"
-                                    Value="{Binding GPULoad, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <ui:FontIcon
+                                    Height="31"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xe964;" />
+                                <ProgressBar
+                                    VerticalAlignment="Bottom"
+                                    Maximum="100"
+                                    Value="{Binding GPULoad, Mode=OneWay}" />
                             </Grid>
                             <DockPanel>
                                 <TextBlock

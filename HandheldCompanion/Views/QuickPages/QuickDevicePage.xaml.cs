@@ -2,7 +2,9 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
+using System;
 using System.Threading.Tasks;
+using System.Windows;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.QuickPages;
@@ -20,24 +22,31 @@ public partial class QuickDevicePage : Page
 
         ViewModel = new QuickDevicePageViewModel(this);
         DataContext = ViewModel;
-
-        // Handle AYANEO Flip Screen confirmation dialog request
-        ViewModel.RequestAYANEOFlipScreenConfirmation += ViewModel_RequestAYANEOFlipScreenConfirmation;
-    }
-
-    public void Close()
-    {
-        if (ViewModel is not null)
-        {
-            ViewModel.RequestAYANEOFlipScreenConfirmation -= ViewModel_RequestAYANEOFlipScreenConfirmation;
-            ViewModel.Close();
-            ViewModel = null;
-        }
     }
 
     public QuickDevicePage(string Tag) : this()
     {
         this.Tag = Tag;
+    }
+
+    private void Page_Loaded(object s, RoutedEventArgs e)
+    {
+        if (ViewModel is not null)
+        {
+            // Subscribe to ViewModel events
+            ViewModel.RequestAYANEOFlipScreenConfirmation += ViewModel_RequestAYANEOFlipScreenConfirmation;
+        }
+    }
+
+    private void Page_Unloaded(object s, RoutedEventArgs e)
+    {
+        if (ViewModel is not null)
+        {
+            // Unsubscribe from all events
+            ViewModel.RequestAYANEOFlipScreenConfirmation -= ViewModel_RequestAYANEOFlipScreenConfirmation;
+            ViewModel.Close();
+            ViewModel = null;
+        }
     }
 
     private async void ViewModel_RequestAYANEOFlipScreenConfirmation(object? sender, TaskCompletionSource<bool> tcs)

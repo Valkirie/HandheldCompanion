@@ -66,13 +66,15 @@ namespace HandheldCompanion.Views.Classes
 
         private AdornerLayer? _adornerLayer;
         private HighlightAdorner? _highlightAdorner;
+        private ContentDialog? _contentDialogControl;
+        private bool _contentDialogHooksInitialized;
 
         protected readonly DispatcherTimer _navDebounceTimer;
         protected string _pendingNavTag = string.Empty;
 
         public GamepadWindow()
         {
-            LayoutUpdated += OnLayoutUpdated;
+            Loaded += GamepadWindow_Loaded;
             StateChanged += Window_StateChanged;
             IsVisibleChanged += Window_VisibleChanged;
 
@@ -96,6 +98,31 @@ namespace HandheldCompanion.Views.Classes
 
         protected virtual void Window_StateChanged(object? sender, EventArgs e)
         {
+        }
+
+        private void ContentDialog_Opened(object? sender, ContentDialogOpenedEventArgs e)
+        {
+            SyncContentDialogState();
+        }
+
+        private void ContentDialog_Closed(object? sender, ContentDialogClosedEventArgs e)
+        {
+            SyncContentDialogState();
+        }
+
+        private void GamepadWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (_contentDialogHooksInitialized)
+                return;
+
+            _contentDialogControl = FindName("ContentDialog") as ContentDialog;
+            if (_contentDialogControl is null)
+                return;
+
+            _contentDialogControl.Opened += ContentDialog_Opened;
+            _contentDialogControl.Closed += ContentDialog_Closed;
+            _contentDialogHooksInitialized = true;
+            SyncContentDialogState();
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -156,35 +183,23 @@ namespace HandheldCompanion.Views.Classes
                 WinAPI.PostMessage(hwnd, WM_MOUSELEAVE, IntPtr.Zero, IntPtr.Zero);
         }
 
-        private void OnLayoutUpdated(object? sender, EventArgs e)
+        private void SyncContentDialogState()
         {
-            if (this.Visibility != Visibility.Visible || this.WindowState == WindowState.Minimized)
-                return;
+            ContentDialog? openDialog = ContentDialog.GetOpenDialog(this);
 
-            // check if a content dialog is open
-            if (contentDialog is not null)
+            if (openDialog is not null)
             {
-                // a content dialog just opened
                 if (currentDialog is null)
                 {
-                    // store content dialog
-                    currentDialog = contentDialog;
+                    currentDialog = openDialog;
 
-                    // raise event
                     ContentDialogOpened?.Invoke(currentDialog);
                 }
             }
-            else if (contentDialog is null)
+            else if (currentDialog is not null)
             {
-                // a content dialog just closed
-                if (currentDialog is not null)
-                {
-                    // raise event
-                    ContentDialogClosed?.Invoke(currentDialog);
-
-                    // clear content dialog
-                    currentDialog = null;
-                }
+                ContentDialogClosed?.Invoke(currentDialog);
+                currentDialog = null;
             }
         }
 

@@ -1,3 +1,4 @@
+
 <Page
     x:Class="HandheldCompanion.Views.Pages.ProfilesPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -36,12 +37,7 @@
                 PrimaryButtonCommand="{Binding DownloadLibrary}"
                 PrimaryButtonText="Apply">
                 <Grid>
-                    <ui:ProgressRing
-                        Panel.ZIndex="1"
-                        IsActive="{Binding IsLibraryBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        IsIndeterminate="{Binding IsLibraryBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        Visibility="{Binding IsLibraryBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
+                    <!--  UI: Add element to show we're loading ?  -->
                     <ikw:SimpleStackPanel
                         Width="500"
                         IsEnabled="{Binding IsLibraryBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvertBooleanConverter}}"

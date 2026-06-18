@@ -15,26 +15,29 @@ public partial class QuickHomePage : Page
     private readonly CrossThreadLock brightnessLock = new();
     private readonly CrossThreadLock volumeLock = new();
 
+    public QuickHomePage()
+    {
+        DataContext = new QuickHomePageViewModel();
+        InitializeComponent();
+    }
+
     public QuickHomePage(string Tag) : this()
     {
         this.Tag = Tag;
+    }
 
+    private void Page_Loaded(object s, RoutedEventArgs e)
+    {
         ManagerFactory.multimediaManager.VolumeNotification += SystemManager_VolumeNotification;
         ManagerFactory.multimediaManager.BrightnessNotification += SystemManager_BrightnessNotification;
         ManagerFactory.multimediaManager.Initialized += SystemManager_Initialized;
     }
 
-    public void Close()
+    private void Page_Unloaded(object s, RoutedEventArgs e)
     {
         ManagerFactory.multimediaManager.VolumeNotification -= SystemManager_VolumeNotification;
         ManagerFactory.multimediaManager.BrightnessNotification -= SystemManager_BrightnessNotification;
         ManagerFactory.multimediaManager.Initialized -= SystemManager_Initialized;
-    }
-
-    public QuickHomePage()
-    {
-        DataContext = new QuickHomePageViewModel();
-        InitializeComponent();
     }
 
     private void QuickButton_Click(object sender, RoutedEventArgs e)

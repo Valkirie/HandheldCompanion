@@ -11,8 +11,6 @@ public partial class QuickOverlayPage : Page
         Tag = "quickoverlay";
         DataContext = new OverlayPageViewModel();
         InitializeComponent();
-        Loaded += OnLoaded;
-        Unloaded += OnUnloaded;
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e) =>

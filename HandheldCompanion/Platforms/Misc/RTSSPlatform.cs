@@ -212,6 +212,8 @@ public class RTSSPlatform : IPlatform
             try
             {
                 appEntry = OSD.GetAppEntries(AppFlags.MASK).FirstOrDefault(x => x.ProcessId == processId);
+                if (appEntry is not null)
+                    break; // Found entry, exit immediately
             }
             catch (FileNotFoundException) { return; }
             catch { }
