@@ -93,6 +93,9 @@ LZMANumBlockThreads=6
 VersionInfoVersion={#MyAppVersion}
 VersionInfoCompany={#MyAppPublisher}
 UninstallDisplayIcon={app}\{#MyAppExeName}
+WizardStyle=modern dynamic includetitlebar
+WizardStyleFile=builtin:polar
+; leave WizardImageFile blank to use built-in modern images
 
 [Languages]
 Name: en; MessagesFile: "compiler:Default.isl"
