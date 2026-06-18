@@ -1,18 +1,18 @@
-﻿using HandheldCompanion.Extensions;
+using HandheldCompanion.Extensions;
 using HandheldCompanion.Utils;
 
 namespace HandheldCompanion.ViewModels
 {
-    public class MotionInputViewModel : BaseViewModel
+    public class MotionOutputViewModel : BaseViewModel
     {
-        public MotionInput Value { get; set; }
+        public MotionOutput Value { get; set; }
         public string? Glyph { get; set; }
         public string? Description { get; set; }
         public bool HasGlyph => !string.IsNullOrWhiteSpace(Glyph);
 
-        public MotionInputViewModel() { }
+        public MotionOutputViewModel() { }
 
-        public MotionInputViewModel(MotionInput mode)
+        public MotionOutputViewModel(MotionOutput mode)
         {
             Value = mode;
             Glyph = mode.ToGlyph();

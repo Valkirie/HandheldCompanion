@@ -18,6 +18,8 @@
     d:DesignHeight="2200"
     d:DesignWidth="640"
     KeepAlive="True"
+    Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded"
     mc:Ignorable="d">
 
     <ikw:SimpleStackPanel IsEnabled="{Binding HasSelectedProfile, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="28">
@@ -210,14 +212,46 @@
 
                     <ui:SettingsExpander.Items>
                         <ui:SettingsCard Description="{l:Static resx:Resources.ProfilesPage_UMCSelectionRightLeftDesc}" Header="{l:Static resx:Resources.ProfilesPage_StyleofOutput}">
-                            <ComboBox Name="MotionOutputComboBox" SelectedIndex="{Binding OutputMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ComboBox
+                                Name="MotionOutputComboBox"
+                                ItemsSource="{Binding MotionOutputModes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                SelectedValue="{Binding OutputMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntToMotionOutputConverter}}"
+                                SelectedValuePath="Value">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <ikw:SimpleStackPanel
+                                            VerticalAlignment="Center"
+                                            Orientation="Horizontal"
+                                            Spacing="6">
+                                            <ui:FontIcon Glyph="{Binding Glyph}" Visibility="{Binding HasGlyph, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            <TextBlock Text="{Binding Description}" />
+                                        </ikw:SimpleStackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
                         </ui:SettingsCard>
 
                         <ui:SettingsCard
                             Description="{l:Static resx:Resources.ProfilesPage_StyleofInputTooltip}"
                             Header="{l:Static resx:Resources.ProfilesPage_StyleofInput}"
                             Visibility="{Binding OutputMode, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5}">
-                            <ComboBox Name="MotionInputComboBox" SelectedIndex="{Binding InputMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ComboBox
+                                Name="MotionInputComboBox"
+                                ItemsSource="{Binding MotionInputModes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                SelectedValue="{Binding InputMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntToMotionInputConverter}}"
+                                SelectedValuePath="Value">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <ikw:SimpleStackPanel
+                                            VerticalAlignment="Center"
+                                            Orientation="Horizontal"
+                                            Spacing="6">
+                                            <ui:FontIcon Glyph="{Binding Glyph}" Visibility="{Binding HasGlyph, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            <TextBlock Text="{Binding Description}" />
+                                        </ikw:SimpleStackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
                         </ui:SettingsCard>
 
                         <ui:SettingsCard Header="{l:Static resx:Resources.ProfilesPage_UMCMotionOnOff}" Visibility="{Binding OutputMode, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5}">

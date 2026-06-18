@@ -14,23 +14,26 @@ using Page = System.Windows.Controls.Page;
 namespace HandheldCompanion.Views.QuickPages;
 
 /// <summary>
-///     Interaction logic for QuickProfilesPage.xaml
-/// </summary>
-public partial class QuickProfilesPage : Page
-{
-    private ProfilesPageViewModel viewModel;
-
-    public QuickProfilesPage(string Tag) : this()
+    ///     Interaction logic for QuickProfilesPage.xaml
+    /// </summary>
+    public partial class QuickProfilesPage : Page
     {
-        this.Tag = Tag;
-    }
+        private ProfilesPageViewModel viewModel;
 
-    public QuickProfilesPage()
+        public QuickProfilesPage()
+        {
+            viewModel = new ProfilesPageViewModel(this);
+            DataContext = viewModel;
+            InitializeComponent();
+        }
+
+        public QuickProfilesPage(string Tag) : this()
+        {
+            this.Tag = Tag;
+        }
+
+    private void Page_Loaded(object s, RoutedEventArgs e)
     {
-        viewModel = new ProfilesPageViewModel(this);
-        DataContext = viewModel;
-        InitializeComponent();
-
         // Subscribe to ViewModel events for UI operations
         viewModel.RequestOpenProfilePage += (s, e) =>
         {
@@ -87,66 +90,15 @@ public partial class QuickProfilesPage : Page
                 PrimaryButtonText = Properties.Resources.ProfilesPage_OK
             }.ShowAsync();
         };
-
-        // todo: move me to MVVM!
-        foreach (var mode in Enum.GetValues<MotionOutput>())
-        {
-            var comboBoxItem = new ComboBoxItem()
-            {
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                HorizontalContentAlignment = HorizontalAlignment.Left,
-            };
-
-            var simpleStackPanel = new SimpleStackPanel
-            {
-                Spacing = 6,
-                Orientation = Orientation.Horizontal,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-
-            var icon = new FontIcon() { Glyph = mode.ToGlyph() };
-            if (!string.IsNullOrEmpty(icon.Glyph))
-                simpleStackPanel.Children.Add(icon);
-
-            var description = EnumUtils.GetDescriptionFromEnumValue(mode);
-            var text = new TextBlock { Text = description };
-            simpleStackPanel.Children.Add(text);
-
-            comboBoxItem.Content = simpleStackPanel;
-            MotionOutputComboBox.Items.Add(comboBoxItem);
-        }
-
-        // todo: move me to MVVM!
-        foreach (var mode in (MotionInput[])Enum.GetValues(typeof(MotionInput)))
-        {
-            var comboBoxItem = new ComboBoxItem()
-            {
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                HorizontalContentAlignment = HorizontalAlignment.Left,
-            };
-
-            var simpleStackPanel = new SimpleStackPanel
-            {
-                Spacing = 6,
-                Orientation = Orientation.Horizontal,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-
-            var icon = new FontIcon() { Glyph = mode.ToGlyph() };
-            if (!string.IsNullOrEmpty(icon.Glyph))
-                simpleStackPanel.Children.Add(icon);
-
-            var description = EnumUtils.GetDescriptionFromEnumValue(mode);
-            var text = new TextBlock { Text = description };
-            simpleStackPanel.Children.Add(text);
-
-            comboBoxItem.Content = simpleStackPanel;
-            MotionInputComboBox.Items.Add(comboBoxItem);
-        }
     }
 
-    public void Close()
+    private void Page_Unloaded(object s, RoutedEventArgs e)
     {
+        // Unsubscribe from ViewModel events
+        viewModel.RequestOpenProfilePage -= (s, e) => { };
+        viewModel.RequestOpenProfileLayout -= (s, e) => { };
+        viewModel.RequestOpenPowerProfile -= (s, powerProfile) => { };
+        viewModel.RequestCreatePowerProfile -= (s, e) => { };
         viewModel.Close();
     }
 
@@ -155,3 +107,4 @@ public partial class QuickProfilesPage : Page
         viewModel.PowerProfile_Selected(powerProfile, AC);
     }
 }
+

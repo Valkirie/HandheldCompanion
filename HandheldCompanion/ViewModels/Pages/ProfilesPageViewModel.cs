@@ -68,6 +68,10 @@ namespace HandheldCompanion.ViewModels
         // ComboBox collections
         public ObservableCollection<ScreenDividerViewModel> IntegerScalingDividers { get; } = [];
 
+        // Motion output and input modes for ComboBox data binding
+        public ObservableCollection<MotionOutputViewModel> MotionOutputModes { get; } = [];
+        public ObservableCollection<MotionInputViewModel> MotionInputModes { get; } = [];
+
         public bool HasAnyWindows => AllWindows.Any();
 
         // True if library search results are available in LibraryPickers (for enabling ComboBox and showing preview)
@@ -1821,6 +1825,18 @@ namespace HandheldCompanion.ViewModels
             SubProfilesView = new ListCollectionView(SubProfiles);
             SubProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.SortOrder), ListSortDirection.Ascending));
             SubProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.Name), ListSortDirection.Ascending));
+
+            // Initialize MotionOutput modes
+            foreach (var mode in Enum.GetValues<MotionOutput>())
+            {
+                MotionOutputModes.Add(new MotionOutputViewModel(mode));
+            }
+
+            // Initialize MotionInput modes
+            foreach (var mode in (MotionInput[])Enum.GetValues(typeof(MotionInput)))
+            {
+                MotionInputModes.Add(new MotionInputViewModel(mode));
+            }
 
             ProfileExecutables.CollectionChanged += (_, __) =>
             {
