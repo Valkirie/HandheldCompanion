@@ -37,10 +37,15 @@
                 PrimaryButtonCommand="{Binding DownloadLibrary}"
                 PrimaryButtonText="Apply">
                 <Grid>
-                    <!--  UI: Add element to show we're loading ?  -->
+                    <ui:ProgressRing
+                        Panel.ZIndex="1"
+                        IsActive="{Binding IsLibraryBusy, UpdateSourceTrigger=PropertyChanged}"
+                        IsIndeterminate="{Binding IsLibraryBusy, UpdateSourceTrigger=PropertyChanged}"
+                        Visibility="{Binding IsLibraryBusy, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
                     <ikw:SimpleStackPanel
                         Width="500"
-                        IsEnabled="{Binding IsLibraryBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvertBooleanConverter}}"
+                        IsEnabled="{Binding IsLibraryBusy, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvertBooleanConverter}}"
                         Spacing="12">
                         <ikw:SimpleStackPanel Spacing="3">
                             <Grid>

@@ -311,7 +311,14 @@
                                     <RowDefinition Height="60" />
                                 </Grid.RowDefinitions>
 
-                                <!--  UI: Add element to show we're loading ?  -->
+                                <ui:ProgressRing
+                                    Grid.Row="0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Panel.ZIndex="999"
+                                    IsActive="{Binding IsBusy, UpdateSourceTrigger=PropertyChanged}"
+                                    IsIndeterminate="{Binding IsBusy, UpdateSourceTrigger=PropertyChanged}"
+                                    Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                                 <Border Grid.Row="0" ClipToBounds="True">
                                     <Grid>
@@ -479,7 +486,14 @@
                                     <RowDefinition Height="60" />
                                 </Grid.RowDefinitions>
 
-                                <!--  UI: Add element to show we're loading ?  -->
+                                <ui:ProgressRing
+                                    Grid.Row="0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Panel.ZIndex="999"
+                                    IsActive="{Binding IsBusy, UpdateSourceTrigger=PropertyChanged}"
+                                    IsIndeterminate="{Binding IsBusy, UpdateSourceTrigger=PropertyChanged}"
+                                    Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                                 <Border Grid.Row="0" ClipToBounds="True">
                                     <Image

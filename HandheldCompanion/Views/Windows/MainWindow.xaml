@@ -116,7 +116,15 @@
             </ui:InfoBar.Style>
         </ui:InfoBar>
 
-        <!--  UI: Add element to show we're loading ?  -->
+        <ui:ProgressRing
+            Width="60"
+            Height="60"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Panel.ZIndex="1000"
+            IsActive="{Binding IsInitializing, UpdateSourceTrigger=PropertyChanged}"
+            IsIndeterminate="{Binding IsInitializing, UpdateSourceTrigger=PropertyChanged}"
+            Visibility="{Binding IsInitializing, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
         <ui:ContentDialog Name="ContentDialog" />
         <ui:ContentDialog x:Name="LaunchProfileDialog" Title="">
