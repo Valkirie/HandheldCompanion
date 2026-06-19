@@ -18,6 +18,8 @@ namespace HandheldCompanion.ViewModels
         public bool IsRunningRTSS => ManagerFactory.platformManager.IsReady && PlatformManager.RTSS.IsInstalled;
         public bool IsRunningLHM => ManagerFactory.platformManager.IsReady && PlatformManager.LibreHardware.IsInstalled;
 
+        private volatile bool _isActive = true;
+
         private int _onScreenDisplayLevel;
         public int OnScreenDisplayLevel
         {
@@ -33,6 +35,20 @@ namespace HandheldCompanion.ViewModels
                     ManagerFactory.settingsManager.SetProperty(Settings.OnScreenDisplayLevel, value);
                 }
             }
+        }
+
+        public void OnNavigatedTo()
+        {
+            _isActive = true;
+            updateTimer.Start();
+            framerateTimer.Start();
+        }
+
+        public void OnNavigatedFrom()
+        {
+            _isActive = false;
+            updateTimer.Stop();
+            framerateTimer.Stop();
         }
 
         private double _OverlayRenderInterval;
@@ -572,6 +588,9 @@ namespace HandheldCompanion.ViewModels
 
         private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
+            if (!_isActive)
+                return;
+
             GPU? gpu = GPUManager.GetCurrent();
             if (gpu is not null)
             {
@@ -588,6 +607,9 @@ namespace HandheldCompanion.ViewModels
 
         private void FramerateTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
+            if (!_isActive)
+                return;
+
             if (!ManagerFactory.platformManager.IsReady)
                 return;
 
@@ -641,6 +663,9 @@ namespace HandheldCompanion.ViewModels
 
         private void LibreHardwareMonitor_CPULoadChanged(float? value)
         {
+            if (!_isActive)
+                return;
+
             if (value is null)
                 return;
 
@@ -649,6 +674,9 @@ namespace HandheldCompanion.ViewModels
 
         private void LibreHardwareMonitor_CPUTemperatureChanged(float? value)
         {
+            if (!_isActive)
+                return;
+
             if (value is null)
                 return;
 
@@ -657,6 +685,9 @@ namespace HandheldCompanion.ViewModels
 
         private void LibreHardwareMonitor_CPUPowerChanged(float? value)
         {
+            if (!_isActive)
+                return;
+
             if (value is null)
                 return;
 
@@ -665,6 +696,9 @@ namespace HandheldCompanion.ViewModels
 
         private void LibreHardwareMonitor_GPULoadChanged(float? value)
         {
+            if (!_isActive)
+                return;
+
             if (value is null)
                 return;
 
@@ -677,6 +711,9 @@ namespace HandheldCompanion.ViewModels
 
         private void LibreHardwareMonitor_GPUTemperatureChanged(float? value)
         {
+            if (!_isActive)
+                return;
+
             if (value is null)
                 return;
 
@@ -689,6 +726,9 @@ namespace HandheldCompanion.ViewModels
 
         private void LibreHardwareMonitor_GPUPowerChanged(float? value)
         {
+            if (!_isActive)
+                return;
+
             if (value is null)
                 return;
 
@@ -697,18 +737,6 @@ namespace HandheldCompanion.ViewModels
                 HasGPUPower = value != 0.0f;
 
             GPUPower = (float)Math.Round((float)value);
-        }
-
-        public void OnNavigatedTo()
-        {
-            updateTimer.Start();
-            framerateTimer.Start();
-        }
-
-        public void OnNavigatedFrom()
-        {
-            updateTimer.Stop();
-            framerateTimer.Stop();
         }
 
         public override void Dispose()
@@ -773,6 +801,9 @@ namespace HandheldCompanion.ViewModels
 
         private void RTSS_Updated(PlatformStatus status)
         {
+            if (!_isActive)
+                return;
+
             if (status == PlatformStatus.Stalled)
                 OnScreenDisplayLevel = 0;
 

@@ -24,6 +24,8 @@ public partial class OverlayPage : Page
         ViewModel = new OverlayPageViewModel();
         DataContext = ViewModel;
         InitializeComponent();
+        Loaded += OverlayPage_Loaded;
+        Unloaded += OverlayPage_Unloaded;
 
         // manage events
         switch (ManagerFactory.settingsManager.Status)
@@ -116,6 +118,10 @@ public partial class OverlayPage : Page
             }
         });
     }
+
+    private void OverlayPage_Loaded(object sender, RoutedEventArgs e) => ViewModel.OnNavigatedTo();
+
+    private void OverlayPage_Unloaded(object sender, RoutedEventArgs e) => ViewModel.OnNavigatedFrom();
 
     private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
     {
