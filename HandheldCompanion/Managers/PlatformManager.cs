@@ -71,6 +71,9 @@ public class PlatformManager : IManager
         }
 
         base.Start();
+
+        // Update platforms for any processes that were created during initialization
+        ProcessManager.UpdatePlatformForProcess();
     }
 
     public override void Stop()

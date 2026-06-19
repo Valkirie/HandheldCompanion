@@ -1,4 +1,5 @@
 using HandheldCompanion.Misc;
+using HandheldCompanion.Platforms;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
@@ -219,7 +220,7 @@ public class ProcessManager : IManager
                 if (!processEx.IsSuspended || !profile.SuspendOnSleep)
                     continue;
 
-                ResumeProcess(processEx, false);
+                _ = ResumeProcess(processEx, false);
             }
         }
     }
@@ -237,7 +238,7 @@ public class ProcessManager : IManager
                 if (processEx.IsSuspended || !profile.SuspendOnSleep)
                     continue;
 
-                SuspendProcess(processEx, false);
+                _ = SuspendProcess(processEx, false);
             }
         }
     }
@@ -386,6 +387,13 @@ public class ProcessManager : IManager
     public static List<ProcessEx> GetProcesses(string executable)
     {
         return Processes.Values.Where(a => a.Executable.Equals(executable, StringComparison.InvariantCultureIgnoreCase)).ToList();
+    }
+
+    public static void UpdatePlatformForProcess()
+    {
+        foreach (ProcessEx processEx in Processes.Values)
+            if (processEx.Platform == GamePlatform.Generic)
+                processEx.Platform = PlatformManager.GetPlatform(processEx);
     }
 
     private void ForegroundCallback(bool IsEventProc, IntPtr hWnd)
