@@ -345,8 +345,12 @@ public class ProfileManager : IManager
         {
             // we've already announced this profile
             if (currentProfile is not null)
+            {
                 if (currentProfile.Guid == profile.Guid)
                     announce = false;
+            }
+            else if (Status == ManagerStatus.Initializing)
+                announce = false;
 
             // update current profile before invoking event
             currentProfile = profile;
