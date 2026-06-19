@@ -60,7 +60,8 @@ public class ProcessManager : IManager
 
     private static readonly ConcurrentDictionary<int, ProcessEx> Processes = new();
 
-    private static ProcessEx currentProcess = null!;
+    private static ProcessEx? currentProcess;
+    private static ProcessFilter currentForegroundFilter = ProcessFilter.Restricted;
     private IntPtr currenthWnd;
 
     private AutomationEventHandler _windowOpenedHandler = null!;
@@ -430,9 +431,6 @@ public class ProcessManager : IManager
             if (!Processes.TryGetValue(processId, out process))
                 return;
 
-            // store previous process
-            ProcessEx prevProcess = currentProcess;
-
             // get filter
             ProcessFilter filter = GetFilter(process.Executable, process.Path, string.Empty, className);
 
@@ -443,8 +441,16 @@ public class ProcessManager : IManager
                     return;
             }
 
+            // skip exact duplicates (same foreground process and same filter)
+            if (currentProcess?.ProcessId == process.ProcessId && currentForegroundFilter == filter)
+                return;
+
+            // store previous process
+            ProcessEx? prevProcess = currentProcess;
+
             // update current process
             currentProcess = process;
+            currentForegroundFilter = filter;
             currentProcess.Refresh(true);
 
             if (currentProcess is not null)
@@ -456,7 +462,7 @@ public class ProcessManager : IManager
             }
 
             // raise event
-            ForegroundChanged?.Invoke(process, prevProcess, filter);
+            ForegroundChanged?.Invoke(currentProcess, prevProcess, filter);
         }
         catch { }
     }
@@ -479,8 +485,12 @@ public class ProcessManager : IManager
             // If the halted process had foreground, log and raise event.
             if (currentProcess == processEx)
             {
-                LogManager.LogDebug("{0} process {1} that had foreground has halted", currentProcess.Platform, currentProcess.Executable);
-                ForegroundChanged?.Invoke(null, currentProcess, ProcessFilter.Allowed);
+                ProcessEx? haltedForegroundProcess = currentProcess;
+                currentProcess = null;
+                currentForegroundFilter = ProcessFilter.Restricted;
+
+                LogManager.LogDebug("{0} process {1} that had foreground has halted", haltedForegroundProcess.Platform, haltedForegroundProcess.Executable);
+                ForegroundChanged?.Invoke(null, haltedForegroundProcess, ProcessFilter.Allowed);
             }
 
             // Remove the process from the dictionary and raise the stopped event.
