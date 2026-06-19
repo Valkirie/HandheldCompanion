@@ -429,14 +429,6 @@ namespace HandheldCompanion.Managers
                 NotifyMasterIntervalOverrideChanged();
             }
 
-            if (!CanUseControllerMode(mode))
-            {
-                HIDmode = mode;
-                ControllerSelected?.Invoke(mode);
-                NotifyMasterIntervalOverrideChanged();
-                return;
-            }
-
             // Create a new target based on the requested mode
             switch (mode)
             {
@@ -461,7 +453,7 @@ namespace HandheldCompanion.Managers
                     break;
 
                 case HIDmode.SwitchProController:
-                    vTarget = new SwitchProTarget(0x057E, 0x2009); // Nintendo Switch Pro Controller
+                    vTarget = new SwitchProTarget(0x057E, 0x2069); // Nintendo Switch Pro 2 Controller
                     break;
 
                 case HIDmode.Xbox360Controller:
@@ -474,6 +466,14 @@ namespace HandheldCompanion.Managers
             {
                 if (mode != HIDmode.NoController)
                     LogManager.LogError("Failed to initialise virtual controller with HIDmode: {0}", mode);
+                NotifyMasterIntervalOverrideChanged();
+                return;
+            }
+
+            if (!CanUseControllerMode(mode))
+            {
+                HIDmode = mode;
+                ControllerSelected?.Invoke(mode);
                 NotifyMasterIntervalOverrideChanged();
                 return;
             }
