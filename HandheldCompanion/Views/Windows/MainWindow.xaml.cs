@@ -887,7 +887,7 @@ public partial class MainWindow : GamepadWindow
             notifyIcon.Visible = true;
             ShowInTaskbar = false;
 
-            try { Hide(); } catch { }
+            try { Hide(true); } catch { }
 
             return;
         }
@@ -1209,7 +1209,7 @@ public partial class MainWindow : GamepadWindow
                 switch (windowState)
                 {
                     case WindowState.Minimized:
-                        Hide();
+                        Hide(true);
                         break;
                 }
 

@@ -33,6 +33,7 @@
 	<TieredCompilation>true</TieredCompilation>
 	<TieredPGO>true</TieredPGO>
 	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <RollForward>LatestPatch</RollForward>
 	<TieredCompilationQuickJit>true</TieredCompilationQuickJit>
 	<TieredCompilationQuickJitForLoops>true</TieredCompilationQuickJitForLoops>
   </PropertyGroup>

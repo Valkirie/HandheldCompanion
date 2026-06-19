@@ -38,7 +38,7 @@
 #define PawnIOName             "PawnIO"
 #define USBipName              "USBip"
 
-#define NewDotNetVersion       "10.0.0"
+#define NewDotNetVersion       "10.0.9"
 #define NewDirectXVersion      "9.29.1974"
 #define NewHidHideVersion      "1.5.230"
 #define NewRtssVersion         "7.3.5.28314"
