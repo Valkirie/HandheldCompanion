@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Inputs;
-using System;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices.OneXPlayer

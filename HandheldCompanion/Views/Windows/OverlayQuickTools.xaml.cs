@@ -15,7 +15,6 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 using Windows.System.Power;

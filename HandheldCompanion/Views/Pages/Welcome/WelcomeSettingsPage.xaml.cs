@@ -1,4 +1,3 @@
-using HandheldCompanion.Managers;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages.Welcome;

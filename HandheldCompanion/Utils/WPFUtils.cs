@@ -509,7 +509,7 @@ public static class WPFUtils
             {
                 return ctrl.TransformToVisual(relativeTo).TransformBounds(new Rect(ctrl.RenderSize));
             }
-            catch {}
+            catch { }
         }
         return Rect.Empty;
     }

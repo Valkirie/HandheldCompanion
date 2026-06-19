@@ -2043,12 +2043,9 @@ namespace HandheldCompanion.Managers
             else if (focusedElement is DropDownButton dropDownButton)
             {
                 var flyout = dropDownButton.Flyout;
-                if (flyout is not null)
-                {
-                    // Flyout events are already subscribed to globally in SubscribeToAllFlyoutEvents()
-                    // Just show the flyout here
-                    flyout.ShowAt(dropDownButton);
-                }
+                // Flyout events are already subscribed to globally in SubscribeToAllFlyoutEvents()
+                // Just show the flyout here
+                flyout?.ShowAt(dropDownButton);
             }
             else if (focusedElement is MenuItem menuItem && HasFlyoutOpen)
             {

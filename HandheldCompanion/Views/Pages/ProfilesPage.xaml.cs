@@ -9,7 +9,6 @@ using HandheldCompanion.Views.Pages.Profiles;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Windows;
-using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;

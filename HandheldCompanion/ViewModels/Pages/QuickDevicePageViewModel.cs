@@ -424,15 +424,9 @@ namespace HandheldCompanion.ViewModels
                     UpdateRadioStates();
 
                     // Hook into StateChanged events for event-driven updates
-                    if (wifiRadio != null)
-                    {
-                        wifiRadio.StateChanged += WiFiRadio_StateChanged;
-                    }
+                    wifiRadio?.StateChanged += WiFiRadio_StateChanged;
 
-                    if (bluetoothRadio != null)
-                    {
-                        bluetoothRadio.StateChanged += BluetoothRadio_StateChanged;
-                    }
+                    bluetoothRadio?.StateChanged += BluetoothRadio_StateChanged;
                 }
                 finally
                 {
@@ -816,17 +810,10 @@ namespace HandheldCompanion.ViewModels
                 NightLight.Toggled -= NightLight_Toggled;
 
                 // Unhook from Radio StateChanged events
-                if (wifiRadio != null)
-                {
-                    wifiRadio.StateChanged -= WiFiRadio_StateChanged;
-                    wifiRadio = null;
-                }
-
-                if (bluetoothRadio != null)
-                {
-                    bluetoothRadio.StateChanged -= BluetoothRadio_StateChanged;
-                    bluetoothRadio = null;
-                }
+                wifiRadio?.StateChanged -= WiFiRadio_StateChanged;
+                wifiRadio = null;
+                bluetoothRadio?.StateChanged -= BluetoothRadio_StateChanged;
+                bluetoothRadio = null;
 
                 radios = null;
                 quickDevicePage = null;

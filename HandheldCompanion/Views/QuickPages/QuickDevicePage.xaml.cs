@@ -2,7 +2,6 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
-using System;
 using System.Threading.Tasks;
 using System.Windows;
 using Page = System.Windows.Controls.Page;
@@ -31,11 +30,8 @@ public partial class QuickDevicePage : Page
 
     private void Page_Loaded(object s, RoutedEventArgs e)
     {
-        if (ViewModel is not null)
-        {
-            // Subscribe to ViewModel events
-            ViewModel.RequestAYANEOFlipScreenConfirmation += ViewModel_RequestAYANEOFlipScreenConfirmation;
-        }
+        // Subscribe to ViewModel events
+        ViewModel?.RequestAYANEOFlipScreenConfirmation += ViewModel_RequestAYANEOFlipScreenConfirmation;
     }
 
     private void Page_Unloaded(object s, RoutedEventArgs e)

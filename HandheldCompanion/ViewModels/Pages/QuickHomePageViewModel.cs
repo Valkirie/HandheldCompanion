@@ -1,6 +1,5 @@
 ﻿using GongSolutions.Wpf.DragDrop;
 using HandheldCompanion.Controllers;
-using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using System;
 using System.Collections.ObjectModel;

@@ -32,7 +32,6 @@ using System.Windows.Navigation;
 using System.Windows.Shell;
 using System.Windows.Threading;
 using Control = System.Windows.Controls.Control;
-using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
 using Page = System.Windows.Controls.Page;
 using RadioButton = System.Windows.Controls.RadioButton;
 

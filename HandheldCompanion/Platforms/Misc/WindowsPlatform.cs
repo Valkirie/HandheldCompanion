@@ -148,11 +148,11 @@ public sealed class WindowsPlatform : IPlatform
     {
         string? settingKey = reason switch
         {
-            ModernStandbyResleepMonitor.WakeReason.PowerButton      => "GoBackToSleepOnPowerButton",
+            ModernStandbyResleepMonitor.WakeReason.PowerButton => "GoBackToSleepOnPowerButton",
             ModernStandbyResleepMonitor.WakeReason.FingerprintReader => "GoBackToSleepOnFingerprintReader",
-            ModernStandbyResleepMonitor.WakeReason.Joystick          => "GoBackToSleepOnJoystick",
-            ModernStandbyResleepMonitor.WakeReason.ChargerConnected  => "GoBackToSleepOnChargerConnected",
-            _                                                         => null,
+            ModernStandbyResleepMonitor.WakeReason.Joystick => "GoBackToSleepOnJoystick",
+            ModernStandbyResleepMonitor.WakeReason.ChargerConnected => "GoBackToSleepOnChargerConnected",
+            _ => null,
         };
 
         return string.IsNullOrEmpty(settingKey) || ManagerFactory.settingsManager.GetBoolean(settingKey);

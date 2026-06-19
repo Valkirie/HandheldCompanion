@@ -179,7 +179,7 @@ public class ProfileManager : IManager
             {
                 case "SetLayoutMode":
                     if (args.TryGetValue("layoutMode", out string? modeStr) && int.TryParse(modeStr, out int modeInt) && Enum.IsDefined(typeof(LayoutModes), modeInt))
-                        ManagerFactory.settingsManager.SetProperty("LayoutMode", modeInt);                    
+                        ManagerFactory.settingsManager.SetProperty("LayoutMode", modeInt);
                     break;
 
                 case "FixVirtualSlot1":
@@ -423,18 +423,18 @@ public class ProfileManager : IManager
             });
         }
 
-            return new ToastRequest
-            {
-                Manager = "ProfileManager",
-                Title = title,
-                Content = content ?? string.Empty,
-                Content2 = hasSlotIssue ? Resources.ControllerPage_VirtualControllerNotOnSlot1Desc : string.Empty,
-                Img = imageToUse,
-                IsHero = useAsHero,
-                Important = hasSlotIssue,  // Mark as important if slot issue exists
-                SelectionBoxes =
-                [
-                    new ToastComboInput
+        return new ToastRequest
+        {
+            Manager = "ProfileManager",
+            Title = title,
+            Content = content ?? string.Empty,
+            Content2 = hasSlotIssue ? Resources.ControllerPage_VirtualControllerNotOnSlot1Desc : string.Empty,
+            Img = imageToUse,
+            IsHero = useAsHero,
+            Important = hasSlotIssue,  // Mark as important if slot issue exists
+            SelectionBoxes =
+            [
+                new ToastComboInput
                     {
                         Id = "layoutMode",
                         Title = "Gamepad mode",
@@ -446,10 +446,10 @@ public class ProfileManager : IManager
                             new ToastComboItem(((int)LayoutModes.Auto).ToString(),    "Auto"),
                         ]
                     }
-                ],
-                Actions = actions
-            };
-        }
+            ],
+            Actions = actions
+        };
+    }
 
     private void PowerProfileManager_Deleted(PowerProfile powerProfile)
     {

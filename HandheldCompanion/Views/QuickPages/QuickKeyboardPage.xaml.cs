@@ -9,7 +9,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
-using System.Windows.Threading;
 using static HandheldCompanion.WinAPI;
 using Page = System.Windows.Controls.Page;
 

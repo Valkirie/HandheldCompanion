@@ -1,36 +1,30 @@
-using HandheldCompanion.Extensions;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
-using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Windows;
-using iNKORE.UI.WPF.Controls;
-using iNKORE.UI.WPF.Modern.Controls;
-using System;
 using System.Windows;
-using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.QuickPages;
 
 /// <summary>
-    ///     Interaction logic for QuickProfilesPage.xaml
-    /// </summary>
-    public partial class QuickProfilesPage : Page
+///     Interaction logic for QuickProfilesPage.xaml
+/// </summary>
+public partial class QuickProfilesPage : Page
+{
+    private ProfilesPageViewModel viewModel;
+
+    public QuickProfilesPage()
     {
-        private ProfilesPageViewModel viewModel;
+        viewModel = new ProfilesPageViewModel(this);
+        DataContext = viewModel;
+        InitializeComponent();
+    }
 
-        public QuickProfilesPage()
-        {
-            viewModel = new ProfilesPageViewModel(this);
-            DataContext = viewModel;
-            InitializeComponent();
-        }
-
-        public QuickProfilesPage(string Tag) : this()
-        {
-            this.Tag = Tag;
-        }
+    public QuickProfilesPage(string Tag) : this()
+    {
+        this.Tag = Tag;
+    }
 
     private void Page_Loaded(object s, RoutedEventArgs e)
     {

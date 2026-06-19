@@ -1,7 +1,3 @@
-using HandheldCompanion.Actions;
-using HandheldCompanion.Views;
-using System;
-
 namespace HandheldCompanion.ViewModels
 {
     public class LayoutItemPageViewModel : BaseViewModel
@@ -19,18 +15,12 @@ namespace HandheldCompanion.ViewModels
                 if (value != _currentMapping)
                 {
                     // Unsubscribe from old mapping
-                    if (_currentMapping is not null)
-                    {
-                        _currentMapping.PropertyChanged -= CurrentMapping_PropertyChanged;
-                    }
+                    _currentMapping?.PropertyChanged -= CurrentMapping_PropertyChanged;
 
                     _currentMapping = value;
 
                     // Subscribe to new mapping
-                    if (_currentMapping is not null)
-                    {
-                        _currentMapping.PropertyChanged += CurrentMapping_PropertyChanged;
-                    }
+                    _currentMapping?.PropertyChanged += CurrentMapping_PropertyChanged;
 
                     // Update the display strings
                     UpdateDisplay();
@@ -149,10 +139,7 @@ namespace HandheldCompanion.ViewModels
             if (disposing)
             {
                 // Unsubscribe from current mapping
-                if (_currentMapping is not null)
-                {
-                    _currentMapping.PropertyChanged -= CurrentMapping_PropertyChanged;
-                }
+                _currentMapping?.PropertyChanged -= CurrentMapping_PropertyChanged;
             }
 
             base.Dispose(disposing);

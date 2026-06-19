@@ -1,5 +1,5 @@
-﻿using HandheldCompanion.Shared;
-using HandheldCompanion.Helpers;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Shared;
 using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.Collections.Concurrent;
@@ -226,70 +226,70 @@ namespace HandheldCompanion.Managers
                 try { ToastNotificationManager.History.Remove(request.Tag, request.Group); }
                 catch { /* ignore */ }
                 finally { CurrentToastNotification = null; }
-                }
-
-                ToastQueue.Enqueue(request);
-                _ = ProcessToastQueue();
-
-                return true;
             }
 
-            /// <summary>
-            /// Force-redisplay a manager's last sent toast, bumping it to the front of the Action Center.
-            /// Useful for re-showing alerts (e.g., controller slot issues) when related events occur (e.g., profile applied).
-            /// </summary>
-            public static bool ForceRedisplayManagerToast(string managerName)
-            {
-                return ForceRedisplayManagerToast(managerName, delayMs: 0);
-            }
+            ToastQueue.Enqueue(request);
+            _ = ProcessToastQueue();
 
-            /// <summary>
-            /// Force-redisplay a manager's last sent toast with optional delay for staggered display.
-            /// Delays help show multiple toasts sequentially so both are briefly visible on screen.
-            /// </summary>
-            /// <param name="managerName">The manager name to redisplay.</param>
-            /// <param name="delayMs">Delay in milliseconds before displaying (default 0). Suggested: 500-800ms for sequential display.</param>
-            public static bool ForceRedisplayManagerToast(string managerName, int delayMs = 0)
-            {
-                if (string.IsNullOrWhiteSpace(managerName) || !ManagerToastRegistry.TryGetValue(managerName, out var storedRequest))
-                    return false;
+            return true;
+        }
 
-                if (delayMs > 0)
+        /// <summary>
+        /// Force-redisplay a manager's last sent toast, bumping it to the front of the Action Center.
+        /// Useful for re-showing alerts (e.g., controller slot issues) when related events occur (e.g., profile applied).
+        /// </summary>
+        public static bool ForceRedisplayManagerToast(string managerName)
+        {
+            return ForceRedisplayManagerToast(managerName, delayMs: 0);
+        }
+
+        /// <summary>
+        /// Force-redisplay a manager's last sent toast with optional delay for staggered display.
+        /// Delays help show multiple toasts sequentially so both are briefly visible on screen.
+        /// </summary>
+        /// <param name="managerName">The manager name to redisplay.</param>
+        /// <param name="delayMs">Delay in milliseconds before displaying (default 0). Suggested: 500-800ms for sequential display.</param>
+        public static bool ForceRedisplayManagerToast(string managerName, int delayMs = 0)
+        {
+            if (string.IsNullOrWhiteSpace(managerName) || !ManagerToastRegistry.TryGetValue(managerName, out var storedRequest))
+                return false;
+
+            if (delayMs > 0)
+            {
+                // Delay redisplay to allow previous toast to remain visible
+                _ = Task.Delay(delayMs).ContinueWith(_ =>
                 {
-                    // Delay redisplay to allow previous toast to remain visible
-                    _ = Task.Delay(delayMs).ContinueWith(_ =>
-                    {
-                        ToastQueue.Enqueue(storedRequest);
-                        _ = ProcessToastQueue();
-                    });
-                }
-                else
-                {
-                    // Re-enqueue the stored request to trigger a fresh display
                     ToastQueue.Enqueue(storedRequest);
                     _ = ProcessToastQueue();
-                }
-
-                return true;
+                });
+            }
+            else
+            {
+                // Re-enqueue the stored request to trigger a fresh display
+                ToastQueue.Enqueue(storedRequest);
+                _ = ProcessToastQueue();
             }
 
-            private static async Task ProcessToastQueue()
-            {
-                // If already processing, don't start another loop (the existing one will drain everything)
-                if (!_queueSemaphore.Wait(0)) // Non-blocking check
-                    return;
+            return true;
+        }
 
-                try
+        private static async Task ProcessToastQueue()
+        {
+            // If already processing, don't start another loop (the existing one will drain everything)
+            if (!_queueSemaphore.Wait(0)) // Non-blocking check
+                return;
+
+            try
+            {
+                while (ToastQueue.TryDequeue(out var toast))
                 {
-                    while (ToastQueue.TryDequeue(out var toast))
-                    {
-                        await UIHelper.TryInvokeAsync(() => DisplayToast(toast), DispatcherPriority.ApplicationIdle);
-                    }
+                    await UIHelper.TryInvokeAsync(() => DisplayToast(toast), DispatcherPriority.ApplicationIdle);
                 }
-                catch (Exception ex)
-                {
-                    // Log but never crash because of a toast
-                    LogManager.LogError("Toast processing error: {0}", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                // Log but never crash because of a toast
+                LogManager.LogError("Toast processing error: {0}", ex.Message);
             }
             finally
             {
@@ -332,7 +332,7 @@ namespace HandheldCompanion.Managers
                 .AddText(request.Title)
                 .AddText(request.Content)
                 .AddText(request.Content2);
-                //.SetToastScenario(request.Important ? ToastScenario.Reminder : ToastScenario.Default);
+            //.SetToastScenario(request.Important ? ToastScenario.Reminder : ToastScenario.Default);
 
             if (imageUri != null)
             {
