@@ -12,7 +12,7 @@
     <StartupObject>HandheldCompanion.App</StartupObject>
     <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-    <Version>0.31.5.0</Version>
+    <Version>0.31.5.1</Version>
     <Platforms>x64</Platforms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
@@ -32,10 +32,7 @@
 	<ReadyToRunUseCrossgen2>true</ReadyToRunUseCrossgen2>
 	<TieredCompilation>true</TieredCompilation>
 	<TieredPGO>true</TieredPGO>
-	<PublishSingleFile>true</PublishSingleFile>
-	<SelfContained>true</SelfContained>
 	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
-	<EnableTrimAnalyzer>false</EnableTrimAnalyzer>
 	<TieredCompilationQuickJit>true</TieredCompilationQuickJit>
 	<TieredCompilationQuickJitForLoops>true</TieredCompilationQuickJitForLoops>
   </PropertyGroup>
@@ -54,18 +51,8 @@
     <PublishReadyToRunUseCrossgen2>true</PublishReadyToRunUseCrossgen2>
     <PublishReadyToRunComposite>true</PublishReadyToRunComposite>    
     <EnableProfileGuidedOptimization>true</EnableProfileGuidedOptimization>    
-    <PublishSingleFile>true</PublishSingleFile>
-    <EnableCompressionInSingleFile>false</EnableCompressionInSingleFile>
-    <IncludeAllContentForSelfExtract>false</IncludeAllContentForSelfExtract>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|x64'">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|x64'">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  
   <ItemGroup>
     <!-- Prevent Server GC from scaling back heaps during idle; avoids ramp-up latency on sudden load -->
     <RuntimeHostConfigurationOption Include="System.GC.GarbageCollectionAdaptationMode" Value="0" Trim="true" />
