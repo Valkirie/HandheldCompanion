@@ -13,6 +13,7 @@ namespace hidapi
         private byte[] _writeBuffer;
         private byte[] _readReturnBuffer;
         private short _index;
+        private string _devicePath;
         private IntPtr _deviceHandle;
         private object _lock = new object();
         private bool _reading = false;
@@ -23,9 +24,10 @@ namespace hidapi
         public bool IsDeviceValid => _deviceHandle != IntPtr.Zero;
         public bool Reading => _reading;
         public ushort ReleaseNumber => _releaseNumber;
+        public string DevicePath => _devicePath;
         public Action<HidDeviceInputReceivedEventArgs> OnInputReceived;
 
-        public HidDevice(ushort vendorId, ushort productId, ushort inputBufferLen, short index)
+        public HidDevice(ushort vendorId, ushort productId, ushort inputBufferLen, short index, string devicePath = null)
         {
             _vid = vendorId;
             _pid = productId;
@@ -35,6 +37,7 @@ namespace hidapi
             _readReturnBuffer = new byte[inputBufferLen];
             _eventArgs = new HidDeviceInputReceivedEventArgs(this, new byte[inputBufferLen], true);
             _index = index;
+            _devicePath = devicePath;
         }
 
         private void ThrowIfDeviceInvalid()
@@ -62,6 +65,29 @@ namespace hidapi
         {
             lock (_lock)
             {
+                // If a specific device path was provided, try to open it directly first
+                if (!string.IsNullOrEmpty(_devicePath))
+                {
+                    _deviceHandle = HidApiNative.hid_open_path(_devicePath);
+                    if (_deviceHandle != IntPtr.Zero)
+                    {
+                        try
+                        {
+                            ushort inputReportLength = GetInputReportByteLength(_devicePath);
+                            if (inputReportLength == _inputBufferLen)
+                            {
+                                // Successfully opened the device by path
+                                return true;
+                            }
+                        }
+                        catch { }
+
+                        HidApiNative.hid_close(_deviceHandle);
+                        _deviceHandle = IntPtr.Zero;
+                    }
+                    // If opening by path failed, fall through to enumerate by VID/PID/index
+                }
+
                 IntPtr devEnum = HidApiNative.hid_enumerate(_vid, _pid);
                 IntPtr deviceInfo = devEnum;
 

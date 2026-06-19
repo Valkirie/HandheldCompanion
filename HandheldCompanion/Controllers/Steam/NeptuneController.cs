@@ -79,7 +79,9 @@ public class NeptuneController : SteamController
         // try known buffer lengths to support different firmware versions (65 current, 64 legacy)
         foreach (ushort bufLen in (ushort[])[65, 64])
         {
-            Controller = new(details.VendorID, details.ProductID, bufLen, details.GetMI());
+            // Pass the device path to ensure we open the correct physical device,
+            // not a virtual one with the same VID/PID/index
+            Controller = new(details.VendorID, details.ProductID, bufLen, details.GetMI(), details.devicePath);
             Open();
             if (IsConnected()) break;
         }

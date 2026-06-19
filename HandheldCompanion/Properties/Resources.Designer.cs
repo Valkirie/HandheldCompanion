@@ -592,7 +592,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Virtual controller is managed by profile.
+        ///   Looks up a localized string similar to Virtual controller is overridden.
         /// </summary>
         public static string ControllerPage_HIDManagedByProfileWarning {
             get {

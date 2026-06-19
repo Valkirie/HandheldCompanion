@@ -287,6 +287,20 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private Visibility _HIDManagedBySteamHybridVisibility = Visibility.Collapsed;
+        public Visibility HIDManagedBySteamHybridVisibility
+        {
+            get => _HIDManagedBySteamHybridVisibility;
+            set
+            {
+                if (value != _HIDManagedBySteamHybridVisibility)
+                {
+                    _HIDManagedBySteamHybridVisibility = value;
+                    OnPropertyChanged(nameof(HIDManagedBySteamHybridVisibility));
+                }
+            }
+        }
+
         private bool _HidModeEnabled = true;
         public bool HidModeEnabled
         {
@@ -433,6 +447,7 @@ namespace HandheldCompanion.ViewModels
             ControllerManager.ControllerPlugged += ControllerPlugged;
             ControllerManager.ControllerUnplugged += ControllerUnplugged;
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+            ControllerManager.SteamHybridModeOverride += ControllerManager_SteamHybridModeOverride;
             ControllerManager.StatusChanged += ControllerManager_StatusChanged;
             ControllerManager.SlotIssueChanged += ControllerManager_SlotIssueChanged;
 
@@ -515,7 +530,19 @@ namespace HandheldCompanion.ViewModels
         {
             bool managedByProfile = !profile.Default && profile.HID != HIDmode.NotSelected;
             HIDManagedByProfileVisibility = managedByProfile ? Visibility.Visible : Visibility.Collapsed;
-            HidModeEnabled = !managedByProfile;
+
+            // Disable combobox if profile manages HIDmode OR if Steam hybrid override is active
+            HidModeEnabled = !managedByProfile && HIDManagedBySteamHybridVisibility == Visibility.Collapsed;
+        }
+
+        private void ControllerManager_SteamHybridModeOverride(bool isOverridden)
+        {
+            HIDManagedBySteamHybridVisibility = isOverridden ? Visibility.Visible : Visibility.Collapsed;
+
+            // Disable combobox if profile manages HIDmode OR if Steam hybrid override is active
+            bool managedByProfile = !ManagerFactory.profileManager.GetCurrent().Default && 
+                                   ManagerFactory.profileManager.GetCurrent().HID != HIDmode.NotSelected;
+            HidModeEnabled = !managedByProfile && !isOverridden;
         }
 
         private void ControllerPlugged(IController Controller, bool WasPowerCycling)
@@ -686,6 +713,7 @@ namespace HandheldCompanion.ViewModels
                 ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
                 ControllerManager.StatusChanged -= ControllerManager_StatusChanged;
                 ControllerManager.SlotIssueChanged -= ControllerManager_SlotIssueChanged;
+                ControllerManager.SteamHybridModeOverride -= ControllerManager_SteamHybridModeOverride;
                 ControllerManager.Initialized -= ControllerManager_Initialized;
                 ManagerFactory.layoutManager.Initialized -= LayoutManager_Initialized;
                 ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;

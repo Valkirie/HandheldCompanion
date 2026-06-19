@@ -115,6 +115,9 @@ public static class ControllerManager
     private static int consecutiveWatchdogFailures = 0;
     private const int MaxConsecutiveWatchdogFailures = 3;
 
+    // Steam hybrid mode: temporarily overridden HIDmode when Steam process has foreground
+    private static HIDmode previousHIDmode = HIDmode.NotSelected;
+
     private static readonly DummyXbox360Controller dummyXbox360 = new();
     private static readonly DummyDualShock4Controller dummyDualShock4 = new();
     private static readonly DummyDualSenseController dummyDualSense = new();
@@ -1207,9 +1210,6 @@ public static class ControllerManager
 
     private static void ScenarioTimer_Elapsed(object? sender, ElapsedEventArgs e)
     {
-        // set flag
-        ControllerMuted = false;
-
         // Steam Deck specific scenario
         if (IDevice.GetCurrent() is SteamDeck steamDeck)
         {
@@ -1224,30 +1224,38 @@ public static class ControllerManager
 
                 if (IsExclusiveMode)
                 {
-                    // mode: exclusive
-                    // hide embedded controller
-                    if (!neptuneController.IsHidden())
-                        neptuneController.Hide();
+                    // do nothing
                 }
                 else
                 {
                     // mode: hybrid
+                    // Temporarily override HIDmode to SteamDeckController when Steam has foreground
                     if (foregroundProcess?.Platform == GamePlatform.Steam)
                     {
                         // application is either steam or a steam game
-                        // restore embedded controller and mute virtual controller
-                        if (neptuneController.IsHidden())
-                            neptuneController.Unhide();
+                        // save current HIDmode before override (if not already saved)
+                        if (previousHIDmode == HIDmode.NotSelected)
+                            previousHIDmode = (HIDmode)ManagerFactory.settingsManager.GetInt("HIDmode", true);
 
-                        // set flag
-                        ControllerMuted = true;
+                        // set to SteamDeck only if not already set
+                        HIDmode currentHIDmode = (HIDmode)ManagerFactory.settingsManager.GetInt("HIDmode", true);
+                        if (currentHIDmode != HIDmode.SteamDeckController)
+                            ManagerFactory.settingsManager.SetProperty("HIDmode", (int)HIDmode.SteamDeckController);
+                        
+                        // notify UI if we've activated Steam hybrid override
+                        SteamHybridModeOverride?.Invoke(true);
                     }
                     else
                     {
                         // application is not steam related
-                        // hide embbeded controller
-                        if (!neptuneController.IsHidden())
-                            neptuneController.Hide();
+                        // restore previous HIDmode if we had overridden it
+                        if (previousHIDmode != HIDmode.NotSelected)
+                        {
+                            ManagerFactory.settingsManager.SetProperty("HIDmode", (int)previousHIDmode);
+
+                            // notify UI that Steam hybrid override is no longer active
+                            SteamHybridModeOverride?.Invoke(false);
+                        }
                     }
                 }
 
@@ -1255,10 +1263,6 @@ public static class ControllerManager
                 scenarioTimer.Stop();
             }
         }
-
-        // either main window or quicktools are focused
-        if (UIGamepad.HasFocus())
-            ControllerMuted = true;
     }
 
     private static void CheckControllerScenario()
@@ -2699,6 +2703,13 @@ public static class ControllerManager
 
     public static event SlotIssueChangedEventHandler? SlotIssueChanged;
     public delegate void SlotIssueChangedEventHandler(bool hasIssue, string reason);
+
+    /// <summary>
+    /// Raised when Steam hybrid mode temporarily overrides HIDmode.
+    /// Allows UI to disable controller selection during Steam foreground.
+    /// </summary>
+    public static event SteamHybridModeOverrideEventHandler? SteamHybridModeOverride;
+    public delegate void SteamHybridModeOverrideEventHandler(bool isOverridden);
 
     public static event InitializedEventHandler? Initialized;
     public delegate void InitializedEventHandler();

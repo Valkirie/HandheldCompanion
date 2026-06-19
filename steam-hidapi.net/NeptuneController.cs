@@ -25,6 +25,14 @@ namespace steam_hidapi.net
             };
         }
 
+        public NeptuneController(ushort vid, ushort pid, ushort inputBufferLen, short index, string devicePath) : base(vid, pid, inputBufferLen, index)
+        {
+            _hidDevice = new HidDevice(_vid, _pid, inputBufferLen, index, devicePath)
+            {
+                OnInputReceived = OnInputReceived
+            };
+        }
+
         internal override void OnInputReceived(HidDeviceInputReceivedEventArgs e)
         {
             if (!_hidDevice.IsDeviceValid || !_active)
