@@ -150,7 +150,7 @@ public class OverlayWindow : Window
             switch (Visibility)
             {
                 case Visibility.Visible:
-                    Hide();
+                    Hide(true);
                     break;
                 case Visibility.Collapsed:
                 case Visibility.Hidden:
@@ -160,4 +160,10 @@ public class OverlayWindow : Window
         }, DispatcherPriority.Normal);
     }
 
+    public void Hide(bool collapse)
+    {
+        base.Hide();
+        if (collapse)
+            Visibility = Visibility.Collapsed;
+    }
 }

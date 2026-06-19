@@ -213,6 +213,13 @@ namespace HandheldCompanion.Views.Classes
             LostGamepadWindowFocus?.Invoke(this);
         }
 
+        public void Hide(bool collapse)
+        {
+            base.Hide();
+            if (collapse)
+                Visibility = Visibility.Collapsed;
+        }
+
         #region events
         public event GotGamepadWindowFocusEventHandler? GotGamepadWindowFocus;
         public delegate void GotGamepadWindowFocusEventHandler(object sender);

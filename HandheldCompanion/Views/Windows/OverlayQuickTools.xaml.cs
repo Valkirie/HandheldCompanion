@@ -359,7 +359,7 @@ public partial class OverlayQuickTools : GamepadWindow
             Dialog.Reset(this);
 
             // use your existing safe hide
-            try { Hide(); } catch { }
+            try { Hide(true); } catch { }
             Top = _targetTop;
         }
 
@@ -397,7 +397,7 @@ public partial class OverlayQuickTools : GamepadWindow
             }
         }
 
-        try { Hide(); } catch { }
+        try { Hide(true); } catch { }
         Top = _targetTop;
     }
 

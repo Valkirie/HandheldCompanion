@@ -264,9 +264,6 @@ public partial class App : Application
             ManagerFactory.settingsManager.SetProperty("LastVersion", fileVersionInfo?.FileVersion);
             Task.Run(() => StartNonUIInit(exePath, IsFirstStart, newUpdate, splashScreen.SetStatus));
 
-            if (!SystemManager.IsSessionInteractive())
-                MainWindow.Visibility = Visibility.Hidden;
-
             MainWindow.Show();
         }
         catch (Exception ex)

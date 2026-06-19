@@ -1239,7 +1239,7 @@ public partial class MainWindow : GamepadWindow
                 switch (windowState)
                 {
                     case WindowState.Minimized:
-                        Hide();
+                        Hide(true);
                         break;
                 }
             }
@@ -1270,7 +1270,7 @@ public partial class MainWindow : GamepadWindow
     {
         Dialog.Reset(this);
 
-        try { Hide(); } catch { }
+        try { Hide(true); } catch { }
 
         notifyIcon.Visible = true;
         ShowInTaskbar = false;

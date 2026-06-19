@@ -20,7 +20,7 @@
 
     <ikw:SimpleStackPanel Spacing="28">
         <TextBlock
-            MaxWidth="420"
+            Margin="0,-50,0,-50"
             HorizontalAlignment="Center"
             FontSize="220"
             FontWeight="Black"
