@@ -89,8 +89,8 @@ public class WelcomeViewModel : BaseViewModel
             // Store the notification for MVVM binding
             oemNotification = oemStackWatcher.notification;
 
-            // OEM stack is disabled if tasks/services/processes are enabled/running
-            LoadOemStackStateAsync();
+            // Initialize with synchronous check to avoid binding race condition
+            disableOemStack = !oemStackWatcher.IsRunning;
         }
 
         // components
@@ -102,22 +102,6 @@ public class WelcomeViewModel : BaseViewModel
         mainWindowTheme = ManagerFactory.settingsManager.GetInt("MainWindowTheme");
         mainWindowBackdrop = ManagerFactory.settingsManager.GetInt("MainWindowBackdrop");
         welcomeWindowApplyNoise = ManagerFactory.settingsManager.GetBoolean("MainWindowApplyNoise");
-    }
-
-    private async void LoadOemStackStateAsync()
-    {
-        if (oemStackWatcher is null)
-            return;
-
-        bool disabled = !await Task.Run(() => oemStackWatcher.IsRunning).ConfigureAwait(false);
-
-        UIHelper.TryBeginInvoke(() =>
-        {
-            if (oemStackChanged)
-                return;
-
-            SetProperty(ref disableOemStack, disabled);
-        });
     }
 
     public string DeviceName => string.IsNullOrEmpty(MotherboardInfo.Product) ? "Generic device" : MotherboardInfo.Product;
