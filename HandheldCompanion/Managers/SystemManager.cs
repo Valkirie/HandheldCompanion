@@ -161,15 +161,16 @@ public static class SystemManager
         if (IsInitialized)
             return;
 
-        // listen to system events
-        SubscribeToSystemEvents();
-
         // Check if current session is locked
         IsSessionLocked = !IsSessionInteractive();
 
         PerformSystemRoutine();
 
         IsInitialized = true;
+
+        // listen to system events (after initialization so they won't be called prematurely)
+        SubscribeToSystemEvents();
+
         Initialized?.Invoke();
 
         PowerStatusChanged?.Invoke(SystemInformation.PowerStatus);
@@ -266,7 +267,7 @@ public static class SystemManager
             return;
         }
 
-        LogManager.LogInformation("System status set to {0}", currentSystemStatus);
+        LogManager.LogInformation("System status set to {0} from {1}", currentSystemStatus, previousSystemStatus);
         SystemStatusChanged?.Invoke(currentSystemStatus, previousSystemStatus);
 
         // update status
