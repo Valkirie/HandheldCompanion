@@ -126,6 +126,13 @@ Filename: "powershell.exe"; Parameters: "-ExecutionPolicy Bypass -WindowStyle Hi
 Filename: "{app}\HandheldCompanion.exe"; Flags: postinstall nowait shellexec skipifsilent; Description: "Starting Handheld Companion"
   
 [InstallDelete]
+; Clean up old DLL files from previous framework-dependent installations
+; These should not exist in the new self-contained single-file build
+Type: files; Name: "{app}\*.dll"
+Type: files; Name: "{app}\*.json"
+Type: files; Name: "{app}\*.pdb"
+Type: files; Name: "{app}\*.runtimeconfig.json"
+; Remove old desktop shortcuts
 Type: files; Name: "{userdesktop}\HidHide Configuration Client.lnk"
 Type: files; Name: "{commondesktop}\HidHide Configuration Client.lnk"
 
