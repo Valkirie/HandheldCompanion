@@ -240,6 +240,9 @@ public partial class App : Application
 
                 if (welcomeWindow.Completed && welcomeWindow.RestartRequired)
                 {
+                    // Update LastVersion to prevent showing WelcomeWindow again on next start
+                    ManagerFactory.settingsManager.SetProperty("LastVersion", CurrentVersion.ToString());
+
                     splashScreen.SetStatus("Restarting device...");
                     splashScreen.Close();
                     PowerActions.Restart(force: false);
