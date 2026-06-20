@@ -149,7 +149,23 @@ public static class DynamicLightingManager
 
     private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
     {
-        // Handle any setting value changes if needed
+        switch (name)
+        {
+            case "LEDSettingsEnabled":
+            case "LEDBrightness":
+            case "LEDMainColor":
+            case "LEDSecondColor":
+            case "LEDSettingsLevel":
+            case "LEDSpeed":
+            case "LEDUseSecondColor":
+            case "LEDPresetIndex":
+                RequestUpdate();
+                break;
+
+            case "LEDAmbilightVerticalBlackBarDetection":
+                VerticalBlackBarDetectionEnabled = Convert.ToBoolean(value);
+                break;
+        }
     }
 
     public static void Stop()
