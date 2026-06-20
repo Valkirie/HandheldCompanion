@@ -241,11 +241,8 @@ namespace HandheldCompanion.Managers
 
         public static async Task StartProcess(bool background)
         {
-            if (!background)
-            {
-                updateStatus = UpdateStatus.Checking;
-                Updated?.Invoke(updateStatus, null, null);
-            }
+            updateStatus = UpdateStatus.Checking;
+            Updated?.Invoke(updateStatus, null, background);
 
             await Task.WhenAll(
                 CheckGameControllerDb(background),

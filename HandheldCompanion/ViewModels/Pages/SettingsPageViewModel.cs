@@ -194,6 +194,9 @@ namespace HandheldCompanion.ViewModels
 
                 case UpdateStatus.Checking:
                     lock (_collectionLock) { UpdateFiles.Clear(); }
+                    if (value is bool background && background)
+                        break;
+
                     UpdateStatusText = Properties.Resources.SettingsPage_UpdateCheck;
                     ChangelogVisibility = Visibility.Collapsed;
                     ChangelogText = string.Empty;
