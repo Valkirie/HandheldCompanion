@@ -496,9 +496,7 @@ namespace HandheldCompanion.Controllers
 
         public virtual void Plug()
         {
-            SetVibrationStrength(ManagerFactory.settingsManager.GetUInt("VibrationStrength"));
-
-            InjectedButtons.Clear();
+            ClearInputState();
         }
 
         public virtual void ClearInputState()
