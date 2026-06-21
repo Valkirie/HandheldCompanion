@@ -501,6 +501,16 @@ namespace HandheldCompanion.Controllers
             InjectedButtons.Clear();
         }
 
+        public virtual void ClearInputState()
+        {
+            // Clear all input state to prevent stuck buttons and vibrations
+            // Used during suspend/resume from hibernation
+            InjectedButtons.Clear();
+            Inputs.ButtonState.Clear();
+            Inputs.AxisState.Clear();
+            StopRumble(waitForCompletion: false);
+        }
+
         public virtual void Unplug()
         { }
 

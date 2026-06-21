@@ -1389,12 +1389,32 @@ public static class ControllerManager
 
     public static void Resume(bool OS)
     {
+        // Clear input state from all controllers to prevent stuck buttons/vibrations after hibernation resume
+        foreach (var controller in Controllers.Values)
+        {
+            try
+            {
+                controller.ClearInputState();
+            }
+            catch { }
+        }
+
         // Slot monitor is always running; on resume we simply re-evaluate the target controller.
         PickTargetController();
     }
 
     public static void Suspend(bool OS)
     {
+        // Clear input state from all controllers before hibernation to prevent stuck state
+        foreach (var controller in Controllers.Values)
+        {
+            try
+            {
+                controller.ClearInputState();
+            }
+            catch { }
+        }
+
         // Stop any in-flight slot fix to avoid manipulating devices during suspend/shutdown.
         StopWatchdog();
 
@@ -2279,23 +2299,13 @@ public static class ControllerManager
             // check if controller is about to power cycle
             PowerCyclers.TryGetValue(baseContainerDeviceInstanceId, out IsPowerCycling);
 
-            string ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
-            switch (ManufacturerName)
+            // vibrate on connect, except when controller is power cycling
+            if (ManagerFactory.settingsManager.GetBoolean("HIDvibrateonconnect"))
             {
-                case "AOKZOE":
-                case "ONE-NETBOOK TECHNOLOGY CO., LTD.":
-                case "ONE-NETBOOK":
+                if (!IsPowerCycling)
                     targetController.Rumble();
-                    break;
-                default:
-                    if (ManagerFactory.settingsManager.GetBoolean("HIDvibrateonconnect"))
-                    {
-                        if (!IsPowerCycling)
-                            targetController.Rumble();
-                        else
-                            targetController.StopRumble();
-                    }
-                    break;
+                else
+                    targetController.StopRumble();
             }
 
             // Never invoke external code while holding targetLock.
