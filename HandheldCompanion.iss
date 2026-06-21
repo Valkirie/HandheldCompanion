@@ -143,13 +143,15 @@ Filename: "C:\Program Files\Nefarius Software Solutions\HidHide\x64\HidHideCLI.e
 Type: filesandordirs; Name: "{app}"
 
 [Registry]
-; Add LocalDumps keys
+
+; Windows Error Reporting crash dumps
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps"; Flags: uninsdeletekeyifempty
-Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\HandheldCompanion.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{localappdata}\CrashDumps"; Flags: uninsdeletekey
+Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\HandheldCompanion.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "%LOCALAPPDATA%\CrashDumps"
+Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\HandheldCompanion.exe"; ValueType: dword; ValueName: "DumpType"; ValueData: "2"
+Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\HandheldCompanion.exe"; ValueType: dword; ValueName: "DumpCount"; ValueData: "20"
 
-; Add the compatibility flag to force HandheldCompanion.exe to run as administrator
+; Force HandheldCompanion.exe to run as administrator
 Root: HKLM; Subkey: "Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"; ValueType: string; ValueName: "{app}\{#MyAppExeName}"; ValueData: "~ RUNASADMIN"; Flags: uninsdeletevalue
-
 [Code]
 // Types and variables
 type
