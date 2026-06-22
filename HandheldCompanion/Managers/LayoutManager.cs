@@ -32,6 +32,7 @@ public class LayoutManager : IManager
     private readonly object updateLock = new();
 
     private Layout currentLayout = new();
+    private Layout? activeLayoutSource = null;
     private Layout profileLayout = new();
     private Layout? defaultLayout = null;
     private Layout? desktopLayout = null;
@@ -259,7 +260,7 @@ public class LayoutManager : IManager
             _ => null,
         };
 
-        if (target is not null && !currentLayout.Equals(target))
+        if (target is not null && !ReferenceEquals(activeLayoutSource, target))
             SetActiveLayout(target);
     }
 
@@ -281,13 +282,14 @@ public class LayoutManager : IManager
     {
         lock (updateLock)
         {
-            if (layout.Clone() is not Layout clonedLayout)
-                return;
+            activeLayoutSource = layout;
 
+            Layout clonedLayout = (Layout)layout.Clone();
             currentLayout = clonedLayout;
 
             BuildPlans();
             BuildMouseKeyboardInputSets(currentLayout);
+
             LayoutChanged?.Invoke(currentLayout);
         }
     }
