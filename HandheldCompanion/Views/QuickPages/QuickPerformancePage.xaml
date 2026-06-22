@@ -438,6 +438,7 @@
             </ui:SettingsExpander>
         </ikw:SimpleStackPanel>
 
+        <!--  Delete power profile  -->
         <Button
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"

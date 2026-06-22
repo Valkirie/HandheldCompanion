@@ -588,7 +588,7 @@ namespace HandheldCompanion.ViewModels
                     ManagerFactory.platformManager.Initialized += PlatformManager_Initialized;
                     break;
                 case ManagerStatus.Initialized:
-                    RefreshPlatformIcons();
+                    PlatformManager_Initialized();
                     break;
             }
         }
@@ -602,7 +602,7 @@ namespace HandheldCompanion.ViewModels
 
         private void RefreshPlatformIcons()
         {
-            UIHelper.TryInvoke(() =>
+            UIHelper.TryBeginInvoke(() =>
             {
                 foreach (LibraryNavigationItemViewModel item in NavigationItems)
                     item.RefreshIcon();

@@ -4,16 +4,21 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using iNKORE.UI.WPF.Modern.Controls.Primitives;
+using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Interop;
+using System.Windows.Navigation;
 using System.Windows.Threading;
 using WpfScreenHelper;
 using static HandheldCompanion.WinAPI;
+using Frame = System.Windows.Controls.Frame;
+using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
 
 namespace HandheldCompanion.Views.Classes
 {
@@ -26,13 +31,23 @@ namespace HandheldCompanion.Views.Classes
         public DropDownButton? currentFlyoutButton;
         public FlyoutBase? currentFlyout;
 
-        public List<Control> controlElements => currentDialog is not null
-            ? WPFUtils.GetElementsFromAdornerLayer<Control>(frameworkElements)
-            : currentFlyout is not null
-            ? WPFUtils.GetElementsFromFlyout<Control>(currentFlyout)
-            : currentFlyoutButton is not null
-            ? WPFUtils.GetElementsFromPopup<Control>(frameworkElements)
-            : frameworkElements.OfType<Control>().ToList();
+        public List<Control> controlElements
+        {
+            get
+            {
+                if (currentDialog is not null || currentMessageBox is not null || currentFlyoutButton is not null)
+                {
+                    List<Control> popupElements = WPFUtils.GetElementsFromPopup<Control>(frameworkElements);
+                    List<Control> adornerElements = WPFUtils.GetElementsFromAdornerLayer<Control>(frameworkElements);
+
+                    return popupElements.Union(adornerElements).ToList<Control>();
+                }
+                else if (currentFlyout is not null)
+                    return WPFUtils.GetElementsFromFlyout<Control>(currentFlyout);
+                else
+                    return frameworkElements.OfType<Control>().ToList();
+            }
+        }
 
         public List<FrameworkElement> frameworkElements
         {
@@ -40,14 +55,24 @@ namespace HandheldCompanion.Views.Classes
             {
                 List<FrameworkElement> children = WPFUtils.FindChildren(this);
                 foreach (FrameworkElement frameworkElement in children)
-                    frameworkElement.FocusVisualStyle = null;
+                    DisableKeyboardFocusVisuals(frameworkElement);
 
                 return children;
             }
         }
 
+        private static void DisableKeyboardFocusVisuals(FrameworkElement frameworkElement)
+        {
+            if (frameworkElement.FocusVisualStyle is not null)
+                frameworkElement.FocusVisualStyle = null;
+
+            PropertyInfo? useSystemFocusVisualsProperty = frameworkElement.GetType().GetProperty("UseSystemFocusVisuals", BindingFlags.Instance | BindingFlags.Public);
+            if (useSystemFocusVisualsProperty?.PropertyType == typeof(bool) && useSystemFocusVisualsProperty.CanWrite)
+                useSystemFocusVisualsProperty.SetValue(frameworkElement, false);
+        }
+
         public ContentDialog? currentDialog;
-        private ContentDialog contentDialog => ContentDialog.GetOpenDialog(this);
+        public MessageBox? currentMessageBox;
 
         protected UIGamepad gamepadFocusManager = null!;
 
@@ -66,8 +91,11 @@ namespace HandheldCompanion.Views.Classes
 
         private AdornerLayer? _adornerLayer;
         private HighlightAdorner? _highlightAdorner;
-        private ContentDialog? _contentDialogControl;
-        private bool _contentDialogHooksInitialized;
+        private readonly List<ContentDialog> _contentDialogControls = [];
+        private readonly List<MessageBox> _messageBoxControls = [];
+        private readonly HashSet<FrameworkElement> _observedPages = new();
+        private System.Windows.Controls.Frame? _contentFrame;
+        private bool _contentFrameHooksInitialized;
 
         protected readonly DispatcherTimer _navDebounceTimer;
         protected string _pendingNavTag = string.Empty;
@@ -102,27 +130,103 @@ namespace HandheldCompanion.Views.Classes
 
         private void ContentDialog_Opened(object? sender, ContentDialogOpenedEventArgs e)
         {
-            SyncContentDialogState();
+            if (sender is ContentDialog contentDialog)
+            {
+                currentDialog = contentDialog;
+                ContentDialogOpened?.Invoke(contentDialog);
+            }
         }
 
         private void ContentDialog_Closed(object? sender, ContentDialogClosedEventArgs e)
         {
-            SyncContentDialogState();
+            if (sender is ContentDialog contentDialog)
+            {
+                currentDialog = null;
+                ContentDialogClosed?.Invoke(contentDialog);
+            }
+        }
+
+        private void MessageBox_Opened(object? sender, MessageBoxOpenedEventArgs e)
+        {
+            if (sender is MessageBox messageBox)
+            {
+                currentMessageBox = messageBox;
+                MessageBoxOpened?.Invoke(messageBox);
+            }
+        }
+
+        private void MessageBox_Closed(object? sender, MessageBoxClosedEventArgs e)
+        {
+            if (sender is MessageBox messageBox)
+            {
+                currentMessageBox = null;
+                MessageBoxClosed?.Invoke(messageBox);
+            }
         }
 
         private void GamepadWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            if (_contentDialogHooksInitialized)
-                return;
+            if (!_contentFrameHooksInitialized)
+            {
+                _contentFrame = FindName("ContentFrame") as Frame ?? WPFUtils.FindChildren(this).OfType<Frame>().FirstOrDefault();
 
-            _contentDialogControl = FindName("ContentDialog") as ContentDialog;
-            if (_contentDialogControl is null)
-                return;
+                if (_contentFrame is not null)
+                    _contentFrame.LoadCompleted += ContentFrame_Navigated;
 
-            _contentDialogControl.Opened += ContentDialog_Opened;
-            _contentDialogControl.Closed += ContentDialog_Closed;
-            _contentDialogHooksInitialized = true;
-            SyncContentDialogState();
+                _contentFrameHooksInitialized = true;
+            }
+
+            RegisterModalControls(this);
+
+            if (_contentFrame?.Content is not null)
+                RegisterModalControls(_contentFrame.Content);
+        }
+
+        private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
+        {
+            if (e.Content is not null)
+                RegisterModalControls(e.Content);
+        }
+
+        private void RegisterModalControls(object root)
+        {
+            foreach (FieldInfo field in root.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+            {
+                RegisterModalControl(field.GetValue(root));
+            }
+
+            if (root is FrameworkElement frameworkElement)
+            {
+                foreach (object? value in frameworkElement.Resources.Values)
+                    RegisterModalControl(value);
+            }
+        }
+
+        private void RegisterModalControl(object? value)
+        {
+            switch (value)
+            {
+                case ContentDialog contentDialog:
+                    if (_contentDialogControls.Contains(contentDialog))
+                        return;
+
+                    contentDialog.Opened += ContentDialog_Opened;
+                    contentDialog.Closed += ContentDialog_Closed;
+                    _contentDialogControls.Add(contentDialog);
+
+                    if (ContentDialog.GetOpenDialog(this) == contentDialog)
+                        ContentDialog_Opened(contentDialog, null!);
+                    return;
+
+                case MessageBox messageBox:
+                    if (_messageBoxControls.Contains(messageBox))
+                        return;
+
+                    messageBox.Opened += MessageBox_Opened;
+                    messageBox.Closed += MessageBox_Closed;
+                    _messageBoxControls.Add(messageBox);
+                    return;
+            }
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -183,26 +287,6 @@ namespace HandheldCompanion.Views.Classes
                 WinAPI.PostMessage(hwnd, WM_MOUSELEAVE, IntPtr.Zero, IntPtr.Zero);
         }
 
-        private void SyncContentDialogState()
-        {
-            ContentDialog? openDialog = ContentDialog.GetOpenDialog(this);
-
-            if (openDialog is not null)
-            {
-                if (currentDialog is null)
-                {
-                    currentDialog = openDialog;
-
-                    ContentDialogOpened?.Invoke(currentDialog);
-                }
-            }
-            else if (currentDialog is not null)
-            {
-                ContentDialogClosed?.Invoke(currentDialog);
-                currentDialog = null;
-            }
-        }
-
         protected void InvokeGotGamepadWindowFocus()
         {
             GotGamepadWindowFocus?.Invoke(this);
@@ -232,6 +316,12 @@ namespace HandheldCompanion.Views.Classes
 
         public event ContentDialogClosedEventHandler? ContentDialogClosed;
         public delegate void ContentDialogClosedEventHandler(ContentDialog contentDialog);
+
+        public event MessageBoxOpenedEventHandler? MessageBoxOpened;
+        public delegate void MessageBoxOpenedEventHandler(MessageBox messageBox);
+
+        public event MessageBoxClosedEventHandler? MessageBoxClosed;
+        public delegate void MessageBoxClosedEventHandler(MessageBox messageBox);
         #endregion
     }
 }

@@ -1,12 +1,11 @@
-using HandheldCompanion.Converters;
-using HandheldCompanion.Managers;
+using HandheldCompanion.Platforms;
 using HandheldCompanion.ViewModels;
+using HandheldCompanion.Views.Pages.Library;
 using iNKORE.UI.WPF.Modern.Controls;
-using System.Globalization;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
+using System.Windows.Navigation;
 
 using Page = System.Windows.Controls.Page;
 
@@ -14,7 +13,6 @@ namespace HandheldCompanion.Views.Pages;
 
 public partial class LibraryPage : Page
 {
-    private readonly AverageColorConverter averageColorConverter = new AverageColorConverter();
     private LibraryPageViewModel? ViewModel => DataContext as LibraryPageViewModel;
 
     public LibraryPage()
@@ -29,34 +27,18 @@ public partial class LibraryPage : Page
         this.Tag = Tag;
     }
 
-    private void ImageContainer_GotFocus(object sender, RoutedEventArgs e)
-    {
-        UpdateArtwork(sender);
-    }
-
-    private void ImageContainer_MouseEnter(object sender, MouseEventArgs e)
-    {
-        UpdateArtwork(sender);
-    }
-
-    private void UpdateArtwork(object sender)
-    {
-        if (sender is Button button && button.DataContext is ProfileViewModel profile && ViewModel is { } vm)
-        {
-            vm.HighlightColor = (Color)averageColorConverter.Convert(profile.Cover ?? LibraryResources.MissingCover, typeof(Color), DependencyProperty.UnsetValue, CultureInfo.CurrentCulture);
-            vm.Artwork = profile.Artwork ?? LibraryResources.MissingArtwork;
-        }
-
-        if (sender is Button collectionButton && collectionButton.DataContext is CollectionGroupViewModel collectionGroup)
-            ViewModel?.RememberCollectionsOverviewItem(collectionGroup);
-    }
-
     private void Page_Loaded(object sender, RoutedEventArgs e)
     {
         if (ViewModel is { } vm)
         {
             vm.BackAvailabilityChanged += LibraryPageViewModel_BackAvailabilityChanged;
+
+            if (vm is INotifyPropertyChanged inpc)
+                inpc.PropertyChanged += LibraryPageViewModel_PropertyChanged;
         }
+
+        navView.SelectedItem = ViewModel?.NavigationViewSelectedItem;
+        NavigateToSelectedPage();
     }
 
     private void Page_Unloaded(object sender, RoutedEventArgs e)
@@ -64,6 +46,9 @@ public partial class LibraryPage : Page
         if (ViewModel is { } vm)
         {
             vm.BackAvailabilityChanged -= LibraryPageViewModel_BackAvailabilityChanged;
+
+            if (vm is INotifyPropertyChanged inpc)
+                inpc.PropertyChanged -= LibraryPageViewModel_PropertyChanged;
         }
     }
 
@@ -74,9 +59,37 @@ public partial class LibraryPage : Page
     {
     }
 
+    private void LibraryPageViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(LibraryPageViewModel.SelectedNavigationItem) ||
+            e.PropertyName == nameof(LibraryPageViewModel.NavigationViewSelectedItem))
+        {
+            NavigateToSelectedPage();
+        }
+    }
+
+    private void NavigateToSelectedPage()
+    {
+        if (ViewModel?.SelectedNavigationItem is null)
+            return;
+
+        string targetKey = ViewModel.SelectedNavigationItem.Key;
+        if (ContentFrame.Content is ILibraryRoutedPage currentPage && string.Equals(currentPage.NavigationKey, targetKey, System.StringComparison.Ordinal))
+            return;
+
+        Page nextPage = CreatePageForSelection(ViewModel.SelectedNavigationItem);
+        ContentFrame.Navigate(nextPage);
+    }
+
     public bool TryGoBack()
     {
         return ViewModel?.TryGoBack() ?? false;
+    }
+
+    public void NavView_Navigate(string navItemTag)
+    {
+        if (ViewModel?.SelectNavigationItemByKey(navItemTag) == true)
+            NavigateToSelectedPage();
     }
 
     private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
@@ -95,5 +108,48 @@ public partial class LibraryPage : Page
             // Restore the correct selection from the ViewModel.
             navView.SelectedItem = vm.NavigationViewSelectedItem;
         }
+
+        NavigateToSelectedPage();
+    }
+
+    private Page CreatePageForSelection(LibraryNavigationItemViewModel selection)
+    {
+        return selection.Key switch
+        {
+            LibraryNavigationKeys.AllGames => new LibraryAllGamesPage(ViewModel!),
+            LibraryNavigationKeys.Favorites => new LibraryFavoritesPage(ViewModel!),
+            LibraryNavigationKeys.Collections => new LibraryCollectionsOverviewPage(ViewModel!),
+            _ when selection.Kind == LibraryNavigationItemKind.Collection && selection.CollectionId.HasValue
+                => new LibraryCollectionPage(ViewModel!, selection.CollectionId.Value),
+            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.BattleNet
+                => new LibraryBattleNetPage(ViewModel!),
+            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.EADesktop
+                => new LibraryEADesktopPage(ViewModel!),
+            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.Epic
+                => new LibraryEpicPage(ViewModel!),
+            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.GOG
+                => new LibraryGOGPage(ViewModel!),
+            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.MicrosoftStore
+                => new LibraryMicrosoftStorePage(ViewModel!),
+            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.Origin
+                => new LibraryOriginPage(ViewModel!),
+            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.RiotGames
+                => new LibraryRiotPage(ViewModel!),
+            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.Rockstar
+                => new LibraryRockstarPage(ViewModel!),
+            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.Steam
+                => new LibrarySteamPage(ViewModel!),
+            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.UbisoftConnect
+                => new LibraryUbisoftPage(ViewModel!),
+            _ => new LibraryAllGamesPage(ViewModel!)
+        };
+    }
+
+    private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
+    {
+        if (e.Content is not ILibraryRoutedPage routedPage || ViewModel is null)
+            return;
+
+        ViewModel.SelectNavigationItemByKey(routedPage.NavigationKey);
     }
 }

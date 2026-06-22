@@ -1263,6 +1263,10 @@ public static class ControllerManager
                 scenarioTimer.Stop();
             }
         }
+
+        // either main window or quicktools are focused
+        if (UIGamepad.HasFocus())
+            ControllerMuted = true;
     }
 
     private static void CheckControllerScenario()

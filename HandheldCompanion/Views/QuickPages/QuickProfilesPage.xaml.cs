@@ -2,6 +2,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Windows;
+using iNKORE.UI.WPF.Modern.Controls;
 using System.Windows;
 using Page = System.Windows.Controls.Page;
 
@@ -84,6 +85,34 @@ public partial class QuickProfilesPage : Page
                 PrimaryButtonText = Properties.Resources.ProfilesPage_OK
             }.ShowAsync();
         };
+
+        // Wire up the create profile card to show the dialog
+        if (CreatePowerProfileCard is not null)
+        {
+            CreatePowerProfileCard.Click += async (s, e) =>
+            {
+                // Initialize the form first
+                viewModel.ShowCreateProfileFlyoutCommand.Execute(null);
+
+                // Show the ContentDialog from resources
+                var dialog = Resources["CreatePowerProfileDialog"] as ContentDialog;
+                if (dialog is not null)
+                {
+                    // Ensure the dialog has the correct data context
+                    dialog.DataContext = viewModel;
+                    dialog.Owner = Window.GetWindow(this);
+                    ContentDialogResult result = ContentDialogResult.None;
+
+                    try { result = await dialog.ShowAsync(); } catch { }
+
+                    if (result == ContentDialogResult.Primary)
+                    {
+                        // Execute the create command
+                        viewModel.CreatePowerProfileCommand.Execute(null);
+                    }
+                }
+            };
+        }
     }
 
     private void Page_Unloaded(object s, RoutedEventArgs e)

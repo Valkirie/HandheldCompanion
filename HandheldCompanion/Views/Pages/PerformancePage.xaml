@@ -122,6 +122,54 @@
                                     Command="{Binding CreatePresetCommand}"
                                     Style="{DynamicResource AccentButtonStyle}">
                                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe710;" />
+                                    <ui:FlyoutService.Flyout>
+                                        <ui:Flyout
+                                            x:Name="CreateProfileFlyout"
+                                            AreOpenCloseAnimationsEnabled="True"
+                                            Placement="Bottom">
+                                            <ikw:SimpleStackPanel Width="350" Spacing="8">
+                                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Create New Power Profile" />
+
+                                                <ikw:SimpleStackPanel Spacing="3">
+                                                    <TextBox
+                                                        Name="ProfileNameTextBox"
+                                                        HorizontalAlignment="Stretch"
+                                                        Text="{Binding CreateProfileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                                    <CheckBox Content="Copy default profile settings (including fan curves)" IsChecked="{Binding CopyDefaultProfileSettings, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                                    <!--  Separator  -->
+                                                    <Separator
+                                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                                        BorderThickness="0,1,0,0"
+                                                        Opacity="0.25" />
+
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="5*" />
+                                                            <ColumnDefinition Width="0.5*" />
+                                                            <ColumnDefinition Width="5*" />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <Button
+                                                            Name="CreateProfileConfirmButton"
+                                                            Grid.Column="0"
+                                                            HorizontalAlignment="Stretch"
+                                                            Click="CreateProfileConfirmButton_Click"
+                                                            Command="{Binding ConfirmCreateProfileCommand}"
+                                                            Content="Create"
+                                                            Style="{DynamicResource AccentButtonStyle}" />
+                                                        <Button
+                                                            Name="CreateProfileCancelButton"
+                                                            Grid.Column="2"
+                                                            HorizontalAlignment="Stretch"
+                                                            Click="CreateProfileCancelButton_Click"
+                                                            Content="Cancel" />
+                                                    </Grid>
+                                                </ikw:SimpleStackPanel>
+                                            </ikw:SimpleStackPanel>
+                                        </ui:Flyout>
+                                    </ui:FlyoutService.Flyout>
                                 </Button>
 
                                 <!--  Delete power profile  -->

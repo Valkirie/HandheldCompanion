@@ -1,5 +1,7 @@
 ﻿using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels;
+using iNKORE.UI.WPF.Modern.Controls;
+using System.Windows;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
@@ -38,6 +40,20 @@ namespace HandheldCompanion.Views.Pages
         public void SelectionChanged(PowerProfile preset)
         {
             _vm.SelectedPreset = preset;
+        }
+
+        private void CreateProfileCancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            var flyout = FindName("CreateProfileFlyout") as Flyout;
+            if (flyout is not null)
+                flyout.Hide();
+        }
+
+        private void CreateProfileConfirmButton_Click(object sender, RoutedEventArgs e)
+        {
+            var flyout = FindName("CreateProfileFlyout") as Flyout;
+            if (flyout is not null)
+                flyout.Hide();
         }
     }
 }

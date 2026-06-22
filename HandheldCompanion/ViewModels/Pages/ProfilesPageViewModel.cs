@@ -884,6 +884,34 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private string _createProfileName = string.Empty;
+        public string CreateProfileName
+        {
+            get => _createProfileName;
+            set
+            {
+                if (value != _createProfileName)
+                {
+                    _createProfileName = value;
+                    OnPropertyChanged(nameof(CreateProfileName));
+                }
+            }
+        }
+
+        private bool _copyDefaultProfileSettings = false;
+        public bool CopyDefaultProfileSettings
+        {
+            get => _copyDefaultProfileSettings;
+            set
+            {
+                if (value != _copyDefaultProfileSettings)
+                {
+                    _copyDefaultProfileSettings = value;
+                    OnPropertyChanged(nameof(CopyDefaultProfileSettings));
+                }
+            }
+        }
+
         public int SteeringAxisIndex
         {
             get => SelectedProfile != null ? (int)SelectedProfile.SteeringAxis : 0;
@@ -1685,8 +1713,9 @@ namespace HandheldCompanion.ViewModels
         public ICommand OpenPowerProfileOnBatteryCommand { get; private set; } = null!;
         public ICommand OpenPowerProfilePluggedCommand { get; private set; } = null!;
         public ICommand OpenProfilePageCommand { get; private set; } = null!;
-        public ICommand OpenProfileLayoutCommand { get; private set; } = null!;
+         public ICommand OpenProfileLayoutCommand { get; private set; } = null!;
         public ICommand CreatePowerProfileCommand { get; private set; } = null!;
+        public ICommand ShowCreateProfileFlyoutCommand { get; private set; } = null!;
         public ICommand OpenAdditionalSettingsCommand { get; private set; } = null!;
         public ICommand BrowseCoverCommand { get; private set; } = null!;
         public ICommand BrowseArtworkCommand { get; private set; } = null!;
@@ -2178,15 +2207,47 @@ namespace HandheldCompanion.ViewModels
 
             CreatePowerProfileCommand = new DelegateCommand(() =>
             {
-                int idx = ManagerFactory.powerProfileManager.profiles.Values.Where(p => !p.IsDefault()).Count() + 1;
-                string Name = string.Format(Properties.Resources.PowerProfileManualName, idx);
-                PowerProfile powerProfile = new PowerProfile(Name, Properties.Resources.PowerProfileManualDescription)
+                // Generate default name if not provided
+                if (string.IsNullOrWhiteSpace(CreateProfileName))
                 {
-                    TDPOverrideValues = IDevice.GetCurrent().nTDP
-                };
+                    CreateProfileName = ManagerFactory.powerProfileManager.GetProfileName(Properties.Resources.PowerProfileManualName);
+                }
+
+                PowerProfile powerProfile;
+
+                if (CopyDefaultProfileSettings)
+                {
+                    // Clone the default profile
+                    PowerProfile defaultProfile = ManagerFactory.powerProfileManager.GetDefault();
+                    powerProfile = ManagerFactory.powerProfileManager.CloneProfile(defaultProfile);
+                    powerProfile.Name = CreateProfileName;
+                    powerProfile.Description = Properties.Resources.PowerProfileManualDescription;
+                    // Generate new GUID for the cloned profile
+                    powerProfile.Guid = Guid.NewGuid();
+                    powerProfile.Default = false;
+                }
+                else
+                {
+                    // Create a new profile with default values
+                    powerProfile = new PowerProfile(CreateProfileName, Properties.Resources.PowerProfileManualDescription)
+                    {
+                        TDPOverrideValues = IDevice.GetCurrent().nTDP
+                    };
+                }
 
                 ManagerFactory.powerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);
                 RequestCreatePowerProfile?.Invoke(this, EventArgs.Empty);
+
+                // Reset form state
+                CreateProfileName = string.Empty;
+                CopyDefaultProfileSettings = false;
+            });
+
+            ShowCreateProfileFlyoutCommand = new DelegateCommand(() =>
+            {
+                // Initialize the form with a generated name
+                CreateProfileName = ManagerFactory.powerProfileManager.GetProfileName(Properties.Resources.PowerProfileManualName);
+                CopyDefaultProfileSettings = false;
             });
 
             OpenAdditionalSettingsCommand = new DelegateCommand(() =>

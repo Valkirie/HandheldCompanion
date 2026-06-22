@@ -476,23 +476,31 @@ namespace HandheldCompanion.Managers
                 ToastManager.SendToast($"Power Profile {profile.FileName} deleted");
 
                 LogManager.LogInformation("Deleted power profile {0}", profilePath);
-            }
 
-            FileUtils.FileDelete(profilePath);
+                // actually delete the file
+                FileUtils.FileDelete(profilePath);
+            }
+        }
+
+        public PowerProfile CloneProfile(PowerProfile source)
+        {
+            // Deep clone the profile by serializing and deserializing
+            string json = JsonConvert.SerializeObject(source);
+            return JsonConvert.DeserializeObject<PowerProfile>(json) ?? new PowerProfile();
         }
 
         #region events
         public event DeletedEventHandler? Deleted;
         public delegate void DeletedEventHandler(PowerProfile profile);
 
-        public event UpdatedEventHandler? Updated;
-        public delegate void UpdatedEventHandler(PowerProfile profile, UpdateSource source);
+            public event UpdatedEventHandler? Updated;
+            public delegate void UpdatedEventHandler(PowerProfile profile, UpdateSource source);
 
-        public event AppliedEventHandler? Applied;
-        public delegate void AppliedEventHandler(PowerProfile profile, UpdateSource source);
+            public event AppliedEventHandler? Applied;
+            public delegate void AppliedEventHandler(PowerProfile profile, UpdateSource source);
 
-        public event DiscardedEventHandler? Discarded;
-        public delegate void DiscardedEventHandler(PowerProfile profile, bool swapped);
-        #endregion
+            public event DiscardedEventHandler? Discarded;
+            public delegate void DiscardedEventHandler(PowerProfile profile, bool swapped);
+            #endregion
     }
 }

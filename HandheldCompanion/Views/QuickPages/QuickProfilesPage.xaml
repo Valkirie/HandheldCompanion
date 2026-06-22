@@ -22,6 +22,41 @@
     Unloaded="Page_Unloaded"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <ui:ContentDialog
+            x:Key="CreatePowerProfileDialog"
+            x:Name="CreateProfileContentDialog"
+            Title="Create New Power Profile"
+            DefaultButton="Primary"
+            PrimaryButtonText="Create"
+            SecondaryButtonText="Cancel">
+            <Grid Margin="0,12,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.Row="0"
+                    Margin="0,0,0,8"
+                    Text="Profile Name:" />
+
+                <TextBox
+                    x:Name="ProfileNameTextBox"
+                    Grid.Row="1"
+                    Margin="0,0,0,16"
+                    Text="{Binding CreateProfileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <CheckBox
+                    x:Name="CopyDefaultCheckBox"
+                    Grid.Row="2"
+                    Content="Copy default profile settings (including fan curves)"
+                    IsChecked="{Binding CopyDefaultProfileSettings, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </ui:ContentDialog>
+    </Page.Resources>
+
     <ikw:SimpleStackPanel IsEnabled="{Binding HasSelectedProfile, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="28">
 
         <!--  Header  -->
@@ -184,9 +219,10 @@
                             </ui:SettingsCard>
 
                             <ui:SettingsCard
-                                Command="{Binding CreatePowerProfileCommand}"
+                                Name="CreatePowerProfileCard"
                                 Header="{l:Static resx:Resources.ProfilesPage_CreatePowerProfile}"
-                                IsClickEnabled="True" />
+                                IsClickEnabled="True"
+                                Tag="Navigation" />
                         </ui:SettingsExpander.Items>
                     </ui:SettingsExpander>
                 </ikw:SimpleStackPanel>

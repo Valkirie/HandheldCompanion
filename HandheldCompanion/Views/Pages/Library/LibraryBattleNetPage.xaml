@@ -1,0 +1,18 @@
+<Page
+    x:Class="HandheldCompanion.Views.Pages.Library.LibraryBattleNetPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:library="clr-namespace:HandheldCompanion.Views.Pages.Library"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
+    Margin="0"
+    d:Background="White"
+    d:DataContext="{d:DesignInstance Type=viewmodels:LibraryPageViewModel}"
+    d:DesignHeight="1080"
+    d:DesignWidth="1920"
+    KeepAlive="True"
+    mc:Ignorable="d">
+
+    <library:LibraryProfilesContent />
+</Page>

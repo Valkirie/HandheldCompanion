@@ -1,5 +1,6 @@
 ﻿using iNKORE.UI.WPF.Modern.Controls;
 using iNKORE.UI.WPF.Modern.Controls.Primitives;
+using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -593,89 +594,87 @@ public static class WPFUtils
 
     public static List<FrameworkElement> FindChildren(DependencyObject startNode)
     {
-        int count = VisualTreeHelper.GetChildrenCount(startNode);
         List<FrameworkElement> childs = [];
+        Stack<DependencyObject> nodes = new();
+        nodes.Push(startNode);
 
-        for (int i = 0; i < count; i++)
+        while (nodes.Count > 0)
         {
-            DependencyObject current = VisualTreeHelper.GetChild(startNode, i);
+            DependencyObject current = nodes.Pop();
+            int count = VisualTreeHelper.GetChildrenCount(current);
 
-            string currentType = current.GetType().Name;
-            switch (currentType)
+            for (int i = count - 1; i >= 0; i--)
             {
-                case "TextBox":
-                    {
-                        TextBox textBox = (TextBox)current;
+                DependencyObject child = VisualTreeHelper.GetChild(current, i);
+                nodes.Push(child);
 
-                        // skip if read only
-                        if (textBox.IsReadOnly)
-                            break;
+                if (child is TextBox textBox)
+                {
+                    // skip if read only
+                    if (textBox.IsReadOnly)
+                        continue;
 
-                        goto case "Slider";
-                    }
+                    if (textBox.IsEnabled && textBox.Focusable && textBox.IsVisible)
+                        childs.Add(textBox);
 
-                case "RepeatButton":
-                    {
-                        RepeatButton repeatButton = (RepeatButton)current;
+                    continue;
+                }
 
-                        // skip if repeat button is part of scrollbar
-                        if (repeatButton.Name.StartsWith("PART_"))
-                            break;
+                if (child is RepeatButton repeatButton)
+                {
+                    // skip if repeat button is part of scrollbar
+                    if (repeatButton.Name.StartsWith("PART_"))
+                        continue;
 
-                        goto case "Slider";
-                    }
+                    if (repeatButton.IsEnabled && repeatButton.Focusable && repeatButton.IsVisible)
+                        childs.Add(repeatButton);
 
-                case "Button":
-                    {
-                        Button button = (Button)current;
-                        if (button.Name.Equals("NavigationViewBackButton"))
-                            break;
-                        else if (button.Name.Equals("TogglePaneButton"))
-                            break;
-                        else
-                            goto case "Slider";
-                    }
+                    continue;
+                }
 
-                case "SettingsCard":
-                    {
-                        SettingsCard settingsCard = (SettingsCard)current;
+                if (child is Button button)
+                {
+                    if (button.Name.Equals("NavigationViewBackButton"))
+                        continue;
+                    else if (button.Name.Equals("TogglePaneButton"))
+                        continue;
+                    else if (button.IsEnabled && button.Focusable && button.IsVisible)
+                        childs.Add(button);
 
-                        // skip if not clickable
-                        if (!settingsCard.IsClickEnabled)
-                            break;
+                    continue;
+                }
 
-                        goto case "Slider";
-                    }
+                if (child is SettingsCard settingsCard)
+                {
+                    // skip if not clickable
+                    if (!settingsCard.IsClickEnabled)
+                        continue;
 
-                case "DropDownButton":
-                    goto case "Slider";
+                    if (settingsCard.IsEnabled && settingsCard.Focusable && settingsCard.IsVisible)
+                        childs.Add(settingsCard);
 
-                case "MenuItem":
-                    goto case "Slider";
+                    continue;
+                }
 
-                case "Slider":
-                case "ToggleSwitch":
-                case "NavigationViewItem":
-                case "ComboBox":
-                case "ComboBoxItem":
-                case "ListView":
-                case "ListViewItem":
-                case "AppBarButton":
-                case "ToggleButton":
-                case "CheckBox":
-                case "RadioButton":
-                case "HyperlinkButton":
-                    {
-                        FrameworkElement asType = (FrameworkElement)current;
-                        if (asType.IsEnabled && asType.Focusable && asType.IsVisible)
-                            childs.Add(asType);
-                    }
-                    break;
-            }
-
-            foreach (var item in FindChildren(current))
-            {
-                childs.Add(item);
+                if (child is Slider
+                    or ToggleSwitch
+                    or NavigationViewItem
+                    or ComboBox
+                    or ComboBoxItem
+                    or System.Windows.Controls.ListView
+                    or System.Windows.Controls.ListViewItem
+                    or AppBarButton
+                    or ToggleButton
+                    or CheckBox
+                    or RadioButton
+                    or ContentDialog
+                    or HyperlinkButton
+                    or DropDownButton
+                    or MenuItem)
+                {
+                    if (child is FrameworkElement asType && asType.IsEnabled && asType.Focusable && asType.IsVisible)
+                        childs.Add(asType);
+                }
             }
         }
 
