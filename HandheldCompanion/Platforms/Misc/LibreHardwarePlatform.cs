@@ -3,7 +3,9 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using LibreHardwareMonitor.Hardware;
 using System;
+using System.Threading;
 using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Platforms.Misc
 {
@@ -149,11 +151,27 @@ namespace HandheldCompanion.Platforms.Misc
 
             updateTimer?.Stop();
 
-            // wait until all tasks are complete
-            lock (updateLock)
+            // Wait for any ongoing update to complete, with timeout to prevent deadlock
+            // if UpdateTimer_Elapsed is blocked inside hardware.Update()
+            const int LockTimeoutMs = 3000;
+            if (Monitor.TryEnter(updateLock, LockTimeoutMs))
             {
+                try
+                {
+                    computerOpened = false;
+                    try { computer.Close(); } catch { }
+                }
+                finally
+                {
+                    Monitor.Exit(updateLock);
+                }
+            }
+            else
+            {
+                // Could not acquire lock within timeout; log and continue
+                // The update thread may be blocked in hardware.Update()
+                LogManager.LogWarning("LibreHardwarePlatform.Stop() could not acquire updateLock within {0}ms; proceeding without cleanup", LockTimeoutMs);
                 computerOpened = false;
-                try { computer.Close(); } catch { }
             }
 
             return base.Stop(kill);
