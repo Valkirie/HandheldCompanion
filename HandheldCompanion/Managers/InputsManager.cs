@@ -70,6 +70,7 @@ public static class InputsManager
     private static readonly Dictionary<bool, short> KeyIndexHotkey = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, bool> KeyUsed = new() { { true, false }, { false, false } };
     private static readonly HashSet<Keys> PhysicalModifiersDown = new();
+    private static bool IsHandlingAltGrRelease;
 
     public static bool IsInitialized;
 
@@ -511,19 +512,28 @@ public static class InputsManager
             BufferKeys[false].Add(args);
         }
 
-        // manage AltGr
-        if (args.IsKeyUp)
+        // Handle AltGr release, prevent endless loops
+        if (args.IsKeyUp && !IsHandlingAltGrRelease)
         {
             switch (args.KeyValue)
             {
-                case 165:
-                    // KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.RMenu);
-                    KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LMenu);
-                    KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LControl);
-                    KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.RControl);
-                    KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.Alt);
-                    KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LAlt);
-                    // KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.RAlt);
+                case (int)Keys.RMenu:
+                    IsHandlingAltGrRelease = true;
+                    try
+                    {
+                        // KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.RMenu);
+                        KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LMenu);
+                        KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LControl);
+                        KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.RControl);
+                        KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.Alt);
+                        KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LAlt);
+                        // KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.RAlt);
+                    }
+                    finally
+                    {
+                        IsHandlingAltGrRelease = false;
+                    }
+
                     break;
             }
         }
