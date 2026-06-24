@@ -1210,6 +1210,9 @@ public static class ControllerManager
 
     private static void ScenarioTimer_Elapsed(object? sender, ElapsedEventArgs e)
     {
+        // reset flag
+        ControllerMuted = false;
+
         // Steam Deck specific scenario
         if (IDevice.GetCurrent() is SteamDeck steamDeck)
         {
