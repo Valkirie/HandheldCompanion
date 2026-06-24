@@ -342,7 +342,7 @@ namespace HandheldCompanion.Controllers
             foreach (var button in State.Buttons)
                 InjectedButtons[button] = IsKeyDown;
 
-            LogManager.LogTrace("Injecting {0} (IsKeyDown:{1}) (IsKeyUp:{2}) to {3}", string.Join(',', State.Buttons),
+            LogManager.LogDebug("Injecting {0} (IsKeyDown:{1}) (IsKeyUp:{2}) to {3}", string.Join(',', State.Buttons),
                 IsKeyDown, IsKeyUp, ToString());
         }
 
