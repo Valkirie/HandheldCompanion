@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Misc;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels;
 using iNKORE.UI.WPF.Modern.Controls;
 using System.Windows;
@@ -16,14 +17,25 @@ namespace HandheldCompanion.Views.Pages
             DataContext = _vm;
             InitializeComponent();
             _vm.InitializeViewDependencies(lvc, lvLineSeries, PowerProfileSettingsDialog);
+        }
 
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
             _vm.FanCurveUpdateRequested += OnFanCurveUpdateRequested;
+        }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            _vm.FanCurveUpdateRequested -= OnFanCurveUpdateRequested;
         }
 
         private void OnFanCurveUpdateRequested(double[] fanSpeeds)
         {
-            Dispatcher.Invoke(() =>
+            UIHelper.TryBeginInvoke(() =>
             {
+                if (!this.IsVisible)
+                    return;
+
                 _vm.SetUpdatingFanCurveUI(true);
                 try
                 {

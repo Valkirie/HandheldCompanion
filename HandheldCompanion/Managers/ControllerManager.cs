@@ -529,8 +529,9 @@ public static class ControllerManager
 
                                 case SDL.GamepadType.Xbox360:
                                 case SDL.GamepadType.XboxOne:
-                                    // controller = new Xbox360Controller(gamepad, deviceIndex, details);
-                                    break;
+                                    // XInput controllers are handled exclusively by the XInput pipeline (XUsbDeviceArrived).
+                                    // SDL detection is expected; skip silently and let XInput manage it.
+                                    return;
 
                                 case SDL.GamepadType.PS3:
                                 case SDL.GamepadType.PS4:
@@ -616,7 +617,7 @@ public static class ControllerManager
                         PowerCyclers.TryGetValue(path, out bool IsPowerCycling);
                         bool WasTarget = IsTargetController(controller.GetInstanceId());
 
-                        LogManager.LogInformation("XInput controller {0} unplugged, cycling {1}", controller.ToString(), IsPowerCycling);
+                        LogManager.LogInformation("SDL controller {0} unplugged, cycling {1}", controller.ToString(), IsPowerCycling);
                         ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
 
                         if (!IsPowerCycling)
@@ -1406,6 +1407,10 @@ public static class ControllerManager
             catch { }
         }
 
+        // Mark system as no longer sleeping to resume normal virtual controller updates
+        if (OS)
+            VirtualManager.SetSystemSleepState(false);
+
         // Slot monitor is always running; on resume we simply re-evaluate the target controller.
         PickTargetController();
     }
@@ -1421,6 +1426,10 @@ public static class ControllerManager
             }
             catch { }
         }
+
+        // Mark system as sleeping to suppress gyro-driven virtual controller updates
+        if (OS)
+            VirtualManager.SetSystemSleepState(true);
 
         // Stop any in-flight slot fix to avoid manipulating devices during suspend/shutdown.
         StopWatchdog();

@@ -47,7 +47,7 @@
                     IsOpen="True"
                     Message="{Binding OemInfoBarMessage}"
                     Severity="Warning"
-                    Visibility="{Binding OemStackVisibility}" />
+                    Visibility="{Binding OemStackRunningVisibility}" />
 
                 <ui:SettingsCard Header="Let HC manage the device instead of the OEM utility" Visibility="{Binding OemStackVisibility}">
                     <ui:SettingsCard.HeaderIcon>

@@ -45,6 +45,10 @@ public class OneXPlayerX1Mini : OneXPlayerX1
 
     public override bool IsReady()
     {
+        // Early return if device is already bound and connected
+        if (hidDevice != null && hidDevice.IsConnected /* && hidDevice.IsOpen */)
+            return true;
+
         // Reuse the same pattern as OneXPlayerOneXFly to grab the LED HID device
         IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 0);
         foreach (HidDevice device in devices)

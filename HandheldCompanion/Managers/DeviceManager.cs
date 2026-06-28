@@ -612,11 +612,13 @@ public class DeviceManager : IManager
     {
         var instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
 
+        // Ignore duplicate arrival notifications while the same device is already being processed.
+        var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        if (!arrivalInProgress.TryAdd(instanceId, tcs.Task))
+            return;
+
         // Register a placeholder before Task.Run so RefreshXInputAsync can find it
         // immediately, even if the task body completes before the caller polls.
-        var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        arrivalInProgress[instanceId] = tcs.Task;
-
         var arrivalTask = Task.Run(async () =>
         {
             // If a removal is running for this device, wait it out first (with timeout to avoid deadlock).
@@ -660,6 +662,10 @@ public class DeviceManager : IManager
     private void XUsbDevice_DeviceRemoved(DeviceEventArgs obj)
     {
         var instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+
+        // Ignore duplicate removal notifications while the same device is already being processed.
+        if (!removalInProgress.TryAdd(instanceId, Task.CompletedTask))
+            return;
 
         var removalTask = Task.Run(async () =>
         {

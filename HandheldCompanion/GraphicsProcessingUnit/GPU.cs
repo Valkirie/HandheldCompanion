@@ -62,9 +62,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         protected static HashSet<string> ProcessTargets = new HashSet<string>();
         private static readonly object processTargetsLock = new object();
 
-        public static string serviceName = string.Empty;
-        protected static ServiceController? serviceController;
-
         public bool IsBusy
         {
             get

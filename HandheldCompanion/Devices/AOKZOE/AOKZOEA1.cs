@@ -160,6 +160,10 @@ public class AOKZOEA1 : OneXAOKZOE
 
     public override bool IsReady()
     {
+        // Early return if device is already bound and connected
+        if (hidDevice != null && hidDevice.IsConnected /* && hidDevice.IsOpen */)
+            return true;
+
         IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 0);
         foreach (HidDevice device in devices)
         {

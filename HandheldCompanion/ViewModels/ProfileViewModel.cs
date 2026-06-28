@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Shared;
@@ -360,7 +361,7 @@ namespace HandheldCompanion.ViewModels
                 if (cts.IsCancellationRequested)
                     return;
 
-                await Application.Current.Dispatcher.InvokeAsync(() =>
+                await UIHelper.TryInvokeAsync(() =>
                 {
                     if (!areVisualsVisible)
                         ApplyPlaceholderImages();

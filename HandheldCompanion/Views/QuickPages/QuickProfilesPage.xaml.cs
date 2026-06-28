@@ -122,7 +122,6 @@ public partial class QuickProfilesPage : Page
         viewModel.RequestOpenProfileLayout -= (s, e) => { };
         viewModel.RequestOpenPowerProfile -= (s, powerProfile) => { };
         viewModel.RequestCreatePowerProfile -= (s, e) => { };
-        viewModel.Close();
     }
 
     public void PowerProfile_Selected(PowerProfile powerProfile, bool AC)

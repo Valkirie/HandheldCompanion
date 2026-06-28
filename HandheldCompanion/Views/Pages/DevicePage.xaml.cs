@@ -47,10 +47,13 @@ namespace HandheldCompanion.Views.Pages
             SecondColorToggleCard.Visibility = SecondColorPickerCard.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor) ? Visibility.Visible : Visibility.Collapsed;
 
             // Move device-specific USB I/O operations to background thread
-            if (device is LegionGoTablet)
+            if (device is LegionGoTablet legionGoTablet)
             {
-                Task.Run(() =>
+                Task.Run(async () =>
                 {
+                    while (!legionGoTablet.IsOpen)
+                        await Task.Delay(1000).ConfigureAwait(false);
+
                     // Perform USB I/O operations on background thread
                     int leftJoystickDeadzone = SapientiaUsb.GetStickCustomDeadzone(LegionGoTablet.LeftJoyconIndex);
                     int leftAutoSleepTime = SapientiaUsb.GetAutoSleepTime(LegionGoTablet.LeftJoyconIndex);
@@ -63,15 +66,15 @@ namespace HandheldCompanion.Views.Pages
                     // Update UI on UI thread
                     UIHelper.TryInvoke(() =>
                     {
-                        SliderLeftJoystickDeadzone.Value = leftJoystickDeadzone + 1;
+                        SliderLeftJoystickDeadzone.Value = leftJoystickDeadzone;
                         SliderLeftAutoSleepTime.Value = leftAutoSleepTime;
-                        SliderLeftTriggerDeadzone.Value = leftTrigger.Deadzone + 1;
-                        SliderLeftTriggerMargin.Value = leftTrigger.Margin + 1;
+                        SliderLeftTriggerDeadzone.Value = leftTrigger.Deadzone;
+                        SliderLeftTriggerMargin.Value = leftTrigger.Margin;
 
-                        SliderRightJoystickDeadzone.Value = rightJoystickDeadzone + 1;
+                        SliderRightJoystickDeadzone.Value = rightJoystickDeadzone;
                         SliderRightAutoSleepTime.Value = rightAutoSleepTime;
-                        SliderRightTriggerDeadzone.Value = rightTrigger.Deadzone + 1;
-                        SliderRightTriggerMargin.Value = rightTrigger.Margin + 1;
+                        SliderRightTriggerDeadzone.Value = rightTrigger.Deadzone;
+                        SliderRightTriggerMargin.Value = rightTrigger.Margin;
                     });
                 });
 
@@ -877,7 +880,7 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            SapientiaUsb.SetAutoSleepTime(LegionGoTablet.LeftJoyconIndex, (int)value);
+            bool success = SapientiaUsb.SetAutoSleepTime(LegionGoTablet.LeftJoyconIndex, (int)value);
         }
 
         private void SliderLeftTriggerDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

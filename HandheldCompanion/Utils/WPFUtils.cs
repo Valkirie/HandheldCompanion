@@ -12,11 +12,44 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using static HandheldCompanion.WinAPI;
 using Control = System.Windows.Controls.Control;
+using ProgressBar = iNKORE.UI.WPF.Modern.Controls.ProgressBar;
 
 namespace HandheldCompanion.Utils;
 
 public static class WPFUtils
 {
+    public static bool CanTarget(FrameworkElement? control, Window? targetWindow = null, bool includeContentRules = false, bool includeNavigationViewItems = true)
+    {
+        return control is not null
+            && control is not Window
+            && control.IsLoaded
+            && control.IsVisible
+            && control.IsEnabled
+            && control.Focusable
+            && control.Opacity > 0
+            && control.ActualWidth > 0
+            && control.ActualHeight > 0
+            && control is not ProgressBar
+            && control is not ProgressRing
+            && (control is not TextBox textBox || !textBox.IsReadOnly)
+            && (control is not SettingsCard settingsCard || settingsCard.IsClickEnabled)
+            && (!includeContentRules || !IsTransientContainerControl(control))
+            && (!includeContentRules || includeNavigationViewItems || control is not NavigationViewItem)
+            && (!includeContentRules || control is not ItemsControl || control is Selector)
+            && (targetWindow is null || Window.GetWindow(control) == targetWindow);
+    }
+
+    private static bool IsTransientContainerControl(FrameworkElement control)
+    {
+        return control is iNKORE.UI.WPF.Modern.Controls.MessageBox
+            || control is iNKORE.UI.WPF.Modern.Controls.ContentDialog
+            || control is iNKORE.UI.WPF.Modern.Controls.SplitView
+            || control is System.Windows.Controls.ScrollViewer
+            || control.GetType().Name is "TouchScrollViewer"
+            || control is iNKORE.UI.WPF.Modern.Controls.Frame
+            || control is iNKORE.UI.WPF.Modern.Controls.Page;
+    }
+
     public static HwndSource? GetControlHandle(Control control)
     {
         return PresentationSource.FromVisual(control) as HwndSource;
@@ -60,7 +93,7 @@ public static class WPFUtils
     // A function that takes a list of controls and returns the top-left control
     public static Control? GetTopLeftControl<T>(List<Control> controls, List<Type>? typesToIgnore = null) where T : Control
     {
-        controls = controls.Where(c => c is T && c.IsEnabled).ToList();
+        controls = controls.Where(c => c is T && CanTarget(c)).ToList();
 
         if (typesToIgnore is not null)
             controls = controls.Where(c => !typesToIgnore.Contains(c.GetType())).ToList();
@@ -329,7 +362,7 @@ public static class WPFUtils
     private static List<Control> GetControlInDirection<T>(Control source, List<Control> controls, Direction direction, List<Type>? typesToIgnore = null, bool strictAxis = false) where T : Control
     {
         // Filter list based on requested type
-        controls = controls.Where(c => c is T && c.IsEnabled && c.Opacity != 0).ToList();
+        controls = controls.Where(c => c is T && CanTarget(c)).ToList();
 
         // Filter based on exclusion type list
         if (typesToIgnore is not null)
@@ -356,7 +389,7 @@ public static class WPFUtils
 
         foreach (Control control in controls)
         {
-            if (control == source || control is not T || !control.IsEnabled || control.Opacity == 0)
+            if (control == source || control is not T || !CanTarget(control))
                 continue;
 
             if (typesToIgnore is not null && typesToIgnore.Contains(control.GetType()))
@@ -614,7 +647,7 @@ public static class WPFUtils
                     if (textBox.IsReadOnly)
                         continue;
 
-                    if (textBox.IsEnabled && textBox.Focusable && textBox.IsVisible)
+                    if (CanTarget(textBox))
                         childs.Add(textBox);
 
                     continue;
@@ -626,7 +659,7 @@ public static class WPFUtils
                     if (repeatButton.Name.StartsWith("PART_"))
                         continue;
 
-                    if (repeatButton.IsEnabled && repeatButton.Focusable && repeatButton.IsVisible)
+                    if (CanTarget(repeatButton))
                         childs.Add(repeatButton);
 
                     continue;
@@ -638,7 +671,7 @@ public static class WPFUtils
                         continue;
                     else if (button.Name.Equals("TogglePaneButton"))
                         continue;
-                    else if (button.IsEnabled && button.Focusable && button.IsVisible)
+                    else if (CanTarget(button))
                         childs.Add(button);
 
                     continue;
@@ -650,7 +683,7 @@ public static class WPFUtils
                     if (!settingsCard.IsClickEnabled)
                         continue;
 
-                    if (settingsCard.IsEnabled && settingsCard.Focusable && settingsCard.IsVisible)
+                    if (CanTarget(settingsCard))
                         childs.Add(settingsCard);
 
                     continue;
@@ -672,7 +705,7 @@ public static class WPFUtils
                     or DropDownButton
                     or MenuItem)
                 {
-                    if (child is FrameworkElement asType && asType.IsEnabled && asType.Focusable && asType.IsVisible)
+                    if (child is FrameworkElement asType && CanTarget(asType))
                         childs.Add(asType);
                 }
             }

@@ -32,6 +32,10 @@ namespace HandheldCompanion.Devices
 
         public override bool IsReady()
         {
+            // Early return if device is already bound and connected
+            if (hidDevice != null && hidDevice.IsConnected /* && hidDevice.IsOpen */)
+                return true;
+
             // Bind the LED HID device (same pattern as OneXPlayerOneXFly)
             IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 0);
             foreach (HidDevice device in devices)

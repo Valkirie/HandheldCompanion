@@ -19,6 +19,8 @@
     d:DesignHeight="2000"
     d:DesignWidth="1000"
     IsEnabled="{Binding PerformanceManagerEnabled}"
+    Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded"
     KeepAlive="True"
     mc:Ignorable="d">
 

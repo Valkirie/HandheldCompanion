@@ -52,10 +52,29 @@ namespace HandheldCompanion.Managers
 
             if (!IsLoaded_IGCL && GPU.HasIntelGPU())
             {
-                // wait until Intel GPU service is ready
-                Task timeout = Task.Delay(TimeSpan.FromSeconds(7));
-                while (!timeout.IsCompleted && !IntelGPU.HasServiceStatus(ServiceControllerStatus.Running))
-                    await Task.Delay(1000).ConfigureAwait(false);
+                // attempt to start Intel GPU service if not already running
+                try
+                {
+                    using (ServiceController sc = new ServiceController(IntelGPU.serviceName))
+                    {
+                        if (sc.Status == ServiceControllerStatus.Stopped)
+                        {
+                            LogManager.LogInformation("Starting {0} service...", IntelGPU.serviceName);
+                            sc.Start();
+                        }
+                        else if (sc.Status == ServiceControllerStatus.StartPending)
+                        {
+                            LogManager.LogInformation("Waiting for {0} service to start...", IntelGPU.serviceName);
+                        }
+
+                        if (sc.Status != ServiceControllerStatus.Running)
+                            sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(7));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogManager.LogWarning("Failed to start {0}: {1}", IntelGPU.serviceName, ex.Message);
+                }
 
                 if (!IntelGPU.HasServiceStatus(ServiceControllerStatus.Running))
                     LogManager.LogError("{0} is not ready. Some GPU related features might not work as expected", IntelGPU.serviceName);

@@ -207,7 +207,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             Control? control = dependencyObject as Control ?? WPFUtils.FindParent<Control>(dependencyObject);
-            if (control is null || !IsValidFocusableContentElement(control))
+            if (control is null || !WPFUtils.CanTarget(control, gamepadWindow, includeContentRules: true))
                 return;
 
             TrackFocusedControl(control);
@@ -275,7 +275,7 @@ namespace HandheldCompanion.Managers
                     {
                         flyoutMenuItems.Clear();
                         flyoutMenuItems = WPFUtils.GetDirectMenuItems(menuFlyout);
-                        var firstItem = flyoutMenuItems.FirstOrDefault(m => m.IsEnabled && m.IsVisible);
+                        var firstItem = flyoutMenuItems.FirstOrDefault(m => IsUsableFlyoutMenuItem(m));
                         if (firstItem is not null)
                             FocusFlyoutMenuItem(firstItem);
                     }
@@ -354,12 +354,12 @@ namespace HandheldCompanion.Managers
             if (string.IsNullOrWhiteSpace(collectionKey))
                 return null;
 
-            return WPFUtils.FindVisualChildren<Button>(page).FirstOrDefault(button => IsValidFocusableContentElement(button, contentRoot) && string.Equals(GetLibraryCollectionKey(button), collectionKey, StringComparison.Ordinal));
+            return WPFUtils.FindVisualChildren<Button>(page).FirstOrDefault(button => WPFUtils.CanTarget(button, gamepadWindow, includeContentRules: true) && string.Equals(GetLibraryCollectionKey(button), collectionKey, StringComparison.Ordinal));
         }
 
         private Control? FindDefaultLibraryCollectionControl(Page page, DependencyObject? contentRoot)
         {
-            return WPFUtils.GetTopLeftControl<Button>(WPFUtils.FindVisualChildren<Button>(page).Where(button => IsValidFocusableContentElement(button, contentRoot)&& !string.IsNullOrWhiteSpace(GetLibraryCollectionKey(button))).Cast<Control>().ToList());
+            return WPFUtils.GetTopLeftControl<Button>(WPFUtils.FindVisualChildren<Button>(page).Where(button => WPFUtils.CanTarget(button, gamepadWindow, includeContentRules: true) && !string.IsNullOrWhiteSpace(GetLibraryCollectionKey(button))).Cast<Control>().ToList());
         }
 
         private NavigationView? FindWindowNavigationView()
@@ -424,10 +424,7 @@ namespace HandheldCompanion.Managers
 
         private static bool IsNavigableNavigationViewItem(NavigationViewItem navigationViewItem)
         {
-            return navigationViewItem.IsLoaded
-                && navigationViewItem.IsVisible
-                && navigationViewItem.IsEnabled
-                && navigationViewItem.Focusable
+            return WPFUtils.CanTarget(navigationViewItem)
                 && navigationViewItem.IsTabStop
                 && !string.IsNullOrWhiteSpace(GetPageFromNavigationViewItemTag(navigationViewItem));
         }
@@ -600,39 +597,6 @@ namespace HandheldCompanion.Managers
             return WPFUtils.FindVisualChild<Frame>(navigationView);
         }
 
-        public bool IsValidFocusableContentElement(Control? control, DependencyObject? scopeRoot = null, bool includeNavigationViewItems = false)
-        {
-            if (control is null)
-                return false;
-
-            if (!includeNavigationViewItems && control is NavigationViewItem)
-                return false;
-
-            if (control is ItemsControl and not Selector)
-                return false;
-
-            // A SettingsCard with IsClickEnabled=false is non-interactive; skip it
-            if (control is SettingsCard settingsCard && !settingsCard.IsClickEnabled)
-                return false;
-
-            // A TextBox with IsReadOnly=true is non-interactive; skip it
-            if (control is TextBox textBox && textBox.IsReadOnly)
-                return false;
-
-            if (control is ProgressBar || control is ProgressRing)
-                return false;
-
-            return !IsTransientContainerControl(control)
-                && control.IsLoaded
-                && control.IsVisible
-                && control.IsEnabled
-                && control.Focusable
-                && control.Opacity > 0
-                && control.ActualWidth > 0
-                && control.ActualHeight > 0
-                && Window.GetWindow(control) == gamepadWindow;
-        }
-
         private Control? GetTopLeftFocusableContentControl(DependencyObject? scopeRoot, bool includeNavigationViewItems = false)
         {
             if (scopeRoot is null)
@@ -640,7 +604,7 @@ namespace HandheldCompanion.Managers
 
             List<Control> allControls = WPFUtils.FindVisualChildren<Control>(scopeRoot).ToList();
             List<Control> controls = allControls
-                .Where(control => IsValidFocusableContentElement(control, scopeRoot, includeNavigationViewItems))
+                .Where(control => WPFUtils.CanTarget(control, gamepadWindow, includeContentRules: true, includeNavigationViewItems: includeNavigationViewItems))
                 .ToList();
 
             if (controls.Count == 0 && allControls.Count > 0)
@@ -691,7 +655,7 @@ namespace HandheldCompanion.Managers
                     return recoveredViewControl;
                 }
 
-                if (IsValidFocusableContentElement(storedViewControl, contentRoot))
+                if (WPFUtils.CanTarget(storedViewControl, gamepadWindow, includeContentRules: true))
                     return storedViewControl;
 
                 state.LastContentControlsByView.Remove(viewKey);
@@ -710,7 +674,7 @@ namespace HandheldCompanion.Managers
                     return recoveredControl;
                 }
 
-                if (IsValidFocusableContentElement(state.LastContentControl, contentRoot))
+                if (WPFUtils.CanTarget(state.LastContentControl, gamepadWindow, includeContentRules: true))
                     return state.LastContentControl;
             }
 
@@ -718,7 +682,7 @@ namespace HandheldCompanion.Managers
             if (state.LastContentProfileGuid.HasValue)
             {
                 Control? resolvedControl = FindProfileControl(state.LastContentProfileGuid.Value, page);
-                if (IsValidFocusableContentElement(resolvedControl, contentRoot))
+                if (WPFUtils.CanTarget(resolvedControl, gamepadWindow, includeContentRules: true))
                 {
                     state.LastContentControl = resolvedControl;
                     return resolvedControl;
@@ -766,12 +730,12 @@ namespace HandheldCompanion.Managers
             if (searchRoot is null)
                 return null;
 
-            return WPFUtils.FindVisualChildren<Button>(searchRoot).FirstOrDefault(button => IsValidFocusableContentElement(button, searchRoot) && TryGetProfileGuid(button, out _));
+            return WPFUtils.FindVisualChildren<Button>(searchRoot).FirstOrDefault(button => WPFUtils.CanTarget(button, gamepadWindow, includeContentRules: true) && TryGetProfileGuid(button, out _));
         }
 
         private Control? RecoverStoredContentControl(Page page, Control storedControl, DependencyObject? contentRoot)
         {
-            if (IsValidFocusableContentElement(storedControl, contentRoot))
+            if (WPFUtils.CanTarget(storedControl, gamepadWindow, includeContentRules: true))
                 return storedControl;
 
             if (storedControl is Button button && button.DataContext is CollectionGroupViewModel group)
@@ -798,7 +762,7 @@ namespace HandheldCompanion.Managers
                 return null;
 
             return WPFUtils.FindVisualChildren<Control>(contentRoot)
-                .FirstOrDefault(control => IsValidFocusableContentElement(control, contentRoot)
+                .FirstOrDefault(control => WPFUtils.CanTarget(control, gamepadWindow, includeContentRules: true)
                 && !ReferenceEquals(control, storedControl)
                 && (ReferenceEquals(control.DataContext, storedDataContext) || ReferenceEquals(control.Tag, storedTag)));
         }
@@ -1071,6 +1035,13 @@ namespace HandheldCompanion.Managers
         private MenuItem? focusedFlyoutItem = null;        // tracks which item is highlighted
         private HashSet<FlyoutBase> _subscribedFlyouts = new();  // tracks which flyouts we've already subscribed to
 
+        private static bool IsUsableFlyoutMenuItem(MenuItem? menuItem)
+        {
+            return menuItem is not null
+                && menuItem.IsEnabled
+                && menuItem.Focusable;
+        }
+
         private void FocusFlyoutMenuItem(MenuItem menuItem)
         {
             List<MenuItem> siblingMenuItems = WPFUtils.GetSiblingMenuItems(menuItem);
@@ -1089,7 +1060,7 @@ namespace HandheldCompanion.Managers
                 return false;
 
             MenuItem? firstChild = WPFUtils.GetDirectMenuItems(menuItem)
-                .FirstOrDefault(m => m.IsEnabled);
+                .FirstOrDefault(m => IsUsableFlyoutMenuItem(m));
 
             if (firstChild is null)
                 return false;
@@ -1579,10 +1550,9 @@ namespace HandheldCompanion.Managers
             if (FocusedElement is null)
                 FocusedElement = gamepadWindow;
 
-            if (FocusedElement.Focusable && FocusedElement is Control)
+            if (FocusedElement is Control controlFocused
+                && WPFUtils.CanTarget(controlFocused))
             {
-                Control controlFocused = (Control)FocusedElement;
-
                 string keyboardType = controlFocused.GetType().Name;
 
                 switch (keyboardType)
@@ -1710,9 +1680,7 @@ namespace HandheldCompanion.Managers
         {
             return control is not null
                 && !IsTransientContainerControl(control)
-                && control.IsLoaded
-                && control.IsEnabled
-                && control.IsVisible
+                && WPFUtils.CanTarget(control)
                 && (control.Parent is not null || VisualTreeHelper.GetParent(control) is not null)
                 && Window.GetWindow(control) == gamepadWindow;
         }
@@ -1761,7 +1729,7 @@ namespace HandheldCompanion.Managers
             searchRoot ??= gamepadPage is not null ? gamepadPage : gamepadWindow;
 
             return WPFUtils.FindVisualChildren<Button>(searchRoot)
-                .FirstOrDefault(button => IsValidFocusableContentElement(button, searchRoot) && TryGetProfileGuid(button, out Guid guid) && guid == profileGuid);
+                .FirstOrDefault(button => WPFUtils.CanTarget(button, gamepadWindow, includeContentRules: true) && TryGetProfileGuid(button, out Guid guid) && guid == profileGuid);
         }
 
         public bool TryGoBack()
@@ -1774,7 +1742,7 @@ namespace HandheldCompanion.Managers
             UIHelper.TryInvoke(() =>
             {
                 Control? focusedElement = NormalizeNavigationViewFocus(GetFocusedElement());
-                if (focusedElement is null || !focusedElement.IsVisible || !focusedElement.IsEnabled)
+                if (!WPFUtils.CanTarget(focusedElement))
                     return;
                 ExecuteSelect(focusedElement);
             });
@@ -1785,7 +1753,7 @@ namespace HandheldCompanion.Managers
             UIHelper.TryInvoke(() =>
             {
                 Control? focusedElement = NormalizeNavigationViewFocus(GetFocusedElement());
-                if (focusedElement is null || !focusedElement.IsVisible || !focusedElement.IsEnabled)
+                if (!WPFUtils.CanTarget(focusedElement))
                     return;
                 ExecuteMore(focusedElement);
             });
@@ -1796,7 +1764,7 @@ namespace HandheldCompanion.Managers
             UIHelper.TryInvoke(() =>
             {
                 Control? focusedElement = NormalizeNavigationViewFocus(GetFocusedElement());
-                if (focusedElement is null || !focusedElement.IsVisible || !focusedElement.IsEnabled)
+                if (!WPFUtils.CanTarget(focusedElement))
                     return;
                 ExecuteToggle(focusedElement);
             });
@@ -1807,7 +1775,7 @@ namespace HandheldCompanion.Managers
             UIHelper.TryInvoke(() =>
             {
                 Control? focusedElement = NormalizeNavigationViewFocus(GetFocusedElement());
-                if (focusedElement is null || !focusedElement.IsVisible || !focusedElement.IsEnabled)
+                if (!WPFUtils.CanTarget(focusedElement))
                     return;
                 ExecuteLike(focusedElement);
             });
@@ -1919,7 +1887,7 @@ namespace HandheldCompanion.Managers
                 {
                     for (int i = 0; i < comboBox.Items.Count; i++)
                     {
-                        if (comboBox.ItemContainerGenerator.ContainerFromIndex(i) is ComboBoxItem ci && ci.IsEnabled && ci.IsVisible)
+                        if (comboBox.ItemContainerGenerator.ContainerFromIndex(i) is ComboBoxItem ci && WPFUtils.CanTarget(ci))
                         {
                             item = ci;
                             break;
@@ -2040,7 +2008,7 @@ namespace HandheldCompanion.Managers
                 {
                     foreach (var mi in navView.MenuItems)
                     {
-                        if (mi is NavigationViewItem nvi && nvi.IsEnabled && nvi.IsVisible)
+                        if (mi is NavigationViewItem nvi && WPFUtils.CanTarget(nvi))
                             ordered.Add(nvi);
                     }
                 }
@@ -2049,7 +2017,7 @@ namespace HandheldCompanion.Managers
                 {
                     foreach (var mi in navView.FooterMenuItems)
                     {
-                        if (mi is NavigationViewItem nvi && nvi.IsEnabled && nvi.IsVisible)
+                        if (mi is NavigationViewItem nvi && WPFUtils.CanTarget(nvi))
                             ordered.Add(nvi);
                     }
                 }
@@ -2067,7 +2035,7 @@ namespace HandheldCompanion.Managers
             // Fallback: collect all NavigationViewItem instances within this NavigationView.
             // This ensures navigation does not "jump" across nested NavigationViews.
             return WPFUtils.FindVisualChildren<NavigationViewItem>(navView)
-                           .Where(i => i is Control c && c.IsEnabled && c.IsVisible)
+                           .Where(i => i is Control c && WPFUtils.CanTarget(c))
                            .Cast<Control>()
                            .ToList();
         }
@@ -2195,7 +2163,7 @@ namespace HandheldCompanion.Managers
                     // If the focused control is gone (null), hidden/collapsed, or disabled,
                     // redirect focus to the nearest available control so gamepad navigation
                     // is not silently swallowed.
-                    if (focusedElement is null || !focusedElement.IsVisible || !focusedElement.IsEnabled)
+                    if (!WPFUtils.CanTarget(focusedElement))
                     {
                         Control? fallback = WPFUtils.GetTopLeftControl<Control>(gamepadWindow.controlElements);
                         if (fallback is not null)
@@ -2510,7 +2478,7 @@ namespace HandheldCompanion.Managers
                                                 focusedElement = (ListViewItem)listView.ItemContainerGenerator.ContainerFromIndex(idx);
 
                                                 // Check if the focused element is enabled
-                                                if (focusedElement != null && focusedElement.IsEnabled)
+                                                if (WPFUtils.CanTarget(focusedElement))
                                                 {
                                                     // If the element is enabled, focus it and break out of the loop
                                                     Focus(focusedElement, listView, true);
@@ -2543,7 +2511,7 @@ namespace HandheldCompanion.Managers
                                             // so that subsequent Up/Down navigation works correctly.
                                             for (int i = 0; i < comboBox.Items.Count; i++)
                                             {
-                                                if (comboBox.ItemContainerGenerator.ContainerFromIndex(i) is ComboBoxItem ci && ci.IsEnabled && ci.IsVisible)
+                                                if (comboBox.ItemContainerGenerator.ContainerFromIndex(i) is ComboBoxItem ci && WPFUtils.CanTarget(ci))
                                                 {
                                                     Focus(ci, comboBox, true);
                                                     break;
@@ -2591,7 +2559,7 @@ namespace HandheldCompanion.Managers
                                                     focusedElement = (ComboBoxItem)comboBox.ItemContainerGenerator.ContainerFromIndex(idx);
 
                                                     // Check if the focused element is enabled
-                                                    if (focusedElement != null && focusedElement.IsEnabled && focusedElement.IsVisible)
+                                                    if (WPFUtils.CanTarget(focusedElement))
                                                     {
                                                         // If the element is enabled, focus it and break out of the loop
                                                         Focus(focusedElement, comboBox, true);
@@ -2651,7 +2619,8 @@ namespace HandheldCompanion.Managers
 
                                             idx = nextIdx;
                                             var candidate = flyoutMenuItems[idx];
-                                            if (candidate.IsEnabled && candidate.IsVisible)
+                                            // Keep helper-based usability check aligned with the flyout-open branch.
+                                            if (IsUsableFlyoutMenuItem(candidate))
                                             {
                                                 FocusFlyoutMenuItem(candidate);
                                                 return;

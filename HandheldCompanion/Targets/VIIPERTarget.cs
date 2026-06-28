@@ -81,20 +81,13 @@ namespace HandheldCompanion.Targets
                 return false;
 
             bool ok = viiperService.SetInput(busId.Value, deviceId, data);
-            if (!ok && IsMissingViiperResourceError(viiperService.LastError))
+            if (!ok)
             {
                 ViiperServerManager.InvalidateBusId(busId.Value);
                 HandleDisconnect();
             }
 
             return ok;
-        }
-
-        private static bool IsMissingViiperResourceError(string error)
-        {
-            return !string.IsNullOrWhiteSpace(error) &&
-                   (error.Contains("not found", StringComparison.OrdinalIgnoreCase) ||
-                    error.Contains("bus", StringComparison.OrdinalIgnoreCase));
         }
 
         protected bool CanUseViiperDevice => !string.IsNullOrEmpty(DeviceType);

@@ -158,6 +158,7 @@ public class WelcomeViewModel : BaseViewModel
     public bool HasOemStack { get; }
     public Visibility OemStackVisibility => HasOemStack ? Visibility.Visible : Visibility.Collapsed;
     public Visibility NoOemStackVisibility => HasOemStack ? Visibility.Collapsed : Visibility.Visible;
+    public Visibility OemStackRunningVisibility => HasOemStack && oemStackWatcher.IsRunning ? Visibility.Visible : Visibility.Collapsed;
 
     public string OemInfoBarTitle => oemNotification?.Title ?? "Reversible choice";
     public string OemInfoBarMessage => oemNotification?.Message ?? "This can be restored later by HC restore logic or by enabling the OEM stack again.";

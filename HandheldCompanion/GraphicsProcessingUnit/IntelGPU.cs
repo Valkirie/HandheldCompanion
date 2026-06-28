@@ -16,6 +16,10 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public delegate void EnduranceGamingStateEventHandler(bool Supported, ctl_3d_endurance_gaming_control_t Control, ctl_3d_endurance_gaming_mode_t Mode);
         #endregion
 
+        // Intel® Graphics Software Service - static fields specific to IntelGPU
+        public static string serviceName = "IntelGraphicsSoftwareService";
+        private static ServiceController? serviceController = new ServiceController(serviceName);
+
         private bool prevEnduranceGamingSupport;
         private ctl_3d_endurance_gaming_control_t prevEGControl = new();
         private ctl_3d_endurance_gaming_mode_t prevEGMode = new();
@@ -221,13 +225,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public override float GetTemperature()
         {
             return (float)TelemetryData.GpuCurrentTemperatureValue;
-        }
-
-        static IntelGPU()
-        {
-            // Intel® Graphics Software Service
-            serviceName = "IntelGraphicsSoftwareService";
-            serviceController = new ServiceController(serviceName);
         }
 
         public static bool HasServiceStatus(ServiceControllerStatus status)

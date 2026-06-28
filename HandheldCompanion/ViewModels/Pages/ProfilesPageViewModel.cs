@@ -2231,7 +2231,12 @@ namespace HandheldCompanion.ViewModels
                     // Create a new profile with default values
                     powerProfile = new PowerProfile(CreateProfileName, Properties.Resources.PowerProfileManualDescription)
                     {
-                        TDPOverrideValues = IDevice.GetCurrent().nTDP
+                        TDPOverrideValues = new[]
+                        {
+                            IDevice.GetCurrent().nTDP[0],
+                            IDevice.GetCurrent().nTDP[1],
+                            IDevice.GetCurrent().nTDP[2]
+                        }
                     };
                 }
 
@@ -2671,6 +2676,9 @@ namespace HandheldCompanion.ViewModels
         /// </summary>
         private void ProcessManager_ProcessStarted(ProcessEx processEx, bool OnStartup)
         {
+            if (OnStartup)
+                return;
+
             UpdateCurrentProcessViewModel();
         }
 

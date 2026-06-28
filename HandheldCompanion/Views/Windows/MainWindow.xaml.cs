@@ -1412,7 +1412,7 @@ public partial class MainWindow : GamepadWindow
             return;
 
         Control? control = dependencyObject as Control ?? WPFUtils.FindParent<Control>(dependencyObject);
-        if (control is null || !gamepadFocusManager.IsValidFocusableContentElement(control))
+        if (control is null || !WPFUtils.CanTarget(control, this, includeContentRules: true))
             return;
 
         gamepadFocusManager.TrackFocusedControl(control);

@@ -373,6 +373,13 @@ public class ROGAlly : IDevice
 
     public override bool IsReady()
     {
+        // Early return if device is already bound and connected
+        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? boundDevice))
+        {
+            if (boundDevice.IsConnected /* && boundDevice.IsOpen */)
+                return true;
+        }
+
         IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 64);
         foreach (HidDevice device in devices)
         {

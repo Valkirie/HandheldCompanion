@@ -9,7 +9,6 @@ namespace HandheldCompanion.Targets.Viiper
     {
         private readonly object _lock = new();
         private readonly Dictionary<Tuple<uint, uint>, LibViiper.FeedbackCallback> _feedbackDelegates = new();
-        private string _lastError = string.Empty;
         private bool _initialized;
 
         public event Action<uint, uint, byte[]>? FeedbackReceived;
@@ -20,15 +19,6 @@ namespace HandheldCompanion.Targets.Viiper
             {
                 lock (_lock)
                     return _initialized;
-            }
-        }
-
-        public string LastError
-        {
-            get
-            {
-                lock (_lock)
-                    return _lastError;
             }
         }
 
@@ -72,12 +62,9 @@ namespace HandheldCompanion.Targets.Viiper
             int result = LibViiper.viiper_bus_create(busId);
             if (result != 0)
             {
-                _lastError = LibViiper.GetLastError();
-                LogManager.LogError("viiper_bus_create({0}) failed: {1}", busId, _lastError);
+                LogManager.LogError("viiper_bus_create({0}) failed: {1}", busId, LibViiper.GetLastError());
                 return false;
             }
-
-            _lastError = string.Empty;
 
             LogManager.LogInformation("VIIPER bus {0} created", busId);
             return true;
@@ -88,12 +75,9 @@ namespace HandheldCompanion.Targets.Viiper
             int result = LibViiper.viiper_bus_remove(busId);
             if (result != 0)
             {
-                _lastError = LibViiper.GetLastError();
-                LogManager.LogWarning("viiper_bus_remove({0}) failed: {1}", busId, _lastError);
+                LogManager.LogWarning("viiper_bus_remove({0}) failed: {1}", busId, LibViiper.GetLastError());
                 return false;
             }
-
-            _lastError = string.Empty;
 
             LogManager.LogInformation("VIIPER bus {0} removed", busId);
             return true;
@@ -124,12 +108,9 @@ namespace HandheldCompanion.Targets.Viiper
 
             if (result != 0)
             {
-                _lastError = LibViiper.GetLastError();
-                LogManager.LogError("viiper_device_add({0}, {1}, vid=0x{2:X4}, pid=0x{3:X4}) failed: {4}", busId, typeName, vid, pid, _lastError);
+                LogManager.LogError("viiper_device_add({0}, {1}, vid=0x{2:X4}, pid=0x{3:X4}) failed: {4}", busId, typeName, vid, pid, LibViiper.GetLastError());
                 return new ViiperAddDeviceResult(false, 0);
             }
-
-            _lastError = string.Empty;
 
             RegisterFeedbackCallback(busId, deviceId);
             LogManager.LogInformation("VIIPER device added: {0} (bus={1}, dev={2}, vid=0x{3:X4}, pid=0x{4:X4})", typeName, busId, deviceId, vid, pid);
@@ -142,12 +123,9 @@ namespace HandheldCompanion.Targets.Viiper
             int result = LibViiper.viiper_device_remove(busId, deviceId);
             if (result != 0)
             {
-                _lastError = LibViiper.GetLastError();
-                LogManager.LogWarning("viiper_device_remove({0}, {1}) failed: {2}", busId, deviceId, _lastError);
+                LogManager.LogWarning("viiper_device_remove({0}, {1}) failed: {2}", busId, deviceId, LibViiper.GetLastError());
                 return false;
             }
-
-            _lastError = string.Empty;
 
             LogManager.LogInformation("VIIPER device removed (bus={0}, dev={1})", busId, deviceId);
             return true;
@@ -156,15 +134,8 @@ namespace HandheldCompanion.Targets.Viiper
         public bool SetInput(uint busId, uint deviceId, byte[] data)
         {
             bool ok = LibViiper.viiper_device_set_input(busId, deviceId, data, data.Length) == 0;
-            if (ok)
-            {
-                _lastError = string.Empty;
-            }
-            else
-            {
-                _lastError = LibViiper.GetLastError();
-                LogManager.LogWarning("viiper_device_set_input failed (bus={0}, dev={1}, len={2}): {3}", busId, deviceId, data.Length, _lastError);
-            }
+            if (!ok)
+                LogManager.LogWarning("viiper_device_set_input failed (bus={0}, dev={1}, len={2}): {3}", busId, deviceId, data.Length, LibViiper.GetLastError());
 
             return ok;
         }

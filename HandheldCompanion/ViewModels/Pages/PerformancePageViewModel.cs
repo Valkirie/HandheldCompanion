@@ -1058,7 +1058,12 @@ namespace HandheldCompanion.ViewModels
                     // Create a new profile with default values
                     powerProfile = new(CreateProfileName, Resources.PowerProfileManualDescription)
                     {
-                        TDPOverrideValues = IDevice.GetCurrent().nTDP
+                        TDPOverrideValues = new[]
+                        {
+                            IDevice.GetCurrent().nTDP[0],
+                            IDevice.GetCurrent().nTDP[1],
+                            IDevice.GetCurrent().nTDP[2]
+                        }
                     };
                 }
 

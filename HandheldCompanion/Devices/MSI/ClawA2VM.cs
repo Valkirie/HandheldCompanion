@@ -38,7 +38,9 @@ public class ClawA2VM : ClawA1M
 
     public override bool Open()
     {
-        base.Open();
+        bool success = base.Open();
+        if (!success)
+            return false;
 
         // unlock TDP
         set_long_limit(30);

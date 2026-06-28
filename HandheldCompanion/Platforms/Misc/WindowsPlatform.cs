@@ -337,8 +337,9 @@ public sealed class WindowsPlatform : IPlatform
 
         private EventLogWatcher? _watcher;
 
-        // Simple cooldown to avoid "wake, resleep, immediate wake, resleep ..." storms
-        private long _lastResleepTicks;
+        private System.Timers.Timer? _batchTimer;
+        private readonly HashSet<WakeReason> _batchedReasons = new();
+        private const int BATCH_WINDOW_MS = 750;
 
         public enum WakeReason
         {
@@ -352,7 +353,10 @@ public sealed class WindowsPlatform : IPlatform
 
         public ModernStandbyResleepMonitor(Func<WakeReason, bool> shouldResleep)
         {
-            _shouldResleep = shouldResleep ?? throw new ArgumentNullException(nameof(shouldResleep));
+            if (shouldResleep == null)
+                throw new ArgumentNullException(nameof(shouldResleep));
+
+            _shouldResleep = shouldResleep;
         }
 
         public void Start()
@@ -367,6 +371,10 @@ public sealed class WindowsPlatform : IPlatform
             _watcher = new EventLogWatcher(query);
             _watcher.EventRecordWritten += OnEventRecordWritten;
             _watcher.Enabled = true;
+
+            // Create the batch timer (will be started when first wake event arrives)
+            _batchTimer = new(BATCH_WINDOW_MS) { AutoReset = false };
+            _batchTimer.Elapsed += (_, _) => OnBatchTimerElapsed();
 
             LogManager.LogInformation("[GoBackToSleep] Watching for Modern Standby sleep(506)/wake(507) events...");
         }
@@ -386,6 +394,15 @@ public sealed class WindowsPlatform : IPlatform
             {
                 _watcher = null;
             }
+
+            _batchTimer?.Stop();
+            _batchTimer?.Dispose();
+            _batchTimer = null;
+
+            lock (_batchedReasons)
+            {
+                _batchedReasons.Clear();
+            }
         }
 
         private void OnEventRecordWritten(object? sender, EventRecordWrittenEventArgs e)
@@ -400,28 +417,61 @@ public sealed class WindowsPlatform : IPlatform
                 WakeReason reason = ParseWakeReason(e.EventRecord);
                 LogManager.LogInformation("[GoBackToSleep] Woke from Modern Standby. Reason: {0}", reason);
 
+                lock (_batchedReasons)
+                {
+                    // Add this reason to the batch; returns true if it's new, false if duplicate
+                    bool isNewReason = _batchedReasons.Add(reason);
+
+                    // Reset the timer only if this is a new reason (not a duplicate)
+                    if (isNewReason)
+                    {
+                        _batchTimer?.Stop();
+                        _batchTimer?.Start();
+                    }
+                }
+            }
+        }
+
+        private void OnBatchTimerElapsed()
+        {
+            WakeReason[] reasons;
+
+            lock (_batchedReasons)
+            {
+                // Capture and clear the batched reasons
+                reasons = _batchedReasons.ToArray();
+                _batchedReasons.Clear();
+            }
+
+            if (reasons.Length == 0)
+                return;
+
+            LogManager.LogDebug("[GoBackToSleep] Batch window closed. Collected reasons: {0}", string.Join(", ", reasons));
+
+            // Check if ANY reason should keep the system awake
+            bool shouldWakeUp = false;
+            foreach (var reason in reasons)
+            {
                 if (!_shouldResleep(reason))
                 {
-                    LogManager.LogInformation("[GoBackToSleep] Wake reason is intentional ({0}). Nudging display on...", reason);
+                    shouldWakeUp = true;
+                    LogManager.LogInformation("[GoBackToSleep] Reason {0} is intentional. Keeping system awake.", reason);
                     WakeDisplay();
-                    return;
+                    break;
                 }
-
-                // cooldown: 5 seconds
-                long now = DateTime.UtcNow.Ticks;
-                if (now - Interlocked.Read(ref _lastResleepTicks) < TimeSpan.FromSeconds(5).Ticks)
-                    return;
-
-                Interlocked.Exchange(ref _lastResleepTicks, now);
-
-                LogManager.LogInformation("[GoBackToSleep] Wake reason is not intentional ({0}). Sending system back to sleep...", reason);
-
-                // Suppress the next SystemStatusChanged event to prevent managers from starting
-                // when the system immediately goes back to sleep
-                SystemManager.SuppressNextSystemStatusChanged();
-
-                SuspendSystem();
             }
+
+            if (shouldWakeUp)
+                return;
+
+            // All reasons are unintentional; send system back to sleep
+            LogManager.LogInformation("[GoBackToSleep] All collected reasons are unintentional. Sending system back to sleep...");
+
+            // Suppress the next SystemStatusChanged event to prevent managers from starting
+            // when the system immediately goes back to sleep
+            SystemManager.SuppressNextSystemStatusChanged();
+
+            SuspendSystem();
         }
 
         private void SuspendSystem()
@@ -451,9 +501,12 @@ public sealed class WindowsPlatform : IPlatform
                     ?.Value;
 
                 if (!int.TryParse(reasonVal, out int code))
+                {
+                    LogManager.LogDebug("[GoBackToSleep] Failed to parse wake reason code from Event Log: {0}", reasonVal ?? "(null)");
                     return WakeReason.Unknown;
+                }
 
-                return code switch
+                var reason = code switch
                 {
                     1 => WakeReason.PowerButton,
                     4 => WakeReason.FingerprintReader,
@@ -463,9 +516,15 @@ public sealed class WindowsPlatform : IPlatform
                     0 => WakeReason.Unknown,
                     _ => WakeReason.Other
                 };
+
+                if (reason == WakeReason.Other)
+                    LogManager.LogDebug("[GoBackToSleep] Unmapped wake reason code: {0}", code);
+
+                return reason;
             }
-            catch
+            catch (Exception ex)
             {
+                LogManager.LogDebug("[GoBackToSleep] Exception parsing wake reason: {0}", ex.Message);
                 return WakeReason.Unknown;
             }
         }

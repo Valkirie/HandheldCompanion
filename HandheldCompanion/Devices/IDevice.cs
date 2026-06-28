@@ -2,6 +2,7 @@ using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Devices.AYANEO;
 using HandheldCompanion.Devices.Lenovo;
+using HandheldCompanion.Devices.MSI;
 using HandheldCompanion.Devices.OneXPlayer;
 using HandheldCompanion.Devices.Zotac;
 using HandheldCompanion.Helpers;
@@ -817,6 +818,9 @@ public abstract class IDevice
                             break;
                         case "MS-1T8K": // Claw A8
                             device = new ClawBZ2EM();
+                            break;
+                        case "MS-1T91": // Claw 8 EX AI+ CG3EM
+                            device = new ClawCG3EM();
                             break;
                     }
                 }

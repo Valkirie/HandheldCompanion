@@ -871,7 +871,6 @@
             <!--  Device settings  -->
             <ikw:SimpleStackPanel Spacing="8">
                 <TextBlock
-                    d:Text="Device settings (MSI Claw)"
                     Style="{StaticResource BaseTextBlockStyle}"
                     Text="{l:Static resx:Resources.DevicePage_DeviceSettings}"
                     Visibility="{Binding ElementName=MSIClawPanel, Path=Visibility}" />
@@ -880,7 +879,7 @@
                 <ikw:SimpleStackPanel
                     Name="MSIClawPanel"
                     d:Visibility="Visible"
-                    Spacing="8"
+                    Spacing="3"
                     Visibility="Collapsed">
 
                     <ui:SettingsCard Description="Select the desired controller mode" Header="Controller mode">
@@ -911,7 +910,7 @@
                 <ikw:SimpleStackPanel
                     Name="LegionGoPanel"
                     d:Visibility="Visible"
-                    Spacing="8"
+                    Spacing="3"
                     Visibility="Collapsed">
 
                     <TextBlock
@@ -1005,7 +1004,7 @@
                                         IsSnapToTickEnabled="True"
                                         LargeChange="5"
                                         Maximum="100"
-                                        Minimum="1"
+                                        Minimum="0"
                                         SmallChange="1"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                         ValueChanged="SliderLeftJoystickDeadzone_ValueChanged" />
@@ -1027,7 +1026,7 @@
                                         IsSnapToTickEnabled="True"
                                         LargeChange="5"
                                         Maximum="{Binding Source={x:Reference SliderLeftTriggerMargin}, Path=Value, Converter={StaticResource InvertPercentageConverter}}"
-                                        Minimum="1"
+                                        Minimum="0"
                                         SmallChange="1"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                         ValueChanged="SliderLeftTriggerDeadzone_ValueChanged"
@@ -1109,7 +1108,7 @@
                                         IsSnapToTickEnabled="True"
                                         LargeChange="5"
                                         Maximum="100"
-                                        Minimum="1"
+                                        Minimum="0"
                                         SmallChange="1"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                         ValueChanged="SliderRightJoystickDeadzone_ValueChanged" />
@@ -1131,7 +1130,7 @@
                                         IsSnapToTickEnabled="True"
                                         LargeChange="5"
                                         Maximum="{Binding Source={x:Reference SliderRightTriggerMargin}, Path=Value, Converter={StaticResource InvertPercentageConverter}}"
-                                        Minimum="1"
+                                        Minimum="0"
                                         SmallChange="1"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                         ValueChanged="SliderRightTriggerDeadzone_ValueChanged"
@@ -1168,7 +1167,7 @@
                 <ikw:SimpleStackPanel
                     Name="ZotacGamingZonePanel"
                     d:Visibility="Visible"
-                    Spacing="8"
+                    Spacing="3"
                     Visibility="Collapsed">
                     <TextBlock
                         d:Text="Device settings (Zotac Gaming Zone)"

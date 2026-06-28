@@ -528,7 +528,7 @@ namespace HandheldCompanion.ViewModels
 
         private void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
-            bool managedByProfile = !profile.Default && profile.HID != HIDmode.NotSelected;
+            bool managedByProfile = profile.HID != HIDmode.NotSelected;
             HIDManagedByProfileVisibility = managedByProfile ? Visibility.Visible : Visibility.Collapsed;
 
             // Disable combobox if profile manages HIDmode OR if Steam hybrid override is active

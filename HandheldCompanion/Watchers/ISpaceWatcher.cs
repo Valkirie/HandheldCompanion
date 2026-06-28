@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Devices.Lenovo;
+using HandheldCompanion.Devices.MSI;
 using HandheldCompanion.Devices.Zotac;
 using HandheldCompanion.Notifications;
 using HandheldCompanion.Utils;
@@ -73,7 +74,7 @@ namespace HandheldCompanion.Watchers
         {
             return device switch
             {
-                ClawA1M or ClawA2VM => new ClawCenterWatcher(),
+                ClawA1M or ClawA2VM or ClawBZ2EM or ClawCG3EM => new ClawCenterWatcher(),
                 LegionGo => new LegionSpaceWatcher(),
                 ROGAlly or ROGAllyX => new RogAllySpaceWatcher(),
                 GamingZone => new ZotacLauncherWatcher(),

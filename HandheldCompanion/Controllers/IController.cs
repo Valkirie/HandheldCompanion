@@ -89,8 +89,8 @@ namespace HandheldCompanion.Controllers
 
         protected double VibrationStrength = 1.0d;
         private readonly object rumbleLock = new();
+        private CancellationTokenSource? rumbleCts;
         private Task? rumbleTask;
-        private CancellationTokenSource? rumbleCancellationTokenSource;
         private int disposeState;
 
         protected object hidLock = new();
@@ -418,80 +418,60 @@ namespace HandheldCompanion.Controllers
             if (_disposing || _disposed)
                 return;
 
-            CancellationTokenSource cancellationTokenSource;
-
             lock (rumbleLock)
             {
                 if (_disposing || _disposed)
                     return;
 
-                if (rumbleTask != null && !rumbleTask.IsCompleted)
-                    return;
+                // Cancel any previous rumble
+                rumbleCts?.Cancel();
+                rumbleCts = new CancellationTokenSource();
 
-                rumbleCancellationTokenSource?.Dispose();
-                rumbleCancellationTokenSource = new CancellationTokenSource();
-                cancellationTokenSource = rumbleCancellationTokenSource;
-
+                var token = rumbleCts.Token;
                 rumbleTask = Task.Run(async () =>
                 {
                     try
                     {
                         SetVibration(LargeMotor, SmallMotor);
-                        await Task.Delay(delay, cancellationTokenSource.Token).ConfigureAwait(false);
+                        await Task.Delay(delay, token).ConfigureAwait(false);
                     }
-                    catch (OperationCanceledException)
-                    { }
-                    catch (ObjectDisposedException)
-                    { }
+                    catch (OperationCanceledException) { }
                     finally
                     {
-                        try
-                        {
-                            SetVibration(0, 0);
-                        }
+                        try { SetVibration(0, 0); }
                         catch { }
                     }
-                }, cancellationTokenSource.Token);
+                }, token);
             }
         }
 
         public void StopRumble(bool waitForCompletion = true)
         {
-            Task? taskToWait;
-            CancellationTokenSource? cancellationTokenSource;
+            CancellationTokenSource? cts;
+            Task? task;
 
             lock (rumbleLock)
             {
-                taskToWait = rumbleTask;
-                cancellationTokenSource = rumbleCancellationTokenSource;
+                cts = rumbleCts;
+                task = rumbleTask;
+                rumbleCts = null;
                 rumbleTask = null;
-                rumbleCancellationTokenSource = null;
             }
 
-            try
-            {
-                cancellationTokenSource?.Cancel();
-            }
+            try { cts?.Cancel(); }
             catch { }
 
-            try
+            if (waitForCompletion && task is not null)
             {
-                SetVibration(0, 0);
-            }
-            catch { }
-
-            if (waitForCompletion && taskToWait is not null)
-            {
-                try
-                {
-                    taskToWait.GetAwaiter().GetResult();
-                }
-                catch (OperationCanceledException)
-                { }
+                try { task.Wait(1000); }
                 catch { }
             }
 
-            cancellationTokenSource?.Dispose();
+            try { cts?.Dispose(); }
+            catch { }
+
+            try { SetVibration(0, 0); }
+            catch { }
         }
 
         public virtual void Plug()

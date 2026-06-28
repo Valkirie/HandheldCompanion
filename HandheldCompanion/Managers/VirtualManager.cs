@@ -30,6 +30,11 @@ namespace HandheldCompanion.Managers
         private static readonly List<VIIPERTarget> temporaryControllers = new List<VIIPERTarget>();
         private static ushort temporaryProductIdSeed = ProductId;
 
+        // Sleep state tracking: when the system is in sleep mode, only report meaningful input changes
+        // to prevent the virtual controller from waking the device with constant gyro reports.
+        private static bool isSystemSleeping = false;
+        private static ControllerState? lastReportedState = null;
+
         public static bool IsInitialized;
 
         public static event ControllerSelectedEventHandler? ControllerSelected;
@@ -543,13 +548,39 @@ namespace HandheldCompanion.Managers
             Vibrated?.Invoke(LargeMotor, SmallMotor);
         }
 
+        /// <summary>
+        /// Sets the system sleep state. When sleeping, UpdateInputs will only update the virtual
+        /// controller if button state has changed, preventing gyro from waking the device.
+        /// </summary>
+        public static void SetSystemSleepState(bool sleeping)
+        {
+            isSystemSleeping = sleeping;
+            if (!sleeping)
+                lastReportedState = null;
+        }
+
         public static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion)
         {
             // Skip sending inputs to virtual controller when listening for hotkey inputs
             if (InputsManager.IsListening)
                 return;
 
-            vTarget?.UpdateInputsAsync(controllerState, gamepadMotion);
+            // During sleep mode, only update the virtual controller if button state has changed.
+            // This prevents the virtual controller from waking the device with constant gyro reports.
+            if (isSystemSleeping)
+            {
+                if (lastReportedState is null || !lastReportedState.ButtonState.Equals(controllerState.ButtonState))
+                {
+                    vTarget?.UpdateInputsAsync(controllerState, null);
+                    lastReportedState = controllerState.Clone() as ControllerState;
+                }
+            }
+            else
+            {
+                // Normal operation: always update with full state including gyro
+                vTarget?.UpdateInputsAsync(controllerState, gamepadMotion);
+                lastReportedState = null; // Clear cached state when not sleeping
+            }
         }
     }
 }

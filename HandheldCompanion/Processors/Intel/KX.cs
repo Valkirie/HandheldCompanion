@@ -263,20 +263,40 @@ public class KX
             return -1; // failed
 
         string hex = TDPToHex(limit);
+        string writeValue = $"0x8{hex.Substring(0, 1)}{hex.Substring(1)}";
+        long expectedValue = Convert.ToInt64(writeValue, 16);
 
         // register command
-        startInfo.Arguments = $"/wrmem16 {mchbar}{pointer1} 0x8{hex.Substring(0, 1)}{hex.Substring(1)}";
+        startInfo.Arguments = $"/wrmem16 {mchbar}{pointer1} {writeValue}";
         using (Process? ProcessOutput = Process.Start(startInfo))
         {
             if (ProcessOutput is null)
                 return -1;
 
-            string? line = ProcessOutput.StandardOutput.ReadLine();
-            if (string.IsNullOrEmpty(line))
-                return 0;
+            try
+            {
+                while (!ProcessOutput.StandardOutput.EndOfStream)
+                {
+                    string? line = ProcessOutput.StandardOutput.ReadLine();
+                    if (string.IsNullOrEmpty(line))
+                        continue;
+
+                    if (!line.Contains("Return"))
+                        continue;
+
+                    // Parse return value and compare with submitted value
+                    line = CommonUtils.Between(line, "Return ");
+                    if (string.IsNullOrEmpty(line))
+                        continue;
+
+                    if (long.TryParse(line, out long returnedValue) && returnedValue == expectedValue)
+                        return 0; // success
+                }
+            }
+            catch { }
         }
 
-        return -1; // implement error code support
+        return -1; // failed
     }
 
     internal int set_msr_limits(int PL1, int PL2)
@@ -287,19 +307,41 @@ public class KX
         string hexPL1 = TDPToHex(PL1);
         string hexPL2 = TDPToHex(PL2);
 
+        // The return value is the data portion (second value)
+        string dataHex = $"00DD8{hexPL1}";
+        long expectedValue = Convert.ToInt64(dataHex, 16);
+
         // register command
-        startInfo.Arguments = $"/wrmsr 0x610 0x00438{hexPL2} 00DD8{hexPL1}";
+        startInfo.Arguments = $"/wrmsr 0x610 0x00438{hexPL2} {dataHex}";
         using (Process? ProcessOutput = Process.Start(startInfo))
         {
             if (ProcessOutput is null)
                 return -1;
 
-            string? line = ProcessOutput.StandardOutput.ReadLine();
-            if (string.IsNullOrEmpty(line))
-                return 0; // success
+            try
+            {
+                while (!ProcessOutput.StandardOutput.EndOfStream)
+                {
+                    string? line = ProcessOutput.StandardOutput.ReadLine();
+                    if (string.IsNullOrEmpty(line))
+                        continue;
+
+                    if (!line.Contains("Return"))
+                        continue;
+
+                    // Parse return value and compare with submitted data value
+                    line = CommonUtils.Between(line, "Return ");
+                    if (string.IsNullOrEmpty(line))
+                        continue;
+
+                    if (long.TryParse(line, out long returnedValue) && returnedValue == expectedValue)
+                        return 0; // success
+                }
+            }
+            catch { }
         }
 
-        return -1; // implement error code support
+        return -1; // failed
     }
 
     public int set_msr_undervolt(string commandHex, int offsetMv)
@@ -324,18 +366,40 @@ public class KX
 
         // Build data field: 0x<VID>00000 (e.g. 0xF9C00000)
         string dataHex = $"0x{vidHex}00000";
+        long expectedValue = Convert.ToInt64(dataHex, 16);
 
         // Call KX: /wrmsr 0x150 <commandHex> <dataHex>
         startInfo.Arguments = $"/wrmsr 0x150 {commandHex} {dataHex}";
 
         using (var processOutput = Process.Start(startInfo))
         {
-            string? line = processOutput?.StandardOutput.ReadLine();
-            if (string.IsNullOrEmpty(line))
-                return 0; // success
+            if (processOutput is null)
+                return -1;
+
+            try
+            {
+                while (!processOutput.StandardOutput.EndOfStream)
+                {
+                    string? line = processOutput.StandardOutput.ReadLine();
+                    if (string.IsNullOrEmpty(line))
+                        continue;
+
+                    if (!line.Contains("Return"))
+                        continue;
+
+                    // Parse return value and compare with submitted data value
+                    line = CommonUtils.Between(line, "Return ");
+                    if (string.IsNullOrEmpty(line))
+                        continue;
+
+                    if (long.TryParse(line, out long returnedValue) && returnedValue == expectedValue)
+                        return 0; // success
+                }
+            }
+            catch { }
         }
 
-        return -1; // implement error code support
+        return -1; // failed
     }
 
     private string TDPToHex(int decValue)
@@ -358,6 +422,7 @@ public class KX
             return -1; // failed
 
         string hex = ClockToHex(clock);
+        long expectedValue = Convert.ToInt64(hex, 16);
 
         startInfo.Arguments = $"/wrmem8 {mchbar}{pnt_clock} {hex}";
         using (Process? ProcessOutput = Process.Start(startInfo))
@@ -365,12 +430,30 @@ public class KX
             if (ProcessOutput is null)
                 return -1;
 
-            string? line = ProcessOutput.StandardOutput.ReadLine();
-            if (string.IsNullOrEmpty(line))
-                return 0;
+            try
+            {
+                while (!ProcessOutput.StandardOutput.EndOfStream)
+                {
+                    string? line = ProcessOutput.StandardOutput.ReadLine();
+                    if (string.IsNullOrEmpty(line))
+                        continue;
+
+                    if (!line.Contains("Return"))
+                        continue;
+
+                    // Parse return value and compare with submitted value
+                    line = CommonUtils.Between(line, "Return ");
+                    if (string.IsNullOrEmpty(line))
+                        continue;
+
+                    if (long.TryParse(line, out long returnedValue) && returnedValue == expectedValue)
+                        return 0; // success
+                }
+            }
+            catch { }
         }
 
-        return -1; // implement error code support
+        return -1; // failed
     }
 
     internal int get_gfx_clk()

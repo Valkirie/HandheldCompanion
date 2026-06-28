@@ -109,6 +109,13 @@ public class GPDWin5 : IDevice
 
     public override bool IsReady()
     {
+        // Early return if device is already bound and connected
+        if (hidDevices.TryGetValue(BackButtonsHidId, out HidDevice? boundDevice))
+        {
+            if (boundDevice.IsConnected /* && boundDevice.IsOpen */)
+                return true;
+        }
+
         IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 0);
         foreach (HidDevice device in devices)
         {

@@ -40,8 +40,6 @@ public partial class QuickDevicePage : Page
         {
             // Unsubscribe from all events
             ViewModel.RequestAYANEOFlipScreenConfirmation -= ViewModel_RequestAYANEOFlipScreenConfirmation;
-            ViewModel.Close();
-            ViewModel = null;
         }
     }
 
