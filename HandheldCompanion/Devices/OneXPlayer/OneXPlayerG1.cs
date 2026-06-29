@@ -106,8 +106,8 @@ namespace HandheldCompanion.Devices
             }
 
             // Same IMU orientation pattern as other modern ONEX devices
-            GyrometerAxis = new Vector3(1.0f, 1.0f, 1.0f);
-            AccelerometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
+            GyroMatrix = new() { Axis = new Vector3(1.0f, 1.0f, 1.0f) };
+            AcceleroMatrix = new() { Axis = new Vector3(1.0f, -1.0f, 1.0f) };
         }
     }
 
@@ -124,8 +124,8 @@ namespace HandheldCompanion.Devices
             GfxClock = new double[] { 100, 2250 };
             CpuClock = 5100;
 
-            GyrometerAxis = new Vector3(1.0f, 1.0f, 1.0f);
-            AccelerometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
+            GyroMatrix = new() { Axis = new Vector3(1.0f, 1.0f, 1.0f) };
+            AcceleroMatrix = new() { Axis = new Vector3(1.0f, -1.0f, 1.0f) };
         }
     }
 }

@@ -17,20 +17,26 @@ public class OneXPlayerMini : OneXAOKZOE
         ProductIllustration = "device_onexplayer_mini";
         ProductModel = "ONEXPLAYERMini";
 
-        GyrometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
-        GyrometerAxisSwap = new SortedDictionary<char, char>
+        GyroMatrix = new()
         {
-            { 'X', 'X' },
-            { 'Y', 'Z' },
-            { 'Z', 'Y' }
+            Axis = new Vector3(1.0f, -1.0f, 1.0f),
+            AxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' }
+            }
         };
 
-        AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
-        AccelerometerAxisSwap = new SortedDictionary<char, char>
+        AcceleroMatrix = new()
         {
-            { 'X', 'X' },
-            { 'Y', 'Z' },
-            { 'Z', 'Y' }
+            Axis = new Vector3(-1.0f, -1.0f, 1.0f),
+            AxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' }
+            }
         };
 
         ECDetails = new ECDetails
@@ -146,7 +152,7 @@ public class OneXPlayerMiniAMD : OneXPlayerMini
         GfxClock = new double[] { 100, 2000 };
         CpuClock = 4400;
 
-        AccelerometerAxis = new Vector3(1.0f, 1.0f, 1.0f);
+        AcceleroMatrix = new() { Axis = new Vector3(1.0f, 1.0f, 1.0f) };
     }
 }
 
@@ -160,14 +166,17 @@ public class OneXPlayerMiniIntel : OneXPlayerMini
         GfxClock = new double[] { 100, 1400 };
         CpuClock = 4700;
 
-        GyrometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
-        GyrometerAxisSwap = new SortedDictionary<char, char>
+        GyroMatrix = new()
         {
-            { 'X', 'Y' },
-            { 'Y', 'Z' },
-            { 'Z', 'X' }
+            Axis = new Vector3(1.0f, -1.0f, -1.0f),
+            AxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'Y' },
+                { 'Y', 'Z' },
+                { 'Z', 'X' }
+            }
         };
 
-        AccelerometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
+        AcceleroMatrix = new() { Axis = new Vector3(1.0f, -1.0f, -1.0f) };
     }
 }

@@ -32,8 +32,8 @@ namespace HandheldCompanion.Devices.Lenovo
                 { 0xE311, new HidFilter(unchecked((short)0xFFA0), unchecked(0x0001)) }, // dinput
             };
 
-            GyrometerAxis = new Vector3(-1.0f, 1.0f, 1.0f);
-            AccelerometerAxis = new Vector3(-1.0f, 1.0f, 1.0f);
+            GyroMatrix = new() { Axis = new Vector3(-1.0f, 1.0f, 1.0f) };
+            AcceleroMatrix = new() { Axis = new Vector3(-1.0f, 1.0f, 1.0f) };
 
             nTDP = new double[] { 15, 15, 20 };
             cTDP = new double[] { 5, 30 };

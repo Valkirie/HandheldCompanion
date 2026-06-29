@@ -27,12 +27,6 @@ namespace HandheldCompanion.Targets
                 SendVibrate(buffer[1], buffer[0]);
         }
 
-        public override Task UpdateInputsAsync(ControllerState Inputs, GamepadMotion gamepadMotion)
-        {
-            UpdateInputs(Inputs, gamepadMotion);
-            return Task.CompletedTask;
-        }
-
         protected override byte[] BuildReport(ControllerState inputs, GamepadMotion gamepadMotion)
         {
             byte[] data = _reportBuffer;

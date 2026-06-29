@@ -941,6 +941,7 @@ namespace HandheldCompanion.ViewModels
                     HIDmode.SteamDeckController => 4,
                     HIDmode.SwitchProController => 5,
                     HIDmode.SteamController => 6,
+                    HIDmode.NoController => 7,
                     _ => 0 // NotSelected
                 };
             }
@@ -954,6 +955,7 @@ namespace HandheldCompanion.ViewModels
                     4 => HIDmode.SteamDeckController,
                     5 => HIDmode.SwitchProController,
                     6 => HIDmode.SteamController,
+                    7 => HIDmode.NoController,
                     _ => HIDmode.NotSelected
                 };
                 if (SelectedProfile != null && SelectedProfile.HID != mode)
@@ -965,6 +967,11 @@ namespace HandheldCompanion.ViewModels
                         UpdateProfile();
                 }
             }
+        }
+
+        public bool CanEditHIDMode
+        {
+            get => SelectedProfile != null && !SelectedProfile.Default;
         }
 
         public int XInputPlusIndex
@@ -1766,6 +1773,7 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(IsProfileEnabledToggleEnabled));
             OnPropertyChanged(nameof(IsControllerPassthroughEnabled));
             OnPropertyChanged(nameof(SelectedSubProfileViewModel));
+            OnPropertyChanged(nameof(CanEditHIDMode));
 
             if (updateProfileContext)
                 OnProfileChanged();

@@ -60,20 +60,26 @@ namespace HandheldCompanion.Devices.Lenovo
             GfxClock = new double[] { 100, 2700 };
             CpuClock = 5100;
 
-            GyrometerAxis = new Vector3(-1.0f, 1.0f, 1.0f);
-            GyrometerAxisSwap = new SortedDictionary<char, char>
+            GyroMatrix = new()
             {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' }
+                Axis = new Vector3(-1.0f, 1.0f, 1.0f),
+                AxisSwap = new SortedDictionary<char, char>
+                {
+                    { 'X', 'X' },
+                    { 'Y', 'Z' },
+                    { 'Z', 'Y' }
+                }
             };
 
-            AccelerometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
-            AccelerometerAxisSwap = new SortedDictionary<char, char>
+            AcceleroMatrix = new()
             {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' }
+                Axis = new Vector3(1.0f, -1.0f, -1.0f),
+                AxisSwap = new SortedDictionary<char, char>
+                {
+                    { 'X', 'X' },
+                    { 'Y', 'Z' },
+                    { 'Z', 'Y' }
+                }
             };
 
             OEMChords.Add(new KeyboardChord("Desktop",

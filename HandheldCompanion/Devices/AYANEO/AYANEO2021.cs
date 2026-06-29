@@ -19,20 +19,26 @@ public class AYANEO2021 : IDevice
         this.GfxClock = new double[] { 100, 1500 };
         this.CpuClock = 4000;
 
-        this.GyrometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
-        this.GyrometerAxisSwap = new SortedDictionary<char, char>
+        this.GyroMatrix = new()
         {
-            { 'X', 'X' },
-            { 'Y', 'Z' },
-            { 'Z', 'Y' }
+            Axis = new Vector3(1.0f, -1.0f, 1.0f),
+            AxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' }
+            }
         };
 
-        this.AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
-        this.AccelerometerAxisSwap = new SortedDictionary<char, char>
+        this.AcceleroMatrix = new()
         {
-            { 'X', 'X' },
-            { 'Y', 'Z' },
-            { 'Z', 'Y' }
+            Axis = new Vector3(-1.0f, -1.0f, 1.0f),
+            AxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' }
+            }
         };
 
         this.OEMChords.Add(new KeyboardChord("WIN key",

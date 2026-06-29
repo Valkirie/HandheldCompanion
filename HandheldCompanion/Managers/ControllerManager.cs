@@ -1407,10 +1407,6 @@ public static class ControllerManager
             catch { }
         }
 
-        // Mark system as no longer sleeping to resume normal virtual controller updates
-        if (OS)
-            VirtualManager.SetSystemSleepState(false);
-
         // Slot monitor is always running; on resume we simply re-evaluate the target controller.
         PickTargetController();
     }
@@ -1426,10 +1422,6 @@ public static class ControllerManager
             }
             catch { }
         }
-
-        // Mark system as sleeping to suppress gyro-driven virtual controller updates
-        if (OS)
-            VirtualManager.SetSystemSleepState(true);
 
         // Stop any in-flight slot fix to avoid manipulating devices during suspend/shutdown.
         StopWatchdog();

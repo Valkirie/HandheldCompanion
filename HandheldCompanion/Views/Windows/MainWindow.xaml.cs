@@ -808,7 +808,8 @@ public partial class MainWindow : GamepadWindow
                         // resume platform(s)
                         PlatformManager.LibreHardware.Start();
 
-                        ControllerManager.Resume(true);
+                        VirtualManager.SetSystemSleepState(false);
+                        // ControllerManager.Resume(true);
                         SensorsManager.Resume(true);
                     }
 
@@ -848,7 +849,8 @@ public partial class MainWindow : GamepadWindow
                         // suspend manager(s)
                         ManagerFactory.Suspend();
 
-                        ControllerManager.Suspend(true);
+                        VirtualManager.SetSystemSleepState(true);
+                        // ControllerManager.Suspend(true);
                         TimerManager.Stop();
                         SensorsManager.Suspend(true);
 

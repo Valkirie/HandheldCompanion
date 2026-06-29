@@ -26,20 +26,26 @@ public class MinisforumV3 : IDevice
         this.GfxClock = new double[] { 100, 2700 };
         this.CpuClock = 5100;
 
-        GyrometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
-        GyrometerAxisSwap = new SortedDictionary<char, char>
+        GyroMatrix = new()
         {
-            { 'X', 'Y' },
-            { 'Y', 'X' },
-            { 'Z', 'Z' }
+            Axis = new Vector3(1.0f, -1.0f, 1.0f),
+            AxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'Y' },
+                { 'Y', 'X' },
+                { 'Z', 'Z' }
+            }
         };
 
-        AccelerometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
-        AccelerometerAxisSwap = new SortedDictionary<char, char>
+        AcceleroMatrix = new()
         {
-            { 'X', 'Y' },
-            { 'Y', 'X' },
-            { 'Z', 'Z' }
+            Axis = new Vector3(-1.0f, 1.0f, -1.0f),
+            AxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'Y' },
+                { 'Y', 'X' },
+                { 'Z', 'Z' }
+            }
         };
 
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileMinisforumV3BetterBattery, Properties.Resources.PowerProfileMinisforumV3BetterBatteryDesc)

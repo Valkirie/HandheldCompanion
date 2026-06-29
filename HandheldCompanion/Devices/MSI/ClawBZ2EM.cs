@@ -20,7 +20,7 @@ public class ClawBZ2EM : ClawA1M
         CpuClock = 5000;
 
         // unknown ?
-        GyrometerAxis = new Vector3(1.0f, 1.0f, -1.0f);
+        GyroMatrix = new() { Axis = new Vector3(1.0f, 1.0f, -1.0f) };
 
         // overwrite ClawA1M default power profiles
         Dictionary<Guid, double[]> tdpOverrides = new Dictionary<Guid, double[]>

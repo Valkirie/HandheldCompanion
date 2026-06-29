@@ -14,7 +14,10 @@ public class ROGAllyX : ROGAlly
         ProductIllustration = "device_rog_ally_x";
 
         // overwrite ROGAlly default gyrometer axis settings
-        GyrometerAxis = new Vector3(1.0f, 1.0f, -1.0f);
+        GyroMatrix = new()
+        {
+            Axis = new Vector3(1.0f, 1.0f, -1.0f)
+        };
 
         // overwrite ROGAlly default power profiles
         Dictionary<Guid, double[]> tdpOverrides = new Dictionary<Guid, double[]>

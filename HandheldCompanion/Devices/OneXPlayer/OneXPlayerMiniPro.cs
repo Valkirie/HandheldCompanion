@@ -14,7 +14,7 @@ public class OneXPlayerMiniPro : OneXPlayerMini
         GfxClock = new double[] { 100, 2200 };
         CpuClock = 4700;
 
-        AccelerometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
+        AcceleroMatrix = new() { Axis = new Vector3(1.0f, -1.0f, 1.0f) };
 
         OEMChords.Clear();
 

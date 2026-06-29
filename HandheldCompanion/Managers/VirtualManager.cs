@@ -1,5 +1,6 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Helpers;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
@@ -33,7 +34,9 @@ namespace HandheldCompanion.Managers
         // Sleep state tracking: when the system is in sleep mode, only report meaningful input changes
         // to prevent the virtual controller from waking the device with constant gyro reports.
         private static bool isSystemSleeping = false;
-        private static ControllerState? lastReportedState = null;
+
+        // Xbox stick noise filter threshold: ignore axis value changes smaller than this
+        private const short AxisNoiseThreshold = 150;
 
         public static bool IsInitialized;
 
@@ -234,6 +237,7 @@ namespace HandheldCompanion.Managers
 
             switch (profile.HID)
             {
+                case HIDmode.NoController:
                 case HIDmode.Xbox360Controller:
                 case HIDmode.DualShock4Controller:
                 case HIDmode.DualSenseController:
@@ -387,7 +391,7 @@ namespace HandheldCompanion.Managers
 
             try
             {
-                await SetControllerModeCore(mode).ConfigureAwait(false);
+                SetControllerModeCore(mode);
             }
             catch { }
             finally
@@ -402,7 +406,7 @@ namespace HandheldCompanion.Managers
 
             try
             {
-                await SetControllerStatusCore(status).ConfigureAwait(false);
+                SetControllerStatusCore(status);
             }
             catch { }
             finally
@@ -411,7 +415,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static async Task SetControllerModeCore(HIDmode mode)
+        private static void SetControllerModeCore(HIDmode mode)
         {
             // If the requested mode is already active, do nothing
             if (HIDmode == mode)
@@ -429,7 +433,7 @@ namespace HandheldCompanion.Managers
                 vTarget.Disconnected -= OnTargetDisconnected;
                 vTarget.Vibrated -= OnTargetVibrated;
                 vTarget.StatusChanged -= OnTargetConnectStatusChanged;
-                await vTarget.DisconnectAsync().ConfigureAwait(false);
+                vTarget.Disconnect();
                 vTarget = null;
                 NotifyMasterIntervalOverrideChanged();
             }
@@ -438,8 +442,13 @@ namespace HandheldCompanion.Managers
             switch (mode)
             {
                 case HIDmode.NoController:
-                    // Nothing to initialize
-                    break;
+                    {
+                        HIDmode = mode;
+                        ControllerSelected?.Invoke(mode);
+                        NotifyMasterIntervalOverrideChanged();
+                        SetControllerStatusCore(HIDstatus);
+                    }
+                    return;
 
                 case HIDmode.DualShock4Controller:
                     vTarget = new DualShock4Target(0x054C, 0x05C4); // DualShock 4 [CUH-ZCT1x]
@@ -496,10 +505,10 @@ namespace HandheldCompanion.Managers
             ControllerSelected?.Invoke(mode);
             NotifyMasterIntervalOverrideChanged();
 
-            await SetControllerStatusCore(HIDstatus).ConfigureAwait(false);
+            SetControllerStatusCore(HIDstatus);
         }
 
-        private static async Task SetControllerStatusCore(HIDstatus status)
+        private static void SetControllerStatusCore(HIDstatus status)
         {
             if (vTarget is null)
             {
@@ -516,10 +525,10 @@ namespace HandheldCompanion.Managers
                     if (!CanUseControllerMode(HIDmode))
                         break;
 
-                    success = vTarget.IsConnected || await vTarget.ConnectAsync().ConfigureAwait(false);
+                    success = vTarget.IsConnected || vTarget.Connect();
                     break;
                 case HIDstatus.Disconnected:
-                    success = !vTarget.IsConnected || await vTarget.DisconnectAsync().ConfigureAwait(false);
+                    success = !vTarget.IsConnected || vTarget.Disconnect();
                     break;
             }
 
@@ -555,8 +564,27 @@ namespace HandheldCompanion.Managers
         public static void SetSystemSleepState(bool sleeping)
         {
             isSystemSleeping = sleeping;
-            if (!sleeping)
-                lastReportedState = null;
+        }
+
+        /// <summary>
+        /// Compares two axis states with a noise filter threshold for Xbox mode.
+        /// Returns true if axis values differ by more than the noise threshold.
+        /// </summary>
+        private static bool AxisStateHasSignificantChange(AxisState? previous, AxisState current)
+        {
+            if (previous is null)
+                return !current.IsEmpty();
+
+            foreach (AxisFlags axis in AxisState.TrueAxis)
+            {
+                short prevValue = previous[axis];
+                short currValue = current[axis];
+
+                if (Math.Abs(currValue - prevValue) > AxisNoiseThreshold)
+                    return true;
+            }
+
+            return false;
         }
 
         public static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion)
@@ -565,22 +593,10 @@ namespace HandheldCompanion.Managers
             if (InputsManager.IsListening)
                 return;
 
-            // During sleep mode, only update the virtual controller if button state has changed.
-            // This prevents the virtual controller from waking the device with constant gyro reports.
             if (isSystemSleeping)
-            {
-                if (lastReportedState is null || !lastReportedState.ButtonState.Equals(controllerState.ButtonState))
-                {
-                    vTarget?.UpdateInputsAsync(controllerState, null);
-                    lastReportedState = controllerState.Clone() as ControllerState;
-                }
-            }
-            else
-            {
-                // Normal operation: always update with full state including gyro
-                vTarget?.UpdateInputsAsync(controllerState, gamepadMotion);
-                lastReportedState = null; // Clear cached state when not sleeping
-            }
+                return;
+
+            vTarget?.UpdateInputs(controllerState, gamepadMotion);
         }
     }
 }

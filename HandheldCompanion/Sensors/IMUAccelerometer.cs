@@ -107,29 +107,24 @@ public class IMUAccelerometer : IMUSensor
     private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
     {
         IDevice device = IDevice.GetCurrent();
-        var accelerometerAxisSwap = device.AccelerometerAxisSwap;
-        Vector3 accelerometerAxis = device.AccelerometerAxis;
+        var accelerometerAxisSwap = device.AcceleroMatrix.AxisSwap;
+        Vector3 accelerometerAxis = device.AcceleroMatrix.Axis;
+        int[] remapIndices = device.AcceleroMatrix.AxisRemapIndices;
 
-        foreach (char axis in reading_axis.Keys)
-        {
-            switch (accelerometerAxisSwap[axis])
-            {
-                default:
-                case 'X':
-                    reading_axis[axis] = args.Reading.AccelerationX;
-                    break;
-                case 'Y':
-                    reading_axis[axis] = args.Reading.AccelerationY;
-                    break;
-                case 'Z':
-                    reading_axis[axis] = args.Reading.AccelerationZ;
-                    break;
-            }
-        }
+        // Get raw readings
+        double rawX = args.Reading.AccelerationX;
+        double rawY = args.Reading.AccelerationY;
+        double rawZ = args.Reading.AccelerationZ;
 
-        reading.reading.X = (float)reading_axis['X'] * accelerometerAxis.X;
-        reading.reading.Y = (float)reading_axis['Y'] * accelerometerAxis.Y;
-        reading.reading.Z = (float)reading_axis['Z'] * accelerometerAxis.Z;
+        // Direct axis remapping using pre-computed indices
+        // remapIndices[input] tells us which output axis each input goes to
+        readingAxis[remapIndices[0]] = rawX;  // X input → output axis at remapIndices[0]
+        readingAxis[remapIndices[1]] = rawY;  // Y input → output axis at remapIndices[1]
+        readingAxis[remapIndices[2]] = rawZ;  // Z input → output axis at remapIndices[2]
+
+        reading.reading.X = (float)readingAxis[0] * accelerometerAxis.X;
+        reading.reading.Y = (float)readingAxis[1] * accelerometerAxis.Y;
+        reading.reading.Z = (float)readingAxis[2] * accelerometerAxis.Z;
         reading.timestamp = args.Reading.Timestamp.DateTime.TimeOfDay.TotalMilliseconds;
 
         base.ReadingChanged();

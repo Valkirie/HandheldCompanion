@@ -20,20 +20,26 @@ public class AYANEONEXT : IDevice
         this.GfxClock = new double[] { 100, 2000 };
         this.CpuClock = 4500;
 
-        this.GyrometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
-        this.GyrometerAxisSwap = new SortedDictionary<char, char>
+        this.GyroMatrix = new()
         {
-            { 'X', 'X' },
-            { 'Y', 'Z' },
-            { 'Z', 'Y' }
+            Axis = new Vector3(1.0f, -1.0f, 1.0f),
+            AxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' }
+            }
         };
 
-        this.AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
-        this.AccelerometerAxisSwap = new SortedDictionary<char, char>
+        this.AcceleroMatrix = new()
         {
-            { 'X', 'X' },
-            { 'Y', 'Z' },
-            { 'Z', 'Y' }
+            Axis = new Vector3(-1.0f, -1.0f, 1.0f),
+            AxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' }
+            }
         };
 
         this.OEMChords.Add(new KeyboardChord("Custom key BIG",

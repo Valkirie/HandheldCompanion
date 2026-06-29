@@ -876,7 +876,10 @@
                                 <ui:FontIcon Glyph="&#xE7FC;" />
                             </ui:SettingsCard.HeaderIcon>
 
-                            <ComboBox x:Name="EmulatedControllerComboBox" SelectedIndex="{Binding HIDModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBox
+                                x:Name="EmulatedControllerComboBox"
+                                IsEnabled="{Binding CanEditHIDMode}"
+                                SelectedIndex="{Binding HIDModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_EmulatedControllerDefault}" />
                                 <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_Xbox360Controller}" />
                                 <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_DualShock4Controller}" />
@@ -884,6 +887,7 @@
                                 <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_SteamDeckController}" />
                                 <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_SwitchProController}" />
                                 <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_SteamController}" />
+                                <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_NoController}" />
                             </ComboBox>
                         </ui:SettingsCard>
 

@@ -74,6 +74,50 @@ public struct HidFilter
     }
 }
 
+public struct IMUMatrix
+{
+    public Vector3 Axis;
+    public SortedDictionary<char, char> AxisSwap;
+
+    // Pre-computed indices for fast axis remapping: AxisRemapIndices[input] = output_axis_index
+    // where 0=X, 1=Y, 2=Z. Eliminates dictionary lookups in hot sensor paths.
+    private int[]? _axisRemapIndices;
+    public int[] AxisRemapIndices
+    {
+        get
+        {
+            if (_axisRemapIndices == null)
+                ComputeRemapIndices();
+            return _axisRemapIndices!;
+        }
+    }
+
+    public IMUMatrix()
+    {
+        Axis = new Vector3(1.0f, 1.0f, 1.0f);
+        AxisSwap = new()
+        {
+            { 'X', 'X' },
+            { 'Y', 'Y' },
+            { 'Z', 'Z' }
+        };
+        _axisRemapIndices = new[] { 0, 1, 2 }; // X?0, Y?1, Z?2 (identity mapping)
+    }
+
+    /// <summary>
+    /// Computes the AxisRemapIndices from the AxisSwap dictionary.
+    /// Maps each input axis position (X=0, Y=1, Z=2) to its remapped output axis.
+    /// </summary>
+    private void ComputeRemapIndices()
+    {
+        _axisRemapIndices = new int[3];
+        // Map input positions: 0=X, 1=Y, 2=Z
+        _axisRemapIndices[0] = AxisSwap['X'] switch { 'Y' => 1, 'Z' => 2, _ => 0 }; // X input ? output axis
+        _axisRemapIndices[1] = AxisSwap['Y'] switch { 'X' => 0, 'Z' => 2, _ => 1 }; // Y input ? output axis
+        _axisRemapIndices[2] = AxisSwap['Z'] switch { 'X' => 0, 'Y' => 1, _ => 2 }; // Z input ? output axis
+    }
+}
+
 public abstract class IDevice
 {
     public delegate void KeyPressedEventHandler(ButtonFlags button);
@@ -98,21 +142,8 @@ public abstract class IDevice
     protected Dictionary<int, HidDevice> hidDevices = [];
     protected Dictionary<int, HidFilter> hidFilters = [];
 
-    public Vector3 AccelerometerAxis = new(1.0f, 1.0f, 1.0f);
-    public SortedDictionary<char, char> AccelerometerAxisSwap = new()
-    {
-        { 'X', 'X' },
-        { 'Y', 'Y' },
-        { 'Z', 'Z' }
-    };
-
-    public Vector3 GyrometerAxis = new(1.0f, 1.0f, 1.0f);
-    public SortedDictionary<char, char> GyrometerAxisSwap = new()
-    {
-        { 'X', 'X' },
-        { 'Y', 'Y' },
-        { 'Z', 'Z' }
-    };
+    public IMUMatrix AcceleroMatrix;
+    public IMUMatrix GyroMatrix;
 
     public GamepadMotion GamepadMotion;
 
@@ -193,6 +224,10 @@ public abstract class IDevice
     public IDevice()
     {
         GamepadMotion = new(ProductIllustration, CalibrationMode.Manual  /*| CalibrationMode.SensorFusion */);
+
+        // initialize IMU matrices with default values
+        AcceleroMatrix = new();
+        GyroMatrix = new();
 
         // add default power profile
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileDefaultName, Properties.Resources.PowerProfileDefaultDescription)

@@ -245,9 +245,10 @@
 
                 <ui:Frame
                     Name="ContentFrame"
-                    Navigated="ContentFrame_Navigated"
                     Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
-                    HorizontalAlignment="Left" />
+                    Margin="0,20,0,0"
+                    HorizontalAlignment="Left"
+                    Navigated="ContentFrame_Navigated" />
             </controls:AdaptiveNavigationView>
         </ikw:SimpleStackPanel>
     </StackPanel>

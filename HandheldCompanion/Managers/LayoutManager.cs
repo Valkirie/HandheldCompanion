@@ -260,7 +260,7 @@ public class LayoutManager : IManager
             _ => null,
         };
 
-        if (target is not null && !ReferenceEquals(activeLayoutSource, target))
+        if (target is not null)
             SetActiveLayout(target);
     }
 

@@ -34,20 +34,26 @@ public class GPDWin4 : IDevice
             FanValueMax = 127
         };
 
-        GyrometerAxis = new Vector3(-1.0f, 1.0f, 1.0f);
-        GyrometerAxisSwap = new SortedDictionary<char, char>
+        GyroMatrix = new()
         {
-            { 'X', 'X' },
-            { 'Y', 'Z' },
-            { 'Z', 'Y' }
+            Axis = new Vector3(-1.0f, 1.0f, 1.0f),
+            AxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' }
+            }
         };
 
-        AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
-        AccelerometerAxisSwap = new SortedDictionary<char, char>
+        AcceleroMatrix = new()
         {
-            { 'X', 'X' },
-            { 'Y', 'Z' },
-            { 'Z', 'Y' }
+            Axis = new Vector3(-1.0f, -1.0f, 1.0f),
+            AxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' }
+            }
         };
 
         // Note, OEM1 not configured as this device has it's own Menu button for guide button

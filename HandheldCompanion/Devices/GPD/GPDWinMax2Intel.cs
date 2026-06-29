@@ -13,14 +13,17 @@ public class GPDWinMax2Intel : GPDWinMax2
         GfxClock = new double[] { 100, 1400 };
         CpuClock = 4700;
 
-        GyrometerAxis = new Vector3(1.0f, 1.0f, 1.0f);
-        GyrometerAxisSwap = new SortedDictionary<char, char>
+        GyroMatrix = new()
         {
-            { 'X', 'X' },
-            { 'Y', 'Z' },
-            { 'Z', 'Y' }
+            Axis = new Vector3(1.0f, 1.0f, 1.0f),
+            AxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' }
+            }
         };
 
-        AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
+        AcceleroMatrix = new() { Axis = new Vector3(-1.0f, -1.0f, 1.0f) };
     }
 }

@@ -2,8 +2,11 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using Windows.System.Power;
 
 namespace HandheldCompanion.Managers;
@@ -41,6 +44,25 @@ public static class SystemManager
     public static event SessionLockChangedEventHandler? SessionLockChanged;
     public delegate void SessionLockChangedEventHandler(bool isLocked);
 
+    public static event PowerModeChangedEventHandler? PowerModeChanged;
+    public delegate void PowerModeChangedEventHandler(PowerMode mode, WakeReason wakeReason);
+
+    public enum PowerMode
+    {
+        Suspend = 0,
+        Resume = 1
+    }
+
+    public enum WakeReason
+    {
+        Unknown = 0,
+        PowerButton = 1,
+        FingerprintReader = 4,
+        Joystick = 7,
+        ChargerConnected = 28,
+        Other = 999
+    }
+
     #endregion
 
     public const uint ES_CONTINUOUS = 0x80000000;
@@ -62,8 +84,9 @@ public static class SystemManager
     private static SystemStatus previousSystemStatus = SystemStatus.SystemBooting;
     private static PowerLineStatus previousPowerLineStatus = PowerLineStatus.Offline;
 
-    // Used to suppress SystemStatusChanged when Modern Standby auto-resleep is triggered
-    private static bool _suppressNextSystemStatusChanged;
+    // EventLogWatcher for power mode detection
+    private static EventLogWatcher? _powerModeWatcher;
+    private static readonly XNamespace _ns = "http://schemas.microsoft.com/win/2004/08/events/event";
 
     public static bool IsInitialized;
 
@@ -110,6 +133,24 @@ public static class SystemManager
 
     private static void SubscribeToSystemEvents()
     {
+        // Initialize EventLogWatcher for power mode detection
+        try
+        {
+            // Query for Kernel-Power events: 506 (sleep entry) and 507 (wake)
+            string xpath = "*[System[(EventID=506 or EventID=507) and Provider[@Name='Microsoft-Windows-Kernel-Power']]]";
+            var query = new EventLogQuery("System", PathType.LogName, xpath);
+
+            _powerModeWatcher = new EventLogWatcher(query);
+            _powerModeWatcher.EventRecordWritten += OnEventRecordWritten;
+            _powerModeWatcher.Enabled = true;
+
+            LogManager.LogInformation("[SystemManager] Power mode watcher initialized");
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("[SystemManager] Failed to initialize power mode watcher: {0}", ex.Message);
+        }
+
         // manage events
         SystemEvents.PowerModeChanged += OnPowerChange;
         SystemEvents.SessionSwitch += OnSessionSwitch;
@@ -125,6 +166,25 @@ public static class SystemManager
 
     private static void UnsubscribeFromSystemEvents()
     {
+        // Clean up EventLogWatcher
+        if (_powerModeWatcher != null)
+        {
+            try
+            {
+                _powerModeWatcher.Enabled = false;
+                _powerModeWatcher.EventRecordWritten -= OnEventRecordWritten;
+                _powerModeWatcher.Dispose();
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("[SystemManager] Error disposing power mode watcher: {0}", ex.Message);
+            }
+            finally
+            {
+                _powerModeWatcher = null;
+            }
+        }
+
         // manage events
         SystemEvents.PowerModeChanged -= OnPowerChange;
         SystemEvents.SessionSwitch -= OnSessionSwitch;
@@ -133,6 +193,25 @@ public static class SystemManager
         PowerManager.PowerSupplyStatusChanged -= BatteryStatusChanged;
         PowerManager.RemainingChargePercentChanged -= BatteryStatusChanged;
         PowerManager.RemainingDischargeTimeChanged -= BatteryStatusChanged;
+    }
+
+    private static void OnPowerChange(object s, PowerModeChangedEventArgs e)
+    {
+        switch (e.Mode)
+        {
+            case PowerModes.StatusChange:
+                {
+                    if (previousPowerLineStatus != SystemInformation.PowerStatus.PowerLineStatus)
+                    {
+                        // raise event
+                        PowerLineStatusChanged?.Invoke(SystemInformation.PowerStatus.PowerLineStatus);
+
+                        // update status
+                        previousPowerLineStatus = SystemInformation.PowerStatus.PowerLineStatus;
+                    }
+                }
+                return;
+        }
     }
 
     private static void BatteryStatusChanged(object? sender, object? e)
@@ -191,45 +270,67 @@ public static class SystemManager
         LogManager.LogInformation("{0} has stopped", "PowerManager");
     }
 
-    /// <summary>
-    /// Suppresses the next SystemStatusChanged event. Used when Modern Standby auto-resleep is triggered
-    /// to prevent managers from unnecessarily starting when the system immediately goes back to sleep.
-    /// </summary>
-    public static void SuppressNextSystemStatusChanged()
+    private static void OnEventRecordWritten(object? sender, EventRecordWrittenEventArgs e)
     {
-        _suppressNextSystemStatusChanged = true;
+        if (e.EventRecord == null)
+            return;
+
+        int eventId = e.EventRecord.Id;
+        WakeReason wakeReason = ParseWakeReason(e.EventRecord);
+
+        try
+        {
+            if (eventId == 506) // Modern Standby sleep entry
+            {
+                isPowerSuspended = true;
+                LogManager.LogDebug("Device entering sleep (Kernel-Power 506)");
+                PowerModeChanged?.Invoke(PowerMode.Suspend, wakeReason);
+                PerformSystemRoutine();
+            }
+            else if (eventId == 507) // Modern Standby wake
+            {
+                isPowerSuspended = false;
+                LogManager.LogDebug("Device waking from sleep (Kernel-Power 507)");
+                PowerModeChanged?.Invoke(PowerMode.Resume, wakeReason);
+                PerformSystemRoutine();
+            }
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Exception in OnEventRecordWritten: {0}", ex.Message);
+        }
     }
 
-    private static void OnPowerChange(object s, PowerModeChangedEventArgs e)
+    private static WakeReason ParseWakeReason(EventRecord evt)
     {
-        switch (e.Mode)
+        try
         {
-            case PowerModes.Resume:
-                isPowerSuspended = false;
-                break;
+            var xml = evt.ToXml();
+            var doc = XDocument.Parse(xml);
 
-            case PowerModes.Suspend:
-                isPowerSuspended = true;
-                break;
+            var reasonVal = doc
+                .Descendants(_ns + "Data")
+                .FirstOrDefault(x => x.Attribute("Name")?.Value == "Reason")
+                ?.Value;
 
-            default:
-            case PowerModes.StatusChange:
-                {
-                    if (previousPowerLineStatus != SystemInformation.PowerStatus.PowerLineStatus)
-                    {
-                        // raise event
-                        PowerLineStatusChanged?.Invoke(SystemInformation.PowerStatus.PowerLineStatus);
+            if (!int.TryParse(reasonVal, out int code))
+                return WakeReason.Unknown;
 
-                        // update status
-                        previousPowerLineStatus = SystemInformation.PowerStatus.PowerLineStatus;
-                    }
-                }
-                return;
+            return code switch
+            {
+                1 => WakeReason.PowerButton,
+                4 => WakeReason.FingerprintReader,
+                7 => WakeReason.Joystick,
+                28 => WakeReason.ChargerConnected,
+                44 => WakeReason.FingerprintReader,
+                0 => WakeReason.Unknown,
+                _ => WakeReason.Other
+            };
         }
-
-        LogManager.LogDebug("Device power mode set to {0}", e.Mode);
-
-        PerformSystemRoutine();
+        catch
+        {
+            return WakeReason.Unknown;
+        }
     }
 
     private static void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
@@ -257,15 +358,6 @@ public static class SystemManager
         // only raise event is system status has changed
         if (previousSystemStatus == currentSystemStatus)
             return;
-
-        // Check if we should suppress this event (Modern Standby auto-resleep scenario)
-        if (_suppressNextSystemStatusChanged)
-        {
-            _suppressNextSystemStatusChanged = false;
-            LogManager.LogInformation("System status set to {0} (event suppressed for auto-resleep)", currentSystemStatus);
-            previousSystemStatus = currentSystemStatus;
-            return;
-        }
 
         LogManager.LogInformation("System status set to {0} from {1}", currentSystemStatus, previousSystemStatus);
         SystemStatusChanged?.Invoke(currentSystemStatus, previousSystemStatus);

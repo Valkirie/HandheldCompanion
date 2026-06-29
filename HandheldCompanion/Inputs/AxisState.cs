@@ -12,6 +12,15 @@ public partial class AxisState : ICloneable, IDisposable
 {
     public static readonly AxisFlags[] AllAxis = Enum.GetValues<AxisFlags>();
     public static readonly AxisLayoutFlags[] AllAxisLayoutFlags = Enum.GetValues<AxisLayoutFlags>();
+    public static readonly AxisFlags[] TrueAxis = new[]
+    {
+        AxisFlags.LeftStickX,
+        AxisFlags.LeftStickY,
+        AxisFlags.RightStickX,
+        AxisFlags.RightStickY,
+        AxisFlags.L2,
+        AxisFlags.R2
+    };
 
     // Runtime storage (no locks, no dictionaries)
     [JsonIgnore]

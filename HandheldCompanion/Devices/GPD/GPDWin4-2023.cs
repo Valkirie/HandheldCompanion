@@ -32,20 +32,26 @@ public class GPDWin4_2023 : IDevice
             FanValueMax = 184
         };
 
-        this.GyrometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
-        this.GyrometerAxisSwap = new SortedDictionary<char, char>
+        this.GyroMatrix = new()
         {
-            { 'X', 'Y' }, // out X from in Y (sign +)
-            { 'Y', 'Z' }, // out Y from in Z (sign -)
-            { 'Z', 'X' }  // out Z from in X (sign -)
+            Axis = new Vector3(1.0f, -1.0f, -1.0f),
+            AxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'Y' }, // out X from in Y (sign +)
+                { 'Y', 'Z' }, // out Y from in Z (sign -)
+                { 'Z', 'X' }  // out Z from in X (sign -)
+            }
         };
 
-        this.AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
-        this.AccelerometerAxisSwap = new SortedDictionary<char, char>
+        this.AcceleroMatrix = new()
         {
-            { 'X', 'X' }, // out X from in X (sign -)
-            { 'Y', 'Z' }, // out Y from in Z (sign -)
-            { 'Z', 'Y' }  // out Z from in Y (sign +)
+            Axis = new Vector3(-1.0f, -1.0f, 1.0f),
+            AxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'X' }, // out X from in X (sign -)
+                { 'Y', 'Z' }, // out Y from in Z (sign -)
+                { 'Z', 'Y' }  // out Z from in Y (sign +)
+            }
         };
 
         // Note, OEM1 not configured as this device has it's own Menu button for guide button

@@ -19,8 +19,8 @@ public class OneXPlayerX1Mini : OneXPlayerX1
         GfxClock = new double[] { 100, 2700 };
         CpuClock = 5100;
 
-        GyrometerAxis = new Vector3(1.0f, 1.0f, 1.0f);
-        AccelerometerAxis = new Vector3(1.0f, -1.0f, 1.0f);
+        GyroMatrix = new() { Axis = new Vector3(1.0f, 1.0f, 1.0f) };
+        AcceleroMatrix = new() { Axis = new Vector3(1.0f, -1.0f, 1.0f) };
 
         EnableSerialPort = false;
 

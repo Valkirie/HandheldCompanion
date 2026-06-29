@@ -35,12 +35,9 @@ public abstract class IMUSensor : IDisposable
 {
     protected SensorReading reading = new();
 
-    protected Dictionary<char, double> reading_axis = new()
-    {
-        { 'X', 0.0d },
-        { 'Y', 0.0d },
-        { 'Z', 0.0d }
-    };
+    // Direct accumulation buffer for axis values (faster than Dictionary<char, double>)
+    // Index: 0=X, 1=Y, 2=Z
+    protected double[] readingAxis = new double[3];
 
     public object? sensor;
     protected SensorFamily sensorFamily;

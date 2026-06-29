@@ -71,20 +71,26 @@ public class GPDWin5 : IDevice
             FanValueMax = 244
         };
 
-        GyrometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
-        GyrometerAxisSwap = new SortedDictionary<char, char>
+        GyroMatrix = new()
         {
-            { 'X', 'Y' },
-            { 'Y', 'Z' },
-            { 'Z', 'X' }
+            Axis = new Vector3(1.0f, -1.0f, -1.0f),
+            AxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'Y' },
+                { 'Y', 'Z' },
+                { 'Z', 'X' }
+            }
         };
 
-        AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
-        AccelerometerAxisSwap = new SortedDictionary<char, char>
+        AcceleroMatrix = new()
         {
-            { 'X', 'X' },
-            { 'Y', 'Z' },
-            { 'Z', 'Y' }
+            Axis = new Vector3(-1.0f, -1.0f, 1.0f),
+            AxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' }
+            }
         };
 
         // GPD Win 5 specific chords

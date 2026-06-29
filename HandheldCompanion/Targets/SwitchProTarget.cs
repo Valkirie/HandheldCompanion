@@ -62,12 +62,6 @@ namespace HandheldCompanion.Targets
             LogManager.LogInformation("{0} initialized for VIIPER ({1:X4}:{2:X4})", ToString(), vendorId, productId);
         }
 
-        public override Task UpdateInputsAsync(ControllerState Inputs, GamepadMotion gamepadMotion)
-        {
-            UpdateInputs(Inputs, gamepadMotion);
-            return Task.CompletedTask;
-        }
-
         protected override byte[] BuildReport(ControllerState inputs, GamepadMotion gamepadMotion)
         {
             uint buttons = 0;

@@ -110,32 +110,24 @@ public class IMUGyrometer : IMUSensor
     private void ReadingChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
     {
         IDevice device = IDevice.GetCurrent();
-        var gyrometerAxisSwap = device.GyrometerAxisSwap;
-        Vector3 gyrometerAxis = device.GyrometerAxis;
+        var gyrometerAxisSwap = device.GyroMatrix.AxisSwap;
+        Vector3 gyrometerAxis = device.GyroMatrix.Axis;
+        int[] remapIndices = device.GyroMatrix.AxisRemapIndices;
 
-        foreach (char axis in reading_axis.Keys)
-        {
-            switch (gyrometerAxisSwap[axis])
-            {
-                default:
-                case 'X':
-                    if (!(Math.Abs(args.Reading.AngularVelocityX) >= threshold))
-                        reading_axis[axis] = args.Reading.AngularVelocityX;
-                    break;
-                case 'Y':
-                    if (!(Math.Abs(args.Reading.AngularVelocityY) >= threshold))
-                        reading_axis[axis] = args.Reading.AngularVelocityY;
-                    break;
-                case 'Z':
-                    if (!(Math.Abs(args.Reading.AngularVelocityZ) >= threshold))
-                        reading_axis[axis] = args.Reading.AngularVelocityZ;
-                    break;
-            }
-        }
+        // Get raw readings with threshold check
+        double rawX = Math.Abs(args.Reading.AngularVelocityX) >= threshold ? 0 : args.Reading.AngularVelocityX;
+        double rawY = Math.Abs(args.Reading.AngularVelocityY) >= threshold ? 0 : args.Reading.AngularVelocityY;
+        double rawZ = Math.Abs(args.Reading.AngularVelocityZ) >= threshold ? 0 : args.Reading.AngularVelocityZ;
 
-        reading.reading.X = (float)reading_axis['X'] * gyrometerAxis.X;
-        reading.reading.Y = (float)reading_axis['Y'] * gyrometerAxis.Y;
-        reading.reading.Z = (float)reading_axis['Z'] * gyrometerAxis.Z;
+        // Direct axis remapping using pre-computed indices
+        // remapIndices[input] tells us which output axis each input goes to
+        readingAxis[remapIndices[0]] = rawX;  // X input → output axis at remapIndices[0]
+        readingAxis[remapIndices[1]] = rawY;  // Y input → output axis at remapIndices[1]
+        readingAxis[remapIndices[2]] = rawZ;  // Z input → output axis at remapIndices[2]
+
+        reading.reading.X = (float)readingAxis[0] * gyrometerAxis.X;
+        reading.reading.Y = (float)readingAxis[1] * gyrometerAxis.Y;
+        reading.reading.Z = (float)readingAxis[2] * gyrometerAxis.Z;
         reading.timestamp = args.Reading.Timestamp.DateTime.TimeOfDay.TotalMilliseconds;
 
         base.ReadingChanged();

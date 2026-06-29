@@ -16,7 +16,7 @@ public class AYANEOSlide : AYANEO.AYANEODeviceCEii
         this.GfxClock = new double[] { 100, 2700 };
         this.CpuClock = 5100;
 
-        this.GyrometerAxis = new Vector3(1.0f, 1.0f, -1.0f);
-        this.AccelerometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
+        this.GyroMatrix = new() { Axis = new Vector3(1.0f, 1.0f, -1.0f) };
+        this.AcceleroMatrix = new() { Axis = new Vector3(-1.0f, 1.0f, -1.0f) };
     }
 }

@@ -20,20 +20,26 @@ namespace HandheldCompanion.Devices
             this.GfxClock = new double[] { 100, 2200 };
             this.CpuClock = 4700;
 
-            GyrometerAxis = new Vector3(-1.0f, -1.0f, -1.0f);
-            this.GyrometerAxisSwap = new()
+            GyroMatrix = new()
             {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' },
+                Axis = new Vector3(-1.0f, -1.0f, -1.0f),
+                AxisSwap = new()
+                {
+                    { 'X', 'X' },
+                    { 'Y', 'Z' },
+                    { 'Z', 'Y' },
+                }
             };
 
-            AccelerometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
-            this.AccelerometerAxisSwap = new()
+            AcceleroMatrix = new()
             {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' },
+                Axis = new Vector3(1.0f, -1.0f, -1.0f),
+                AxisSwap = new()
+                {
+                    { 'X', 'X' },
+                    { 'Y', 'Z' },
+                    { 'Z', 'Y' },
+                }
             };
 
             ECDetails = new ECDetails

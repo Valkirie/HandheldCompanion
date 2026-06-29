@@ -17,6 +17,6 @@ public class AYANEOFlipKB : AYANEO.AYANEODeviceCEc
         this.GfxClock = new double[] { 100, 2700 };
         this.CpuClock = 5100;
 
-        this.AccelerometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
+        this.AcceleroMatrix = new() { Axis = new Vector3(1.0f, -1.0f, -1.0f) };
     }
 }

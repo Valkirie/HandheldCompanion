@@ -108,27 +108,20 @@ public static class ViiperServerManager
         }
     }
 
-    public static uint GetOrCreateBusId(out bool createdBus)
-    {
-        var result = GetOrCreateBusIdAsync().GetAwaiter().GetResult();
-        createdBus = result.CreatedBus;
-        return result.BusId;
-    }
-
-    public static Task<(uint BusId, bool CreatedBus)> GetOrCreateBusIdAsync()
+    public static (uint BusId, bool CreatedBus) GetOrCreateBusId()
     {
         lock (_lock)
         {
             if (_busId.HasValue)
             {
-                return Task.FromResult((_busId.Value, false));
+                return (_busId.Value, false);
             }
 
             if (_service is null || !_service.CreateBus(1))
                 throw new InvalidOperationException("Failed to create VIIPER bus.");
 
             _busId = 1;
-            return Task.FromResult((_busId.Value, true));
+            return (_busId.Value, true);
         }
     }
 

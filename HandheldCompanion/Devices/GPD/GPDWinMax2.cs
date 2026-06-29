@@ -27,19 +27,25 @@ public class GPDWinMax2 : IDevice
             FanValueMax = 184
         };
 
-        GyrometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
-        GyrometerAxisSwap = new SortedDictionary<char, char>
+        GyroMatrix = new()
         {
-            { 'X', 'Y' },
-            { 'Y', 'Z' },
-            { 'Z', 'X' }
+            Axis = new Vector3(1.0f, -1.0f, -1.0f),
+            AxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'Y' },
+                { 'Y', 'Z' },
+                { 'Z', 'X' }
+            }
         };
-        AccelerometerAxis = new Vector3(-1.0f, 1.0f, 1.0f);
-        AccelerometerAxisSwap = new SortedDictionary<char, char>
+        AcceleroMatrix = new()
         {
-            { 'X', 'X' },
-            { 'Y', 'Z' },
-            { 'Z', 'Y' }
+            Axis = new Vector3(-1.0f, 1.0f, 1.0f),
+            AxisSwap = new SortedDictionary<char, char>
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' }
+            }
         };
 
         // Disabled this one as Win Max 2 also sends an Xbox guide input when Menu key is pressed.

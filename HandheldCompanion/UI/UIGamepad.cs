@@ -2149,8 +2149,8 @@ namespace HandheldCompanion.Managers
                 }
             }
 
-            // UI thread
-            UIHelper.TryInvoke(() =>
+            // UI thread (non-blocking to avoid deadlocks on high-frequency input events)
+            UIHelper.TryBeginInvoke(() =>
             {
                 try
                 {

@@ -122,14 +122,6 @@ namespace HandheldCompanion.Targets
 
         public virtual bool Connect()
         {
-            return ConnectAsync().GetAwaiter().GetResult();
-        }
-
-        public virtual async Task<bool> ConnectAsync()
-        {
-            if (!CanUseViiperDevice)
-                return Connect();
-
             if (IsConnected)
                 return true;
 
@@ -147,7 +139,7 @@ namespace HandheldCompanion.Targets
                 if (viiperService is null)
                     throw new InvalidOperationException("VIIPER service is not available.");
 
-                var bus = await ViiperServerManager.GetOrCreateBusIdAsync().ConfigureAwait(false);
+                var bus = ViiperServerManager.GetOrCreateBusId();
                 uint currentBusId = bus.BusId;
                 busId = currentBusId;
 
@@ -155,7 +147,7 @@ namespace HandheldCompanion.Targets
                 if (!addedDevice.Success)
                 {
                     ViiperServerManager.InvalidateBusId(currentBusId);
-                    bus = await ViiperServerManager.GetOrCreateBusIdAsync().ConfigureAwait(false);
+                    bus = ViiperServerManager.GetOrCreateBusId();
                     currentBusId = bus.BusId;
                     busId = currentBusId;
                     addedDevice = viiperService.AddDevice(currentBusId, DeviceType, vendorId, productId);
@@ -177,7 +169,7 @@ namespace HandheldCompanion.Targets
             {
                 LogManager.LogWarning("Failed to connect {0}: {1}", ToString(), ex.Message);
                 RaiseStatusChanged(VirtualManagerStatus.Failed, 1, 1);
-                await Cleanup().ConfigureAwait(false);
+                Cleanup();
                 ManagerFactory.settingsManager.SetProperty("HIDstatus", 0);
                 return false;
             }
@@ -185,41 +177,35 @@ namespace HandheldCompanion.Targets
 
         public virtual bool Disconnect()
         {
-            return DisconnectAsync().GetAwaiter().GetResult();
-        }
-
-        public virtual async Task<bool> DisconnectAsync()
-        {
-            if (!CanUseViiperDevice)
-                return Disconnect();
-
             if (!IsConnected && deviceId == 0)
                 return false;
 
             isDisconnecting = true;
-            await Cleanup().ConfigureAwait(false);
+            Cleanup();
             IsConnected = false;
             RaiseDisconnected();
             LogManager.LogInformation("{0} disconnected", ToString());
             return true;
         }
 
-        private async Task Cleanup()
+        private bool Cleanup()
         {
+            bool success = false;
             Close();
 
             try
             {
                 if (viiperService is not null && busId.HasValue && deviceId != 0)
-                    viiperService.RemoveDevice(busId.Value, deviceId);
+                    success = viiperService.RemoveDevice(busId.Value, deviceId);
+
+                deviceId = 0;
+                busId = null;
+                viiperService = null;
+                isDisconnecting = false;
             }
             catch { }
 
-            deviceId = 0;
-            busId = null;
-            viiperService = null;
-            isDisconnecting = false;
-            await Task.CompletedTask.ConfigureAwait(false);
+            return success;
         }
 
         public virtual void UpdateInputs(ControllerState inputs, GamepadMotion gamepadMotion)
@@ -235,12 +221,6 @@ namespace HandheldCompanion.Targets
             {
                 LogManager.LogError(ex.Message);
             }
-        }
-
-        public virtual Task UpdateInputsAsync(ControllerState inputs, GamepadMotion gamepadMotion)
-        {
-            UpdateInputs(inputs, gamepadMotion);
-            return Task.CompletedTask;
         }
 
         protected abstract byte[] BuildReport(ControllerState inputs, GamepadMotion gamepadMotion);
