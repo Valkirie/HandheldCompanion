@@ -82,32 +82,10 @@ public class MultimediaManager : IManager
         // Subscribe to display settings changes
         SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
 
-        // Subscribe to settings manager
-        switch (ManagerFactory.settingsManager.Status)
-        {
-            default:
-            case ManagerStatus.Initializing:
-                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
-                break;
-            case ManagerStatus.Initialized:
-                QuerySettings();
-                break;
-        }
-
         // Initial display query
         SystemEvents_DisplaySettingsChanged(null, new EventArgs());
 
         base.Start();
-    }
-
-    private void SettingsManager_Initialized()
-    {
-        QuerySettings();
-    }
-
-    private void QuerySettings()
-    {
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
     }
 
     public override void Stop()
@@ -130,8 +108,6 @@ public class MultimediaManager : IManager
 
         // Unsubscribe from events
         SystemEvents.DisplaySettingsChanged -= SystemEvents_DisplaySettingsChanged;
-        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
         base.Stop();
     }
@@ -165,11 +141,6 @@ public class MultimediaManager : IManager
         {
             LogManager.LogError("No AudioEndpoint available");
         }
-    }
-
-    private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
-    {
-        // do something
     }
 
     private void MultimediaManager_ScreenConnected(DesktopScreen screen)

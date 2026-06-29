@@ -198,11 +198,6 @@ public static class PerformanceManager
         SettingsManager_SettingValueChanged("MsrUndervoltSoc", ManagerFactory.settingsManager.GetString("MsrUndervoltSoc"), false, false);
     }
 
-    private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
-    {
-        // Handle any setting value changes if needed
-    }
-
     public static void Stop()
     {
         if (!IsInitialized)
@@ -245,7 +240,7 @@ public static class PerformanceManager
         return TDPMax;
     }
 
-    private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary)
+    private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
     {
         switch (name)
         {

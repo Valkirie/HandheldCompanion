@@ -126,11 +126,6 @@ public static class OSDManager
         SettingsManager_SettingValueChanged("OnScreenDisplayBATTLevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayBATTLevel"), false, false);
     }
 
-    private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
-    {
-        // Handle any setting value changes if needed
-    }
-
     public static void Stop()
     {
         if (!IsInitialized)
@@ -250,7 +245,7 @@ public static class OSDManager
             entry.elements.Add(new OverlayEntryElement((float)value, (float)available, unit));
     }
 
-    private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary)
+    private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
     {
         switch (name)
         {
