@@ -8,6 +8,7 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels;
+using iNKORE.UI.WPF.Helpers;
 using iNKORE.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
@@ -115,6 +116,7 @@ namespace HandheldCompanion.Views.Pages
 
             // manage events
             IDevice.GetCurrent().CapabilitiesChanged += OnCapabilitiesChanged;
+            App.uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
             switch (ManagerFactory.settingsManager.Status)
             {
@@ -242,6 +244,7 @@ namespace HandheldCompanion.Views.Pages
             ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
             IDevice.GetCurrent().CapabilitiesChanged -= OnCapabilitiesChanged;
+            App.uiSettings.ColorValuesChanged -= OnColorValuesChanged;
         }
 
         private void SettingsManager_SettingValueChanged(string? name, object? value, bool temporary, bool initializing)
