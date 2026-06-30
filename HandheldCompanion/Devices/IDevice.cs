@@ -374,6 +374,10 @@ public abstract class IDevice
 
     protected virtual void QueryPowerProfile()
     {
+        // manage events
+        // handled by PowerProfileManager, because of complex power profile order logic
+        // ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
+
         // apply current profile once the device is open and ready
         PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
     }
@@ -383,7 +387,7 @@ public abstract class IDevice
         QueryPowerProfile();
     }
 
-    protected virtual void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    public virtual void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
         // apply profile Fan mode
         switch (profile.FanProfile.fanMode)
@@ -398,14 +402,6 @@ public abstract class IDevice
         }
     }
 
-    public virtual void ApplyPowerProfile(PowerProfile profile, UpdateSource source)
-    {
-        if (profile is null || !IsOpen)
-            return;
-
-        PowerProfileManager_Applied(profile, source);
-    }
-
     public virtual void Close()
     {
         // disable fan control
@@ -418,10 +414,16 @@ public abstract class IDevice
         // set flag
         DeviceOpen = false;
 
-        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
         ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
+        // handled by PowerProfileManager, because of complex power profile order logic
+        // ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
+
         VirtualManager.ControllerSelected -= VirtualManager_ControllerSelected;
+
+        ManagerFactory.deviceManager.Initialized -= DeviceManager_Initialized;
         ManagerFactory.deviceManager.UsbDeviceArrived -= GenericDeviceUpdated;
         ManagerFactory.deviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
 

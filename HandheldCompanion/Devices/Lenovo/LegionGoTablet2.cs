@@ -112,7 +112,7 @@ namespace HandheldCompanion.Devices.Lenovo
             return Math.Clamp(percent, 0f, 100f);
         }
 
-        protected override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+        public override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
         {
             // Apply OEM power mode via WMI (inherited from LegionGo)
             int currentFanMode = GetSmartFanMode();

@@ -371,7 +371,7 @@ public class ClawA1M : IDevice
         Device_Inserted();
     }
 
-    protected override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    public override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
         byte[] fanTable = new byte[8];
         if (profile.FanProfile.fanMode == FanMode.Software)

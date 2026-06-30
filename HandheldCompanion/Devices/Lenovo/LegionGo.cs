@@ -374,7 +374,8 @@ public class LegionGo : IDevice
     }
 
     private FanTable defaultFanTable = new([44, 48, 55, 60, 71, 79, 87, 87, 100, 100]);
-    protected override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+
+    public override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
         // get current fan mode and set it to the desired one if different
         // this has to happen before we try setting custom fan/TDP ?

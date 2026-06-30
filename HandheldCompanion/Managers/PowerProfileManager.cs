@@ -235,7 +235,7 @@ namespace HandheldCompanion.Managers
                 currentProfile = powerProfile;
 
                 // apply device-specific power profile behavior before other subscribers
-                IDevice.GetCurrent().ApplyPowerProfile(powerProfile, source);
+                IDevice.GetCurrent().PowerProfileManager_Applied(powerProfile, source);
 
                 Applied?.Invoke(powerProfile, source);
 
@@ -333,7 +333,7 @@ namespace HandheldCompanion.Managers
                 if (isCurrent)
                 {
                     // apply device-specific power profile behavior before other subscribers
-                    IDevice.GetCurrent().ApplyPowerProfile(profile, source);
+                    IDevice.GetCurrent().PowerProfileManager_Applied(profile, source);
 
                     Applied?.Invoke(profile, source);
                 }

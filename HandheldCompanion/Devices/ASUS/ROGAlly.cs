@@ -258,7 +258,7 @@ public class ROGAlly : IDevice
         return curve;
     }
 
-    protected override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    public override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
         if (profile.FanProfile.fanMode == FanMode.Software)
         {
