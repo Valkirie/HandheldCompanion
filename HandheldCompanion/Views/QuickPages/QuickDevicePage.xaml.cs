@@ -36,11 +36,8 @@ public partial class QuickDevicePage : Page
 
     private void Page_Unloaded(object s, RoutedEventArgs e)
     {
-        if (ViewModel is not null)
-        {
-            // Unsubscribe from all events
-            ViewModel.RequestAYANEOFlipScreenConfirmation -= ViewModel_RequestAYANEOFlipScreenConfirmation;
-        }
+        // Unsubscribe from all events
+        ViewModel?.RequestAYANEOFlipScreenConfirmation -= ViewModel_RequestAYANEOFlipScreenConfirmation;
     }
 
     private async void ViewModel_RequestAYANEOFlipScreenConfirmation(object? sender, TaskCompletionSource<bool> tcs)

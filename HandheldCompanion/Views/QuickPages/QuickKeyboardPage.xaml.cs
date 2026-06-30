@@ -16,45 +16,7 @@ namespace HandheldCompanion.Views.QuickPages
 {
     public partial class QuickKeyboardPage : Page
     {
-        // the one animation template
-        private readonly Storyboard _tapTemplate;
-
-        // Constructors
-        public QuickKeyboardPage(string tag) : this() => Tag = tag;
-        public QuickKeyboardPage()
-        {
-            DataContext = new QuickKeyboardPageViewModel(this);
-            InitializeComponent();
-
-            // grab the *templates* from your XAML resources
-            _tapTemplate = (Storyboard)TryFindResource("KeyTapAnimation");
-        }
-
-        // Layout modes
-        private enum LayoutState { Default, Switch1, Switch2 }
-        private LayoutState _state = LayoutState.Default;
-
-        private bool _shiftToggled
-        {
-            get => ((QuickKeyboardPageViewModel)DataContext).ShiftToggleChecked;
-            set => ((QuickKeyboardPageViewModel)DataContext).ShiftToggleChecked = value;
-        }
-
-        private bool _shiftToggleLocked
-        {
-            get => ((QuickKeyboardPageViewModel)DataContext).ShiftToggleLocked;
-        }
-
-        // Event-driven keyboard layout detection (no polling)
-        private IntPtr _lastHkl;
-
-        // Physical scan-codes for default letter layout (dynamic per HKL)
-        private static readonly object[] _row0Sc = { (0x01, KEYEVENTF_SCANCODE), (0x0F, KEYEVENTF_SCANCODE), (0x3B, KEYEVENTF_SCANCODE), (0x3C, KEYEVENTF_SCANCODE), (0x3D, KEYEVENTF_SCANCODE), (0x3E, KEYEVENTF_SCANCODE), (0x4B, KEYEVENTF_SCANCODE_EXT), (0x4D, KEYEVENTF_SCANCODE_EXT), (0x53, KEYEVENTF_SCANCODE_EXT) };                           // ESC, TAB, F1, F2, F3, F4, LEFT, RIGHT, DEL
-        private static readonly object[] _row1Sc = { (0x10, KEYEVENTF_SCANCODE), (0x11, KEYEVENTF_SCANCODE), (0x12, KEYEVENTF_SCANCODE), (0x13, KEYEVENTF_SCANCODE), (0x14, KEYEVENTF_SCANCODE), (0x15, KEYEVENTF_SCANCODE), (0x16, KEYEVENTF_SCANCODE), (0x17, KEYEVENTF_SCANCODE), (0x18, KEYEVENTF_SCANCODE), (0x19, KEYEVENTF_SCANCODE) };   // Q,W,E,R,T,Y,U,I,O,P
-        private static readonly object[] _row2Sc = { (0x1E, KEYEVENTF_SCANCODE), (0x1F, KEYEVENTF_SCANCODE), (0x20, KEYEVENTF_SCANCODE), (0x21, KEYEVENTF_SCANCODE), (0x22, KEYEVENTF_SCANCODE), (0x23, KEYEVENTF_SCANCODE), (0x24, KEYEVENTF_SCANCODE), (0x25, KEYEVENTF_SCANCODE), (0x26, KEYEVENTF_SCANCODE), (0x27, KEYEVENTF_SCANCODE) };   // A,S,D,F,G,H,J,K,L,;
-        private static readonly object[] _row3Sc = { (0x00, KEYEVENTF_SCANCODE), (0x2C, KEYEVENTF_SCANCODE), (0x2D, KEYEVENTF_SCANCODE), (0x2E, KEYEVENTF_SCANCODE), (0x2F, KEYEVENTF_SCANCODE), (0x30, KEYEVENTF_SCANCODE), (0x31, KEYEVENTF_SCANCODE), (0x32, KEYEVENTF_SCANCODE), (0x0E, KEYEVENTF_SCANCODE) };                               // SHIFT,Z,X,C,V,B,N,M,BACKSPACE
-        private static readonly object[] _row4Sc = { (string.Empty, KEYEVENTF_UNICODE), (",", KEYEVENTF_UNICODE), (" ", KEYEVENTF_UNICODE), (".", KEYEVENTF_UNICODE), ("?", KEYEVENTF_UNICODE), (0x1C, KEYEVENTF_SCANCODE) };                                                                                                                           // SWITCH,COMMA,SPACE,LANGUAGE,PERIOD,RETURN
-
+        #region imports
         // P/Invoke
         private const uint INPUT_KEYBOARD = 1;
         private const uint KEYEVENTF_EXTENDEDKEY = 0x0001;
@@ -88,10 +50,43 @@ namespace HandheldCompanion.Views.QuickPages
         struct KEYBDINPUT { public ushort wVk, wScan; public uint dwFlags, time; public UIntPtr dwExtraInfo; }
         [StructLayout(LayoutKind.Sequential)]
         struct HARDWAREINPUT { public uint uMsg; public ushort wParamL, wParamH; }
+        #endregion
 
-        // Page events
-        private void Page_Loaded(object s, RoutedEventArgs e)
+        // Layout modes
+        private enum LayoutState { Default, Switch1, Switch2 }
+        private LayoutState _state = LayoutState.Default;
+
+        private bool _shiftToggled
         {
+            get => ((QuickKeyboardPageViewModel)DataContext).ShiftToggleChecked;
+            set => ((QuickKeyboardPageViewModel)DataContext).ShiftToggleChecked = value;
+        }
+
+        private bool _shiftToggleLocked
+        {
+            get => ((QuickKeyboardPageViewModel)DataContext).ShiftToggleLocked;
+        }
+
+        // Event-driven keyboard layout detection (no polling)
+        private IntPtr _lastHkl;
+
+        // Physical scan-codes for default letter layout (dynamic per HKL)
+        private static readonly object[] _row0Sc = { (0x01, KEYEVENTF_SCANCODE), (0x0F, KEYEVENTF_SCANCODE), (0x3B, KEYEVENTF_SCANCODE), (0x3C, KEYEVENTF_SCANCODE), (0x3D, KEYEVENTF_SCANCODE), (0x3E, KEYEVENTF_SCANCODE), (0x4B, KEYEVENTF_SCANCODE_EXT), (0x4D, KEYEVENTF_SCANCODE_EXT), (0x53, KEYEVENTF_SCANCODE_EXT) };                           // ESC, TAB, F1, F2, F3, F4, LEFT, RIGHT, DEL
+        private static readonly object[] _row1Sc = { (0x10, KEYEVENTF_SCANCODE), (0x11, KEYEVENTF_SCANCODE), (0x12, KEYEVENTF_SCANCODE), (0x13, KEYEVENTF_SCANCODE), (0x14, KEYEVENTF_SCANCODE), (0x15, KEYEVENTF_SCANCODE), (0x16, KEYEVENTF_SCANCODE), (0x17, KEYEVENTF_SCANCODE), (0x18, KEYEVENTF_SCANCODE), (0x19, KEYEVENTF_SCANCODE) };   // Q,W,E,R,T,Y,U,I,O,P
+        private static readonly object[] _row2Sc = { (0x1E, KEYEVENTF_SCANCODE), (0x1F, KEYEVENTF_SCANCODE), (0x20, KEYEVENTF_SCANCODE), (0x21, KEYEVENTF_SCANCODE), (0x22, KEYEVENTF_SCANCODE), (0x23, KEYEVENTF_SCANCODE), (0x24, KEYEVENTF_SCANCODE), (0x25, KEYEVENTF_SCANCODE), (0x26, KEYEVENTF_SCANCODE), (0x27, KEYEVENTF_SCANCODE) };   // A,S,D,F,G,H,J,K,L,;
+        private static readonly object[] _row3Sc = { (0x00, KEYEVENTF_SCANCODE), (0x2C, KEYEVENTF_SCANCODE), (0x2D, KEYEVENTF_SCANCODE), (0x2E, KEYEVENTF_SCANCODE), (0x2F, KEYEVENTF_SCANCODE), (0x30, KEYEVENTF_SCANCODE), (0x31, KEYEVENTF_SCANCODE), (0x32, KEYEVENTF_SCANCODE), (0x0E, KEYEVENTF_SCANCODE) };                               // SHIFT,Z,X,C,V,B,N,M,BACKSPACE
+        private static readonly object[] _row4Sc = { (string.Empty, KEYEVENTF_UNICODE), (",", KEYEVENTF_UNICODE), (" ", KEYEVENTF_UNICODE), (".", KEYEVENTF_UNICODE), ("?", KEYEVENTF_UNICODE), (0x1C, KEYEVENTF_SCANCODE) };                                                                                                                           // SWITCH,COMMA,SPACE,LANGUAGE,PERIOD,RETURN
+
+        // the one animation template
+        private readonly Storyboard _tapTemplate;
+
+        // Constructors
+        public QuickKeyboardPage(string tag) : this() => Tag = tag;
+        public QuickKeyboardPage()
+        {
+            DataContext = new QuickKeyboardPageViewModel(this);
+            InitializeComponent();
+
             // Wait for ProcessManager to initialize before subscribing to foreground window events
             switch (ManagerFactory.processManager.Status)
             {
@@ -103,13 +98,19 @@ namespace HandheldCompanion.Views.QuickPages
                     QueryForeground();
                     break;
             }
+
+            // grab the *templates* from your XAML resources
+            _tapTemplate = (Storyboard)TryFindResource("KeyTapAnimation");
+        }
+
+        private void Page_Loaded(object s, RoutedEventArgs e)
+        {
+            // do something
         }
 
         private void Page_Unloaded(object s, RoutedEventArgs e)
         {
-            // Unsubscribe from all events to prevent memory leaks
-            ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
-            ManagerFactory.processManager.RawForeground -= ProcessManager_RawForeground;
+            // do something
         }
 
         private void ProcessManager_Initialized()
@@ -119,28 +120,26 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void QueryForeground()
         {
-            // Initial build for current foreground window
-            CheckKeyboardLayout();
-
-            // Subscribe to ProcessManager's RawForeground event
-            // This fires whenever the foreground window changes, instead of polling every 1000ms
+            // manage events
             ManagerFactory.processManager.RawForeground += ProcessManager_RawForeground;
+
+            // Initial build for current foreground window
+            CheckKeyboardLayout(GetForegroundWindow());
         }
 
         // Event handler: called whenever foreground window changes
         private void ProcessManager_RawForeground(IntPtr hWnd)
         {
-            CheckKeyboardLayout();
+            CheckKeyboardLayout(hWnd);
         }
 
         // Check if keyboard layout changed and rebuild if needed
-        private void CheckKeyboardLayout()
+        private void CheckKeyboardLayout(IntPtr hWnd = default)
         {
-            nint targetHwnd = GetForegroundWindow();
-            if (targetHwnd == IntPtr.Zero)
+            if (hWnd == IntPtr.Zero)
                 return;
 
-            uint tid = WinAPI.GetWindowThreadProcessId(targetHwnd, out uint _);
+            uint tid = WinAPI.GetWindowThreadProcessId(hWnd, out uint _);
             nint h = GetKeyboardLayout(tid);
             if (h != _lastHkl)
             {

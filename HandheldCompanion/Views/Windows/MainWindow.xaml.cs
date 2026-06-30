@@ -66,7 +66,7 @@ public partial class MainWindow : GamepadWindow
     public static LayoutItemPage layoutItemPage = null!;
 
     // overlay(s) vars
-    private static MainWindow? CurrentWindow;
+    private static MainWindow CurrentWindow;
 
     public static string CurrentPageName = string.Empty;
 
@@ -117,6 +117,8 @@ public partial class MainWindow : GamepadWindow
 
     public MainWindow(SplashScreenHost splashScreen, IDevice? currentDevice = null)
     {
+        CurrentWindow = this;
+
         SplashScreen = splashScreen;
         DataContext = new MainWindowViewModel();
 
@@ -137,8 +139,6 @@ public partial class MainWindow : GamepadWindow
 
         ContentDialog.Closed += ContentDialog_Closed;
         ContentDialog.Opened += ContentDialog_Opened;
-
-        CurrentWindow = this;
 
         // define current directory
         Directory.SetCurrentDirectory(App.CurrentPath);
@@ -493,7 +493,7 @@ public partial class MainWindow : GamepadWindow
             RemoveProfileFromTrayMenu(profile);
     }
 
-    public static MainWindow? GetCurrent()
+    public static MainWindow GetCurrent()
     {
         return CurrentWindow;
     }
@@ -969,8 +969,8 @@ public partial class MainWindow : GamepadWindow
 
     public static void NavView_Navigate(Page _page)
     {
-        CurrentWindow?.ContentFrame.Navigate(_page);
-        CurrentWindow?.scrollViewer.ScrollToTop();
+        CurrentWindow.ContentFrame.Navigate(_page);
+        CurrentWindow.scrollViewer.ScrollToTop();
     }
 
     private void navView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)

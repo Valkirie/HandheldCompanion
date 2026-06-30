@@ -64,10 +64,10 @@ public partial class OverlayQuickTools : GamepadWindow
 
     public OverlayQuickTools()
     {
+        CurrentWindow = this;
+
         DataContext = new OverlayQuickToolsViewModel(this);
         InitializeComponent();
-
-        CurrentWindow = this;
 
         // used by gamepad navigation
         Tag = "QuickTools";
@@ -174,7 +174,7 @@ public partial class OverlayQuickTools : GamepadWindow
         Top = _targetTop;   // otherwise start at the resting Y
     }
 
-    public static OverlayQuickTools? GetCurrent()
+    public static OverlayQuickTools GetCurrent()
     {
         return CurrentWindow;
     }

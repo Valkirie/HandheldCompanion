@@ -25,10 +25,7 @@ public partial class QuickProfilesPage : Page
     public QuickProfilesPage(string Tag) : this()
     {
         this.Tag = Tag;
-    }
 
-    private void Page_Loaded(object s, RoutedEventArgs e)
-    {
         // Subscribe to ViewModel events for UI operations
         viewModel.RequestOpenProfilePage += (s, e) =>
         {
@@ -78,7 +75,7 @@ public partial class QuickProfilesPage : Page
 
         viewModel.RequestCreatePowerProfile += (s, e) =>
         {
-            new Dialog(OverlayQuickTools.GetCurrent())
+            _ = new Dialog(OverlayQuickTools.GetCurrent())
             {
                 Title = "Power preset",
                 Content = "Power preset was created",
@@ -115,13 +112,14 @@ public partial class QuickProfilesPage : Page
         }
     }
 
+    private void Page_Loaded(object s, RoutedEventArgs e)
+    {
+        // do something
+    }
+
     private void Page_Unloaded(object s, RoutedEventArgs e)
     {
-        // Unsubscribe from ViewModel events
-        viewModel.RequestOpenProfilePage -= (s, e) => { };
-        viewModel.RequestOpenProfileLayout -= (s, e) => { };
-        viewModel.RequestOpenPowerProfile -= (s, powerProfile) => { };
-        viewModel.RequestCreatePowerProfile -= (s, e) => { };
+        // do something
     }
 
     public void PowerProfile_Selected(PowerProfile powerProfile, bool AC)

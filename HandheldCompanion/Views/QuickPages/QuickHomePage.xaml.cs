@@ -24,20 +24,83 @@ public partial class QuickHomePage : Page
     public QuickHomePage(string Tag) : this()
     {
         this.Tag = Tag;
+
+        // raise events
+        switch (ManagerFactory.multimediaManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryMedia();
+                break;
+        }
+    }
+
+    private void QueryMedia()
+    {
+        // manage events
+        ManagerFactory.multimediaManager.VolumeNotification -= MultimediaManager_VolumeNotification;
+        ManagerFactory.multimediaManager.BrightnessNotification -= MultimediaManager_BrightnessNotification;
+
+        if (ManagerFactory.multimediaManager.HasBrightnessSupport())
+        {
+            short brightnessValue = 0;
+            brightnessLock.Enter();
+            try
+            {
+                brightnessValue = ManagerFactory.multimediaManager.GetBrightness();
+            }
+            finally
+            {
+                brightnessLock.Exit();
+            }
+
+            UIHelper.TryBeginInvoke(() =>
+            {
+                SliderBrightness.IsEnabled = true;
+                SliderBrightness.Value = brightnessValue;
+            });
+        }
+
+        if (ManagerFactory.multimediaManager.HasVolumeSupport())
+        {
+            double vol = 0;
+            double rounded = 0;
+            volumeLock.Enter();
+            try
+            {
+                vol = ManagerFactory.multimediaManager.GetVolume();
+                rounded = Math.Round(vol);
+            }
+            finally
+            {
+                volumeLock.Exit();
+            }
+
+            UIHelper.TryBeginInvoke(() =>
+            {
+                SliderVolume.IsEnabled = true;
+                UpdateVolumeIcon(rounded);
+                SliderVolume.Value = rounded;
+            });
+        }
+    }
+
+    private void MultimediaManager_Initialized()
+    {
+        QueryMedia();
     }
 
     private void Page_Loaded(object s, RoutedEventArgs e)
     {
-        ManagerFactory.multimediaManager.VolumeNotification += SystemManager_VolumeNotification;
-        ManagerFactory.multimediaManager.BrightnessNotification += SystemManager_BrightnessNotification;
-        ManagerFactory.multimediaManager.Initialized += SystemManager_Initialized;
+        // do something
     }
 
     private void Page_Unloaded(object s, RoutedEventArgs e)
     {
-        ManagerFactory.multimediaManager.VolumeNotification -= SystemManager_VolumeNotification;
-        ManagerFactory.multimediaManager.BrightnessNotification -= SystemManager_BrightnessNotification;
-        ManagerFactory.multimediaManager.Initialized -= SystemManager_Initialized;
+        // do something
     }
 
     private void QuickButton_Click(object sender, RoutedEventArgs e)
@@ -46,50 +109,7 @@ public partial class QuickHomePage : Page
         OverlayQuickTools.GetCurrent().NavigateToPage(button.Name);
     }
 
-    private void SystemManager_Initialized()
-    {
-        if (ManagerFactory.multimediaManager.HasBrightnessSupport())
-        {
-            UIHelper.TryBeginInvoke(() =>
-            {
-                SliderBrightness.IsEnabled = true;
-
-                brightnessLock.Enter();
-                try
-                {
-                    SliderBrightness.Value = ManagerFactory.multimediaManager.GetBrightness();
-                }
-                finally
-                {
-                    brightnessLock.Exit();
-                }
-            });
-        }
-
-        if (ManagerFactory.multimediaManager.HasVolumeSupport())
-        {
-            UIHelper.TryBeginInvoke(() =>
-            {
-                SliderVolume.IsEnabled = true;
-
-                var vol = ManagerFactory.multimediaManager.GetVolume();
-                var rounded = Math.Round(vol);
-
-                volumeLock.Enter();
-                try
-                {
-                    UpdateVolumeIcon(rounded);
-                    SliderVolume.Value = rounded;
-                }
-                finally
-                {
-                    volumeLock.Exit();
-                }
-            });
-        }
-    }
-
-    private void SystemManager_BrightnessNotification(int brightness)
+    private void MultimediaManager_BrightnessNotification(int brightness)
     {
         UIHelper.TryBeginInvoke(() =>
         {
@@ -108,7 +128,7 @@ public partial class QuickHomePage : Page
         });
     }
 
-    private void SystemManager_VolumeNotification(float volume)
+    private void MultimediaManager_VolumeNotification(float volume)
     {
         var rounded = Math.Round(Convert.ToDouble(volume));
 
