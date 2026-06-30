@@ -134,6 +134,9 @@ namespace HandheldCompanion.Views.Pages
             });
         }
 
+        private LegionTriggerDeadzone legionTriggerDeadzoneLeft = new();
+        private LegionTriggerDeadzone legionTriggerDeadzoneRight = new();
+
         private void Device_Opened(IDevice sender)
         {
             // Update UI on UI thread
@@ -165,12 +168,12 @@ namespace HandheldCompanion.Views.Pages
                 // Perform USB I/O operations (left joystick)
                 int leftJoystickDeadzone = GetStickCustomDeadzone(LegionGoTablet.LeftJoyconIndex);
                 int leftAutoSleepTime = GetAutoSleepTime(LegionGoTablet.LeftJoyconIndex);
-                LegionTriggerDeadzone leftTrigger = GetTriggerDeadzoneAndMargin(LegionGoTablet.LeftJoyconIndex);
+                legionTriggerDeadzoneLeft = GetTriggerDeadzoneAndMargin(LegionGoTablet.LeftJoyconIndex);
 
                 // Perform USB I/O operations (right joystick)
                 int rightJoystickDeadzone = GetStickCustomDeadzone(LegionGoTablet.RightJoyconIndex);
                 int rightAutoSleepTime = GetAutoSleepTime(LegionGoTablet.RightJoyconIndex);
-                LegionTriggerDeadzone rightTrigger = GetTriggerDeadzoneAndMargin(LegionGoTablet.RightJoyconIndex);
+                legionTriggerDeadzoneRight = GetTriggerDeadzoneAndMargin(LegionGoTablet.RightJoyconIndex);
 
                 // Update UI on UI thread
                 UIHelper.TryInvoke(() =>
@@ -182,15 +185,15 @@ namespace HandheldCompanion.Views.Pages
                     // left joystick
                     SliderLeftJoystickDeadzone.Value = leftJoystickDeadzone;
                     SliderLeftAutoSleepTime.Value = leftAutoSleepTime;
-                    SliderLeftTriggerDeadzone.Value = leftTrigger.Deadzone;
-                    SliderLeftTriggerMargin.Value = leftTrigger.Margin;
+                    SliderLeftTriggerDeadzone.Value = legionTriggerDeadzoneLeft.Deadzone;
+                    SliderLeftTriggerMargin.Value = legionTriggerDeadzoneLeft.Margin;
                     LegionGoLeftController.Visibility = Visibility.Visible;
 
                     // right joystick
                     SliderRightJoystickDeadzone.Value = rightJoystickDeadzone;
                     SliderRightAutoSleepTime.Value = rightAutoSleepTime;
-                    SliderRightTriggerDeadzone.Value = rightTrigger.Deadzone;
-                    SliderRightTriggerMargin.Value = rightTrigger.Margin;
+                    SliderRightTriggerDeadzone.Value = legionTriggerDeadzoneRight.Deadzone;
+                    SliderRightTriggerMargin.Value = legionTriggerDeadzoneRight.Margin;
                     LegionGoRightController.Visibility = Visibility.Visible;
                 });
             }
@@ -858,110 +861,106 @@ namespace HandheldCompanion.Views.Pages
 
         private void SliderLeftJoystickDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            var value = SliderLeftJoystickDeadzone.Value;
+            double value = SliderLeftJoystickDeadzone.Value;
             if (double.IsNaN(value))
                 return;
 
             if (!IsLoaded)
                 return;
 
-            SapientiaUsb.SetStickCustomDeadzone(LegionGoTablet.LeftJoyconIndex, (int)value - 1);
+            bool success = SetStickCustomDeadzone(LegionGoTablet.LeftJoyconIndex, (int)value);
         }
 
         private void SliderLeftAutoSleepTime_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            var value = SliderLeftAutoSleepTime.Value;
+            double value = SliderLeftAutoSleepTime.Value;
             if (double.IsNaN(value))
                 return;
 
             if (!IsLoaded)
                 return;
 
-            bool success = SapientiaUsb.SetAutoSleepTime(LegionGoTablet.LeftJoyconIndex, (int)value);
+            bool success = SetAutoSleepTime(LegionGoTablet.LeftJoyconIndex, (int)value);
         }
 
         private void SliderLeftTriggerDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            var value = SliderLeftTriggerDeadzone.Value;
+            double value = SliderLeftTriggerDeadzone.Value;
             if (double.IsNaN(value))
                 return;
 
             if (!IsLoaded)
                 return;
 
-            var trigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGoTablet.LeftJoyconIndex);
-            trigger.Deadzone = (int)value - 1;
+            legionTriggerDeadzoneLeft.Deadzone = (int)value;
 
-            SapientiaUsb.SetTriggerDeadzoneAndMargin(LegionGoTablet.LeftJoyconIndex, trigger);
+            bool success = SetTriggerDeadzoneAndMargin(LegionGoTablet.LeftJoyconIndex, legionTriggerDeadzoneLeft);
         }
 
         private void SliderLeftTriggerMargin_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            var value = SliderLeftTriggerMargin.Value;
+            double value = SliderLeftTriggerMargin.Value;
             if (double.IsNaN(value))
                 return;
 
             if (!IsLoaded)
                 return;
 
-            var trigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGoTablet.LeftJoyconIndex);
-            trigger.Margin = (int)value - 1;
+            legionTriggerDeadzoneLeft.Margin = (int)value;
 
-            SapientiaUsb.SetTriggerDeadzoneAndMargin(LegionGoTablet.LeftJoyconIndex, trigger);
+            bool success = SetTriggerDeadzoneAndMargin(LegionGoTablet.LeftJoyconIndex, legionTriggerDeadzoneLeft);
         }
 
         private void SliderRightJoystickDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            var value = SliderRightJoystickDeadzone.Value;
+            double value = SliderRightJoystickDeadzone.Value;
             if (double.IsNaN(value))
                 return;
 
             if (!IsLoaded)
                 return;
 
-            SapientiaUsb.SetStickCustomDeadzone(LegionGoTablet.RightJoyconIndex, (int)value - 1);
+            bool success = SetStickCustomDeadzone(LegionGoTablet.RightJoyconIndex, (int)value);
         }
 
         private void SliderRightAutoSleepTime_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            var value = SliderRightAutoSleepTime.Value;
+            double value = SliderRightAutoSleepTime.Value;
             if (double.IsNaN(value))
                 return;
 
             if (!IsLoaded)
                 return;
 
-            SapientiaUsb.SetAutoSleepTime(LegionGoTablet.RightJoyconIndex, (int)value);
+            bool success = SetAutoSleepTime(LegionGoTablet.RightJoyconIndex, (int)value);
         }
 
         private void SliderRightTriggerDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            var value = SliderRightTriggerDeadzone.Value;
+            double value = SliderRightTriggerDeadzone.Value;
             if (double.IsNaN(value))
                 return;
 
             if (!IsLoaded)
                 return;
 
-            var trigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGoTablet.RightJoyconIndex);
-            trigger.Deadzone = (int)value - 1;
+            legionTriggerDeadzoneRight.Deadzone = (int)value;
 
-            SapientiaUsb.SetTriggerDeadzoneAndMargin(LegionGoTablet.RightJoyconIndex, trigger);
+            bool success = SetTriggerDeadzoneAndMargin(LegionGoTablet.RightJoyconIndex, legionTriggerDeadzoneRight);
         }
 
         private void SliderRightTriggerMargin_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            var value = SliderRightTriggerMargin.Value;
+            double value = SliderRightTriggerMargin.Value;
             if (double.IsNaN(value))
                 return;
 
             if (!IsLoaded)
                 return;
 
-            var trigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGoTablet.RightJoyconIndex);
-            trigger.Margin = (int)value - 1;
+            legionTriggerDeadzoneRight.Margin = (int)value;
 
-            SapientiaUsb.SetTriggerDeadzoneAndMargin(LegionGoTablet.RightJoyconIndex, trigger);
+            bool success = SetTriggerDeadzoneAndMargin(LegionGoTablet.RightJoyconIndex, legionTriggerDeadzoneRight);
         }
         #endregion
 

@@ -19,7 +19,7 @@
     Margin="20"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:DevicePageViewModel}"
-    d:DesignHeight="3000"
+    d:DesignHeight="4000"
     d:DesignWidth="1000"
     KeepAlive="True"
     Loaded="Page_Loaded"
@@ -963,6 +963,7 @@
 
                     <ui:SettingsExpander
                         Name="LegionGoLeftController"
+                        d:IsExpanded="True"
                         d:Visibility="Visible"
                         Description="{l:Static resx:Resources.DevicePage_Lenovo_ControllerLeftDesc}"
                         Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerLeft}"
@@ -973,11 +974,14 @@
                         <ui:SettingsExpander.Items>
                             <!--  Left Joycon Sleep Time  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerAutoSleepTime}">
-                                <DockPanel>
-                                    <Label
+                                <DockPanel Margin="12,0,0,0">
+                                    <TextBox
+                                        Height="31"
+                                        HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
-                                        Content="{Binding Value, StringFormat={}{0:N0}min, Source={x:Reference SliderLeftAutoSleepTime}, Mode=OneWay}"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
+                                        Text="{Binding Value, StringFormat={}{0:N0}min, Source={x:Reference SliderLeftAutoSleepTime}, Mode=OneWay}" />
                                     <Slider
                                         Name="SliderLeftAutoSleepTime"
                                         Width="200"
@@ -995,10 +999,13 @@
                             </ui:SettingsCard>
                             <!--  Left Joystick deadzone  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerJoystickDeadzone}">
-                                <DockPanel>
-                                    <TextBlock
+                                <DockPanel Margin="12,0,0,0">
+                                    <TextBox
+                                        Height="31"
+                                        HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
                                         Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLeftJoystickDeadzone}, Mode=OneWay}" />
                                     <Slider
                                         Name="SliderLeftJoystickDeadzone"
@@ -1008,8 +1015,8 @@
                                         IsMoveToPointEnabled="True"
                                         IsSnapToTickEnabled="True"
                                         LargeChange="5"
-                                        Maximum="100"
-                                        Minimum="0"
+                                        Maximum="50"
+                                        Minimum="1"
                                         SmallChange="1"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                         ValueChanged="SliderLeftJoystickDeadzone_ValueChanged" />
@@ -1017,10 +1024,13 @@
                             </ui:SettingsCard>
                             <!--  Left Trigger deadzone  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerDeadzone}">
-                                <DockPanel>
-                                    <TextBlock
+                                <DockPanel Margin="12,0,0,0">
+                                    <TextBox
+                                        Height="31"
+                                        HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
                                         Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLeftTriggerDeadzone}, Mode=OneWay}" />
                                     <Slider
                                         Name="SliderLeftTriggerDeadzone"
@@ -1030,20 +1040,22 @@
                                         IsMoveToPointEnabled="True"
                                         IsSnapToTickEnabled="True"
                                         LargeChange="5"
-                                        Maximum="{Binding Source={x:Reference SliderLeftTriggerMargin}, Path=Value, Converter={StaticResource InvertPercentageConverter}}"
-                                        Minimum="0"
+                                        Maximum="50"
+                                        Minimum="1"
                                         SmallChange="1"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        ValueChanged="SliderLeftTriggerDeadzone_ValueChanged"
-                                        Value="{Binding LeftTriggerDeadzoneValue}" />
+                                        ValueChanged="SliderLeftTriggerDeadzone_ValueChanged" />
                                 </DockPanel>
                             </ui:SettingsCard>
                             <!--  Left Trigger margin  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerMargin}">
-                                <DockPanel>
-                                    <TextBlock
+                                <DockPanel Margin="12,0,0,0">
+                                    <TextBox
+                                        Height="31"
+                                        HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
                                         Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderLeftTriggerMargin}, Mode=OneWay}" />
                                     <Slider
                                         Name="SliderLeftTriggerMargin"
@@ -1053,7 +1065,7 @@
                                         IsMoveToPointEnabled="True"
                                         IsSnapToTickEnabled="True"
                                         LargeChange="5"
-                                        Maximum="{Binding LeftTriggerDeadzoneValue, Converter={StaticResource InvertPercentageConverter}}"
+                                        Maximum="50"
                                         Minimum="1"
                                         SmallChange="1"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
@@ -1066,6 +1078,7 @@
                     <!--  Right Joycon  -->
                     <ui:SettingsExpander
                         Name="LegionGoRightController"
+                        d:IsExpanded="True"
                         d:Visibility="Visible"
                         Description="{l:Static resx:Resources.DevicePage_Lenovo_ControllerRightDesc}"
                         Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerRight}"
@@ -1076,11 +1089,14 @@
                         <ui:SettingsExpander.Items>
                             <!--  Right Joycon Sleep Time  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerAutoSleepTime}">
-                                <DockPanel>
-                                    <Label
+                                <DockPanel Margin="12,0,0,0">
+                                    <TextBox
+                                        Height="31"
+                                        HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
-                                        Content="{Binding Value, StringFormat={}{0:N0}min, Source={x:Reference SliderRightAutoSleepTime}, Mode=OneWay}"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
+                                        Text="{Binding Value, StringFormat={}{0:N0}min, Source={x:Reference SliderRightAutoSleepTime}, Mode=OneWay}" />
                                     <Slider
                                         Name="SliderRightAutoSleepTime"
                                         Width="200"
@@ -1098,10 +1114,13 @@
                             </ui:SettingsCard>
                             <!--  Right Joystick deadzone  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerJoystickDeadzone}">
-                                <DockPanel>
-                                    <TextBlock
+                                <DockPanel Margin="12,0,0,0">
+                                    <TextBox
+                                        Height="31"
+                                        HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
                                         Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRightJoystickDeadzone}, Mode=OneWay}" />
                                     <Slider
                                         Name="SliderRightJoystickDeadzone"
@@ -1111,8 +1130,8 @@
                                         IsMoveToPointEnabled="True"
                                         IsSnapToTickEnabled="True"
                                         LargeChange="5"
-                                        Maximum="100"
-                                        Minimum="0"
+                                        Maximum="50"
+                                        Minimum="1"
                                         SmallChange="1"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                         ValueChanged="SliderRightJoystickDeadzone_ValueChanged" />
@@ -1120,10 +1139,13 @@
                             </ui:SettingsCard>
                             <!--  Right Trigger deadzone  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerDeadzone}">
-                                <DockPanel>
-                                    <TextBlock
+                                <DockPanel Margin="12,0,0,0">
+                                    <TextBox
+                                        Height="31"
+                                        HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
                                         Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRightTriggerDeadzone}, Mode=OneWay}" />
                                     <Slider
                                         Name="SliderRightTriggerDeadzone"
@@ -1133,20 +1155,22 @@
                                         IsMoveToPointEnabled="True"
                                         IsSnapToTickEnabled="True"
                                         LargeChange="5"
-                                        Maximum="{Binding Source={x:Reference SliderRightTriggerMargin}, Path=Value, Converter={StaticResource InvertPercentageConverter}}"
-                                        Minimum="0"
+                                        Maximum="50"
+                                        Minimum="1"
                                         SmallChange="1"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        ValueChanged="SliderRightTriggerDeadzone_ValueChanged"
-                                        Value="{Binding RightTriggerDeadzoneValue}" />
+                                        ValueChanged="SliderRightTriggerDeadzone_ValueChanged" />
                                 </DockPanel>
                             </ui:SettingsCard>
                             <!--  Right Trigger margin  -->
                             <ui:SettingsCard d:Visibility="Visible" Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerTriggerMargin}">
-                                <DockPanel>
-                                    <TextBlock
+                                <DockPanel Margin="12,0,0,0">
+                                    <TextBox
+                                        Height="31"
+                                        HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
                                         Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRightTriggerMargin}, Mode=OneWay}" />
                                     <Slider
                                         Name="SliderRightTriggerMargin"
@@ -1156,7 +1180,7 @@
                                         IsMoveToPointEnabled="True"
                                         IsSnapToTickEnabled="True"
                                         LargeChange="5"
-                                        Maximum="{Binding RightTriggerDeadzoneValue, Converter={StaticResource InvertPercentageConverter}}"
+                                        Maximum="50"
                                         Minimum="1"
                                         SmallChange="1"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
