@@ -127,6 +127,8 @@ public abstract class IDevice
     public event KeyReleasedEventHandler? KeyReleased;
     public delegate void OpenedEventHandler(IDevice sender);
     public event OpenedEventHandler? Opened;
+    public delegate void ClosedEventHandler(IDevice sender);
+    public event ClosedEventHandler? Closed;
 
     public delegate void CapabilitiesChangedEventHandler(IDevice sender, DeviceCapabilities capabilities);
     public event CapabilitiesChangedEventHandler? CapabilitiesChanged;
@@ -422,6 +424,8 @@ public abstract class IDevice
         VirtualManager.ControllerSelected -= VirtualManager_ControllerSelected;
         ManagerFactory.deviceManager.UsbDeviceArrived -= GenericDeviceUpdated;
         ManagerFactory.deviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
+
+        Closed?.Invoke(this);
     }
 
     public virtual void Initialize(bool FirstStart, bool NewUpdate)

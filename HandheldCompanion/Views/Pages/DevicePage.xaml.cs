@@ -45,6 +45,7 @@ namespace HandheldCompanion.Views.Pages
             // manage events
             IDevice.GetCurrent().CapabilitiesChanged += OnCapabilitiesChanged;
             IDevice.GetCurrent().Opened += Device_Opened;
+            IDevice.GetCurrent().Closed += Device_Closed;
             App.uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
             switch (ManagerFactory.settingsManager.Status)
@@ -221,6 +222,11 @@ namespace HandheldCompanion.Views.Pages
             }
         }
 
+        private void Device_Closed(IDevice sender)
+        {
+            // do something
+        }
+
         private void ControllerManager_ControllerSelected(IController Controller)
         {
             // UI thread (async to prevent blocking event callers)
@@ -239,6 +245,7 @@ namespace HandheldCompanion.Views.Pages
         {
             IDevice.GetCurrent().CapabilitiesChanged -= OnCapabilitiesChanged;
             IDevice.GetCurrent().Opened -= Device_Opened;
+            IDevice.GetCurrent().Closed -= Device_Closed;
             App.uiSettings.ColorValuesChanged -= OnColorValuesChanged;
             ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
             ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
