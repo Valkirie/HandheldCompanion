@@ -1197,13 +1197,13 @@ public static class ControllerManager
         CheckControllerScenario();
     }
 
-    private static void CurrentDevice_KeyReleased(ButtonFlags button)
+    private static void CurrentDevice_KeyReleased(IDevice sender, ButtonFlags button)
     {
         // calls current controller (if connected)
         targetController?.InjectButton(button, false, true);
     }
 
-    private static void CurrentDevice_KeyPressed(ButtonFlags button)
+    private static void CurrentDevice_KeyPressed(IDevice sender, ButtonFlags button)
     {
         // calls current controller (if connected)
         targetController?.InjectButton(button, true, false);

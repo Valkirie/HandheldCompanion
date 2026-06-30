@@ -138,10 +138,7 @@
                 </Border>
 
                 <!--  Aiming down sights/scope multiplier settings  -->
-                <Expander
-                    Name="Expander_AimingDownSights"
-                    HorizontalAlignment="Stretch"
-                    Expanded="Expander_Expanded">
+                <Expander Name="Expander_AimingDownSights" HorizontalAlignment="Stretch">
                     <Expander.Header>
                         <DockPanel Margin="0,12,12,12">
                             <ui:FontIcon

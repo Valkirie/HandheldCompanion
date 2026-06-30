@@ -25,6 +25,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using Windows.Devices.Sensors;
 using WindowsInput.Events;
+using static HandheldCompanion.Devices.IDevice;
 using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices;
@@ -120,12 +121,14 @@ public struct IMUMatrix
 
 public abstract class IDevice
 {
-    public delegate void KeyPressedEventHandler(ButtonFlags button);
+    public delegate void KeyPressedEventHandler(IDevice sender, ButtonFlags button);
     public event KeyPressedEventHandler? KeyPressed;
-    public delegate void KeyReleasedEventHandler(ButtonFlags button);
+    public delegate void KeyReleasedEventHandler(IDevice sender, ButtonFlags button);
     public event KeyReleasedEventHandler? KeyReleased;
+    public delegate void OpenedEventHandler(IDevice sender);
+    public event OpenedEventHandler? Opened;
 
-    public delegate void CapabilitiesChangedEventHandler(DeviceCapabilities capabilities);
+    public delegate void CapabilitiesChangedEventHandler(IDevice sender, DeviceCapabilities capabilities);
     public event CapabilitiesChangedEventHandler? CapabilitiesChanged;
 
     public static readonly Guid BetterBatteryGuid = new Guid("961cc777-2547-4f9d-8174-7d86181b8a7a");
@@ -291,6 +294,9 @@ public abstract class IDevice
 
     public virtual void OpenEvents()
     {
+        // raise opened event
+        Opened?.Invoke(this);
+
         // raise events
         switch (ManagerFactory.settingsManager.Status)
         {
@@ -969,7 +975,7 @@ public abstract class IDevice
             Capabilities &= ~DeviceCapabilities.ExternalSensor;
         }
 
-        CapabilitiesChanged?.Invoke(Capabilities);
+        CapabilitiesChanged?.Invoke(this, Capabilities);
     }
 
     public virtual void SetFanDuty(double percent)
@@ -1172,12 +1178,12 @@ public abstract class IDevice
 
     protected void KeyPress(ButtonFlags button)
     {
-        KeyPressed?.Invoke(button);
+        KeyPressed?.Invoke(this, button);
     }
 
     protected void KeyRelease(ButtonFlags button)
     {
-        KeyReleased?.Invoke(button);
+        KeyReleased?.Invoke(this, button);
     }
 
     protected void KeyPressAndRelease(ButtonFlags button, short delay)

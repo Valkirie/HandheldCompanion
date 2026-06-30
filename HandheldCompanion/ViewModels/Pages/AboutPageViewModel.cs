@@ -49,7 +49,7 @@ namespace HandheldCompanion.ViewModels
             base.Dispose(disposing);
         }
 
-        private void OnCapabilitiesChanged(DeviceCapabilities capabilities)
+        private void OnCapabilitiesChanged(IDevice sender, DeviceCapabilities capabilities)
         {
             UIHelper.TryBeginInvoke(() => OnPropertyChanged(string.Empty));
         }

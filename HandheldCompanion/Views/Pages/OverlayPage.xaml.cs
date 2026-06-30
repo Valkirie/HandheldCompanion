@@ -288,11 +288,6 @@ public partial class OverlayPage : Page
         ManagerFactory.settingsManager.SetProperty("OverlayTrackpadsOpacity", SliderTrackpadsOpacity.Value);
     }
 
-    private void Expander_Expanded(object sender, EventArgs e)
-    {
-        ((SettingsExpander)sender).BringIntoView();
-    }
-
     private void Toggle_MotionActivated_Toggled(object sender, RoutedEventArgs e)
     {
         if (!IsLoaded)

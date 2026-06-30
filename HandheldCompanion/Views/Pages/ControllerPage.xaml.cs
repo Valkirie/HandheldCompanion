@@ -279,11 +279,6 @@ public partial class ControllerPage : Page
         MainWindow.NavView_Navigate(MainWindow.layoutPage);
     }
 
-    private void Expander_Expanded(object sender, RoutedEventArgs e)
-    {
-        ((Expander)sender).BringIntoView();
-    }
-
     private void cB_SCModeController_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!IsLoaded)

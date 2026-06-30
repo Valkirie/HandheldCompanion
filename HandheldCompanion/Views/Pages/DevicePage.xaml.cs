@@ -18,6 +18,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Windows.UI.ViewManagement;
+using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
 using static HandheldCompanion.Utils.DeviceUtils;
 using Page = System.Windows.Controls.Page;
 
@@ -35,79 +36,6 @@ namespace HandheldCompanion.Views.Pages
         {
             DataContext = new DevicePageViewModel();
             InitializeComponent();
-
-            // call function
-            UpdateDevice();
-
-            // get device
-            IDevice device = IDevice.GetCurrent();
-
-            // Adjust UI element availability based on device capabilities
-            DynamicLightingPanel.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLighting) ? Visibility.Visible : Visibility.Collapsed;
-            LEDBrightness.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingBrightness) ? Visibility.Visible : Visibility.Collapsed;
-            SecondColorToggleCard.Visibility = SecondColorPickerCard.Visibility = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor) ? Visibility.Visible : Visibility.Collapsed;
-
-            // Move device-specific USB I/O operations to background thread
-            if (device is LegionGoTablet legionGoTablet)
-            {
-                Task.Run(async () =>
-                {
-                    while (!legionGoTablet.IsOpen)
-                        await Task.Delay(1000).ConfigureAwait(false);
-
-                    // Perform USB I/O operations on background thread
-                    int leftJoystickDeadzone = SapientiaUsb.GetStickCustomDeadzone(LegionGoTablet.LeftJoyconIndex);
-                    int leftAutoSleepTime = SapientiaUsb.GetAutoSleepTime(LegionGoTablet.LeftJoyconIndex);
-                    var leftTrigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGoTablet.LeftJoyconIndex);
-
-                    int rightJoystickDeadzone = SapientiaUsb.GetStickCustomDeadzone(LegionGoTablet.RightJoyconIndex);
-                    int rightAutoSleepTime = SapientiaUsb.GetAutoSleepTime(LegionGoTablet.RightJoyconIndex);
-                    var rightTrigger = SapientiaUsb.GetTriggerDeadzoneAndMargin(LegionGoTablet.RightJoyconIndex);
-
-                    // Update UI on UI thread
-                    UIHelper.TryInvoke(() =>
-                    {
-                        SliderLeftJoystickDeadzone.Value = leftJoystickDeadzone;
-                        SliderLeftAutoSleepTime.Value = leftAutoSleepTime;
-                        SliderLeftTriggerDeadzone.Value = leftTrigger.Deadzone;
-                        SliderLeftTriggerMargin.Value = leftTrigger.Margin;
-
-                        SliderRightJoystickDeadzone.Value = rightJoystickDeadzone;
-                        SliderRightAutoSleepTime.Value = rightAutoSleepTime;
-                        SliderRightTriggerDeadzone.Value = rightTrigger.Deadzone;
-                        SliderRightTriggerMargin.Value = rightTrigger.Margin;
-                    });
-                });
-
-                // Show LegionGoPanel immediately
-                LegionGoPanel.Visibility = Visibility.Visible;
-
-                if (device.GetType() == typeof(LegionGoTablet) ||
-                    device.GetType() == typeof(LegionGoTablet2))
-                {
-                    LegionGoSensorSelection.Visibility = Visibility.Visible;
-                    LegionGoLeftController.Visibility = Visibility.Visible;
-                    LegionGoRightController.Visibility = Visibility.Visible;
-                }
-            }
-            else if (device is ClawA2VM || device is ClawA1M)
-            {
-                // Show MSIClawPanel
-                MSIClawPanel.Visibility = Visibility.Visible;
-            }
-            else if (device is GamingZone)
-            {
-                ZotacGamingZonePanel.Visibility = Visibility.Visible;
-            }
-
-            SetControlEnabledAndVisible(LEDSolidColor, LEDLevel.SolidColor);
-            SetControlEnabledAndVisible(LEDBreathing, LEDLevel.Breathing);
-            SetControlEnabledAndVisible(LEDRainbow, LEDLevel.Rainbow);
-            SetControlEnabledAndVisible(LEDWave, LEDLevel.Wave);
-            SetControlEnabledAndVisible(LEDWheel, LEDLevel.Wheel);
-            SetControlEnabledAndVisible(LEDGradient, LEDLevel.Gradient);
-            SetControlEnabledAndVisible(LEDAmbilight, LEDLevel.Ambilight);
-            SetControlEnabledAndVisible(LEDPreset, LEDLevel.LEDPreset);
         }
 
         public DevicePage(string? Tag) : this()
@@ -116,6 +44,7 @@ namespace HandheldCompanion.Views.Pages
 
             // manage events
             IDevice.GetCurrent().CapabilitiesChanged += OnCapabilitiesChanged;
+            IDevice.GetCurrent().Opened += Device_Opened;
             App.uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
             switch (ManagerFactory.settingsManager.Status)
@@ -194,9 +123,102 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager_SettingValueChanged("DockedDisplayBehavior", ManagerFactory.settingsManager.GetString("DockedDisplayBehavior"), false, false);
         }
 
-        private void OnCapabilitiesChanged(DeviceCapabilities capabilities)
+        private void OnCapabilitiesChanged(IDevice sender, DeviceCapabilities capabilities)
         {
-            UpdateDevice();
+            // UI thread
+            UIHelper.TryInvoke(() =>
+            {
+                SensorInternal.IsEnabled = sender.Capabilities.HasFlag(DeviceCapabilities.InternalSensor);
+                SensorExternal.IsEnabled = sender.Capabilities.HasFlag(DeviceCapabilities.ExternalSensor);
+            });
+        }
+
+        private void Device_Opened(IDevice sender)
+        {
+            // Update UI on UI thread
+            UIHelper.TryInvoke(() =>
+            {
+                // Adjust UI element availability based on device capabilities
+                if (sender.Capabilities.HasFlag(DeviceCapabilities.DynamicLighting))
+                {
+                    DynamicLightingPanel.Visibility = Visibility.Visible;
+
+                    SetControlEnabledAndVisible(sender, LEDSolidColor, LEDLevel.SolidColor);
+                    SetControlEnabledAndVisible(sender, LEDBreathing, LEDLevel.Breathing);
+                    SetControlEnabledAndVisible(sender, LEDRainbow, LEDLevel.Rainbow);
+                    SetControlEnabledAndVisible(sender, LEDWave, LEDLevel.Wave);
+                    SetControlEnabledAndVisible(sender, LEDWheel, LEDLevel.Wheel);
+                    SetControlEnabledAndVisible(sender, LEDGradient, LEDLevel.Gradient);
+                    SetControlEnabledAndVisible(sender, LEDAmbilight, LEDLevel.Ambilight);
+                    SetControlEnabledAndVisible(sender, LEDPreset, LEDLevel.LEDPreset);
+                }
+
+                LEDBrightness.Visibility = sender.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingBrightness) ? Visibility.Visible : Visibility.Collapsed;
+                SecondColorToggleCard.Visibility = SecondColorPickerCard.Visibility = sender.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor) ? Visibility.Visible : Visibility.Collapsed;
+            });
+
+            // device-specific logic
+            // we might need the device to be opened
+            if (sender is LegionGoTablet legionGoTablet)
+            {
+                // Perform USB I/O operations (left joystick)
+                int leftJoystickDeadzone = GetStickCustomDeadzone(LegionGoTablet.LeftJoyconIndex);
+                int leftAutoSleepTime = GetAutoSleepTime(LegionGoTablet.LeftJoyconIndex);
+                LegionTriggerDeadzone leftTrigger = GetTriggerDeadzoneAndMargin(LegionGoTablet.LeftJoyconIndex);
+
+                // Perform USB I/O operations (right joystick)
+                int rightJoystickDeadzone = GetStickCustomDeadzone(LegionGoTablet.RightJoyconIndex);
+                int rightAutoSleepTime = GetAutoSleepTime(LegionGoTablet.RightJoyconIndex);
+                LegionTriggerDeadzone rightTrigger = GetTriggerDeadzoneAndMargin(LegionGoTablet.RightJoyconIndex);
+
+                // Update UI on UI thread
+                UIHelper.TryInvoke(() =>
+                {
+                    // Show LegionGoPanel immediately
+                    LegionGoPanel.Visibility = Visibility.Visible;
+                    LegionGoSensorSelection.Visibility = Visibility.Visible;
+
+                    // left joystick
+                    SliderLeftJoystickDeadzone.Value = leftJoystickDeadzone;
+                    SliderLeftAutoSleepTime.Value = leftAutoSleepTime;
+                    SliderLeftTriggerDeadzone.Value = leftTrigger.Deadzone;
+                    SliderLeftTriggerMargin.Value = leftTrigger.Margin;
+                    LegionGoLeftController.Visibility = Visibility.Visible;
+
+                    // right joystick
+                    SliderRightJoystickDeadzone.Value = rightJoystickDeadzone;
+                    SliderRightAutoSleepTime.Value = rightAutoSleepTime;
+                    SliderRightTriggerDeadzone.Value = rightTrigger.Deadzone;
+                    SliderRightTriggerMargin.Value = rightTrigger.Margin;
+                    LegionGoRightController.Visibility = Visibility.Visible;
+                });
+            }
+            else if (sender is ClawA1M)
+            {
+                // Update UI on UI thread
+                UIHelper.TryInvoke(() =>
+                {
+                    // Show MSIClawPanel
+                    MSIClawPanel.Visibility = Visibility.Visible;
+                });
+            }
+            else if (sender is GamingZone)
+            {
+                // Update UI on UI thread
+                UIHelper.TryInvoke(() =>
+                {
+                    ZotacGamingZonePanel.Visibility = Visibility.Visible;
+                });
+            }
+            else if (sender is OneXPlayerX1)
+            {
+                // Update UI on UI thread
+                UIHelper.TryInvoke(() =>
+                {
+                    LedPresetsComboBox.ItemsSource = sender.LEDPresets;
+                    CB_BatteryBypassCharging.ItemsSource = sender.BatteryBypassPresets;
+                });
+            }
         }
 
         private void ControllerManager_ControllerSelected(IController Controller)
@@ -210,41 +232,17 @@ namespace HandheldCompanion.Views.Pages
 
         private void Page_Loaded(object? sender, RoutedEventArgs? e)
         {
-            if (LedPresetsComboBox.ItemsSource is null)
-            {
-                // First Time
-                LedPresetsComboBox.ItemsSource = IDevice.GetCurrent().LEDPresets;
-            }
-            else
-            {
-                // Refresh preset ComboBox when localization changed or re-enter page
-                int currentSelected = LedPresetsComboBox.SelectedIndex;
-                LedPresetsComboBox.ItemsSource = null;
-                LedPresetsComboBox.ItemsSource = IDevice.GetCurrent().LEDPresets;
-                LedPresetsComboBox.SelectedIndex = currentSelected;
-            }
-
-            // Battery Charge settings
-            if (CB_BatteryBypassCharging.ItemsSource is null)
-            {
-                CB_BatteryBypassCharging.ItemsSource = IDevice.GetCurrent().BatteryBypassPresets;
-            }
-            else
-            {
-                int currentSelected = CB_BatteryBypassCharging.SelectedIndex;
-                CB_BatteryBypassCharging.ItemsSource = null;
-                CB_BatteryBypassCharging.ItemsSource = IDevice.GetCurrent().BatteryBypassPresets;
-                CB_BatteryBypassCharging.SelectedIndex = currentSelected;
-            }
+            // do something
         }
 
         public void Page_Closed()
         {
+            IDevice.GetCurrent().CapabilitiesChanged -= OnCapabilitiesChanged;
+            IDevice.GetCurrent().Opened -= Device_Opened;
+            App.uiSettings.ColorValuesChanged -= OnColorValuesChanged;
             ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
             ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-            IDevice.GetCurrent().CapabilitiesChanged -= OnCapabilitiesChanged;
-            App.uiSettings.ColorValuesChanged -= OnColorValuesChanged;
         }
 
         private void SettingsManager_SettingValueChanged(string? name, object? value, bool temporary, bool initializing)
@@ -412,16 +410,6 @@ namespace HandheldCompanion.Views.Pages
                         cB_DockedDisplayBehavior.SelectedIndex = Convert.ToInt32(value);
                         break;
                 }
-            });
-        }
-
-        public void UpdateDevice(PnPDevice? device = null)
-        {
-            // UI thread
-            UIHelper.TryInvoke(() =>
-            {
-                SensorInternal.IsEnabled = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.InternalSensor);
-                SensorExternal.IsEnabled = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.ExternalSensor);
             });
         }
 
@@ -612,11 +600,6 @@ namespace HandheldCompanion.Views.Pages
             ManagerFactory.settingsManager.SetProperty("LEDUseSecondColor", Toggle_UseSecondColor.IsOn);
         }
 
-        private void Expander_Expanded(object sender, EventArgs e)
-        {
-            ((SettingsExpander)sender).BringIntoView();
-        }
-
         private void SliderLEDSpeed_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             var value = SliderLEDSpeed.Value;
@@ -637,11 +620,15 @@ namespace HandheldCompanion.Views.Pages
             ManagerFactory.settingsManager.SetProperty("LEDDirection", LEDDirection.SelectedIndex);
         }
 
-        private void SetControlEnabledAndVisible(UIElement control, LEDLevel level)
+        private void SetControlEnabledAndVisible(IDevice device, UIElement control, LEDLevel level)
         {
-            bool isCapabilitySupported = IDevice.GetCurrent().DynamicLightingCapabilities.HasFlag(level);
-            control.IsEnabled = isCapabilitySupported;
-            control.Visibility = isCapabilitySupported ? Visibility.Visible : Visibility.Collapsed;
+            // Update UI on UI thread
+            UIHelper.TryInvoke(() =>
+            {
+                bool isCapabilitySupported = device.DynamicLightingCapabilities.HasFlag(level);
+                control.IsEnabled = isCapabilitySupported;
+                control.Visibility = isCapabilitySupported ? Visibility.Visible : Visibility.Collapsed;
+            });
         }
 
         private void Toggle_BatteryChargeLimit_Toggled(object sender, RoutedEventArgs e)

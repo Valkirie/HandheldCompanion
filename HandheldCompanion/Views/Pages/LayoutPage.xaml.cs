@@ -187,11 +187,6 @@ public partial class LayoutPage : Page
         ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
     }
 
-    private void Expander_Expanded(object sender, RoutedEventArgs e)
-    {
-        ((Expander)sender).BringIntoView();
-    }
-
     public void UpdateLayout(Layout layout)
     {
         currentTemplate.Layout = layout;

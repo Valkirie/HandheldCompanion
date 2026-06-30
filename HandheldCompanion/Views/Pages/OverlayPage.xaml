@@ -450,7 +450,6 @@
                     <ui:SettingsExpander
                         HorizontalAlignment="Stretch"
                         Description="{l:Static resx:Resources.OverlayPage_RenderSettingsDesc}"
-                        Expanded="Expander_Expanded"
                         Header="{l:Static resx:Resources.OverlayPage_RenderSettings}">
                         <ui:SettingsExpander.HeaderIcon>
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE8B4;" />

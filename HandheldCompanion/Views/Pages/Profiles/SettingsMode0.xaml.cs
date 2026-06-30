@@ -249,11 +249,6 @@ public partial class SettingsMode0 : Page
         ProfilesPage.SubmitProfile();
     }
 
-    private void Expander_Expanded(object sender, RoutedEventArgs e)
-    {
-        ((Expander)sender).BringIntoView();
-    }
-
     private void SliderAimingDownSightsMultiplier_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
         if (ProfilesPage.selectedProfile is null)
