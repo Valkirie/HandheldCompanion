@@ -523,8 +523,8 @@ public static class InputsManager
                     {
                         // KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.RMenu);
                         KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LMenu);
-                        KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LControl);
-                        KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.RControl);
+                        // KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LControl);
+                        // KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.RControl);
                         KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.Alt);
                         KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LAlt);
                         // KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.RAlt);
@@ -550,16 +550,6 @@ public static class InputsManager
         // and that modifier is no longer physically held, synthesize a KeyUp for it.
         List<KeyEventArgsExt> pressedKeys = BufferKeys[true];
         List<KeyEventArgsExt> releasedKeys = BufferKeys[false];
-
-        var pressedModifiersWithoutRelease = pressedKeys
-            .Where(pressed => IsModifierKey(pressed))
-            .Where(pressed => !releasedKeys.Any(released => released.KeyValue == pressed.KeyValue))
-            .Where(pressed => !IsModifierPhysicallyDown(pressed.KeyValue))
-            .OrderBy(pressed => pressed.Timestamp)
-            .ToList();
-
-        // Re-use the original KeyEventArgsExt instances; KeyboardSimulator only cares about KeyCode
-        BufferKeys[false].AddRange(pressedModifiersWithoutRelease);
 
         // Send all key inputs (first downs, then ups)
         foreach (bool IsKeyDown in new[] { true, false })
