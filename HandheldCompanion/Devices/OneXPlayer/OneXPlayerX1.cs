@@ -467,7 +467,7 @@ public class OneXPlayerX1 : OneXAOKZOE
         StopVendorHidListener();
     }
 
-    private async void Device_Inserted(bool reScan = false)
+    protected override async void Device_Inserted(bool reScan = false)
     {
         if (reScan)
             await WaitUntilReady();

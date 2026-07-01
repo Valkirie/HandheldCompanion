@@ -242,29 +242,6 @@ public class GPDWin5 : IDevice
         return val == 0x02 || val == 0x10; // Device is running on Type-C only
     }
 
-    protected override void Device_Removed()
-    {
-        isReading = false;
-
-        // Release all back buttons so none remain logically pressed after disconnect.
-        lock (updateLock)
-        {
-            KeyRelease(ButtonFlags.OEM2); // R4
-            KeyRelease(ButtonFlags.OEM3); // L4
-            KeyRelease(ButtonFlags.OEM4); // Switch
-        }
-
-        if (hidDevices.TryGetValue(BackButtonsHidId, out HidDevice? device))
-        {
-            device.MonitorDeviceEvents = false;
-            device.Removed -= Device_Removed;
-
-            try { device.Dispose(); } catch { }
-
-            hidDevices.Remove(BackButtonsHidId);
-        }
-    }
-
     private (int major, int minor)? ReadControllerFirmwareVersion(HidDevice device)
     {
         try
@@ -303,7 +280,30 @@ public class GPDWin5 : IDevice
         }
     }
 
-    private async void Device_Inserted(bool reScan = false)
+    protected override void Device_Removed()
+    {
+        isReading = false;
+
+        // Release all back buttons so none remain logically pressed after disconnect.
+        lock (updateLock)
+        {
+            KeyRelease(ButtonFlags.OEM2); // R4
+            KeyRelease(ButtonFlags.OEM3); // L4
+            KeyRelease(ButtonFlags.OEM4); // Switch
+        }
+
+        if (hidDevices.TryGetValue(BackButtonsHidId, out HidDevice? device))
+        {
+            device.MonitorDeviceEvents = false;
+            device.Removed -= Device_Removed;
+
+            try { device.Dispose(); } catch { }
+
+            hidDevices.Remove(BackButtonsHidId);
+        }
+    }
+
+    protected override async void Device_Inserted(bool reScan = false)
     {
         if (reScan)
             await WaitUntilReady();

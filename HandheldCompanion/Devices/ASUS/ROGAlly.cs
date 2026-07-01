@@ -283,7 +283,7 @@ public class ROGAlly : IDevice
         IsReading = false;
     }
 
-    private async void Device_Inserted(bool reScan = false)
+    protected override async void Device_Inserted(bool reScan = false)
     {
         // if you still want to automatically re-attach:
         if (reScan)
@@ -587,13 +587,12 @@ public class ROGAlly : IDevice
             case ButtonFlags.OEM1:
                 return "\uE006";
             case ButtonFlags.OEM2:
+            case ButtonFlags.OEM5:
                 return "\uE005";
             case ButtonFlags.OEM3:
                 return "\u2212";
             case ButtonFlags.OEM4:
                 return "\u2213";
-            case ButtonFlags.OEM5:
-                return "\ue8f1";
         }
 
         return base.GetGlyph(button);

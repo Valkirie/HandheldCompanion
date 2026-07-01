@@ -227,7 +227,7 @@ namespace HandheldCompanion.Devices.Zotac
             base.SettingsManager_SettingValueChanged(name, value, temporary, initializing);
         }
 
-        private void Device_Removed()
+        protected override void Device_Removed()
         {
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
             {
@@ -237,7 +237,7 @@ namespace HandheldCompanion.Devices.Zotac
             }
         }
 
-        private async void Device_Inserted(bool reScan = false)
+        protected override async void Device_Inserted(bool reScan = false)
         {
             // if you still want to automatically re-attach:
             if (reScan)

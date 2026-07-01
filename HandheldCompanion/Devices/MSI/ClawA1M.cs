@@ -909,7 +909,7 @@ public class ClawA1M : IDevice
             ];
     }
 
-    private void Device_Removed()
+    protected override void Device_Removed()
     {
         // close device
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
@@ -921,7 +921,7 @@ public class ClawA1M : IDevice
         }
     }
 
-    private async void Device_Inserted(bool reScan = false)
+    protected override async void Device_Inserted(bool reScan = false)
     {
         // if you still want to automatically re-attach:
         if (reScan)
