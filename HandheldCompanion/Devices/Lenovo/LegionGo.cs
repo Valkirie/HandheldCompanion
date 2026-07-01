@@ -318,20 +318,10 @@ public class LegionGo : IDevice
     public override void OpenEvents()
     {
         base.OpenEvents();
-
-        // manage events
-        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
-        ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
-
-        Device_Inserted();
     }
 
     public override void Close()
     {
-        // manage events
-        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
-        ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
-
         // close devices
         foreach (HidDevice hidDevice in hidDevices.Values)
             hidDevice.Dispose();
@@ -407,25 +397,13 @@ public class LegionGo : IDevice
         }
     }
 
-    private void ControllerManager_ControllerPlugged(IController Controller, bool WasPowerCycling)
-    {
-        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
-            Device_Inserted(true);
-    }
-
-    protected virtual void Device_Inserted(bool reScan = false)
+    protected override void Device_Inserted(bool reScan = false)
     {
         // initialize SapientiaUsb
         Init();
     }
 
-    private void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
-    {
-        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
-            Device_Removed();
-    }
-
-    protected virtual void Device_Removed()
+    protected override void Device_Removed()
     {
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
         {

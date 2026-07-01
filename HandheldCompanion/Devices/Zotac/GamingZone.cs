@@ -191,12 +191,6 @@ namespace HandheldCompanion.Devices.Zotac
         public override void OpenEvents()
         {
             base.OpenEvents();
-
-            // manage events
-            ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
-            ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
-
-            Device_Inserted();
         }
 
         public override void Close()
@@ -208,10 +202,6 @@ namespace HandheldCompanion.Devices.Zotac
                     hidDevice.Dispose();
                 hidDevices.Clear();
             }
-
-            // manage events
-            ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
-            ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
 
             base.Close();
         }
@@ -235,19 +225,6 @@ namespace HandheldCompanion.Devices.Zotac
             }
 
             base.SettingsManager_SettingValueChanged(name, value, temporary, initializing);
-        }
-
-        private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool IsPowerCycling)
-        {
-            if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
-                Device_Inserted(true);
-        }
-
-        private void ControllerManager_ControllerUnplugged(Controllers.IController Controller, bool WasPowerCycling, bool WasTarget)
-        {
-            // hack, force rescan
-            if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
-                Device_Removed();
         }
 
         private void Device_Removed()

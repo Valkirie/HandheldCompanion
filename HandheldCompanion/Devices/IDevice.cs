@@ -1,5 +1,6 @@
 using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices.AYANEO;
 using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Devices.MSI;
@@ -334,13 +335,22 @@ public abstract class IDevice
         }
 
         // manage events
-        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
+        ControllerManager.Initialized += ControllerManager_Initialized;
 
         // raise events
-        if (VirtualManager.IsInitialized)
-        {
-            VirtualManager_ControllerSelected(VirtualManager.HIDmode);
-        }
+        if (ControllerManager.IsInitialized)
+            ControllerManager_Initialized();
+    }
+
+    private void ControllerManager_Initialized()
+    {
+        // manage events
+        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
+        ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
+
+        // send events
+        if (ControllerManager.HasTargetController && ControllerManager.GetTarget() is IController controller)
+            ControllerManager_ControllerPlugged(controller, false);
     }
 
     private void QueryDevices()
@@ -421,7 +431,9 @@ public abstract class IDevice
         // handled by PowerProfileManager, because of complex power profile order logic
         // ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
 
-        VirtualManager.ControllerSelected -= VirtualManager_ControllerSelected;
+        ControllerManager.Initialized -= ControllerManager_Initialized;
+        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
+        ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
 
         ManagerFactory.deviceManager.Initialized -= DeviceManager_Initialized;
         ManagerFactory.deviceManager.UsbDeviceArrived -= GenericDeviceUpdated;
@@ -433,10 +445,23 @@ public abstract class IDevice
     public virtual void Initialize(bool FirstStart, bool NewUpdate)
     { }
 
-    private void VirtualManager_ControllerSelected(HIDmode mode)
+    protected virtual void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool WasPowerCycling)
     {
-        SetKeyPressDelay(mode);
+        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
+            Device_Inserted(true);
     }
+
+    protected virtual void ControllerManager_ControllerUnplugged(Controllers.IController Controller, bool IsPowerCycling, bool WasTarget)
+    {
+        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
+            Device_Removed();
+    }
+
+    protected virtual void Device_Inserted(bool reScan = false)
+    { }
+
+    protected virtual void Device_Removed()
+    { }
 
     private void GenericDeviceUpdated(PnPDevice? device, Guid IntefaceGuid)
     {
@@ -930,21 +955,6 @@ public abstract class IDevice
     {
         while (!IsReady())
             await Task.Delay(250).ConfigureAwait(false);
-    }
-
-    public virtual void SetKeyPressDelay(HIDmode controllerMode)
-    {
-        /*
-        switch (controllerMode)
-        {
-            case HIDmode.DualShock4Controller:
-                KeyPressDelay = (short)(TimerManager.GetPeriod() * 18);
-                break;
-            default:
-                KeyPressDelay = (short)(TimerManager.GetPeriod() * 2);
-                break;
-        }
-        */
     }
 
     public void PullSensors()

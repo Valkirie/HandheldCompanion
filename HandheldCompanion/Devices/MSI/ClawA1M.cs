@@ -266,8 +266,6 @@ public class ClawA1M : IDevice
             IntelEnduranceGamingPreset = (int)ctl_3d_endurance_gaming_mode_t.PERFORMANCE // GPU Auto TDP is Off, FPS depends on the game, and it can be up to 120
         });
 
-        KeyPressDelay = 500;
-
         OEMChords.Add(new KeyboardChord(name: "CLAW", button: ButtonFlags.OEM1));
         OEMChords.Add(new KeyboardChord(name: "QS", button: ButtonFlags.OEM2));
         OEMChords.Add(new KeyboardChord(name: "M1", button: ButtonFlags.OEM3));
@@ -363,12 +361,6 @@ public class ClawA1M : IDevice
     public override void OpenEvents()
     {
         base.OpenEvents();
-
-        // manage events
-        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
-        ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
-
-        Device_Inserted();
     }
 
     public override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
@@ -416,18 +408,6 @@ public class ClawA1M : IDevice
         {
             SetShiftMode(ShiftModeCalcType.ChangeToCurrentShiftType, IsDcMode ? ShiftType.None : ShiftType.SportMode);
         }
-    }
-
-    private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool WasPowerCycling)
-    {
-        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
-            Device_Inserted(true);
-    }
-
-    private void ControllerManager_ControllerUnplugged(Controllers.IController Controller, bool IsPowerCycling, bool WasTarget)
-    {
-        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
-            Device_Removed();
     }
 
     private int LEDBrightness = 100;
@@ -485,10 +465,6 @@ public class ClawA1M : IDevice
 
         // set flag
         ClawOpen = false;
-
-        // manage events
-        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
-        ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
 
         base.Close();
     }

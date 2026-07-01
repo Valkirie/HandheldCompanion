@@ -210,11 +210,6 @@ public class OneXPlayerX1 : OneXAOKZOE
     public override void OpenEvents()
     {
         base.OpenEvents();
-
-        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
-        ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
-
-        Device_Inserted();
     }
 
     protected override void QuerySettings()
@@ -238,9 +233,6 @@ public class OneXPlayerX1 : OneXAOKZOE
 
     public override void Close()
     {
-        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
-        ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
-
         StopVendorHidListener();
 
         if (_serialPort is not null)
@@ -470,19 +462,7 @@ public class OneXPlayerX1 : OneXAOKZOE
         }
     }
 
-    private void ControllerManager_ControllerPlugged(Controllers.IController controller, bool isPowerCycling)
-    {
-        if (controller.GetVendorID() == vendorId && productIds.Contains(controller.GetProductID()))
-            Device_Inserted(true);
-    }
-
-    private void ControllerManager_ControllerUnplugged(Controllers.IController controller, bool wasPowerCycling, bool wasTarget)
-    {
-        if (controller.GetVendorID() == vendorId && productIds.Contains(controller.GetProductID()))
-            Device_Removed();
-    }
-
-    private void Device_Removed()
+    protected override void Device_Removed()
     {
         StopVendorHidListener();
     }

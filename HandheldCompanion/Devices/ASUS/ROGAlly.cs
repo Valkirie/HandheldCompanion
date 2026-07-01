@@ -222,12 +222,6 @@ public class ROGAlly : IDevice
     public override void OpenEvents()
     {
         base.OpenEvents();
-
-        // manage events
-        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
-        ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
-
-        Device_Inserted();
     }
 
     private static byte[] defaultCPUFan = new byte[] { 0x3A, 0x3D, 0x40, 0x44, 0x48, 0x4D, 0x51, 0x62, 0x08, 0x11, 0x16, 0x1A, 0x22, 0x29, 0x30, 0x45 };
@@ -274,22 +268,9 @@ public class ROGAlly : IDevice
         }
     }
 
-    private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool WasPowerCycling)
-    {
-        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
-            Device_Inserted(true);
-    }
-
-    private void ControllerManager_ControllerUnplugged(Controllers.IController Controller, bool IsPowerCycling, bool WasTarget)
-    {
-        // hack, force rescan
-        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
-            Device_Removed();
-    }
-
     private bool IsReading = false;
 
-    private void Device_Removed()
+    protected override void Device_Removed()
     {
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
         {
@@ -369,10 +350,6 @@ public class ROGAlly : IDevice
                 hidDevice.Dispose();
             hidDevices.Clear();
         }
-
-        // manage events
-        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
-        ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
 
         base.Close();
     }

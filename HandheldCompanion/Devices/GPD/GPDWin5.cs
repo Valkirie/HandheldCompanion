@@ -172,11 +172,6 @@ public class GPDWin5 : IDevice
     public override void OpenEvents()
     {
         base.OpenEvents();
-
-        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
-        ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
-
-        Device_Inserted();
     }
 
     public override void Close()
@@ -188,9 +183,6 @@ public class GPDWin5 : IDevice
             KeyRelease(ButtonFlags.OEM3); // L4
             KeyRelease(ButtonFlags.OEM4); // Switch
         }
-
-        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
-        ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
 
         lock (updateLock)
         {
@@ -250,19 +242,7 @@ public class GPDWin5 : IDevice
         return val == 0x02 || val == 0x10; // Device is running on Type-C only
     }
 
-    private void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool WasPowerCycling)
-    {
-        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
-            Device_Inserted(true);
-    }
-
-    private void ControllerManager_ControllerUnplugged(Controllers.IController Controller, bool IsPowerCycling, bool WasTarget)
-    {
-        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
-            Device_Removed();
-    }
-
-    private void Device_Removed()
+    protected override void Device_Removed()
     {
         isReading = false;
 
