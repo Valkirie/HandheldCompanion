@@ -394,8 +394,10 @@ namespace HandheldCompanion.ViewModels
                     break;
             }
 
+            // manager events
             ControllerManager.Initialized += ControllerManager_Initialized;
 
+            // raise events
             if (ControllerManager.IsInitialized)
                 ControllerManager_Initialized();
 

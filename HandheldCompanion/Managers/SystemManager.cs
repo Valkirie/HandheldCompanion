@@ -36,7 +36,7 @@ public static class SystemManager
     public delegate void PowerStatusChangedEventHandler(PowerStatus status);
 
     public static event PowerLineStatusChangedEventHandler? PowerLineStatusChanged;
-    public delegate void PowerLineStatusChangedEventHandler(PowerLineStatus powerLineStatus);
+    public delegate void PowerLineStatusChangedEventHandler(PowerLineStatus prevPowerLineStatus, PowerLineStatus powerLineStatus);
 
     public static event InitializedEventHandler? Initialized;
     public delegate void InitializedEventHandler();
@@ -82,7 +82,7 @@ public static class SystemManager
 
     private static SystemStatus currentSystemStatus = SystemStatus.SystemBooting;
     private static SystemStatus previousSystemStatus = SystemStatus.SystemBooting;
-    private static PowerLineStatus previousPowerLineStatus = PowerLineStatus.Offline;
+    private static PowerLineStatus prevPowerLineStatus = PowerLineStatus.Offline;
 
     // EventLogWatcher for power mode detection
     private static EventLogWatcher? _powerModeWatcher;
@@ -199,15 +199,36 @@ public static class SystemManager
     {
         switch (e.Mode)
         {
+            case PowerModes.Suspend:
+                if (!isPowerSuspended)
+                {
+                    isPowerSuspended = true;
+                    LogManager.LogDebug("Device entering sleep/hibernate (PowerModes.Suspend)");
+                    PowerModeChanged?.Invoke(PowerMode.Suspend, WakeReason.Unknown);
+                    PerformSystemRoutine();
+                }
+                return;
+
+            case PowerModes.Resume:
+                if (isPowerSuspended)
+                {
+                    isPowerSuspended = false;
+                    LogManager.LogDebug("Device waking from sleep/hibernate (PowerModes.Resume)");
+                    PowerModeChanged?.Invoke(PowerMode.Resume, WakeReason.Unknown);
+                    PerformSystemRoutine();
+                }
+                return;
+
             case PowerModes.StatusChange:
                 {
-                    if (previousPowerLineStatus != SystemInformation.PowerStatus.PowerLineStatus)
+                    PowerLineStatus powerLineStatus = SystemInformation.PowerStatus.PowerLineStatus;
+                    if (prevPowerLineStatus != powerLineStatus)
                     {
                         // raise event
-                        PowerLineStatusChanged?.Invoke(SystemInformation.PowerStatus.PowerLineStatus);
+                        PowerLineStatusChanged?.Invoke(prevPowerLineStatus, powerLineStatus);
 
                         // update status
-                        previousPowerLineStatus = SystemInformation.PowerStatus.PowerLineStatus;
+                        prevPowerLineStatus = powerLineStatus;
                     }
                 }
                 return;
@@ -280,14 +301,14 @@ public static class SystemManager
 
         try
         {
-            if (eventId == 506) // Modern Standby sleep entry
+            if (eventId == 506 && !isPowerSuspended) // Modern Standby sleep entry
             {
                 isPowerSuspended = true;
                 LogManager.LogDebug("Device entering sleep (Kernel-Power 506)");
                 PowerModeChanged?.Invoke(PowerMode.Suspend, wakeReason);
                 PerformSystemRoutine();
             }
-            else if (eventId == 507) // Modern Standby wake
+            else if (eventId == 507 && isPowerSuspended) // Modern Standby wake
             {
                 isPowerSuspended = false;
                 LogManager.LogDebug("Device waking from sleep (Kernel-Power 507)");

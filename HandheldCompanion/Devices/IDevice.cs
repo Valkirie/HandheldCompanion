@@ -348,7 +348,7 @@ public abstract class IDevice
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
 
-        // send events
+        // raise events
         if (ControllerManager.HasTargetController && ControllerManager.GetTarget() is IController controller)
             ControllerManager_ControllerPlugged(controller, false);
     }

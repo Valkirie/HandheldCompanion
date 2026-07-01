@@ -211,7 +211,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private void SystemManager_PowerLineStatusChanged(PowerLineStatus powerLineStatus)
+        private void SystemManager_PowerLineStatusChanged(PowerLineStatus prevPowerLineStatus, PowerLineStatus powerLineStatus)
         {
             // Get current profile
             Profile profile = ManagerFactory.profileManager.GetCurrent();
