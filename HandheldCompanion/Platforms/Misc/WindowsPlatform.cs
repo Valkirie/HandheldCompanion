@@ -153,10 +153,16 @@ public sealed class WindowsPlatform : IPlatform
             WakeReason.FingerprintReader => "GoBackToSleepOnFingerprintReader",
             WakeReason.Joystick => "GoBackToSleepOnJoystick",
             WakeReason.ChargerConnected => "GoBackToSleepOnChargerConnected",
+            WakeReason.Unknown => null, // On S4-only devices (no Modern Standby), only Unknown is available; don't resleep
             _ => null,
         };
 
-        return string.IsNullOrEmpty(settingKey) || ManagerFactory.settingsManager.GetBoolean(settingKey);
+        // If no setting key, don't resleep (safer default for unknown/unsupported reasons)
+        if (string.IsNullOrEmpty(settingKey))
+            return false;
+
+        // For recognized reasons, check if user configured resleep for that reason
+        return ManagerFactory.settingsManager.GetBoolean(settingKey);
     }
 
     private sealed class EnhancedSleepPolicy

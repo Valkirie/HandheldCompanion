@@ -203,7 +203,7 @@ public static class SystemManager
                 if (!isPowerSuspended)
                 {
                     isPowerSuspended = true;
-                    LogManager.LogDebug("Device entering sleep/hibernate (PowerModes.Suspend)");
+                    LogManager.LogDebug("Device entering sleep/hibernate (PowerModes.Suspend from SystemEvents)");
                     PowerModeChanged?.Invoke(PowerMode.Suspend, WakeReason.Unknown);
                     PerformSystemRoutine();
                 }
@@ -213,7 +213,7 @@ public static class SystemManager
                 if (isPowerSuspended)
                 {
                     isPowerSuspended = false;
-                    LogManager.LogDebug("Device waking from sleep/hibernate (PowerModes.Resume)");
+                    LogManager.LogDebug("Device waking from sleep/hibernate (PowerModes.Resume from SystemEvents). Actual WakeReason will come from Kernel-Power 507 event.");
                     PowerModeChanged?.Invoke(PowerMode.Resume, WakeReason.Unknown);
                     PerformSystemRoutine();
                 }
@@ -308,12 +308,19 @@ public static class SystemManager
                 PowerModeChanged?.Invoke(PowerMode.Suspend, wakeReason);
                 PerformSystemRoutine();
             }
-            else if (eventId == 507 && isPowerSuspended) // Modern Standby wake
+            else if (eventId == 507) // Modern Standby wake
             {
-                isPowerSuspended = false;
-                LogManager.LogDebug("Device waking from sleep (Kernel-Power 507)");
+                // Always emit the wake reason from Kernel-Power, even if isPowerSuspended is already false.
+                // This handles the race where PowerModes.Resume clears isPowerSuspended before this event arrives.
+                LogManager.LogDebug("Device waking from sleep (Kernel-Power 507), reason: {0}", wakeReason);
                 PowerModeChanged?.Invoke(PowerMode.Resume, wakeReason);
-                PerformSystemRoutine();
+
+                // Only perform state transition if we're still marked as suspended
+                if (isPowerSuspended)
+                {
+                    isPowerSuspended = false;
+                    PerformSystemRoutine();
+                }
             }
         }
         catch (Exception ex)
