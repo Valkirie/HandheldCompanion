@@ -399,17 +399,14 @@ public class MultimediaManager : IManager
                     }
                     else
                     {
-                        // Clear stale frequencies - rebuild fresh list for this resolution
-                        resolution.Frequencies.Clear();
-
                         if (mode.dmBitsPerPel > resolution.BitsPerPel)
                         {
                             resolution.BitsPerPel = mode.dmBitsPerPel;
                         }
                     }
 
-                    if (mode.dmDisplayFrequency > 1 && !resolution.Frequencies.ContainsKey(mode.dmDisplayFrequency))
-                        resolution.Frequencies.Add(mode.dmDisplayFrequency, mode.dmDisplayFrequency);
+                    if (mode.dmDisplayFrequency > 1)
+                        resolution.Frequencies.TryAdd(mode.dmDisplayFrequency, mode.dmDisplayFrequency);
                 }
 
                 // Get current resolution info
