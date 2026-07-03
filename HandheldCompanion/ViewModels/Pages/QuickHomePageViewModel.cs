@@ -45,7 +45,7 @@ namespace HandheldCompanion.ViewModels
             ControllerManager.ControllerUnplugged += ControllerManager_ControllerChanged;
 
             // raise events
-            if (ControllerManager.GetTarget() is IController controller)
+            if (ControllerManager.HasTargetController && ControllerManager.GetTarget() is IController controller)
                 ControllerManager_ControllerSelected(controller);
         }
 

@@ -22,10 +22,20 @@ namespace HandheldCompanion.ViewModels
         public ILayoutPageViewModel()
         {
             // manage events
+            ControllerManager.Initialized += ControllerManager_Initialized;
+
+            // raise events
+            if (ControllerManager.IsInitialized)
+                ControllerManager_Initialized();
+        }
+
+        private void ControllerManager_Initialized()
+        {
+            // manage events
             ControllerManager.ControllerSelected += UpdateController;
 
             // raise events
-            if (ControllerManager.GetTarget() is IController controller)
+            if (ControllerManager.HasTargetController && ControllerManager.GetTarget() is IController controller)
                 UpdateController(controller);
         }
 
@@ -38,6 +48,7 @@ namespace HandheldCompanion.ViewModels
         {
             if (disposing)
             {
+                ControllerManager.Initialized -= ControllerManager_Initialized;
                 ControllerManager.ControllerSelected -= UpdateController;
             }
 

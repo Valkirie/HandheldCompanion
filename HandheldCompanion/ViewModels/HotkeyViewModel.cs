@@ -140,9 +140,20 @@ namespace HandheldCompanion.ViewModels
 
         public override void Dispose()
         {
-            _Hotkey.command.Executed -= Command_Executed;
-            _Hotkey.command.Updated -= Command_Updated;
             base.Dispose();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _Hotkey.command.Executed -= Command_Executed;
+                _Hotkey.command.Updated -= Command_Updated;
+                ControllerManager.Initialized -= ControllerManager_Initialized;
+                ControllerManager.ControllerSelected -= UpdateController;
+            }
+
+            base.Dispose(disposing);
         }
 
         public string Glyph => Hotkey.command.Glyph;
@@ -742,11 +753,21 @@ namespace HandheldCompanion.ViewModels
             });
 
             // manage events
+            ControllerManager.Initialized += ControllerManager_Initialized;
+
+            // raise events
+            if (ControllerManager.IsInitialized)
+                ControllerManager_Initialized();
+        }
+
+        private void ControllerManager_Initialized()
+        {
+            // manage events
             ControllerManager.ControllerSelected += UpdateController;
 
             // raise events
-            if (ControllerManager.HasTargetController)
-                UpdateController(ControllerManager.GetTarget());
+            if (ControllerManager.HasTargetController && ControllerManager.GetTarget() is IController controller)
+                UpdateController(controller);
         }
 
         protected void UpdateController(IController? controller)

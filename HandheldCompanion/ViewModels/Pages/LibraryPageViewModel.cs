@@ -379,10 +379,6 @@ namespace HandheldCompanion.ViewModels
 
             RebuildNavigationItems();
 
-            ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-            if (ControllerManager.HasTargetController)
-                ControllerManager_ControllerSelected(ControllerManager.GetTarget());
-
             ToggleSortCommand = new DelegateCommand(() =>
             {
                 SortAscending = !SortAscending;
@@ -558,6 +554,7 @@ namespace HandheldCompanion.ViewModels
                     break;
             }
 
+            // raise events
             switch (ManagerFactory.libraryManager.Status)
             {
                 default:
@@ -569,6 +566,7 @@ namespace HandheldCompanion.ViewModels
                     break;
             }
 
+            // raise events
             switch (ManagerFactory.collectionManager.Status)
             {
                 default:
@@ -580,7 +578,7 @@ namespace HandheldCompanion.ViewModels
                     break;
             }
 
-            // Refresh platform icons once PlatformManager has started so logos are available.
+            // raise events
             switch (ManagerFactory.platformManager.Status)
             {
                 default:
@@ -591,6 +589,23 @@ namespace HandheldCompanion.ViewModels
                     PlatformManager_Initialized();
                     break;
             }
+
+            // manage events
+            ControllerManager.Initialized += ControllerManager_Initialized;
+
+            // raise events
+            if (ControllerManager.IsInitialized)
+                ControllerManager_Initialized();
+        }
+
+        private void ControllerManager_Initialized()
+        {
+            // manage events
+            ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+
+            // raise events
+            if (ControllerManager.HasTargetController && ControllerManager.GetTarget() is IController controller)
+                ControllerManager_ControllerSelected(controller);
         }
 
         private void PlatformManager_Initialized()

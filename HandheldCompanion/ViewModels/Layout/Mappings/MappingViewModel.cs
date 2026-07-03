@@ -687,6 +687,10 @@ namespace HandheldCompanion.ViewModels
             MainWindow.layoutPage.LayoutUpdated += UpdateMapping;
             VirtualManager.Initialized += VirtualManager_Initialized;
 
+            // raise events
+            if (VirtualManager.IsInitialized)
+                VirtualManager_Initialized();
+
             // Send update event to Model
             PropertyChanged +=
                 (s, e) =>
