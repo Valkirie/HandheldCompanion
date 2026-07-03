@@ -32,12 +32,6 @@ namespace HandheldCompanion.Managers
             if (IsInitialized)
                 return;
 
-            // manage events
-            ManagerFactory.deviceManager.UsbDeviceArrived += DeviceManager_UsbDeviceArrived;
-            ManagerFactory.deviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceRemoved;
-            ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-            ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
-
             // raise events
             switch (ManagerFactory.settingsManager.Status)
             {
@@ -50,18 +44,55 @@ namespace HandheldCompanion.Managers
                     break;
             }
 
-            if (ManagerFactory.deviceManager.IsRunning)
+            // raise events
+            switch (ManagerFactory.deviceManager.Status)
             {
-                DeviceManager_UsbDeviceArrived(null, Guid.Empty);
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.deviceManager.Initialized += DeviceManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryDevice();
+                    break;
             }
+            
+            // manage events
+            ControllerManager.Initialized += ControllerManager_Initialized;
 
-            if (ControllerManager.HasTargetController)
-                ControllerManager_ControllerSelected(ControllerManager.GetTarget());
+            // raise events
+            if (ControllerManager.IsInitialized)
+                ControllerManager_Initialized();
 
             IsInitialized = true;
             Initialized?.Invoke();
 
             LogManager.LogInformation("{0} has started", "SensorsManager");
+        }
+
+        private static void ControllerManager_Initialized()
+        {
+            // manage events
+            ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+            ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
+
+            // raise events
+            if (ControllerManager.HasTargetController && ControllerManager.GetTarget() is IController controller)
+                ControllerManager_ControllerSelected(controller);
+        }
+
+        private static void QueryDevice()
+        {
+            // manage events
+            ManagerFactory.deviceManager.UsbDeviceArrived += DeviceManager_UsbDeviceArrived;
+            ManagerFactory.deviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceRemoved;
+
+            // raise events
+            DeviceManager_UsbDeviceArrived(null, Guid.Empty);
+        }
+
+        private static void DeviceManager_Initialized()
+        {
+            QueryDevice();
         }
 
         private static void SettingsManager_Initialized()
@@ -90,12 +121,16 @@ namespace HandheldCompanion.Managers
             USBSensor?.Close();
 
             // manage events
+            ManagerFactory.deviceManager.Initialized -= DeviceManager_Initialized;
             ManagerFactory.deviceManager.UsbDeviceArrived -= DeviceManager_UsbDeviceArrived;
             ManagerFactory.deviceManager.UsbDeviceRemoved -= DeviceManager_UsbDeviceRemoved;
+
+            ControllerManager.Initialized -= ControllerManager_Initialized;
             ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
             ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
-            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
             ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
             IsInitialized = false;
 

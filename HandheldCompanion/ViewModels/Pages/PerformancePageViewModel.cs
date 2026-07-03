@@ -132,8 +132,8 @@ namespace HandheldCompanion.ViewModels
         }
 
         public bool SupportsTDP => PerformanceManager.GetProcessor()?.CanChangeTDP ?? false;
-
         public bool SupportsGPUFreq => PerformanceManager.GetProcessor()?.CanChangeGPU ?? false;
+
         public bool SupportsFramerateLimiter => IsRunningRTSS;
 
         public bool PerformanceManagerEnabled => ManagerFactory.settingsManager.GetBoolean("PerformanceManagerEnabled");
@@ -918,14 +918,6 @@ namespace HandheldCompanion.ViewModels
 
             #region General Setup
 
-            // manage events
-            PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
-
-            if (PerformanceManager.IsInitialized && PerformanceManager.GetProcessor() is Processor processor)
-                PerformanceManager_Initialized(processor.CanChangeTDP, processor.CanChangeGPU);
-            else
-                PerformanceManager.Initialized += PerformanceManager_Initialized;
-
             // raise events
             switch (ManagerFactory.powerProfileManager.Status)
             {
@@ -938,6 +930,7 @@ namespace HandheldCompanion.ViewModels
                     break;
             }
 
+            // raise events
             switch (ManagerFactory.settingsManager.Status)
             {
                 default:
@@ -949,6 +942,7 @@ namespace HandheldCompanion.ViewModels
                     break;
             }
 
+            // raise events
             switch (ManagerFactory.multimediaManager.Status)
             {
                 default:
@@ -960,6 +954,7 @@ namespace HandheldCompanion.ViewModels
                     break;
             }
 
+            // raise events
             switch (ManagerFactory.gpuManager.Status)
             {
                 default:
@@ -971,6 +966,7 @@ namespace HandheldCompanion.ViewModels
                     break;
             }
 
+            // raise events
             switch (ManagerFactory.platformManager.Status)
             {
                 default:
@@ -981,6 +977,13 @@ namespace HandheldCompanion.ViewModels
                     QueryPlatforms();
                     break;
             }
+
+            // manage events
+            PerformanceManager.Initialized += PerformanceManager_Initialized;
+
+            // raise events
+            if (PerformanceManager.IsInitialized && PerformanceManager.GetProcessor() is Processor processor)
+                PerformanceManager_Initialized(processor.CanChangeTDP, processor.CanChangeGPU);
 
             PropertyChanged += (sender, e) =>
             {
@@ -1394,6 +1397,9 @@ namespace HandheldCompanion.ViewModels
 
         private void PerformanceManager_Initialized(bool CanChangeTDP, bool CanChangeGPU)
         {
+            // manage events
+            PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
+
             OnPropertyChanged(nameof(SupportsTDP));
             OnPropertyChanged(nameof(SupportsGPUFreq));
         }

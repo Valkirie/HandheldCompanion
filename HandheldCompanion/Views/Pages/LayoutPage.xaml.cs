@@ -52,22 +52,39 @@ public partial class LayoutPage : Page
     {
         this.Tag = Tag;
         this.parentNavView = parent;
-    }
 
-    private void ControllerManager_ControllerSelected(IController? Controller)
-    {
-        if (Controller is null)
-            return;
-
-        // UI thread (async to prevent blocking event callers)
-        UIHelper.TryBeginInvoke(() =>
+        // raise events
+        switch (ManagerFactory.settingsManager.Status)
         {
-            L2.Glyph = Controller.GetGlyph(AxisFlags.L2);
-            R2.Glyph = Controller.GetGlyph(AxisFlags.R2);
-        });
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
+        }
+
+        // raise events
+        switch (ManagerFactory.profileManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.profileManager.Initialized += ProfileManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryProfile();
+                break;
+        }
+
+        // manage events
+        ControllerManager.Initialized += ControllerManager_Initialized;
+
+        // raise events
+        if (ControllerManager.IsInitialized)
+            ControllerManager_Initialized();
     }
 
-    // Initialize pages later so the reference can be made to layoutPage from MainWindow
     public void Initialize()
     {
         buttonsPage = new ButtonsPage();
@@ -76,12 +93,6 @@ public partial class LayoutPage : Page
         joysticksPage = new JoysticksPage();
         trackpadsPage = new TrackpadsPage();
         triggersPage = new TriggersPage();
-
-        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-
-        // raise events
-        if (ControllerManager.HasTargetController)
-            ControllerManager_ControllerSelected(ControllerManager.GetTarget());
 
         // create controller related pages
         this.pages = new()
@@ -109,10 +120,56 @@ public partial class LayoutPage : Page
             // force raise event, in case page is already loaded
             BaseViewModel_PropertyChanged(page, new PropertyChangedEventArgs("IsEnabled"));
         }
+    }
 
+    private void QueryProfile()
+    {
+        // manage events
+        ManagerFactory.profileManager.Updated += ProfileManager_Updated;
+
+        // do something ?
+    }
+
+    private void ProfileManager_Initialized()
+    {
+        QueryProfile();
+    }
+
+    private void QuerySettings()
+    {
         // manage events
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        ManagerFactory.profileManager.Updated += ProfileManager_Updated;
+
+        // raise events
+        SettingsManager_SettingValueChanged("LayoutFilterOnDevice", ManagerFactory.settingsManager.GetString("LayoutFilterOnDevice"), false, false);
+    }
+
+    private void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
+    private void ControllerManager_Initialized()
+    {
+        // manage events
+        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+
+        // raise events
+        if (ControllerManager.HasTargetController && ControllerManager.GetTarget() is IController controller)
+            ControllerManager_ControllerSelected(controller);
+    }
+
+    private void ControllerManager_ControllerSelected(IController? Controller)
+    {
+        if (Controller is null)
+            return;
+
+        // UI thread (async to prevent blocking event callers)
+        UIHelper.TryBeginInvoke(() =>
+        {
+            L2.Glyph = Controller.GetGlyph(AxisFlags.L2);
+            R2.Glyph = Controller.GetGlyph(AxisFlags.R2);
+        });
     }
 
     private void BaseViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -183,7 +240,10 @@ public partial class LayoutPage : Page
         ((LayoutPageViewModel)DataContext).Dispose();
 
         // manage events
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
+        ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
         ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
     }
 

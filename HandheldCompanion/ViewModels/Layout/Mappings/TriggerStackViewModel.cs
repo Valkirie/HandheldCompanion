@@ -50,14 +50,6 @@ namespace HandheldCompanion.ViewModels
                     MainWindow.NavView_Navigate(MainWindow.layoutItemPage);
                 }
             });
-
-            // manage events
-            MainWindow.layoutPage.LayoutUpdated += UpdateMapping;
-            ControllerManager.ControllerSelected += UpdateController;
-
-            // send events
-            if (ControllerManager.GetTarget() is IController controller)
-                UpdateController(controller);
         }
 
         private void TriggerMappings_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -82,8 +74,6 @@ namespace HandheldCompanion.ViewModels
             if (disposing)
             {
                 TriggerMappings.CollectionChanged -= TriggerMappings_CollectionChanged;
-                MainWindow.layoutPage.LayoutUpdated -= UpdateMapping;
-                ControllerManager.ControllerSelected -= UpdateController;
 
                 foreach (var buttonMapping in TriggerMappings)
                     buttonMapping.Dispose();
@@ -130,7 +120,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private void UpdateMapping(Layout layout)
+        protected override void UpdateMapping(Layout layout)
         {
             if (layout.AxisLayout.TryGetValue(_flag, out var actions))
             {

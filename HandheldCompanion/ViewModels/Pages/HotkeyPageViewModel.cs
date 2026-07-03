@@ -1,5 +1,7 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -31,15 +33,6 @@ namespace HandheldCompanion.ViewModels
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(HotkeysList, _collectionLock);
 
-            // manage events
-            InputsManager.StartedListening += InputsManager_StartedListening;
-            InputsManager.StoppedListening += InputsManager_StoppedListening;
-            ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-
-            // raise event
-            if (ControllerManager.HasTargetController)
-                ControllerManager_ControllerSelected(ControllerManager.GetTarget());
-
             // raise events
             switch (ManagerFactory.hotkeysManager.Status)
             {
@@ -52,10 +45,30 @@ namespace HandheldCompanion.ViewModels
                     break;
             }
 
+            // manage events
+            ControllerManager.Initialized += ControllerManager_Initialized;
+            InputsManager.Initialized += InputsManager_Initialized;
+
+            // raise events
+            if (ControllerManager.IsInitialized)
+                ControllerManager_Initialized();
+            if (InputsManager.IsInitialized)
+                InputsManager_Initialized();
+
             CreateHotkeyCommand = new DelegateCommand(async () =>
             {
                 ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(new Hotkey());
             });
+        }
+
+        private void ControllerManager_Initialized()
+        {
+            // manage events
+            ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+
+            // raise events
+            if (ControllerManager.HasTargetController && ControllerManager.GetTarget() is IController controller)
+                ControllerManager_ControllerSelected(controller);
         }
 
         private void ControllerManager_ControllerSelected(Controllers.IController Controller)
@@ -69,6 +82,13 @@ namespace HandheldCompanion.ViewModels
 
             foreach (HotkeyViewModel hotkeyViewModel in hotkeyViewModels)
                 hotkeyViewModel.DrawChords();
+        }
+
+        private void InputsManager_Initialized()
+        {
+            // manage events
+            InputsManager.StartedListening += InputsManager_StartedListening;
+            InputsManager.StoppedListening += InputsManager_StoppedListening;
         }
 
         private void HotkeysManager_Initialized()

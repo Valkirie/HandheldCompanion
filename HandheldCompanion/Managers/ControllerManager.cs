@@ -2644,7 +2644,7 @@ public static class ControllerManager
 
     public static IEnumerable<T> GetControllers<T>() where T : IController
     {
-        return Controllers.Values.Where(controller => typeof(T).IsAssignableFrom(controller.GetType())).Cast<T>();
+        return Controllers.Values.Where(controller => typeof(T).IsAssignableFrom(controller.GetType()) && !controller.IsDummy()).Cast<T>();
     }
 
     private static ControllerState mutedState = new ControllerState();

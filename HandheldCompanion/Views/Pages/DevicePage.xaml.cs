@@ -48,6 +48,7 @@ namespace HandheldCompanion.Views.Pages
             IDevice.GetCurrent().Closed += Device_Closed;
             App.uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
+            // raise events
             switch (ManagerFactory.settingsManager.Status)
             {
                 default:
@@ -59,8 +60,10 @@ namespace HandheldCompanion.Views.Pages
                     break;
             }
 
+            // manage events
             ControllerManager.Initialized += ControllerManager_Initialized;
 
+            // raise events
             if (ControllerManager.IsInitialized)
                 ControllerManager_Initialized();
         }

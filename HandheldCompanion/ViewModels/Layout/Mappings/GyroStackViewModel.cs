@@ -38,14 +38,6 @@ namespace HandheldCompanion.ViewModels
             BindingOperations.EnableCollectionSynchronization(GyroMappings, _collectionLock);
 
             GyroMappings.Add(new GyroMappingViewModel(flag));
-
-            // manage events
-            MainWindow.layoutPage.LayoutUpdated += UpdateMapping;
-            ControllerManager.ControllerSelected += UpdateController;
-
-            // send events
-            if (ControllerManager.GetTarget() is IController controller)
-                UpdateController(controller);
         }
 
         protected override void UpdateController(IController controller)
@@ -63,9 +55,6 @@ namespace HandheldCompanion.ViewModels
         {
             if (disposing)
             {
-                MainWindow.layoutPage.LayoutUpdated -= UpdateMapping;
-                ControllerManager.ControllerSelected -= UpdateController;
-
                 foreach (var buttonMapping in GyroMappings)
                     buttonMapping.Dispose();
 
@@ -103,7 +92,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private void UpdateMapping(Layout layout)
+        protected override void UpdateMapping(Layout layout)
         {
             if (layout.AxisLayout.TryGetValue(_flag, out var actions))
             {

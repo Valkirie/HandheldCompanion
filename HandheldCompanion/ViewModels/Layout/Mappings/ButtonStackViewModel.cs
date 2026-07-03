@@ -54,14 +54,6 @@ namespace HandheldCompanion.ViewModels
                 }
             });
 
-            // manage events
-            MainWindow.layoutPage.LayoutUpdated += UpdateMapping;
-            ControllerManager.ControllerSelected += UpdateController;
-
-            // send events
-            if (ControllerManager.GetTarget() is IController controller)
-                UpdateController(controller);
-
             if (OEM.Contains(_flag))
             {
                 IsSupported = true;
@@ -94,8 +86,6 @@ namespace HandheldCompanion.ViewModels
             if (disposing)
             {
                 ButtonMappings.CollectionChanged -= ButtonMappings_CollectionChanged;
-                MainWindow.layoutPage.LayoutUpdated -= UpdateMapping;
-                ControllerManager.ControllerSelected -= UpdateController;
 
                 foreach (var buttonMapping in ButtonMappings)
                     buttonMapping.Dispose();
@@ -143,7 +133,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private void UpdateMapping(Layout layout)
+        protected override void UpdateMapping(Layout layout)
         {
             if (layout.ButtonLayout.TryGetValue(_flag, out var actions))
             {

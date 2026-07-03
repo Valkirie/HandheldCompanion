@@ -392,7 +392,6 @@ namespace HandheldCompanion.ViewModels
             // raise events
             if (ControllerManager.IsInitialized)
                 ControllerManager_Initialized();
-
             if (VirtualManager.IsInitialized)
                 VirtualManager_Initialized();
 
@@ -445,7 +444,7 @@ namespace HandheldCompanion.ViewModels
             VirtualManager.MasterIntervalOverrideChanged += VirtualManager_MasterIntervalOverrideChanged;
             VirtualManager.StatusChanged += VirtualManager_StatusChanged;
 
-            // send events
+            // raise events
             VirtualManager_ControllerSelected(VirtualManager.HIDmode);
         }
 
@@ -463,9 +462,12 @@ namespace HandheldCompanion.ViewModels
             _hasSlotIssue = ControllerManager.HasSlotIssue;
             _virtualNotInSlot1 = ControllerManager.HasVirtualSlot1Issue;
 
-            // send events
+            // raise events
             foreach(IController controller in ControllerManager.GetControllers<IController>())
                 ControllerPlugged(controller, false);
+            
+            if (ControllerManager.HasTargetController && ControllerManager.GetTarget() is IController tController)
+                ControllerManager_ControllerSelected(tController);
         }
 
         private void VirtualManager_ControllerSelected(HIDmode mode)
@@ -501,7 +503,10 @@ namespace HandheldCompanion.ViewModels
 
         private void QueryProfile()
         {
+            // manage events
             ManagerFactory.profileManager.Applied += ProfileManager_Applied;
+
+            // raise events
             ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
         }
 

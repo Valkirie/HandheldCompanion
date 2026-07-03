@@ -97,6 +97,7 @@ public partial class OverlayQuickTools : GamepadWindow
                 break;
         }
 
+        // raise events
         switch (ManagerFactory.multimediaManager.Status)
         {
             default:
@@ -108,6 +109,7 @@ public partial class OverlayQuickTools : GamepadWindow
                 break;
         }
 
+        // raise events
         switch (ManagerFactory.processManager.Status)
         {
             default:

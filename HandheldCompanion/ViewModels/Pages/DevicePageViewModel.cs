@@ -232,11 +232,6 @@ namespace HandheldCompanion.ViewModels
 
         public DevicePageViewModel()
         {
-            // raise events
-            PerformanceManager.Initialized += PerformanceManager_Initialized;
-            if (PerformanceManager.GetProcessor() is not null)
-                QueryProcessor();
-
             // manufacturer watcher
             manufacturerWatcher = ISpaceWatcher.CreateCurrent();
 
@@ -258,6 +253,13 @@ namespace HandheldCompanion.ViewModels
                     QuerySettings();
                     break;
             }
+
+            // raise events
+            PerformanceManager.Initialized += PerformanceManager_Initialized;
+
+            // raise events
+            if (PerformanceManager.IsInitialized && PerformanceManager.GetProcessor() is Processor processor)
+                PerformanceManager_Initialized(processor.CanChangeTDP, processor.CanChangeGPU);
         }
 
         private void PerformanceManager_Initialized(bool canChangeTDP, bool canChangeGPU)
@@ -286,7 +288,10 @@ namespace HandheldCompanion.ViewModels
 
         private void QuerySettings()
         {
+            // manage events
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            // raise events
             SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false, false);
             SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetDouble("BatteryChargeLimitPercent"), false, false);
             SettingsManager_SettingValueChanged("GoBackToSleep", ManagerFactory.settingsManager.GetBoolean("GoBackToSleep"), false, false);

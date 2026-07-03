@@ -670,10 +670,6 @@ namespace HandheldCompanion.ViewModels
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(Targets, _collectionLock);
 
-            // manage events
-            MainWindow.layoutPage.LayoutUpdated += UpdateMapping;
-            VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
-
             // Lazy initialize to avoid re-creating target for Keyboard targets
             if (_keyboardKeysTargets.Count == 0)
             {
@@ -687,6 +683,10 @@ namespace HandheldCompanion.ViewModels
                 }
             }
 
+            // manage events
+            MainWindow.layoutPage.LayoutUpdated += UpdateMapping;
+            VirtualManager.Initialized += VirtualManager_Initialized;
+
             // Send update event to Model
             PropertyChanged +=
                 (s, e) =>
@@ -694,6 +694,16 @@ namespace HandheldCompanion.ViewModels
                     if (_updateToModel && e.PropertyName is not null && !ExcludedUpdateProperties.Contains(e.PropertyName))
                         Update();
                 };
+        }
+
+        private void VirtualManager_Initialized()
+        {
+            // manage events
+            // which virtual output format to map it to
+            VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
+
+            // raise events
+            VirtualManager_ControllerSelected(VirtualManager.HIDmode);
         }
 
         public override void Dispose()
@@ -706,6 +716,7 @@ namespace HandheldCompanion.ViewModels
             if (disposing)
             {
                 MainWindow.layoutPage.LayoutUpdated -= UpdateMapping;
+                VirtualManager.Initialized -= VirtualManager_Initialized;
                 VirtualManager.ControllerSelected -= VirtualManager_ControllerSelected;
             }
 

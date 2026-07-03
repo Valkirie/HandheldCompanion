@@ -55,6 +55,8 @@ namespace HandheldCompanion.ViewModels
             // raise events
             if (ControllerManager.IsInitialized)
                 ControllerManager_Initialized();
+            if (VirtualManager.IsInitialized)
+                VirtualManager_Initialized();
         }
 
         private void VirtualManager_Initialized()

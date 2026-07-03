@@ -17,11 +17,6 @@ namespace HandheldCompanion.ViewModels
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(HotkeysList, _collectionLock);
 
-            // manage events
-            ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-            ControllerManager.ControllerPlugged += ControllerManager_ControllerChanged;
-            ControllerManager.ControllerUnplugged += ControllerManager_ControllerChanged;
-
             // raise events
             switch (ManagerFactory.hotkeysManager.Status)
             {
@@ -33,6 +28,25 @@ namespace HandheldCompanion.ViewModels
                     QueryHotkeys();
                     break;
             }
+
+            // manage events
+            ControllerManager.Initialized += ControllerManager_Initialized;
+
+            // raise events
+            if (ControllerManager.IsInitialized)
+                ControllerManager_Initialized();
+        }
+
+        private void ControllerManager_Initialized()
+        {
+            // manage events
+            ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+            ControllerManager.ControllerPlugged += ControllerManager_ControllerChanged;
+            ControllerManager.ControllerUnplugged += ControllerManager_ControllerChanged;
+
+            // raise events
+            if (ControllerManager.GetTarget() is IController controller)
+                ControllerManager_ControllerSelected(controller);
         }
 
         private void HotkeysManager_Initialized()
@@ -157,6 +171,7 @@ namespace HandheldCompanion.ViewModels
         {
             ManagerFactory.hotkeysManager.Updated -= HotkeysManager_Updated;
             ManagerFactory.hotkeysManager.Deleted -= HotkeysManager_Deleted;
+            ControllerManager.Initialized -= ControllerManager_Initialized;
             ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
             ControllerManager.ControllerPlugged -= ControllerManager_ControllerChanged;
             ControllerManager.ControllerUnplugged -= ControllerManager_ControllerChanged;

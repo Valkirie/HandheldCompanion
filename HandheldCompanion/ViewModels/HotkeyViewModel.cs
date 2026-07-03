@@ -744,7 +744,7 @@ namespace HandheldCompanion.ViewModels
             // manage events
             ControllerManager.ControllerSelected += UpdateController;
 
-            // send events
+            // raise events
             if (ControllerManager.HasTargetController)
                 UpdateController(ControllerManager.GetTarget());
         }

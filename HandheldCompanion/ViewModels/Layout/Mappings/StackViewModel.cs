@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Views;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -89,12 +90,27 @@ namespace HandheldCompanion.ViewModels
         public StackViewModel(object value)
         {
             // manage events
+            MainWindow.layoutPage.LayoutUpdated += UpdateMapping;
+            ControllerManager.Initialized += ControllerManager_Initialized;
+
+            // raise events
+            if (ControllerManager.IsInitialized)
+                ControllerManager_Initialized();
+        }
+
+        private void ControllerManager_Initialized()
+        {
+            // raise events
+            // which physical input is being processed
             ControllerManager.ControllerSelected += UpdateController;
 
-            // send events
-            if (ControllerManager.GetTarget() is IController controller)
+            // raise events
+            if (ControllerManager.HasTargetController && ControllerManager.GetTarget() is IController controller)
                 UpdateController(controller);
         }
+
+        protected virtual void UpdateMapping(Layout layout)
+        { }
 
         protected void UpdateIcon(GlyphIconInfo glyphIconInfo)
         {
@@ -127,6 +143,8 @@ namespace HandheldCompanion.ViewModels
         {
             if (disposing)
             {
+                MainWindow.layoutPage.LayoutUpdated -= UpdateMapping;
+                ControllerManager.Initialized -= ControllerManager_Initialized;
                 ControllerManager.ControllerSelected -= UpdateController;
             }
 
