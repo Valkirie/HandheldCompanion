@@ -877,6 +877,7 @@
             <!--  Device settings  -->
             <ikw:SimpleStackPanel Spacing="8">
                 <TextBlock
+                    d:Text="Device settings (MSI Claw)"
                     Style="{StaticResource BaseTextBlockStyle}"
                     Text="{l:Static resx:Resources.DevicePage_DeviceSettings}"
                     Visibility="{Binding ElementName=MSIClawPanel, Path=Visibility}" />
