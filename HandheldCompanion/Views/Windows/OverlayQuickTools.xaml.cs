@@ -73,6 +73,9 @@ public partial class OverlayQuickTools : GamepadWindow
         // used by gamepad navigation
         Tag = "QuickTools";
 
+        _MaxHeight = MaxHeight;
+        _MaxWidth = MaxWidth;
+
         ContentDialog.Closed += ContentDialog_Closed;
         ContentDialog.Opened += ContentDialog_Opened;
 
@@ -290,8 +293,8 @@ public partial class OverlayQuickTools : GamepadWindow
         UpdateLocation();
     }
 
-    private const double _MaxHeight = 960;
-    private const double _MaxWidth = 960;
+    private readonly double _MaxHeight;
+    private readonly double _MaxWidth;
     private double _Top = 0;
     private double _Left = 0;
 
