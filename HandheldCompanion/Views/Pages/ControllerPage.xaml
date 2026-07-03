@@ -176,6 +176,24 @@
                             </ComboBox>
                         </ui:SettingsCard>
 
+                        <ui:InfoBar
+                            Name="HintsHIDManagedByProfile"
+                            Title="{l:Static resx:Resources.ControllerPage_HIDManagedByProfileWarning}"
+                            IsClosable="False"
+                            IsOpen="True"
+                            Message="{l:Static resx:Resources.ControllerPage_HIDManagedByProfileDesc}"
+                            Severity="Warning"
+                            Visibility="{Binding HIDManagedByProfileVisibility}" />
+
+                        <ui:InfoBar
+                            Name="HintsHIDManagedBySteamHybrid"
+                            Title="{l:Static resx:Resources.ControllerPage_HIDManagedByProfileWarning}"
+                            IsClosable="False"
+                            IsOpen="True"
+                            Message="The virtual controller type is being managed by the currently applied Steam Deck controller mode."
+                            Severity="Warning"
+                            Visibility="{Binding HIDManagedBySteamHybridVisibility}" />
+
                         <!--  Controller type  -->
                         <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_VirtualTypeDesc}" Header="{l:Static resx:Resources.ControllerPage_VirtualType}">
                             <ui:SettingsCard.HeaderIcon>
@@ -194,24 +212,6 @@
                                 <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDmode_SteamController}" Tag="6" />
                             </ComboBox>
                         </ui:SettingsCard>
-
-                        <ui:InfoBar
-                            Name="HintsHIDManagedByProfile"
-                            Title="{l:Static resx:Resources.ControllerPage_HIDManagedByProfileWarning}"
-                            IsClosable="False"
-                            IsOpen="True"
-                            Message="{l:Static resx:Resources.ControllerPage_HIDManagedByProfileDesc}"
-                            Severity="Warning"
-                            Visibility="{Binding HIDManagedByProfileVisibility}" />
-
-                        <ui:InfoBar
-                            Name="HintsHIDManagedBySteamHybrid"
-                            Title="{l:Static resx:Resources.ControllerPage_HIDManagedByProfileWarning}"
-                            IsClosable="False"
-                            IsOpen="True"
-                            Message="The virtual controller type is being managed by the currently applied Steam Deck controller mode."
-                            Severity="Warning"
-                            Visibility="{Binding HIDManagedBySteamHybridVisibility}" />
 
                         <!--  Vibration Strength  -->
                         <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_VibrationStrengthDesc}" Header="{l:Static resx:Resources.ControllerPage_VibrationStrength}">
