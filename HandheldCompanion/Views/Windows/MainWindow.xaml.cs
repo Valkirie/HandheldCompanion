@@ -1409,6 +1409,18 @@ public partial class MainWindow : GamepadWindow
                         }
                     }
 
+                    // Unload all pages
+                    foreach (var page in _pages.Values)
+                    {
+                        if (page.DataContext is BaseViewModel viewModel)
+                        {
+                            if (viewModel is OverlayPageViewModel overlayViewModel)
+                                overlayViewModel.OnPageUnloaded();
+                            else if (viewModel is PerformancePageViewModel performanceViewModel)
+                                performanceViewModel.OnPageUnloaded();
+                        }
+                    }
+
                     TryHide();
 
                     // Don't save state when minimizing due to CloseMinimises setting
@@ -1435,6 +1447,15 @@ public partial class MainWindow : GamepadWindow
                         Focus();
                     }
                     catch { }
+
+                    // Load only the currently navigated page
+                    if (ContentFrame.Content is Page currentPage && currentPage.DataContext is BaseViewModel currentViewModel)
+                    {
+                        if (currentViewModel is OverlayPageViewModel overlayViewModel)
+                            overlayViewModel.OnPageLoaded();
+                        else if (currentViewModel is PerformancePageViewModel performanceViewModel)
+                            performanceViewModel.OnPageLoaded();
+                    }
 
                     if (!isFseActive)
                     {

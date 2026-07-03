@@ -18,8 +18,6 @@
     d:DesignHeight="1200"
     d:DesignWidth="640"
     KeepAlive="True"
-    Loaded="OnLoaded"
-    Unloaded="OnUnloaded"
     mc:Ignorable="d">
 
     <ikw:SimpleStackPanel Spacing="28">

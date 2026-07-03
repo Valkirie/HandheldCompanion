@@ -604,16 +604,31 @@ public partial class OverlayQuickTools : GamepadWindow
         {
             case Visibility.Collapsed:
             case Visibility.Hidden:
-                if (overlayPage.DataContext is OverlayPageViewModel overlayViewModel)
-                    overlayViewModel.OnNavigatedFrom();
+                // Unload all pages
+                foreach (var page in _pages.Values)
+                {
+                    if (page.DataContext is BaseViewModel viewModel)
+                    {
+                        if (viewModel is OverlayPageViewModel overlayViewModel)
+                            overlayViewModel.OnPageUnloaded();
+                        else if (viewModel is PerformancePageViewModel performanceViewModel)
+                            performanceViewModel.OnPageUnloaded();
+                    }
+                }
 
                 InvokeLostGamepadWindowFocus();
                 clockUpdateTimer.Stop();
                 break;
 
             case Visibility.Visible:
-                if (overlayPage.DataContext is OverlayPageViewModel visibleOverlayViewModel)
-                    visibleOverlayViewModel.OnNavigatedTo();
+                // Load only the currently navigated page
+                if (ContentFrame.Content is Page currentPage && currentPage.DataContext is BaseViewModel currentViewModel)
+                {
+                    if (currentViewModel is OverlayPageViewModel overlayViewModel)
+                        overlayViewModel.OnPageLoaded();
+                    else if (currentViewModel is PerformancePageViewModel performanceViewModel)
+                        performanceViewModel.OnPageLoaded();
+                }
 
                 UpdateStyle();
                 UpdateTime(null, EventArgs.Empty);

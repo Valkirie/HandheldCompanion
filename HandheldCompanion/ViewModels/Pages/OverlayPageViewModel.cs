@@ -18,7 +18,7 @@ namespace HandheldCompanion.ViewModels
         public bool IsRunningRTSS => ManagerFactory.platformManager.IsReady && PlatformManager.RTSS.IsInstalled;
         public bool IsRunningLHM => ManagerFactory.platformManager.IsReady && PlatformManager.LibreHardware.IsInstalled;
 
-        private volatile bool _isActive = true;
+        private volatile bool _isPageLoaded = true;
 
         private int _onScreenDisplayLevel;
         public int OnScreenDisplayLevel
@@ -37,16 +37,16 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public void OnNavigatedTo()
+        public void OnPageLoaded()
         {
-            _isActive = true;
+            _isPageLoaded = true;
             updateTimer.Start();
             framerateTimer.Start();
         }
 
-        public void OnNavigatedFrom()
+        public void OnPageUnloaded()
         {
-            _isActive = false;
+            _isPageLoaded = false;
             updateTimer.Stop();
             framerateTimer.Stop();
         }
@@ -588,7 +588,7 @@ namespace HandheldCompanion.ViewModels
 
         private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if (!_isActive)
+            if (!_isPageLoaded)
                 return;
 
             GPU? gpu = GPUManager.GetCurrent();
@@ -607,7 +607,7 @@ namespace HandheldCompanion.ViewModels
 
         private void FramerateTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if (!_isActive)
+            if (!_isPageLoaded)
                 return;
 
             if (!ManagerFactory.platformManager.IsReady)
@@ -663,44 +663,32 @@ namespace HandheldCompanion.ViewModels
 
         private void LibreHardwareMonitor_CPULoadChanged(float? value)
         {
-            if (!_isActive)
-                return;
-
-            if (value is null)
-                return;
+            if (!_isPageLoaded) return;
+            if (!value.HasValue) return;
 
             CPULoad = (float)Math.Round((float)value);
         }
 
         private void LibreHardwareMonitor_CPUTemperatureChanged(float? value)
         {
-            if (!_isActive)
-                return;
-
-            if (value is null)
-                return;
+            if (!_isPageLoaded) return;
+            if (!value.HasValue) return;
 
             CPUTemperature = (float)Math.Round((float)value);
         }
 
         private void LibreHardwareMonitor_CPUPowerChanged(float? value)
         {
-            if (!_isActive)
-                return;
-
-            if (value is null)
-                return;
+            if (!_isPageLoaded) return;
+            if (!value.HasValue) return;
 
             CPUPower = (float)Math.Round((float)value);
         }
 
         private void LibreHardwareMonitor_GPULoadChanged(float? value)
         {
-            if (!_isActive)
-                return;
-
-            if (value is null)
-                return;
+            if (!_isPageLoaded) return;
+            if (!value.HasValue) return;
 
             // todo: improve me
             if (!HasGPULoad)
@@ -711,11 +699,8 @@ namespace HandheldCompanion.ViewModels
 
         private void LibreHardwareMonitor_GPUTemperatureChanged(float? value)
         {
-            if (!_isActive)
-                return;
-
-            if (value is null)
-                return;
+            if (!_isPageLoaded) return;
+            if (!value.HasValue) return;
 
             // todo: improve me
             if (!HasGPUTemperature)
@@ -726,11 +711,8 @@ namespace HandheldCompanion.ViewModels
 
         private void LibreHardwareMonitor_GPUPowerChanged(float? value)
         {
-            if (!_isActive)
-                return;
-
-            if (value is null)
-                return;
+            if (!_isPageLoaded) return;
+            if (!value.HasValue) return;
 
             // todo: improve me
             if (!HasGPUPower)
@@ -801,9 +783,6 @@ namespace HandheldCompanion.ViewModels
 
         private void RTSS_Updated(PlatformStatus status)
         {
-            if (!_isActive)
-                return;
-
             if (status == PlatformStatus.Stalled)
                 OnScreenDisplayLevel = 0;
 

@@ -88,6 +88,8 @@ namespace HandheldCompanion.ViewModels
         public readonly bool IsQuickTools;
         public bool IsMainPage => !IsQuickTools;
 
+        private bool _isPageLoaded = true;
+
         #region Binding Properties
 
         public double GPUFreqMinimum => IDevice.GetCurrent().GfxClock[0];
@@ -1190,6 +1192,7 @@ namespace HandheldCompanion.ViewModels
 
         private void LibreHardwareMonitor_CpuTemperatureChanged(float? value)
         {
+            if (!_isPageLoaded) return;
             if (!value.HasValue) return;
 
             // Clamp to your axis range and convert °C -> X index (0..10)
@@ -1482,6 +1485,16 @@ namespace HandheldCompanion.ViewModels
         }
 
         #endregion
+
+        public void OnPageLoaded()
+        {
+            _isPageLoaded = true;
+        }
+
+        public void OnPageUnloaded()
+        {
+            _isPageLoaded = false;
+        }
 
         // TODO: Get rid of View dependencies
         public void InitializeViewDependencies(CartesianChart fanGraph, LineSeries fanGraphLineSeries, ContentDialog modifyDialog)

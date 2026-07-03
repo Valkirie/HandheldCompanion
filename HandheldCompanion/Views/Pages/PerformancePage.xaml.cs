@@ -21,11 +21,13 @@ namespace HandheldCompanion.Views.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            _vm.OnPageLoaded();
             _vm.FanCurveUpdateRequested += OnFanCurveUpdateRequested;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
+            _vm.OnPageUnloaded();
             _vm.FanCurveUpdateRequested -= OnFanCurveUpdateRequested;
         }
 

@@ -6,16 +6,21 @@ namespace HandheldCompanion.Views.QuickPages;
 
 public partial class QuickOverlayPage : Page
 {
+    private readonly OverlayPageViewModel ViewModel;
+
     public QuickOverlayPage()
     {
         Tag = "quickoverlay";
-        DataContext = new OverlayPageViewModel();
+
+        ViewModel = new OverlayPageViewModel();
+        DataContext = ViewModel;
         InitializeComponent();
+
+        this.Loaded += OverlayPage_Loaded;
+        this.Unloaded += OverlayPage_Unloaded;
     }
 
-    private void OnLoaded(object sender, RoutedEventArgs e) =>
-        ((OverlayPageViewModel)DataContext).OnNavigatedTo();
+    private void OverlayPage_Loaded(object sender, RoutedEventArgs e) => ViewModel.OnPageLoaded();
 
-    private void OnUnloaded(object sender, RoutedEventArgs e) =>
-        ((OverlayPageViewModel)DataContext).OnNavigatedFrom();
+    private void OverlayPage_Unloaded(object sender, RoutedEventArgs e) => ViewModel.OnPageUnloaded();
 }

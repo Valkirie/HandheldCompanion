@@ -19,7 +19,6 @@
     d:DesignHeight="2200"
     d:DesignWidth="1000"
     KeepAlive="True"
-    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <StackPanel>

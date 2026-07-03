@@ -103,6 +103,8 @@ public partial class OverlayPage : Page
     public OverlayPage(string Tag) : this()
     {
         this.Tag = Tag;
+        this.Loaded += OverlayPage_Loaded;
+        this.Unloaded += OverlayPage_Unloaded;
     }
 
     private void RTSS_Updated(PlatformStatus status)
@@ -119,9 +121,9 @@ public partial class OverlayPage : Page
         });
     }
 
-    private void OverlayPage_Loaded(object sender, RoutedEventArgs e) => ViewModel.OnNavigatedTo();
+    private void OverlayPage_Loaded(object sender, RoutedEventArgs e) => ViewModel.OnPageLoaded();
 
-    private void OverlayPage_Unloaded(object sender, RoutedEventArgs e) => ViewModel.OnNavigatedFrom();
+    private void OverlayPage_Unloaded(object sender, RoutedEventArgs e) => ViewModel.OnPageUnloaded();
 
     private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
     {
@@ -202,10 +204,6 @@ public partial class OverlayPage : Page
                     break;
             }
         });
-    }
-
-    private void Page_Loaded(object sender, RoutedEventArgs e)
-    {
     }
 
     public void Page_Closed()
