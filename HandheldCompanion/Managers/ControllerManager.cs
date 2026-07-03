@@ -560,6 +560,7 @@ public static class ControllerManager
                         // controller is gone ?
                         if (!controller.IsConnected() && !controller.IsVirtual())
                         {
+                            LogManager.LogWarning("SDL controller: VID:{0} and PID:{1} is gone while being added", details.GetVendorID(), details.GetProductID());
                             controller.Gone();
                             return;
                         }
@@ -758,6 +759,7 @@ public static class ControllerManager
                     // controller is gone ?
                     if (!controller.IsConnected() && !controller.IsVirtual())
                     {
+                        LogManager.LogWarning("Generic controller: VID:{0} and PID:{1} is gone while being added", details.GetVendorID(), details.GetProductID());
                         controller.Gone();
                         return;
                     }
@@ -984,6 +986,7 @@ public static class ControllerManager
                     // controller is gone ?
                     if (!controller.IsConnected() && !controller.IsVirtual())
                     {
+                        LogManager.LogWarning("XInput controller: VID:{0} and PID:{1} is gone while being added", details.GetVendorID(), details.GetProductID());
                         controller.Gone();
                         return;
                     }
@@ -1343,17 +1346,46 @@ public static class ControllerManager
         ManagerFactory.deviceManager.HidDeviceArrived += HidDeviceArrived;
         ManagerFactory.deviceManager.HidDeviceRemoved += HidDeviceRemoved;
 
-        HydrateKnownDevices();
+        // Fire and forget the hydration; exceptions are handled within HydrateKnownDevices
+        _ = HydrateKnownDevices();
     }
 
-    private static void HydrateKnownDevices()
+    private static async Task HydrateKnownDevices()
     {
+        var tasksToWait = new List<Task>();
+
         foreach (PnPDetails details in ManagerFactory.deviceManager.PnPDevices.Values.Where(details => details.isGaming))
         {
+            var key = details.baseContainerDeviceInstanceId;
+
             if (details.isXInput)
+            {
                 XUsbDeviceArrived(details, details.InterfaceGuid);
+                // Collect the task that was just created and added to xusbArrivalInProgress
+                if (xusbArrivalInProgress.TryGetValue(key, out var task))
+                    tasksToWait.Add(task);
+            }
             else
+            {
                 HidDeviceArrived(details, details.InterfaceGuid);
+                // Collect the task that was just created and added to hidArrivalInProgress
+                if (hidArrivalInProgress.TryGetValue(key, out var task))
+                    tasksToWait.Add(task);
+            }
+        }
+
+        // Wait for all hydration tasks to complete before proceeding
+        if (tasksToWait.Count > 0)
+        {
+            try
+            {
+                await Task.WhenAll(tasksToWait).ConfigureAwait(false);
+            }
+            catch
+            {
+                // If any task fails, we still want to continue - the logging/error handling
+                // is already done in the individual arrival handlers
+            }
         }
 
         ReopenSDLGamepads();
@@ -1397,16 +1429,6 @@ public static class ControllerManager
 
     public static void Resume(bool OS)
     {
-        // Clear input state from all controllers to prevent stuck buttons/vibrations after hibernation resume
-        foreach (var controller in Controllers.Values)
-        {
-            try
-            {
-                controller.ClearInputState();
-            }
-            catch { }
-        }
-
         // Slot monitor is always running; on resume we simply re-evaluate the target controller.
         PickTargetController();
     }

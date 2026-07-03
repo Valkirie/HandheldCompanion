@@ -31,6 +31,7 @@ using System.Windows.Media;
 using System.Windows.Navigation;
 using System.Windows.Shell;
 using System.Windows.Threading;
+using static HandheldCompanion.Managers.SystemManager;
 using Control = System.Windows.Controls.Control;
 using Page = System.Windows.Controls.Page;
 using RadioButton = System.Windows.Controls.RadioButton;
@@ -254,6 +255,8 @@ public partial class MainWindow : GamepadWindow
         // manage events
         SystemManager.SystemStatusChanged += SystemManager_SystemStatusChanged;
         SystemManager.SessionLockChanged += SystemManager_SessionLockChanged;
+
+        SystemManager_SystemStatusChanged(SystemManager.currentSystemStatus, SystemStatus.SystemBooting);
     }
 
     private void QueryNotification()
@@ -898,7 +901,7 @@ public partial class MainWindow : GamepadWindow
                         PlatformManager.LibreHardware.Start();
 
                         VirtualManager.SetSystemSleepState(false);
-                        // ControllerManager.Resume(true);
+                        ControllerManager.Resume(true);
                         SensorsManager.Resume(true);
                     }
 
@@ -939,7 +942,7 @@ public partial class MainWindow : GamepadWindow
                         ManagerFactory.Suspend();
 
                         VirtualManager.SetSystemSleepState(true);
-                        // ControllerManager.Suspend(true);
+                        ControllerManager.Suspend(true);
                         TimerManager.Stop();
                         SensorsManager.Suspend(true);
 

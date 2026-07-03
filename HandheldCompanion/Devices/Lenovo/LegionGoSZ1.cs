@@ -79,8 +79,6 @@ namespace HandheldCompanion.Devices.Lenovo
 
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
             {
-                device.MonitorDeviceEvents = true;
-                device.Removed += Device_Removed;
                 device.OpenDevice();
 
                 // Send controller init packet sequence

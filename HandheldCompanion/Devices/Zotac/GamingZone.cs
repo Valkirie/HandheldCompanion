@@ -226,8 +226,6 @@ namespace HandheldCompanion.Devices.Zotac
         {
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
             {
-                device.MonitorDeviceEvents = false;
-                device.Removed -= Device_Removed;
                 try { device.Dispose(); } catch { }
             }
         }
@@ -240,8 +238,6 @@ namespace HandheldCompanion.Devices.Zotac
 
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
             {
-                device.MonitorDeviceEvents = true;
-                device.Removed += Device_Removed;
                 device.OpenDevice();
 
                 // device.Write(RestoreProfileSet());

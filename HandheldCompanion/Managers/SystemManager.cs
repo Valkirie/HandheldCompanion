@@ -80,7 +80,7 @@ public static class SystemManager
     public static bool IsPowerSuspended => isPowerSuspended;
     public static bool IsSessionLocked = true;
 
-    private static SystemStatus currentSystemStatus = SystemStatus.SystemBooting;
+    public static SystemStatus currentSystemStatus = SystemStatus.SystemBooting;
     private static SystemStatus previousSystemStatus = SystemStatus.SystemBooting;
     private static PowerLineStatus prevPowerLineStatus = PowerLineStatus.Offline;
 
@@ -133,9 +133,9 @@ public static class SystemManager
 
     private static void SubscribeToSystemEvents()
     {
-        // Initialize EventLogWatcher for power mode detection
         try
         {
+            // Initialize EventLogWatcher for power mode detection
             // Query for Kernel-Power events: 506 (sleep entry) and 507 (wake)
             string xpath = "*[System[(EventID=506 or EventID=507) and Provider[@Name='Microsoft-Windows-Kernel-Power']]]";
             var query = new EventLogQuery("System", PathType.LogName, xpath);
@@ -154,14 +154,12 @@ public static class SystemManager
         // manage events
         SystemEvents.PowerModeChanged += OnPowerChange;
         SystemEvents.SessionSwitch += OnSessionSwitch;
+
         PowerManager.BatteryStatusChanged += BatteryStatusChanged;
         PowerManager.EnergySaverStatusChanged += BatteryStatusChanged;
         PowerManager.PowerSupplyStatusChanged += BatteryStatusChanged;
         PowerManager.RemainingChargePercentChanged += BatteryStatusChanged;
         PowerManager.RemainingDischargeTimeChanged += BatteryStatusChanged;
-
-        // raise events
-        BatteryStatusChanged(null, null);
     }
 
     private static void UnsubscribeFromSystemEvents()
@@ -188,6 +186,7 @@ public static class SystemManager
         // manage events
         SystemEvents.PowerModeChanged -= OnPowerChange;
         SystemEvents.SessionSwitch -= OnSessionSwitch;
+
         PowerManager.BatteryStatusChanged -= BatteryStatusChanged;
         PowerManager.EnergySaverStatusChanged -= BatteryStatusChanged;
         PowerManager.PowerSupplyStatusChanged -= BatteryStatusChanged;
@@ -264,7 +263,9 @@ public static class SystemManager
         // Check if current session is locked
         IsSessionLocked = !IsSessionInteractive();
 
+        // raise events
         PerformSystemRoutine();
+        BatteryStatusChanged(null, null);
 
         IsInitialized = true;
 
@@ -272,8 +273,6 @@ public static class SystemManager
         SubscribeToSystemEvents();
 
         Initialized?.Invoke();
-
-        PowerStatusChanged?.Invoke(SystemInformation.PowerStatus);
 
         LogManager.LogInformation("{0} has started", "PowerManager");
     }

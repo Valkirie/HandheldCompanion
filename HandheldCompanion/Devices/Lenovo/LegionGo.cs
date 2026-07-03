@@ -392,7 +392,7 @@ public class LegionGo : IDevice
         }
     }
 
-    protected override void Device_Inserted(bool reScan = false)
+    protected override async void Device_Inserted(bool reScan = false)
     {
         // initialize SapientiaUsb
         Init();
@@ -402,8 +402,6 @@ public class LegionGo : IDevice
     {
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
         {
-            device.MonitorDeviceEvents = false;
-            device.Removed -= Device_Removed;
             try { device.Dispose(); } catch { }
         }
 

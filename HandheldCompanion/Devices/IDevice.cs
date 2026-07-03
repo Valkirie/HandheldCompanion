@@ -17,6 +17,7 @@ using HandheldCompanion.Utils;
 using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using Sentry;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -333,23 +334,6 @@ public abstract class IDevice
                 QueryPowerProfile();
                 break;
         }
-
-        // manage events
-        ControllerManager.Initialized += ControllerManager_Initialized;
-
-        // raise events
-        if (ControllerManager.IsInitialized)
-            ControllerManager_Initialized();
-    }
-
-    private void ControllerManager_Initialized()
-    {
-        // manage events
-        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
-        ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
-
-        // raise events
-        Device_Inserted();
     }
 
     private void QueryDevices()
@@ -357,9 +341,33 @@ public abstract class IDevice
         // manage events
         ManagerFactory.deviceManager.UsbDeviceArrived += GenericDeviceUpdated;
         ManagerFactory.deviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
+        ManagerFactory.deviceManager.HidDeviceArrived += DeviceManager_HidDeviceArrived;
+        ManagerFactory.deviceManager.HidDeviceRemoved += DeviceManager_HidDeviceRemoved;
+
+        // raise events
+        foreach (PnPDetails pnPDetails in ManagerFactory.deviceManager.PnPDevices.Values)
+            DeviceManager_HidDeviceArrived(pnPDetails, Guid.Empty);
 
         // raise events
         GenericDeviceUpdated(null, Guid.Empty);
+    }
+
+    private void DeviceManager_HidDeviceRemoved(PnPDetails device, Guid InterfaceGuid)
+    {
+        lock (updateLock)
+        {
+            if (device.VendorID == vendorId && productIds.Contains(device.ProductID))
+                Device_Removed();
+        }
+    }
+
+    private void DeviceManager_HidDeviceArrived(PnPDetails device, Guid InterfaceGuid)
+    {
+        lock (updateLock)
+        {
+            if (device.VendorID == vendorId && productIds.Contains(device.ProductID))
+                Device_Inserted(true);
+        }
     }
 
     private void DeviceManager_Initialized()
@@ -430,13 +438,11 @@ public abstract class IDevice
         // handled by PowerProfileManager, because of complex power profile order logic
         // ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
 
-        ControllerManager.Initialized -= ControllerManager_Initialized;
-        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
-        ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
-
         ManagerFactory.deviceManager.Initialized -= DeviceManager_Initialized;
         ManagerFactory.deviceManager.UsbDeviceArrived -= GenericDeviceUpdated;
         ManagerFactory.deviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
+        ManagerFactory.deviceManager.HidDeviceArrived -= DeviceManager_HidDeviceArrived;
+        ManagerFactory.deviceManager.HidDeviceRemoved -= DeviceManager_HidDeviceRemoved;
 
         Closed?.Invoke(this);
     }
@@ -444,19 +450,7 @@ public abstract class IDevice
     public virtual void Initialize(bool FirstStart, bool NewUpdate)
     { }
 
-    protected virtual void ControllerManager_ControllerPlugged(Controllers.IController Controller, bool WasPowerCycling)
-    {
-        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
-            Device_Inserted(true);
-    }
-
-    protected virtual void ControllerManager_ControllerUnplugged(Controllers.IController Controller, bool IsPowerCycling, bool WasTarget)
-    {
-        if (Controller.GetVendorID() == vendorId && productIds.Contains(Controller.GetProductID()))
-            Device_Removed();
-    }
-
-    protected virtual void Device_Inserted(bool reScan = false)
+    protected virtual async void Device_Inserted(bool reScan = false)
     { }
 
     protected virtual void Device_Removed()

@@ -909,9 +909,6 @@ public class ClawA1M : IDevice
         // close device
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
         {
-            device.MonitorDeviceEvents = false;
-            device.Removed -= Device_Removed;
-
             try { device.Dispose(); } catch { }
         }
     }
@@ -925,8 +922,6 @@ public class ClawA1M : IDevice
         // listen for events
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
         {
-            device.MonitorDeviceEvents = true;
-            device.Removed += Device_Removed;
             device.OpenDevice();
 
             ApplyM12Configuration();

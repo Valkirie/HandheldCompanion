@@ -289,12 +289,7 @@ public class GPDWin5 : IDevice
 
         if (hidDevices.TryGetValue(BackButtonsHidId, out HidDevice? device))
         {
-            device.MonitorDeviceEvents = false;
-            device.Removed -= Device_Removed;
-
             try { device.Dispose(); } catch { }
-
-            hidDevices.Remove(BackButtonsHidId);
         }
     }
 
@@ -305,8 +300,6 @@ public class GPDWin5 : IDevice
 
         if (hidDevices.TryGetValue(BackButtonsHidId, out HidDevice? device))
         {
-            device.MonitorDeviceEvents = true;
-            device.Removed += Device_Removed;
             device.OpenDevice();
 
             // Silence L4/R4/Gamepad chords only for firmware >= 1.11.

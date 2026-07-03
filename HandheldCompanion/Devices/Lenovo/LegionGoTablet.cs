@@ -116,8 +116,6 @@ namespace HandheldCompanion.Devices.Lenovo
             // listen for events
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
             {
-                device.MonitorDeviceEvents = true;
-                device.Removed += Device_Removed;
                 device.OpenDevice();
 
                 // reset controller to factory default
