@@ -24,6 +24,7 @@ using static HandheldCompanion.WinAPI;
 using Page = System.Windows.Controls.Page;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 using Screen = WpfScreenHelper.Screen;
+using SystemInformation = System.Windows.Forms.SystemInformation;
 using SystemManager = HandheldCompanion.Managers.SystemManager;
 using SystemPowerManager = Windows.System.Power.PowerManager;
 
@@ -84,12 +85,6 @@ public partial class OverlayQuickTools : GamepadWindow
         };
         clockUpdateTimer.Tick += UpdateTime;
 
-        // manage events
-        SystemManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
-        ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
-        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-        ManagerFactory.processManager.RawForeground += ProcessManager_RawForeground;
-
         // raise events
         switch (ManagerFactory.settingsManager.Status)
         {
@@ -102,9 +97,37 @@ public partial class OverlayQuickTools : GamepadWindow
                 break;
         }
 
+        switch (ManagerFactory.multimediaManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.multimediaManager.Initialized += MultimediaManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryMultimedia();
+                break;
+        }
+
+        switch (ManagerFactory.processManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.processManager.Initialized += ProcessManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryForeground();
+                break;
+        }
+
+        // manage events
+        ControllerManager.Initialized += ControllerManager_Initialized;
+        SystemManager.Initialized += SystemManager_Initialized;
+
         // raise events
-        if (ControllerManager.HasTargetController && ControllerManager.GetTarget() is IController controller)
-            ControllerManager_ControllerSelected(controller);
+        if (ControllerManager.IsInitialized)
+            ControllerManager_Initialized();
+        if (SystemManager.IsInitialized)
+            SystemManager_Initialized();
 
         // load gamepad navigation manager
         gamepadFocusManager = new(this, ContentFrame);
@@ -130,6 +153,35 @@ public partial class OverlayQuickTools : GamepadWindow
         QuerySettings();
     }
 
+    private void QueryMultimedia()
+    {
+        // manage events
+        ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
+
+        // raise events
+        if (ManagerFactory.multimediaManager.PrimaryDesktop is not null)
+            MultimediaManager_DisplaySettingsChanged(ManagerFactory.multimediaManager.PrimaryDesktop, ManagerFactory.multimediaManager.PrimaryDesktop.GetResolution());
+    }
+
+    private void MultimediaManager_Initialized()
+    {
+        QueryMultimedia();
+    }
+
+    private void ProcessManager_Initialized()
+    {
+        QueryForeground();
+    }
+
+    private void QueryForeground()
+    {
+        // manage events
+        ManagerFactory.processManager.RawForeground += ProcessManager_RawForeground;
+
+        // raise events
+        ProcessManager_RawForeground(GetForegroundWindow());
+    }
+
     private void ProcessManager_RawForeground(nint hWnd)
     {
         if (hWnd != hwndSource.Handle && AutoHide && !isClosing)
@@ -140,6 +192,25 @@ public partial class OverlayQuickTools : GamepadWindow
                 HideInstant();
             });
         }
+    }
+
+    private void ControllerManager_Initialized()
+    {
+        // manage events
+        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+
+        // raise events
+        if (ControllerManager.HasTargetController && ControllerManager.GetTarget() is IController controller)
+            ControllerManager_ControllerSelected(controller);
+    }
+
+    private void SystemManager_Initialized()
+    {
+        // manage events
+        SystemManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
+
+        // raise events
+        PowerManager_PowerStatusChanged(SystemInformation.PowerStatus);
     }
 
     public void loadPages()

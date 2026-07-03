@@ -250,6 +250,7 @@ namespace HandheldCompanion.Views.Pages
             IDevice.GetCurrent().Opened -= Device_Opened;
             IDevice.GetCurrent().Closed -= Device_Closed;
             App.uiSettings.ColorValuesChanged -= OnColorValuesChanged;
+            ControllerManager.Initialized -= ControllerManager_Initialized;
             ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
             ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;

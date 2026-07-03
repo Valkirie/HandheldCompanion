@@ -21,9 +21,6 @@ namespace HandheldCompanion.ViewModels
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(layoutList, _collectionLock);
 
-            // manage events
-            VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
-
             LayoutCollectionView = new ListCollectionView(layoutList);
             LayoutCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Header"));
 
@@ -39,6 +36,7 @@ namespace HandheldCompanion.ViewModels
                     break;
             }
 
+            // raise events
             switch (ManagerFactory.settingsManager.Status)
             {
                 default:
@@ -50,10 +48,22 @@ namespace HandheldCompanion.ViewModels
                     break;
             }
 
+            // manage events
             ControllerManager.Initialized += ControllerManager_Initialized;
+            VirtualManager.Initialized += VirtualManager_Initialized;
 
+            // raise events
             if (ControllerManager.IsInitialized)
                 ControllerManager_Initialized();
+        }
+
+        private void VirtualManager_Initialized()
+        {
+            // manage events
+            VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
+
+            // raise events
+            VirtualManager_ControllerSelected(VirtualManager.HIDmode);
         }
 
         private void ControllerManager_Initialized()
@@ -61,6 +71,7 @@ namespace HandheldCompanion.ViewModels
             // manage events
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
+            // raise events
             if (ControllerManager.HasTargetController && ControllerManager.GetTarget() is IController controller)
                 ControllerManager_ControllerSelected(controller);
         }
@@ -255,7 +266,9 @@ namespace HandheldCompanion.ViewModels
                 ManagerFactory.layoutManager.Initialized -= LayoutManager_Initialized;
                 ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
                 ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+                ControllerManager.Initialized -= ControllerManager_Initialized;
                 ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
+                VirtualManager.Initialized -= VirtualManager_Initialized;
                 VirtualManager.ControllerSelected -= VirtualManager_ControllerSelected;
             }
 

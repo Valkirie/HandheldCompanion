@@ -349,15 +349,6 @@ namespace HandheldCompanion.ViewModels
             BindingOperations.EnableCollectionSynchronization(PhysicalControllers, _collectionLock);
             BindingOperations.EnableCollectionSynchronization(VirtualControllers, _collectionLock2);
 
-            // manage events
-            VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
-            VirtualManager.MasterIntervalOverrideChanged += VirtualManager_MasterIntervalOverrideChanged;
-            VirtualManager.StatusChanged += VirtualManager_StatusChanged;
-
-            // initialize slot issue state
-            _hasSlotIssue = ControllerManager.HasSlotIssue;
-            _virtualNotInSlot1 = ControllerManager.HasVirtualSlot1Issue;
-
             // raise events
             switch (ManagerFactory.settingsManager.Status)
             {
@@ -394,12 +385,16 @@ namespace HandheldCompanion.ViewModels
                     break;
             }
 
-            // manager events
+            // manage events
             ControllerManager.Initialized += ControllerManager_Initialized;
+            VirtualManager.Initialized += VirtualManager_Initialized;
 
             // raise events
             if (ControllerManager.IsInitialized)
                 ControllerManager_Initialized();
+
+            if (VirtualManager.IsInitialized)
+                VirtualManager_Initialized();
 
             ScanHardwareCommand = new DelegateCommand(async () =>
             {
@@ -443,6 +438,17 @@ namespace HandheldCompanion.ViewModels
             });
         }
 
+        private void VirtualManager_Initialized()
+        {
+            // manage events
+            VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
+            VirtualManager.MasterIntervalOverrideChanged += VirtualManager_MasterIntervalOverrideChanged;
+            VirtualManager.StatusChanged += VirtualManager_StatusChanged;
+
+            // send events
+            VirtualManager_ControllerSelected(VirtualManager.HIDmode);
+        }
+
         private void ControllerManager_Initialized()
         {
             // manage events
@@ -458,10 +464,8 @@ namespace HandheldCompanion.ViewModels
             _virtualNotInSlot1 = ControllerManager.HasVirtualSlot1Issue;
 
             // send events
-            if (ControllerManager.HasTargetController && ControllerManager.GetTarget() is IController controller)
-                ControllerManager_ControllerSelected(controller);
-            else
-                Refresh();
+            foreach(IController controller in ControllerManager.GetControllers<IController>())
+                ControllerPlugged(controller, false);
         }
 
         private void VirtualManager_ControllerSelected(HIDmode mode)
@@ -720,6 +724,7 @@ namespace HandheldCompanion.ViewModels
                 ManagerFactory.layoutManager.Initialized -= LayoutManager_Initialized;
                 ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
                 ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
+                VirtualManager.Initialized -= VirtualManager_Initialized;
                 VirtualManager.ControllerSelected -= VirtualManager_ControllerSelected;
                 VirtualManager.MasterIntervalOverrideChanged -= VirtualManager_MasterIntervalOverrideChanged;
                 VirtualManager.StatusChanged -= VirtualManager_StatusChanged;
