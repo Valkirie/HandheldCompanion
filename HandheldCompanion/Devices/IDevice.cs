@@ -349,8 +349,7 @@ public abstract class IDevice
         ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
 
         // raise events
-        if (ControllerManager.HasTargetController && ControllerManager.GetTarget() is IController controller)
-            ControllerManager_ControllerPlugged(controller, false);
+        Device_Inserted();
     }
 
     private void QueryDevices()

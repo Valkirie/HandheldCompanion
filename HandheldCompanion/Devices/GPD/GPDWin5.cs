@@ -169,11 +169,6 @@ public class GPDWin5 : IDevice
         return true;
     }
 
-    public override void OpenEvents()
-    {
-        base.OpenEvents();
-    }
-
     public override void Close()
     {
         // Release all back buttons so none remain logically pressed after disconnect.

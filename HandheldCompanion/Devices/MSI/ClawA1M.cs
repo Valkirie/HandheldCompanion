@@ -358,11 +358,6 @@ public class ClawA1M : IDevice
         return true;
     }
 
-    public override void OpenEvents()
-    {
-        base.OpenEvents();
-    }
-
     public override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
         byte[] fanTable = new byte[8];

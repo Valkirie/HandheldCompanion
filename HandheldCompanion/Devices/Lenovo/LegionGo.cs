@@ -315,11 +315,6 @@ public class LegionGo : IDevice
         return base.Open();
     }
 
-    public override void OpenEvents()
-    {
-        base.OpenEvents();
-    }
-
     public override void Close()
     {
         // close devices

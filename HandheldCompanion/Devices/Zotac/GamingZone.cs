@@ -188,11 +188,6 @@ namespace HandheldCompanion.Devices.Zotac
             }
         }
 
-        public override void OpenEvents()
-        {
-            base.OpenEvents();
-        }
-
         public override void Close()
         {
             // close devices

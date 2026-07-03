@@ -207,11 +207,6 @@ public class OneXPlayerX1 : OneXAOKZOE
         return success;
     }
 
-    public override void OpenEvents()
-    {
-        base.OpenEvents();
-    }
-
     protected override void QuerySettings()
     {
         // raise events
