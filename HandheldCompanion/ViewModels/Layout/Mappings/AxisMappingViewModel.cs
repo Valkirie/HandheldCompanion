@@ -5,10 +5,14 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
+using LiveCharts;
+using LiveCharts.Wpf;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Numerics;
 using System.Windows;
 using System.Windows.Input;
 
@@ -153,6 +157,11 @@ namespace HandheldCompanion.ViewModels
                     OnPropertyChanged(nameof(AxisVisualizerAntiDeadzoneSize));
                 }
             }
+        }
+
+        public override Visibility AxisResponseCurveVisibility
+        {
+            get => Action is AxisActions axisAction && axisAction.actionType == ActionType.Joystick ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public override int Axis2AxisOutputShapeIndex
@@ -350,6 +359,19 @@ namespace HandheldCompanion.ViewModels
 
         public ICommand ButtonCommand { get; private set; }
         public ICommand OpenSettingsCommand { get; private set; }
+        public ICommand ResetResponseCurveCommand { get; private set; }
+
+        private CartesianChart? _responseCurveGraph;
+        private LineSeries? _responseCurveLineSeries;
+        private bool _updatingResponseCurveUI;
+        private bool _responseCurveDirty;
+        private bool _isDraggingResponseCurve;
+        private int _responseCurveDragIndex = -1;
+        private const double Epsilon = 0.0001;
+
+        public Func<double, string> ResponseCurveAxisYFormatter { get; } = v => v.ToString("0.0");
+
+        public event Action<double[]>? ResponseCurveUpdateRequested;
 
         public override Visibility Axis2TouchpadVisibility => Axis2MouseVisibility == Visibility.Visible && TouchpadVisibility == Visibility.Visible ? Visibility.Visible : Visibility.Collapsed;
         public override Visibility Axis2JoystickVisibility => Axis2MouseVisibility == Visibility.Visible && JoystickVisibility == Visibility.Visible ? Visibility.Visible : Visibility.Collapsed;
@@ -401,6 +423,265 @@ namespace HandheldCompanion.ViewModels
                     MainWindow.NavView_Navigate(MainWindow.layoutItemPage);
                 }
             });
+
+            ResetResponseCurveCommand = new DelegateCommand(ResetResponseCurve);
+        }
+
+        private void ResetResponseCurve()
+        {
+            if (Action is not AxisActions axisAction)
+                return;
+
+            axisAction.ResponseCurvePoints = new List<Vector2>
+            {
+                new Vector2(0.0f, 0.0f),
+                new Vector2(0.2f, 0.2f),
+                new Vector2(0.4f, 0.4f),
+                new Vector2(0.6f, 0.6f),
+                new Vector2(0.8f, 0.8f),
+                new Vector2(1.0f, 1.0f)
+            };
+
+            _responseCurveDirty = false;
+            PushResponseCurveToView();
+            _parentStack.UpdateFromMapping();
+        }
+
+        public void InitializeViewDependencies(CartesianChart responseCurveGraph, LineSeries responseCurveLineSeries)
+        {
+            ReleaseViewDependencies();
+
+            _responseCurveGraph = responseCurveGraph;
+            _responseCurveLineSeries = responseCurveLineSeries;
+
+            _responseCurveLineSeries.ActualValues.CollectionChanged += ResponseCurveActualValues_CollectionChanged;
+            _responseCurveGraph.DataClick += ResponseCurveChartOnDataClick;
+            _responseCurveGraph.MouseLeave += ResponseCurveChartMouseLeave;
+            _responseCurveGraph.MouseMove += ResponseCurveChartMouseMove;
+            _responseCurveGraph.MouseUp += ResponseCurveChartMouseUp;
+            _responseCurveGraph.TouchMove += ResponseCurveChartTouchMove;
+            _responseCurveGraph.PreviewTouchDown += ResponseCurveGraph_PreviewTouchDown;
+
+            PushResponseCurveToView();
+        }
+
+        public void ReleaseViewDependencies()
+        {
+            if (_responseCurveLineSeries is not null)
+                _responseCurveLineSeries.ActualValues.CollectionChanged -= ResponseCurveActualValues_CollectionChanged;
+
+            if (_responseCurveGraph is not null)
+            {
+                _responseCurveGraph.DataClick -= ResponseCurveChartOnDataClick;
+                _responseCurveGraph.MouseLeave -= ResponseCurveChartMouseLeave;
+                _responseCurveGraph.MouseMove -= ResponseCurveChartMouseMove;
+                _responseCurveGraph.MouseUp -= ResponseCurveChartMouseUp;
+                _responseCurveGraph.TouchMove -= ResponseCurveChartTouchMove;
+                _responseCurveGraph.PreviewTouchDown -= ResponseCurveGraph_PreviewTouchDown;
+            }
+
+            _responseCurveGraph = null;
+            _responseCurveLineSeries = null;
+            _updatingResponseCurveUI = false;
+            _responseCurveDirty = false;
+            _isDraggingResponseCurve = false;
+            _responseCurveDragIndex = -1;
+        }
+
+        public void SetUpdatingResponseCurveUI(bool value) => _updatingResponseCurveUI = value;
+
+        private static int ClampIndex(double x, int maxIndex)
+        {
+            int idx = (int)Math.Round(x);
+            if (idx < 0) return 0;
+            if (idx > maxIndex) return maxIndex;
+            return idx;
+        }
+
+        private static double Clamp01(double y)
+        {
+            if (y < 0d) return 0d;
+            if (y > 1d) return 1d;
+            return y;
+        }
+
+        private void ResponseCurveGraph_PreviewTouchDown(object? sender, System.Windows.Input.TouchEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void ResponseCurveActualValues_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (_updatingResponseCurveUI || _responseCurveLineSeries is null || Action is not AxisActions axisAction)
+                return;
+
+            if (_isDraggingResponseCurve)
+            {
+                _responseCurveDirty = true;
+                return;
+            }
+
+            CommitResponseCurveFromChart(axisAction, submitMapping: false);
+        }
+
+        private void CommitResponseCurveFromChart(AxisActions axisAction, bool submitMapping)
+        {
+            if (_responseCurveLineSeries is null)
+                return;
+
+            List<Vector2> responseCurvePoints = axisAction.ResponseCurvePoints;
+            int count = Math.Min(_responseCurveLineSeries.ActualValues.Count, responseCurvePoints.Count);
+            bool changed = false;
+
+            for (int idx = 0; idx < count; idx++)
+            {
+                double value = Convert.ToDouble(_responseCurveLineSeries.ActualValues[idx] ?? 0.0d);
+                Vector2 point = responseCurvePoints[idx];
+
+                if (Math.Abs(point.Y - value) < Epsilon)
+                    continue;
+
+                responseCurvePoints[idx] = new Vector2(point.X, (float)value);
+                changed = true;
+            }
+
+            _responseCurveDirty = false;
+
+            if (changed)
+            {
+                ResponseCurveUpdateRequested?.Invoke(responseCurvePoints.Select(point => (double)point.Y).ToArray());
+
+                if (submitMapping)
+                    _parentStack.UpdateFromMapping();
+            }
+        }
+
+        private void PushResponseCurveToView()
+        {
+            if (_responseCurveLineSeries is null || Action is not AxisActions axisAction)
+                return;
+
+            if (_responseCurveLineSeries.ActualValues.Count == 0)
+                return;
+
+            _updatingResponseCurveUI = true;
+            try
+            {
+                int count = Math.Min(_responseCurveLineSeries.ActualValues.Count, axisAction.ResponseCurvePoints.Count);
+                for (int idx = 0; idx < count; idx++)
+                    _responseCurveLineSeries.ActualValues[idx] = (double)axisAction.ResponseCurvePoints[idx].Y;
+
+                ResponseCurveUpdateRequested?.Invoke(axisAction.ResponseCurvePoints.Select(point => (double)point.Y).ToArray());
+            }
+            finally
+            {
+                _updatingResponseCurveUI = false;
+            }
+        }
+
+        private void ChartMovePoint(Point p)
+        {
+            if (_responseCurveLineSeries is null)
+                return;
+
+            int idx = ClampIndex(p.X, _responseCurveLineSeries.ActualValues.Count - 1);
+
+            if (!_isDraggingResponseCurve || _responseCurveDragIndex < 0)
+                return;
+
+            double newY = Clamp01(p.Y);
+            double currentY = Convert.ToDouble(_responseCurveLineSeries.ActualValues[_responseCurveDragIndex] ?? 0.0d);
+            if (Math.Abs(newY - currentY) < Epsilon)
+                return;
+
+            _responseCurveLineSeries.ActualValues[_responseCurveDragIndex] = newY;
+
+            double carry = newY;
+            for (int i = _responseCurveDragIndex + 1; i < _responseCurveLineSeries.ActualValues.Count; i++)
+            {
+                double yi = Convert.ToDouble(_responseCurveLineSeries.ActualValues[i] ?? 0.0d);
+                if (yi + Epsilon < carry) _responseCurveLineSeries.ActualValues[i] = carry;
+                else carry = yi;
+            }
+
+            carry = newY;
+            for (int i = _responseCurveDragIndex - 1; i >= 0; i--)
+            {
+                double yi = Convert.ToDouble(_responseCurveLineSeries.ActualValues[i] ?? 0.0d);
+                if (yi - Epsilon > carry) _responseCurveLineSeries.ActualValues[i] = carry;
+                else carry = yi;
+            }
+        }
+
+        private void ResponseCurveChartMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (_responseCurveGraph is null)
+                return;
+
+            ChartMovePoint(_responseCurveGraph.ConvertToChartValues(e.GetPosition(_responseCurveGraph)));
+            e.Handled = true;
+        }
+
+        private void ResponseCurveChartTouchMove(object? sender, System.Windows.Input.TouchEventArgs e)
+        {
+            if (_responseCurveGraph is null)
+                return;
+
+            ChartMovePoint(_responseCurveGraph.ConvertToChartValues(e.GetTouchPoint(_responseCurveGraph).Position));
+            e.Handled = true;
+        }
+
+        private void ResponseCurveChartMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            EndResponseCurveDrag();
+        }
+
+        private void ResponseCurveChartMouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            EndResponseCurveDrag();
+        }
+
+        private void EndResponseCurveDrag()
+        {
+            if (_responseCurveGraph is null || Action is not AxisActions axisAction)
+                return;
+
+            if (!_isDraggingResponseCurve)
+                return;
+
+            _isDraggingResponseCurve = false;
+            _responseCurveDragIndex = -1;
+
+            if (_responseCurveDirty)
+                CommitResponseCurveFromChart(axisAction, submitMapping: true);
+
+            if (Mouse.Captured == _responseCurveGraph)
+                _responseCurveGraph.ReleaseMouseCapture();
+        }
+
+        private void ResponseCurveChartOnDataClick(object sender, ChartPoint chartPoint)
+        {
+            if (chartPoint == null || _responseCurveGraph is null || _responseCurveLineSeries is null || _responseCurveLineSeries.ActualValues.Count == 0)
+                return;
+
+            Point p = _responseCurveGraph.ConvertToChartValues(Mouse.GetPosition(_responseCurveGraph));
+            _responseCurveDragIndex = ClampIndex(p.X, _responseCurveLineSeries.ActualValues.Count - 1);
+            _isDraggingResponseCurve = true;
+            _responseCurveGraph.CaptureMouse();
+        }
+
+        private void PushResponseCurveToViewIfNeeded()
+        {
+            if (_responseCurveLineSeries is null || Action is not AxisActions axisAction)
+                return;
+
+            if (_responseCurveLineSeries.ActualValues.Count == 0)
+                return;
+
+            if (_updatingResponseCurveUI)
+                return;
+
+            PushResponseCurveToView();
         }
 
         protected override void ActionTypeChanged(ActionType? newActionType = null)
@@ -451,6 +732,8 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 ReplaceTargets(targets, matchingTargetVm);
+
+                PushResponseCurveToViewIfNeeded();
             }
             else if (actionType == ActionType.Button)
             {

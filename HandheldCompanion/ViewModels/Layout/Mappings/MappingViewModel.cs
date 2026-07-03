@@ -292,6 +292,7 @@ namespace HandheldCompanion.ViewModels
         public virtual int Axis2AxisAntiDeadzone { get => 0; set { } }
         public virtual int Button2AxisX { get => 0; set { } }
         public virtual int Button2AxisY { get => 0; set { } }
+        public virtual Visibility AxisResponseCurveVisibility => Visibility.Collapsed;
 
         // Visibility for Axis invert properties - only Axis mappings
         public virtual Visibility AxisInvertVisibility => Visibility.Collapsed;
@@ -345,6 +346,9 @@ namespace HandheldCompanion.ViewModels
 
                 // For Axis mappings converting to Button, also show
                 if (IsAxisMapping && Axis2ButtonVisibility == Visibility.Visible)
+                    return Visibility.Visible;
+
+                if (IsAxisMapping && AxisResponseCurveVisibility == Visibility.Visible)
                     return Visibility.Visible;
 
                 return Visibility.Collapsed;

@@ -93,7 +93,6 @@ namespace HandheldCompanion.Utils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte ClampToByte(int value) => (byte)Math.Clamp(value, byte.MinValue, byte.MaxValue);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static short NegateClampToShort(short value)
         {
             int neg = -value;
@@ -116,7 +115,6 @@ namespace HandheldCompanion.Utils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float rad2deg(float rad) => rad * RAD2DEG;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float MapRange(float value, float oldMin, float oldMax, float newMin, float newMax)
         {
             if (oldMin == oldMax) throw new ArgumentException("oldMin and oldMax cannot be equal.");
@@ -460,6 +458,63 @@ namespace HandheldCompanion.Utils
                 6 => DeflectionDirection.Down,
                 _ => DeflectionDirection.Down | DeflectionDirection.Right,
             };
+        }
+
+        /// <summary>
+        /// Apply a response curve to a 2D axis input using linear interpolation between control points.
+        /// </summary>
+        /// <param name="input">Input vector in range [-1, 1]</param>
+        /// <param name="curvePoints">Control points as Vector2, x=input%, y=output%</param>
+        /// <returns>Curved output vector</returns>
+        public static Vector2 ApplyResponseCurve(Vector2 input, List<System.Numerics.Vector2> curvePoints)
+        {
+            if (curvePoints == null || curvePoints.Count < 2)
+                return input;
+
+            // Apply curve as a magnitude multiplier, preserving direction/sign
+            Vector2 stick = input * INV_SHORT_MAX;
+            float magnitude = stick.Length();
+            if (magnitude == 0f)
+                return input;
+
+            // Normalize input magnitude to [0, 1]
+            float normalizedMagnitude = MathF.Min(1f, magnitude);
+
+            // Find interpolated curve value
+            float curvedMagnitude = InterpolateResponseCurve(normalizedMagnitude, curvePoints);
+
+            // Convert output magnitude into a multiplier for the original vector
+            float multiplier = curvedMagnitude / normalizedMagnitude;
+            return input * multiplier;
+        }
+
+        /// <summary>
+        /// Linear interpolation between response curve control points.
+        /// </summary>
+        private static float InterpolateResponseCurve(float inputValue, List<Vector2> curvePoints)
+        {
+            // Handle edge cases
+            if (inputValue <= 0f) return curvePoints[0].Y;
+            if (inputValue >= 1f) return curvePoints[curvePoints.Count - 1].Y;
+
+            // Find the two points to interpolate between
+            for (int i = 0; i < curvePoints.Count - 1; i++)
+            {
+                Vector2 p1 = curvePoints[i];
+                Vector2 p2 = curvePoints[i + 1];
+
+                if (inputValue >= p1.X && inputValue <= p2.X)
+                {
+                    // Linear interpolation between p1 and p2
+                    if (p2.X == p1.X)
+                        return p1.Y;
+
+                    float t = (inputValue - p1.X) / (p2.X - p1.X);
+                    return p1.Y + t * (p2.Y - p1.Y);
+                }
+            }
+
+            return inputValue; // Fallback to identity
         }
     }
 }

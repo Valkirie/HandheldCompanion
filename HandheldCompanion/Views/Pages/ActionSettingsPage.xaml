@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
+    xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
@@ -469,7 +470,62 @@
                             Value="{Binding Axis2AxisAntiDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
                 </ui:SettingsCard>
+
+                <!--  Response curve  -->
             </ikw:SimpleStackPanel>
+
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Response curve" />
+            <Border
+                Padding="15,12,12,12"
+                Background="{DynamicResource ExpanderHeaderBackground}"
+                CornerRadius="{DynamicResource ControlCornerRadius}">
+                <ikw:SimpleStackPanel Spacing="12">
+                    <lvc:CartesianChart
+                        Name="responseCurveChart"
+                        Height="400"
+                        DataTooltip="{x:Null}"
+                        DisableAnimations="True"
+                        Zoom="None">
+                        <lvc:CartesianChart.Series>
+                            <lvc:LineSeries
+                                Name="responseCurveLineSeries"
+                                Fill="{DynamicResource ExpanderHeaderBackground}"
+                                LineSmoothness="0"
+                                PointGeometry="{x:Static lvc:DefaultGeometries.Circle}"
+                                PointGeometrySize="30"
+                                Stroke="{DynamicResource AccentAAFillColorDefaultBrush}"
+                                StrokeThickness="4"
+                                Values="0.0,0.2,0.4,0.6,0.8,1.0" />
+                        </lvc:CartesianChart.Series>
+
+                        <lvc:CartesianChart.AxisY>
+                            <lvc:Axis
+                                Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+                                LabelFormatter="{Binding ResponseCurveAxisYFormatter}"
+                                MaxValue="1"
+                                MinValue="0">
+                                <lvc:Axis.Separator>
+                                    <lvc:Separator Step="0.1" Stroke="{DynamicResource ExpanderHeaderBackground}" />
+                                </lvc:Axis.Separator>
+                            </lvc:Axis>
+                        </lvc:CartesianChart.AxisY>
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis
+                                Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+                                MaxValue="5"
+                                MinValue="0">
+                                <lvc:Axis.Separator>
+                                    <lvc:Separator Step="1" Stroke="{DynamicResource ExpanderHeaderBackground}" />
+                                </lvc:Axis.Separator>
+                            </lvc:Axis>
+                        </lvc:CartesianChart.AxisX>
+                    </lvc:CartesianChart>
+                    <Button
+                        HorizontalAlignment="Center"
+                        Command="{Binding ResetResponseCurveCommand}"
+                        Content="Reset to default" />
+                </ikw:SimpleStackPanel>
+            </Border>
         </ikw:SimpleStackPanel>
 
         <!--  Mouse settings  -->
