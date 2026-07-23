@@ -475,7 +475,7 @@ public abstract class IDevice
         QueryDevices();
     }
 
-    private void SystemManager_Initialized()
+    protected virtual void SystemManager_Initialized()
     {
         // manage events
         SystemManager.PowerLineStatusChanged += SystemManager_PowerLineStatusChanged;
@@ -483,8 +483,9 @@ public abstract class IDevice
         SystemManager_PowerLineStatusChanged(SystemInformation.PowerStatus.PowerLineStatus, SystemInformation.PowerStatus.PowerLineStatus);
     }
 
-    private void SystemManager_PowerLineStatusChanged(PowerLineStatus prevPowerLineStatus, PowerLineStatus powerLineStatus)
+    protected virtual async void SystemManager_PowerLineStatusChanged(PowerLineStatus prevPowerLineStatus, PowerLineStatus powerLineStatus)
     {
+        await Task.Delay(2000).ConfigureAwait(false); // wait for power status to stabilize
         ApplyTemperatureLimits();
     }
 

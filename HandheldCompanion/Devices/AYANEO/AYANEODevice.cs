@@ -59,22 +59,11 @@ namespace HandheldCompanion.Devices.AYANEO
             });
         }
 
-        public override void OpenEvents()
+        protected override void SystemManager_Initialized()
         {
-            base.OpenEvents();
+            base.SystemManager_Initialized();
 
             // manage events
-            SystemManager.Initialized += SystemManager_Initialized;
-
-            // raise events
-            if (SystemManager.IsInitialized)
-                SystemManager_Initialized();
-        }
-
-        private void SystemManager_Initialized()
-        {
-            // manage events
-            SystemManager.PowerLineStatusChanged += SystemManager_PowerLineStatusChanged_Handler;
             SystemManager.SessionLockChanged += SystemManager_SessionLockChanged;
 
             // raise events
@@ -84,8 +73,6 @@ namespace HandheldCompanion.Devices.AYANEO
         public override void Close()
         {
             // manage events
-            SystemManager.Initialized -= SystemManager_Initialized;
-            SystemManager.PowerLineStatusChanged -= SystemManager_PowerLineStatusChanged_Handler;
             SystemManager.SessionLockChanged -= SystemManager_SessionLockChanged;
 
             base.Close();
@@ -117,8 +104,10 @@ namespace HandheldCompanion.Devices.AYANEO
             return base.SetLedBrightness(brightness);
         }
 
-        private void SystemManager_PowerLineStatusChanged_Handler(PowerLineStatus prevPowerLineStatus, PowerLineStatus powerLineStatus)
+        protected override void SystemManager_PowerLineStatusChanged(PowerLineStatus prevPowerLineStatus, PowerLineStatus powerLineStatus)
         {
+            base.SystemManager_PowerLineStatusChanged(prevPowerLineStatus, powerLineStatus);
+
             if (powerLineStatus == PowerLineStatus.Online)
                 return;
 
