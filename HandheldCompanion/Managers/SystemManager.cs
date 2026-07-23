@@ -82,7 +82,7 @@ public static class SystemManager
 
     public static SystemStatus currentSystemStatus = SystemStatus.SystemBooting;
     private static SystemStatus previousSystemStatus = SystemStatus.SystemBooting;
-    private static PowerLineStatus prevPowerLineStatus = PowerLineStatus.Offline;
+    private static PowerLineStatus prevPowerLineStatus = PowerLineStatus.Unknown;
 
     // EventLogWatcher for power mode detection
     private static EventLogWatcher? _powerModeWatcher;

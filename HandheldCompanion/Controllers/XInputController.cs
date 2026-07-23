@@ -121,7 +121,8 @@ public class XInputController : IController
             Inputs.ButtonState[ButtonFlags.DPadLeft] |= Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft);
             Inputs.ButtonState[ButtonFlags.DPadRight] |= Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight);
 
-            Inputs.ButtonState[ButtonFlags.Special] |= State.wButtons.HasFlag(XInputStateButtons.Xbox);
+            if (SourceButtons.Contains(ButtonFlags.Special))
+                Inputs.ButtonState[ButtonFlags.Special] |= State.wButtons.HasFlag(XInputStateButtons.Xbox);
 
             Inputs.AxisState[AxisFlags.LeftStickX] = Gamepad.LeftThumbX;
             Inputs.AxisState[AxisFlags.LeftStickY] = Gamepad.LeftThumbY;

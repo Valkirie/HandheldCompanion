@@ -54,7 +54,7 @@ namespace HandheldCompanion.Managers
 
             // raise events
             if (SystemManager.IsInitialized)
-                SystemManager_PowerLineStatusChanged(SystemInformation.PowerStatus.PowerLineStatus, SystemInformation.PowerStatus.PowerLineStatus);
+                SystemManager_Initialized();
 
             // raise events
             switch (ManagerFactory.profileManager.Status)
@@ -229,6 +229,9 @@ namespace HandheldCompanion.Managers
 
         private void SystemManager_PowerLineStatusChanged(PowerLineStatus prevPowerLineStatus, PowerLineStatus powerLineStatus)
         {
+            if (!ManagerFactory.profileManager.IsReady)
+                return;
+
             // Get current profile
             Profile profile = ManagerFactory.profileManager.GetCurrent();
             ProfileManager_Applied(profile, UpdateSource.Background);
