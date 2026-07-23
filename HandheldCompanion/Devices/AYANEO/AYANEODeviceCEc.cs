@@ -2,8 +2,6 @@
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using System;
-using System.Collections.Generic;
-using System.Numerics;
 using System.Threading;
 using System.Windows.Media;
 using Windows.System.Power;
@@ -48,27 +46,7 @@ namespace HandheldCompanion.Devices.AYANEO
                 FanValueMax = 100
             };
 
-            this.GyroMatrix = new()
-            {
-                Axis = new Vector3(1.0f, -1.0f, 1.0f),
-                AxisSwap = new SortedDictionary<char, char>
-                {
-                    { 'X', 'X' },
-                    { 'Y', 'Z' },
-                    { 'Z', 'Y' }
-                }
-            };
-
-            this.AcceleroMatrix = new()
-            {
-                Axis = new Vector3(-1.0f, -1.0f, 1.0f),
-                AxisSwap = new SortedDictionary<char, char>
-                {
-                    { 'X', 'X' },
-                    { 'Y', 'Z' },
-                    { 'Z', 'Y' }
-                }
-            };
+            // IMU matrices loaded from AYANEODeviceCEc.json
 
             this.OEMChords.Add(new KeyboardChord("Custom Key Big",
                 [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F17],
@@ -121,7 +99,7 @@ namespace HandheldCompanion.Devices.AYANEO
         protected override void QuerySettings()
         {
             // raise events
-            SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetString("BatteryChargeLimit"), false, false);
+            SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetString("BatteryChargeLimit"), false, true);
 
             base.QuerySettings();
         }

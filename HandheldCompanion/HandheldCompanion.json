@@ -14,13 +14,14 @@
         "Name": "File",
         "Args": {
           "path": "%LOG_PATH%\\HandheldCompanion-.log",
-          "rollingInterval": "Day"
+          "rollingInterval": "Day",
+          "restrictedToMinimumLevel": "Information"
         }
       },
       {
         "Name": "Console",
         "Args": {
-          "restrictedToMinimumLevel": "Debug"
+          "restrictedToMinimumLevel": "Verbose"
         }
       }
     ]

@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Misc;
 using System;
-using System.Numerics;
 
 namespace HandheldCompanion.Devices.Lenovo
 {
@@ -38,8 +37,7 @@ namespace HandheldCompanion.Devices.Lenovo
             GfxClock = new double[] { 100, 2900 };
             CpuClock = 5000;
 
-            GyroMatrix = new() { Axis = new Vector3(1.0f, 1.0f, -1.0f) };
-            AcceleroMatrix = new() { Axis = new Vector3(-1.0f, -1.0f, 1.0f) };
+            // IMU matrices loaded from LegionGoTablet2.json
 
             // Enable direct EC I/O for fan control
             UseOpenLib = true;

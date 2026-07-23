@@ -40,9 +40,26 @@ namespace HandheldCompanion.Misc
         public ProcessWindow(ProcessEx processEx, AutomationElement element, bool isPrimary)
         {
             this.processEx = processEx;
-            this.Hwnd = element.Current.NativeWindowHandle;
             this.Element = element;
-            this.Name = element.Current.Name;
+
+            // Access Current properties with error handling, protecting against stack overflow
+            // in Windows UI Automation when accessing properties on invalid/closing windows
+            try
+            {
+                this.Hwnd = element.Current.NativeWindowHandle;
+                this.Name = element.Current.Name ?? string.Empty;
+            }
+            catch (COMException)
+            {
+                this.Hwnd = 0;
+                this.Name = string.Empty;
+            }
+            catch (InvalidOperationException)
+            {
+                // Element was disposed or window is closing
+                this.Hwnd = 0;
+                this.Name = string.Empty;
+            }
 
             this.propertyHandle = new(OnPropertyChanged);
             this.eventHandler = new(OnClosed);
@@ -74,7 +91,15 @@ namespace HandheldCompanion.Misc
 
         private void OnClosed(object sender, AutomationEventArgs e)
         {
-            Closed?.Invoke(this, EventArgs.Empty);
+            try
+            {
+                Closed?.Invoke(this, EventArgs.Empty);
+            }
+            catch (COMException)
+            {
+                // Window or automation element is being destroyed, safe to ignore
+            }
+            catch { }
         }
 
         ~ProcessWindow()
@@ -86,17 +111,19 @@ namespace HandheldCompanion.Misc
         {
             try
             {
-                if (Element != null)
+                // Double-check Element is still valid, as it can become null during disposal
+                if (Element != null && e.Property == AutomationElement.NameProperty)
                 {
-                    if (e.Property == AutomationElement.NameProperty)
-                    {
-                        // Run off the UIAutomation callback thread: GetWindowText sends WM_GETTEXT
-                        // cross-process, which blocks the calling thread until the target processes
-                        // the message. Blocking the UIA STA thread prevents it from pumping incoming
-                        // COM messages and can deadlock the target application on close.
-                        Task.Run(RefreshName);
-                    }
+                    // Run off the UIAutomation callback thread: GetWindowText sends WM_GETTEXT
+                    // cross-process, which blocks the calling thread until the target processes
+                    // the message. Blocking the UIA STA thread prevents it from pumping incoming
+                    // COM messages and can deadlock the target application on close.
+                    Task.Run(RefreshName);
                 }
+            }
+            catch (COMException)
+            {
+                // UI Automation COM object is invalid, safely abandon this event
             }
             catch { }
         }
@@ -113,6 +140,14 @@ namespace HandheldCompanion.Misc
             }
             catch (COMException)
             {
+                // COM object is invalid or the window is closing. Safely dispose.
+                // Stack overflow in UI Automation can occur if we continue accessing
+                // properties on invalid IAccessible objects.
+                Dispose();
+            }
+            catch (InvalidOperationException)
+            {
+                // Element was disposed or window handle is invalid
                 Dispose();
             }
             catch

@@ -1,8 +1,6 @@
 ﻿using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Inputs;
 using System;
-using System.Collections.Generic;
-using System.Numerics;
 using System.Threading;
 using WindowsInput.Events;
 
@@ -24,27 +22,7 @@ namespace HandheldCompanion.Devices.AYANEO
                 FanValueMax = 255
             };
 
-            this.GyroMatrix = new()
-            {
-                Axis = new Vector3(1.0f, 1.0f, -1.0f),
-                AxisSwap = new SortedDictionary<char, char>
-                {
-                    { 'X', 'X' },
-                    { 'Y', 'Z' },
-                    { 'Z', 'Y' }
-                }
-            };
-
-            this.AcceleroMatrix = new()
-            {
-                Axis = new Vector3(1.0f, 1.0f, -1.0f),
-                AxisSwap = new SortedDictionary<char, char>
-                {
-                    { 'X', 'X' },
-                    { 'Y', 'Z' },
-                    { 'Z', 'Y' }
-                }
-            };
+            // IMU matrices loaded from AYANEODeviceCEii.json
 
             this.OEMChords.Add(new KeyboardChord("Custom Key Big",
                 [KeyCode.LControl, KeyCode.LWin, KeyCode.F17],

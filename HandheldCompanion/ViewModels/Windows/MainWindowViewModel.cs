@@ -24,10 +24,29 @@ namespace HandheldCompanion.ViewModels
 
         public MainWindowViewModel()
         {
-            // manage events
-            ManagerFactory.notificationManager.Added += NotificationManager_Added;
-            ManagerFactory.notificationManager.Discarded += NotificationManager_Discarded;
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            // raise events
+            switch (ManagerFactory.notificationManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.notificationManager.Initialized += NotificationManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryNotifications();
+                    break;
+            }
+
+            // raise events
+            switch (ManagerFactory.settingsManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QuerySettings();
+                    break;
+            }
 
             // Initialize MainWindowApplyNoise from settings
             MainWindowApplyNoise = ManagerFactory.settingsManager.GetBoolean("MainWindowApplyNoise");
@@ -36,6 +55,38 @@ namespace HandheldCompanion.ViewModels
             {
                 IsInfoBarOpen = false;
             });
+        }
+
+        private void QueryNotifications()
+        {
+            // manage events
+            ManagerFactory.notificationManager.Added += NotificationManager_Added;
+            ManagerFactory.notificationManager.Discarded += NotificationManager_Discarded;
+
+            if (ManagerFactory.notificationManager.Notifications.TryGetSnapshot(out Notification[] notifications, 2000))
+                foreach (Notification notification in notifications)
+                    NotificationManager_Added(notification);
+        }
+
+        private void NotificationManager_Initialized()
+        {
+            QueryNotifications();
+        }
+
+        private void QuerySettings()
+        {
+            // manage events
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            // raise events
+            SettingsManager_SettingValueChanged("PerformanceManagerEnabled", ManagerFactory.settingsManager.GetString("PerformanceManagerEnabled"), false, true);
+            SettingsManager_SettingValueChanged("LibraryPageEnabled", ManagerFactory.settingsManager.GetString("LibraryPageEnabled"), false, true);
+            SettingsManager_SettingValueChanged("MainWindowApplyNoise", ManagerFactory.settingsManager.GetString("MainWindowApplyNoise"), false, true);
+        }
+
+        private void SettingsManager_Initialized()
+        {
+            QuerySettings();
         }
 
         private bool _isInitializing = true;

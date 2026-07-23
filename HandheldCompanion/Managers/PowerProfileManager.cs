@@ -9,6 +9,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace HandheldCompanion.Managers
@@ -49,9 +50,11 @@ namespace HandheldCompanion.Managers
             }
 
             // manage events
-            ManagerFactory.profileManager.Applied += ProfileManager_Applied;
-            ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
-            SystemManager.PowerLineStatusChanged += SystemManager_PowerLineStatusChanged;
+            SystemManager.Initialized += SystemManager_Initialized;
+
+            // raise events
+            if (SystemManager.IsInitialized)
+                SystemManager_PowerLineStatusChanged(SystemInformation.PowerStatus.PowerLineStatus, SystemInformation.PowerStatus.PowerLineStatus);
 
             // raise events
             switch (ManagerFactory.profileManager.Status)
@@ -90,6 +93,14 @@ namespace HandheldCompanion.Managers
             base.Start();
         }
 
+        private void SystemManager_Initialized()
+        {
+            // manage events
+            SystemManager.PowerLineStatusChanged += SystemManager_PowerLineStatusChanged;
+
+            SystemManager_PowerLineStatusChanged(SystemInformation.PowerStatus.PowerLineStatus, SystemInformation.PowerStatus.PowerLineStatus);
+        }
+
         private void QueryPlatforms()
         {
             // manage events
@@ -103,6 +114,10 @@ namespace HandheldCompanion.Managers
 
         private void QueryProfile()
         {
+            // manage events
+            ManagerFactory.profileManager.Applied += ProfileManager_Applied;
+            ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
+
             ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
         }
 
@@ -122,8 +137,8 @@ namespace HandheldCompanion.Managers
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // raise events
-            SettingsManager_SettingValueChanged("ConfigurableTDPOverrideDown", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideDown"), false, false);
-            SettingsManager_SettingValueChanged("ConfigurableTDPOverrideUp", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideUp"), false, false);
+            SettingsManager_SettingValueChanged("ConfigurableTDPOverrideDown", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideDown"), false, true);
+            SettingsManager_SettingValueChanged("ConfigurableTDPOverrideUp", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideUp"), false, true);
         }
 
         public override void Stop()
@@ -138,6 +153,7 @@ namespace HandheldCompanion.Managers
             ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
             ManagerFactory.profileManager.Discarded -= ProfileManager_Discarded;
             ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
+            SystemManager.Initialized -= SystemManager_Initialized;
             SystemManager.PowerLineStatusChanged -= SystemManager_PowerLineStatusChanged;
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
@@ -215,7 +231,6 @@ namespace HandheldCompanion.Managers
         {
             // Get current profile
             Profile profile = ManagerFactory.profileManager.GetCurrent();
-
             ProfileManager_Applied(profile, UpdateSource.Background);
         }
 
@@ -408,12 +423,19 @@ namespace HandheldCompanion.Managers
 
         public PowerProfile GetCurrent()
         {
-            lock (profileLock)
+            if (!Monitor.TryEnter(profileLock, TimeSpan.FromSeconds(2)))
+                return GetDefault();
+
+            try
             {
                 if (currentProfile is not null)
                     return currentProfile;
 
                 return GetDefault();
+            }
+            finally
+            {
+                Monitor.Exit(profileLock);
             }
         }
 
@@ -459,12 +481,6 @@ namespace HandheldCompanion.Managers
             {
                 profiles.Remove(profile.Guid, out _);
 
-                lock (profileLock)
-                {
-                    // warn owner
-                    bool isCurrent = profile.Guid == currentProfile?.Guid;
-                }
-
                 // raise event
                 Discarded?.Invoke(profile, false);
 
@@ -493,14 +509,14 @@ namespace HandheldCompanion.Managers
         public event DeletedEventHandler? Deleted;
         public delegate void DeletedEventHandler(PowerProfile profile);
 
-            public event UpdatedEventHandler? Updated;
-            public delegate void UpdatedEventHandler(PowerProfile profile, UpdateSource source);
+        public event UpdatedEventHandler? Updated;
+        public delegate void UpdatedEventHandler(PowerProfile profile, UpdateSource source);
 
-            public event AppliedEventHandler? Applied;
-            public delegate void AppliedEventHandler(PowerProfile profile, UpdateSource source);
+        public event AppliedEventHandler? Applied;
+        public delegate void AppliedEventHandler(PowerProfile profile, UpdateSource source);
 
-            public event DiscardedEventHandler? Discarded;
-            public delegate void DiscardedEventHandler(PowerProfile profile, bool swapped);
-            #endregion
+        public event DiscardedEventHandler? Discarded;
+        public delegate void DiscardedEventHandler(PowerProfile profile, bool swapped);
+        #endregion
     }
 }

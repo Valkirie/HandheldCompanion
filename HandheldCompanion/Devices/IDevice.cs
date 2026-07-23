@@ -1,6 +1,5 @@
 using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
-using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices.AYANEO;
 using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Devices.MSI;
@@ -11,23 +10,23 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Models;
+using HandheldCompanion.Processors;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using Sentry;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Media;
 using Windows.Devices.Sensors;
 using WindowsInput.Events;
-using static HandheldCompanion.Devices.IDevice;
 using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices;
@@ -54,6 +53,12 @@ public enum TDPMethod
 {
     Default = 0,
     OEM = 1
+}
+
+public enum IMUMatrixType
+{
+    Gyro = 0,
+    Accelero = 1
 }
 
 public struct ECDetails
@@ -84,16 +89,8 @@ public struct IMUMatrix
 
     // Pre-computed indices for fast axis remapping: AxisRemapIndices[input] = output_axis_index
     // where 0=X, 1=Y, 2=Z. Eliminates dictionary lookups in hot sensor paths.
-    private int[]? _axisRemapIndices;
-    public int[] AxisRemapIndices
-    {
-        get
-        {
-            if (_axisRemapIndices == null)
-                ComputeRemapIndices();
-            return _axisRemapIndices!;
-        }
-    }
+    private int[] _axisRemapIndices;
+    public int[] AxisRemapIndices => _axisRemapIndices;
 
     public IMUMatrix()
     {
@@ -104,7 +101,7 @@ public struct IMUMatrix
             { 'Y', 'Y' },
             { 'Z', 'Z' }
         };
-        _axisRemapIndices = new[] { 0, 1, 2 }; // X?0, Y?1, Z?2 (identity mapping)
+        _axisRemapIndices = new[] { 0, 1, 2 };
     }
 
     /// <summary>
@@ -113,11 +110,19 @@ public struct IMUMatrix
     /// </summary>
     private void ComputeRemapIndices()
     {
-        _axisRemapIndices = new int[3];
         // Map input positions: 0=X, 1=Y, 2=Z
-        _axisRemapIndices[0] = AxisSwap['X'] switch { 'Y' => 1, 'Z' => 2, _ => 0 }; // X input ? output axis
-        _axisRemapIndices[1] = AxisSwap['Y'] switch { 'X' => 0, 'Z' => 2, _ => 1 }; // Y input ? output axis
-        _axisRemapIndices[2] = AxisSwap['Z'] switch { 'X' => 0, 'Y' => 1, _ => 2 }; // Z input ? output axis
+        _axisRemapIndices[0] = AxisSwap['X'] switch { 'Y' => 1, 'Z' => 2, _ => 0 }; // X input → output axis
+        _axisRemapIndices[1] = AxisSwap['Y'] switch { 'X' => 0, 'Z' => 2, _ => 1 }; // Y input → output axis
+        _axisRemapIndices[2] = AxisSwap['Z'] switch { 'X' => 0, 'Y' => 1, _ => 2 }; // Z input → output axis
+    }
+
+    /// <summary>
+    /// Invalidates the axis remap cache and recomputes indices immediately.
+    /// Call this whenever AxisSwap is modified to ensure the indices are recalculated.
+    /// </summary>
+    public void InvalidateAxisRemapCache()
+    {
+        ComputeRemapIndices();
     }
 }
 
@@ -181,7 +186,8 @@ public abstract class IDevice
     public double[] nTDP = { 15, 15, 20 };
 
     // device maximum operating temperature
-    public double Tjmax = 95;
+    public uint Tjmax = 95;
+    public uint Tskin = 45;
 
     // power profile(s)
     public List<PowerProfile> DevicePowerProfiles = [];
@@ -236,6 +242,9 @@ public abstract class IDevice
         AcceleroMatrix = new();
         GyroMatrix = new();
 
+        // Load IMU configurations from JSON file (will override defaults if file exists)
+        ApplyDeviceConfiguration();
+
         // add default power profile
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileDefaultName, Properties.Resources.PowerProfileDefaultDescription)
         {
@@ -250,6 +259,7 @@ public abstract class IDevice
         DeviceHotkeys[typeof(QuickToolsCommands)] = new Hotkey() { command = new QuickToolsCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED1 };
         DeviceHotkeys[typeof(MainWindowCommands)] = new Hotkey() { command = new MainWindowCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED2 };
         DeviceHotkeys[typeof(OnScreenKeyboardCommands)] = new Hotkey() { command = new OnScreenKeyboardCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED3 };
+        DeviceHotkeys[typeof(OverlayGamepadCommands)] = new Hotkey() { command = new OverlayGamepadCommands(), IsPinned = true, ButtonFlags = ButtonFlags.HOTKEY_RESERVED4 };
 
         // prepare hotkeys
         DeviceHotkeys[typeof(DesktopLayoutCommands)].inputsChord.ButtonState[ButtonFlags.LeftStickClick] = true;
@@ -296,10 +306,100 @@ public abstract class IDevice
         }
     }
 
+    protected virtual void ApplyDeviceConfiguration()
+    {
+        DeviceConfiguration? config = DeviceConfigurationManager.LoadConfiguration(this.GetType().Name);
+        if (config is null)
+            return;
+
+        if (config?.GyroMatrix is not null)
+        {
+            GyroMatrix = ConvertToIMUMatrix(config.GyroMatrix);
+            GyroMatrix.InvalidateAxisRemapCache();
+        }
+
+        if (config?.AcceleroMatrix is not null)
+        {
+            AcceleroMatrix = ConvertToIMUMatrix(config.AcceleroMatrix);
+            AcceleroMatrix.InvalidateAxisRemapCache();
+        }
+    }
+
+    private static IMUMatrix ConvertToIMUMatrix(IMUMatrixData data)
+    {
+        var matrix = new IMUMatrix();
+
+        if (data.Axis != null)
+            matrix.Axis = new Vector3(data.Axis.X, data.Axis.Y, data.Axis.Z);
+
+        if (data.AxisSwap != null)
+        {
+            foreach (var kvp in data.AxisSwap)
+            {
+                if (char.TryParse(kvp.Key, out var key) && char.TryParse(kvp.Value, out var value))
+                    matrix.AxisSwap[key] = value;
+            }
+        }
+
+        return matrix;
+    }
+
+    public void UpdateIMUMatrix(IMUMatrixType type, IMUMatrix matrix)
+    {
+        if (type == IMUMatrixType.Gyro)
+        {
+            GyroMatrix = matrix;
+            GyroMatrix.InvalidateAxisRemapCache();
+        }
+        else
+        {
+            AcceleroMatrix = matrix;
+            AcceleroMatrix.InvalidateAxisRemapCache();
+        }
+
+        // Save to JSON
+        SaveDeviceConfiguration();
+
+        // Reset device gamepadMotion
+        this.GamepadMotion.Reset();
+        this.GamepadMotion.ResetContinuousCalibration();
+        this.GamepadMotion.ResetCalibrationOffset();
+    }
+
+    private void SaveDeviceConfiguration()
+    {
+        var data = new DeviceConfiguration
+        {
+            DeviceClass = this.GetType().Name,
+            GyroMatrix = ConvertToIMUMatrixData(GyroMatrix),
+            AcceleroMatrix = ConvertToIMUMatrixData(AcceleroMatrix)
+        };
+
+        DeviceConfigurationManager.SaveConfiguration(data);
+    }
+
+    private static IMUMatrixData ConvertToIMUMatrixData(IMUMatrix matrix)
+    {
+        return new IMUMatrixData
+        {
+            Axis = new Vector3Data { X = matrix.Axis.X, Y = matrix.Axis.Y, Z = matrix.Axis.Z },
+            AxisSwap = new Dictionary<string, string>(matrix.AxisSwap.ToDictionary(
+                kvp => kvp.Key.ToString(),
+                kvp => kvp.Value.ToString()))
+        };
+    }
+
     public virtual void OpenEvents()
     {
         // raise opened event
         Opened?.Invoke(this);
+
+        // manage events
+        SystemManager.Initialized += SystemManager_Initialized;
+
+        // raise events
+        if (SystemManager.IsInitialized)
+            SystemManager_PowerLineStatusChanged(SystemInformation.PowerStatus.PowerLineStatus, SystemInformation.PowerStatus.PowerLineStatus);
 
         // raise events
         switch (ManagerFactory.settingsManager.Status)
@@ -375,6 +475,47 @@ public abstract class IDevice
         QueryDevices();
     }
 
+    private void SystemManager_Initialized()
+    {
+        // manage events
+        SystemManager.PowerLineStatusChanged += SystemManager_PowerLineStatusChanged;
+
+        SystemManager_PowerLineStatusChanged(SystemInformation.PowerStatus.PowerLineStatus, SystemInformation.PowerStatus.PowerLineStatus);
+    }
+
+    private void SystemManager_PowerLineStatusChanged(PowerLineStatus prevPowerLineStatus, PowerLineStatus powerLineStatus)
+    {
+        ApplyTemperatureLimits();
+    }
+
+    public bool ApplyTctlLimit(uint value)
+    {
+        if (PerformanceManager.GetProcessor() is not AMDProcessor AMD)
+            return false;
+
+        bool hasSetChtcTemp = AMD.SetChtcTemp(value);
+        bool hasSetTctclTemp = AMD.SetTctlTemp(value);
+
+        return hasSetChtcTemp || hasSetTctclTemp;
+    }
+
+    public bool ApplySkinTemperatureLimit(uint value)
+    {
+        if (PerformanceManager.GetProcessor() is not AMDProcessor AMD)
+            return false;
+
+        return AMD.SetApuSkinTemp(value);
+    }
+
+    public void ApplyTemperatureLimits()
+    {
+        uint tctlLimit = (uint)ManagerFactory.settingsManager.GetInt("TctlLimit");
+        uint skinTemperatureLimit = (uint)ManagerFactory.settingsManager.GetInt("SkinTemperatureLimit");
+
+        ApplyTctlLimit(tctlLimit == 0 ? Tjmax : tctlLimit);
+        ApplySkinTemperatureLimit(skinTemperatureLimit == 0 ? Tskin : skinTemperatureLimit);
+    }
+
     protected virtual void QuerySettings()
     {
         // manage events
@@ -433,6 +574,8 @@ public abstract class IDevice
 
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        SystemManager.Initialized -= SystemManager_Initialized;
+        SystemManager.PowerLineStatusChanged -= SystemManager_PowerLineStatusChanged;
 
         ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
         // handled by PowerProfileManager, because of complex power profile order logic

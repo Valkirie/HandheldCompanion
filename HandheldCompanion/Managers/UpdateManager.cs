@@ -128,7 +128,7 @@ namespace HandheldCompanion.Managers
             // manage events
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-            SettingsManager_SettingValueChanged("UpdateUrl", ManagerFactory.settingsManager.GetString("UpdateUrl"), false, false);
+            SettingsManager_SettingValueChanged("UpdateUrl", ManagerFactory.settingsManager.GetString("UpdateUrl"), false, true);
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)

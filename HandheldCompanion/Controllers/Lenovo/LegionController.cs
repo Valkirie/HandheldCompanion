@@ -157,7 +157,7 @@ namespace HandheldCompanion.Controllers.Lenovo
 
         protected override void QuerySettings()
         {
-            SettingsManager_SettingValueChanged("LegionControllerGyroIndex", ManagerFactory.settingsManager.GetInt("LegionControllerGyroIndex"), false, false);
+            SettingsManager_SettingValueChanged("LegionControllerGyroIndex", ManagerFactory.settingsManager.GetInt("LegionControllerGyroIndex"), false, true);
             base.QuerySettings();
         }
 

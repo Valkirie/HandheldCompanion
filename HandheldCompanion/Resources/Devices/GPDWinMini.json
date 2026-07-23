@@ -1,0 +1,32 @@
+{
+  "DeviceClass": "GPDWinMini",
+  "GyroMatrix": {
+    "Axis": {
+      "X": 1,
+      "Y": -1,
+      "Z": -1
+    },
+    "AxisSwap": {
+      "X": "Z",
+      "Y": "X",
+      "Z": "Y"
+    }
+  },
+  "AcceleroMatrix": {
+    "Axis": {
+      "X": 1,
+      "Y": 1,
+      "Z": 1
+    },
+    "AxisSwap": {
+      "X": "Z",
+      "Y": "X",
+      "Z": "Y"
+    }
+  },
+  "cTDP": null,
+  "nTDP": null,
+  "gfxClock": null,
+  "cpuClock": null,
+  "tjmax": null
+}

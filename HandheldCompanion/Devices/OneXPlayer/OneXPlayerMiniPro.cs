@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Inputs;
-using System.Numerics;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;
@@ -14,7 +13,7 @@ public class OneXPlayerMiniPro : OneXPlayerMini
         GfxClock = new double[] { 100, 2200 };
         CpuClock = 4700;
 
-        AcceleroMatrix = new() { Axis = new Vector3(1.0f, -1.0f, 1.0f) };
+        // IMU matrices loaded from OneXPlayerMiniPro.json (AcceleroMatrix only, GyroMatrix inherited from OneXPlayerMini)
 
         OEMChords.Clear();
 

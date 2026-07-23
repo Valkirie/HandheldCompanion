@@ -78,35 +78,35 @@ public partial class SettingsPage : Page
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        SettingsManager_SettingValueChanged("MainWindowTheme", ManagerFactory.settingsManager.GetString("MainWindowTheme"), false, false);
-        SettingsManager_SettingValueChanged("MainWindowBackdrop", ManagerFactory.settingsManager.GetString("MainWindowBackdrop"), false, false);
-        SettingsManager_SettingValueChanged("MainWindowApplyNoise", ManagerFactory.settingsManager.GetString("MainWindowApplyNoise"), false, false);
-        SettingsManager_SettingValueChanged("QuicktoolsBackdrop", ManagerFactory.settingsManager.GetString("QuicktoolsBackdrop"), false, false);
-        SettingsManager_SettingValueChanged("QuickToolsApplyNoise", ManagerFactory.settingsManager.GetString("QuickToolsApplyNoise"), false, false);
-        SettingsManager_SettingValueChanged("RunAtStartup", ManagerFactory.settingsManager.GetString("RunAtStartup"), false, false);
-        SettingsManager_SettingValueChanged("StartMinimized", ManagerFactory.settingsManager.GetString("StartMinimized"), false, false);
-        SettingsManager_SettingValueChanged("StartMaximized", ManagerFactory.settingsManager.GetString("StartMaximized"), false, false);
-        SettingsManager_SettingValueChanged("CloseMinimises", ManagerFactory.settingsManager.GetString("CloseMinimises"), false, false);
-        SettingsManager_SettingValueChanged("DesktopLayoutOnStart", ManagerFactory.settingsManager.GetString("DesktopLayoutOnStart"), false, false);
-        SettingsManager_SettingValueChanged("ToastEnable", ManagerFactory.settingsManager.GetString("ToastEnable"), false, false);
-        SettingsManager_SettingValueChanged("CurrentCulture", ManagerFactory.settingsManager.GetString("CurrentCulture"), false, false);
-        SettingsManager_SettingValueChanged("PlatformRTSSEnabled", ManagerFactory.settingsManager.GetString("PlatformRTSSEnabled"), false, false);
-        SettingsManager_SettingValueChanged("QuickToolsLocation", ManagerFactory.settingsManager.GetString("QuickToolsLocation"), false, false);
-        SettingsManager_SettingValueChanged("QuickToolsAutoHide", ManagerFactory.settingsManager.GetString("QuickToolsAutoHide"), false, false);
-        SettingsManager_SettingValueChanged("UISounds", ManagerFactory.settingsManager.GetString("UISounds"), false, false);
-        SettingsManager_SettingValueChanged("TelemetryEnabled", ManagerFactory.settingsManager.GetString("TelemetryEnabled"), false, false);
-        SettingsManager_SettingValueChanged("ProcessPriority", ManagerFactory.settingsManager.GetString("ProcessPriority"), false, false);
-        SettingsManager_SettingValueChanged("QuickKeyboardVisibility", ManagerFactory.settingsManager.GetString("QuickKeyboardVisibility"), false, false);
-        SettingsManager_SettingValueChanged("QuickTrackpadVisibility", ManagerFactory.settingsManager.GetString("QuickTrackpadVisibility"), false, false);
-        SettingsManager_SettingValueChanged("QuickToolsSlideAnimation", ManagerFactory.settingsManager.GetString("QuickToolsSlideAnimation"), false, false);
-        SettingsManager_SettingValueChanged("PerformanceManagerEnabled", ManagerFactory.settingsManager.GetString("PerformanceManagerEnabled"), false, false);
-        SettingsManager_SettingValueChanged("GPUManagementEnabled", ManagerFactory.settingsManager.GetString("GPUManagementEnabled"), false, false);
-        SettingsManager_SettingValueChanged("LibraryPageEnabled", ManagerFactory.settingsManager.GetString("LibraryPageEnabled"), false, false);
-        SettingsManager_SettingValueChanged("ShowSplashScreen", ManagerFactory.settingsManager.GetString("ShowSplashScreen"), false, false);
-        SettingsManager_SettingValueChanged("DSUEnabled", ManagerFactory.settingsManager.GetString("DSUEnabled"), false, false);
-        SettingsManager_SettingValueChanged("DSUport", ManagerFactory.settingsManager.GetString("DSUport"), false, false);
-        SettingsManager_SettingValueChanged("VIIPEREnabled", ManagerFactory.settingsManager.GetString("VIIPEREnabled"), false, false);
-        SettingsManager_SettingValueChanged("VIIPERPort", ManagerFactory.settingsManager.GetString("VIIPERPort"), false, false);
+        SettingsManager_SettingValueChanged("MainWindowTheme", ManagerFactory.settingsManager.GetString("MainWindowTheme"), false, true);
+        SettingsManager_SettingValueChanged("MainWindowBackdrop", ManagerFactory.settingsManager.GetString("MainWindowBackdrop"), false, true);
+        SettingsManager_SettingValueChanged("MainWindowApplyNoise", ManagerFactory.settingsManager.GetString("MainWindowApplyNoise"), false, true);
+        SettingsManager_SettingValueChanged("QuicktoolsBackdrop", ManagerFactory.settingsManager.GetString("QuicktoolsBackdrop"), false, true);
+        SettingsManager_SettingValueChanged("QuickToolsApplyNoise", ManagerFactory.settingsManager.GetString("QuickToolsApplyNoise"), false, true);
+        SettingsManager_SettingValueChanged("RunAtStartup", ManagerFactory.settingsManager.GetString("RunAtStartup"), false, true);
+        SettingsManager_SettingValueChanged("StartMinimized", ManagerFactory.settingsManager.GetString("StartMinimized"), false, true);
+        SettingsManager_SettingValueChanged("StartMaximized", ManagerFactory.settingsManager.GetString("StartMaximized"), false, true);
+        SettingsManager_SettingValueChanged("CloseMinimises", ManagerFactory.settingsManager.GetString("CloseMinimises"), false, true);
+        SettingsManager_SettingValueChanged("DesktopLayoutOnStart", ManagerFactory.settingsManager.GetString("DesktopLayoutOnStart"), false, true);
+        SettingsManager_SettingValueChanged("ToastEnable", ManagerFactory.settingsManager.GetString("ToastEnable"), false, true);
+        SettingsManager_SettingValueChanged("CurrentCulture", ManagerFactory.settingsManager.GetString("CurrentCulture"), false, true);
+        SettingsManager_SettingValueChanged("PlatformRTSSEnabled", ManagerFactory.settingsManager.GetString("PlatformRTSSEnabled"), false, true);
+        SettingsManager_SettingValueChanged("QuickToolsLocation", ManagerFactory.settingsManager.GetString("QuickToolsLocation"), false, true);
+        SettingsManager_SettingValueChanged("QuickToolsAutoHide", ManagerFactory.settingsManager.GetString("QuickToolsAutoHide"), false, true);
+        SettingsManager_SettingValueChanged("UISounds", ManagerFactory.settingsManager.GetString("UISounds"), false, true);
+        SettingsManager_SettingValueChanged("TelemetryEnabled", ManagerFactory.settingsManager.GetString("TelemetryEnabled"), false, true);
+        SettingsManager_SettingValueChanged("ProcessPriority", ManagerFactory.settingsManager.GetString("ProcessPriority"), false, true);
+        SettingsManager_SettingValueChanged("QuickKeyboardVisibility", ManagerFactory.settingsManager.GetString("QuickKeyboardVisibility"), false, true);
+        SettingsManager_SettingValueChanged("QuickTrackpadVisibility", ManagerFactory.settingsManager.GetString("QuickTrackpadVisibility"), false, true);
+        SettingsManager_SettingValueChanged("QuickToolsSlideAnimation", ManagerFactory.settingsManager.GetString("QuickToolsSlideAnimation"), false, true);
+        SettingsManager_SettingValueChanged("PerformanceManagerEnabled", ManagerFactory.settingsManager.GetString("PerformanceManagerEnabled"), false, true);
+        SettingsManager_SettingValueChanged("GPUManagementEnabled", ManagerFactory.settingsManager.GetString("GPUManagementEnabled"), false, true);
+        SettingsManager_SettingValueChanged("LibraryPageEnabled", ManagerFactory.settingsManager.GetString("LibraryPageEnabled"), false, true);
+        SettingsManager_SettingValueChanged("ShowSplashScreen", ManagerFactory.settingsManager.GetString("ShowSplashScreen"), false, true);
+        SettingsManager_SettingValueChanged("DSUEnabled", ManagerFactory.settingsManager.GetString("DSUEnabled"), false, true);
+        SettingsManager_SettingValueChanged("DSUport", ManagerFactory.settingsManager.GetString("DSUport"), false, true);
+        SettingsManager_SettingValueChanged("VIIPEREnabled", ManagerFactory.settingsManager.GetString("VIIPEREnabled"), false, true);
+        SettingsManager_SettingValueChanged("VIIPERPort", ManagerFactory.settingsManager.GetString("VIIPERPort"), false, true);
     }
 
     private void QueryPlatforms()
@@ -125,7 +125,7 @@ public partial class SettingsPage : Page
     private void MultimediaManager_ScreenConnected(DesktopScreen screen)
     {
         // UI thread
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             int idx = -1;
             foreach (DesktopScreen desktopScreen in cB_QuickToolsDevicePath.Items.OfType<DesktopScreen>())
@@ -144,7 +144,7 @@ public partial class SettingsPage : Page
     private void MultimediaManager_ScreenDisconnected(DesktopScreen screen)
     {
         // UI thread
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             // check if current target was disconnected
             if (cB_QuickToolsDevicePath.SelectedItem is DesktopScreen targetScreen)
@@ -169,7 +169,7 @@ public partial class SettingsPage : Page
         string DeviceName = ManagerFactory.settingsManager.GetString("QuickToolsDeviceName");
 
         // UI thread
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             DesktopScreen? selectedScreen = cB_QuickToolsDevicePath.Items.OfType<DesktopScreen>()
                 .FirstOrDefault(screen => screen.DevicePath.Equals(DevicePath) || screen.FriendlyName.Equals(DeviceName));
@@ -189,7 +189,7 @@ public partial class SettingsPage : Page
     private void RTSS_Updated(PlatformStatus status)
     {
         // UI thread
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             switch (status)
             {
@@ -206,7 +206,7 @@ public partial class SettingsPage : Page
     private void SettingsManager_SettingValueChanged(string? name, object? value, bool temporary, bool initializing)
     {
         // UI thread
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             switch (name)
             {

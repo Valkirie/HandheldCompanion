@@ -1,6 +1,5 @@
 ﻿using HidLibrary;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Windows.Media;
 using static HandheldCompanion.Utils.DeviceUtils;
 
@@ -19,8 +18,7 @@ public class OneXPlayerX1Mini : OneXPlayerX1
         GfxClock = new double[] { 100, 2700 };
         CpuClock = 5100;
 
-        GyroMatrix = new() { Axis = new Vector3(1.0f, 1.0f, 1.0f) };
-        AcceleroMatrix = new() { Axis = new Vector3(1.0f, -1.0f, 1.0f) };
+        // IMU matrices are now loaded from OneXPlayerX1Mini.json via IDevice.ApplyDeviceConfiguration()
 
         EnableSerialPort = false;
 

@@ -1,10 +1,8 @@
 ﻿using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using HidLibrary;
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Threading;
 using WindowsInput.Events;
 using Task = System.Threading.Tasks.Task;
@@ -71,27 +69,7 @@ public class GPDWin5 : IDevice
             FanValueMax = 244
         };
 
-        GyroMatrix = new()
-        {
-            Axis = new Vector3(1.0f, -1.0f, -1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'Y' },
-                { 'Y', 'Z' },
-                { 'Z', 'X' }
-            }
-        };
-
-        AcceleroMatrix = new()
-        {
-            Axis = new Vector3(-1.0f, -1.0f, 1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' }
-            }
-        };
+        // IMU matrices loaded from GPDWin5.json
 
         // GPD Win 5 specific chords
         // todo: figure out which value is which button

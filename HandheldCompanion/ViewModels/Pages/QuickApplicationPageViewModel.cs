@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Windows.Data;
 using System.Windows.Input;
 using WpfScreenHelper.Enum;
@@ -81,7 +82,10 @@ namespace HandheldCompanion.ViewModels
         private void RefreshPage()
         {
             List<ProfileViewModel> items;
-            lock (_collectionLock2)
+            if (!Monitor.TryEnter(_collectionLock2, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 items = Profiles
                     .OrderByDescending(p => p.LastUsed)
@@ -89,12 +93,23 @@ namespace HandheldCompanion.ViewModels
                     .Take(PageSize)
                     .ToList();
             }
+            finally
+            {
+                Monitor.Exit(_collectionLock2);
+            }
 
-            lock (_collectionLock3)
+            if (!Monitor.TryEnter(_collectionLock3, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 PagedProfiles.Clear();
                 foreach (var vm in items)
                     PagedProfiles.Add(vm);
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock3);
             }
         }
 
@@ -189,7 +204,10 @@ namespace HandheldCompanion.ViewModels
                 return;
 
             bool removed = false;
-            lock (_collectionLock2)
+            if (!Monitor.TryEnter(_collectionLock2, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
                 if (foundProfile is not null)
@@ -198,6 +216,10 @@ namespace HandheldCompanion.ViewModels
                     foundProfile.Dispose();
                     removed = true;
                 }
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock2);
             }
 
             if (removed)
@@ -218,7 +240,10 @@ namespace HandheldCompanion.ViewModels
             if (profile.Default)
                 return;
 
-            lock (_collectionLock2)
+            if (!Monitor.TryEnter(_collectionLock2, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
                 if (foundProfile is null)
@@ -233,6 +258,10 @@ namespace HandheldCompanion.ViewModels
                     else
                         ProfileManager_Deleted(profile);
                 }
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock2);
             }
 
             // re-compute pages
@@ -251,7 +280,10 @@ namespace HandheldCompanion.ViewModels
             if (processEx is null)
                 return;
 
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
                 if (foundProcess is not null)
@@ -259,6 +291,10 @@ namespace HandheldCompanion.ViewModels
                     Processes.Remove(foundProcess);
                     foundProcess.Dispose();
                 }
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
         }
 
@@ -274,7 +310,10 @@ namespace HandheldCompanion.ViewModels
                     return;
             }
 
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
                 if (foundProcess is null)
@@ -286,6 +325,10 @@ namespace HandheldCompanion.ViewModels
                     // Some apps might have the process come in twice, update the process on the viewmodel
                     foundProcess.Process = processEx;
                 }
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
         }
 

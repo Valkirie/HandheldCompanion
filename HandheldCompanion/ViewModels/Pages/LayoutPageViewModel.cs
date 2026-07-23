@@ -3,8 +3,10 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Pages;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
@@ -88,7 +90,7 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // raise events
-            SettingsManager_SettingValueChanged("LayoutFilterOnDevice", ManagerFactory.settingsManager.GetString("LayoutFilterOnDevice"), false, false);
+            SettingsManager_SettingValueChanged("LayoutFilterOnDevice", ManagerFactory.settingsManager.GetString("LayoutFilterOnDevice"), false, true);
             RefreshLayoutList();
         }
 
@@ -211,7 +213,10 @@ namespace HandheldCompanion.ViewModels
 
         private void LayoutManager_Updated(LayoutTemplate layoutTemplate)
         {
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 LayoutTemplateViewModel? foundPreset = layoutList.FirstOrDefault(p => p.Guid == layoutTemplate.Guid);
                 if (foundPreset is not null)
@@ -223,6 +228,10 @@ namespace HandheldCompanion.ViewModels
                 {
                     layoutList.Insert(0, new(layoutTemplate));
                 }
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
 
             RefreshLayoutList();
@@ -236,7 +245,10 @@ namespace HandheldCompanion.ViewModels
             // Get current controller
             IController? controller = ControllerManager.GetTarget();
 
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 foreach (LayoutTemplateViewModel layoutTemplate in layoutList)
                 {
@@ -251,6 +263,10 @@ namespace HandheldCompanion.ViewModels
 
                     layoutTemplate.Visibility = Visibility.Visible;
                 }
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
         }
 

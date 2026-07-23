@@ -1,5 +1,3 @@
-using System.Numerics;
-
 namespace HandheldCompanion.Devices;
 
 public class AYANEOSlide : AYANEO.AYANEODeviceCEii
@@ -16,7 +14,6 @@ public class AYANEOSlide : AYANEO.AYANEODeviceCEii
         this.GfxClock = new double[] { 100, 2700 };
         this.CpuClock = 5100;
 
-        this.GyroMatrix = new() { Axis = new Vector3(1.0f, 1.0f, -1.0f) };
-        this.AcceleroMatrix = new() { Axis = new Vector3(-1.0f, 1.0f, -1.0f) };
+        // IMU matrices loaded from AYANEOSlide.json
     }
 }

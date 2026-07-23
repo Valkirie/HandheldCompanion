@@ -1,11 +1,12 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Views;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Windows.Data;
 
 namespace HandheldCompanion.ViewModels
@@ -66,14 +67,32 @@ namespace HandheldCompanion.ViewModels
 
         public override void AddMapping()
         {
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
+            {
                 GyroMappings.Add(new GyroMappingViewModel(_flag));
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
+            }
         }
 
         public override void RemoveMapping(MappingViewModel mapping)
         {
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
+            {
                 GyroMappings.Remove((GyroMappingViewModel)mapping);
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
+            }
             mapping.Dispose();
         }
 
@@ -111,11 +130,18 @@ namespace HandheldCompanion.ViewModels
                     newMapping.SetAction(action, false);
                 }
 
-                lock (_collectionLock)
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
                 {
                     GyroMappings.Clear();
                     foreach (var m in newMappings)
                         GyroMappings.Add(m);
+                }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
                 }
             }
         }

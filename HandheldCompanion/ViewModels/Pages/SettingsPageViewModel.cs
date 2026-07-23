@@ -2,8 +2,10 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels.Misc;
 using HandheldCompanion.Views;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using static HandheldCompanion.Managers.UpdateManager;
@@ -167,9 +169,9 @@ namespace HandheldCompanion.ViewModels
 
         private void UpdateManager_Updated(UpdateStatus status, UpdateFile? updateFile, object? value)
         {
-            GithubUpdateViewModel? vm = updateFile is not null
-                ? FindVm(updateFile)
-                : null;
+            GithubUpdateViewModel? vm = null;
+            if (updateFile is not null && !TryFindVm(updateFile, out vm))
+                return;
 
             switch (status)
             {
@@ -193,7 +195,12 @@ namespace HandheldCompanion.ViewModels
                     break;
 
                 case UpdateStatus.Checking:
-                    lock (_collectionLock) { UpdateFiles.Clear(); }
+                    if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                        return;
+
+                    try { UpdateFiles.Clear(); }
+                    finally { Monitor.Exit(_collectionLock); }
+
                     if (value is bool background && background)
                         break;
 
@@ -218,7 +225,10 @@ namespace HandheldCompanion.ViewModels
                     UpdateStatusText = Properties.Resources.SettingsPage_UpdateAvailable;
                     if (value is Dictionary<string, UpdateFile> files)
                     {
-                        lock (_collectionLock)
+                        if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                            return;
+
+                        try
                         {
                             UpdateFiles.Clear();
                             foreach (var file in files.Values)
@@ -228,19 +238,34 @@ namespace HandheldCompanion.ViewModels
                                 UpdateFiles.Add(fileVm);
                             }
                         }
+                        finally
+                        {
+                            Monitor.Exit(_collectionLock);
+                        }
                     }
                     break;
 
                 case UpdateStatus.ControllerDbReady:
-                    if (updateFile is not null && FindVm(updateFile) is null)
+                    GithubUpdateViewModel? existingVm = null;
+                    if (updateFile is not null && !TryFindVm(updateFile, out existingVm))
+                        return;
+
+                    if (updateFile is not null && existingVm is null)
                     {
                         UpdateSymbolVisibility = Visibility.Visible;
-                        lock (_collectionLock)
+                        if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                            return;
+
+                        try
                         {
                             var fileVm = new GithubUpdateViewModel(updateFile);
                             fileVm.OnInstallFailed += OnInstallFailed;
                             fileVm.OnInstalled += OnInstalled;
                             UpdateFiles.Add(fileVm);
+                        }
+                        finally
+                        {
+                            Monitor.Exit(_collectionLock);
                         }
                     }
                     break;
@@ -261,15 +286,28 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private GithubUpdateViewModel? FindVm(UpdateFile updateFile)
+        private bool TryFindVm(UpdateFile updateFile, out GithubUpdateViewModel? viewModel)
         {
-            lock (_collectionLock)
+            viewModel = null;
+
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return false;
+
+            try
             {
                 foreach (var vm in UpdateFiles)
                     if (vm.UpdateFile == updateFile)
-                        return vm;
+                    {
+                        viewModel = vm;
+                        break;
+                    }
             }
-            return null;
+            finally
+            {
+                Monitor.Exit(_collectionLock);
+            }
+
+            return true;
         }
 
         private async void OnInstallFailed(GithubUpdateViewModel vm)
@@ -284,9 +322,16 @@ namespace HandheldCompanion.ViewModels
 
         private void OnInstalled(GithubUpdateViewModel vm)
         {
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 UpdateFiles.Remove(vm);
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
         }
 

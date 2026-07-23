@@ -8,6 +8,7 @@ using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 
@@ -754,11 +755,18 @@ namespace HandheldCompanion.ViewModels
         {
             MappingTargetViewModel? resolvedTarget = selectedTarget ?? (targets.Count > 0 ? targets[0] : null);
 
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 Targets.Clear();
                 foreach (var target in targets)
                     Targets.Add(target);
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
 
             IsSupported = resolvedTarget?.IsSupported ?? true;

@@ -83,8 +83,8 @@ public class AYANEOFlipDS : AYANEOFlipKB
     protected override void QuerySettings()
     {
         // raise events
-        SettingsManager_SettingValueChanged("AYANEOFlipScreenEnabled", ManagerFactory.settingsManager.GetString("AYANEOFlipScreenEnabled"), false, false);
-        SettingsManager_SettingValueChanged("AYANEOFlipScreenBrightness", ManagerFactory.settingsManager.GetString("AYANEOFlipScreenBrightness"), false, false);
+        SettingsManager_SettingValueChanged("AYANEOFlipScreenEnabled", ManagerFactory.settingsManager.GetString("AYANEOFlipScreenEnabled"), false, true);
+        SettingsManager_SettingValueChanged("AYANEOFlipScreenBrightness", ManagerFactory.settingsManager.GetString("AYANEOFlipScreenBrightness"), false, true);
 
         base.QuerySettings();
     }

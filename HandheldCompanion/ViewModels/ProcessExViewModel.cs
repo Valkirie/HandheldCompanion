@@ -226,31 +226,34 @@ namespace HandheldCompanion.ViewModels
 
         private void Process_WindowAttached(ProcessWindow processWindow)
         {
-            lock (_collectionLock)
+            HandheldCompanion.Helpers.UIHelper.TryInvoke(() =>
             {
-                WindowListItemViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow?.Hwnd == processWindow.Hwnd);
-                if (foundWindow is null)
+                lock (_collectionLock)
                 {
-                    ProcessWindows.SafeAdd(new WindowListItemViewModel(processWindow));
+                    WindowListItemViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow?.Hwnd == processWindow.Hwnd);
+                    if (foundWindow is null)
+                        ProcessWindows.Add(new WindowListItemViewModel(processWindow));
+                    else
+                        foundWindow.ProcessWindow = processWindow;
                 }
-                else
-                {
-                    foundWindow.ProcessWindow = processWindow;
-                }
-            }
+            });
         }
 
         private void Process_WindowDetached(ProcessWindow processWindow)
         {
-            lock (_collectionLock)
+            WindowListItemViewModel? detachedWindow = null;
+            bool invoked = HandheldCompanion.Helpers.UIHelper.TryInvoke(() =>
             {
-                WindowListItemViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow?.Hwnd == processWindow.Hwnd);
-                if (foundWindow is not null)
+                lock (_collectionLock)
                 {
-                    ProcessWindows.SafeRemove(foundWindow);
-                    foundWindow.Dispose();
+                    detachedWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow?.Hwnd == processWindow.Hwnd);
+                    if (detachedWindow is not null)
+                        ProcessWindows.Remove(detachedWindow);
                 }
-            }
+            });
+
+            if (invoked)
+                detachedWindow?.Dispose();
         }
 
         private void UpdateProcess(ProcessEx? oldProcess, ProcessEx? newProcess)

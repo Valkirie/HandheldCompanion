@@ -17,7 +17,6 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Hotkeys"
     Title="{l:Static resx:Resources.HotkeysPage_Hotkeys}"
-    Margin="20"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:HotkeyPageViewModel}"
     d:DesignHeight="1500"
@@ -33,12 +32,6 @@
     </Page.Resources>
 
     <StackPanel>
-        <TextBlock
-            Margin="0,0,0,8"
-            behaviors:TextBlockUpperCase.IsUpperCase="True"
-            Style="{StaticResource CapitalAccentTextBlockStyle}"
-            Text="{Binding Name, RelativeSource={RelativeSource AncestorType=Page}}" />
-
         <ikw:SimpleStackPanel Spacing="28">
             <!--  Hotkeys settings  -->
             <ikw:SimpleStackPanel Spacing="8">
@@ -63,6 +56,35 @@
 
                         <ui:ToggleSwitch IsOn="{Binding Rumble, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </ui:SettingsCard>
+
+                     <ui:SettingsCard Description="{l:Static resx:Resources.HotkeysPage_RumbleStrengthDesc}" Header="{l:Static resx:Resources.HotkeysPage_RumbleStrength}">
+                         <ui:SettingsCard.HeaderIcon>
+                             <ui:FontIcon Glyph="&#xE877;" />
+                         </ui:SettingsCard.HeaderIcon>
+
+                         <DockPanel>
+                             <TextBox
+                                 Height="31"
+                                 HorizontalAlignment="Right"
+                                 VerticalAlignment="Center"
+                                 HorizontalContentAlignment="Center"
+                                 IsReadOnly="True"
+                                 Text="{Binding Value, StringFormat={}{0:N0}%, Source={x:Reference SliderRumbleStrength}, Mode=OneWay}" />
+                             <Slider
+                                 x:Name="SliderRumbleStrength"
+                                 Width="200"
+                                 Margin="6,0,0,0"
+                                 IsMoveToPointEnabled="True"
+                                 IsSnapToTickEnabled="True"
+                                 LargeChange="10"
+                                 Maximum="100"
+                                 Minimum="0"
+                                 SmallChange="1"
+                                 TickFrequency="1"
+                                 ToolTip="{Binding Value, StringFormat={}{0:N0}%, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                 Value="{Binding RumbleStrength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                         </DockPanel>
+                     </ui:SettingsCard>
                 </ikw:SimpleStackPanel>
             </ikw:SimpleStackPanel>
 

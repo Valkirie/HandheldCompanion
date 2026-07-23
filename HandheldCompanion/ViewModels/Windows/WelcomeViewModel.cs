@@ -1,5 +1,4 @@
 using HandheldCompanion.Devices;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Watchers;
 using iNKORE.UI.WPF.Modern;
@@ -8,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using WindowHelper = iNKORE.UI.WPF.Modern.Controls.Helpers.WindowHelper;

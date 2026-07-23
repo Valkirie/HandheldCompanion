@@ -384,7 +384,7 @@ public class NeptuneController : SteamController
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        SettingsManager_SettingValueChanged("SteamControllerRumbleInterval", ManagerFactory.settingsManager.GetInt("SteamControllerRumbleInterval"), false, false);
+        SettingsManager_SettingValueChanged("SteamControllerRumbleInterval", ManagerFactory.settingsManager.GetInt("SteamControllerRumbleInterval"), false, true);
     }
 
     protected override void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)

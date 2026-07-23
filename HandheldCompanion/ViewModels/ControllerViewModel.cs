@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Controllers.GameSir;
+using HandheldCompanion.Controllers.Lenovo;
 using HandheldCompanion.Managers;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -34,6 +35,7 @@ namespace HandheldCompanion.ViewModels
         public bool IsInternal => _controller?.IsInternal() == true;
         public bool IsWireless => _controller?.IsWireless() == true;
         public bool IsDongle => _controller?.IsDongle() == true;
+        public bool IsLegionWireless => _controller is LegionController && _controller.IsWireless();
         public int VisibleUserIndexCount => _controller is XInputController ? 4 : 8;
 
         private string _LayoutGlyph = "\ue001"; // Default icon for layout
@@ -108,7 +110,7 @@ namespace HandheldCompanion.ViewModels
             {
                 string path = Controller?.GetContainerInstanceId() ?? string.Empty;
                 if (!string.IsNullOrEmpty(path))
-                    ControllerManager.SetTargetController(path, false);
+                    await Task.Run(() => ControllerManager.SetTargetController(path, false));
             });
 
             HideCommand = new DelegateCommand(async () =>

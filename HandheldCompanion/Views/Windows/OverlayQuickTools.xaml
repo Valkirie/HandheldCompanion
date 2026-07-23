@@ -320,12 +320,14 @@
                         </Grid>
                     </Border>
                 </ui:ContentDialog>
+
                 <ui:ScrollViewerEx
                     x:Name="scrollViewer"
-                    Margin="0,48,0,4"
+                    Margin="12,48,12,12"
                     PanningMode="VerticalFirst">
                     <ui:Frame Name="ContentFrame" />
                 </ui:ScrollViewerEx>
+
                 <Separator
                     Margin="0,0,0,0"
                     VerticalAlignment="Bottom"

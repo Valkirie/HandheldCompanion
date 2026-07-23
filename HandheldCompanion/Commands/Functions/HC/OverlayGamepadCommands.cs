@@ -12,7 +12,7 @@ namespace HandheldCompanion.Commands.Functions.HC
             base.Glyph = "\ue7fc";
             base.OnKeyUp = true;
 
-            App.overlayModel.IsVisibleChanged += IsVisibleChanged;
+            App.overlayModel?.IsVisibleChanged += IsVisibleChanged;
         }
 
         private void IsVisibleChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
@@ -22,12 +22,12 @@ namespace HandheldCompanion.Commands.Functions.HC
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            App.overlayModel.ToggleVisibility();
+            App.overlayModel?.ToggleVisibility();
 
             base.Execute(IsKeyDown, IsKeyUp, false);
         }
 
-        public override bool IsToggled => App.overlayModel.Visibility == System.Windows.Visibility.Visible;
+        public override bool IsToggled => App.overlayModel?.Visibility == System.Windows.Visibility.Visible;
 
         public override object Clone()
         {
@@ -46,7 +46,7 @@ namespace HandheldCompanion.Commands.Functions.HC
 
         public override void Dispose()
         {
-            App.overlayModel.IsVisibleChanged -= IsVisibleChanged;
+            App.overlayModel?.IsVisibleChanged -= IsVisibleChanged;
             base.Dispose();
         }
     }

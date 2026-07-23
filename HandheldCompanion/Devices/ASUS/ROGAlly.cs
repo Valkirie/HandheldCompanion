@@ -8,8 +8,6 @@ using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -85,27 +83,7 @@ public class ROGAlly : IDevice
         GfxClock = new double[] { 100, 2700 };
         CpuClock = 5100;
 
-        GyroMatrix = new()
-        {
-            Axis = new Vector3(-1.0f, -1.0f, 1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' }
-            }
-        };
-
-        AcceleroMatrix = new()
-        {
-            Axis = new Vector3(-1.0f, -1.0f, 1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' }
-            }
-        };
+        // IMU matrices loaded from ROGAlly.json
 
         // device specific capacities
         Capabilities |= DeviceCapabilities.FanControl;
@@ -325,8 +303,8 @@ public class ROGAlly : IDevice
     protected override void QuerySettings()
     {
         // raise events
-        SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetString("BatteryChargeLimit"), false, false);
-        SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetString("BatteryChargeLimitPercent"), false, false);
+        SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetString("BatteryChargeLimit"), false, true);
+        SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetString("BatteryChargeLimitPercent"), false, true);
 
         base.QuerySettings();
     }

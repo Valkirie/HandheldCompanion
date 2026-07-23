@@ -4,7 +4,6 @@ using HandheldCompanion.Inputs;
 using HidLibrary;
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
@@ -60,27 +59,7 @@ namespace HandheldCompanion.Devices.Lenovo
             GfxClock = new double[] { 100, 2700 };
             CpuClock = 5100;
 
-            GyroMatrix = new()
-            {
-                Axis = new Vector3(-1.0f, 1.0f, 1.0f),
-                AxisSwap = new SortedDictionary<char, char>
-                {
-                    { 'X', 'X' },
-                    { 'Y', 'Z' },
-                    { 'Z', 'Y' }
-                }
-            };
-
-            AcceleroMatrix = new()
-            {
-                Axis = new Vector3(1.0f, -1.0f, -1.0f),
-                AxisSwap = new SortedDictionary<char, char>
-                {
-                    { 'X', 'X' },
-                    { 'Y', 'Z' },
-                    { 'Z', 'Y' }
-                }
-            };
+            // IMU matrices loaded from LegionGoTablet.json
 
             OEMChords.Add(new KeyboardChord("Desktop",
                 [KeyCode.LWin, KeyCode.D],

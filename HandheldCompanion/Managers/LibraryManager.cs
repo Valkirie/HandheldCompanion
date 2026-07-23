@@ -142,7 +142,7 @@ namespace HandheldCompanion.Managers
         public async Task<IEnumerable<LibraryEntry>> GetGames(LibraryFamily libraryFamily, string name)
         {
             // prepare list
-            Dictionary<long, LibraryEntry> entries = new();
+            ConcurrentDictionary<long, LibraryEntry> entries = new();
 
             // check connection
             if (!IsConnected)
@@ -216,8 +216,7 @@ namespace HandheldCompanion.Managers
                                 entry.Artwork = entry.Artworks.FirstOrDefault();
                             }
 
-                            lock (entries)
-                                entries[gameId] = entry;
+                            entries[gameId] = entry;
                         });
                     }
 
@@ -283,8 +282,7 @@ namespace HandheldCompanion.Managers
                                 Logo = logos.FirstOrDefault(),
                             };
 
-                            lock (entries)
-                                entries[gameId] = entry;
+                            entries[gameId] = entry;
                         });
                     }
                 }

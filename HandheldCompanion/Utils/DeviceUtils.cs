@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -13,7 +13,8 @@ public class DeviceUtils
         None = 0,
         Windows = 1,
         SerialUSBIMU = 2,
-        Controller = 3
+        Controller = 3,
+        Auto = 4
     }
 
     [Flags]

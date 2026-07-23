@@ -91,6 +91,8 @@
             <converters:MotionOutputToNameConverter x:Key="MotionOutputToNameConverter" />
             <converters:IntToMotionOutputConverter x:Key="IntToMotionOutputConverter" />
             <converters:IntToMotionInputConverter x:Key="IntToMotionInputConverter" />
+            <converters:CharToComboBoxIndexConverter x:Key="CharToComboBoxIndexConverter" />
+            <converters:FloatAxisToBooleanConverter x:Key="FloatAxisToBooleanConverter" />
 
             <math:MathConverter x:Key="Math" />
 

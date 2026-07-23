@@ -1,4 +1,3 @@
-using System;
 using HandheldCompanion.Platforms;
 
 namespace HandheldCompanion.Views.Pages.Library;

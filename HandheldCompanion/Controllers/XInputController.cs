@@ -1,9 +1,6 @@
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using SharpDX.XInput;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Media;
 
@@ -165,27 +162,17 @@ public class XInputController : IController
         catch { }
     }
 
-    public static UserIndex TryGetUserIndex(PnPDetails details)
-    {
-        List<PnPDetails> tempList = ManagerFactory.deviceManager.PnPDevices.Values
-            .Where(device => device.isXInput)
-            .OrderBy(device => device.XInputUserIndex)
-            .ThenBy(device => device.XInputDeviceIdx)
-            .ToList();
-
-        int index = tempList.IndexOf(details);
-        return index >= 0 && index < MaxControllers ? (UserIndex)index : SharpDX.XInput.UserIndex.Any;
-    }
-
     public virtual void AttachController(byte userIndex)
     {
-        // Never create Controller(UserIndex.Any) — it reads input from any connected device
+        // Never create Controller(UserIndex.Any)
         if (userIndex == byte.MaxValue)
             return;
 
-        if (UserIndex == userIndex)
+        // Skip if UserIndex is identical to the current one and controller is already connected
+        if (UserIndex == userIndex && Controller?.IsConnected == true)
             return;
 
+        // Update UserIndex and create a new Controller instance
         UserIndex = userIndex;
         Controller = new((UserIndex)userIndex);
     }

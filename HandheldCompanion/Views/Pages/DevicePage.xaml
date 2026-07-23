@@ -16,22 +16,14 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Device"
     Title="{l:Static resx:Resources.DevicePage_Device}"
-    Margin="20"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:DevicePageViewModel}"
-    d:DesignHeight="4000"
+    d:DesignHeight="4300"
     d:DesignWidth="1000"
     KeepAlive="True"
-    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <StackPanel>
-        <TextBlock
-            Margin="0,0,0,8"
-            behaviors:TextBlockUpperCase.IsUpperCase="True"
-            Style="{StaticResource CapitalAccentTextBlockStyle}"
-            Text="{Binding Name, RelativeSource={RelativeSource AncestorType=Page}}" />
-
         <ikw:SimpleStackPanel Spacing="28">
             <!--  Power options  -->
             <ikw:SimpleStackPanel Name="PowerOptionsStack" Spacing="8">
@@ -48,6 +40,7 @@
                 </DockPanel>
 
                 <ikw:SimpleStackPanel Spacing="3">
+                    <!--  TDP control method  -->
                     <ui:SettingsCard
                         HorizontalContentAlignment="Stretch"
                         Description="{l:Static resx:Resources.DevicePage_TDPControlMethodDesc}"
@@ -61,7 +54,7 @@
                         </ComboBox>
                     </ui:SettingsCard>
 
-                    <!--  Configurable TDP  -->
+                    <!--  Advanced settings  -->
                     <ui:SettingsExpander
                         d:IsExpanded="True"
                         Description="{l:Static resx:Resources.SettingsPage_AdvancedSettingsDesc}"
@@ -97,11 +90,43 @@
                                     ValueChanged="NumberBox_TDPMax_ValueChanged" />
                             </ui:SettingsCard>
 
+                            <!--  RyzenAdj (tctl-temp)  -->
+                            <ui:SettingsCard
+                                Description="{l:Static resx:Resources.SettingsPage_TctlTempDesc}"
+                                Header="{l:Static resx:Resources.SettingsPage_TctlTemp}"
+                                IsEnabled="{Binding CanSetTctlTemperature, UpdateSourceTrigger=PropertyChanged}"
+                                Visibility="{Binding IsAMD, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <ui:NumberBox
+                                    Name="NumberBox_TctlLimit"
+                                    MinWidth="20"
+                                    Maximum="120"
+                                    Minimum="30"
+                                    SpinButtonPlacementMode="Inline"
+                                    ValueChanged="NumberBox_TctlLimit_ValueChanged"
+                                    Value="{Binding TctlLimit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+
+                            <!--  RyzenAdj (apu-skin-temp)  -->
+                            <ui:SettingsCard
+                                Description="{l:Static resx:Resources.SettingsPage_SkinTempDesc}"
+                                Header="{l:Static resx:Resources.SettingsPage_SkinTemp}"
+                                IsEnabled="{Binding CanSetSkinTemperature, UpdateSourceTrigger=PropertyChanged}"
+                                Visibility="{Binding IsAMD, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <ui:NumberBox
+                                    Name="NumberBox_SkinTemperatureLimit"
+                                    MinWidth="20"
+                                    Maximum="120"
+                                    Minimum="30"
+                                    SpinButtonPlacementMode="Inline"
+                                    ValueChanged="NumberBox_SkinTemperatureLimit_ValueChanged"
+                                    Value="{Binding SkinTemperatureLimit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+
                             <!--  RyzenAdj (set_coall)  -->
                             <ui:SettingsCard
                                 Description="{l:Static resx:Resources.SettingsPage_AllCurveOptimiserDesc}"
                                 Header="{l:Static resx:Resources.SettingsPage_AllCurveOptimiser}"
-                                IsEnabled="{Binding HasCoreCurve, UpdateSourceTrigger=PropertyChanged}"
+                                IsEnabled="{Binding CanSetCoreCurve, UpdateSourceTrigger=PropertyChanged}"
                                 Visibility="{Binding IsAMD, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <StackPanel Orientation="Horizontal">
                                     <ui:NumberBox
@@ -133,7 +158,7 @@
                             <ui:SettingsCard
                                 Description="{l:Static resx:Resources.SettingsPage_GfxCurveOptimiserDesc}"
                                 Header="{l:Static resx:Resources.SettingsPage_GfxCurveOptimiser}"
-                                IsEnabled="{Binding HasGPUCurve, UpdateSourceTrigger=PropertyChanged}"
+                                IsEnabled="{Binding CanSetGPUCurve, UpdateSourceTrigger=PropertyChanged}"
                                 Visibility="{Binding IsAMD, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <StackPanel Orientation="Horizontal">
                                     <ui:NumberBox
@@ -473,7 +498,10 @@
                             Header="{l:Static resx:Resources.DevicePage_BatteryBypassCharging}"
                             IsEnabled="{Binding BatteryChargeLimit, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             Visibility="{Binding BatteryBypassModeVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBox Name="CB_BatteryBypassCharging" SelectionChanged="CB_BatteryBypassCharging_OnSelectionChanged">
+                            <ComboBox
+                                Name="CB_BatteryBypassCharging"
+                                ItemsSource="{Binding DeviceBatteryBypassPresets}"
+                                SelectionChanged="CB_BatteryBypassCharging_OnSelectionChanged">
                                 <ComboBox.ItemTemplate>
                                     <ItemContainerTemplate>
                                         <WrapPanel>
@@ -495,7 +523,7 @@
                 Name="DynamicLightingPanel"
                 d:Visibility="Visible"
                 Spacing="8"
-                Visibility="Collapsed">
+                Visibility="{Binding IsDynamicLightingVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <DockPanel>
                     <TextBlock
                         VerticalAlignment="Center"
@@ -525,7 +553,8 @@
                     <ui:SettingsCard
                         Name="LEDBrightness"
                         Description="{l:Static resx:Resources.DevicePage_DynamicLighting_BrightnessDesc}"
-                        Header="{l:Static resx:Resources.DevicePage_DynamicLighting_Brightness}">
+                        Header="{l:Static resx:Resources.DevicePage_DynamicLighting_Brightness}"
+                        Visibility="{Binding IsLedBrightnessVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <ui:SettingsCard.HeaderIcon>
                             <ui:FontIcon Glyph="&#xE706;" />
                         </ui:SettingsCard.HeaderIcon>
@@ -573,51 +602,51 @@
                             <ComboBoxItem
                                 Name="LEDSolidColor"
                                 Content="{l:Static resx:Resources.DevicePage_DynamicLighting_SolidColor}"
-                                IsEnabled="False"
+                                IsEnabled="{Binding IsSolidColorSupported}"
                                 Tag="1"
-                                Visibility="Collapsed" />
+                                Visibility="{Binding IsSolidColorSupported, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             <ComboBoxItem
                                 Name="LEDBreathing"
                                 Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Breathing}"
-                                IsEnabled="False"
+                                IsEnabled="{Binding IsBreathingSupported}"
                                 Tag="2"
-                                Visibility="Collapsed" />
+                                Visibility="{Binding IsBreathingSupported, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             <ComboBoxItem
                                 Name="LEDRainbow"
                                 Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Rainbow}"
-                                IsEnabled="False"
+                                IsEnabled="{Binding IsRainbowSupported}"
                                 Tag="4"
-                                Visibility="Collapsed" />
+                                Visibility="{Binding IsRainbowSupported, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             <ComboBoxItem
                                 Name="LEDWave"
                                 Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Wave}"
-                                IsEnabled="False"
+                                IsEnabled="{Binding IsWaveSupported}"
                                 Tag="8"
-                                Visibility="Collapsed" />
+                                Visibility="{Binding IsWaveSupported, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             <ComboBoxItem
                                 Name="LEDWheel"
                                 Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Wheel}"
-                                IsEnabled="False"
+                                IsEnabled="{Binding IsWheelSupported}"
                                 Tag="16"
-                                Visibility="Collapsed" />
+                                Visibility="{Binding IsWheelSupported, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             <ComboBoxItem
                                 Name="LEDGradient"
                                 Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Gradient}"
-                                IsEnabled="False"
+                                IsEnabled="{Binding IsGradientSupported}"
                                 Tag="32"
-                                Visibility="Collapsed" />
+                                Visibility="{Binding IsGradientSupported, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             <ComboBoxItem
                                 Name="LEDAmbilight"
                                 Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Ambilight}"
-                                IsEnabled="False"
+                                IsEnabled="{Binding IsAmbilightSupported}"
                                 Tag="64"
-                                Visibility="Collapsed" />
+                                Visibility="{Binding IsAmbilightSupported, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             <ComboBoxItem
                                 Name="LEDPreset"
                                 Content="{l:Static resx:Resources.DevicePage_DynamicLighting_Presets}"
-                                IsEnabled="False"
+                                IsEnabled="{Binding IsPresetSupported}"
                                 Tag="128"
-                                Visibility="Collapsed" />
+                                Visibility="{Binding IsPresetSupported, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         </ComboBox>
                         <ui:SettingsExpander.Items>
                             <!--  Effect speed  -->
@@ -686,6 +715,7 @@
                                     Width="32"
                                     Height="31"
                                     ColorChanged="MainColorPicker_ColorChanged"
+                                    IsEnabled="{Binding IsColorPickerEnabled}"
                                     Style="{StaticResource DefaultColorPickerStyle}" />
                             </ui:SettingsCard>
 
@@ -694,6 +724,7 @@
                                 Name="SecondColorToggleCard"
                                 d:Visibility="Visible"
                                 Header="{l:Static resx:Resources.DevicePage_UseSecondColor}"
+                                IsEnabled="{Binding IsSecondColorSupported}"
                                 Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0|1}">
                                 <ui:ToggleSwitch Name="Toggle_UseSecondColor" Toggled="Toggle_UseSecondColor_Toggled" />
                             </ui:SettingsCard>
@@ -710,6 +741,7 @@
                                     Width="32"
                                     Height="31"
                                     ColorChanged="SecondColorPicker_ColorChanged"
+                                    IsEnabled="{Binding IsColorPickerEnabled}"
                                     Style="{StaticResource DefaultColorPickerStyle}" />
                             </ui:SettingsCard>
 
@@ -732,6 +764,7 @@
                                     Margin="12,0,0,0"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
+                                    ItemsSource="{Binding DeviceLEDPresets}"
                                     SelectionChanged="LEDOEMPreset_SelectionChanged">
                                     <ComboBox.ItemTemplate>
                                         <ItemContainerTemplate>
@@ -769,109 +802,303 @@
                         Text="Gyroscope and accelerometer selection, calibration and placement" />
                 </DockPanel>
 
-                <ui:SettingsExpander
-                    Name="SensorSelectionExpander"
-                    d:IsExpanded="True"
-                    Description="{l:Static resx:Resources.SettingsPage_SensorSelectionDesc}"
-                    Header="{l:Static resx:Resources.SettingsPage_SensorSelection}">
-                    <ui:SettingsExpander.HeaderIcon>
-                        <ui:FontIcon Glyph="&#xE950;" />
-                    </ui:SettingsExpander.HeaderIcon>
+                <ikw:SimpleStackPanel Spacing="3">
+                    <!--  Sensor selection  -->
+                    <ui:SettingsExpander
+                        d:IsExpanded="True"
+                        Description="{l:Static resx:Resources.SettingsPage_SensorSelectionDesc}"
+                        Header="{l:Static resx:Resources.SettingsPage_SensorSelection}">
+                        <ui:SettingsExpander.HeaderIcon>
+                            <ui:FontIcon Glyph="&#xE950;" />
+                        </ui:SettingsExpander.HeaderIcon>
 
-                    <ComboBox Name="cB_SensorSelection" SelectionChanged="cB_SensorSelection_SelectionChanged">
-                        <ComboBoxItem
-                            Name="SensorNone"
-                            Content="{l:Static resx:Resources.SettingsPage_SensorNone}"
-                            IsEnabled="True" />
-                        <ComboBoxItem
-                            Name="SensorInternal"
-                            Content="{l:Static resx:Resources.SettingsPage_SensorInternal}"
-                            IsEnabled="False" />
-                        <ComboBoxItem
-                            Name="SensorExternal"
-                            Content="{l:Static resx:Resources.SettingsPage_SensorExternal}"
-                            IsEnabled="False" />
-                        <ComboBoxItem
-                            Name="SensorController"
-                            Content="{l:Static resx:Resources.MainWindow_navController}"
-                            IsEnabled="False" />
-                    </ComboBox>
+                        <ComboBox
+                            Name="cB_SensorSelection"
+                            Margin="6,0,0,0"
+                            SelectionChanged="cB_SensorSelection_SelectionChanged">
+                            <ComboBoxItem
+                                Name="SensorNone"
+                                Content="{l:Static resx:Resources.SettingsPage_SensorNone}"
+                                IsEnabled="True" />
+                            <ComboBoxItem
+                                Name="SensorInternal"
+                                Content="{l:Static resx:Resources.SettingsPage_SensorInternal}"
+                                IsEnabled="{Binding IsInternalSensorEnabled}" />
+                            <ComboBoxItem
+                                Name="SensorExternal"
+                                Content="{l:Static resx:Resources.SettingsPage_SensorExternal}"
+                                IsEnabled="{Binding IsExternalSensorEnabled}" />
+                            <ComboBoxItem
+                                Name="SensorController"
+                                Content="{l:Static resx:Resources.MainWindow_navController}"
+                                IsEnabled="{Binding IsControllerSensorEnabled}" />
+                            <ComboBoxItem Name="SensorAuto" Content="Auto" />
+                        </ComboBox>
 
-                    <ui:SettingsExpander.Items>
-                        <!--  Sensor Calibration  -->
-                        <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_SensorCalibrationDesc}" Header="{l:Static resx:Resources.SettingsPage_SensorCalibration}">
-                            <Button
-                                Name="ui_button_calibrate"
-                                Click="ui_button_calibrate_Click"
-                                Content="{l:Static resx:Resources.DevicePage_SensorCalibration_Button}"
-                                FontSize="14"
-                                Style="{DynamicResource AccentButtonStyle}" />
-                        </ui:SettingsCard>
+                        <ui:SettingsExpander.Items>
+                            <ui:SettingsCard Header="Sensor calibration">
+                                <Button
+                                    Name="ui_button_calibrate"
+                                    Click="ui_button_calibrate_Click"
+                                    Content="{l:Static resx:Resources.DevicePage_SensorCalibration_Button}"
+                                    IsEnabled="{Binding IsCalibrationEnabled}"
+                                    Style="{DynamicResource AccentButtonStyle}" />
+                            </ui:SettingsCard>
 
-                        <!--  Sensor Placement Mirror  -->
-                        <ui:SettingsCard
-                            Name="SensorPlacementUpsideDown"
-                            Description="{l:Static resx:Resources.SettingsPage_SensorPlacementUpsideDownDesc}"
-                            Header="{l:Static resx:Resources.SettingsPage_SensorPlacementUpsideDown}">
-                            <ui:ToggleSwitch Name="Toggle_SensorPlacementUpsideDown" Toggled="Toggle_SensorPlacementUpsideDown_Toggled" />
-                        </ui:SettingsCard>
+                            <ui:SettingsCard Header="Display virtual gamepad">
+                                <ToggleButton
+                                    Name="ui_toggle_overlayGamepad"
+                                    Margin="8,0,0,0"
+                                    Command="{Binding ToggleOverlayGamepadCommand}"
+                                    Content="Display"
+                                    IsChecked="{Binding IsOverlayGamepadVisible, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+                        </ui:SettingsExpander.Items>
+                    </ui:SettingsExpander>
 
-                        <!--  Sensor Placement Direction  -->
-                        <ui:SettingsCard
-                            Name="SensorPlacementVisualisation"
-                            Description="{l:Static resx:Resources.SettingsPage_SensorPlacementDirectionDesc}"
-                            Header="{l:Static resx:Resources.SettingsPage_SensorPlacementDirection}">
-                            <Grid Name="Grid_SensorPlacementVisualisation" IsEnabled="False">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="50" />
-                                    <RowDefinition Height="3" />
-                                    <RowDefinition Height="50" />
-                                    <RowDefinition Height="3" />
-                                    <RowDefinition Height="50" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50" />
-                                    <ColumnDefinition Width="3" />
-                                    <ColumnDefinition Width="50" />
-                                    <ColumnDefinition Width="3" />
-                                    <ColumnDefinition Width="50" />
-                                </Grid.ColumnDefinitions>
-                                <!--  Top  -->
-                                <Button
-                                    Grid.Row="0"
-                                    Grid.Column="2"
-                                    Width="50"
-                                    Height="50"
-                                    Click="SensorPlacement_Click"
-                                    Tag="0" />
-                                <!--  Left  -->
-                                <Button
-                                    Grid.Row="2"
-                                    Grid.Column="0"
-                                    Width="50"
-                                    Height="50"
-                                    Click="SensorPlacement_Click"
-                                    Tag="1" />
-                                <!--  Right  -->
-                                <Button
-                                    Grid.Row="2"
-                                    Grid.Column="4"
-                                    Width="50"
-                                    Height="50"
-                                    Click="SensorPlacement_Click"
-                                    Tag="2" />
-                                <!--  Bottom  -->
-                                <Button
-                                    Grid.Row="4"
-                                    Grid.Column="2"
-                                    Width="50"
-                                    Height="50"
-                                    Click="SensorPlacement_Click"
-                                    Tag="3" />
-                            </Grid>
-                        </ui:SettingsCard>
-                    </ui:SettingsExpander.Items>
-                </ui:SettingsExpander>
+                    <controls:AdaptiveColumnPanel
+                        BreakWidth="1180"
+                        IsEnabled="{Binding IsInternalSensorExpanderEnabled}"
+                        Spacing="3"
+                        Visibility="{Binding IsInternalSensorExpanderEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <!--  Internal|Gyroscope sensor settings  -->
+                        <ui:SettingsExpander
+                            Name="InternalGyroSensorExpander"
+                            d:IsExpanded="True"
+                            Description="Adjust the gyroscope axis matrices"
+                            Header="Gyroscope">
+                            <ui:SettingsExpander.HeaderIcon>
+                                <ui:FontIcon Glyph="&#xEC4A;" />
+                            </ui:SettingsExpander.HeaderIcon>
+
+                            <ui:SettingsExpander.Items>
+                                <ui:SettingsCard Header="Axis">
+                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                        <CheckBox
+                                            VerticalAlignment="Center"
+                                            Content="Invert X"
+                                            IsChecked="{Binding GyroAxisX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource FloatAxisToBooleanConverter}}" />
+
+                                        <CheckBox
+                                            VerticalAlignment="Center"
+                                            Content="Invert Y"
+                                            IsChecked="{Binding GyroAxisY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource FloatAxisToBooleanConverter}}" />
+
+                                        <CheckBox
+                                            VerticalAlignment="Center"
+                                            Content="Invert Z"
+                                            IsChecked="{Binding GyroAxisZ, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource FloatAxisToBooleanConverter}}" />
+                                    </ikw:SimpleStackPanel>
+                                </ui:SettingsCard>
+
+                                <ui:SettingsCard Header="Matrix">
+                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                        <StackPanel
+                                            Grid.Column="0"
+                                            HorizontalAlignment="Center"
+                                            Orientation="Horizontal">
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                Foreground="OrangeRed"
+                                                Text="X" />
+
+                                            <ComboBox Margin="6,0,0,0" SelectedIndex="{Binding GyroAxisSwapX, Converter={StaticResource CharToComboBoxIndexConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <ComboBoxItem>X</ComboBoxItem>
+                                                <ComboBoxItem>Y</ComboBoxItem>
+                                                <ComboBoxItem>Z</ComboBoxItem>
+                                            </ComboBox>
+                                        </StackPanel>
+
+                                        <StackPanel
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Center"
+                                            Orientation="Horizontal">
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                Foreground="YellowGreen"
+                                                Text="Y" />
+
+                                            <ComboBox Margin="6,0,0,0" SelectedIndex="{Binding GyroAxisSwapY, Converter={StaticResource CharToComboBoxIndexConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <ComboBoxItem>X</ComboBoxItem>
+                                                <ComboBoxItem>Y</ComboBoxItem>
+                                                <ComboBoxItem>Z</ComboBoxItem>
+                                            </ComboBox>
+                                        </StackPanel>
+
+                                        <StackPanel
+                                            Grid.Column="2"
+                                            HorizontalAlignment="Center"
+                                            Orientation="Horizontal">
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                Foreground="CornflowerBlue"
+                                                Text="Z" />
+
+                                            <ComboBox Margin="6,0,0,0" SelectedIndex="{Binding GyroAxisSwapZ, Converter={StaticResource CharToComboBoxIndexConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <ComboBoxItem>X</ComboBoxItem>
+                                                <ComboBoxItem>Y</ComboBoxItem>
+                                                <ComboBoxItem>Z</ComboBoxItem>
+                                            </ComboBox>
+                                        </StackPanel>
+                                    </ikw:SimpleStackPanel>
+                                </ui:SettingsCard>
+                            </ui:SettingsExpander.Items>
+                        </ui:SettingsExpander>
+
+                        <!--  Internal|Accelerometer sensor settings  -->
+                        <ui:SettingsExpander
+                            Name="InternalAcceleroSensorExpander"
+                            d:IsExpanded="True"
+                            Description="Adjust the accelerometer axis matrices"
+                            Header="Accelerometer">
+                            <ui:SettingsExpander.HeaderIcon>
+                                <ui:FontIcon Glyph="&#xEC4A;" />
+                            </ui:SettingsExpander.HeaderIcon>
+
+                            <ui:SettingsExpander.Items>
+                                <ui:SettingsCard Header="Axis">
+                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                        <CheckBox
+                                            VerticalAlignment="Center"
+                                            Content="Invert X"
+                                            IsChecked="{Binding AcceleroAxisX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource FloatAxisToBooleanConverter}}" />
+
+                                        <CheckBox
+                                            VerticalAlignment="Center"
+                                            Content="Invert Y"
+                                            IsChecked="{Binding AcceleroAxisY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource FloatAxisToBooleanConverter}}" />
+
+                                        <CheckBox
+                                            VerticalAlignment="Center"
+                                            Content="Invert Z"
+                                            IsChecked="{Binding AcceleroAxisZ, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource FloatAxisToBooleanConverter}}" />
+                                    </ikw:SimpleStackPanel>
+                                </ui:SettingsCard>
+
+                                <ui:SettingsCard Header="Matrix">
+                                    <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                        <StackPanel
+                                            Grid.Column="0"
+                                            HorizontalAlignment="Center"
+                                            Orientation="Horizontal">
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                Foreground="OrangeRed"
+                                                Text="X" />
+
+                                            <ComboBox Margin="6,0,0,0" SelectedIndex="{Binding AcceleroAxisSwapX, Converter={StaticResource CharToComboBoxIndexConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <ComboBoxItem>X</ComboBoxItem>
+                                                <ComboBoxItem>Y</ComboBoxItem>
+                                                <ComboBoxItem>Z</ComboBoxItem>
+                                            </ComboBox>
+                                        </StackPanel>
+
+                                        <StackPanel
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Center"
+                                            Orientation="Horizontal">
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                Foreground="YellowGreen"
+                                                Text="Y" />
+
+                                            <ComboBox Margin="6,0,0,0" SelectedIndex="{Binding AcceleroAxisSwapY, Converter={StaticResource CharToComboBoxIndexConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <ComboBoxItem>X</ComboBoxItem>
+                                                <ComboBoxItem>Y</ComboBoxItem>
+                                                <ComboBoxItem>Z</ComboBoxItem>
+                                            </ComboBox>
+                                        </StackPanel>
+
+                                        <StackPanel
+                                            Grid.Column="2"
+                                            HorizontalAlignment="Center"
+                                            Orientation="Horizontal">
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                Foreground="CornflowerBlue"
+                                                Text="Z" />
+
+                                            <ComboBox Margin="6,0,0,0" SelectedIndex="{Binding AcceleroAxisSwapZ, Converter={StaticResource CharToComboBoxIndexConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <ComboBoxItem>X</ComboBoxItem>
+                                                <ComboBoxItem>Y</ComboBoxItem>
+                                                <ComboBoxItem>Z</ComboBoxItem>
+                                            </ComboBox>
+                                        </StackPanel>
+                                    </ikw:SimpleStackPanel>
+                                </ui:SettingsCard>
+                            </ui:SettingsExpander.Items>
+                        </ui:SettingsExpander>
+                    </controls:AdaptiveColumnPanel>
+
+                    <!--  External sensor settings  -->
+                    <ui:SettingsExpander
+                        Name="ExternalSensorExpander"
+                        d:IsExpanded="True"
+                        Header="External sensor"
+                        IsEnabled="{Binding IsExternalSensorExpanderEnabled}">
+                        <ui:SettingsExpander.HeaderIcon>
+                            <ui:FontIcon Glyph="&#xE950;" />
+                        </ui:SettingsExpander.HeaderIcon>
+                        <ui:SettingsExpander.Items>
+                            <!--  Sensor Placement Mirror  -->
+                            <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_SensorPlacementUpsideDownDesc}" Header="{l:Static resx:Resources.SettingsPage_SensorPlacementUpsideDown}">
+                                <ui:ToggleSwitch Name="Toggle_SensorPlacementUpsideDown" Toggled="Toggle_SensorPlacementUpsideDown_Toggled" />
+                            </ui:SettingsCard>
+
+                            <!--  Sensor Placement Direction  -->
+                            <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_SensorPlacementDirectionDesc}" Header="{l:Static resx:Resources.SettingsPage_SensorPlacementDirection}">
+                                <Grid Name="Grid_SensorPlacementVisualisation">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="50" />
+                                        <RowDefinition Height="3" />
+                                        <RowDefinition Height="50" />
+                                        <RowDefinition Height="3" />
+                                        <RowDefinition Height="50" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="3" />
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="3" />
+                                        <ColumnDefinition Width="50" />
+                                    </Grid.ColumnDefinitions>
+                                    <!--  Top  -->
+                                    <Button
+                                        Grid.Row="0"
+                                        Grid.Column="2"
+                                        Width="50"
+                                        Height="50"
+                                        Click="SensorPlacement_Click"
+                                        Tag="0" />
+                                    <!--  Left  -->
+                                    <Button
+                                        Grid.Row="2"
+                                        Grid.Column="0"
+                                        Width="50"
+                                        Height="50"
+                                        Click="SensorPlacement_Click"
+                                        Tag="1" />
+                                    <!--  Right  -->
+                                    <Button
+                                        Grid.Row="2"
+                                        Grid.Column="4"
+                                        Width="50"
+                                        Height="50"
+                                        Click="SensorPlacement_Click"
+                                        Tag="2" />
+                                    <!--  Bottom  -->
+                                    <Button
+                                        Grid.Row="4"
+                                        Grid.Column="2"
+                                        Width="50"
+                                        Height="50"
+                                        Click="SensorPlacement_Click"
+                                        Tag="3" />
+                                </Grid>
+                            </ui:SettingsCard>
+                        </ui:SettingsExpander.Items>
+                    </ui:SettingsExpander>
+                </ikw:SimpleStackPanel>
             </ikw:SimpleStackPanel>
 
             <!--  Device settings  -->
@@ -887,7 +1114,7 @@
                     Name="MSIClawPanel"
                     d:Visibility="Visible"
                     Spacing="3"
-                    Visibility="Collapsed">
+                    Visibility="{Binding IsMsiClawVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <ui:SettingsCard Description="Select the desired controller mode" Header="Controller mode">
                         <ui:SettingsCard.HeaderIcon>
@@ -918,7 +1145,7 @@
                     Name="LegionGoPanel"
                     d:Visibility="Visible"
                     Spacing="3"
-                    Visibility="Collapsed">
+                    Visibility="{Binding IsLegionGoVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <TextBlock
                         d:Text="Device settings (Lenovo Legion Go)"
@@ -933,7 +1160,7 @@
                         <ui:SettingsCard.HeaderIcon>
                             <ui:FontIcon Glyph="&#xe772;" />
                         </ui:SettingsCard.HeaderIcon>
-                        <ui:ToggleSwitch Name="Toggle_TouchpadPassthrough" Toggled="Toggle_TouchpadPassthrough_Toggled" />
+                        <ui:ToggleSwitch IsOn="{Binding LegionControllerPassthrough, Mode=TwoWay}" />
                     </ui:SettingsCard>
 
                     <ui:SettingsCard
@@ -943,7 +1170,7 @@
                         <ui:SettingsCard.HeaderIcon>
                             <ui:FontIcon Glyph="&#xe772;" />
                         </ui:SettingsCard.HeaderIcon>
-                        <ui:ToggleSwitch Name="Toggle_ControllerSwap" Toggled="Toggle_ControllerSwap_Toggled" />
+                        <ui:ToggleSwitch IsOn="{Binding LegionControllerSwap, Mode=TwoWay}" />
                     </ui:SettingsCard>
 
                     <ui:SettingsCard
@@ -951,12 +1178,12 @@
                         d:Visibility="Visible"
                         Description="{l:Static resx:Resources.SettingsPage_SensorSelectionDesc}"
                         Header="{l:Static resx:Resources.SettingsPage_SensorSelection}"
-                        Visibility="Collapsed">
+                        Visibility="{Binding IsLegionGoSensorSelectionVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <ui:SettingsCard.HeaderIcon>
                             <ui:FontIcon Glyph="&#xE950;" />
                         </ui:SettingsCard.HeaderIcon>
 
-                        <ComboBox Name="ComboBox_GyroController" SelectionChanged="ComboBox_GyroController_SelectionChanged">
+                        <ComboBox SelectedIndex="{Binding LegionControllerGyroIndex, Mode=TwoWay}">
                             <ComboBoxItem Content="{l:Static resx:Resources.DevicePage_Lenovo_LeftController}" />
                             <ComboBoxItem Content="{l:Static resx:Resources.DevicePage_Lenovo_RightController}" />
                         </ComboBox>
@@ -968,7 +1195,7 @@
                         d:Visibility="Visible"
                         Description="{l:Static resx:Resources.DevicePage_Lenovo_ControllerLeftDesc}"
                         Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerLeft}"
-                        Visibility="Collapsed">
+                        Visibility="{Binding IsLegionGoLeftControllerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <ui:SettingsExpander.HeaderIcon>
                             <ui:FontIcon Glyph="&#xE7FC;" />
                         </ui:SettingsExpander.HeaderIcon>
@@ -995,7 +1222,7 @@
                                         Minimum="1"
                                         SmallChange="1"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        ValueChanged="SliderLeftAutoSleepTime_ValueChanged" />
+                                        Value="{Binding LeftAutoSleepTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </DockPanel>
                             </ui:SettingsCard>
                             <!--  Left Joystick deadzone  -->
@@ -1020,7 +1247,7 @@
                                         Minimum="1"
                                         SmallChange="1"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        ValueChanged="SliderLeftJoystickDeadzone_ValueChanged" />
+                                        Value="{Binding LeftJoystickDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </DockPanel>
                             </ui:SettingsCard>
                             <!--  Left Trigger deadzone  -->
@@ -1045,7 +1272,7 @@
                                         Minimum="1"
                                         SmallChange="1"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        ValueChanged="SliderLeftTriggerDeadzone_ValueChanged" />
+                                        Value="{Binding LeftTriggerDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </DockPanel>
                             </ui:SettingsCard>
                             <!--  Left Trigger margin  -->
@@ -1070,7 +1297,7 @@
                                         Minimum="1"
                                         SmallChange="1"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        ValueChanged="SliderLeftTriggerMargin_ValueChanged" />
+                                        Value="{Binding LeftTriggerMargin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </DockPanel>
                             </ui:SettingsCard>
                         </ui:SettingsExpander.Items>
@@ -1083,7 +1310,7 @@
                         d:Visibility="Visible"
                         Description="{l:Static resx:Resources.DevicePage_Lenovo_ControllerRightDesc}"
                         Header="{l:Static resx:Resources.DevicePage_Lenovo_ControllerRight}"
-                        Visibility="Collapsed">
+                        Visibility="{Binding IsLegionGoRightControllerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <ui:SettingsExpander.HeaderIcon>
                             <ui:FontIcon Glyph="&#xE7FC;" />
                         </ui:SettingsExpander.HeaderIcon>
@@ -1110,7 +1337,7 @@
                                         Minimum="1"
                                         SmallChange="1"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        ValueChanged="SliderRightAutoSleepTime_ValueChanged" />
+                                        Value="{Binding RightAutoSleepTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </DockPanel>
                             </ui:SettingsCard>
                             <!--  Right Joystick deadzone  -->
@@ -1135,7 +1362,7 @@
                                         Minimum="1"
                                         SmallChange="1"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        ValueChanged="SliderRightJoystickDeadzone_ValueChanged" />
+                                        Value="{Binding RightJoystickDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </DockPanel>
                             </ui:SettingsCard>
                             <!--  Right Trigger deadzone  -->
@@ -1160,7 +1387,7 @@
                                         Minimum="1"
                                         SmallChange="1"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        ValueChanged="SliderRightTriggerDeadzone_ValueChanged" />
+                                        Value="{Binding RightTriggerDeadzone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </DockPanel>
                             </ui:SettingsCard>
                             <!--  Right Trigger margin  -->
@@ -1185,7 +1412,7 @@
                                         Minimum="1"
                                         SmallChange="1"
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        ValueChanged="SliderRightTriggerMargin_ValueChanged" />
+                                        Value="{Binding RightTriggerMargin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </DockPanel>
                             </ui:SettingsCard>
                         </ui:SettingsExpander.Items>
@@ -1197,7 +1424,7 @@
                     Name="ZotacGamingZonePanel"
                     d:Visibility="Visible"
                     Spacing="3"
-                    Visibility="Collapsed">
+                    Visibility="{Binding IsGamingZoneVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <TextBlock
                         d:Text="Device settings (Zotac Gaming Zone)"
                         Style="{StaticResource BaseTextBlockStyle}"
@@ -1209,7 +1436,7 @@
                             <ui:FontIcon Glyph="&#xe772;" />
                         </ui:SettingsCard.HeaderIcon>
 
-                        <ComboBox Name="ComboBox_GamingZoneVRAM" SelectionChanged="ComboBox_GamingZoneVRAM_SelectionChanged">
+                        <ComboBox SelectedIndex="{Binding GamingZoneVRAM, Mode=TwoWay}">
                             <ComboBoxItem Content="Default" />
                             <ComboBoxItem Content="+1 GB" />
                             <ComboBoxItem Content="+2 GB" />

@@ -2324,6 +2324,9 @@
   <data name="XInputController_Warning_USB" xml:space="preserve">
     <value>컨트롤러의 전원을 껐다 켭니다. 잠시 기다려 주십시오.</value>
   </data>
+  <data name="XInputController_Warning_LegionWireless" xml:space="preserve">
+    <value>One of your detachable controllers is still disconnected. Please manually power cycle the disconnected controller by pressing and holding its power button until it reconnects.</value>
+  </data>
   <data name="Enum_LegionController_ButtonFlags_B5" xml:space="preserve">
     <value>M2</value>
   </data>

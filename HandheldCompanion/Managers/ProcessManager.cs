@@ -69,15 +69,6 @@ public class ProcessManager : IManager
 
     public ProcessManager()
     {
-        // hook: on window opened
-        _windowOpenedHandler = OnWindowOpened;
-
-        Automation.AddAutomationEventHandler(
-            WindowPattern.WindowOpenedEvent,
-            AutomationElement.RootElement,
-            TreeScope.Children,
-            _windowOpenedHandler);
-
         // Set up the WinEvent hook
         winDelegate = new WinEventDelegate(WinEventProc);
         m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, winDelegate, 0, 0, WINEVENT_OUTOFCONTEXT);
@@ -95,6 +86,16 @@ public class ProcessManager : IManager
             return;
 
         base.PrepareStart();
+
+        // Register after the startup windows have been created and shown. Registering this
+        // global handler during ManagerFactory construction lets WPF re-enter its UI
+        // Automation provider while OnStartup is still creating windows.
+        _windowOpenedHandler = OnWindowOpened;
+        Automation.AddAutomationEventHandler(
+            WindowPattern.WindowOpenedEvent,
+            AutomationElement.RootElement,
+            TreeScope.Children,
+            _windowOpenedHandler);
 
         // list all current windows
         EnumWindows(OnWindowDiscovered, 0);
@@ -265,22 +266,40 @@ public class ProcessManager : IManager
         {
             int processId = 0;
             string className = string.Empty;
+            IntPtr nativeWindowHandle = IntPtr.Zero;
 
             try
             {
+                // Access Current properties with error handling
+                // Multiple .Current calls, but wrapped safely to catch COM exceptions
                 processId = senderElement.Current.ProcessId;
                 className = senderElement.Current.ClassName ?? string.Empty;
+                nativeWindowHandle = (IntPtr)senderElement.Current.NativeWindowHandle;
             }
-            catch
+            catch (COMException)
             {
-                // Automation failed to retrieve process id
+                // Window closed or automation element became invalid
+                return;
+            }
+            catch (InvalidOperationException)
+            {
+                // Element was disposed
+                return;
             }
 
             if (className == "ApplicationFrameWindow")
             {
-                ProcessDiagnosticInfo? processInfo = new ProcessUtils.FindHostedProcess(senderElement.Current.NativeWindowHandle)._realProcess;
-                if (processInfo is not null)
-                    processId = (int)processInfo.ProcessId;
+                try
+                {
+                    ProcessDiagnosticInfo? processInfo = new ProcessUtils.FindHostedProcess(nativeWindowHandle)._realProcess;
+                    if (processInfo is not null)
+                        processId = (int)processInfo.ProcessId;
+                }
+                catch (COMException)
+                {
+                    // Window closed or invalid
+                    return;
+                }
             }
 
             // skip if we couldn't find a process id
@@ -309,7 +328,22 @@ public class ProcessManager : IManager
                 if (element is null)
                     return false;
 
-                int processId = element.Current.ProcessId;
+                int processId = 0;
+                try
+                {
+                    // Access Current property with error handling
+                    processId = element.Current.ProcessId;
+                }
+                catch (COMException)
+                {
+                    // Window closed or automation element became invalid
+                    return false;
+                }
+                catch (InvalidOperationException)
+                {
+                    // Element was disposed
+                    return false;
+                }
 
                 ProcessDiagnosticInfo? processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
                 if (processInfo != null)
@@ -525,7 +559,27 @@ public class ProcessManager : IManager
         {
             try
             {
-                if (!automationElement.Current.IsContentElement && !automationElement.Current.IsControlElement)
+                // Access Current properties with error handling
+                // This prevents race conditions by using local variables
+                bool isContentElement = false;
+                bool isControlElement = false;
+                try
+                {
+                    isContentElement = automationElement.Current.IsContentElement;
+                    isControlElement = automationElement.Current.IsControlElement;
+                }
+                catch (COMException)
+                {
+                    // Window closed or automation element became invalid
+                    return false;
+                }
+                catch (InvalidOperationException)
+                {
+                    // Element was disposed
+                    return false;
+                }
+
+                if (!isContentElement && !isControlElement)
                     return false;
 
                 // Process has exited on arrival

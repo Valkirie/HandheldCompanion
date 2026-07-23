@@ -4,11 +4,10 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using iNKORE.UI.WPF.Modern.Controls.Primitives;
-using System.Collections;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -170,8 +169,7 @@ namespace HandheldCompanion.Views.Classes
             {
                 _contentFrame = FindName("ContentFrame") as Frame ?? WPFUtils.FindChildren(this).OfType<Frame>().FirstOrDefault();
 
-                if (_contentFrame is not null)
-                    _contentFrame.LoadCompleted += ContentFrame_Navigated;
+                _contentFrame?.LoadCompleted += ContentFrame_Navigated;
 
                 _contentFrameHooksInitialized = true;
             }

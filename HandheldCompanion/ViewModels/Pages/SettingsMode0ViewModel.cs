@@ -1,7 +1,9 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Windows.Data;
 
 namespace HandheldCompanion.ViewModels
@@ -26,13 +28,20 @@ namespace HandheldCompanion.ViewModels
             if (hotkey.ButtonFlags != gyroButtonFlags)
                 return;
 
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
                 if (foundHotkey is null)
                     HotkeysList.Add(new HotkeyViewModel(hotkey));
                 else
                     foundHotkey.Hotkey = hotkey;
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
         }
 

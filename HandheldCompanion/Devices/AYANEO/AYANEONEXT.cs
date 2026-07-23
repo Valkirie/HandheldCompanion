@@ -1,6 +1,4 @@
 ﻿using HandheldCompanion.Inputs;
-using System.Collections.Generic;
-using System.Numerics;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;
@@ -20,27 +18,7 @@ public class AYANEONEXT : IDevice
         this.GfxClock = new double[] { 100, 2000 };
         this.CpuClock = 4500;
 
-        this.GyroMatrix = new()
-        {
-            Axis = new Vector3(1.0f, -1.0f, 1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' }
-            }
-        };
-
-        this.AcceleroMatrix = new()
-        {
-            Axis = new Vector3(-1.0f, -1.0f, 1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' }
-            }
-        };
+        // IMU matrices loaded from AYANEONEXT.json
 
         this.OEMChords.Add(new KeyboardChord("Custom key BIG",
             [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12],

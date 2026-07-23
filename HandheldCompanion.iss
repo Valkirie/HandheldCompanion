@@ -10,6 +10,7 @@
 #endif
 
 #define UseDirectX
+#define UseViGem
 #define UseHideHide
 #define UseRTSS
 #define UsePawnIO
@@ -18,7 +19,7 @@
 #define InstallerVersion        "0.2"
 #define MyAppSetupName         "Handheld Companion"
 #define MyBuildId              "HandheldCompanion"
-#define MyAppVersion           "0.32.2.0"
+#define MyAppVersion           "0.34.4.0"
 #define MyAppPublisher         "BenjaminLSR"
 #define MyAppCopyright         "Copyright © BenjaminLSR"
 #define MyAppURL               "https://github.com/Valkirie/HandheldCompanion"
@@ -33,6 +34,7 @@
 
 #define DotNetName             ".NET Desktop Runtime"
 #define DirectXName            "DirectX Runtime"
+#define ViGemName              "ViGEmBus Setup"
 #define HidHideName            "HidHide Drivers"
 #define RtssName               "RTSS Setup"
 #define PawnIOName             "PawnIO"
@@ -40,16 +42,18 @@
 
 #define NewDotNetVersion       "10.0.9"
 #define NewDirectXVersion      "9.29.1974"
+#define NewViGemVersion        "1.22.0.0"
 #define NewHidHideVersion      "1.5.230"
 #define NewRtssVersion         "7.3.5.28314"
 #define NewPawnIOVersion       "2.1.0.0"
-#define NewUSBipVersion        "0.9.7.7"
+#define NewUSBipVersion        "0.9.7.8"
 
 #define DirectXDownloadLink    "https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe"
+#define ViGemDownloadLink      "https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe"
 #define HidHideDownloadLink    "https://github.com/nefarius/HidHide/releases/download/v1.5.230.0/HidHide_1.5.230_x64.exe"
 #define RtssDownloadLink       "https://github.com/Valkirie/HandheldCompanion/raw/main/redist/RTSSSetup737.exe"
 #define PawnIODownloadLink     "https://github.com/namazso/PawnIO.Setup/releases/latest/download/PawnIO_setup.exe"
-#define USBipDownloadLink      "https://github.com/vadimgrn/usbip-win2/releases/download/v.0.9.7.7/USBip-0.9.7.7-x64.exe"
+#define USBipDownloadLink      "https://github.com/vadimgrn/usbip-win2/releases/download/v.0.9.7.8/USBip-0.9.7.8-x64.exe"
 #define GameControllerDBDownloadLink "https://raw.githubusercontent.com/mdqinc/SDL_GameControllerDB/refs/heads/master/gamecontrollerdb.txt"
 
 ; Registry  
@@ -84,6 +88,7 @@ DefaultDirName={autopf}\{#MyAppSetupName}
 OutputBaseFilename={#MyBuildId}-{#MyAppVersion}
 SetupIconFile="{#SourcePath}\HandheldCompanion\Resources\icon.ico"
 SetupLogging=yes 
+SetupArchitecture=x64
 MinVersion={#WindowsVersion}
 OutputDir={#SourcePath}\install 
 PrivilegesRequired=admin
@@ -189,6 +194,7 @@ function Dependency_IsNetCoreInstalled(const Version: String): Boolean; forward;
 function Dependency_IsDirectXInstalled: Boolean; forward;
 procedure Dependency_AddDotNet10Desktop; forward;
 procedure Dependency_AddDirectX; forward;
+procedure Dependency_AddViGem; forward;
 procedure Dependency_AddHideHide; forward;
 procedure Dependency_AddRTSS; forward;
 procedure Dependency_AddPawnIO; forward;
@@ -250,21 +256,43 @@ begin
 
   CoreIsolationPromptNeeded := IsCoreIsolationDisableRequired();
 
+  // --- Generic “Optional Settings” page on Welcome ---
+  SettingsPage := CreateInputOptionPage(
+    wpWelcome,
+    'Installation Options',                             // Caption
+    'Optional Features',                                // Description
+    'Select any optional settings you wish to apply before continuing:',  // SubCaption
+    False,                                              // Exclusive = False → checkboxes
+    False                                               // ListBox = False → simple list
+  );
+  SettingsPage.Add('Create a Windows restore point before installation');
+  SettingsPage.Values[0] := True;
+
   if CoreIsolationPromptNeeded then
   begin
-    // --- Generic “Optional Settings” page on Welcome ---
-    SettingsPage := CreateInputOptionPage(
-      wpWelcome,
-      'Installation Options',                             // Caption
-      'Optional Features',                                // Description
-      'Select any optional settings you wish to apply before continuing:',  // SubCaption
-      False,                                              // Exclusive = False → checkboxes
-      False                                               // ListBox = False → simple list
-    );
-    // Core Isolation option
     SettingsPage.Add('Disable Windows Core Isolation (Recommended)');
-    SettingsPage.Values[0] := False;  // unchecked by default
+    SettingsPage.Values[1] := True;
   end;
+end;
+
+procedure CreateRestorePoint;
+var
+  PS1, PSBody: String;
+  ResultCode: Integer;
+begin
+  PS1 := ExpandConstant('{tmp}\HC_CreateRestorePoint.ps1');
+  PSBody :=
+    'Checkpoint-Computer -Description "Handheld Companion {#MyAppVersion} installation" -RestorePointType "MODIFY_SETTINGS"' + #13#10;
+
+  SaveStringToFile(PS1, PSBody, False);
+  if Exec(
+    'powershell.exe',
+    '-NoProfile -NonInteractive -ExecutionPolicy Bypass -File "' + PS1 + '"',
+    '', SW_HIDE, ewWaitUntilTerminated, ResultCode
+  ) then
+    Log('Create restore point exit=' + IntToStr(ResultCode))
+  else
+    Log('Failed to launch restore point creation');
 end;
 
 procedure AddDefenderExclusions_Simple();
@@ -325,9 +353,13 @@ end;
 function NextButtonClick(CurPageID: Integer): Boolean;
 begin
   Result := True;  // allow wizard to proceed
-  if CoreIsolationPromptNeeded and (CurPageID = SettingsPage.ID) then
+  if CurPageID = SettingsPage.ID then
+  begin
     if SettingsPage.Values[0] then
+      CreateRestorePoint();
+    if CoreIsolationPromptNeeded and SettingsPage.Values[1] then
       DisableCoreIsolation();
+  end;
 end;
 
 // Disables core isolation settings and requests a single reboot at end
@@ -503,6 +535,24 @@ begin
   else
   begin
     Log('{#DirectXName} runtime already detected.');
+  end;
+#endif
+
+#ifdef UseViGem
+  if not IsViGemInstalled() then
+  begin
+    Dependency_AddViGem;
+    uninstallViGem();
+  end
+  else
+  begin
+    installedVersion := RegGetInstalledVersion('{#ViGemName}');
+    if compareVersions('{#NewViGemVersion}', installedVersion, '.', '-') > 0 then
+    begin
+      Log('{#ViGemName} {#NewViGemVersion} needs update.');
+      Dependency_AddViGem;
+      uninstallViGem();
+    end;
   end;
 #endif
 
@@ -828,6 +878,15 @@ begin
     '{#DirectXName}',
     '{#DirectXDownloadLink}',
     '', True, False, False, '');
+end;
+
+procedure Dependency_AddViGem;
+begin
+  Dependency_Add_With_Version('ViGEmBus_1.22.0_x64_x86_arm64.exe', '{#NewViGemVersion}', RegGetInstalledVersion('{#ViGemName}'),
+    '/quiet /norestart',
+    '{#ViGemName}',
+    '{#ViGemDownloadLink}',
+    '', True, False, True, 'ViGEm');
 end;
 
 procedure Dependency_AddHideHide;

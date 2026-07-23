@@ -204,7 +204,7 @@ namespace HandheldCompanion.Managers
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // raise events
-            SettingsManager_SettingValueChanged("GPUManagementEnabled", ManagerFactory.settingsManager.GetString("GPUManagementEnabled"), false, false);
+            SettingsManager_SettingValueChanged("GPUManagementEnabled", ManagerFactory.settingsManager.GetString("GPUManagementEnabled"), false, true);
         }
 
         private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)

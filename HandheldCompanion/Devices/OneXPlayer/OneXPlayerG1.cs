@@ -1,7 +1,6 @@
 ﻿using HidLibrary;
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Windows.Media;
 using static HandheldCompanion.Utils.DeviceUtils;
 
@@ -105,9 +104,7 @@ namespace HandheldCompanion.Devices
                 }
             }
 
-            // Same IMU orientation pattern as other modern ONEX devices
-            GyroMatrix = new() { Axis = new Vector3(1.0f, 1.0f, 1.0f) };
-            AcceleroMatrix = new() { Axis = new Vector3(1.0f, -1.0f, 1.0f) };
+            // IMU matrices are now loaded from OneXPlayerG1.json via IDevice.ApplyDeviceConfiguration()
         }
     }
 
@@ -124,8 +121,7 @@ namespace HandheldCompanion.Devices
             GfxClock = new double[] { 100, 2250 };
             CpuClock = 5100;
 
-            GyroMatrix = new() { Axis = new Vector3(1.0f, 1.0f, 1.0f) };
-            AcceleroMatrix = new() { Axis = new Vector3(1.0f, -1.0f, 1.0f) };
+            // IMU matrices are now loaded from OneXPlayerG1Intel.json via IDevice.ApplyDeviceConfiguration()
         }
     }
 }

@@ -163,14 +163,7 @@ public class DeviceManager : IManager
 
             deviceEx.isXInput = true;
             deviceEx.baseContainerDevicePath = path;
-            deviceEx.XInputDeviceIdx = GetDeviceIndex(deviceEx.baseContainerDevicePath);
-
-            if (deviceEx.EnumeratorName.Equals("USB", StringComparison.InvariantCultureIgnoreCase))
-                deviceEx.XInputUserIndex = GetXInputIndex(deviceEx.baseContainerDevicePath);
-
-            if (deviceEx.XInputUserIndex == byte.MaxValue)
-                deviceEx.XInputUserIndex = (byte)XInputController.TryGetUserIndex(deviceEx);
-
+            deviceEx.XInputUserIndex = GetXInputIndex(deviceEx.baseContainerDevicePath);
             deviceEx.InterfaceGuid = interfaceGuid;
 
             LogManager.LogDebug("XUsbDevice {4} arrived on slot {5}: {0} (VID:{1}, PID:{2}) {3}",
@@ -252,24 +245,9 @@ public class DeviceManager : IManager
         return device;
     }
 
-    private int GetDeviceIndex(string path)
+    public PnPDetails[] GetGamingDevices(bool isXinput)
     {
-        int deviceIndex = 0;
-        Guid targetInterface = DeviceInterfaceIds.HidDevice;
-
-        if (path.Contains("USB"))
-            targetInterface = DeviceInterfaceIds.XUsbDevice;
-        else
-        {
-            // We are trying to get a XInput HID here
-            path = path.Replace(DeviceInterfaceIds.XUsbDevice.ToString(), DeviceInterfaceIds.HidDevice.ToString(), StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        while (Devcon.FindByInterfaceGuid(targetInterface, out var symlink, out var instanceId, deviceIndex++))
-            if (symlink.Equals(path, StringComparison.InvariantCultureIgnoreCase))
-                return deviceIndex;
-
-        return byte.MaxValue;
+        return PnPDevices.Values.Where(d => d.isGaming && (d.isXInput == isXinput) || (!d.isXInput && !isXinput)).ToArray();
     }
 
     [Flags]
@@ -410,12 +388,6 @@ public class DeviceManager : IManager
     /// <returns></returns>
     private static bool IsMoonlight(Attributes attributes) => attributes.VendorID == 1356 && attributes.ProductID == 1476;
     private static bool IsvJoy(Attributes attributes) => attributes.VendorID == 4660 && attributes.ProductID == 48813;
-
-    public List<PnPDetails> GetDetails(ushort VendorId = 0, ushort ProductId = 0)
-    {
-        return PnPDevices.Values.OrderBy(device => device.XInputDeviceIdx).Where(device =>
-            device.VendorID == VendorId && device.ProductID == ProductId && !device.isHooked).ToList();
-    }
 
     public PnPDetails? GetDeviceByInterfaceId(string path)
     {
@@ -632,14 +604,7 @@ public class DeviceManager : IManager
 
                 deviceEx.isXInput = true;
                 deviceEx.baseContainerDevicePath = obj.SymLink;
-                deviceEx.XInputDeviceIdx = GetDeviceIndex(deviceEx.baseContainerDevicePath);
-
-                if (deviceEx.EnumeratorName.Equals("USB", StringComparison.InvariantCultureIgnoreCase))
-                    deviceEx.XInputUserIndex = GetXInputIndex(deviceEx.baseContainerDevicePath);
-
-                if (deviceEx.XInputUserIndex == byte.MaxValue)
-                    deviceEx.XInputUserIndex = (byte)XInputController.TryGetUserIndex(deviceEx);
-
+                deviceEx.XInputUserIndex = GetXInputIndex(deviceEx.baseContainerDevicePath);
                 deviceEx.InterfaceGuid = obj.InterfaceGuid;
 
                 LogManager.LogDebug("XUsbDevice {4} arrived on slot {5}: {0} (VID:{1}, PID:{2}) {3}",

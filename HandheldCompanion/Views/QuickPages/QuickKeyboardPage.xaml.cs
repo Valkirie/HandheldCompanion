@@ -292,9 +292,12 @@ namespace HandheldCompanion.Views.QuickPages
                         StringBuilder sb = new StringBuilder(2);
                         int cnt = ToUnicodeEx(vk, (uint)sc, st, sb, sb.Capacity, 0, _lastHkl);
 
-                        string content = sb[0].ToString();
-                        if (cnt > 0 && !string.IsNullOrEmpty(content))
-                            b.Content = content;
+                        if (sb.Length > 0)
+                        {
+                            string content = sb[0].ToString();
+                            if (cnt > 0 && !string.IsNullOrEmpty(content))
+                                b.Content = content;
+                        }
                     }
                 }
             }

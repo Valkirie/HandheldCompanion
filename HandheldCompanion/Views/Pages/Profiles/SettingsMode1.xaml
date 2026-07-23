@@ -16,7 +16,7 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
-    <Grid Name="MainGrid" Margin="20">
+    <Grid Name="MainGrid">
         <ikw:SimpleStackPanel Spacing="12">
 
             <!--  Joystick steering preview  -->

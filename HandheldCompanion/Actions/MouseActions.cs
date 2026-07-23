@@ -241,7 +241,10 @@ namespace HandheldCompanion.Actions
             if (MouseType == MouseActionsType.Move)
                 MouseSimulator.MoveBy((int)intDelta.X, (int)intDelta.Y);
             else
+            {
+                MouseSimulator.HorizontalScroll((int)intDelta.X);
                 MouseSimulator.VerticalScroll((int)-intDelta.Y);
+            }
         }
 
         private Vector2 ComputeStickDelta(Vector2 raw)

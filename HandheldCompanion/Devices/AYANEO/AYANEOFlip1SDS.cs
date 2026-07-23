@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
-using System.Numerics;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices.AYANEO
@@ -13,8 +12,7 @@ namespace HandheldCompanion.Devices.AYANEO
             GfxClock = new double[] { 100, 2900 };
             CpuClock = 5100;
 
-            this.GyroMatrix = new() { Axis = new Vector3(1.0f, 1.0f, -1.0f) };
-            this.AcceleroMatrix = new() { Axis = new Vector3(1.0f, 1.0f, -1.0f) };
+            // IMU matrices loaded from AYANEOFlip1SDS.json
 
             this.OEMChords.Add(new KeyboardChord("Custom Key Big", [KeyCode.F23], [KeyCode.F23], false, ButtonFlags.OEM1));
             this.OEMChords.Add(new KeyboardChord("Custom Key Small", [KeyCode.F24], [KeyCode.F24], false, ButtonFlags.OEM2));

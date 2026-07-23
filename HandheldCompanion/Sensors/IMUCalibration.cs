@@ -58,6 +58,14 @@ namespace HandheldCompanion.Sensors
             return thresholdA;
         }
 
+        public void Reset()
+        {
+            this.xOffset = 0;
+            this.yOffset = 0;
+            this.zOffset = 0;
+            this.weight = 0;
+        }
+
         public static void SerializeCollection(Dictionary<string, IMUCalibration> collection)
         {
             string json = JsonConvert.SerializeObject(collection, Formatting.Indented);

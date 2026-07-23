@@ -8,6 +8,7 @@ using HandheldCompanion.Views.Classes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Media;
@@ -84,14 +85,24 @@ public partial class OverlayModel : OverlayWindow
     {
         InitializeComponent();
 
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
         // initialize timers
         UpdateTimer = new Timer(33)
         {
             AutoReset = true
         };
         UpdateTimer.Elapsed += DrawModel;
+
+        // raise events
+        switch (ManagerFactory.settingsManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
+        }
 
         _devicePoseRotation = new QuaternionRotation3D(DevicePose);
         _deviceRotateTransform = new RotateTransform3D(_devicePoseRotation);
@@ -108,6 +119,30 @@ public partial class OverlayModel : OverlayWindow
         _modelTransformGroup.Children.Add(_deviceRotateTransform);
         _modelTransformGroup.Children.Add(_restingPitchTransform);
         _modelTransformGroup.Children.Add(_importViewportCorrectionTransform);
+    }
+
+    private void QuerySettings()
+    {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        SettingsManager_SettingValueChanged("OverlayControllerMotion", ManagerFactory.settingsManager.GetString("OverlayControllerMotion"), false, true);
+        SettingsManager_SettingValueChanged("OverlayFaceCamera", ManagerFactory.settingsManager.GetString("OverlayFaceCamera"), false, true);
+        SettingsManager_SettingValueChanged("OverlayControllerRestingPitch", ManagerFactory.settingsManager.GetString("OverlayControllerRestingPitch"), false, true);
+        SettingsManager_SettingValueChanged("OverlayControllerAlignment", ManagerFactory.settingsManager.GetString("OverlayControllerAlignment"), false, true);
+        SettingsManager_SettingValueChanged("OverlayControllerSize", ManagerFactory.settingsManager.GetString("OverlayControllerSize"), false, true);
+        SettingsManager_SettingValueChanged("OverlayModel", ManagerFactory.settingsManager.GetString("OverlayModel"), false, true);
+        SettingsManager_SettingValueChanged("OverlayRenderAntialiasing", ManagerFactory.settingsManager.GetString("OverlayRenderAntialiasing"), false, true);
+        SettingsManager_SettingValueChanged("OverlayRenderInterval", ManagerFactory.settingsManager.GetString("OverlayRenderInterval"), false, true);
+        SettingsManager_SettingValueChanged("OverlayControllerOpacity", ManagerFactory.settingsManager.GetString("OverlayControllerOpacity"), false, true);
+        SettingsManager_SettingValueChanged("OverlayControllerAlwaysOnTop", ManagerFactory.settingsManager.GetString("OverlayControllerAlwaysOnTop"), false, true);
+        SettingsManager_SettingValueChanged("OverlayControllerBackgroundColor", ManagerFactory.settingsManager.GetString("OverlayControllerBackgroundColor"), false, true);
+    }
+
+    private void SettingsManager_Initialized()
+    {
+        QuerySettings();
     }
 
     private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
@@ -127,17 +162,17 @@ public partial class OverlayModel : OverlayWindow
                 {
                     int controllerAlignment = Convert.ToInt32(value);
                     // UI thread
-                    UIHelper.TryInvoke(() => { UpdateUI_ControllerPosition(controllerAlignment); });
+                    UIHelper.TryBeginInvoke(() => { UpdateUI_ControllerPosition(controllerAlignment); });
                 }
                 break;
             case "OverlayControllerSize":
                 {
                     double controllerSize = Convert.ToDouble(value);
                     // UI thread
-                    UIHelper.TryInvoke(() =>
+                    UIHelper.TryBeginInvoke(() =>
                     {
-                        App.overlayModel.Width = controllerSize;
-                        App.overlayModel.Height = controllerSize;
+                        Width = controllerSize;
+                        Height = controllerSize;
                     });
                 }
                 break;
@@ -145,14 +180,14 @@ public partial class OverlayModel : OverlayWindow
                 {
                     OverlayModelMode modelMode = (OverlayModelMode)Convert.ToInt32(value);
                     // UI thread
-                    UIHelper.TryInvoke(() => { UpdateOverlayMode(modelMode); });
+                    UIHelper.TryBeginInvoke(() => { UpdateOverlayMode(modelMode); });
                 }
                 break;
             case "OverlayRenderAntialiasing":
                 {
                     bool antialiasing = Convert.ToBoolean(value);
                     // UI thread
-                    UIHelper.TryInvoke(() => { ModelViewPort.SetValue(RenderOptions.EdgeModeProperty, antialiasing ? EdgeMode.Unspecified : EdgeMode.Aliased); });
+                    UIHelper.TryBeginInvoke(() => { ModelViewPort.SetValue(RenderOptions.EdgeModeProperty, antialiasing ? EdgeMode.Unspecified : EdgeMode.Aliased); });
                 }
                 break;
             case "OverlayRenderInterval":
@@ -165,21 +200,21 @@ public partial class OverlayModel : OverlayWindow
                 {
                     double opacity = Convert.ToDouble(value);
                     // UI thread
-                    UIHelper.TryInvoke(() => { ModelViewPort.Opacity = opacity; });
+                    UIHelper.TryBeginInvoke(() => { ModelViewPort.Opacity = opacity; });
                 }
                 break;
             case "OverlayControllerAlwaysOnTop":
                 {
                     bool alwaysOnTop = Convert.ToBoolean(value);
                     // UI thread
-                    UIHelper.TryInvoke(() => { Topmost = alwaysOnTop; });
+                    UIHelper.TryBeginInvoke(() => { Topmost = alwaysOnTop; });
                 }
                 break;
             case "OverlayControllerBackgroundColor":
                 {
                     Color SelectedColor = (Color)ColorConverter.ConvertFromString(Convert.ToString(value));
                     // UI thread
-                    UIHelper.TryInvoke(() => { Background = new SolidColorBrush(SelectedColor); });
+                    UIHelper.TryBeginInvoke(() => { Background = new SolidColorBrush(SelectedColor); });
                 }
                 break;
         }
@@ -510,42 +545,46 @@ public partial class OverlayModel : OverlayWindow
             }
 
             // Update shoulder buttons left, rotate into view angle, trigger angle and trigger gradient color
-            Model3DGroup leftShoulderButton = model.ButtonMap[ButtonFlags.L1][0];
-            UpdateShoulderButtons(
-                _leftShoulderTransform,
-                model.LeftShoulderTrigger,
-                leftShoulderButton,
-                model.UpwardVisibilityRotationAxisLeft,
-                model.UpwardVisibilityRotationPointLeft,
-                model.ShoulderTriggerRotationPointCenterLeftMillimeter,
-                ref TriggerAngleShoulderLeft,
-                model.TriggerMaxAngleDeg,
-                AxisFlags.L2,
-                ShoulderButtonsAngleDeg,
-                ref ShoulderTriggerAngleLeftPrev,
-                ref ShoulderButtonsAngleDegLeftPrev,
-                model.DefaultMaterials[model.LeftShoulderTrigger],
-                model.HighlightMaterials
-            );
+            if (model.ButtonMap.TryGetValue(ButtonFlags.L1, out List<Model3DGroup>? l1Models) && l1Models.ElementAt(0) is Model3DGroup leftShoulderButton)
+            {
+                UpdateShoulderButtons(
+                    _leftShoulderTransform,
+                    model.LeftShoulderTrigger,
+                    leftShoulderButton,
+                    model.UpwardVisibilityRotationAxisLeft,
+                    model.UpwardVisibilityRotationPointLeft,
+                    model.ShoulderTriggerRotationPointCenterLeftMillimeter,
+                    ref TriggerAngleShoulderLeft,
+                    model.TriggerMaxAngleDeg,
+                    AxisFlags.L2,
+                    ShoulderButtonsAngleDeg,
+                    ref ShoulderTriggerAngleLeftPrev,
+                    ref ShoulderButtonsAngleDegLeftPrev,
+                    model.DefaultMaterials[model.LeftShoulderTrigger],
+                    model.HighlightMaterials
+                );
+            }
 
             // Update shoulder buttons right, rotate into view angle, trigger angle and trigger gradient color
-            Model3DGroup rightShoulderButton = model.ButtonMap[ButtonFlags.R1][0];
-            UpdateShoulderButtons(
-                _rightShoulderTransform,
-                model.RightShoulderTrigger,
-                rightShoulderButton,
-                model.UpwardVisibilityRotationAxisRight,
-                model.UpwardVisibilityRotationPointRight,
-                model.ShoulderTriggerRotationPointCenterRightMillimeter,
-                ref TriggerAngleShoulderRight,
-                model.TriggerMaxAngleDeg,
-                AxisFlags.R2,
-                ShoulderButtonsAngleDeg,
-                ref ShoulderTriggerAngleRightPrev,
-                ref ShoulderButtonsAngleDegRightPrev,
-                model.DefaultMaterials[model.RightShoulderTrigger],
-                model.HighlightMaterials
-            );
+            if (model.ButtonMap.TryGetValue(ButtonFlags.R1, out List<Model3DGroup>? r1Models) && r1Models.ElementAt(0) is Model3DGroup rightShoulderButton)
+            {
+                UpdateShoulderButtons(
+                    _rightShoulderTransform,
+                    model.RightShoulderTrigger,
+                    rightShoulderButton,
+                    model.UpwardVisibilityRotationAxisRight,
+                    model.UpwardVisibilityRotationPointRight,
+                    model.ShoulderTriggerRotationPointCenterRightMillimeter,
+                    ref TriggerAngleShoulderRight,
+                    model.TriggerMaxAngleDeg,
+                    AxisFlags.R2,
+                    ShoulderButtonsAngleDeg,
+                    ref ShoulderTriggerAngleRightPrev,
+                    ref ShoulderButtonsAngleDegRightPrev,
+                    model.DefaultMaterials[model.RightShoulderTrigger],
+                    model.HighlightMaterials
+                );
+            }
 
             // Update left joystick
             UpdateJoystick(
@@ -700,14 +739,13 @@ public partial class OverlayModel : OverlayWindow
                 MathF.Abs(X * ShortMaxValueInverse),
                 MathF.Abs(Y * ShortMaxValueInverse));
 
-            SetMaterialIfChanged(geometryModel3D, GradientHighlight(
-                defaultMaterials[thumbRing],
-                highlightMaterials[thumbRing],
-                gradientFactor));
+            if (defaultMaterials.TryGetValue(thumbRing, out Material? material) && highlightMaterials.TryGetValue(thumbRing, out Material? highlightMaterial))
+                SetMaterialIfChanged(geometryModel3D, GradientHighlight(material, highlightMaterial, gradientFactor));
         }
         else
         {
-            SetMaterialIfChanged(geometryModel3D, defaultMaterials[thumbRing]);
+            if (defaultMaterials.TryGetValue(thumbRing, out Material? material))
+                SetMaterialIfChanged(geometryModel3D, material);
         }
 
         // Define and compute rotation angles

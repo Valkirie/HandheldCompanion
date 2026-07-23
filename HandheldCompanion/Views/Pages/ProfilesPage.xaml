@@ -17,7 +17,6 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Profiles"
     Title="{l:Static resx:Resources.ProfilesPage_Profiles}"
-    Margin="20"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:ProfilesPageViewModel}"
     d:DesignHeight="4000"
@@ -274,12 +273,6 @@
         </StackPanel>
 
         <StackPanel>
-            <TextBlock
-                Margin="0,0,0,8"
-                behaviors:TextBlockUpperCase.IsUpperCase="True"
-                Style="{StaticResource CapitalAccentTextBlockStyle}"
-                Text="{Binding Name, RelativeSource={RelativeSource AncestorType=Page}}" />
-
             <ikw:SimpleStackPanel
                 Name="StackPanel_Profiles"
                 IsEnabled="{Binding HasSelectedProfile, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -427,11 +420,9 @@
                         </Image>
                         -->
 
-                        <ikw:SimpleStackPanel
-                            Margin="12,0,12,0"
-                            VerticalAlignment="Center"
-                            Spacing="3">
+                        <ikw:SimpleStackPanel VerticalAlignment="Center" Spacing="3">
                             <TextBlock
+                                Margin="8,0,0,0"
                                 Style="{StaticResource TitleBoldTextBlockStyle}"
                                 Text="{Binding CurrentProfileName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                 TextWrapping="Wrap" />

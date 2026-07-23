@@ -16,6 +16,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -393,7 +394,7 @@ namespace HandheldCompanion.ViewModels
                 if (desktopScreen is null)
                     return 60;
 
-                return desktopScreen.GetCurrentFrequency();
+                return desktopScreen.GetMaximumFrequency();
             }
         }
 
@@ -458,7 +459,10 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                lock (_collectionLock)
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return null;
+
+                try
                 {
                     if (!FramerateLimits.Any())
                         return null;
@@ -471,6 +475,10 @@ namespace HandheldCompanion.ViewModels
                         return exactLimit;
 
                     return FramerateLimits.FirstOrDefault(vm => vm.IsCustom);
+                }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
                 }
             }
             set
@@ -1374,7 +1382,10 @@ namespace HandheldCompanion.ViewModels
 
         private void MultimediaManager_PrimaryScreenChanged(DesktopScreen? screen)
         {
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 FramerateLimits.Clear();
 
@@ -1385,6 +1396,10 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 FramerateLimits.Add(new ScreenFramelimitViewModel(new ScreenFramelimit(-1, 0), Resources.Enum_InputsHotkeyType_Custom, true));
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
 
             if (SelectedPreset is not null && ShouldUseCustomFrameLimit(SelectedPreset.FramerateValue))
@@ -1456,9 +1471,16 @@ namespace HandheldCompanion.ViewModels
             if (framerateValue == 0)
                 return false;
 
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return false;
+
+            try
             {
                 return FramerateLimits.Any(vm => vm.IsCustom) && !FramerateLimits.Any(vm => !vm.IsCustom && vm.FrameLimit.limit == framerateValue);
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
         }
 

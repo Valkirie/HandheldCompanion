@@ -187,14 +187,26 @@ public static class DSUServer
     {
         int temp;
         poolLock.EnterWriteLock();
-        temp = listInd;
-        listInd = ++listInd % ARG_BUFFER_LEN;
+        try
+        {
+            temp = listInd;
+            listInd = ++listInd % ARG_BUFFER_LEN;
+        }
+        finally
+        {
+            poolLock.ExitWriteLock();
+        }
+
         SocketAsyncEventArgs args = new SocketAsyncEventArgs() { RemoteEndPoint = endpoint };
         args.SetBuffer(dataBuffers[temp], 0, 100);
         args.Completed += SocketEvent_AsyncCompleted;
-        poolLock.ExitWriteLock();
 
-        _pool.Wait();
+        if (!_pool.Wait(1000))
+        {
+            args.Dispose();
+            return;
+        }
+
         if (args.Buffer is null)
         {
             CompletedSynchronousSocketEvent(args);

@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Devices;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +18,7 @@ public static class MotherboardInfo
     private static readonly ManagementObjectSearcher videoControllerSearcher = new("root\\CIMV2", "SELECT * FROM Win32_VideoController");
     private static readonly ManagementObjectSearcher computerSearcher = new("root\\CIMV2", "SELECT * FROM Win32_ComputerSystem");
 
-    private static object cacheLock = new();
+    private static readonly object cacheLock = new();
     private static Dictionary<string, object> cache = [];
 
     private static readonly string cacheDirectory;
@@ -112,18 +113,21 @@ public static class MotherboardInfo
 
         // pull value if it exsts and check if correct
         object? result = null;
-        if (cache.TryGetValue($"{collectionName}-{query}", out result))
+        lock (cacheLock)
         {
-            switch (result)
+            if (cache.TryGetValue($"{collectionName}-{query}", out result))
             {
-                case string s when !string.IsNullOrEmpty(s):
-                case int i when i != 0:
-                case uint ui when ui != 0:
-                case long l when l != 0:
-                case double d when d != 0:
-                case short sh when sh != 0:
-                    hasvalue = true;
-                    break;
+                switch (result)
+                {
+                    case string s when !string.IsNullOrEmpty(s):
+                    case int i when i != 0:
+                    case uint ui when ui != 0:
+                    case long l when l != 0:
+                    case double d when d != 0:
+                    case short sh when sh != 0:
+                        hasvalue = true;
+                        break;
+                }
             }
         }
 
@@ -138,7 +142,9 @@ public static class MotherboardInfo
             if (result != null)
             {
                 // update cache
-                cache[$"{collectionName}-{query}"] = result;
+                lock (cacheLock)
+                    cache[$"{collectionName}-{query}"] = result;
+
                 writeCache();
             }
             else return string.Empty;
@@ -211,7 +217,8 @@ public static class MotherboardInfo
 
                     if (cache is not null)
                     {
-                        MotherboardInfo.cache = cache;
+                        // clone the cache to the static cache variable
+                        MotherboardInfo.cache = cache.ToDictionary(pair => pair.Key, pair => pair.Value is JValue value ? value.Value ?? string.Empty : pair.Value);
                         return true;
                     }
                 }

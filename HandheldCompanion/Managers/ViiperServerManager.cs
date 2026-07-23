@@ -1,7 +1,6 @@
 using HandheldCompanion.Shared;
 using HandheldCompanion.Targets.Viiper;
 using System;
-using System.Threading.Tasks;
 
 namespace HandheldCompanion.Managers;
 

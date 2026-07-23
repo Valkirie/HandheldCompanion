@@ -265,7 +265,7 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
         public int SensorSelection {
             get {
                 return ((int)(this["SensorSelection"]));
@@ -1201,6 +1201,18 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public double HotkeyRumbleStrength {
+            get {
+                return ((double)(this["HotkeyRumbleStrength"]));
+            }
+            set {
+                this["HotkeyRumbleStrength"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("2")]
         public int ProcessPriority {
             get {
@@ -1699,6 +1711,30 @@ namespace HandheldCompanion.Properties
             }
             set {
                 this["MainWindowApplyNoise"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int TctlLimit {
+            get {
+                return ((int)(this["TctlLimit"]));
+            }
+            set {
+                this["TctlLimit"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SkinTemperatureLimit {
+            get {
+                return ((int)(this["SkinTemperatureLimit"]));
+            }
+            set {
+                this["SkinTemperatureLimit"] = value;
             }
         }
     }

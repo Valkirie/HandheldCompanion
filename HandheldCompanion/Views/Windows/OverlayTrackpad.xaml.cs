@@ -28,7 +28,17 @@ public partial class OverlayTrackpad : OverlayWindow
     {
         InitializeComponent();
 
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        // raise events
+        switch (ManagerFactory.settingsManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
+        }
 
         // touch vars
         dpiInput = GetWindowsScaling();
@@ -36,10 +46,26 @@ public partial class OverlayTrackpad : OverlayWindow
         rightInput = new TouchInput();
     }
 
+    private void QuerySettings()
+    {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        SettingsManager_SettingValueChanged("OverlayTrackpadsSize", ManagerFactory.settingsManager.GetString("OverlayTrackpadsSize"), false, true);
+        SettingsManager_SettingValueChanged("OverlayTrackpadsAlignment", ManagerFactory.settingsManager.GetString("OverlayTrackpadsAlignment"), false, true);
+        SettingsManager_SettingValueChanged("OverlayTrackpadsOpacity", ManagerFactory.settingsManager.GetString("OverlayTrackpadsOpacity"), false, true);
+    }
+
+    private void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
     private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
     {
         // UI thread
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             switch (name)
             {

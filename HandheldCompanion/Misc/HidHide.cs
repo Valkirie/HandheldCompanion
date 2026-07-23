@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 
 namespace HandheldCompanion;
@@ -14,7 +15,8 @@ namespace HandheldCompanion;
 public static class HidHide
 {
     private static readonly Process? process;
-    private static object hidLock = new();
+    private static readonly object hidLock = new();
+    private const int HidLockTimeoutMs = 3000;
 
     static HidHide()
     {
@@ -53,10 +55,17 @@ public static class HidHide
     {
         try
         {
-            lock (hidLock)
+            if (!Monitor.TryEnter(hidLock, HidLockTimeoutMs))
+                throw new TimeoutException();
+
+            try
             {
                 HidHideControlService service = new HidHideControlService();
                 return service.ApplicationPaths.ToList();
+            }
+            finally
+            {
+                Monitor.Exit(hidLock);
             }
         }
         catch { }
@@ -68,10 +77,17 @@ public static class HidHide
     {
         try
         {
-            lock (hidLock)
+            if (!Monitor.TryEnter(hidLock, HidLockTimeoutMs))
+                throw new TimeoutException();
+
+            try
             {
                 HidHideControlService service = new HidHideControlService();
                 return service.BlockedInstanceIds.Select(x => x.ToUpper()).ToList();
+            }
+            finally
+            {
+                Monitor.Exit(hidLock);
             }
         }
         catch { }
@@ -95,7 +111,10 @@ public static class HidHide
     {
         try
         {
-            lock (hidLock)
+            if (!Monitor.TryEnter(hidLock, HidLockTimeoutMs))
+                throw new TimeoutException();
+
+            try
             {
                 HidHideControlService service = new HidHideControlService();
                 if (service.ApplicationPaths.Contains(fileName))
@@ -103,6 +122,10 @@ public static class HidHide
                     service.RemoveApplicationPath(fileName);
                     LogManager.LogInformation("HideDevice RemoveApplicationPath: {0}", fileName);
                 }
+            }
+            finally
+            {
+                Monitor.Exit(hidLock);
             }
         }
         catch
@@ -130,7 +153,10 @@ public static class HidHide
     {
         try
         {
-            lock (hidLock)
+            if (!Monitor.TryEnter(hidLock, HidLockTimeoutMs))
+                throw new TimeoutException();
+
+            try
             {
                 HidHideControlService service = new HidHideControlService();
                 if (!service.ApplicationPaths.Contains(fileName))
@@ -138,6 +164,10 @@ public static class HidHide
                     service.AddApplicationPath(fileName);
                     LogManager.LogInformation("HideDevice AddApplicationPath: {0}", fileName);
                 }
+            }
+            finally
+            {
+                Monitor.Exit(hidLock);
             }
         }
         catch
@@ -165,10 +195,17 @@ public static class HidHide
     {
         try
         {
-            lock (hidLock)
+            if (!Monitor.TryEnter(hidLock, HidLockTimeoutMs))
+                throw new TimeoutException();
+
+            try
             {
                 HidHideControlService service = new HidHideControlService { IsActive = status };
                 LogManager.LogInformation("HideDevice IsActive: {0}", status);
+            }
+            finally
+            {
+                Monitor.Exit(hidLock);
             }
         }
         catch
@@ -207,7 +244,10 @@ public static class HidHide
 
         try
         {
-            lock (hidLock)
+            if (!Monitor.TryEnter(hidLock, HidLockTimeoutMs))
+                throw new TimeoutException();
+
+            try
             {
                 HidHideControlService service = new HidHideControlService();
                 if (service.BlockedInstanceIds.Contains(deviceInstancePath))
@@ -215,6 +255,10 @@ public static class HidHide
                     service.RemoveBlockedInstanceId(deviceInstancePath);
                     LogManager.LogInformation("HideDevice RemoveBlockedInstanceId: {0}", deviceInstancePath);
                 }
+            }
+            finally
+            {
+                Monitor.Exit(hidLock);
             }
         }
         catch
@@ -245,7 +289,10 @@ public static class HidHide
 
         try
         {
-            lock (hidLock)
+            if (!Monitor.TryEnter(hidLock, HidLockTimeoutMs))
+                throw new TimeoutException();
+
+            try
             {
                 HidHideControlService service = new HidHideControlService();
                 if (!service.BlockedInstanceIds.Contains(deviceInstancePath))
@@ -253,6 +300,10 @@ public static class HidHide
                     service.AddBlockedInstanceId(deviceInstancePath);
                     LogManager.LogInformation("HideDevice AddBlockedInstanceId: {0}", deviceInstancePath);
                 }
+            }
+            finally
+            {
+                Monitor.Exit(hidLock);
             }
         }
         catch

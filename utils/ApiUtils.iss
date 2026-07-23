@@ -32,10 +32,6 @@ type
     hProcess: THandle;
   end;
 
-  WPARAM = UINT_PTR;
-  LPARAM = INT_PTR;
-  LRESULT = INT_PTR;
-
 	DWORDLONG = Int64;
 	TMemoryStatusEx = record
     dwLength: DWORD;

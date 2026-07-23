@@ -84,9 +84,7 @@ public partial class QuickProfilesPage : Page
         };
 
         // Wire up the create profile card to show the dialog
-        if (CreatePowerProfileCard is not null)
-        {
-            CreatePowerProfileCard.Click += async (s, e) =>
+        CreatePowerProfileCard?.Click += async (s, e) =>
             {
                 // Initialize the form first
                 viewModel.ShowCreateProfileFlyoutCommand.Execute(null);
@@ -109,7 +107,6 @@ public partial class QuickProfilesPage : Page
                     }
                 }
             };
-        }
     }
 
     private void Page_Loaded(object s, RoutedEventArgs e)

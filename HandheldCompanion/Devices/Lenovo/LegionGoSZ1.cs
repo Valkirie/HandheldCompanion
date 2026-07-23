@@ -4,7 +4,6 @@ using HandheldCompanion.Inputs;
 using HidLibrary;
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Windows.Media;
 using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -32,8 +31,7 @@ namespace HandheldCompanion.Devices.Lenovo
                 { 0xE311, new HidFilter(unchecked((short)0xFFA0), unchecked(0x0001)) }, // dinput
             };
 
-            GyroMatrix = new() { Axis = new Vector3(-1.0f, 1.0f, 1.0f) };
-            AcceleroMatrix = new() { Axis = new Vector3(-1.0f, 1.0f, 1.0f) };
+            // IMU matrices loaded from LegionGoSZ1.json
 
             nTDP = new double[] { 15, 15, 20 };
             cTDP = new double[] { 5, 30 };

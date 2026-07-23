@@ -111,7 +111,11 @@ namespace HandheldCompanion
         {
             bool Rumble = ManagerFactory.settingsManager.GetBoolean("HotkeyRumbleOnExecution");
             if (Rumble && !IsBackground && !IsInternal)
-                ControllerManager.GetTarget()?.Rumble();
+            {
+                double strength = Math.Clamp(ManagerFactory.settingsManager.GetDouble("HotkeyRumbleStrength"), 0, 100) / 100d;
+                byte motorStrength = (byte)(byte.MaxValue * strength);
+                ControllerManager.GetTarget()?.Rumble(LargeMotor: motorStrength, SmallMotor: motorStrength);
+            }
 
             command?.Execute(command.OnKeyDown && onKeyDown, command.OnKeyUp && onKeyUp, IsBackground);
         }

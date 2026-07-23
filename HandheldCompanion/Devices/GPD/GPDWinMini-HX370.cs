@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Numerics;
-
-namespace HandheldCompanion.Devices;
+﻿namespace HandheldCompanion.Devices;
 
 public class GPDWinMini_HX370 : GPDWinMini_8840U
 {
@@ -13,26 +10,6 @@ public class GPDWinMini_HX370 : GPDWinMini_8840U
         GfxClock = new double[] { 100, 2900 };
         CpuClock = 5100;
 
-        GyroMatrix = new()
-        {
-            Axis = new Vector3(-1.0f, -1.0f, 1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'Y' },
-                { 'Y', 'Z' },
-                { 'Z', 'X' }
-            }
-        };
-
-        AcceleroMatrix = new()
-        {
-            Axis = new Vector3(-1.0f, 1.0f, 1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' }
-            }
-        };
+        // IMU matrices loaded from GPDWinMini-HX370.json
     }
 }

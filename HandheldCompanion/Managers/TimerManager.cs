@@ -66,7 +66,7 @@ public static class TimerManager
         VirtualManager.MasterIntervalOverrideChanged += VirtualManager_MasterIntervalOverrideChanged;
 
         // raise events
-        SettingsManager_SettingValueChanged("MasterInterval", ManagerFactory.settingsManager.GetString("MasterInterval"), false, false);
+        SettingsManager_SettingValueChanged("MasterInterval", ManagerFactory.settingsManager.GetString("MasterInterval"), false, true);
         ApplyEffectiveMasterInterval();
     }
 

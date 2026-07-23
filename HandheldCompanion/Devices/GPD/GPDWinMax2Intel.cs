@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Numerics;
-
-namespace HandheldCompanion.Devices;
+﻿namespace HandheldCompanion.Devices;
 
 public class GPDWinMax2Intel : GPDWinMax2
 {
@@ -13,17 +10,6 @@ public class GPDWinMax2Intel : GPDWinMax2
         GfxClock = new double[] { 100, 1400 };
         CpuClock = 4700;
 
-        GyroMatrix = new()
-        {
-            Axis = new Vector3(1.0f, 1.0f, 1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' }
-            }
-        };
-
-        AcceleroMatrix = new() { Axis = new Vector3(-1.0f, -1.0f, 1.0f) };
+        // IMU matrices loaded from GPDWinMax2Intel.json
     }
 }

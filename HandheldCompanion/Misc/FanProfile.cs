@@ -65,7 +65,7 @@ namespace HandheldCompanion.Misc
             temp = Math.Clamp(temp, 0.0, 100.0);
 
             // Trip latch if we hit or exceed Tjmax
-            double tjmax = IDevice.GetCurrent().Tjmax;
+            uint tjmax = IDevice.GetCurrent().Tjmax;
             if (temp >= tjmax)
             {
                 if (!tjLatch)

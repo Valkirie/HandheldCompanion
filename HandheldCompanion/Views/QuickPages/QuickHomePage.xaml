@@ -13,7 +13,6 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="QuickHome"
     Title="{l:Static resx:Resources.QuickHomePage_Title}"
-    Margin="12,0,12,0"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:QuickHomePageViewModel}"
     d:DesignHeight="1200"
@@ -206,20 +205,21 @@
                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                     Glyph="&#xE706;" />
 
-                <ikw:SimpleStackPanel Margin="12,0,12,0" VerticalAlignment="Center">
-                    <Slider
-                        x:Name="SliderBrightness"
-                        IsEnabled="False"
-                        IsMoveToPointEnabled="True"
-                        IsSnapToTickEnabled="True"
-                        LargeChange="10"
-                        Maximum="100"
-                        Minimum="0"
-                        SmallChange="1"
-                        TickFrequency="1"
-                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                        ValueChanged="SliderBrightness_ValueChanged" />
-                </ikw:SimpleStackPanel>
+                <Slider
+                    x:Name="SliderBrightness"
+                    Margin="6,0,6,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    IsEnabled="False"
+                    IsMoveToPointEnabled="True"
+                    IsSnapToTickEnabled="True"
+                    LargeChange="10"
+                    Maximum="100"
+                    Minimum="0"
+                    SmallChange="1"
+                    TickFrequency="1"
+                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                    ValueChanged="SliderBrightness_ValueChanged" />
             </DockPanel>
 
             <DockPanel>
@@ -230,19 +230,20 @@
                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                     Glyph="&#xE767;" />
 
-                <ikw:SimpleStackPanel Margin="12,0,12,0" VerticalAlignment="Center">
-                    <Slider
-                        x:Name="SliderVolume"
-                        IsMoveToPointEnabled="True"
-                        IsSnapToTickEnabled="True"
-                        LargeChange="10"
-                        Maximum="100"
-                        Minimum="0"
-                        SmallChange="1"
-                        TickFrequency="1"
-                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                        ValueChanged="SliderVolume_ValueChanged" />
-                </ikw:SimpleStackPanel>
+                <Slider
+                    x:Name="SliderVolume"
+                    Margin="6,0,6,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    IsMoveToPointEnabled="True"
+                    IsSnapToTickEnabled="True"
+                    LargeChange="10"
+                    Maximum="100"
+                    Minimum="0"
+                    SmallChange="1"
+                    TickFrequency="1"
+                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                    ValueChanged="SliderVolume_ValueChanged" />
             </DockPanel>
         </ikw:SimpleStackPanel>
     </Grid>

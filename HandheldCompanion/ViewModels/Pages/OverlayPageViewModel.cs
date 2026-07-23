@@ -516,16 +516,16 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // raise events
-            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayRefreshRate, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayRefreshRate), false, false);
-            SettingsManager_SettingValueChanged("OverlayRenderInterval", ManagerFactory.settingsManager.GetDouble("OverlayRenderInterval"), false, false);
-            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayLevel), false, false);
-            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayTimeLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayTimeLevel), false, false);
-            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayFPSLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayFPSLevel), false, false);
-            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayCPULevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayCPULevel), false, false);
-            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayGPULevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayGPULevel), false, false);
-            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayRAMLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayRAMLevel), false, false);
-            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayVRAMLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayVRAMLevel), false, false);
-            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayBATTLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayBATTLevel), false, false);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayRefreshRate, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayRefreshRate), false, true);
+            SettingsManager_SettingValueChanged("OverlayRenderInterval", ManagerFactory.settingsManager.GetDouble("OverlayRenderInterval"), false, true);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayLevel), false, true);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayTimeLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayTimeLevel), false, true);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayFPSLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayFPSLevel), false, true);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayCPULevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayCPULevel), false, true);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayGPULevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayGPULevel), false, true);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayRAMLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayRAMLevel), false, true);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayVRAMLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayVRAMLevel), false, true);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayBATTLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayBATTLevel), false, true);
         }
 
         private void QueryGPU()

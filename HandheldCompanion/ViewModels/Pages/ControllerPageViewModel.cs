@@ -6,6 +6,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -463,9 +464,9 @@ namespace HandheldCompanion.ViewModels
             _virtualNotInSlot1 = ControllerManager.HasVirtualSlot1Issue;
 
             // raise events
-            foreach(IController controller in ControllerManager.GetControllers<IController>())
+            foreach (IController controller in ControllerManager.GetControllers<IController>())
                 ControllerPlugged(controller, false);
-            
+
             if (ControllerManager.HasTargetController && ControllerManager.GetTarget() is IController tController)
                 ControllerManager_ControllerSelected(tController);
         }
@@ -521,9 +522,9 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // raise events
-            SettingsManager_SettingValueChanged("HIDstatus", ManagerFactory.settingsManager.GetString("HIDstatus"), false, false);
-            SettingsManager_SettingValueChanged("SteamControllerMode", ManagerFactory.settingsManager.GetString("SteamControllerMode"), false, false);
-            SettingsManager_SettingValueChanged("ControllerSlotManagementMode", ManagerFactory.settingsManager.GetString("ControllerSlotManagementMode"), false, false);
+            SettingsManager_SettingValueChanged("HIDstatus", ManagerFactory.settingsManager.GetString("HIDstatus"), false, true);
+            SettingsManager_SettingValueChanged("SteamControllerMode", ManagerFactory.settingsManager.GetString("SteamControllerMode"), false, true);
+            SettingsManager_SettingValueChanged("ControllerSlotManagementMode", ManagerFactory.settingsManager.GetString("ControllerSlotManagementMode"), false, true);
             UpdateMasterIntervalOverrideInfo();
         }
 
@@ -551,7 +552,7 @@ namespace HandheldCompanion.ViewModels
             HIDManagedBySteamHybridVisibility = isOverridden ? Visibility.Visible : Visibility.Collapsed;
 
             // Disable combobox if profile manages HIDmode OR if Steam hybrid override is active
-            bool managedByProfile = !ManagerFactory.profileManager.GetCurrent().Default && 
+            bool managedByProfile = !ManagerFactory.profileManager.GetCurrent().Default &&
                                    ManagerFactory.profileManager.GetCurrent().HID != HIDmode.NotSelected;
             HidModeEnabled = !managedByProfile && !isOverridden;
         }
@@ -561,7 +562,10 @@ namespace HandheldCompanion.ViewModels
             ObservableCollection<ControllerViewModel> controllers = Controller.IsVirtual() ? VirtualControllers : PhysicalControllers;
             object lockObj = Controller.IsVirtual() ? _collectionLock2 : _collectionLock;
 
-            lock (lockObj)
+            if (!Monitor.TryEnter(lockObj, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 ControllerViewModel? foundController = controllers.FirstOrDefault(controller => controller.Controller?.GetInstanceId() == Controller.GetInstanceId());
                 if (foundController is null)
@@ -573,6 +577,10 @@ namespace HandheldCompanion.ViewModels
                     foundController.Controller = Controller;
                 }
             }
+            finally
+            {
+                Monitor.Exit(lockObj);
+            }
 
             Refresh();
         }
@@ -583,7 +591,10 @@ namespace HandheldCompanion.ViewModels
             ObservableCollection<ControllerViewModel> controllers = Controller.IsVirtual() ? VirtualControllers : PhysicalControllers;
             object lockObj = Controller.IsVirtual() ? _collectionLock2 : _collectionLock;
 
-            lock (lockObj)
+            if (!Monitor.TryEnter(lockObj, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 ControllerViewModel? foundController = controllers.FirstOrDefault(controller => controller.Controller?.GetInstanceId() == Controller.GetInstanceId());
                 if (foundController is not null && !IsPowerCycling)
@@ -596,6 +607,10 @@ namespace HandheldCompanion.ViewModels
                     LogManager.LogError("Couldn't find ControllerViewModel associated with {0}", Controller.ToString());
                 }
             }
+            finally
+            {
+                Monitor.Exit(lockObj);
+            }
 
             // do something
             Refresh();
@@ -606,10 +621,17 @@ namespace HandheldCompanion.ViewModels
             if (Controller is null)
                 return;
 
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 foreach (ControllerViewModel controller in PhysicalControllers)
                     controller.Updated();
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
 
             // check rumble
@@ -624,14 +646,29 @@ namespace HandheldCompanion.ViewModels
             IController? targetController = ControllerManager.GetTarget();
 
             bool hasPhysical, hasVirtual, hasTarget;
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 hasPhysical = PhysicalControllers.Any();
                 hasTarget = targetController != null && PhysicalControllers.Any(c => c.Controller?.GetInstanceId() == targetController.GetInstanceId());
             }
-            lock (_collectionLock2)
+            finally
+            {
+                Monitor.Exit(_collectionLock);
+            }
+
+            if (!Monitor.TryEnter(_collectionLock2, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 hasVirtual = VirtualControllers.Any();
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock2);
             }
 
             bool isHidden = hasTarget && targetController!.IsHidden();

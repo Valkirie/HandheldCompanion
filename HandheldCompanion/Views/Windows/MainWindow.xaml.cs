@@ -79,6 +79,7 @@ public partial class MainWindow : GamepadWindow
     private bool hasDeferredInitialShow;
     private bool pendingStartupFullscreen;
     private bool startupWindowReady;
+    private bool applyingStartupWindowState;
     private WindowState deferredStartupWindowState = WindowState.Minimized;
 
     // Track tray menu items for liked profiles
@@ -266,8 +267,9 @@ public partial class MainWindow : GamepadWindow
         ManagerFactory.notificationManager.Discarded += NotificationManagerUpdated;
 
         // raise events
-        foreach(var notification in ManagerFactory.notificationManager.Notifications)
-            NotificationManagerUpdated(notification);
+        if (ManagerFactory.notificationManager.Notifications.TryGetSnapshot(out Notification[] notifications, 2000))
+            foreach (Notification notification in notifications)
+                NotificationManagerUpdated(notification);
     }
 
     private void NotificationManager_Initialized()
@@ -289,8 +291,8 @@ public partial class MainWindow : GamepadWindow
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        SettingsManager_SettingValueChanged("LibraryPageEnabled", ManagerFactory.settingsManager.GetString("LibraryPageEnabled"), false, false);
-        SettingsManager_SettingValueChanged("PerformanceManagerEnabled", ManagerFactory.settingsManager.GetString("PerformanceManagerEnabled"), false, false);
+        SettingsManager_SettingValueChanged("LibraryPageEnabled", ManagerFactory.settingsManager.GetString("LibraryPageEnabled"), false, true);
+        SettingsManager_SettingValueChanged("PerformanceManagerEnabled", ManagerFactory.settingsManager.GetString("PerformanceManagerEnabled"), false, true);
     }
 
     private void QueryProfile()
@@ -383,7 +385,7 @@ public partial class MainWindow : GamepadWindow
     private void GamepadFocusManagerOnFocused(Control control)
     {
         // UI thread
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
 
@@ -485,7 +487,7 @@ public partial class MainWindow : GamepadWindow
     /// </summary>
     private void BuildTrayMenu()
     {
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             trayContextMenu.Items.Clear();
 
@@ -510,7 +512,7 @@ public partial class MainWindow : GamepadWindow
         if (profile == null || !profile.IsLiked || profile.Default || profileMenuItems.ContainsKey(profile.Guid))
             return;
 
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             // Extract icon from executable
             System.Drawing.Icon? profileIcon = null;
@@ -556,7 +558,7 @@ public partial class MainWindow : GamepadWindow
         if (profile == null || !profileMenuItems.ContainsKey(profile.Guid))
             return;
 
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             if (profileMenuItems.TryGetValue(profile.Guid, out var menuItem))
             {
@@ -593,7 +595,7 @@ public partial class MainWindow : GamepadWindow
     public void UpdateTaskbarState(TaskbarItemProgressState state)
     {
         // UI thread
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             this.TaskbarItem.ProgressState = state;
         });
@@ -604,7 +606,7 @@ public partial class MainWindow : GamepadWindow
         if (value < 0 || value > 1) return;
 
         // UI thread
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             this.TaskbarItem.ProgressValue = value;
         });
@@ -663,11 +665,11 @@ public partial class MainWindow : GamepadWindow
         {
             case "LibraryPageEnabled":
                 if (Convert.ToBoolean(value))
-                    UIHelper.TryInvoke(EnsureLibraryPage);
+                    UIHelper.TryBeginInvoke(EnsureLibraryPage);
                 break;
             case "PerformanceManagerEnabled":
                 if (Convert.ToBoolean(value))
-                    UIHelper.TryInvoke(EnsurePerformancePage);
+                    UIHelper.TryBeginInvoke(EnsurePerformancePage);
                 break;
         }
     }
@@ -754,7 +756,7 @@ public partial class MainWindow : GamepadWindow
 
     private void ShowTrayMenu()
     {
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             if (!trayContextMenu.Items.OfType<ToolStripItem>().Any(item => item.Available))
                 return;
@@ -988,14 +990,22 @@ public partial class MainWindow : GamepadWindow
 
         hasDeferredInitialShow = true;
 
-        if (deferredStartupWindowState == WindowState.Minimized)
-            TryHide();
-        else
+        applyingStartupWindowState = true;
+        try
         {
-            SetState(deferredStartupWindowState);
+            if (deferredStartupWindowState == WindowState.Minimized)
+                TryHide();
+            else
+            {
+                SetState(deferredStartupWindowState);
 
-            if (pendingStartupFullscreen)
-                EnterFullscreen();
+                if (pendingStartupFullscreen)
+                    EnterFullscreen();
+            }
+        }
+        finally
+        {
+            applyingStartupWindowState = false;
         }
     }
 
@@ -1424,7 +1434,7 @@ public partial class MainWindow : GamepadWindow
                     TryHide();
 
                     // Don't save state when minimizing due to CloseMinimises setting
-                    if (!_isClosingToMinimize && !isFseActive)
+                    if (!_isClosingToMinimize && !isFseActive && !applyingStartupWindowState)
                     {
                         prevWindowState = WindowState;
                         ManagerFactory.settingsManager.SetProperty("MainWindowState", (int)WindowState);
@@ -1457,7 +1467,7 @@ public partial class MainWindow : GamepadWindow
                             performanceViewModel.OnPageLoaded();
                     }
 
-                    if (!isFseActive)
+                    if (!isFseActive && !applyingStartupWindowState)
                     {
                         prevWindowState = WindowState;
                         ManagerFactory.settingsManager.SetProperty("MainWindowState", (int)WindowState);

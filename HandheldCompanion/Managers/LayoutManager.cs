@@ -335,8 +335,8 @@ public class LayoutManager : IManager
         => _mouseKeyboardAxes.Contains(axis);
 
     //  File I/O
-    // Called from a non-UI thread by FileSystemWatcher — marshal to UI thread
-    private void LayoutWatcher_Template(object sender, FileSystemEventArgs e) => UIHelper.TryInvoke(() => ProcessLayoutTemplate(e.FullPath));
+    // Called from a non-UI thread by FileSystemWatcher
+    private void LayoutWatcher_Template(object sender, FileSystemEventArgs e) => ProcessLayoutTemplate(e.FullPath);
 
     private Layout? ProcessLayout(string fileName)
     {
@@ -378,6 +378,11 @@ public class LayoutManager : IManager
             return;
         }
 
+        UIHelper.TryBeginInvoke(() => UpdateLayoutTemplate(layoutTemplate));
+    }
+
+    private void UpdateLayoutTemplate(LayoutTemplate layoutTemplate)
+    {
         int existingIndex = Templates.FindIndex(t => t.Guid == layoutTemplate.Guid);
         if (existingIndex >= 0)
             Templates[existingIndex] = layoutTemplate;

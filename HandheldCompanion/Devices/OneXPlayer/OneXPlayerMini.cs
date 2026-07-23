@@ -3,8 +3,6 @@ using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
 using System;
-using System.Collections.Generic;
-using System.Numerics;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;
@@ -17,27 +15,7 @@ public class OneXPlayerMini : OneXAOKZOE
         ProductIllustration = "device_onexplayer_mini";
         ProductModel = "ONEXPLAYERMini";
 
-        GyroMatrix = new()
-        {
-            Axis = new Vector3(1.0f, -1.0f, 1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' }
-            }
-        };
-
-        AcceleroMatrix = new()
-        {
-            Axis = new Vector3(-1.0f, -1.0f, 1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' }
-            }
-        };
+        // IMU matrices are now loaded from OneXPlayerMini.json via IDevice.ApplyDeviceConfiguration()
 
         ECDetails = new ECDetails
         {
@@ -152,7 +130,7 @@ public class OneXPlayerMiniAMD : OneXPlayerMini
         GfxClock = new double[] { 100, 2000 };
         CpuClock = 4400;
 
-        AcceleroMatrix = new() { Axis = new Vector3(1.0f, 1.0f, 1.0f) };
+        // IMU matrices loaded from OneXPlayerMiniAMD.json
     }
 }
 
@@ -166,17 +144,6 @@ public class OneXPlayerMiniIntel : OneXPlayerMini
         GfxClock = new double[] { 100, 1400 };
         CpuClock = 4700;
 
-        GyroMatrix = new()
-        {
-            Axis = new Vector3(1.0f, -1.0f, -1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'Y' },
-                { 'Y', 'Z' },
-                { 'Z', 'X' }
-            }
-        };
-
-        AcceleroMatrix = new() { Axis = new Vector3(1.0f, -1.0f, -1.0f) };
+        // IMU matrices loaded from OneXPlayerMiniIntel.json
     }
 }

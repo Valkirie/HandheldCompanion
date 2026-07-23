@@ -141,7 +141,9 @@ namespace HandheldCompanion.Processors.AMD
                 // Connect to PawnIO driver
                 if (!_pawnIO.Connect())
                 {
-                    if (!_pawnIO.IsInstalled() && !ManagerFactory.notificationManager.Notifications.Any(n => n is PawnIONotInstalledNotification))
+                    if (!_pawnIO.IsInstalled() &&
+                        ManagerFactory.notificationManager.Notifications.TryGetSnapshot(out Notification[] notifications, 100) &&
+                        !notifications.Any(n => n is PawnIONotInstalledNotification))
                         ManagerFactory.notificationManager.Add(PawnIONotInstalledNotification);
 
                     LogManager.LogError("Failed to connect to PawnIO driver. Is PawnIO installed?");
@@ -241,7 +243,7 @@ namespace HandheldCompanion.Processors.AMD
                 }
                 else if (_mailboxType.HasValue)
                 {
-                    LogManager.LogDebug("Using {0} mailbox. CMD={1}, RSP={2}, ARGS={3}", _mailboxType.Value, $"0x{MP1_ADDR_CMD:X}", $"0x{MP1_ADDR_RSP:X}", $"0x{MP1_ADDR_ARGS:X}");
+                    LogManager.LogTrace("Using {0} mailbox. CMD={1}, RSP={2}, ARGS={3}", _mailboxType.Value, $"0x{MP1_ADDR_CMD:X}", $"0x{MP1_ADDR_RSP:X}", $"0x{MP1_ADDR_ARGS:X}");
                 }
 
                 // Get SMU version
@@ -251,7 +253,7 @@ namespace HandheldCompanion.Processors.AMD
                 }
                 else
                 {
-                    LogManager.LogDebug("SMU version: {0}", $"0x{_smuVersion:X8}");
+                    LogManager.LogTrace("SMU version: {0}", $"0x{_smuVersion:X8}");
                 }
 
                 _initialized = true;
@@ -336,7 +338,7 @@ namespace HandheldCompanion.Processors.AMD
                     for (int i = 0; i < 6; i++)
                         response[i] = (uint)output[i];
 
-                    LogManager.LogDebug("SMU command {0} executed. Response: {1}", $"0x{command:X2}", string.Join(", ", response));
+                    LogManager.LogTrace("SMU command {0} executed. Response: {1}", $"0x{command:X2}", string.Join(", ", response));
 
                     return SmuStatus.OK;
                 }
@@ -559,7 +561,7 @@ namespace HandheldCompanion.Processors.AMD
 
             try
             {
-                LogManager.LogDebug("Sending SMU command {0} via mailbox ({1}) (CMD={2}, RSP={3}) with arg: {4}",
+                LogManager.LogTrace("Sending SMU command {0} via mailbox ({1}) (CMD={2}, RSP={3}) with arg: {4}",
                     $"0x{command:X2}",
                     _mailboxType.HasValue ? _mailboxType.Value.ToString() : "Unknown",
                     $"0x{MP1_ADDR_CMD:X}",
@@ -628,7 +630,7 @@ namespace HandheldCompanion.Processors.AMD
                     }
                 }
 
-                LogManager.LogDebug("SMU MP1 command {0} response: [{1}]", $"0x{command:X2}", string.Join(',', response));
+                LogManager.LogTrace("SMU MP1 command {0} response: [{1}]", $"0x{command:X2}", string.Join(',', response));
 
                 return SmuStatus.OK;
             }
@@ -652,35 +654,6 @@ namespace HandheldCompanion.Processors.AMD
                 return SendMp1Command(command, args, out response);
             else
                 return SendIotclCommand(command, args, out response);
-        }
-
-        /// <summary>
-        /// Sets all TDP limits at once (STAPM, Fast, Slow) in watts.
-        /// </summary>
-        /// <param name="stapmWatts">STAPM limit in watts.</param>
-        /// <param name="fastWatts">Fast/SPPL limit in watts.</param>
-        /// <param name="slowWatts">Slow/SPL limit in watts.</param>
-        public bool SetAllLimits(int stapmWatts, int fastWatts, int slowWatts)
-        {
-            LogManager.LogInformation("Setting TDP limits via PawnIO: STAPM={0}W, Fast={1}W, Slow={2}W", stapmWatts, fastWatts, slowWatts);
-
-            bool success = true;
-
-            // Convert to milliwatts
-            success &= SetStapmLimit((uint)(stapmWatts));
-            success &= SetFastLimit((uint)(fastWatts));
-            success &= SetSlowLimit((uint)(slowWatts));
-
-            if (success)
-            {
-                LogManager.LogInformation("TDP limits set successfully");
-            }
-            else
-            {
-                LogManager.LogError("Failed to set one or more TDP limits");
-            }
-
-            return success;
         }
 
         /// <summary>
@@ -761,6 +734,37 @@ namespace HandheldCompanion.Processors.AMD
             return timeout != 0 && response > 0;
         }
 
+        #region Setters
+
+        /// <summary>
+        /// Sets all TDP limits at once (STAPM, Fast, Slow) in watts.
+        /// </summary>
+        /// <param name="stapmWatts">STAPM limit in watts.</param>
+        /// <param name="fastWatts">Fast/SPPL limit in watts.</param>
+        /// <param name="slowWatts">Slow/SPL limit in watts.</param>
+        public bool SetAllLimits(int stapmWatts, int fastWatts, int slowWatts)
+        {
+            LogManager.LogInformation("Setting TDP limits via PawnIO: STAPM={0}W, Fast={1}W, Slow={2}W", stapmWatts, fastWatts, slowWatts);
+
+            bool success = true;
+
+            // Convert to milliwatts
+            success &= SetStapmLimit((uint)(stapmWatts));
+            success &= SetFastLimit((uint)(fastWatts));
+            success &= SetSlowLimit((uint)(slowWatts));
+
+            if (success)
+            {
+                LogManager.LogInformation("TDP limits set successfully");
+            }
+            else
+            {
+                LogManager.LogError("Failed to set one or more TDP limits");
+            }
+
+            return success;
+        }
+
         public bool SetStapmLimit(uint limitW)
         {
             uint cmdId = GetSetStapmCommand();
@@ -769,10 +773,7 @@ namespace HandheldCompanion.Processors.AMD
             // expected value is mW
             uint limitMw = limitW * 1000;
 
-            if (SendCommand(cmdId, new uint[] { limitMw }, out uint[] response) == SmuStatus.OK && response.Any())
-                return (response[0] == limitMw);
-
-            return false;
+            return SendCommand(cmdId, new uint[] { limitMw }, out uint[] response) == SmuStatus.OK && response.Any() && response[0] == limitMw;
         }
 
         public bool SetFastLimit(uint limitW)
@@ -783,10 +784,7 @@ namespace HandheldCompanion.Processors.AMD
             // expected value is mW
             uint limitMw = limitW * 1000;
 
-            if (SendCommand(cmdId, new uint[] { limitMw }, out uint[] response) == SmuStatus.OK && response.Any())
-                return (response[0] == limitMw);
-
-            return false;
+            return SendCommand(cmdId, new uint[] { limitMw }, out uint[] response) == SmuStatus.OK && response.Any() && response[0] == limitMw;
         }
 
         public bool SetSlowLimit(uint limitW)
@@ -797,11 +795,134 @@ namespace HandheldCompanion.Processors.AMD
             // expected value is mW
             uint limitMw = limitW * 1000;
 
-            if (SendCommand(cmdId, new uint[] { limitMw }, out uint[] response) == SmuStatus.OK && response.Any())
-                return (response[0] == limitMw);
-
-            return false;
+            return SendCommand(cmdId, new uint[] { limitMw }, out uint[] response) == SmuStatus.OK && response.Any() && response[0] == limitMw;
         }
+
+        public bool SetTctlTemp(uint tempC)
+        {
+            uint cmdId = GetSetTctlCommand();
+            if (cmdId == 0)
+                return false;
+
+            return SendCommand(cmdId, new uint[] { tempC }, out uint[] response) == SmuStatus.OK && response.Any() && response[0] == tempC;
+        }
+
+        public bool SetChtcTemp(uint tempC)
+        {
+            uint cmdId = GetSetChtcCommand();
+            if (cmdId == 0)
+                return false;
+
+            return SendCommand(cmdId, new uint[] { tempC }, out uint[] response) == SmuStatus.OK && response.Any() && response[0] == tempC;
+        }
+
+        public bool SetApuSkinTemp(uint tempC)
+        {
+            uint cmdId = GetSetApuSkinTempCommand();
+            if (cmdId == 0)
+                return false;
+
+            tempC *= 256;
+            return SendCommand(cmdId, new uint[] { tempC }, out uint[] response) == SmuStatus.OK && response.Any() && response[0] == tempC;
+        }
+
+        public bool SetPboScalar(uint scalar)
+        {
+            uint cmdId = GetSetPboScalarCommand();
+            if (cmdId == 0)
+                return false;
+
+            uint pboEnableCommand = GetSetPboEnableCommand();
+            if (pboEnableCommand != 0 && _mailboxType == SmuMailboxType.MP1)
+            {
+                SendMp1Command(pboEnableCommand, Array.Empty<uint>(), out _);
+            }
+
+            scalar *= 100;
+            return SendCommand(cmdId, new[] { scalar }, out uint[] resp) == SmuStatus.OK;
+        }
+
+        public bool SetGpuPsmMargin(int margin)
+        {
+            uint cmdId = GetSetGpuPsmMarginCommand();
+            if (cmdId == 0)
+                return false;
+
+            return SendCommand(cmdId, new[] { EncodePsmMargin(margin) }, out uint[] resp) == SmuStatus.OK;
+        }
+
+        public bool SetCpuSubsystemFrequencyLimit(CpuSubsystem subsystem, uint frequency, bool maximum = true)
+        {
+            uint cmdId = GetCpuSubsystemFrequencyCommand(subsystem, maximum);
+            if (cmdId == 0)
+                return false;
+
+            return SendCommand(cmdId, new[] { frequency }, out uint[] resp) == SmuStatus.OK;
+        }
+
+        // curve offset helper
+        public static uint EncodeCurveOffset(int steps) => (uint)(steps & 0xFFFFF);
+
+        public bool SetCoAll(int value)
+        {
+            uint cmdId = GetSetCoAllCommand();
+            if (cmdId == 0) return false;
+
+            uint encodedValue = EncodeCurveOffset(value);
+            return SendIotclCommand(cmdId, new[] { encodedValue }, out uint[] response) == SmuStatus.OK && response.Any() && response[0] == encodedValue;
+        }
+
+        public bool SetCoPer(int value)
+        {
+            uint cmdId = GetSetCoPerCommand();
+            if (cmdId == 0) return false;
+
+            uint encodedValue = EncodeCurveOffset(value);
+            return SendIotclCommand(cmdId, new[] { encodedValue }, out uint[] response) == SmuStatus.OK && response.Any() && response[0] == encodedValue;
+        }
+
+        public bool SetCoGfx(int value)
+        {
+            uint cmdId = GetSetCoGfxCommand();
+            if (cmdId == 0) return false;
+
+            uint encodedValue = EncodeCurveOffset(value);
+            return SendIotclCommand(cmdId, new[] { encodedValue }, out uint[] response) == SmuStatus.OK && response.Any() && response[0] == encodedValue;
+        }
+
+        public bool SetMinGfxClkFreq(uint value)
+        {
+            uint cmdId = GetSetMinGfxClkCommand();
+            if (cmdId == 0) return false;
+
+            return SendIotclCommand(cmdId, new[] { value }, out uint[] response) == SmuStatus.OK && response.Any() && response[0] == value;
+        }
+
+        public bool SetMaxGfxClkFreq(uint value)
+        {
+            uint cmdId = GetSetMaxGfxClkCommand();
+            if (cmdId == 0) return false;
+
+            return SendIotclCommand(cmdId, new[] { value }, out uint[] response) == SmuStatus.OK && response.Any() && response[0] == value;
+        }
+
+        public bool SetGfxClk(uint value)
+        {
+            uint cmdId = GetSetGfxClkCommand();
+            if (cmdId == 0) return false;
+
+            return SendIotclCommand(cmdId, new[] { value }, out uint[] response) == SmuStatus.OK && response.Any() && response[0] == value;
+        }
+
+        public static uint EncodePsmMargin(int margin)
+        {
+            int offset = margin < 0 ? 0x100000 : 0;
+            return (uint)(offset + margin) & 0xFFFF;
+        }
+
+        #endregion Setters
+
+        #region Getters
 
         public bool TryGetStapmLimit(out float stapmWatts)
         {
@@ -865,30 +986,52 @@ namespace HandheldCompanion.Processors.AMD
             return true;
         }
 
-        public static uint EncodeCurveOffset(int steps) => (uint)(steps & 0xFFFFF);
-
-        public bool SetCoAll(int value)
+        public bool TryGetTctlTemp(out uint tempC)
         {
-            uint cmdId = GetSetCoAllCommand();
-            if (cmdId == 0) return false;
+            tempC = 0;
 
-            return SendIotclCommand(cmdId, new[] { EncodeCurveOffset(value) }, out _) == SmuStatus.OK;
-        }
-
-        public bool SetPboScalar(uint scalar)
-        {
-            uint cmdId = GetSetPboScalarCommand();
+            uint cmdId = GetGetTctlCommand();
             if (cmdId == 0)
                 return false;
 
-            uint pboEnableCommand = GetSetPboEnableCommand();
-            if (pboEnableCommand != 0 && _mailboxType == SmuMailboxType.MP1)
-            {
-                SendMp1Command(pboEnableCommand, Array.Empty<uint>(), out _);
-            }
+            var status = SendCommand(cmdId, new uint[] { 0 }, out uint[] resp);
+            if (status != SmuStatus.OK || resp == null || resp.Length == 0)
+                return false;
 
-            uint scalarValue = scalar * 100;
-            return SendCommand(cmdId, new[] { scalarValue }, out _) == SmuStatus.OK;
+            tempC = resp[0];
+            return tempC > 0;
+        }
+
+        public bool TryGetChtcTemp(out uint tempC)
+        {
+            tempC = 0;
+
+            uint cmdId = GetGetChtcCommand();
+            if (cmdId == 0)
+                return false;
+
+            var status = SendCommand(cmdId, new uint[] { 0 }, out uint[] resp);
+            if (status != SmuStatus.OK || resp == null || resp.Length == 0)
+                return false;
+
+            tempC = resp[0];
+            return tempC > 0;
+        }
+
+        public bool TryGetApuSkinTemp(out uint tempC)
+        {
+            tempC = 0;
+
+            uint cmdId = GetSetApuSkinTempCommand();
+            if (cmdId == 0)
+                return false;
+
+            var status = SendCommand(cmdId, new uint[] { 0 }, out uint[] resp);
+            if (status != SmuStatus.OK || resp == null || resp.Length == 0)
+                return false;
+
+            tempC = resp[0];
+            return tempC > 0;
         }
 
         public bool TryGetGpuPsmMargin(out uint margin)
@@ -905,21 +1048,6 @@ namespace HandheldCompanion.Processors.AMD
 
             margin = response[0];
             return true;
-        }
-
-        public static uint EncodePsmMargin(int margin)
-        {
-            int offset = margin < 0 ? 0x100000 : 0;
-            return (uint)(offset + margin) & 0xFFFF;
-        }
-
-        public bool SetGpuPsmMargin(int margin)
-        {
-            uint cmdId = GetSetGpuPsmMarginCommand();
-            if (cmdId == 0)
-                return false;
-
-            return SendCommand(cmdId, new[] { EncodePsmMargin(margin) }, out _) == SmuStatus.OK;
         }
 
         public bool TryGetSystemPowerLimit(out SystemPowerLimit systemPowerLimit)
@@ -944,54 +1072,7 @@ namespace HandheldCompanion.Processors.AMD
             return true;
         }
 
-        public bool SetCpuSubsystemFrequencyLimit(CpuSubsystem subsystem, uint frequency, bool maximum = true)
-        {
-            uint cmdId = GetCpuSubsystemFrequencyCommand(subsystem, maximum);
-            if (cmdId == 0)
-                return false;
-
-            return SendCommand(cmdId, new[] { frequency }, out _) == SmuStatus.OK;
-        }
-
-        public bool SetCoPer(int value)
-        {
-            uint cmdId = GetSetCoPerCommand();
-            if (cmdId == 0) return false;
-
-            return SendIotclCommand(cmdId, new[] { EncodeCurveOffset(value) }, out _) == SmuStatus.OK;
-        }
-
-        public bool SetCoGfx(int value)
-        {
-            uint cmdId = GetSetCoGfxCommand();
-            if (cmdId == 0) return false;
-
-            return SendIotclCommand(cmdId, new[] { EncodeCurveOffset(value) }, out _) == SmuStatus.OK;
-        }
-
-        public bool SetMinGfxClkFreq(uint value)
-        {
-            uint cmdId = GetSetMinGfxClkCommand();
-            if (cmdId == 0) return false;
-
-            return SendIotclCommand(cmdId, new[] { value }, out _) == SmuStatus.OK;
-        }
-
-        public bool SetMaxGfxClkFreq(uint value)
-        {
-            uint cmdId = GetSetMaxGfxClkCommand();
-            if (cmdId == 0) return false;
-
-            return SendIotclCommand(cmdId, new[] { value }, out _) == SmuStatus.OK;
-        }
-
-        public bool SetGfxClk(uint value)
-        {
-            uint cmdId = GetSetGfxClkCommand();
-            if (cmdId == 0) return false;
-
-            return SendIotclCommand(cmdId, new[] { value }, out _) == SmuStatus.OK;
-        }
+        #endregion Getters
 
         public bool CanSetTDP() => GetSetFastCommand() != 0;
         public bool CanSetGfxClk() => GetSetGfxClkCommand() != 0 || GetSetMinGfxClkCommand() != 0;
@@ -999,7 +1080,15 @@ namespace HandheldCompanion.Processors.AMD
         public bool CanSetCoPer() => GetSetCoPerCommand() != 0;
         public bool CanSetCoGfx() => GetSetCoGfxCommand() != 0;
         public bool CanSetPboScalar() => GetSetPboScalarCommand() != 0;
+        public bool CanSetTctlTemp() => GetSetTctlCommand() != 0;
+        public bool CanSetChtcTemp() => GetSetChtcCommand() != 0;
+        public bool CanSetApuSkinTemp() => GetSetApuSkinTempCommand() != 0;
         public bool CanSetCpuSubsystemFrequency(CpuSubsystem subsystem, bool maximum = true) => GetCpuSubsystemFrequencyCommand(subsystem, maximum) != 0;
+
+        public bool CanGetTctlTemp() => GetGetTctlCommand() != 0;
+        public bool CanGetChtcTemp() => GetGetChtcCommand() != 0;
+
+        #region Commands
 
         private uint GetSetStapmCommand()
         {
@@ -1307,6 +1396,156 @@ namespace HandheldCompanion.Processors.AMD
             return 0;
         }
 
+        private uint GetSetTctlCommand()
+        {
+            switch (_cpuCodeName)
+            {
+                case CpuCodeName.RavenRidge:
+                case CpuCodeName.RavenRidge2:
+                case CpuCodeName.Picasso:
+                case CpuCodeName.Dali:
+                    return 0x1F;
+
+                case CpuCodeName.Renoir:
+                case CpuCodeName.Lucienne:
+                case CpuCodeName.Cezanne:
+                case CpuCodeName.Vangogh:
+                case CpuCodeName.Rembrandt:
+                case CpuCodeName.Mendocino:
+                case CpuCodeName.Phoenix:
+                case CpuCodeName.Phoenix2:
+                case CpuCodeName.HawkPoint:
+                case CpuCodeName.KrackanPoint:
+                case CpuCodeName.StrixPoint:
+                case CpuCodeName.StrixHalo:
+                    return 0x19;
+
+                case CpuCodeName.DragonRange:
+                //case CpuCodeName.FireRange:
+                case CpuCodeName.Raphael:
+                case CpuCodeName.GraniteRidge:
+                    return 0x3F;
+            }
+
+            return 0;
+        }
+
+        private uint GetGetTctlCommand()
+        {
+            switch (_cpuCodeName)
+            {
+                case CpuCodeName.RavenRidge:
+                case CpuCodeName.RavenRidge2:
+                case CpuCodeName.Picasso:
+                case CpuCodeName.Dali:
+                    return 0x33;
+
+                case CpuCodeName.Renoir:
+                case CpuCodeName.Lucienne:
+                case CpuCodeName.Cezanne:
+                case CpuCodeName.Vangogh:
+                case CpuCodeName.Rembrandt:
+                case CpuCodeName.Mendocino:
+                case CpuCodeName.Phoenix:
+                case CpuCodeName.Phoenix2:
+                case CpuCodeName.HawkPoint:
+                case CpuCodeName.KrackanPoint:
+                case CpuCodeName.StrixPoint:
+                case CpuCodeName.StrixHalo:
+                    return 0; // No read command for these families
+
+                case CpuCodeName.DragonRange:
+                //case CpuCodeName.FireRange:
+                case CpuCodeName.Raphael:
+                case CpuCodeName.GraniteRidge:
+                    return 0x59;
+            }
+
+            return 0;
+        }
+
+        private uint GetGetChtcCommand()
+        {
+            switch (_cpuCodeName)
+            {
+                case CpuCodeName.RavenRidge:
+                case CpuCodeName.RavenRidge2:
+                case CpuCodeName.Picasso:
+                case CpuCodeName.Dali:
+                    return 0x56;
+
+                case CpuCodeName.Renoir:
+                case CpuCodeName.Lucienne:
+                case CpuCodeName.Cezanne:
+                case CpuCodeName.Vangogh:
+                    return 0x37;
+
+                case CpuCodeName.Rembrandt:
+                case CpuCodeName.Mendocino:
+                case CpuCodeName.Phoenix:
+                case CpuCodeName.Phoenix2:
+                case CpuCodeName.HawkPoint:
+                case CpuCodeName.KrackanPoint:
+                case CpuCodeName.KrackanPoint2:
+                case CpuCodeName.StrixPoint:
+                case CpuCodeName.StrixHalo:
+                    return 0x37;
+
+                case CpuCodeName.DragonRange:
+                case CpuCodeName.Raphael:
+                case CpuCodeName.GraniteRidge:
+                    return 0x59;
+            }
+
+            return 0;
+        }
+
+        private uint GetSetChtcCommand()
+        {
+            switch (_cpuCodeName)
+            {
+                case CpuCodeName.Rembrandt:
+                case CpuCodeName.Mendocino:
+                case CpuCodeName.Phoenix:
+                case CpuCodeName.Phoenix2:
+                case CpuCodeName.HawkPoint:
+                case CpuCodeName.KrackanPoint:
+                case CpuCodeName.KrackanPoint2:
+                case CpuCodeName.StrixPoint:
+                case CpuCodeName.StrixHalo:
+                    return 0x63;
+            }
+
+            return 0;
+        }
+
+        private uint GetSetApuSkinTempCommand()
+        {
+            switch (_cpuCodeName)
+            {
+                case CpuCodeName.Renoir:
+                case CpuCodeName.Lucienne:
+                case CpuCodeName.Cezanne:
+                    return 0x38;
+
+                case CpuCodeName.Vangogh:
+                case CpuCodeName.Rembrandt:
+                case CpuCodeName.Mendocino:
+                case CpuCodeName.Phoenix:
+                case CpuCodeName.Phoenix2:
+                case CpuCodeName.HawkPoint:
+                    return 0x33;
+
+                case CpuCodeName.KrackanPoint:
+                case CpuCodeName.KrackanPoint2:
+                case CpuCodeName.StrixPoint:
+                case CpuCodeName.StrixHalo:
+                    return 0x33;
+            }
+
+            return 0;
+        }
+
         private uint GetSetCoAllCommand()
         {
             switch (_cpuCodeName)
@@ -1441,6 +1680,8 @@ namespace HandheldCompanion.Processors.AMD
 
             return 0;
         }
+
+        #endregion Commands
 
         public void Dispose()
         {

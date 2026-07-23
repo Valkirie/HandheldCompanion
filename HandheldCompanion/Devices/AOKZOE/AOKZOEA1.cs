@@ -3,7 +3,6 @@ using HandheldCompanion.Inputs;
 using HidLibrary;
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -27,27 +26,7 @@ public class AOKZOEA1 : OneXAOKZOE
         GfxClock = new double[] { 100, 2200 };
         CpuClock = 4700;
 
-        GyroMatrix = new()
-        {
-            Axis = new Vector3(1.0f, -1.0f, 1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' }
-            }
-        };
-
-        AcceleroMatrix = new()
-        {
-            Axis = new Vector3(1.0f, -1.0f, -1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' }
-            }
-        };
+        // IMU matrices loaded from AOKZOEA1.json
 
         // device specific capacities
         Capabilities |= DeviceCapabilities.DynamicLighting;

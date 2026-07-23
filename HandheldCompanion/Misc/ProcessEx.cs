@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows.Automation;
@@ -379,7 +380,23 @@ public class ProcessEx : IDisposable, ICloneable
 
     public void AttachWindow(AutomationElement automationElement, bool primary = false)
     {
-        int hwnd = automationElement.Current.NativeWindowHandle;
+        int hwnd = 0;
+        try
+        {
+            // Access Current property with error handling
+            hwnd = automationElement.Current.NativeWindowHandle;
+        }
+        catch (COMException)
+        {
+            // Window closed or automation element became invalid
+            return;
+        }
+        catch (InvalidOperationException)
+        {
+            // Element was disposed
+            return;
+        }
+
         if (!ProcessWindows.TryGetValue(hwnd, out var window))
         {
             // create new window object
@@ -450,10 +467,17 @@ public class ProcessEx : IDisposable, ICloneable
         {
             if (value != IsSuspended)
             {
-                if (value)
-                    ProcessManager.SuspendProcess(this).Wait();
-                else
-                    ProcessManager.ResumeProcess(this).Wait();
+                try
+                {
+                    if (value)
+                        ProcessManager.SuspendProcess(this).Wait(TimeSpan.FromSeconds(5));
+                    else
+                        ProcessManager.ResumeProcess(this).Wait(TimeSpan.FromSeconds(5));
+                }
+                catch
+                {
+                    // Process suspension is best effort; do not block indefinitely.
+                }
             }
         }
     }

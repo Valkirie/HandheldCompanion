@@ -1,6 +1,4 @@
 ﻿using HandheldCompanion.Inputs;
-using System.Collections.Generic;
-using System.Numerics;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;
@@ -32,27 +30,7 @@ public class GPDWin4_2024 : IDevice
             FanValueMax = 184
         };
 
-        GyroMatrix = new()
-        {
-            Axis = new Vector3(1.0f, -1.0f, -1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'Y' },
-                { 'Y', 'Z' },
-                { 'Z', 'X' }
-            }
-        };
-
-        AcceleroMatrix = new()
-        {
-            Axis = new Vector3(-1.0f, -1.0f, 1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' }
-            }
-        };
+        // IMU matrices loaded from GPDWin4-2024.json
 
         // Note, OEM1 not configured as this device has it's own Menu button for guide button
 

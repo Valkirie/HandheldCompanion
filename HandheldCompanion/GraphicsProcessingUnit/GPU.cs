@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management;
-using System.ServiceProcess;
 using System.Threading;
 using System.Timers;
 using Timer = System.Timers.Timer;
@@ -104,6 +103,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         {
             if (!halting && IsInitialized)
             {
+                bool notifyFree = false;
+                T result = defaultValue;
+
                 lock (functionLock)
                 {
                     try
@@ -116,19 +118,24 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                         BusyTimer?.Start();
 
                         // Execute function
-                        T result = func();
+                        result = func();
 
                         // Stop timer since func() has completed
                         BusyTimer?.Stop();
 
                         // If the busy event was raised, signal that we're now free.
                         if (busyEventRaised)
-                            StatusChanged?.Invoke(false);
-
-                        return result;
+                            notifyFree = true;
                     }
                     catch { }
                 }
+
+                // Invoke callbacks after releasing functionLock so handlers may safely
+                // query or update the GPU without creating a lock cycle.
+                if (notifyFree)
+                    StatusChanged?.Invoke(false);
+
+                return result;
             }
 
             return defaultValue;

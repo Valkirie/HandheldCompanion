@@ -1,4 +1,3 @@
-using System;
 using HandheldCompanion.ViewModels;
 using System.Windows.Controls;
 

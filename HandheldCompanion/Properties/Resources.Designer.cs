@@ -6071,6 +6071,24 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("HotkeysPage_RumbleOnExecutionDesc", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Rumble strength.
+        /// </summary>
+        public static string HotkeysPage_RumbleStrength {
+            get {
+                return ResourceManager.GetString("HotkeysPage_RumbleStrength", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Sets the controller vibration strength when a hotkey is executed.
+        /// </summary>
+        public static string HotkeysPage_RumbleStrengthDesc {
+            get {
+                return ResourceManager.GetString("HotkeysPage_RumbleStrengthDesc", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
@@ -12011,6 +12029,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Skin temperature limit (°C).
+        /// </summary>
+        public static string SettingsPage_SkinTemp {
+            get {
+                return ResourceManager.GetString("SettingsPage_SkinTemp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sets the maximum allowed temperature, in celsius, for the device&apos;s surface.
+        /// </summary>
+        public static string SettingsPage_SkinTempDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_SkinTempDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Startup type.
         /// </summary>
         public static string SettingsPage_StartupType {
@@ -12025,6 +12061,24 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_StartupTypeDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_StartupTypeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Temperature limit (°C).
+        /// </summary>
+        public static string SettingsPage_TctlTemp {
+            get {
+                return ResourceManager.GetString("SettingsPage_TctlTemp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sets the maximum allowed temperature, in celsius, for the processor.
+        /// </summary>
+        public static string SettingsPage_TctlTempDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_TctlTempDesc", resourceCulture);
             }
         }
         
@@ -12405,6 +12459,15 @@ namespace HandheldCompanion.Properties {
         public static string XInputController_Warning_BTH {
             get {
                 return ResourceManager.GetString("XInputController_Warning_BTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One of your detachable controllers is still disconnected. Please manually power cycle the disconnected controller by pressing and holding its power button until it reconnects..
+        /// </summary>
+        public static string XInputController_Warning_LegionWireless {
+            get {
+                return ResourceManager.GetString("XInputController_Warning_LegionWireless", resourceCulture);
             }
         }
         

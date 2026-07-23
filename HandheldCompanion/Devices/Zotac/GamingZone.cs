@@ -7,7 +7,6 @@ using HidLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -76,27 +75,7 @@ namespace HandheldCompanion.Devices.Zotac
             this.GfxClock = new double[] { 100, 2700 };
             this.CpuClock = 5100;
 
-            GyroMatrix = new()
-            {
-                Axis = new Vector3(1.0f, 1.0f, -1.0f),
-                AxisSwap = new SortedDictionary<char, char>
-                {
-                    { 'X', 'X' },
-                    { 'Y', 'Z' },
-                    { 'Z', 'Y' }
-                }
-            };
-
-            AcceleroMatrix = new()
-            {
-                Axis = new Vector3(1.0f, 1.0f, 1.0f),
-                AxisSwap = new SortedDictionary<char, char>
-                {
-                    { 'X', 'X' },
-                    { 'Y', 'Z' },
-                    { 'Z', 'Y' }
-                }
-            };
+            // IMU matrices loaded from GamingZone.json
 
             this.OEMChords.Add(new KeyboardChord("ZOTAC key",
                 [KeyCode.LControl, KeyCode.LWin, KeyCode.F17],
@@ -204,7 +183,7 @@ namespace HandheldCompanion.Devices.Zotac
         protected override void QuerySettings()
         {
             // raise events
-            SettingsManager_SettingValueChanged("ZotacGamingZoneVRAM", ManagerFactory.settingsManager.GetInt("ZotacGamingZoneVRAM"), false, false);
+            SettingsManager_SettingValueChanged("ZotacGamingZoneVRAM", ManagerFactory.settingsManager.GetInt("ZotacGamingZoneVRAM"), false, true);
 
             base.QuerySettings();
         }

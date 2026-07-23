@@ -4,7 +4,6 @@ using HandheldCompanion.Views.Pages.Library;
 using iNKORE.UI.WPF.Modern.Controls;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Navigation;
 
 using Page = System.Windows.Controls.Page;

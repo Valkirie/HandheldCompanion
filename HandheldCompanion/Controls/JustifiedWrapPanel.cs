@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -582,7 +583,10 @@ namespace HandheldCompanion.Controls
 
         private static PropertyInfo? GetCachedProperty(Type type, string propertyName)
         {
-            lock (PropertyCacheSync)
+            if (!Monitor.TryEnter(PropertyCacheSync))
+                return null;
+
+            try
             {
                 if (PropertyCache.TryGetValue((type, propertyName), out PropertyInfo? propertyInfo))
                     return propertyInfo;
@@ -590,6 +594,10 @@ namespace HandheldCompanion.Controls
                 propertyInfo = type.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public);
                 PropertyCache[(type, propertyName)] = propertyInfo;
                 return propertyInfo;
+            }
+            finally
+            {
+                Monitor.Exit(PropertyCacheSync);
             }
         }
 

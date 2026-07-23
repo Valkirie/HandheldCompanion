@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Numerics;
-using HandheldCompanion.Commands.Functions.HC;
+﻿using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Inputs;
 using WindowsInput.Events;
@@ -15,27 +13,7 @@ namespace HandheldCompanion.Devices.OneXPlayer
             ProductModel = "ONEXPLAYERAPEX";
             VendorHidInitProfile = OxpHidInitProfile.Apex;
 
-            GyroMatrix = new()
-            {
-                Axis = new Vector3(1.0f, -1.0f, 1.0f),
-                AxisSwap = new SortedDictionary<char, char>
-                {
-                    { 'X', 'Y' },
-                    { 'Y', 'X' },
-                    { 'Z', 'Z' },
-                }
-            };
-
-            AcceleroMatrix = new()
-            {
-                Axis = new Vector3(-1.0f, 1.0f, -1.0f),
-                AxisSwap = new SortedDictionary<char, char>
-                {
-                    { 'X', 'Y' },
-                    { 'Y', 'X' },
-                    { 'Z', 'Z' },
-                }
-            };
+            // IMU matrices loaded from OneXPlayerApex.json
 
             nTDP = new double[] { 25, 35, 65 };
             cTDP = new double[] { 25, 65 };

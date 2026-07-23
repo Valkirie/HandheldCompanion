@@ -59,15 +59,13 @@ namespace HandheldCompanion.Views.Pages
         private void CreateProfileCancelButton_Click(object sender, RoutedEventArgs e)
         {
             var flyout = FindName("CreateProfileFlyout") as Flyout;
-            if (flyout is not null)
-                flyout.Hide();
+            flyout?.Hide();
         }
 
         private void CreateProfileConfirmButton_Click(object sender, RoutedEventArgs e)
         {
             var flyout = FindName("CreateProfileFlyout") as Flyout;
-            if (flyout is not null)
-                flyout.Hide();
+            flyout?.Hide();
         }
     }
 }

@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 
 namespace HandheldCompanion.Devices;
 
@@ -13,11 +12,7 @@ public class ROGAllyX : ROGAlly
         // device specific settings
         ProductIllustration = "device_rog_ally_x";
 
-        // overwrite ROGAlly default gyrometer axis settings
-        GyroMatrix = new()
-        {
-            Axis = new Vector3(1.0f, 1.0f, -1.0f)
-        };
+        // IMU matrices loaded from ROGAllyX.json
 
         // overwrite ROGAlly default power profiles
         Dictionary<Guid, double[]> tdpOverrides = new Dictionary<Guid, double[]>

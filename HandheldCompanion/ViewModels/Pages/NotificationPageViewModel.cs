@@ -1,7 +1,9 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Notifications;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Windows.Data;
 
 namespace HandheldCompanion.ViewModels.Pages
@@ -34,8 +36,9 @@ namespace HandheldCompanion.ViewModels.Pages
             ManagerFactory.notificationManager.Added += NotificationManager_Added;
             ManagerFactory.notificationManager.Discarded += NotificationManager_Discarded;
 
-            foreach (Notification notification in ManagerFactory.notificationManager.Notifications)
-                NotificationManager_Added(notification);
+            if (ManagerFactory.notificationManager.Notifications.TryGetSnapshot(out Notification[] notifications, 2000))
+                foreach (Notification notification in notifications)
+                    NotificationManager_Added(notification);
         }
 
         private void NotificationManager_Initialized()
@@ -48,7 +51,10 @@ namespace HandheldCompanion.ViewModels.Pages
             if (notification.IsInternal)
                 return;
 
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 NotificationViewModel? foundNotification = Notifications.FirstOrDefault(n => n.Notification == notification || n.Notification.Guid == notification.Guid);
                 if (foundNotification is not null)
@@ -56,6 +62,10 @@ namespace HandheldCompanion.ViewModels.Pages
                     Notifications.Remove(foundNotification);
                     foundNotification.Dispose();
                 }
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
 
             OnPropertyChanged(nameof(HasNotifications));
@@ -66,13 +76,20 @@ namespace HandheldCompanion.ViewModels.Pages
             if (notification.IsInternal)
                 return;
 
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 NotificationViewModel? foundNotification = Notifications.FirstOrDefault(n => n.Notification == notification || n.Notification.Guid == notification.Guid);
                 if (foundNotification is null)
                     Notifications.Add(new NotificationViewModel(notification));
                 else
                     foundNotification.Notification = notification;
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
 
             OnPropertyChanged(nameof(HasNotifications));

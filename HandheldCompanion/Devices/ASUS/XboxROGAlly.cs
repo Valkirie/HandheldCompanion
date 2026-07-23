@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 
 namespace HandheldCompanion.Devices;
 
@@ -19,27 +18,7 @@ public class XboxROGAlly : ROGAlly
         GfxClock = new double[] { 100, 1800 };
         CpuClock = 3800;
 
-        GyroMatrix = new()
-        {
-            Axis = new Vector3(1.0f, 1.0f, -1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' }
-            }
-        };
-
-        AcceleroMatrix = new()
-        {
-            Axis = new Vector3(-1.0f, -1.0f, 1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' }
-            }
-        };
+        // IMU matrices loaded from XboxROGAlly.json
 
         // overwrite ROGAlly default power profiles
         Dictionary<Guid, double[]> tdpOverrides = new Dictionary<Guid, double[]>

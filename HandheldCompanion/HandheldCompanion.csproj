@@ -11,7 +11,7 @@
 		<StartupObject>HandheldCompanion.App</StartupObject>
 		<OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
 		<ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-		<Version>0.32.2.0</Version>
+		<Version>0.34.4.0</Version>
 		<Platforms>x64</Platforms>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
@@ -243,16 +243,16 @@
 		<PackageReference Include="protobuf-net" Version="3.2.56" />
 		<PackageReference Include="protobuf-net.Core" Version="3.3.0-g6785ecbb35" />
 		<PackageReference Include="RAMSPDToolkit-NDD" Version="1.5.0" />
-		<PackageReference Include="SDL3-CS" Version="3.4.10.5" />
-		<PackageReference Include="Sentry" Version="6.6.0" />
+		<PackageReference Include="SDL3-CS" Version="3.4.12.3" />
+		<PackageReference Include="Sentry" Version="6.7.0" />
 		<PackageReference Include="SharpDX" Version="4.2.0" />
 		<PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
 		<PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
 		<PackageReference Include="SharpDX.XInput" Version="4.2.0" />
-		<PackageReference Include="System.Drawing.Common" Version="10.0.9" />
-		<PackageReference Include="System.IO.Ports" Version="10.0.9" />
-		<PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.9" />
-		<PackageReference Include="System.Text.Json" Version="10.0.9" />
+		<PackageReference Include="System.Drawing.Common" Version="10.0.10" />
+		<PackageReference Include="System.IO.Ports" Version="10.0.10" />
+		<PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.10" />
+		<PackageReference Include="System.Text.Json" Version="10.0.10" />
 		<PackageReference Include="WindowsAPICodePack" Version="8.0.15.2" />
 		<PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
 		<PackageReference Include="WindowsInput" Version="6.4.1" />
@@ -2312,6 +2312,147 @@
 		<None Update="Properties\Settings.settings">
 			<Generator>SettingsSingleFileGenerator</Generator>
 			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
+		</None>
+		<None Update="Resources\Devices\AOKZOEA1.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\AYANEO2.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\AYANEO2021.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\AYANEOAIR.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\AYANEODeviceCEc.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\AYANEODeviceCEii.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\AYANEOFlip1SDS.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\AYANEOFlip1SKB.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\AYANEOFlipKB.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\AYANEONEXT.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\AYANEOSlide.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\AynLoki.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\ClawA1M.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\ClawA2VM.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\ClawBZ2EM.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\ClawCG3EM.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\DefaultDevice.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\GamingZone.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\GPDWin4-2023.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\GPDWin4-2024.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\GPDWin4.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\GPDWin5.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\GPDWinMax2-2024-HX370.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\GPDWinMax2.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\GPDWinMax2Intel.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\GPDWinMini-8840U.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\GPDWinMini-HX370.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\GPDWinMini.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\LegionGoSZ1.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\LegionGoTablet.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\LegionGoTablet2.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\MinisforumV3.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\OneXPlayer2.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\OneXPlayerApex.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\OneXPlayerG1.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\OneXPlayerMini.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\OneXPlayerMiniAMD.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\OneXPlayerMiniIntel.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\OneXPlayerMiniPro.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\OneXPlayerOneXFly.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\OneXPlayerX1.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\OneXPlayerX1Mini.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\ROGAlly.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\ROGAllyX.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\SteamDeck.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\XboxROGAlly.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\XboxROGAllyX.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Resources\inpoutx64.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

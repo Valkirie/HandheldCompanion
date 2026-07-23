@@ -3,13 +3,10 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.Json;
-using System.Threading;
-using System.Xml.Linq;
 using static HandheldCompanion.Managers.SystemManager;
 
 namespace HandheldCompanion.Platforms.Misc;
@@ -73,8 +70,8 @@ public sealed class WindowsPlatform : IPlatform
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        SettingsManager_SettingValueChanged("EnhancedSleep", ManagerFactory.settingsManager.GetString("EnhancedSleep"), false, false);
-        SettingsManager_SettingValueChanged("GoBackToSleep", ManagerFactory.settingsManager.GetString("GoBackToSleep"), false, false);
+        SettingsManager_SettingValueChanged("EnhancedSleep", ManagerFactory.settingsManager.GetString("EnhancedSleep"), false, true);
+        SettingsManager_SettingValueChanged("GoBackToSleep", ManagerFactory.settingsManager.GetString("GoBackToSleep"), false, true);
     }
 
     private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
@@ -409,7 +406,7 @@ public sealed class WindowsPlatform : IPlatform
         {
             if (_consecutiveResleepAttempts > 0)
             {
-                LogManager.LogDebug("[GoBackToSleep] Resetting resleep attempt counter ({0} attempts). Reason: {1}", 
+                LogManager.LogDebug("[GoBackToSleep] Resetting resleep attempt counter ({0} attempts). Reason: {1}",
                     _consecutiveResleepAttempts, reason);
                 _consecutiveResleepAttempts = 0;
                 _lastResleepAttemptTicks = 0;

@@ -1,8 +1,6 @@
 ﻿using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Inputs;
 using System;
-using System.Collections.Generic;
-using System.Numerics;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -28,29 +26,9 @@ public class AynLoki : IDevice
         ProductModel = "AynLoki";
         UseOpenLib = true;
 
-        GyroMatrix = new()
-        {
-            Axis = new Vector3(1.0f, -1.0f, -1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'Y' },
-                { 'Y', 'Z' },
-                { 'Z', 'X' }
-            }
-        };
+        // IMU matrices loaded from AynLoki.json
 
-        AcceleroMatrix = new()
-        {
-            Axis = new Vector3(-1.0f, 1.0f, -1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' }
-            }
-        };
-
-        // device specific capacities        
+        // device specific capacities
         Capabilities |= DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.DynamicLighting;
 

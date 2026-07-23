@@ -47,7 +47,8 @@ public partial class QuickHomePage : Page
         if (ManagerFactory.multimediaManager.HasBrightnessSupport())
         {
             short brightnessValue = 0;
-            brightnessLock.Enter();
+            if (!brightnessLock.TryEnter(100))
+                return;
             try
             {
                 brightnessValue = ManagerFactory.multimediaManager.GetBrightness();
@@ -68,7 +69,8 @@ public partial class QuickHomePage : Page
         {
             double vol = 0;
             double rounded = 0;
-            volumeLock.Enter();
+            if (!volumeLock.TryEnter(100))
+                return;
             try
             {
                 vol = ManagerFactory.multimediaManager.GetVolume();
@@ -116,7 +118,8 @@ public partial class QuickHomePage : Page
             if (Math.Abs(SliderBrightness.Value - brightness) < double.Epsilon)
                 return;
 
-            brightnessLock.Enter();
+            if (!brightnessLock.TryEnter(100))
+                return;
             try
             {
                 SliderBrightness.Value = brightness;
@@ -139,7 +142,8 @@ public partial class QuickHomePage : Page
             if (Math.Abs(SliderVolume.Value - rounded) < double.Epsilon)
                 return;
 
-            volumeLock.Enter();
+            if (!volumeLock.TryEnter(100))
+                return;
             try
             {
                 SliderVolume.Value = rounded;

@@ -186,16 +186,16 @@ public static class PerformanceManager
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        SettingsManager_SettingValueChanged("PerformanceManagerEnabled", ManagerFactory.settingsManager.GetString("PerformanceManagerEnabled"), false, false);
-        SettingsManager_SettingValueChanged("ConfigurableTDPOverrideDown", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideDown"), false, false);
-        SettingsManager_SettingValueChanged("ConfigurableTDPOverrideUp", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideUp"), false, false);
+        SettingsManager_SettingValueChanged("PerformanceManagerEnabled", ManagerFactory.settingsManager.GetString("PerformanceManagerEnabled"), false, true);
+        SettingsManager_SettingValueChanged("ConfigurableTDPOverrideDown", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideDown"), false, true);
+        SettingsManager_SettingValueChanged("ConfigurableTDPOverrideUp", ManagerFactory.settingsManager.GetString("ConfigurableTDPOverrideUp"), false, true);
         // AMD
-        SettingsManager_SettingValueChanged("RyzenAdjCoAll", ManagerFactory.settingsManager.GetString("RyzenAdjCoAll"), false, false);
-        SettingsManager_SettingValueChanged("RyzenAdjCoGfx", ManagerFactory.settingsManager.GetString("RyzenAdjCoGfx"), false, false);
+        SettingsManager_SettingValueChanged("RyzenAdjCoAll", ManagerFactory.settingsManager.GetString("RyzenAdjCoAll"), false, true);
+        SettingsManager_SettingValueChanged("RyzenAdjCoGfx", ManagerFactory.settingsManager.GetString("RyzenAdjCoGfx"), false, true);
         // Intel
-        SettingsManager_SettingValueChanged("MsrUndervoltCore", ManagerFactory.settingsManager.GetString("MsrUndervoltCore"), false, false);
-        SettingsManager_SettingValueChanged("MsrUndervoltGpu", ManagerFactory.settingsManager.GetString("MsrUndervoltGpu"), false, false);
-        SettingsManager_SettingValueChanged("MsrUndervoltSoc", ManagerFactory.settingsManager.GetString("MsrUndervoltSoc"), false, false);
+        SettingsManager_SettingValueChanged("MsrUndervoltCore", ManagerFactory.settingsManager.GetString("MsrUndervoltCore"), false, true);
+        SettingsManager_SettingValueChanged("MsrUndervoltGpu", ManagerFactory.settingsManager.GetString("MsrUndervoltGpu"), false, true);
+        SettingsManager_SettingValueChanged("MsrUndervoltSoc", ManagerFactory.settingsManager.GetString("MsrUndervoltSoc"), false, true);
     }
 
     public static void Stop()
@@ -347,82 +347,83 @@ public static class PerformanceManager
 
     private static void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
-        currentProfile = profile;
-
         if (!_performanceManagerEnabled)
             return;
 
+        bool previousProfileIsDefault = currentProfile?.IsDefault() == true;
+        bool previousAutoTDPEnabled = !previousProfileIsDefault && currentProfile?.AutoTDPEnabled == true;
+        bool previousTDPOverrideEnabled = !previousProfileIsDefault && currentProfile?.TDPOverrideEnabled == true;
+        bool restoreTDP = previousAutoTDPEnabled || previousTDPOverrideEnabled;
+
         if (profile.TDPOverrideEnabled)
         {
-            if (!profile.AutoTDPEnabled)
-            {
-                // AutoTDP is off and manual TDP is set
-                // Validate TDPOverrideValues before applying
-                if (profile.TDPOverrideValues != null &&
-                    profile.TDPOverrideValues.Length > 0 &&
-                    profile.TDPOverrideValues[0] >= TDPMin)
-                {
-                    // stop AutoTDP watchdog and apply manual TDP
-                    StopAutoTDPWatchdog(true);
-                    RequestTDP(profile.TDPOverrideValues);
+            double configuredAutoTDP = ManagerFactory.settingsManager.GetDouble(Settings.ConfigurableTDPOverrideUp);
+            bool hasTDPOverrideValues = profile.TDPOverrideValues.Length >= 3;
 
-                    if (!tdpWatchdog.Enabled)
-                        StartTDPWatchdog();
-                }
-                else
+            if (hasTDPOverrideValues)
+            {
+                for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
                 {
-                    // Invalid or missing TDP values, restore default instead
-                    LogManager.LogWarning("Profile {0} has invalid or missing TDP override values, restoring default", profile.Name);
-                    StopAutoTDPWatchdog(true);
+                    double value = profile.TDPOverrideValues![idx];
+                    if (double.IsNaN(value) || double.IsInfinity(value))
+                        value = TDPMin;
+
+                    profile.TDPOverrideValues[idx] = Math.Clamp(value, TDPMin, TDPMax);
+                }
+
+                configuredAutoTDP = profile.TDPOverrideValues[0];
+            }
+
+            if (profile.AutoTDPEnabled)
+            {
+                // Both manual TDP and AutoTDP are on, clear the previous manual TDP before AutoTDP takes over
+                if (previousTDPOverrideEnabled)
+                {
+                    StopTDPWatchdog(true);
                     RestoreTDP(true);
                 }
             }
+            else if (hasTDPOverrideValues)
+            {
+                // stop AutoTDP before applying manual TDP
+                if (previousAutoTDPEnabled)
+                    StopAutoTDPWatchdog(true);
+
+                RequestTDP(profile.TDPOverrideValues);
+
+                if (!tdpWatchdog.Enabled)
+                    StartTDPWatchdog();
+            }
             else
             {
-                // Both manual TDP and AutoTDP are on
-                // use AutoTDP watchdog to adjust TDP
-                StopTDPWatchdog(true);
-                RestoreTDP(true);
+                LogManager.LogWarning("Profile {0} has invalid or missing TDP override values, restoring default", profile.Name);
+                if (previousAutoTDPEnabled)
+                    StopAutoTDPWatchdog(true);
+
+                if (restoreTDP)
+                    RestoreTDP(true);
             }
 
-            // use manual slider as the starting value
-            // and max limit for AutoTDP
-            if (profile.TDPOverrideValues is not null && profile.TDPOverrideValues.Length > 0)
-            {
-                // Validate TDP value meets minimum threshold
-                double tdpValue = profile.TDPOverrideValues[0];
-                if (tdpValue >= TDPMin)
-                    AutoTDP = AutoTDPMax = tdpValue;
-                else
-                {
-                    // Invalid TDP value, use settings default instead
-                    LogManager.LogWarning("Profile {0} has invalid TDP value {1}W, using settings default", profile.Name, tdpValue);
-                    AutoTDP = AutoTDPMax = ManagerFactory.settingsManager.GetDouble(Settings.ConfigurableTDPOverrideUp);
-                }
-            }
-            else
-            {
-                // TDPOverrideValues is null or empty, use settings default
-                AutoTDP = AutoTDPMax = ManagerFactory.settingsManager.GetDouble(Settings.ConfigurableTDPOverrideUp);
-            }
+            AutoTDP = AutoTDPMax = configuredAutoTDP;
         }
         else
         {
-            if (tdpWatchdog.Enabled)
+            if (previousTDPOverrideEnabled && tdpWatchdog.Enabled)
                 StopTDPWatchdog(true);
 
             if (!profile.AutoTDPEnabled)
             {
-                if (autotdpWatchdog.Enabled)
+                if (previousAutoTDPEnabled && autotdpWatchdog.Enabled)
                     StopAutoTDPWatchdog(true);
 
                 // Neither manual TDP nor AutoTDP is enabled, restore default TDP
-                RestoreTDP(true);
+                if (restoreTDP)
+                    RestoreTDP(true);
             }
 
             // manual TDP override is not set
             // use the settings max limit for AutoTDP
-            AutoTDP = AutoTDPMax = ManagerFactory.settingsManager.GetInt("ConfigurableTDPOverrideUp");
+            AutoTDP = AutoTDPMax = ManagerFactory.settingsManager.GetDouble(Settings.ConfigurableTDPOverrideUp);
         }
 
         // apply profile defined AutoTDP
@@ -442,7 +443,8 @@ public static class PerformanceManager
         else
         {
             // restore default GPU clock
-            RestoreCPUClock();
+            if (currentProfile?.CPUOverrideEnabled == true)
+                RestoreCPUClock();
         }
 
         // apply profile defined GPU
@@ -457,7 +459,8 @@ public static class PerformanceManager
                 StopGPUWatchdog(true);
 
             // restore default GPU clock
-            RestoreGPUClock(true);
+            if (currentProfile?.GPUOverrideEnabled == true)
+                RestoreGPUClock(true);
         }
 
         // apply profile defined CPU Core Parking
@@ -471,7 +474,8 @@ public static class PerformanceManager
         else
         {
             // restore default CPU Core Count
-            RequestCPUCoreCount(MotherboardInfo.NumberOfCores);
+            if (currentProfile?.CPUCoreEnabled == true)
+                RequestCPUCoreCount(MotherboardInfo.NumberOfCores);
         }
 
         // apply profile define CPU Boost
@@ -479,6 +483,9 @@ public static class PerformanceManager
 
         // apply profile Power mode
         RequestPowerMode(profile.OSPowerMode);
+
+        // update current profile reference
+        currentProfile = profile;
     }
 
     private static void PowerProfileManager_Discarded(PowerProfile profile, bool swapped)
@@ -490,27 +497,27 @@ public static class PerformanceManager
         currentProfile = null;
 
         // restore default TDP
-        if (profile.TDPOverrideEnabled)
+        if (!profile.IsDefault() && profile.TDPOverrideEnabled)
         {
             StopTDPWatchdog(true);
             RestoreTDP(true);
         }
 
         // restore default TDP
-        if (profile.AutoTDPEnabled)
+        if (!profile.IsDefault() && profile.AutoTDPEnabled)
         {
             StopAutoTDPWatchdog(true);
             RestoreTDP(true);
         }
 
         // restore default CPU frequency
-        if (profile.CPUOverrideEnabled)
+        if (!profile.IsDefault() && profile.CPUOverrideEnabled)
         {
             RestoreCPUClock();
         }
 
         // restore default GPU frequency
-        if (profile.GPUOverrideEnabled)
+        if (!profile.IsDefault() && profile.GPUOverrideEnabled)
         {
             StopGPUWatchdog(true);
             RestoreGPUClock(true);
@@ -1022,10 +1029,10 @@ public static class PerformanceManager
         }
     }
 
-    private static async void RequestTDP(double[] values, bool immediate = false)
+    private static async void RequestTDP(double[]? values, bool immediate = false)
     {
         // Handle null or insufficient array scenario
-        if (values == null || values.Length <= (int)PowerType.Fast)
+        if (values is null || values.Length <= (int)PowerType.Fast)
             return;
 
         for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)

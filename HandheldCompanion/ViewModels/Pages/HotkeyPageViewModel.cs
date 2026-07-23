@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Windows.Data;
 using System.Windows.Input;
 
@@ -25,6 +26,19 @@ namespace HandheldCompanion.ViewModels
             {
                 ManagerFactory.settingsManager.SetProperty("HotkeyRumbleOnExecution", value);
                 OnPropertyChanged(nameof(Rumble));
+            }
+        }
+
+        public double RumbleStrength
+        {
+            get
+            {
+                return ManagerFactory.settingsManager.GetDouble("HotkeyRumbleStrength");
+            }
+            set
+            {
+                ManagerFactory.settingsManager.SetProperty("HotkeyRumbleStrength", value);
+                OnPropertyChanged(nameof(RumbleStrength));
             }
         }
 
@@ -75,9 +89,16 @@ namespace HandheldCompanion.ViewModels
         {
             // (re)draw chords on controller update
             List<HotkeyViewModel> hotkeyViewModels;
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 hotkeyViewModels = HotkeysList.ToList();
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
 
             foreach (HotkeyViewModel hotkeyViewModel in hotkeyViewModels)
@@ -112,13 +133,20 @@ namespace HandheldCompanion.ViewModels
                 return;
 
             HotkeyViewModel? foundHotkey;
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
                 if (foundHotkey is null)
                     HotkeysList.Add(new HotkeyViewModel(hotkey));
                 else
                     foundHotkey.Hotkey = hotkey;
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
 
             OnPropertyChanged(nameof(HotkeysList));
@@ -127,7 +155,10 @@ namespace HandheldCompanion.ViewModels
         private void HotkeysManager_Deleted(Hotkey hotkey)
         {
             HotkeyViewModel? foundHotkey;
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
                 if (foundHotkey is not null)
@@ -136,6 +167,10 @@ namespace HandheldCompanion.ViewModels
                     foundHotkey.Dispose();
                 }
             }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
+            }
 
             OnPropertyChanged(nameof(HotkeysList));
         }
@@ -143,9 +178,16 @@ namespace HandheldCompanion.ViewModels
         private void InputsManager_StartedListening(ButtonFlags buttonFlags, InputsChordTarget chordTarget)
         {
             HotkeyViewModel? foundHotkey;
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 foundHotkey = HotkeysList.FirstOrDefault(h => h.Hotkey.ButtonFlags == buttonFlags);
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
 
             foundHotkey?.SetListening(true, chordTarget);
@@ -154,9 +196,16 @@ namespace HandheldCompanion.ViewModels
         private void InputsManager_StoppedListening(ButtonFlags buttonFlags, InputsChord storedChord)
         {
             HotkeyViewModel? foundHotkey;
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 foundHotkey = HotkeysList.FirstOrDefault(h => h.Hotkey.ButtonFlags == buttonFlags);
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
 
             foundHotkey?.SetListening(false, storedChord.chordTarget);

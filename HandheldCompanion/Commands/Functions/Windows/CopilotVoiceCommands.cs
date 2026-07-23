@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Automation;
 
@@ -69,13 +70,38 @@ namespace HandheldCompanion.Commands.Functions.Windows
                     {
                         AutomationElement b = nodes[i];
 
-                        string name = b.Current.Name ?? "";
-                        string accesskey = b.Current.AccessKey ?? "";
+                        // Access Current properties with error handling
+                        string name = "";
+                        string accesskey = "";
+                        try
+                        {
+                            name = b.Current.Name ?? "";
+                            accesskey = b.Current.AccessKey ?? "";
+                        }
+                        catch (COMException)
+                        {
+                            // Element became invalid, skip it
+                            continue;
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            // Element was disposed
+                            continue;
+                        }
 
                         if (name.Equals("Talk to Copilot") || accesskey.Equals("Alt, T"))
                         {
                             if (b.TryGetCurrentPattern(InvokePattern.Pattern, out var p) && p is InvokePattern inv)
-                                inv.Invoke();
+                            {
+                                try
+                                {
+                                    inv.Invoke();
+                                }
+                                catch (COMException)
+                                {
+                                    // Element no longer available
+                                }
+                            }
                         }
                         /*
                         else if ((name.Equals("Open quick view") || accesskey.Equals("Alt, Q")) && copilot.Current.BoundingRectangle.Width > 660)
@@ -109,7 +135,24 @@ namespace HandheldCompanion.Commands.Functions.Windows
         public bool ResizeAutomationElement(AutomationElement window, int xPx, int yPx, int widthPx, int heightPx)
         {
             if (window == null) return false;
-            var hwnd = (IntPtr)window.Current.NativeWindowHandle;
+
+            IntPtr hwnd = IntPtr.Zero;
+            try
+            {
+                // Access Current property with error handling
+                hwnd = (IntPtr)window.Current.NativeWindowHandle;
+            }
+            catch (COMException)
+            {
+                // Window closed or automation element became invalid
+                return false;
+            }
+            catch (InvalidOperationException)
+            {
+                // Element was disposed
+                return false;
+            }
+
             if (hwnd == IntPtr.Zero) return false;
 
             const uint SWP_NOMOVE = 0x0002;

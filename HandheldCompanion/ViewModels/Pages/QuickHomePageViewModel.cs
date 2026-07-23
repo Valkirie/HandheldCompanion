@@ -4,6 +4,7 @@ using HandheldCompanion.Managers;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Windows.Data;
 
 namespace HandheldCompanion.ViewModels
@@ -71,10 +72,17 @@ namespace HandheldCompanion.ViewModels
 
         private void RefreshHotkeyGlyphs()
         {
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 foreach (HotkeyViewModel hotkeyViewModel in HotkeysList)
                     hotkeyViewModel.DrawChords();
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
         }
 
@@ -131,7 +139,10 @@ namespace HandheldCompanion.ViewModels
             if (hotkey.IsInternal)
                 return;
 
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
                 if (foundHotkey is null)
@@ -152,11 +163,18 @@ namespace HandheldCompanion.ViewModels
                         HotkeysManager_Deleted(hotkey);
                 }
             }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
+            }
         }
 
         private void HotkeysManager_Deleted(Hotkey hotkey)
         {
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
                 if (foundHotkey is not null)
@@ -164,6 +182,10 @@ namespace HandheldCompanion.ViewModels
                     HotkeysList.Remove(foundHotkey);
                     foundHotkey.Dispose();
                 }
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
         }
 

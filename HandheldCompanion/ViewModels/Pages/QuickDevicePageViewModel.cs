@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -284,9 +285,16 @@ namespace HandheldCompanion.ViewModels
                     return;
 
                 ScreenFrequencyViewModel? matchingFrequency;
-                lock (_collectionLock2)
+                if (!Monitor.TryEnter(_collectionLock2, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
                 {
                     matchingFrequency = Frequencies.FirstOrDefault(f => f.Frequency == value.Value);
+                }
+                finally
+                {
+                    Monitor.Exit(_collectionLock2);
                 }
 
                 if (matchingFrequency is not null)
@@ -480,11 +488,18 @@ namespace HandheldCompanion.ViewModels
             isLoadingDisplay = true;
             try
             {
-                lock (_collectionLock)
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
                 {
                     Resolutions.Clear();
                     foreach (ScreenResolution resolution in screen.screenResolutions)
                         Resolutions.Add(resolution);
+                }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
                 }
             }
             finally
@@ -529,7 +544,10 @@ namespace HandheldCompanion.ViewModels
             if (currentFrequency.HasValue && currentFrequency.Value > 1)
                 frequencies = frequencies.Append(currentFrequency.Value);
 
-            lock (_collectionLock2)
+            if (!Monitor.TryEnter(_collectionLock2, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 Frequencies.Clear();
                 foreach (int frequency in frequencies.Distinct().OrderByDescending(f => f))
@@ -557,6 +575,10 @@ namespace HandheldCompanion.ViewModels
                     if (selectedFreq != null)
                         SelectedFrequency = selectedFreq;
                 }
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock2);
             }
         }
 

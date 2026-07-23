@@ -1,6 +1,4 @@
 ﻿using HandheldCompanion.Managers;
-using System.Collections.Generic;
-using System.Numerics;
 
 namespace HandheldCompanion.Devices;
 
@@ -26,27 +24,7 @@ public class MinisforumV3 : IDevice
         this.GfxClock = new double[] { 100, 2700 };
         this.CpuClock = 5100;
 
-        GyroMatrix = new()
-        {
-            Axis = new Vector3(1.0f, -1.0f, 1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'Y' },
-                { 'Y', 'X' },
-                { 'Z', 'Z' }
-            }
-        };
-
-        AcceleroMatrix = new()
-        {
-            Axis = new Vector3(-1.0f, 1.0f, -1.0f),
-            AxisSwap = new SortedDictionary<char, char>
-            {
-                { 'X', 'Y' },
-                { 'Y', 'X' },
-                { 'Z', 'Z' }
-            }
-        };
+        // IMU matrices loaded from MinisforumV3.json
 
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileMinisforumV3BetterBattery, Properties.Resources.PowerProfileMinisforumV3BetterBatteryDesc)
         {

@@ -1,10 +1,11 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Views;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Windows.Data;
 
 namespace HandheldCompanion.ViewModels
@@ -86,22 +87,49 @@ namespace HandheldCompanion.ViewModels
 
         public override void AddMapping()
         {
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
+            {
                 TriggerMappings.Add(new TriggerMappingViewModel(this, _flag));
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
+            }
         }
 
-        public TriggerMappingViewModel AddMappingAndReturn()
+        public TriggerMappingViewModel? AddMappingAndReturn()
         {
             var newMapping = new TriggerMappingViewModel(this, _flag);
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return null;
+
+            try
+            {
                 TriggerMappings.Add(newMapping);
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
+            }
             return newMapping;
         }
 
         public override void RemoveMapping(MappingViewModel mapping)
         {
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
+            {
                 TriggerMappings.Remove((TriggerMappingViewModel)mapping);
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
+            }
             mapping.Dispose();
         }
 
@@ -139,11 +167,18 @@ namespace HandheldCompanion.ViewModels
                     newMapping.SetAction(action, false);
                 }
 
-                lock (_collectionLock)
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
                 {
                     TriggerMappings.Clear();
                     foreach (var m in newMappings)
                         TriggerMappings.Add(m);
+                }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
                 }
             }
             else if (TriggerMappings.Count != 0)

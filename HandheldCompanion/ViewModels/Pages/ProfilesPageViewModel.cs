@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Data;
@@ -1720,7 +1721,7 @@ namespace HandheldCompanion.ViewModels
         public ICommand OpenPowerProfileOnBatteryCommand { get; private set; } = null!;
         public ICommand OpenPowerProfilePluggedCommand { get; private set; } = null!;
         public ICommand OpenProfilePageCommand { get; private set; } = null!;
-         public ICommand OpenProfileLayoutCommand { get; private set; } = null!;
+        public ICommand OpenProfileLayoutCommand { get; private set; } = null!;
         public ICommand CreatePowerProfileCommand { get; private set; } = null!;
         public ICommand ShowCreateProfileFlyoutCommand { get; private set; } = null!;
         public ICommand OpenAdditionalSettingsCommand { get; private set; } = null!;
@@ -2041,8 +2042,11 @@ namespace HandheldCompanion.ViewModels
                 else
                     manualEntry = new ManualEntry(SelectedProfile?.Guid.GetHashCode() ?? 0L, SelectedProfile?.Name ?? string.Empty);
 
-                lock (_collectionLock2)
-                    LibraryPickers.Add(new(manualEntry));
+                if (!Monitor.TryEnter(_collectionLock2, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try { LibraryPickers.Add(new(manualEntry)); }
+                finally { Monitor.Exit(_collectionLock2); }
 
                 IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(
                     (QuerySteamGrid ? LibraryFamily.SteamGrid : LibraryFamily.None) | (QueryIGDB ? LibraryFamily.IGDB : LibraryFamily.None),
@@ -2053,10 +2057,17 @@ namespace HandheldCompanion.ViewModels
                     entries = entries.OrderByDescending(entry => entry.Family);
                     entries = entries.OrderBy(entry => entry.Name);
 
-                    lock (_collectionLock2)
+                    if (!Monitor.TryEnter(_collectionLock2, TimeSpan.FromSeconds(2)))
+                        return;
+
+                    try
                     {
                         foreach (LibraryEntry entry in entries)
                             LibraryPickers.Add(new(entry));
+                    }
+                    finally
+                    {
+                        Monitor.Exit(_collectionLock2);
                     }
 
                     if (SelectedProfile?.LibraryEntry is ManualEntry)
@@ -2469,7 +2480,10 @@ namespace HandheldCompanion.ViewModels
 
         private void PowerProfileManager_Deleted(PowerProfile profile)
         {
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 ProfilesPickerViewModel? foundPreset = ProfilePicker.FirstOrDefault(p => p.LinkedPresetId == profile.Guid);
                 if (foundPreset is not null)
@@ -2482,11 +2496,18 @@ namespace HandheldCompanion.ViewModels
                         SelectedPickerDC = ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty);
                 }
             }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
+            }
         }
 
         private void PowerProfileManager_Updated(PowerProfile profile, UpdateSource source)
         {
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 int index;
                 ProfilesPickerViewModel? foundPreset = ProfilePicker.FirstOrDefault(p => p.LinkedPresetId == profile.Guid);
@@ -2500,6 +2521,10 @@ namespace HandheldCompanion.ViewModels
                     index = 0;
                     ProfilePicker.Insert(index, new() { LinkedPresetId = profile.Guid, Text = profile.Name, IsInternal = profile.IsDefault() || profile.IsDeviceDefault() });
                 }
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
         }
 
@@ -2531,11 +2556,18 @@ namespace HandheldCompanion.ViewModels
                 DesktopScreen? desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
                 if (desktopScreen is not null)
                 {
-                    lock (_collectionLock6)
+                    if (!Monitor.TryEnter(_collectionLock6, TimeSpan.FromSeconds(2)))
+                        return;
+
+                    try
                     {
                         IntegerScalingDividers.Clear();
                         foreach (var screenDivider in desktopScreen.screenDividers)
                             IntegerScalingDividers.Add(new ScreenDividerViewModel(screenDivider));
+                    }
+                    finally
+                    {
+                        Monitor.Exit(_collectionLock6);
                     }
                 }
             }
@@ -2766,7 +2798,10 @@ namespace HandheldCompanion.ViewModels
         {
             UIHelper.TryBeginInvoke(() =>
             {
-                lock (_collectionLock5)
+                if (!Monitor.TryEnter(_collectionLock5, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
                 {
                     if (isLoadingProfile)
                         return;
@@ -2806,6 +2841,10 @@ namespace HandheldCompanion.ViewModels
 
                         UpdateUI();
                     }
+                }
+                finally
+                {
+                    Monitor.Exit(_collectionLock5);
                 }
             });
         }
@@ -2975,7 +3014,10 @@ namespace HandheldCompanion.ViewModels
 
             ClearWindows();
 
-            lock (_collectionLock7)
+            if (!Monitor.TryEnter(_collectionLock7, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 AllWindows.Clear();
                 if (SelectedProfile != null)
@@ -2983,6 +3025,10 @@ namespace HandheldCompanion.ViewModels
                     foreach (var kvp in SelectedProfile.WindowsSettings)
                         AllWindows.Add(new WindowListItemViewModel(kvp.Key, kvp.Value));
                 }
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock7);
             }
 
             OnPropertyChanged(nameof(HasAnyWindows));
@@ -3017,7 +3063,10 @@ namespace HandheldCompanion.ViewModels
         /// </summary>
         private void RefreshProfileExecutables()
         {
-            lock (_collectionLock3)
+            if (!Monitor.TryEnter(_collectionLock3, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 ProfileExecutables.Clear();
                 if (SelectedProfile != null)
@@ -3029,6 +3078,10 @@ namespace HandheldCompanion.ViewModels
                     if (ProfileExecutables.Count > 0 && idx == -1) idx = 0;
                     ProfileExecutablesIdx = (ProfileExecutables.Count == 0) ? -1 : Math.Min(idx, ProfileExecutables.Count - 1);
                 }
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock3);
             }
         }
 
@@ -3223,7 +3276,10 @@ namespace HandheldCompanion.ViewModels
             if (SelectedMainProfile is null)
                 return;
 
-            lock (_collectionLock5)
+            if (!Monitor.TryEnter(_collectionLock5, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 try
                 {
@@ -3242,17 +3298,28 @@ namespace HandheldCompanion.ViewModels
                 }
                 catch { }
             }
+            finally
+            {
+                Monitor.Exit(_collectionLock5);
+            }
         }
 
         private void SelectedProcess_WindowAttached_Merged(ProcessWindow processWindow)
         {
-            lock (_collectionLock7)
+            if (!Monitor.TryEnter(_collectionLock7, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 var item = AllWindows.FirstOrDefault(w => w.Hwnd == processWindow.Hwnd && w.Hwnd != 0);
                 if (item is null)
                     AllWindows.Add(item = new WindowListItemViewModel(processWindow));
                 else
                     item.UpdateFrom(processWindow);
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock7);
             }
 
             OnPropertyChanged(nameof(HasAnyWindows));
@@ -3268,8 +3335,11 @@ namespace HandheldCompanion.ViewModels
 
         private void ClearWindows()
         {
-            lock (_collectionLock7)
-                AllWindows.Clear();
+            if (!Monitor.TryEnter(_collectionLock7, TimeSpan.FromSeconds(2)))
+                return;
+
+            try { AllWindows.Clear(); }
+            finally { Monitor.Exit(_collectionLock7); }
 
             if (selectedProcess is not null)
             {
@@ -3284,8 +3354,11 @@ namespace HandheldCompanion.ViewModels
             LibraryCoversIndex = -1;
             LibraryLogosIndex = -1;
             SelectedLibraryIndex = -1;
-            lock (_collectionLock2)
-                LibraryPickers.Clear();
+            if (!Monitor.TryEnter(_collectionLock2, TimeSpan.FromSeconds(2)))
+                return;
+
+            try { LibraryPickers.Clear(); }
+            finally { Monitor.Exit(_collectionLock2); }
 
             // Notify that library entries have been cleared
             OnPropertyChanged(nameof(HasLibraryEntry));
@@ -3426,13 +3499,20 @@ namespace HandheldCompanion.ViewModels
 
             GyroHotkey = hotkey;
 
-            lock (_collectionLock4)
+            if (!Monitor.TryEnter(_collectionLock4, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
                 if (foundHotkey is null)
                     HotkeysList.Add(new HotkeyViewModel(hotkey));
                 else
                     foundHotkey.Hotkey = hotkey;
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock4);
             }
 
             if (ManagerFactory.hotkeysManager.Status != ManagerStatus.Initialized || isLoadingProfile || SelectedProfile is null)
@@ -3515,10 +3595,17 @@ namespace HandheldCompanion.ViewModels
         {
             UIHelper.TryBeginInvoke(() =>
             {
-                lock (_collectionLock)
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
                 {
                     SelectedPickerAC = ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == powerProfileAC.Guid);
                     SelectedPickerDC = ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == powerProfileDC.Guid);
+                }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
                 }
             });
         }

@@ -17,8 +17,6 @@ namespace HandheldCompanion.Managers
     {
         private static GyroActions gyroAction = new();
         private static Inclination inclination = new();
-        private static SensorFamily sensorSelection;
-
         // Accumulates displacement across frames for velocity mode
         // Allows fast movements to spread across multiple frames without losing precision
         private static Vector2 accumulatedDisplacement = Vector2.Zero;
@@ -68,13 +66,10 @@ namespace HandheldCompanion.Managers
         private static void QuerySettings()
         {
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-            sensorSelection = (SensorFamily)ManagerFactory.settingsManager.GetInt("SensorSelection");
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
         {
-            if (name == "SensorSelection")
-                sensorSelection = (SensorFamily)Convert.ToInt32(value);
         }
 
         public static void UpdateReport(ControllerState controllerState, GamepadMotion gamepadMotion, float delta = 0.016f)
@@ -141,11 +136,12 @@ namespace HandheldCompanion.Managers
             SteeringAxis steeringAxis = current.SteeringAxis;
             if (steeringAxis == SteeringAxis.Auto)
             {
-                if (sensorSelection == SensorFamily.Windows || sensorSelection == SensorFamily.SerialUSBIMU)
+                SensorFamily activeSensorFamily = SensorsManager.ActiveSensorFamily;
+                if (activeSensorFamily == SensorFamily.Windows || activeSensorFamily == SensorFamily.SerialUSBIMU)
                 {
                     return SteeringAxis.Yaw;
                 }
-                if (sensorSelection == SensorFamily.Controller)
+                if (activeSensorFamily == SensorFamily.Controller)
                 {
                     Vector3 accelerometer = controllerState.GyroState.GetAccelerometer(SensorState.Default);
                     if (MathF.Abs(accelerometer.Z) > MathF.Abs(accelerometer.Y))

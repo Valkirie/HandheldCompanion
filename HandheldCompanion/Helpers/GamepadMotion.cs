@@ -79,6 +79,7 @@ namespace HandheldCompanion.Helpers
         public void Reset()
         {
             ResetGamepadMotion(handle);
+            ResetMotion();
             _madgwick.Reset();
         }
 
@@ -224,6 +225,11 @@ namespace HandheldCompanion.Helpers
             calibration.weight = weight;
 
             SetCalibrationOffset(handle, xOffset, yOffset, zOffset, weight);
+        }
+
+        public void ResetCalibrationOffset()
+        {
+            calibration.Reset();
         }
 
         // Implement the GetAutoCalibrationConfidence function

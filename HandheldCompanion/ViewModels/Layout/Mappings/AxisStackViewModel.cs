@@ -1,10 +1,11 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Views;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Windows.Data;
 
 namespace HandheldCompanion.ViewModels
@@ -88,22 +89,49 @@ namespace HandheldCompanion.ViewModels
 
         public override void AddMapping()
         {
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
+            {
                 AxisMappings.Add(new AxisMappingViewModel(this, _flag));
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
+            }
         }
 
-        public AxisMappingViewModel AddMappingAndReturn()
+        public AxisMappingViewModel? AddMappingAndReturn()
         {
             var newMapping = new AxisMappingViewModel(this, _flag);
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return null;
+
+            try
+            {
                 AxisMappings.Add(newMapping);
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
+            }
             return newMapping;
         }
 
         public override void RemoveMapping(MappingViewModel mapping)
         {
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
+            {
                 AxisMappings.Remove((AxisMappingViewModel)mapping);
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
+            }
             mapping.Dispose();
         }
 
@@ -141,11 +169,18 @@ namespace HandheldCompanion.ViewModels
                     newMapping.SetAction(action, false);
                 }
 
-                lock (_collectionLock)
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
                 {
                     AxisMappings.Clear();
                     foreach (var m in newMappings)
                         AxisMappings.Add(m);
+                }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
                 }
             }
             else if (AxisMappings.Count != 0)

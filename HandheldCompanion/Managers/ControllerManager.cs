@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Controllers.Dummies;
 using HandheldCompanion.Controllers.GameSir;
 using HandheldCompanion.Controllers.Lenovo;
@@ -128,9 +128,8 @@ public static class ControllerManager
     private static IController? targetController;
     private static ProcessEx? foregroundProcess;
     private static bool ControllerMuted;
-    private static SensorFamily sensorSelection = SensorFamily.None;
 
-    private static object targetLock = new object();
+    private static readonly object targetLock = new();
     public static ControllerManagerStatus managerStatus = ControllerManagerStatus.Pending;
 
     private static Timer scenarioTimer = new(100) { AutoReset = false };
@@ -268,6 +267,36 @@ public static class ControllerManager
         LogManager.LogInformation("{0} has started", "ControllerManager");
     }
 
+    /// <summary>
+    /// Waits for a controller to be ready or gone, retrying physical disconnection checks.
+    /// Returns true if the controller is confirmed gone.
+    /// </summary>
+    private static async Task<bool> IsControllerGoneAsync(IController controller)
+    {
+        const int maxGoneAttempts = 3;
+        int goneAttempts = 0;
+
+        while (!controller.IsReady || !controller.IsConnected())
+        {
+            if (controller.IsConnected())
+            {
+                goneAttempts = 0;
+            }
+            else if (controller.IsVirtual())
+            {
+                return false;
+            }
+            else if (++goneAttempts >= maxGoneAttempts)
+            {
+                return true;
+            }
+
+            await Task.Delay(1000).ConfigureAwait(false);
+        }
+
+        return false;
+    }
+
     private static void ToastCommandRouter(string command, IReadOnlyDictionary<string, string> args)
     {
         try
@@ -300,9 +329,11 @@ public static class ControllerManager
 
     private static void Tick(long ticks, float delta)
     {
-        // Snapshot to avoid races after HasTargetController check
-        IController? tc = targetController;
-        if (!HasTargetController || tc is null)
+        IController? tc;
+        lock (targetLock)
+            tc = targetController;
+
+        if (tc is null)
             return;
 
         // pull controller
@@ -327,7 +358,7 @@ public static class ControllerManager
             return;
 
         // sensor override
-        switch (sensorSelection)
+        switch (SensorsManager.ActiveSensorFamily)
         {
             case SensorFamily.Windows:
             case SensorFamily.SerialUSBIMU:
@@ -554,13 +585,10 @@ public static class ControllerManager
                             return;
                         }
 
-                        while (!controller.IsReady && controller.IsConnected())
-                            await Task.Delay(1000).ConfigureAwait(false);
-
                         // controller is gone ?
-                        if (!controller.IsConnected() && !controller.IsVirtual())
+                        if (await IsControllerGoneAsync(controller))
                         {
-                            LogManager.LogWarning("SDL controller: VID:{0} and PID:{1} is gone while being added", details.GetVendorID(), details.GetProductID());
+                            LogManager.LogWarning("SDL controller: VID:{0} and PID:{1} was gone while being added", details.GetVendorID(), details.GetProductID());
                             controller.Gone();
                             return;
                         }
@@ -753,13 +781,10 @@ public static class ControllerManager
                         return;
                     }
 
-                    while (!controller.IsReady && controller.IsConnected())
-                        await Task.Delay(1000).ConfigureAwait(false);
-
                     // controller is gone ?
-                    if (!controller.IsConnected() && !controller.IsVirtual())
+                    if (await IsControllerGoneAsync(controller))
                     {
-                        LogManager.LogWarning("Generic controller: VID:{0} and PID:{1} is gone while being added", details.GetVendorID(), details.GetProductID());
+                        LogManager.LogWarning("Generic controller: VID:{0} and PID:{1} was gone while being added", details.GetVendorID(), details.GetProductID());
                         controller.Gone();
                         return;
                     }
@@ -980,13 +1005,10 @@ public static class ControllerManager
                         }
                     }
 
-                    while (!controller.IsReady && controller.IsConnected())
-                        await Task.Delay(1000).ConfigureAwait(false);
-
                     // controller is gone ?
-                    if (!controller.IsConnected() && !controller.IsVirtual())
+                    if (await IsControllerGoneAsync(controller))
                     {
-                        LogManager.LogWarning("XInput controller: VID:{0} and PID:{1} is gone while being added", details.GetVendorID(), details.GetProductID());
+                        LogManager.LogWarning("XInput controller: VID:{0} and PID:{1} was gone while being added", details.GetVendorID(), details.GetProductID());
                         controller.Gone();
                         return;
                     }
@@ -1174,7 +1196,11 @@ public static class ControllerManager
     private static void OnColorValuesChanged(UISettings sender, object args)
     {
         Color _systemAccent = App.uiSettings.GetColorValue(UIColorType.AccentDark1);
-        targetController?.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
+        IController? controller;
+        lock (targetLock)
+            controller = targetController;
+
+        controller?.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
     }
 
     [Flags]
@@ -1203,13 +1229,21 @@ public static class ControllerManager
     private static void CurrentDevice_KeyReleased(IDevice sender, ButtonFlags button)
     {
         // calls current controller (if connected)
-        targetController?.InjectButton(button, false, true);
+        IController? controller;
+        lock (targetLock)
+            controller = targetController;
+
+        controller?.InjectButton(button, false, true);
     }
 
     private static void CurrentDevice_KeyPressed(IDevice sender, ButtonFlags button)
     {
         // calls current controller (if connected)
-        targetController?.InjectButton(button, true, false);
+        IController? controller;
+        lock (targetLock)
+            controller = targetController;
+
+        controller?.InjectButton(button, true, false);
     }
 
     private static void ScenarioTimer_Elapsed(object? sender, ElapsedEventArgs e)
@@ -1223,7 +1257,11 @@ public static class ControllerManager
             bool IsExclusiveMode = ManagerFactory.settingsManager.GetBoolean("SteamControllerMode");
 
             // Making sure current controller is embedded
-            if (targetController is NeptuneController neptuneController)
+            IController? controller;
+            lock (targetLock)
+                controller = targetController;
+
+            if (controller is NeptuneController neptuneController)
             {
                 // We're busy, come back later
                 if (neptuneController.IsBusy)
@@ -1248,7 +1286,7 @@ public static class ControllerManager
                         HIDmode currentHIDmode = (HIDmode)ManagerFactory.settingsManager.GetInt("HIDmode", true);
                         if (currentHIDmode != HIDmode.SteamDeckController)
                             ManagerFactory.settingsManager.SetProperty("HIDmode", (int)HIDmode.SteamDeckController);
-                        
+
                         // notify UI if we've activated Steam hybrid override
                         SteamHybridModeOverride?.Invoke(true);
                     }
@@ -1289,7 +1327,11 @@ public static class ControllerManager
         {
             case "VibrationStrength":
                 uint VibrationStrength = Convert.ToUInt32(value);
-                targetController?.SetVibrationStrength(VibrationStrength, ManagerFactory.settingsManager.IsReady);
+                IController? controller;
+                lock (targetLock)
+                    controller = targetController;
+
+                controller?.SetVibrationStrength(VibrationStrength, ManagerFactory.settingsManager.IsReady);
                 break;
 
             case "ControllerSlotManagementMode":
@@ -1304,10 +1346,6 @@ public static class ControllerManager
                     if (slotManagementMode == ControllerSlotManagementMode.Automatic)
                         consecutiveWatchdogFailures = 0;
                 }
-                break;
-
-            case "SensorSelection":
-                sensorSelection = (SensorFamily)Convert.ToInt32(value);
                 break;
 
             case "SteamControllerMode":
@@ -1327,10 +1365,9 @@ public static class ControllerManager
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        SettingsManager_SettingValueChanged("VibrationStrength", ManagerFactory.settingsManager.GetString("VibrationStrength"), false, false);
-        SettingsManager_SettingValueChanged("ControllerSlotManagementMode", ManagerFactory.settingsManager.GetString("ControllerSlotManagementMode"), false, false);
-        SettingsManager_SettingValueChanged("SensorSelection", ManagerFactory.settingsManager.GetString("SensorSelection"), false, false);
-        SettingsManager_SettingValueChanged("SteamControllerMode", ManagerFactory.settingsManager.GetString("SteamControllerMode"), false, false);
+        SettingsManager_SettingValueChanged("VibrationStrength", ManagerFactory.settingsManager.GetString("VibrationStrength"), false, true);
+        SettingsManager_SettingValueChanged("ControllerSlotManagementMode", ManagerFactory.settingsManager.GetString("ControllerSlotManagementMode"), false, true);
+        SettingsManager_SettingValueChanged("SteamControllerMode", ManagerFactory.settingsManager.GetString("SteamControllerMode"), false, true);
     }
 
     private static void DeviceManager_Initialized()
@@ -1346,48 +1383,15 @@ public static class ControllerManager
         ManagerFactory.deviceManager.HidDeviceArrived += HidDeviceArrived;
         ManagerFactory.deviceManager.HidDeviceRemoved += HidDeviceRemoved;
 
-        // Fire and forget the hydration; exceptions are handled within HydrateKnownDevices
-        _ = HydrateKnownDevices();
-    }
+        // raise events
+        foreach (PnPDetails details in ManagerFactory.deviceManager.GetGamingDevices(false))
+            HidDeviceArrived(details, details.InterfaceGuid);
 
-    private static async Task HydrateKnownDevices()
-    {
-        var tasksToWait = new List<Task>();
+        // raise events
+        foreach (PnPDetails details in ManagerFactory.deviceManager.GetGamingDevices(true))
+            XUsbDeviceArrived(details, details.InterfaceGuid);
 
-        foreach (PnPDetails details in ManagerFactory.deviceManager.PnPDevices.Values.Where(details => details.isGaming))
-        {
-            var key = details.baseContainerDeviceInstanceId;
-
-            if (details.isXInput)
-            {
-                XUsbDeviceArrived(details, details.InterfaceGuid);
-                // Collect the task that was just created and added to xusbArrivalInProgress
-                if (xusbArrivalInProgress.TryGetValue(key, out var task))
-                    tasksToWait.Add(task);
-            }
-            else
-            {
-                HidDeviceArrived(details, details.InterfaceGuid);
-                // Collect the task that was just created and added to hidArrivalInProgress
-                if (hidArrivalInProgress.TryGetValue(key, out var task))
-                    tasksToWait.Add(task);
-            }
-        }
-
-        // Wait for all hydration tasks to complete before proceeding
-        if (tasksToWait.Count > 0)
-        {
-            try
-            {
-                await Task.WhenAll(tasksToWait).ConfigureAwait(false);
-            }
-            catch
-            {
-                // If any task fails, we still want to continue - the logging/error handling
-                // is already done in the individual arrival handlers
-            }
-        }
-
+        // raise events
         ReopenSDLGamepads();
     }
 
@@ -1509,6 +1513,9 @@ public static class ControllerManager
             return;
 
         SlotProbeResult probe = await ProbeSlotsAsync().ConfigureAwait(false);
+        if (!probe.IsAvailable)
+            return;
+
         SetSlotIssueState(probe.NeedsFix, probe.Reason);
 
         if (!probe.NeedsFix)
@@ -1615,7 +1622,11 @@ public static class ControllerManager
 
     private static void VirtualManager_Vibrated(byte LargeMotor, byte SmallMotor)
     {
-        targetController?.SetVibration(LargeMotor, SmallMotor);
+        IController? controller;
+        lock (targetLock)
+            controller = targetController;
+
+        controller?.SetVibration(LargeMotor, SmallMotor);
     }
 
     public static void Unplug(IController controller)
@@ -1655,10 +1666,14 @@ public static class ControllerManager
         bool VirtualInSlot1,
         bool HasInvalidControllers,
         bool HasInvalidVirtual,
-        string Reason)
+        string Reason,
+        bool IsAvailable)
     {
         public static readonly SlotProbeResult Healthy =
-            new(false, false, true, false, false, string.Empty);
+            new(false, false, true, false, false, string.Empty, true);
+
+        public static readonly SlotProbeResult Unavailable =
+            new(false, false, true, false, false, string.Empty, false);
     }
 
     private static void SlotMonitorLoop()
@@ -1683,6 +1698,9 @@ public static class ControllerManager
 
             // Update UI state continuously so the Manual fallback button is available even if a toast was ignored.
             SlotProbeResult probe = ProbeSlotsAsync().GetAwaiter().GetResult();
+            if (!probe.IsAvailable)
+                continue;
+
             SetSlotIssueState(probe.NeedsFix, probe.Reason);
 
             if (!probe.NeedsFix)
@@ -1699,7 +1717,9 @@ public static class ControllerManager
 
     private static async Task<SlotProbeResult> ProbeSlotsAsync()
     {
-        await slotStateSemaphore.WaitAsync().ConfigureAwait(false);
+        if (!await slotStateSemaphore.WaitAsync(CrossWaitTimeout).ConfigureAwait(false))
+            return SlotProbeResult.Unavailable;
+
         try
         {
             var slotOwners = new Dictionary<byte, XInputController>();
@@ -1710,8 +1730,6 @@ public static class ControllerManager
                 .Select(controller => Task.Run(() =>
                 {
                     byte index = DeviceManager.GetXInputIndex(controller.GetContainerPath());
-                    if (index == byte.MaxValue && controller.Details is not null)
-                        index = (byte)XInputController.TryGetUserIndex(controller.Details);
 
                     // Skip controllers whose slot could not be determined —
                     // they must not be attached (UserIndex.Any cross-talk) or
@@ -1760,7 +1778,7 @@ public static class ControllerManager
                 : !virtualInSlot1 ? "Virtual controller is not occupying slot 1."
                 : string.Empty;
 
-            return new SlotProbeResult(needsFix, ensureVirtualSlot1, virtualInSlot1, hasInvalidControllers, hasInvalidVirtual, reason);
+            return new SlotProbeResult(needsFix, ensureVirtualSlot1, virtualInSlot1, hasInvalidControllers, hasInvalidVirtual, reason, true);
         }
         finally
         {
@@ -1817,6 +1835,12 @@ public static class ControllerManager
                 UpdateStatus(ControllerManagerStatus.Busy);
 
                 SlotProbeResult probe = ProbeSlotsAsync().GetAwaiter().GetResult();
+                if (!probe.IsAvailable)
+                {
+                    Thread.Sleep(100);
+                    continue;
+                }
+
                 if (!probe.NeedsFix)
                 {
                     MarkControllerManagementSuccess();
@@ -1864,6 +1888,9 @@ public static class ControllerManager
                 Thread.Sleep(1000);
 
                 probe = ProbeSlotsAsync().GetAwaiter().GetResult();
+                if (!probe.IsAvailable)
+                    continue;
+
                 if (!probe.NeedsFix)
                 {
                     MarkControllerManagementSuccess();
@@ -2071,7 +2098,8 @@ public static class ControllerManager
         try
         {
             SlotProbeResult finalProbe = ProbeSlotsAsync().GetAwaiter().GetResult();
-            SetSlotIssueState(finalProbe.NeedsFix, finalProbe.Reason);
+            if (finalProbe.IsAvailable)
+                SetSlotIssueState(finalProbe.NeedsFix, finalProbe.Reason);
         }
         catch { }
 
@@ -2158,9 +2186,9 @@ public static class ControllerManager
     private static ControllerPlugBehavior PlugBehavior => (ControllerPlugBehavior)ManagerFactory.settingsManager.GetInt("ControllerPlugBehavior");
     private static void PickTimer_Elapsed(object? sender, ElapsedEventArgs e)
     {
-        // Snapshot targetController once to guard against concurrent nulling between null-checks and method calls.
-        // SetTargetController handles its own atomicity under targetLock.
-        IController? current = targetController;
+        IController? current;
+        lock (targetLock)
+            current = targetController;
         IEnumerable<IController> controllers = GetPhysicalControllers<IController>();
 
         // Pick the most recently arrived external or wireless controller
@@ -2255,6 +2283,7 @@ public static class ControllerManager
             return;
 
         targetController.SetLightColor(0, 0, 0);
+        targetController.StopRumble(waitForCompletion: false);
         targetController.Unplug();
         targetController = null;
         ManagerFactory.settingsManager.SetProperty("HIDInstancePath", string.Empty);
@@ -2329,14 +2358,12 @@ public static class ControllerManager
             // check if controller is about to power cycle
             PowerCyclers.TryGetValue(baseContainerDeviceInstanceId, out IsPowerCycling);
 
+            // stop any ongoing rumble
+            targetController.StopRumble(waitForCompletion: false);
+
             // vibrate on connect, except when controller is power cycling
-            if (ManagerFactory.settingsManager.GetBoolean("HIDvibrateonconnect"))
-            {
-                if (!IsPowerCycling)
-                    targetController.Rumble();
-                else
-                    targetController.StopRumble();
-            }
+            if (ManagerFactory.settingsManager.GetBoolean("HIDvibrateonconnect") && !IsPowerCycling)
+                targetController.Rumble();
 
             // Never invoke external code while holding targetLock.
             // Subscribers may touch UI / managers that also take locks during shutdown.
@@ -2618,17 +2645,23 @@ public static class ControllerManager
 
     public static IController? GetTarget()
     {
-        return targetController;
+        lock (targetLock)
+            return targetController;
     }
 
     public static IController GetTargetOrDefault()
     {
-        return targetController is not null ? targetController : GetDefault();
+        IController? controller;
+        lock (targetLock)
+            controller = targetController;
+
+        return controller ?? GetDefault();
     }
 
     public static bool IsTargetController(string InstanceId)
     {
-        return targetController?.GetInstanceId() == InstanceId;
+        lock (targetLock)
+            return targetController?.GetInstanceId() == InstanceId;
     }
 
     public static bool HasPhysicalController<T>() where T : IController

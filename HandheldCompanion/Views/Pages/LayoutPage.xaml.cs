@@ -27,7 +27,6 @@ public partial class LayoutPage : Page
     // Getter to update layout in ViewModels
     public Layout CurrentLayout => currentTemplate.Layout;
     public LayoutTemplate currentTemplate = new();
-    protected object updateLock = new();
 
     // page vars
     private Dictionary<string, (ILayoutPage, NavigationViewItem)>? pages;
@@ -141,7 +140,7 @@ public partial class LayoutPage : Page
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        SettingsManager_SettingValueChanged("LayoutFilterOnDevice", ManagerFactory.settingsManager.GetString("LayoutFilterOnDevice"), false, false);
+        SettingsManager_SettingValueChanged("LayoutFilterOnDevice", ManagerFactory.settingsManager.GetString("LayoutFilterOnDevice"), false, true);
     }
 
     private void SettingsManager_Initialized()
@@ -183,7 +182,7 @@ public partial class LayoutPage : Page
         }
 
         // UI thread
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             if (sender is ILayoutPage layoutPage)
             {
@@ -220,7 +219,7 @@ public partial class LayoutPage : Page
     private void SettingsManager_SettingValueChanged(string? name, object? value, bool temporary, bool initializing)
     {
         // UI thread
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             switch (name)
             {
@@ -274,16 +273,13 @@ public partial class LayoutPage : Page
         // This is a very important lock, it blocks backward events to the layout when
         // this is actually the backend that triggered the update. Notifications on higher
         // levels (pages and mappings) could potentially be blocked for optimization.
-        UIHelper.TryBeginInvoke(() =>
+        UIHelper.TryInvoke(() =>
         {
-            lock (updateLock)
-            {
-                // Invoke Layout Updated to trigger ViewModel updates
-                LayoutUpdated?.Invoke(currentTemplate.Layout);
+            // Invoke Layout Updated to trigger ViewModel updates
+            LayoutUpdated?.Invoke(currentTemplate.Layout);
 
-                // clear layout selection
-                cB_Layouts.SelectedValue = null;
-            }
+            // clear layout selection
+            cB_Layouts.SelectedValue = null;
         });
     }
 

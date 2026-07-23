@@ -4,7 +4,6 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System.Numerics;
-using System.Threading.Tasks;
 
 namespace HandheldCompanion.Targets
 {

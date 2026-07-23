@@ -147,10 +147,10 @@ public partial class OverlayQuickTools : GamepadWindow
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        SettingsManager_SettingValueChanged("QuickToolsLocation", ManagerFactory.settingsManager.GetString("QuickToolsLocation"), false, false);
-        SettingsManager_SettingValueChanged("QuickToolsAutoHide", ManagerFactory.settingsManager.GetString("QuickToolsAutoHide"), false, false);
-        SettingsManager_SettingValueChanged("QuickToolsDevicePath", ManagerFactory.settingsManager.GetString("QuickToolsDevicePath"), false, false);
-        SettingsManager_SettingValueChanged("QuickToolsSlideAnimation", ManagerFactory.settingsManager.GetString("QuickToolsSlideAnimation"), false, false);
+        SettingsManager_SettingValueChanged("QuickToolsLocation", ManagerFactory.settingsManager.GetString("QuickToolsLocation"), false, true);
+        SettingsManager_SettingValueChanged("QuickToolsAutoHide", ManagerFactory.settingsManager.GetString("QuickToolsAutoHide"), false, true);
+        SettingsManager_SettingValueChanged("QuickToolsDevicePath", ManagerFactory.settingsManager.GetString("QuickToolsDevicePath"), false, true);
+        SettingsManager_SettingValueChanged("QuickToolsSlideAnimation", ManagerFactory.settingsManager.GetString("QuickToolsSlideAnimation"), false, true);
     }
 
     protected virtual void SettingsManager_Initialized()
@@ -258,7 +258,7 @@ public partial class OverlayQuickTools : GamepadWindow
     private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
     {
         // UI thread
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             switch (name)
             {
@@ -281,7 +281,7 @@ public partial class OverlayQuickTools : GamepadWindow
     private void ControllerManager_ControllerSelected(IController Controller)
     {
         // UI thread
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             QTLB.Glyph = Controller.GetGlyph(ButtonFlags.L1);
             QTRB.Glyph = Controller.GetGlyph(ButtonFlags.R1);

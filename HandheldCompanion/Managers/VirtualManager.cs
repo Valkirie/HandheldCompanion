@@ -4,23 +4,37 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
+using Nefarius.ViGEm.Client;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
+using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
 using static HandheldCompanion.Managers.ControllerManager;
 
 namespace HandheldCompanion.Managers
 {
+    public enum HIDBackend
+    {
+        ViGEM,
+        VIIPER
+    }
+
     public static class VirtualManager
     {
-        public static VIIPERTarget? vTarget;
+        // controllers vars
+        public static ViGEmClient? vClient;
+        public static VTarget? vTarget;
+
+        // drivers vars
+        private const string driverName = "ViGEmBus";
 
         // settings vars
         public static HIDmode HIDmode = HIDmode.NoController;
         private static HIDmode defaultHIDmode = HIDmode.NoController;
         public static HIDstatus HIDstatus = HIDstatus.Disconnected;
+        public static HIDBackend HIDBackend = HIDBackend.ViGEM;
 
         private static readonly SemaphoreSlim controllerLock = new SemaphoreSlim(1, 1);
 
@@ -28,7 +42,7 @@ namespace HandheldCompanion.Managers
         public static ushort ProductId = 0x28E;
 
         private static readonly object temporaryControllerLock = new object();
-        private static readonly List<VIIPERTarget> temporaryControllers = new List<VIIPERTarget>();
+        private static readonly List<VTarget> temporaryControllers = new List<VTarget>();
         private static ushort temporaryProductIdSeed = ProductId;
 
         // Sleep state tracking: when the system is in sleep mode, only report meaningful input changes
@@ -36,7 +50,14 @@ namespace HandheldCompanion.Managers
         private static bool isSystemSleeping = false;
 
         // Xbox stick noise filter threshold: ignore axis value changes smaller than this
-        private const short AxisNoiseThreshold = 150;
+        private const short AxisNoiseThreshold = 140;
+
+        // Trigger (L2/R2) noise filter threshold: much smaller since range is 0-255 vs sticks at ±32k
+        private const short TriggerNoiseThreshold = 6;
+
+        // ponytail: State caching for UpdateInputs deduplication. Only skips updates when inputs are unchanged
+        // beyond noise thresholds. Gyro/motion always change, so we only cache button & axis state.
+        private static ControllerState? prevControllerState = null;
 
         public static bool IsInitialized;
 
@@ -56,7 +77,91 @@ namespace HandheldCompanion.Managers
         public delegate void MasterIntervalOverrideChangedEventHandler(int? overrideHz);
 
         static VirtualManager()
+        { }
+
+        /// <summary>
+        /// Initializes the ViGEm backend by ensuring the service is running and creating the client.
+        /// </summary>
+        /// <returns>True if ViGEm was successfully initialized, false otherwise.</returns>
+        private static bool InitializeViGEm()
         {
+            try
+            {
+                // Ensure the ViGEmBus service is running
+                if (!EnsureViGEmServiceRunning())
+                {
+                    LogManager.LogWarning("Failed to start ViGEmBus service");
+                    return false;
+                }
+
+                // Create the ViGEm client if not already created
+                if (vClient is null)
+                    vClient = new ViGEmClient();
+
+                LogManager.LogInformation("ViGEm backend initialized successfully");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to initialize ViGEm backend: {0}", ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Uninitializes the ViGEm backend by disposing the client.
+        /// </summary>
+        private static void UninitializeViGEm()
+        {
+            try
+            {
+                // Dispose the ViGEm client
+                if (vClient is not null)
+                {
+                    vClient.Dispose();
+                    vClient = null;
+                    LogManager.LogInformation("ViGEm client disposed");
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Error during ViGEm uninitialization: {0}", ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Ensures the ViGEmBus service is running, starting it if necessary.
+        /// </summary>
+        /// <returns>True if the service is running after this call, false otherwise.</returns>
+        private static bool EnsureViGEmServiceRunning()
+        {
+            try
+            {
+                using (ServiceController sc = new ServiceController(driverName))
+                {
+                    // Check if service exists
+                    if (sc.ServiceName != driverName)
+                    {
+                        LogManager.LogWarning("ViGEmBus service not found");
+                        return false;
+                    }
+
+                    // If service is not running, try to start it
+                    if (sc.Status != ServiceControllerStatus.Running)
+                    {
+                        LogManager.LogInformation("Starting ViGEmBus service...");
+                        sc.Start();
+                        sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(5));
+                    }
+
+                    return sc.Status == ServiceControllerStatus.Running;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to ensure ViGEmBus service is running: {0}", ex.Message);
+                return false;
+            }
         }
 
         public static int? GetMasterIntervalOverrideHz()
@@ -74,6 +179,13 @@ namespace HandheldCompanion.Managers
             if (IsInitialized)
                 return;
 
+            // Initialize ViGEm backend if selected
+            if (!InitializeViGEm())
+            {
+                LogManager.LogWarning("Failed to initialize ViGEm backend");
+                HIDBackend = HIDBackend.VIIPER;
+            }
+
             // manage events
             ManagerFactory.profileManager.Applied += ProfileManager_Applied;
             ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
@@ -89,13 +201,6 @@ namespace HandheldCompanion.Managers
                     QuerySettings();
                     break;
             }
-
-            /*
-            if (ManagerFactory.profileManager.IsInitialized)
-            {
-                ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
-            }
-            */
 
             IsInitialized = true;
             Initialized?.Invoke();
@@ -126,14 +231,14 @@ namespace HandheldCompanion.Managers
             }
 
             // load a few variables
-            HIDstatus = (HIDstatus)ManagerFactory.settingsManager.GetInt("HIDstatus");
+            SettingsManager_SettingValueChanged("VIIPERPort", ManagerFactory.settingsManager.GetInt("VIIPERPort"), false, true);
+            SettingsManager_SettingValueChanged("VIIPEREnabled", ManagerFactory.settingsManager.GetString("VIIPEREnabled"), false, true);
+            SettingsManager_SettingValueChanged("DSUport", ManagerFactory.settingsManager.GetInt("DSUport"), false, true);
+            SettingsManager_SettingValueChanged("DSUEnabled", ManagerFactory.settingsManager.GetString("DSUEnabled"), false, true);
+            SettingsManager_SettingValueChanged("HIDmode", selectedHIDMode, false, true);
+            SettingsManager_SettingValueChanged("HIDstatus", ManagerFactory.settingsManager.GetString("HIDstatus"), false, true);
 
-            SettingsManager_SettingValueChanged("VIIPERPort", ManagerFactory.settingsManager.GetInt("VIIPERPort"), false, false);
-            SettingsManager_SettingValueChanged("VIIPEREnabled", ManagerFactory.settingsManager.GetString("VIIPEREnabled"), false, false);
-            SettingsManager_SettingValueChanged("DSUport", ManagerFactory.settingsManager.GetInt("DSUport"), false, false);
-            SettingsManager_SettingValueChanged("DSUEnabled", ManagerFactory.settingsManager.GetString("DSUEnabled"), false, false);
-            SettingsManager_SettingValueChanged("HIDmode", selectedHIDMode, false, false);
-            SettingsManager_SettingValueChanged("HIDstatus", HIDstatus, false, false);
+            SetControllerModeCore(defaultHIDmode);
         }
 
         public static async Task Stop()
@@ -156,6 +261,24 @@ namespace HandheldCompanion.Managers
 
         public static async Task Resume(bool OS)
         {
+            if (!controllerLock.Wait(3000))
+                return;
+
+            try
+            {
+                // Re-initialize ViGEm if we're using that backend
+                if (!InitializeViGEm())
+                    LogManager.LogWarning("Failed to re-initialize ViGEm backend");
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Error during ViGEm resume: {0}", ex.Message);
+            }
+            finally
+            {
+                controllerLock.Release();
+            }
+
             if (OS)
             {
                 // Update DSU status
@@ -170,6 +293,23 @@ namespace HandheldCompanion.Managers
         {
             // Disconnect the controller first
             await SetControllerMode(HIDmode.NoController).ConfigureAwait(false);
+
+            if (!controllerLock.Wait(3000))
+                return;
+
+            try
+            {
+                // Uninitialize ViGEm
+                UninitializeViGEm();
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Error during ViGEm suspend: {0}", ex.Message);
+            }
+            finally
+            {
+                controllerLock.Release();
+            }
 
             if (OS)
             {
@@ -187,22 +327,25 @@ namespace HandheldCompanion.Managers
                     {
                         // update variable
                         defaultHIDmode = (HIDmode)Convert.ToInt32(value);
-                        _ = Task.Run(() =>
-                        {
-                            SetControllerMode(defaultHIDmode).ConfigureAwait(false);
-                        });
+
+                        // skip if initializing
+                        if (initializing)
+                            return;
+
+                        _ = SetControllerMode(defaultHIDmode);
                     }
                     break;
                 case "HIDstatus":
                     {
-                        // skip on cold boot, retrieved by Start() function and called by SetControllerMode()
-                        if (ManagerFactory.settingsManager.IsReady)
+                        HIDstatus selectedHIDstatus = (HIDstatus)Convert.ToInt32(value);
+
+                        if (initializing)
                         {
-                            _ = Task.Run(() =>
-                            {
-                                SetControllerStatus((HIDstatus)Convert.ToInt32(value)).ConfigureAwait(false);
-                            });
+                            HIDstatus = selectedHIDstatus;
+                            return;
                         }
+
+                        _ = SetControllerStatus(selectedHIDstatus);
                     }
                     break;
                 case "DSUEnabled":
@@ -215,10 +358,8 @@ namespace HandheldCompanion.Managers
                         DSUServer.serverPort = Convert.ToInt32(value);
                     break;
                 case "VIIPEREnabled":
-                    _ = Task.Run(() =>
-                    {
-                        SetVIIPERStatus(Convert.ToBoolean(value)).ConfigureAwait(false);
-                    });
+                    // don't restore controller if initializing
+                    _ = SetVIIPERStatus(Convert.ToBoolean(value), restoreController: !initializing);
                     break;
                 case "VIIPERPort":
                     ViiperServerManager.SetPort(Convert.ToInt32(value));
@@ -280,7 +421,7 @@ namespace HandheldCompanion.Managers
                 if (controller.IsConnected)
                     continue;
 
-                VIIPERTarget target = CreateTemporaryControllerTarget();
+                VTarget target = CreateTemporaryControllerTarget();
                 if (!target.Connect())
                 {
                     target.Dispose();
@@ -319,7 +460,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static VIIPERTarget CreateTemporaryControllerTarget()
+        private static VTarget CreateTemporaryControllerTarget()
         {
             lock (temporaryControllerLock)
             {
@@ -327,7 +468,9 @@ namespace HandheldCompanion.Managers
                 if (temporaryProductIdSeed == 0)
                     temporaryProductIdSeed = 1;
 
-                return new Xbox360Target(VendorId, temporaryProductIdSeed);
+                return HIDBackend == HIDBackend.ViGEM
+                    ? new ViXbox360Target(VendorId, temporaryProductIdSeed)
+                    : new Xbox360Target(VendorId, temporaryProductIdSeed);
             }
         }
 
@@ -344,7 +487,7 @@ namespace HandheldCompanion.Managers
             if (started)
             {
                 ViiperServerManager.Start();
-                if (restoreController && ViiperServerManager.IsRunning && IsViiperBackedMode(HIDmode) && HIDstatus == HIDstatus.Connected)
+                if (restoreController && ViiperServerManager.IsRunning && HIDstatus == HIDstatus.Connected)
                     await SetControllerMode(HIDmode).ConfigureAwait(false);
             }
             else
@@ -353,22 +496,8 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static bool IsViiperBackedMode(HIDmode mode)
-        {
-            return mode == HIDmode.Xbox360Controller
-                || mode == HIDmode.DualShock4Controller
-                || mode == HIDmode.DualSenseController
-                || mode == HIDmode.SteamDeckController
-                || mode == HIDmode.SteamController
-                || mode == HIDmode.SwitchProController
-                || mode == HIDmode.Free;
-        }
-
         private static bool CanUseControllerMode(HIDmode mode)
         {
-            if (!IsViiperBackedMode(mode))
-                return true;
-
             if (!ManagerFactory.settingsManager.GetBoolean("VIIPEREnabled"))
             {
                 LogManager.LogInformation("Skipping {0}: VIIPER server is disabled", mode);
@@ -387,7 +516,8 @@ namespace HandheldCompanion.Managers
 
         public static async Task SetControllerMode(HIDmode mode)
         {
-            await controllerLock.WaitAsync().ConfigureAwait(false);
+            if (!await controllerLock.WaitAsync(3000).ConfigureAwait(false))
+                return;
 
             try
             {
@@ -402,7 +532,8 @@ namespace HandheldCompanion.Managers
 
         public static async Task SetControllerStatus(HIDstatus status)
         {
-            await controllerLock.WaitAsync().ConfigureAwait(false);
+            if (!await controllerLock.WaitAsync(3000).ConfigureAwait(false))
+                return;
 
             try
             {
@@ -429,11 +560,9 @@ namespace HandheldCompanion.Managers
             // Disconnect and dispose the current virtual controller if it exists
             if (vTarget is not null)
             {
-                vTarget.Connected -= OnTargetConnected;
-                vTarget.Disconnected -= OnTargetDisconnected;
-                vTarget.Vibrated -= OnTargetVibrated;
-                vTarget.StatusChanged -= OnTargetConnectStatusChanged;
+                // Events will be cleared when target is disposed
                 vTarget.Disconnect();
+                vTarget.Dispose();
                 vTarget = null;
                 NotifyMasterIntervalOverrideChanged();
             }
@@ -451,7 +580,9 @@ namespace HandheldCompanion.Managers
                     return;
 
                 case HIDmode.DualShock4Controller:
-                    vTarget = new DualShock4Target(0x054C, 0x05C4); // DualShock 4 [CUH-ZCT1x]
+                    vTarget = HIDBackend == HIDBackend.ViGEM
+                        ? new ViDualShock4Target(0x054C, 0x05C4)
+                        : new DualShock4Target(0x054C, 0x05C4);
                     break;
 
                 case HIDmode.DualSenseController:
@@ -471,7 +602,9 @@ namespace HandheldCompanion.Managers
                     break;
 
                 case HIDmode.Xbox360Controller:
-                    vTarget = new Xbox360Target(VendorId, ProductId);
+                    vTarget = HIDBackend == HIDBackend.ViGEM
+                        ? new ViXbox360Target(VendorId, ProductId)
+                        : new Xbox360Target(VendorId, ProductId);
                     break;
             }
 
@@ -484,7 +617,7 @@ namespace HandheldCompanion.Managers
                 return;
             }
 
-            if (!CanUseControllerMode(mode))
+            if (vTarget is VIIPERTarget && !CanUseControllerMode(mode))
             {
                 HIDmode = mode;
                 ControllerSelected?.Invoke(mode);
@@ -492,11 +625,10 @@ namespace HandheldCompanion.Managers
                 return;
             }
 
-            // Subscribe to target events
-            vTarget.Connected += OnTargetConnected;
-            vTarget.Disconnected += OnTargetDisconnected;
+            vTarget.Connected += (t) => OnTargetConnected(t);
+            vTarget.Disconnected += (t) => OnTargetDisconnected(t);
             vTarget.Vibrated += OnTargetVibrated;
-            vTarget.StatusChanged += OnTargetConnectStatusChanged;
+            vTarget.StatusChanged += (t, status, attempt, maxAttempts) => OnTargetConnectStatusChanged(t, status, attempt, maxAttempts);
 
             // Update the current mode
             HIDmode = mode;
@@ -514,17 +646,16 @@ namespace HandheldCompanion.Managers
             {
                 if (status == HIDstatus.Disconnected)
                     HIDstatus = status;
-
                 return;
             }
+
+            if (vTarget is VIIPERTarget && !CanUseControllerMode(HIDmode))
+                return;
 
             bool success = false;
             switch (status)
             {
                 case HIDstatus.Connected:
-                    if (!CanUseControllerMode(HIDmode))
-                        break;
-
                     success = vTarget.IsConnected || vTarget.Connect();
                     break;
                 case HIDstatus.Disconnected:
@@ -537,17 +668,17 @@ namespace HandheldCompanion.Managers
                 HIDstatus = status;
         }
 
-        private static void OnTargetConnectStatusChanged(VIIPERTarget target, VirtualManagerStatus status, int attempt, int maxAttempts)
+        private static void OnTargetConnectStatusChanged(VTarget target, VirtualManagerStatus status, int attempt, int maxAttempts)
         {
             StatusChanged?.Invoke(status, attempt, maxAttempts);
         }
 
-        private static void OnTargetConnected(VIIPERTarget target)
+        private static void OnTargetConnected(VTarget target)
         {
             ToastManager.SendToast($"{target}", "is now connected"); //, $"controller_{(uint)target.HID}_1", true);
         }
 
-        private static void OnTargetDisconnected(VIIPERTarget target)
+        private static void OnTargetDisconnected(VTarget target)
         {
             ToastManager.SendToast($"{target}", "is now disconnected"); //, $"controller_{(uint)target.HID}_0", true);
         }
@@ -567,8 +698,10 @@ namespace HandheldCompanion.Managers
         }
 
         /// <summary>
-        /// Compares two axis states with a noise filter threshold for Xbox mode.
-        /// Returns true if axis values differ by more than the noise threshold.
+        /// Compares two axis states with noise filter thresholds.
+        /// Sticks use AxisNoiseThreshold (150); triggers (L2/R2) use TriggerNoiseThreshold (10) 
+        /// since they operate in 0-255 range vs sticks in ±32k range.
+        /// Returns true if any axis values differ by more than their respective threshold.
         /// </summary>
         private static bool AxisStateHasSignificantChange(AxisState? previous, AxisState current)
         {
@@ -580,11 +713,57 @@ namespace HandheldCompanion.Managers
                 short prevValue = previous[axis];
                 short currValue = current[axis];
 
-                if (Math.Abs(currValue - prevValue) > AxisNoiseThreshold)
+                // Use different thresholds for triggers vs sticks
+                short threshold = (axis == AxisFlags.L2 || axis == AxisFlags.R2)
+                    ? TriggerNoiseThreshold
+                    : AxisNoiseThreshold;
+
+                if (Math.Abs(currValue - prevValue) > threshold)
                     return true;
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Compares button states for exact equality.
+        /// Buttons are digital, so no thresholding needed.
+        /// </summary>
+        private static bool ButtonStateHasChanged(ButtonState? previous, ButtonState current)
+        {
+            if (previous is null)
+                return !current.IsEmpty();
+
+            return !previous.Contains(current) || !current.Contains(previous);
+        }
+
+        /// <summary>
+        /// Compares gyro states with loose thresholds to ignore sensor noise.
+        /// Gyro/accel data changes constantly; we only detect large meaningful movements.
+        /// ponytail: Ceiling—this compares all sensor states which is O(n). For strict dedup, 
+        /// compare only the "active" sensor. Upgrade path: accept SensorState hint or cache last active.
+        /// </summary>
+        private static bool GyroStateHasSignificantChange(GyroState? previous, GyroState current)
+        {
+            if (previous is null)
+                return true; // First update, always send
+
+            // Loose thresholds: 1.0 deg/s for gyro, 0.2g for accel (human-perceptible movements)
+            const float gyroThreshold = 1.0f;
+            const float accelThreshold = 0.2f;
+
+            // Check the default sensor state (most common case)
+            var prevGyro = previous.GetGyroscope(GyroState.SensorState.Default);
+            var currGyro = current.GetGyroscope(GyroState.SensorState.Default);
+            var prevAccel = previous.GetAccelerometer(GyroState.SensorState.Default);
+            var currAccel = current.GetAccelerometer(GyroState.SensorState.Default);
+
+            // Simple distance check: if either gyro or accel vector moved significantly, report change
+            var gyroDelta = currGyro - prevGyro;
+            var accelDelta = currAccel - prevAccel;
+
+            return gyroDelta.LengthSquared() > (gyroThreshold * gyroThreshold) ||
+                   accelDelta.LengthSquared() > (accelThreshold * accelThreshold);
         }
 
         public static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion)
@@ -596,7 +775,21 @@ namespace HandheldCompanion.Managers
             if (isSystemSleeping)
                 return;
 
+            // Deduplicate: skip if controller state hasn't changed meaningfully
+            if (prevControllerState is not null)
+            {
+                bool buttonChanged = ButtonStateHasChanged(prevControllerState.ButtonState, controllerState.ButtonState);
+                bool axisChanged = AxisStateHasSignificantChange(prevControllerState.AxisState, controllerState.AxisState);
+                bool gyroChanged = GyroStateHasSignificantChange(prevControllerState.GyroState, controllerState.GyroState);
+
+                if (!buttonChanged && !axisChanged && !gyroChanged)
+                    return; // No significant change, skip update
+            }
+
             vTarget?.UpdateInputs(controllerState, gamepadMotion);
+
+            // Cache the current state for next tick
+            prevControllerState = controllerState.Clone() as ControllerState;
         }
     }
 }

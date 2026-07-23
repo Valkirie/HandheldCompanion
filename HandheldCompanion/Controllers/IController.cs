@@ -929,8 +929,6 @@ namespace HandheldCompanion.Controllers
                 if (!disposing)
                     return;
 
-                StopRumble();
-
                 // manage events
                 ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
                 ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;

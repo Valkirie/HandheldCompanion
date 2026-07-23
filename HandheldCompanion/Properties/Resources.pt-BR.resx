@@ -2355,6 +2355,9 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="XInputController_Warning_USB" xml:space="preserve">
     <value>Favor aguarde um momento enquanto religamos o seu controle.</value>
   </data>
+  <data name="XInputController_Warning_LegionWireless" xml:space="preserve">
+    <value>One of your detachable controllers is still disconnected. Please manually power cycle the disconnected controller by pressing and holding its power button until it reconnects.</value>
+  </data>
   <data name="Enum_LegionController_ButtonFlags_B5" xml:space="preserve">
     <value>M2</value>
   </data>

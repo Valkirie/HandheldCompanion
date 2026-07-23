@@ -1,7 +1,6 @@
 using HandheldCompanion.Helpers;
 using HandheldCompanion.ViewModels;
 using System;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace HandheldCompanion.Views.Pages;

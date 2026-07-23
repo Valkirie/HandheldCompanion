@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
-using System.Numerics;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices
@@ -20,27 +19,7 @@ namespace HandheldCompanion.Devices
             this.GfxClock = new double[] { 100, 2200 };
             this.CpuClock = 4700;
 
-            GyroMatrix = new()
-            {
-                Axis = new Vector3(-1.0f, -1.0f, -1.0f),
-                AxisSwap = new()
-                {
-                    { 'X', 'X' },
-                    { 'Y', 'Z' },
-                    { 'Z', 'Y' },
-                }
-            };
-
-            AcceleroMatrix = new()
-            {
-                Axis = new Vector3(1.0f, -1.0f, -1.0f),
-                AxisSwap = new()
-                {
-                    { 'X', 'X' },
-                    { 'Y', 'Z' },
-                    { 'Z', 'Y' },
-                }
-            };
+            // IMU matrices loaded from OneXPlayer2.json
 
             ECDetails = new ECDetails
             {

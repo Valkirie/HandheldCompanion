@@ -12,7 +12,7 @@ namespace HandheldCompanion.Commands.Functions.HC
             base.Glyph = "\uEDA4";
             base.OnKeyUp = true;
 
-            App.overlayTrackpad.IsVisibleChanged += IsVisibleChanged;
+            App.overlayTrackpad?.IsVisibleChanged += IsVisibleChanged;
         }
 
         private void IsVisibleChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
@@ -22,12 +22,12 @@ namespace HandheldCompanion.Commands.Functions.HC
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            App.overlayTrackpad.ToggleVisibility();
+            App.overlayTrackpad?.ToggleVisibility();
 
             base.Execute(IsKeyDown, IsKeyUp, false);
         }
 
-        public override bool IsToggled => App.overlayTrackpad.Visibility == System.Windows.Visibility.Visible;
+        public override bool IsToggled => App.overlayTrackpad?.Visibility == System.Windows.Visibility.Visible;
 
         public override object Clone()
         {
@@ -46,7 +46,7 @@ namespace HandheldCompanion.Commands.Functions.HC
 
         public override void Dispose()
         {
-            App.overlayTrackpad.IsVisibleChanged -= IsVisibleChanged;
+            App.overlayTrackpad?.IsVisibleChanged -= IsVisibleChanged;
             base.Dispose();
         }
     }

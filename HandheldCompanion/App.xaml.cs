@@ -265,9 +265,8 @@ public partial class App : Application
 
             // Pages are guaranteed to exist because MainWindow construction (loadPages()) is complete.
             ManagerFactory.settingsManager.SetProperty("LastVersion", fileVersionInfo?.FileVersion);
-            Task.Run(() => StartNonUIInit(exePath, IsFirstStart, newUpdate, splashScreen.SetStatus));
-
             MainWindow.Show();
+            Task.Run(() => StartNonUIInit(exePath, IsFirstStart, newUpdate, splashScreen.SetStatus));
         }
         catch (Exception ex)
         {

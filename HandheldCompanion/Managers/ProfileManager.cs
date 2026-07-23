@@ -301,7 +301,12 @@ public class ProfileManager : IManager
 
     public void CycleSubProfiles(bool previous = false)
     {
-        lock (profileLock)
+        Profile? profileToApply = null;
+
+        if (!Monitor.TryEnter(profileLock, TimeSpan.FromSeconds(2)))
+            return;
+
+        try
         {
             if (currentProfile == null)
                 return;
@@ -330,10 +335,16 @@ public class ProfileManager : IManager
             if (newIndex < 0 || newIndex >= subProfiles.Count)
                 return;
 
-            // apply profile
-            Profile profileToApply = subProfiles[newIndex];
-            UpdateOrCreateProfile(profileToApply);
+            profileToApply = subProfiles[newIndex];
         }
+        finally
+        {
+            Monitor.Exit(profileLock);
+        }
+
+        // Apply outside profileLock because this raises external events and performs I/O.
+        if (profileToApply is not null)
+            UpdateOrCreateProfile(profileToApply);
     }
 
     private void ApplyProfile(Profile profile, UpdateSource source = UpdateSource.Background, bool announce = true)
@@ -341,20 +352,21 @@ public class ProfileManager : IManager
         // might not be the same anymore if disabled
         profile = GetProfileFromGuid(profile.Guid, false, profile.IsSubProfile);
 
+        Profile? previousProfile;
         lock (profileLock)
         {
-            // we've already announced this profile
-            if (currentProfile is not null)
-            {
-                if (currentProfile.Guid == profile.Guid)
-                    announce = false;
-            }
-            else if (Status == ManagerStatus.Initializing)
-                announce = false;
-
-            // update current profile before invoking event
+            previousProfile = currentProfile;
             currentProfile = profile;
         }
+
+        // we've already announced this profile
+        if (previousProfile is not null)
+        {
+            if (previousProfile.Guid == profile.Guid)
+                announce = false;
+        }
+        else if (Status == ManagerStatus.Initializing)
+            announce = false;
 
         // refresh error code
         SanitizeProfile(profile);
@@ -464,10 +476,17 @@ public class ProfileManager : IManager
                 // update profile
                 UpdateOrCreateProfile(profile);
 
-                lock (profileLock)
+                if (!Monitor.TryEnter(profileLock, TimeSpan.FromSeconds(2)))
+                    continue;
+
+                try
                 {
                     if (currentProfile?.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase) == true)
                         profileToApply = profile;
+                }
+                finally
+                {
+                    Monitor.Exit(profileLock);
                 }
             }
         }
@@ -547,10 +566,17 @@ public class ProfileManager : IManager
                 return;
 
             // skip if current
-            lock (profileLock)
+            if (!Monitor.TryEnter(profileLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 if (profile.Guid == currentProfile?.Guid)
                     return;
+            }
+            finally
+            {
+                Monitor.Exit(profileLock);
             }
 
             if (!profile.Default)
@@ -632,12 +658,19 @@ public class ProfileManager : IManager
 
     public Profile GetCurrent()
     {
-        lock (profileLock)
+        if (!Monitor.TryEnter(profileLock, TimeSpan.FromSeconds(2)))
+            return GetDefault();
+
+        try
         {
             if (currentProfile is not null)
                 return currentProfile;
 
             return GetDefault();
+        }
+        finally
+        {
+            Monitor.Exit(profileLock);
         }
     }
 
@@ -842,35 +875,45 @@ public class ProfileManager : IManager
             ManualResetEventSlim waitHandle = new ManualResetEventSlim(false);
 
             // UI thread
-            UIHelper.TryInvoke(async () =>
+            bool dialogStarted = UIHelper.TryInvoke((Action)(async () =>
             {
-                // todo: localize me
-                Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+                try
                 {
-                    Title = $"Importing profile for {profile.Name}",
-                    Content = $"Would you like to import this profile to your database ?",
-                    PrimaryButtonText = Resources.ProfilesPage_OK,
-                    CloseButtonText = Resources.ProfilesPage_Cancel
-                }.ShowAsync();
+                    // todo: localize me
+                    Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+                    {
+                        Title = $"Importing profile for {profile.Name}",
+                        Content = $"Would you like to import this profile to your database ?",
+                        PrimaryButtonText = Resources.ProfilesPage_OK,
+                        CloseButtonText = Resources.ProfilesPage_Cancel
+                    }.ShowAsync();
 
-                ContentDialogResult result = await dialogTask; // await the task
+                    ContentDialogResult result = await dialogTask; // await the task
 
-                switch (result)
-                {
-                    case ContentDialogResult.Primary:
-                        skipImported = false;
-                        break;
-                    default:
-                        skipImported = true;
-                        break;
+                    switch (result)
+                    {
+                        case ContentDialogResult.Primary:
+                            skipImported = false;
+                            break;
+                        default:
+                            skipImported = true;
+                            break;
+                    }
                 }
-
-                // Signal the waiting thread that the dialog has been closed
-                waitHandle.Set();
-            });
+                catch
+                {
+                    skipImported = true;
+                }
+                finally
+                {
+                    // Always release the importer if the dialog or dispatcher fails.
+                    waitHandle.Set();
+                }
+            }));
 
             // Wait until the dialog has been closed
-            waitHandle.Wait();
+            if (!dialogStarted || !waitHandle.Wait(TimeSpan.FromSeconds(30)))
+                return;
 
             // delete file and exit if user decided to skip this profile
             if (skipImported)
@@ -943,9 +986,16 @@ public class ProfileManager : IManager
             // warn owner
             bool isCurrent = false;
 
-            lock (profileLock)
+            if (!Monitor.TryEnter(profileLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 isCurrent = profile.Path.Equals(currentProfile?.Path, StringComparison.InvariantCultureIgnoreCase);
+            }
+            finally
+            {
+                Monitor.Exit(profileLock);
             }
 
             // raise event
@@ -1076,10 +1126,17 @@ public class ProfileManager : IManager
 
     public bool IsCurrentProfile(Profile profile)
     {
-        lock (profileLock)
+        if (!Monitor.TryEnter(profileLock, TimeSpan.FromSeconds(2)))
+            return false;
+
+        try
         {
             return currentProfile is not null
                 && profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
+        }
+        finally
+        {
+            Monitor.Exit(profileLock);
         }
     }
 

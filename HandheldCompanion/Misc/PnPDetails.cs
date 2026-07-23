@@ -39,7 +39,6 @@ public class PnPDetails
     // XInput
     public bool isXInput;
     public byte XInputUserIndex = byte.MaxValue;
-    public int XInputDeviceIdx;
 
     public string GetProductID()
     {

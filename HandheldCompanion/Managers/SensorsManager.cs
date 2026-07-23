@@ -21,11 +21,16 @@ namespace HandheldCompanion.Managers
         private static SerialUSBIMU? USBSensor;
 
         private static SensorFamily sensorFamily;
+        private static SensorFamily sensorSelection;
+
+        public static SensorFamily ActiveSensorFamily => sensorFamily;
 
         public static bool IsInitialized;
 
         public static event InitializedEventHandler? Initialized;
         public delegate void InitializedEventHandler();
+
+        public static event Action<SensorFamily>? SensorSelectionChanged;
 
         public static void Start()
         {
@@ -55,7 +60,7 @@ namespace HandheldCompanion.Managers
                     QueryDevice();
                     break;
             }
-            
+
             // manage events
             ControllerManager.Initialized += ControllerManager_Initialized;
 
@@ -106,9 +111,9 @@ namespace HandheldCompanion.Managers
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // raise events
-            SettingsManager_SettingValueChanged("SensorPlacement", ManagerFactory.settingsManager.GetString("SensorPlacement"), false, false);
-            SettingsManager_SettingValueChanged("SensorPlacementUpsideDown", ManagerFactory.settingsManager.GetString("SensorPlacementUpsideDown"), false, false);
-            SettingsManager_SettingValueChanged("SensorSelection", ManagerFactory.settingsManager.GetString("SensorSelection"), false, false);
+            SettingsManager_SettingValueChanged("SensorPlacement", ManagerFactory.settingsManager.GetString("SensorPlacement"), false, true);
+            SettingsManager_SettingValueChanged("SensorPlacementUpsideDown", ManagerFactory.settingsManager.GetString("SensorPlacementUpsideDown"), false, true);
+            SettingsManager_SettingValueChanged("SensorSelection", ManagerFactory.settingsManager.GetString("SensorSelection"), false, true);
         }
 
         public static void Stop()
@@ -174,51 +179,46 @@ namespace HandheldCompanion.Managers
             if (Controller is null)
                 return;
 
-            // select controller as current sensor if current sensor selection is none
-            if (Controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor))
-                ManagerFactory.settingsManager.SetProperty("SensorSelection", (int)SensorFamily.Controller);
-            else
-                PickNextSensor();
+            if (!Controller.HasMotionSensor())
+                return;
+
+            if (sensorSelection == SensorFamily.Auto)
+                PickNextSensor(SensorFamily.Controller);
+            else if (sensorSelection == SensorFamily.Controller)
+                ActivateSensor(SensorFamily.Controller);
         }
 
         private static void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
         {
-            if (sensorFamily != SensorFamily.Controller)
+            if (sensorSelection != SensorFamily.Auto && sensorSelection != SensorFamily.Controller)
                 return;
 
             // skip if controller isn't current or doesn't have motion sensor anyway
             if (!Controller.HasMotionSensor() || !WasTarget)
                 return;
 
-            // pick next available sensor
-            PickNextSensor();
+            if (sensorSelection == SensorFamily.Auto)
+                PickNextSensor();
+            else
+                StopListening();
         }
 
         private static void DeviceManager_UsbDeviceRemoved(PnPDevice? device, Guid IntefaceGuid)
         {
-            if (USBSensor is null || sensorFamily != SensorFamily.SerialUSBIMU)
+            if (USBSensor is null)
                 return;
 
             // If the USB Gyro is unplugged, close serial connection
             USBSensor.Close();
+            USBSensor = null;
 
-            // pick next available sensor
-            PickNextSensor();
-        }
+            if (sensorSelection != SensorFamily.Auto && sensorSelection != SensorFamily.SerialUSBIMU)
+                return;
 
-        private static void PickNextSensor()
-        {
-            // get current controller
-            IController? controller = ControllerManager.GetTarget();
-
-            if (controller is not null && controller.HasMotionSensor())
-                ManagerFactory.settingsManager.SetProperty("SensorSelection", (int)SensorFamily.Controller);
-            else if (IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.InternalSensor))
-                ManagerFactory.settingsManager.SetProperty("SensorSelection", (int)SensorFamily.Windows);
-            else if (IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.ExternalSensor))
-                ManagerFactory.settingsManager.SetProperty("SensorSelection", (int)SensorFamily.SerialUSBIMU);
+            if (sensorSelection == SensorFamily.Auto)
+                PickNextSensor();
             else
-                ManagerFactory.settingsManager.SetProperty("SensorSelection", (int)SensorFamily.None);
+                StopListening();
         }
 
         private static void DeviceManager_UsbDeviceArrived(PnPDevice? device, Guid IntefaceGuid)
@@ -226,9 +226,63 @@ namespace HandheldCompanion.Managers
             // If USB Gyro is plugged, hook into it
             USBSensor = SerialUSBIMU.GetCurrent();
 
-            // select serial usb as current sensor if current sensor selection is none
-            if (sensorFamily == SensorFamily.None)
-                ManagerFactory.settingsManager.SetProperty("SensorSelection", (int)SensorFamily.SerialUSBIMU);
+            if (USBSensor is null)
+                return;
+
+            if (sensorSelection == SensorFamily.Auto)
+                PickNextSensor(SensorFamily.SerialUSBIMU);
+            else if (sensorSelection == SensorFamily.SerialUSBIMU)
+                ActivateSensor(SensorFamily.SerialUSBIMU);
+        }
+
+        private static void PickNextSensor(SensorFamily preferred = SensorFamily.None)
+        {
+            if (sensorSelection != SensorFamily.Auto)
+                return;
+
+            IController? controller = ControllerManager.GetTarget();
+            bool hasControllerSensor = controller?.HasMotionSensor() ?? false;
+            bool hasInternalSensor = IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.InternalSensor);
+            bool hasExternalSensor = USBSensor is not null;
+
+            if (preferred == SensorFamily.Controller && hasControllerSensor)
+                ActivateSensor(SensorFamily.Controller);
+            else if (preferred == SensorFamily.SerialUSBIMU && hasExternalSensor)
+                ActivateSensor(SensorFamily.SerialUSBIMU);
+            else if (hasControllerSensor)
+                ActivateSensor(SensorFamily.Controller);
+            else if (hasInternalSensor)
+                ActivateSensor(SensorFamily.Windows);
+            else if (hasExternalSensor)
+                ActivateSensor(SensorFamily.SerialUSBIMU);
+        }
+
+        private static void ActivateSensor(SensorFamily selectedFamily)
+        {
+            if (sensorFamily == selectedFamily)
+                return;
+
+            StopListening();
+            if (sensorFamily == SensorFamily.SerialUSBIMU)
+                USBSensor?.Close();
+
+            sensorFamily = selectedFamily;
+
+            if (sensorFamily == SensorFamily.SerialUSBIMU)
+            {
+                USBSensor ??= SerialUSBIMU.GetCurrent();
+                if (USBSensor is null)
+                    return;
+
+                SerialPlacement placement = (SerialPlacement)ManagerFactory.settingsManager.GetInt("SensorPlacement");
+                bool upsidedown = ManagerFactory.settingsManager.GetBoolean("SensorPlacementUpsideDown");
+                USBSensor.Open();
+                USBSensor.SetSensorPlacement(placement);
+                USBSensor.SetSensorOrientation(upsidedown);
+            }
+
+            SetSensorFamily(sensorFamily);
+            SensorSelectionChanged?.Invoke(sensorFamily);
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
@@ -249,61 +303,21 @@ namespace HandheldCompanion.Managers
                     break;
                 case "SensorSelection":
                     {
-                        SensorFamily sensorSelection = (SensorFamily)Convert.ToInt32(value);
+                        int selectedValue = Convert.ToInt32(value);
+                        SensorFamily selectedFamily = selectedValue == -1 ? SensorFamily.Auto : (SensorFamily)selectedValue;
 
                         // skip if set already
-                        if (sensorFamily == sensorSelection)
+                        if (sensorSelection == selectedFamily)
                             return;
 
-                        switch (sensorFamily)
-                        {
-                            case SensorFamily.Windows:
-                                StopListening();
-                                break;
+                        sensorSelection = selectedFamily;
 
-                            case SensorFamily.SerialUSBIMU:
-                                USBSensor?.Close();
-                                break;
-                        }
-
-                        // update current sensorFamily
-                        sensorFamily = sensorSelection;
-
-                        switch (sensorFamily)
-                        {
-                            case SensorFamily.SerialUSBIMU:
-                                {
-                                    // get current USB sensor
-                                    USBSensor = SerialUSBIMU.GetCurrent();
-                                    if (USBSensor is null)
-                                    {
-                                        PickNextSensor();
-                                        break;
-                                    }
-
-                                    SerialPlacement placement = (SerialPlacement)ManagerFactory.settingsManager.GetInt("SensorPlacement");
-                                    bool upsidedown = ManagerFactory.settingsManager.GetBoolean("SensorPlacementUpsideDown");
-
-                                    USBSensor.Open();
-                                    USBSensor.SetSensorPlacement(placement);
-                                    USBSensor.SetSensorOrientation(upsidedown);
-                                }
-                                break;
-
-                            case SensorFamily.Controller:
-                                {
-                                    // get current controller
-                                    IController? controller = ControllerManager.GetTarget();
-                                    if (controller is null || !controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor))
-                                    {
-                                        PickNextSensor();
-                                        break;
-                                    }
-                                }
-                                break;
-                        }
-
-                        SetSensorFamily(sensorSelection);
+                        if (sensorSelection == SensorFamily.Auto)
+                            PickNextSensor();
+                        else if (sensorSelection == SensorFamily.None)
+                            ActivateSensor(SensorFamily.None);
+                        else
+                            ActivateSensor(sensorSelection);
                     }
                     break;
             }

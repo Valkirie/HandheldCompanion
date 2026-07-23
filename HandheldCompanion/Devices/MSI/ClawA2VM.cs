@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 
 namespace HandheldCompanion.Devices;
 
@@ -19,7 +18,7 @@ public class ClawA2VM : ClawA1M
         GfxClock = new double[] { 100, 1950 };
         CpuClock = 4800;
 
-        GyroMatrix = new() { Axis = new Vector3(1.0f, 1.0f, -1.0f) };
+        // IMU matrices loaded from ClawA2VM.json
 
         // overwrite ClawA1M default power profiles
         Dictionary<Guid, double[]> tdpOverrides = new Dictionary<Guid, double[]>

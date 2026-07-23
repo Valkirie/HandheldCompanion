@@ -245,6 +245,25 @@ public class ConcurrentList<T> : IList<T>, IDisposable
         }
     }
 
+    public bool TryGetSnapshot(out T[] items, int millisecondsTimeout = 0)
+    {
+        items = Array.Empty<T>();
+
+        if (!_lock.TryEnterReadLock(millisecondsTimeout))
+            return false;
+
+        try
+        {
+            items = new T[_count];
+            Array.Copy(_arr, items, _count);
+            return true;
+        }
+        finally
+        {
+            _lock.ExitReadLock();
+        }
+    }
+
     public bool IsReadOnly => false;
 
     public T this[int index]

@@ -1,5 +1,4 @@
 using HandheldCompanion.Inputs;
-using System.Numerics;
 using WindowsInput.Events;
 namespace HandheldCompanion.Devices;
 
@@ -17,8 +16,7 @@ public class AYANEOAIR : AYANEO.AYANEODeviceCEc
         this.GfxClock = new double[] { 100, 1600 };
         this.CpuClock = 4000;
 
-        this.GyroMatrix = new() { Axis = new Vector3(1.0f, -1.0f, 1.0f) };
-        this.AcceleroMatrix = new() { Axis = new Vector3(1.0f, -1.0f, -1.0f) };
+        // IMU matrices loaded from AYANEOAIR.json
 
         this.OEMChords.Clear();
         this.OEMChords.Add(new KeyboardChord("Custom Key Big",

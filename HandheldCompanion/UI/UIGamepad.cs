@@ -30,7 +30,6 @@ using ListView = System.Windows.Controls.ListView;
 using ListViewItem = System.Windows.Controls.ListViewItem;
 using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
 using Page = System.Windows.Controls.Page;
-using ProgressBar = iNKORE.UI.WPF.Modern.Controls.ProgressBar;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers
@@ -1404,13 +1403,11 @@ namespace HandheldCompanion.Managers
             if (ReferenceEquals(_embeddedNavFrame, nextEmbeddedNavFrame))
                 return;
 
-            if (_embeddedNavFrame is not null)
-                _embeddedNavFrame.ContentRendered -= EmbeddedContentRendering;
+            _embeddedNavFrame?.ContentRendered -= EmbeddedContentRendering;
 
             _embeddedNavFrame = nextEmbeddedNavFrame;
 
-            if (_embeddedNavFrame is not null)
-                _embeddedNavFrame.ContentRendered += EmbeddedContentRendering;
+            _embeddedNavFrame?.ContentRendered += EmbeddedContentRendering;
 
             // already loaded ?
             if (_embeddedNavFrame is not null && _embeddedNavFrame.IsLoaded)
@@ -1624,7 +1621,7 @@ namespace HandheldCompanion.Managers
             PageFocusState state = GetPageFocusState(page);
             state.LastContentControl = control;
 
-            string? viewKey = GetActivePageViewKey(page);
+            string? viewKey = GetActivePageViewKey(page) ?? page.GetType().Name;
             if (!string.IsNullOrWhiteSpace(viewKey))
                 state.LastContentControlsByView[viewKey] = control;
 

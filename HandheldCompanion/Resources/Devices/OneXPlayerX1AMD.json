@@ -1,0 +1,32 @@
+{
+  "DeviceClass": "OneXPlayerX1AMD",
+  "GyroMatrix": {
+    "Axis": {
+      "X": 1,
+      "Y": -1,
+      "Z": 1
+    },
+    "AxisSwap": {
+      "X": "X",
+      "Y": "Z",
+      "Z": "Y"
+    }
+  },
+  "AcceleroMatrix": {
+    "Axis": {
+      "X": 1,
+      "Y": -1,
+      "Z": -1
+    },
+    "AxisSwap": {
+      "X": "X",
+      "Y": "Z",
+      "Z": "Y"
+    }
+  },
+  "cTDP": null,
+  "nTDP": null,
+  "gfxClock": null,
+  "cpuClock": null,
+  "tjmax": null
+}

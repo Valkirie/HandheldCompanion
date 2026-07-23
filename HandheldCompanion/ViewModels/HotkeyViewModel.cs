@@ -19,6 +19,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -609,7 +610,13 @@ namespace HandheldCompanion.ViewModels
             if (_sharedFunctionTypes is not null)
                 return;
 
-            lock (_sharedDataLock)
+            if (!Monitor.TryEnter(_sharedDataLock, TimeSpan.FromSeconds(2)))
+            {
+                _sharedFunctionItems ??= [];
+                return;
+            }
+
+            try
             {
                 if (_sharedFunctionTypes is not null)
                     return;
@@ -650,6 +657,10 @@ namespace HandheldCompanion.ViewModels
 
                 _sharedFunctionItems = items;
                 _sharedFunctionTypes = types;
+            }
+            finally
+            {
+                Monitor.Exit(_sharedDataLock);
             }
         }
 

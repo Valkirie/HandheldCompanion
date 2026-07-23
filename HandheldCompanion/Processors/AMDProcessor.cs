@@ -5,11 +5,15 @@ namespace HandheldCompanion.Processors;
 
 public class AMDProcessor : Processor
 {
-    public RyzenSmuService ryzenSmuService = new();
+    private RyzenSmuService ryzenSmuService = new();
 
     public bool HasAllCoreCurve = false;
     public bool HasPerCoreCurve = false;
-    public bool HasGpuCurve = false;
+    public bool CanSetGPUCurve = false;
+
+    public bool CanSetSkinTemperature = false;
+    public bool CanSetTctl = false;
+    public bool CanSetChtc = false;
 
     public AMDProcessor()
     {
@@ -19,9 +23,13 @@ public class AMDProcessor : Processor
         CanChangeTDP = ryzenSmuService.CanSetTDP();
         CanChangeGPU = ryzenSmuService.CanSetGfxClk();
 
-        HasAllCoreCurve = ryzenSmuService.CanSetCoAll() && ryzenSmuService.SetCoAll(0);
-        HasPerCoreCurve = ryzenSmuService.CanSetCoPer() && ryzenSmuService.SetCoPer(0);
-        HasGpuCurve = ryzenSmuService.CanSetCoGfx() && ryzenSmuService.SetCoGfx(0);
+        HasAllCoreCurve = ryzenSmuService.CanSetCoAll() && ryzenSmuService.SetCoAll(-1);
+        HasPerCoreCurve = ryzenSmuService.CanSetCoPer() && ryzenSmuService.SetCoPer(-1);
+        CanSetGPUCurve = ryzenSmuService.CanSetCoGfx() && ryzenSmuService.SetCoGfx(-1);
+
+        CanSetSkinTemperature = ryzenSmuService.CanSetApuSkinTemp();
+        CanSetTctl = ryzenSmuService.CanSetTctlTemp();
+        CanSetChtc = ryzenSmuService.CanSetChtcTemp();
 
         // check capabilities
         CanChangeTDP |= HasOEMCPU;
@@ -164,10 +172,40 @@ public class AMDProcessor : Processor
     {
         lock (updateLock)
         {
-            if (!HasGpuCurve)
+            if (!CanSetGPUCurve)
                 return false;
 
             return ryzenSmuService.SetCoGfx(steps);
+        }
+    }
+
+    public bool SetApuSkinTemp(uint tempC)
+    {
+        lock (updateLock)
+        {
+            if (!CanSetSkinTemperature)
+                return false;
+            return ryzenSmuService.SetApuSkinTemp(tempC);
+        }
+    }
+
+    public bool SetTctlTemp(uint tempC)
+    {
+        lock (updateLock)
+        {
+            if (!CanSetTctl)
+                return false;
+            return ryzenSmuService.SetTctlTemp(tempC);
+        }
+    }
+
+    public bool SetChtcTemp(uint tempC)
+    {
+        lock (updateLock)
+        {
+            if (!CanSetChtc)
+                return false;
+            return ryzenSmuService.SetChtcTemp(tempC);
         }
     }
 }

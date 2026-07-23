@@ -18,8 +18,7 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
-    <ikw:SimpleStackPanel Margin="20" Spacing="3">
-
+    <ikw:SimpleStackPanel Spacing="3">
         <ui:InfoBar
             Title="{l:Static resx:Resources.NotificationsPage_NothingToSee}"
             IsClosable="False"

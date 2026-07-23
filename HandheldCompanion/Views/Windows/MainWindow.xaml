@@ -5,6 +5,7 @@
     xmlns:behaviors="clr-namespace:HandheldCompanion.Behaviors"
     xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:controls="clr-namespace:HandheldCompanion.Controls"
+    xmlns:converters="clr-namespace:HandheldCompanion.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:emoji="http://schemas.inkore.net/lib/ui/wpf/emojis"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
@@ -220,8 +221,15 @@
             </controls:AdaptiveNavigationView.MenuItemContainerStyle>
 
             <ui:NavigationView.HeaderTemplate>
-                <DataTemplate />
-                <!--  Empty  -->
+                <DataTemplate>
+                    <Grid MaxWidth="1900">
+                        <TextBlock
+                            Margin="-2,-20,0,0"
+                            behaviors:TextBlockUpperCase.IsUpperCase="True"
+                            Style="{StaticResource CapitalAccentTextBlockStyle}"
+                            Text="{Binding Text}" />
+                    </Grid>
+                </DataTemplate>
             </ui:NavigationView.HeaderTemplate>
 
             <ui:NavigationView.MenuItems>
@@ -250,6 +258,7 @@
                 <ui:NavigationViewItem
                     Name="navLibrary"
                     Content="{l:Static resx:Resources.MainWindow_navLibrary}"
+                    IsEnabled="{Binding IsNavLibraryVisible}"
                     Tag="LibraryPage"
                     Visibility="{Binding IsNavLibraryVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ui:NavigationViewItem.Icon>
@@ -272,7 +281,8 @@
                     Name="navPerformance"
                     Content="{l:Static resx:Resources.MainWindow_navPerformance}"
                     IsEnabled="{Binding IsNavPerformanceEnabled}"
-                    Tag="PerformancePage">
+                    Tag="PerformancePage"
+                    Visibility="{Binding IsNavPerformanceEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.SpeedHigh}" />
                     </ui:NavigationViewItem.Icon>
@@ -352,12 +362,13 @@
             <ui:NavigationView.Content>
                 <ui:ScrollViewerEx
                     x:Name="scrollViewer"
-                    Margin="0,-60,0,0"
+                    Margin="0,-32,0,0"
                     PanningMode="VerticalFirst">
                     <ui:Frame
                         Name="ContentFrame"
                         Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
                         MaxWidth="1900"
+                        Padding="26,0,26,26"
                         HorizontalAlignment="Center" />
                 </ui:ScrollViewerEx>
             </ui:NavigationView.Content>

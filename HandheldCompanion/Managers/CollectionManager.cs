@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace HandheldCompanion.Managers
 {
@@ -68,14 +69,32 @@ namespace HandheldCompanion.Managers
 
         public IReadOnlyList<GameCollection> GetCollections()
         {
-            lock (_lock)
+            if (!Monitor.TryEnter(_lock, TimeSpan.FromSeconds(2)))
+                return [];
+
+            try
+            {
                 return [.. _collections];
+            }
+            finally
+            {
+                Monitor.Exit(_lock);
+            }
         }
 
         public GameCollection? GetCollection(Guid id)
         {
-            lock (_lock)
+            if (!Monitor.TryEnter(_lock, TimeSpan.FromSeconds(2)))
+                return null;
+
+            try
+            {
                 return _collections.FirstOrDefault(c => c.Id == id);
+            }
+            finally
+            {
+                Monitor.Exit(_lock);
+            }
         }
 
         public GameCollection CreateCollection(string name)
