@@ -399,7 +399,7 @@ public abstract class IDevice
 
         // raise events
         if (SystemManager.IsInitialized)
-            SystemManager_PowerLineStatusChanged(SystemInformation.PowerStatus.PowerLineStatus, SystemInformation.PowerStatus.PowerLineStatus);
+            SystemManager_Initialized();
 
         // raise events
         switch (ManagerFactory.settingsManager.Status)
