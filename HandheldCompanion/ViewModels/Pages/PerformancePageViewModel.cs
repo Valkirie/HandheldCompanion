@@ -873,6 +873,7 @@ namespace HandheldCompanion.ViewModels
             nameof(CopyDefaultProfileSettings),
 
             // TDP configuration
+            "ConfigurableTDPOverride",
             nameof(AutoTDPMaximum),
             nameof(ConfigurableTDPOverrideDown),
             nameof(ConfigurableTDPOverrideUp),

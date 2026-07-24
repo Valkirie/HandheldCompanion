@@ -324,6 +324,9 @@ namespace HandheldCompanion.Managers
 
         public void UpdateOrCreateProfile(PowerProfile profile, UpdateSource source)
         {
+            if (string.IsNullOrEmpty(profile.Name))
+                return;
+
             switch (source)
             {
                 case UpdateSource.Serializer:
