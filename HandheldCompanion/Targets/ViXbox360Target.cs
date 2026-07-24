@@ -137,6 +137,8 @@ namespace HandheldCompanion.Targets
 
         public override void Dispose()
         {
+            _xboxController?.FeedbackReceived -= FeedbackReceived;
+
             try { _xboxController?.Disconnect(); } catch { }
             _xboxController = null;
 

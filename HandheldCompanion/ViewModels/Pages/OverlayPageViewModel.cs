@@ -14,11 +14,14 @@ namespace HandheldCompanion.ViewModels
 {
     public class OverlayPageViewModel : BaseViewModel
     {
+        public readonly bool IsQuickTools;
+        public bool IsMainPage => !IsQuickTools;
+
         // Platform Manager
         public bool IsRunningRTSS => ManagerFactory.platformManager.IsReady && PlatformManager.RTSS.IsInstalled;
         public bool IsRunningLHM => ManagerFactory.platformManager.IsReady && PlatformManager.LibreHardware.IsInstalled;
 
-        private volatile bool _isPageLoaded = true;
+        private bool _isPageLoaded;
 
         private int _onScreenDisplayLevel;
         public int OnScreenDisplayLevel
@@ -40,15 +43,21 @@ namespace HandheldCompanion.ViewModels
         public void OnPageLoaded()
         {
             _isPageLoaded = true;
-            updateTimer.Start();
-            framerateTimer.Start();
+            if (IsQuickTools)
+            {
+                updateTimer.Start();
+                framerateTimer.Start();
+            }
         }
 
         public void OnPageUnloaded()
         {
             _isPageLoaded = false;
-            updateTimer.Stop();
-            framerateTimer.Stop();
+            if (IsQuickTools)
+            {
+                updateTimer.Stop();
+                framerateTimer.Stop();
+            }
         }
 
         private double _OverlayRenderInterval;
@@ -427,8 +436,10 @@ namespace HandheldCompanion.ViewModels
         private Timer framerateTimer;
         private int framerateInterval = 1000;
 
-        public OverlayPageViewModel()
+        public OverlayPageViewModel(bool isQuickTools)
         {
+            IsQuickTools = isQuickTools;
+
             updateTimer = new Timer(updateInterval) { Enabled = false };
             updateTimer.Elapsed += UpdateTimer_Elapsed;
 
@@ -438,26 +449,29 @@ namespace HandheldCompanion.ViewModels
             CPUName = IDevice.GetCurrent().Processor;
 
             // raise events
-            switch (ManagerFactory.processManager.Status)
+            if (IsQuickTools)
             {
-                default:
-                case ManagerStatus.Initializing:
-                    ManagerFactory.processManager.Initialized += ProcessManager_Initialized;
-                    break;
-                case ManagerStatus.Initialized:
-                    QueryForeground();
-                    break;
-            }
+                switch (ManagerFactory.processManager.Status)
+                {
+                    default:
+                    case ManagerStatus.Initializing:
+                        ManagerFactory.processManager.Initialized += ProcessManager_Initialized;
+                        break;
+                    case ManagerStatus.Initialized:
+                        QueryForeground();
+                        break;
+                }
 
-            switch (ManagerFactory.gpuManager.Status)
-            {
-                default:
-                case ManagerStatus.Initializing:
-                    ManagerFactory.gpuManager.Initialized += GpuManager_Initialized;
-                    break;
-                case ManagerStatus.Initialized:
-                    QueryGPU();
-                    break;
+                switch (ManagerFactory.gpuManager.Status)
+                {
+                    default:
+                    case ManagerStatus.Initializing:
+                        ManagerFactory.gpuManager.Initialized += GpuManager_Initialized;
+                        break;
+                    case ManagerStatus.Initialized:
+                        QueryGPU();
+                        break;
+                }
             }
 
             switch (ManagerFactory.settingsManager.Status)
@@ -488,7 +502,7 @@ namespace HandheldCompanion.ViewModels
             // manage events
             PlatformManager.RTSS.Updated += RTSS_Updated;
 
-            if (IDevice.GetCurrent().CpuMonitor)
+            if (IsQuickTools && IDevice.GetCurrent().CpuMonitor)
             {
                 PlatformManager.LibreHardware.CPUPowerChanged += LibreHardwareMonitor_CPUPowerChanged;
                 PlatformManager.LibreHardware.CPUTemperatureChanged += LibreHardwareMonitor_CPUTemperatureChanged;
@@ -531,6 +545,9 @@ namespace HandheldCompanion.ViewModels
         private void QueryGPU()
         {
             // manage events
+            if (!IsQuickTools)
+                return;
+
             ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
 
             GPU? gpu = GPUManager.GetCurrent();
@@ -734,12 +751,22 @@ namespace HandheldCompanion.ViewModels
                 updateTimer.Dispose();
                 framerateTimer.Stop();
                 framerateTimer.Dispose();
-                ManagerFactory.gpuManager.Hooked -= GPUManager_Hooked;
-                ManagerFactory.gpuManager.Initialized -= GpuManager_Initialized;
+                if (IsQuickTools)
+                {
+                    ManagerFactory.gpuManager.Hooked -= GPUManager_Hooked;
+                    ManagerFactory.gpuManager.Initialized -= GpuManager_Initialized;
+                    ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
+                    ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
+
+                    PlatformManager.LibreHardware.CPUPowerChanged -= LibreHardwareMonitor_CPUPowerChanged;
+                    PlatformManager.LibreHardware.CPUTemperatureChanged -= LibreHardwareMonitor_CPUTemperatureChanged;
+                    PlatformManager.LibreHardware.CPULoadChanged -= LibreHardwareMonitor_CPULoadChanged;
+                    PlatformManager.LibreHardware.GPUPowerChanged -= LibreHardwareMonitor_GPUPowerChanged;
+                    PlatformManager.LibreHardware.GPUTemperatureChanged -= LibreHardwareMonitor_GPUTemperatureChanged;
+                    PlatformManager.LibreHardware.GPULoadChanged -= LibreHardwareMonitor_GPULoadChanged;
+                }
                 ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
                 ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
-                ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
-                ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
                 PlatformManager.RTSS.Updated -= RTSS_Updated;
             }
 

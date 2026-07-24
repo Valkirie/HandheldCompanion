@@ -13,7 +13,6 @@
     d:DataContext="{d:DesignInstance Type=viewmodels:SettingsMode0ViewModel}"
     d:DesignHeight="1000"
     d:DesignWidth="1000"
-    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <Grid Name="MainGrid">

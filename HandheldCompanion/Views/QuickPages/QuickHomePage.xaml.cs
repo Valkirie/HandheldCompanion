@@ -95,14 +95,11 @@ public partial class QuickHomePage : Page
         QueryMedia();
     }
 
-    private void Page_Loaded(object s, RoutedEventArgs e)
+    public void Dispose()
     {
-        // do something
-    }
-
-    private void Page_Unloaded(object s, RoutedEventArgs e)
-    {
-        // do something
+        ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
+        ManagerFactory.multimediaManager.VolumeNotification -= MultimediaManager_VolumeNotification;
+        ManagerFactory.multimediaManager.BrightnessNotification -= MultimediaManager_BrightnessNotification;
     }
 
     private void QuickButton_Click(object sender, RoutedEventArgs e)

@@ -70,12 +70,9 @@ public partial class SettingsMode1 : Page
         }
     }
 
-    private void Page_Loaded(object sender, RoutedEventArgs e)
+    public void Dispose()
     {
-    }
-
-    public void Page_Closed()
-    {
+        MotionManager.SettingsMode1Update -= MotionManager_SettingsMode1Update;
     }
 
     private void MotionManager_SettingsMode1Update(Vector2 deviceAngle)

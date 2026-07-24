@@ -12,15 +12,16 @@ public partial class QuickOverlayPage : Page
     {
         Tag = "quickoverlay";
 
-        ViewModel = new OverlayPageViewModel();
+        ViewModel = new OverlayPageViewModel(true);
         DataContext = ViewModel;
         InitializeComponent();
-
-        this.Loaded += OverlayPage_Loaded;
-        this.Unloaded += OverlayPage_Unloaded;
+        Loaded += OverlayPage_Loaded;
+        Unloaded += OverlayPage_Unloaded;
     }
 
     private void OverlayPage_Loaded(object sender, RoutedEventArgs e) => ViewModel.OnPageLoaded();
 
     private void OverlayPage_Unloaded(object sender, RoutedEventArgs e) => ViewModel.OnPageUnloaded();
+
+    public void Dispose() => ViewModel.OnPageUnloaded();
 }

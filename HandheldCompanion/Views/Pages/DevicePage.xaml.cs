@@ -105,7 +105,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager_SettingValueChanged("DockedDisplayBehavior", ManagerFactory.settingsManager.GetString("DockedDisplayBehavior"), false, true);
         }
 
-        public void Page_Closed()
+        public void Dispose()
         {
             if (DataContext is DevicePageViewModel viewModel)
                 viewModel.RestartConfirmationRequested -= ShowRestartConfirmation;

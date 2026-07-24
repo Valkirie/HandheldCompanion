@@ -20,7 +20,7 @@ public partial class OverlayPage : Page
 
     public OverlayPage()
     {
-        ViewModel = new OverlayPageViewModel();
+        ViewModel = new OverlayPageViewModel(false);
         DataContext = ViewModel;
         InitializeComponent();
         Loaded += OverlayPage_Loaded;
@@ -205,8 +205,10 @@ public partial class OverlayPage : Page
         });
     }
 
-    public void Page_Closed()
+    public void Dispose()
     {
+        ViewModel.OnPageUnloaded();
+
         // manage events
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         PlatformManager.RTSS.Updated -= RTSS_Updated;

@@ -330,11 +330,7 @@ public partial class SettingsPage : Page
         });
     }
 
-    private void Page_Loaded(object? sender, RoutedEventArgs? e)
-    {
-    }
-
-    public void Page_Closed()
+    public void Dispose()
     {
         // manage events
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;

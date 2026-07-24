@@ -31,6 +31,12 @@ namespace HandheldCompanion.Views.Pages
             _vm.FanCurveUpdateRequested -= OnFanCurveUpdateRequested;
         }
 
+        public void Dispose()
+        {
+            _vm.OnPageUnloaded();
+            _vm.FanCurveUpdateRequested -= OnFanCurveUpdateRequested;
+        }
+
         private void OnFanCurveUpdateRequested(double[] fanSpeeds)
         {
             UIHelper.TryBeginInvoke(() =>

@@ -18,4 +18,9 @@ public partial class QuickPerformancePage : Page
     {
         ((PerformancePageViewModel)DataContext).SelectedPreset = ManagerFactory.powerProfileManager.GetProfile(guid);
     }
+
+    public void Dispose()
+    {
+        ((PerformancePageViewModel)DataContext).OnPageUnloaded();
+    }
 }

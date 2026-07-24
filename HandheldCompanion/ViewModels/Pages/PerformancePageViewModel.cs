@@ -89,7 +89,7 @@ namespace HandheldCompanion.ViewModels
         public readonly bool IsQuickTools;
         public bool IsMainPage => !IsQuickTools;
 
-        private bool _isPageLoaded = true;
+        private bool _isPageLoaded;
 
         #region Binding Properties
 
@@ -1178,7 +1178,8 @@ namespace HandheldCompanion.ViewModels
         private void QueryPlatforms()
         {
             // manage events
-            PlatformManager.LibreHardware.CPUTemperatureChanged += LibreHardwareMonitor_CpuTemperatureChanged;
+            if (IsMainPage)
+                PlatformManager.LibreHardware.CPUTemperatureChanged += LibreHardwareMonitor_CpuTemperatureChanged;
 
             OnPropertyChanged(nameof(IsRunningRTSS));
             OnPropertyChanged(nameof(SupportsFramerateLimiter));
@@ -1339,7 +1340,8 @@ namespace HandheldCompanion.ViewModels
                 ManagerFactory.gpuManager.Hooked -= GPUManager_Hooked;
                 ManagerFactory.gpuManager.Unhooked -= GpuManager_Unhooked;
                 ManagerFactory.gpuManager.Initialized -= GpuManager_Initialized;
-                PlatformManager.LibreHardware.CPUTemperatureChanged -= LibreHardwareMonitor_CpuTemperatureChanged;
+                if (IsMainPage)
+                    PlatformManager.LibreHardware.CPUTemperatureChanged -= LibreHardwareMonitor_CpuTemperatureChanged;
                 ManagerFactory.platformManager.Initialized -= PlatformManager_Initialized;
 
                 if (IsMainPage)

@@ -19,15 +19,7 @@ public partial class LibraryPage : Page
         Tag = "about";
         DataContext = new LibraryPageViewModel();
         InitializeComponent();
-    }
 
-    public LibraryPage(string Tag) : this()
-    {
-        this.Tag = Tag;
-    }
-
-    private void Page_Loaded(object sender, RoutedEventArgs e)
-    {
         if (ViewModel is { } vm)
         {
             vm.BackAvailabilityChanged += LibraryPageViewModel_BackAvailabilityChanged;
@@ -40,7 +32,12 @@ public partial class LibraryPage : Page
         NavigateToSelectedPage();
     }
 
-    private void Page_Unloaded(object sender, RoutedEventArgs e)
+    public LibraryPage(string Tag) : this()
+    {
+        this.Tag = Tag;
+    }
+
+    public void Dispose()
     {
         if (ViewModel is { } vm)
         {
@@ -50,9 +47,6 @@ public partial class LibraryPage : Page
                 inpc.PropertyChanged -= LibraryPageViewModel_PropertyChanged;
         }
     }
-
-    public void Page_Closed()
-    { }
 
     private void LibraryPageViewModel_BackAvailabilityChanged(bool canGoBack)
     {

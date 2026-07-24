@@ -13,7 +13,6 @@
     Title="{l:Static resx:Resources.SettingsMode1_AdditionalSettings}"
     d:DesignHeight="1000"
     d:DesignWidth="1000"
-    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <Grid Name="MainGrid">

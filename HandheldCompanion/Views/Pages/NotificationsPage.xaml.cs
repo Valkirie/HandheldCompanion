@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.ViewModels.Pages;
-using System.Windows;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
@@ -23,10 +22,7 @@ namespace HandheldCompanion.Views.Pages
             this.Tag = Tag;
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        { }
-
-        public void Page_Closed()
+        public void Dispose()
         { }
     }
 }

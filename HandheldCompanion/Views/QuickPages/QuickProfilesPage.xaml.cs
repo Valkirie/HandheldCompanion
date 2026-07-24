@@ -109,15 +109,7 @@ public partial class QuickProfilesPage : Page
             };
     }
 
-    private void Page_Loaded(object s, RoutedEventArgs e)
-    {
-        // do something
-    }
-
-    private void Page_Unloaded(object s, RoutedEventArgs e)
-    {
-        // do something
-    }
+    public void Dispose() => viewModel.Close();
 
     public void PowerProfile_Selected(PowerProfile powerProfile, bool AC)
     {

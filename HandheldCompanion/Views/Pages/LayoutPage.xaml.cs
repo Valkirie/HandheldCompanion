@@ -230,11 +230,7 @@ public partial class LayoutPage : Page
         });
     }
 
-    private void Page_Loaded(object sender, RoutedEventArgs e)
-    {
-    }
-
-    public void Page_Closed()
+    public void Dispose()
     {
         ((LayoutPageViewModel)DataContext).Dispose();
 

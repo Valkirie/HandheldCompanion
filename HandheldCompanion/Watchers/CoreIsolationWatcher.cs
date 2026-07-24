@@ -129,12 +129,16 @@ namespace HandheldCompanion.Watchers
             if (!RegistryUtils.KeyExists(regPath, valueName))
                 RegistryUtils.CreateKey(regPath);
 
-            watcher.EventArrived += new EventArrivedEventHandler(HandleEvent);
+            watcher.EventArrived -= HandleEvent;
+            watcher.EventArrived += HandleEvent;
             watcher.Start();
         }
 
         public override void Dispose()
         {
+            HypervisorWatcher.EventArrived -= HandleEvent;
+            VulnerableDriverWatcher.EventArrived -= HandleEvent;
+            SmartAppControlWatcher.EventArrived -= HandleEvent;
             base.Dispose(); // calls Stop() which stops all three ManagementEventWatchers
             HypervisorWatcher.Dispose();
             VulnerableDriverWatcher.Dispose();

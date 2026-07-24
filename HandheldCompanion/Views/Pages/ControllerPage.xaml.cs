@@ -129,11 +129,7 @@ public partial class ControllerPage : Page
         });
     }
 
-    private void Page_Loaded(object sender, RoutedEventArgs e)
-    {
-    }
-
-    public void Page_Closed()
+    public void Dispose()
     {
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ViewModel.Dispose();

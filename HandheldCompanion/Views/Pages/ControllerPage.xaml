@@ -18,7 +18,6 @@
     d:DesignHeight="1800"
     d:DesignWidth="1000"
     KeepAlive="True"
-    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <Page.Resources>

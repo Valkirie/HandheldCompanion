@@ -3,7 +3,6 @@ using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System.Threading.Tasks;
-using System.Windows;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.QuickPages;
@@ -21,6 +20,7 @@ public partial class QuickDevicePage : Page
 
         ViewModel = new QuickDevicePageViewModel(this);
         DataContext = ViewModel;
+        ViewModel.RequestAYANEOFlipScreenConfirmation += ViewModel_RequestAYANEOFlipScreenConfirmation;
     }
 
     public QuickDevicePage(string Tag) : this()
@@ -28,15 +28,8 @@ public partial class QuickDevicePage : Page
         this.Tag = Tag;
     }
 
-    private void Page_Loaded(object s, RoutedEventArgs e)
+    public void Dispose()
     {
-        // Subscribe to ViewModel events
-        ViewModel?.RequestAYANEOFlipScreenConfirmation += ViewModel_RequestAYANEOFlipScreenConfirmation;
-    }
-
-    private void Page_Unloaded(object s, RoutedEventArgs e)
-    {
-        // Unsubscribe from all events
         ViewModel?.RequestAYANEOFlipScreenConfirmation -= ViewModel_RequestAYANEOFlipScreenConfirmation;
     }
 

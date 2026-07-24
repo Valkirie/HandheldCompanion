@@ -148,6 +148,9 @@ public abstract class IPlatform : IDisposable
 
     public virtual void Dispose()
     {
+        _Process?.Exited -= _Process_Exited;
+        _Process = null;
+
         if (PlatformWatchdog is not null)
         {
             PlatformWatchdog.Stop();
@@ -163,6 +166,7 @@ public abstract class IPlatform : IDisposable
         if (_Process is null)
             return;
 
+        _Process.Exited -= _Process_Exited;
         SetStatus(PlatformStatus.Stopped);
 
         _Process = null;

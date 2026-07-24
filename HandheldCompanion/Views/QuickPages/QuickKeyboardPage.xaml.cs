@@ -103,14 +103,10 @@ namespace HandheldCompanion.Views.QuickPages
             _tapTemplate = (Storyboard)TryFindResource("KeyTapAnimation");
         }
 
-        private void Page_Loaded(object s, RoutedEventArgs e)
+        public void Dispose()
         {
-            // do something
-        }
-
-        private void Page_Unloaded(object s, RoutedEventArgs e)
-        {
-            // do something
+            ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
+            ManagerFactory.processManager.RawForeground -= ProcessManager_RawForeground;
         }
 
         private void ProcessManager_Initialized()

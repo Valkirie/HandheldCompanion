@@ -56,5 +56,17 @@ namespace HandheldCompanion.ViewModels
             HotkeyViewModel? hotkeyViewModel = HotkeysList.FirstOrDefault(h => h.Hotkey.ButtonFlags == buttonFlags);
             hotkeyViewModel?.SetListening(false, storedChord.chordTarget);
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                ManagerFactory.hotkeysManager.Updated -= HotkeysManager_Updated;
+                InputsManager.StartedListening -= InputsManager_StartedListening;
+                InputsManager.StoppedListening -= InputsManager_StoppedListening;
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }

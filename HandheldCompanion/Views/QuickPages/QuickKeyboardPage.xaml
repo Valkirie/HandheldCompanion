@@ -14,8 +14,6 @@
     d:Height="450"
     d:Width="940"
     KeepAlive="True"
-    Loaded="Page_Loaded"
-    Unloaded="Page_Unloaded"
     mc:Ignorable="d">
 
     <Page.Resources>

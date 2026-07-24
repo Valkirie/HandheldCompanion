@@ -204,6 +204,8 @@ namespace HandheldCompanion.Targets
 
         public override void Dispose()
         {
+            _dualShockController?.FeedbackReceived -= FeedbackReceived;
+
             try { _dualShockController?.Disconnect(); } catch { }
             _dualShockController = null;
 

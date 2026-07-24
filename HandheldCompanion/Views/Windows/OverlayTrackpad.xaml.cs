@@ -108,7 +108,8 @@ public partial class OverlayTrackpad : OverlayWindow
 
     private void Window_Closing(object sender, CancelEventArgs e)
     {
-        // do something
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
     }
 
     public double GetWindowsScaling()

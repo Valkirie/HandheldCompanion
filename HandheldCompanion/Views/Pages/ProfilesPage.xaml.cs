@@ -40,9 +40,6 @@ public partial class ProfilesPage : Page
         DataContext = viewModel;
         InitializeComponent();
 
-        // Subscribe to control changes for Profile properties that are bound directly
-        Loaded += ProfilesPage_Loaded;
-
         // Subscribe to ViewModel events for UI operations
         viewModel.RequestCreateProfile += (s, e) => b_CreateProfile_Click(null, null);
         viewModel.RequestDeleteProfile += (s, profile) => b_DeleteProfile_Click(null, null);
@@ -72,47 +69,11 @@ public partial class ProfilesPage : Page
         };
     }
 
-    private void ProfilesPage_Loaded(object sender, RoutedEventArgs e)
-    {
-        // Subscribe to UI control changes for properties bound directly to SelectedProfile
-        EnableProfileToggle.Toggled += ProfileProperty_Changed;
-        WhitelistToggle.Toggled += ProfileProperty_Changed;
-        EmulatedControllerComboBox.SelectionChanged += ProfileProperty_Changed;
-        WrapperComboBox.SelectionChanged += ProfileProperty_Changed;
-        GPUScalingToggle.Toggled += ProfileProperty_Changed;
-        GPUScalingComboBox.SelectionChanged += ProfileProperty_Changed;
-        AFMFToggle.Toggled += ProfileProperty_Changed;
-        AFMFAlgorithmComboBox.SelectionChanged += ProfileProperty_Changed;
-        AFMFSearchModeComboBox.SelectionChanged += ProfileProperty_Changed;
-        AFMFPerformanceModeComboBox.SelectionChanged += ProfileProperty_Changed;
-        AFMFFastMotionResponseComboBox.SelectionChanged += ProfileProperty_Changed;
-        RSRToggle.Toggled += ProfileProperty_Changed;
-        IntegerScalingToggle.Toggled += ProfileProperty_Changed;
-        RISToggle.Toggled += ProfileProperty_Changed;
-        GyroSteeringComboBox.SelectionChanged += ProfileProperty_Changed;
-        InvertHorizontalCheckBox.Checked += ProfileProperty_Changed;
-        InvertHorizontalCheckBox.Unchecked += ProfileProperty_Changed;
-        InvertVerticalCheckBox.Checked += ProfileProperty_Changed;
-        InvertVerticalCheckBox.Unchecked += ProfileProperty_Changed;
-        SuspendOnOverlayCheckBox.Checked += ProfileProperty_Changed;
-        SuspendOnOverlayCheckBox.Unchecked += ProfileProperty_Changed;
-        SuspendOnSleepCheckBox.Checked += ProfileProperty_Changed;
-        SuspendOnSleepCheckBox.Unchecked += ProfileProperty_Changed;
-        UseFullscreenOptimizations.Toggled += ProfileProperty_Changed;
-        UseHighDPIAwareness.Toggled += ProfileProperty_Changed;
-        ShowInLibraryToggle.Toggled += ProfileProperty_Changed;
-    }
-
-    private void ProfileProperty_Changed(object sender, RoutedEventArgs e)
-    {
-        // Only trigger update if we're not loading the profile (prevent updates during UI refresh)
-        if (!viewModel.IsLoadingProfile)
-            viewModel.UpdateProfile();
-    }
-
-    public void Page_Closed()
+    public void Dispose()
     {
         viewModel.Close();
+        page0.Dispose();
+        page1.Dispose();
     }
 
     // Navigation and dialog events that cannot be bound

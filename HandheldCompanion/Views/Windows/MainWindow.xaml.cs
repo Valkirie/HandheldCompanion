@@ -1130,14 +1130,15 @@ public partial class MainWindow : GamepadWindow
             App.overlayquickTools.Close(true);
 
             // stop pages
-            controllerPage.Page_Closed();
-            profilesPage.Page_Closed();
-            settingsPage.Page_Closed();
-            overlayPage.Page_Closed();
-            hotkeysPage.Page_Closed();
-            layoutPage.Page_Closed();
-            notificationsPage.Page_Closed();
-            libraryPage?.Page_Closed();
+            controllerPage.Dispose();
+            profilesPage.Dispose();
+            settingsPage.Dispose();
+            overlayPage.Dispose();
+            performancePage.Dispose();
+            hotkeysPage.Dispose();
+            layoutPage.Dispose();
+            notificationsPage.Dispose();
+            libraryPage?.Dispose();
         });
 
         // remove all automation event handlers
@@ -1419,16 +1420,12 @@ public partial class MainWindow : GamepadWindow
                         }
                     }
 
-                    // Unload all pages
-                    foreach (var page in _pages.Values)
+                    if (ContentFrame.Content is Page currentPage && currentPage.DataContext is BaseViewModel currentViewModel)
                     {
-                        if (page.DataContext is BaseViewModel viewModel)
-                        {
-                            if (viewModel is OverlayPageViewModel overlayViewModel)
-                                overlayViewModel.OnPageUnloaded();
-                            else if (viewModel is PerformancePageViewModel performanceViewModel)
-                                performanceViewModel.OnPageUnloaded();
-                        }
+                        if (currentViewModel is OverlayPageViewModel overlayViewModel)
+                            overlayViewModel.OnPageUnloaded();
+                        else if (currentViewModel is PerformancePageViewModel performanceViewModel)
+                            performanceViewModel.OnPageUnloaded();
                     }
 
                     TryHide();
@@ -1458,7 +1455,6 @@ public partial class MainWindow : GamepadWindow
                     }
                     catch { }
 
-                    // Load only the currently navigated page
                     if (ContentFrame.Content is Page currentPage && currentPage.DataContext is BaseViewModel currentViewModel)
                     {
                         if (currentViewModel is OverlayPageViewModel overlayViewModel)

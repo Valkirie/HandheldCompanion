@@ -98,12 +98,13 @@ public partial class SettingsMode0 : Page
         }
     }
 
-    private void Page_Loaded(object sender, RoutedEventArgs e)
+    public void Dispose()
     {
-    }
+        MotionManager.SettingsMode0Update -= MotionManager_SettingsMode0Update;
+        ManagerFactory.hotkeysManager.Updated -= HotkeysManager_Updated;
 
-    public void Page_Closed()
-    {
+        if (DataContext is IDisposable disposable)
+            disposable.Dispose();
     }
 
     private void MotionManager_SettingsMode0Update(Vector3 gyrometer)

@@ -604,16 +604,12 @@ public partial class OverlayQuickTools : GamepadWindow
         {
             case Visibility.Collapsed:
             case Visibility.Hidden:
-                // Unload all pages
-                foreach (var page in _pages.Values)
+                if (ContentFrame.Content is Page hiddenPage && hiddenPage.DataContext is BaseViewModel hiddenViewModel)
                 {
-                    if (page.DataContext is BaseViewModel viewModel)
-                    {
-                        if (viewModel is OverlayPageViewModel overlayViewModel)
-                            overlayViewModel.OnPageUnloaded();
-                        else if (viewModel is PerformancePageViewModel performanceViewModel)
-                            performanceViewModel.OnPageUnloaded();
-                    }
+                    if (hiddenViewModel is OverlayPageViewModel overlayViewModel)
+                        overlayViewModel.OnPageUnloaded();
+                    else if (hiddenViewModel is PerformancePageViewModel performanceViewModel)
+                        performanceViewModel.OnPageUnloaded();
                 }
 
                 InvokeLostGamepadWindowFocus();
@@ -621,12 +617,11 @@ public partial class OverlayQuickTools : GamepadWindow
                 break;
 
             case Visibility.Visible:
-                // Load only the currently navigated page
-                if (ContentFrame.Content is Page currentPage && currentPage.DataContext is BaseViewModel currentViewModel)
+                if (ContentFrame.Content is Page visiblePage && visiblePage.DataContext is BaseViewModel visibleViewModel)
                 {
-                    if (currentViewModel is OverlayPageViewModel overlayViewModel)
+                    if (visibleViewModel is OverlayPageViewModel overlayViewModel)
                         overlayViewModel.OnPageLoaded();
-                    else if (currentViewModel is PerformancePageViewModel performanceViewModel)
+                    else if (visibleViewModel is PerformancePageViewModel performanceViewModel)
                         performanceViewModel.OnPageLoaded();
                 }
 
@@ -660,7 +655,23 @@ public partial class OverlayQuickTools : GamepadWindow
             ToggleVisibility();
         else
         {
-            // Cleanup handled by page Unloaded events now
+            ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            ManagerFactory.multimediaManager.Initialized -= MultimediaManager_Initialized;
+            ManagerFactory.multimediaManager.DisplaySettingsChanged -= MultimediaManager_DisplaySettingsChanged;
+            ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
+            ManagerFactory.processManager.RawForeground -= ProcessManager_RawForeground;
+            ControllerManager.Initialized -= ControllerManager_Initialized;
+            ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
+            SystemManager.Initialized -= SystemManager_Initialized;
+            SystemManager.PowerStatusChanged -= PowerManager_PowerStatusChanged;
+            clockUpdateTimer.Stop();
+            devicePage.Dispose();
+            overlayPage.Dispose();
+            performancePage.Dispose();
+            keyboardPage.Dispose();
+            homePage.Dispose();
+            profilesPage.Dispose();
         }
     }
 
