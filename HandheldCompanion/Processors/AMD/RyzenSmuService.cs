@@ -1020,18 +1020,7 @@ namespace HandheldCompanion.Processors.AMD
 
         public bool TryGetApuSkinTemp(out uint tempC)
         {
-            tempC = 0;
-
-            uint cmdId = GetSetApuSkinTempCommand();
-            if (cmdId == 0)
-                return false;
-
-            var status = SendCommand(cmdId, new uint[] { 0 }, out uint[] resp);
-            if (status != SmuStatus.OK || resp == null || resp.Length == 0)
-                return false;
-
-            tempC = resp[0];
-            return tempC > 0;
+            throw new NotImplementedException("TryGetApuSkinTemp is not supported");
         }
 
         public bool TryGetGpuPsmMargin(out uint margin)
