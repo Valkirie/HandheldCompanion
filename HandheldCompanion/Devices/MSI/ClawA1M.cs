@@ -162,6 +162,7 @@ public class ClawA1M : IDevice
         
         // MS-1T91
         new DeviceVersion() { Firmware = 0x411, RGB = [0x02, 0x4A], M1DInput = [0x00, 0xBA], M2DInput = [0x01, 0x63], M1XInput = [0x00, 0xBB], M2XInput = [0x01, 0x64] },
+        new DeviceVersion() { Firmware = 0x414, RGB = [0x02, 0x4A], M1DInput = [0x00, 0xBA], M2DInput = [0x01, 0x63], M1XInput = [0x00, 0xBB], M2XInput = [0x01, 0x64] },
     };
 
     protected int Firmware;
