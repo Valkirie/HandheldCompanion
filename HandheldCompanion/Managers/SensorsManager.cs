@@ -22,8 +22,10 @@ namespace HandheldCompanion.Managers
 
         private static SensorFamily sensorFamily;
         private static SensorFamily sensorSelection;
+        private static CalibrationMode calibrationMode = CalibrationMode.Manual;
 
         public static SensorFamily ActiveSensorFamily => sensorFamily;
+        public static CalibrationMode ActiveCalibrationMode => calibrationMode;
 
         public static bool IsInitialized;
 
@@ -31,6 +33,7 @@ namespace HandheldCompanion.Managers
         public delegate void InitializedEventHandler();
 
         public static event Action<SensorFamily>? SensorSelectionChanged;
+        public static event Action<CalibrationMode>? CalibrationModeChanged;
 
         public static void Start()
         {
@@ -114,6 +117,7 @@ namespace HandheldCompanion.Managers
             SettingsManager_SettingValueChanged("SensorPlacement", ManagerFactory.settingsManager.GetString("SensorPlacement"), false, true);
             SettingsManager_SettingValueChanged("SensorPlacementUpsideDown", ManagerFactory.settingsManager.GetString("SensorPlacementUpsideDown"), false, true);
             SettingsManager_SettingValueChanged("SensorSelection", ManagerFactory.settingsManager.GetString("SensorSelection"), false, true);
+            SettingsManager_SettingValueChanged("SensorCalibrationMode", ManagerFactory.settingsManager.GetString("SensorCalibrationMode"), false, true);
         }
 
         public static void Stop()
@@ -181,6 +185,8 @@ namespace HandheldCompanion.Managers
 
             if (!Controller.HasMotionSensor())
                 return;
+
+            ApplyCalibrationMode(Controller);
 
             if (sensorSelection == SensorFamily.Auto)
                 PickNextSensor(SensorFamily.Controller);
@@ -320,7 +326,40 @@ namespace HandheldCompanion.Managers
                             ActivateSensor(sensorSelection);
                     }
                     break;
+                case "SensorCalibrationMode":
+                    {
+                        CalibrationMode selectedMode = Convert.ToInt32(value) == (int)(CalibrationMode.Stillness | CalibrationMode.SensorFusion)
+                            ? CalibrationMode.Stillness | CalibrationMode.SensorFusion
+                            : CalibrationMode.Manual;
+
+                        if (calibrationMode == selectedMode)
+                            return;
+
+                        calibrationMode = selectedMode;
+                        ApplyCalibrationMode();
+                        CalibrationModeChanged?.Invoke(calibrationMode);
+                    }
+                    break;
             }
+        }
+
+        private static void ApplyCalibrationMode()
+        {
+            ApplyCalibrationMode(IDevice.GetCurrent().GamepadMotion);
+
+            if (ControllerManager.GetTarget() is IController controller)
+                ApplyCalibrationMode(controller);
+        }
+
+        private static void ApplyCalibrationMode(IController controller)
+        {
+            foreach (GamepadMotion gamepadMotion in controller.gamepadMotions.Values)
+                ApplyCalibrationMode(gamepadMotion);
+        }
+
+        private static void ApplyCalibrationMode(GamepadMotion gamepadMotion)
+        {
+            gamepadMotion.SetCalibrationMode(calibrationMode);
         }
 
         private static void StopListening()
@@ -358,6 +397,9 @@ namespace HandheldCompanion.Managers
 
         public static async void Calibrate(Dictionary<byte, GamepadMotion> gamepadMotions)
         {
+            if (calibrationMode != CalibrationMode.Manual)
+                return;
+
             Dialog dialog = new Dialog(MainWindow.GetCurrent())
             {
                 Title = "Please place the controller on a stable and level surface.",
@@ -382,34 +424,21 @@ namespace HandheldCompanion.Managers
             {
                 dialog.UpdateContent($"Calibrating {gamepadMotion.deviceInstanceId} stationary sensor noise and drift correction...");
 
+                gamepadMotion.SetCalibrationMode(CalibrationMode.Manual);
                 gamepadMotion.ResetContinuousCalibration();
-                gamepadMotion.SetCalibrationMode(CalibrationMode.Stillness | CalibrationMode.SensorFusion);
-
-                // wait until device is steady
-                float confidence = 0.0f;
-
-                Task timeout = Task.Delay(TimeSpan.FromSeconds(5));
-                while (!timeout.IsCompleted)
-                {
-                    confidence = gamepadMotion.GetAutoCalibrationConfidence();
-                    if (confidence == 1.0f)
-                        break;
-
-                    await Task.Delay(10);
-                }
+                gamepadMotion.StartContinuousCalibration();
+                await Task.Delay(TimeSpan.FromSeconds(5));
+                gamepadMotion.PauseContinuousCalibration();
 
                 // get/set calibration offsets
                 gamepadMotion.GetCalibrationOffset(out float xOffset, out float yOffset, out float zOffset);
-                gamepadMotion.SetCalibrationOffset(xOffset, yOffset, zOffset, (int)(confidence * 10.0f));
+                gamepadMotion.SetCalibrationOffset(xOffset, yOffset, zOffset, 1);
 
                 // store calibration offsets
                 IMUCalibration.StoreCalibration(gamepadMotion.deviceInstanceId, gamepadMotion.GetCalibration());
 
-                // restore calibration mode
-                gamepadMotion.SetCalibrationMode(CalibrationMode.Manual);
-
                 // display message
-                dialog.UpdateContent($"Calibration succeeded: stationary sensor noise recorded. Drift correction found. Confidence: {confidence * 100.0f}%");
+                dialog.UpdateContent("Calibration succeeded: stationary sensor noise recorded. Drift correction found.");
 
                 // wait a bit
                 await Task.Delay(2000); // Captures synchronization context

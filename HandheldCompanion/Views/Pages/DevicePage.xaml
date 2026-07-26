@@ -832,10 +832,17 @@
                                 Name="SensorController"
                                 Content="{l:Static resx:Resources.MainWindow_navController}"
                                 IsEnabled="{Binding IsControllerSensorEnabled}" />
-                            <ComboBoxItem Name="SensorAuto" Content="Auto" />
+                            <ComboBoxItem Name="SensorAuto" Content="Automatic" />
                         </ComboBox>
 
                         <ui:SettingsExpander.Items>
+                            <ui:SettingsCard Header="Calibration mode">
+                                <ComboBox Name="cB_SensorCalibrationMode" SelectionChanged="cB_SensorCalibrationMode_SelectionChanged">
+                                    <ComboBoxItem Content="Manual" />
+                                    <ComboBoxItem Content="Automatic" />
+                                </ComboBox>
+                            </ui:SettingsCard>
+
                             <ui:SettingsCard Header="Sensor calibration">
                                 <Button
                                     Name="ui_button_calibrate"

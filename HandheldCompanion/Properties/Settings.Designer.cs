@@ -278,6 +278,18 @@ namespace HandheldCompanion.Properties
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SensorCalibrationMode {
+            get {
+                return ((int)(this["SensorCalibrationMode"]));
+            }
+            set {
+                this["SensorCalibrationMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int SensorPlacement {
             get {
                 return ((int)(this["SensorPlacement"]));

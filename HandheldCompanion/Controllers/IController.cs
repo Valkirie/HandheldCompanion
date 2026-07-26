@@ -139,7 +139,7 @@ namespace HandheldCompanion.Controllers
 
         public IController()
         {
-            gamepadMotions[gamepadIndex] = new(string.Empty, CalibrationMode.Manual);
+            gamepadMotions[gamepadIndex] = new(string.Empty, SensorsManager.ActiveCalibrationMode);
             InitializeInputOutput();
 
             // raise events
@@ -181,7 +181,7 @@ namespace HandheldCompanion.Controllers
             this.Details.isHooked = true;
 
             // manage gamepad motion
-            gamepadMotions[gamepadIndex] = new(details.baseContainerDeviceInstanceId);
+            gamepadMotions[gamepadIndex] = new(details.baseContainerDeviceInstanceId, SensorsManager.ActiveCalibrationMode);
             InitializeInputOutput();
         }
 

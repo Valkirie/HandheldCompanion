@@ -65,6 +65,9 @@
     <Setting Name="SensorSelection" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">4</Value>
     </Setting>
+    <Setting Name="SensorCalibrationMode" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
     <Setting Name="SensorPlacement" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>

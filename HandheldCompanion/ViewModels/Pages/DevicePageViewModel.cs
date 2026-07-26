@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Devices.Lenovo;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Models;
@@ -71,6 +72,8 @@ namespace HandheldCompanion.ViewModels
         }
 
         private void SensorsManager_SensorSelectionChanged(SensorFamily sensorFamily) => UpdateSensorSelection(sensorFamily);
+
+        private void SensorsManager_CalibrationModeChanged(CalibrationMode calibrationMode) => UpdateSensorSelection(SensorsManager.ActiveSensorFamily);
 
         public bool LegionControllerSwap
         {
@@ -269,7 +272,7 @@ namespace HandheldCompanion.ViewModels
             bool isInternal = activeSensorFamily == SensorFamily.Windows;
             bool isController = activeSensorFamily == SensorFamily.Controller;
 
-            SetUiState(nameof(IsCalibrationEnabled), isExternal || isInternal || isController, ref _isCalibrationEnabled);
+            SetUiState(nameof(IsCalibrationEnabled), SensorsManager.ActiveCalibrationMode == CalibrationMode.Manual && (isExternal || isInternal || isController), ref _isCalibrationEnabled);
             SetUiState(nameof(IsExternalSensorExpanderEnabled), isExternal, ref _isExternalSensorExpanderEnabled);
             SetUiState(nameof(IsInternalSensorExpanderEnabled), isInternal, ref _isInternalSensorExpanderEnabled);
         }
@@ -903,6 +906,7 @@ namespace HandheldCompanion.ViewModels
         {
             // manage events
             SensorsManager.SensorSelectionChanged += SensorsManager_SensorSelectionChanged;
+            SensorsManager.CalibrationModeChanged += SensorsManager_CalibrationModeChanged;
 
             // raise events
             SensorsManager_SensorSelectionChanged(SensorsManager.ActiveSensorFamily);
@@ -1042,6 +1046,7 @@ namespace HandheldCompanion.ViewModels
                 CurrentDevice.Closed -= Device_Closed;
                 SensorsManager.Initialized -= SensorsManager_Initialized;
                 SensorsManager.SensorSelectionChanged -= SensorsManager_SensorSelectionChanged;
+                SensorsManager.CalibrationModeChanged -= SensorsManager_CalibrationModeChanged;
                 ControllerManager.Initialized -= ControllerManager_Initialized;
                 ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
                 PerformanceManager.Initialized -= PerformanceManager_Initialized;

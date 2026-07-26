@@ -206,7 +206,7 @@ namespace HandheldCompanion.Controllers.Lenovo
             }
 
             // manage gamepad motion from right controller
-            gamepadMotions[1] = new($"{details.baseContainerDeviceInstanceId}\\{LegionGoTablet.RightJoyconIndex}");
+            gamepadMotions[1] = new($"{details.baseContainerDeviceInstanceId}\\{LegionGoTablet.RightJoyconIndex}", SensorsManager.ActiveCalibrationMode);
         }
 
         public override void Tick(long ticks, float delta, bool commit)

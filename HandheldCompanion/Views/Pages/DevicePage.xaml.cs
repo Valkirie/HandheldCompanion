@@ -89,6 +89,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetString("BatteryChargeLimitPercent"), false, true);
             SettingsManager_SettingValueChanged("BatteryBypassChargingMode", ManagerFactory.settingsManager.GetString("BatteryBypassChargingMode"), false, true);
             SettingsManager_SettingValueChanged("SensorSelection", ManagerFactory.settingsManager.GetString("SensorSelection"), false, true);
+            SettingsManager_SettingValueChanged("SensorCalibrationMode", ManagerFactory.settingsManager.GetString("SensorCalibrationMode"), false, true);
             SettingsManager_SettingValueChanged("SensorPlacement", ManagerFactory.settingsManager.GetString("SensorPlacement"), false, true);
             SettingsManager_SettingValueChanged("SensorPlacementUpsideDown", ManagerFactory.settingsManager.GetString("SensorPlacementUpsideDown"), false, true);
             SettingsManager_SettingValueChanged("RyzenAdjCoAll", ManagerFactory.settingsManager.GetString("RyzenAdjCoAll"), false, true);
@@ -218,6 +219,9 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "SensorSelection":
                         cB_SensorSelection.SelectedIndex = Convert.ToInt32(value);
+                        break;
+                    case "SensorCalibrationMode":
+                        cB_SensorCalibrationMode.SelectedIndex = Convert.ToInt32(value) == (int)(CalibrationMode.Stillness | CalibrationMode.SensorFusion) ? 1 : 0;
                         break;
                     case "SensorPlacement":
                         UpdateUI_SensorPlacement(Convert.ToInt32(value));
@@ -628,10 +632,24 @@ namespace HandheldCompanion.Views.Pages
                 ManagerFactory.settingsManager.SetProperty("SensorSelection", cB_SensorSelection.SelectedIndex);
         }
 
+        private void cB_SensorCalibrationMode_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
+        {
+            if (cB_SensorCalibrationMode.SelectedIndex == -1)
+                return;
+
+            if (IsLoaded)
+            {
+                int calibrationMode = cB_SensorCalibrationMode.SelectedIndex == 1
+                    ? (int)(CalibrationMode.Stillness | CalibrationMode.SensorFusion)
+                    : (int)CalibrationMode.Manual;
+                ManagerFactory.settingsManager.SetProperty("SensorCalibrationMode", calibrationMode);
+            }
+        }
+
         private void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
         {
             // update dependencies
-            SensorFamily sensorFamily = (SensorFamily)cB_SensorSelection.SelectedIndex;
+            SensorFamily sensorFamily = SensorsManager.ActiveSensorFamily;
 
             switch (sensorFamily)
             {

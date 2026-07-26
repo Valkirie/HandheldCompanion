@@ -236,7 +236,7 @@ public abstract class IDevice
 
     public IDevice()
     {
-        GamepadMotion = new(ProductIllustration, CalibrationMode.Manual  /*| CalibrationMode.SensorFusion */);
+        GamepadMotion = new(ProductIllustration, SensorsManager.ActiveCalibrationMode);
 
         // initialize IMU matrices with default values
         AcceleroMatrix = new();
