@@ -83,7 +83,12 @@ public abstract class IMUSensor : IDisposable
             switch (sensorFamily)
             {
                 case SensorFamily.Windows:
-                    return ((Gyrometer)sensor).DeviceId;
+                    return sensor switch
+                    {
+                        Gyrometer gyrometer => gyrometer.DeviceId,
+                        Accelerometer accelerometer => accelerometer.DeviceId,
+                        _ => string.Empty
+                    };
                 case SensorFamily.SerialUSBIMU:
                     return ((SerialUSBIMU)sensor).USBDevice.DeviceId;
             }

@@ -2,6 +2,7 @@ using HandheldCompanion.Devices;
 using HandheldCompanion.Shared;
 using System;
 using System.Numerics;
+using Windows.Devices.Enumeration;
 using Windows.Devices.Sensors;
 using static HandheldCompanion.Utils.DeviceUtils;
 
@@ -18,12 +19,39 @@ public class IMUGyrometer : IMUSensor
         UpdateSensor();
     }
 
+    public static Gyrometer? GetAvailableSensor()
+    {
+        DeviceInformationCollection devices = DeviceInformation.FindAllAsync(Gyrometer.GetDeviceSelector())
+            .AsTask().GetAwaiter().GetResult();
+
+        LogManager.LogTrace("Found {0} gyrometer devices", devices.Count);
+        foreach (DeviceInformation device in devices)
+        {
+            LogManager.LogTrace("Gyrometer: {0} - {1} is {2}", device.Id, device.Name, device.IsEnabled ? "enabled" : "disabled");
+            if (!device.IsEnabled)
+                continue;
+
+            try
+            {
+                Gyrometer? gyrometer = Gyrometer.FromIdAsync(device.Id).AsTask().GetAwaiter().GetResult();
+                if (gyrometer is not null)
+                    return gyrometer;
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Unable to initialise gyrometer {0}: {1}", device.Id, ex.Message);
+            }
+        }
+
+        return null;
+    }
+
     public void UpdateSensor()
     {
         switch (sensorFamily)
         {
             case SensorFamily.Windows:
-                sensor = Gyrometer.GetDefault();
+                sensor = GetAvailableSensor();
                 break;
             case SensorFamily.SerialUSBIMU:
                 sensor = SerialUSBIMU.GetCurrent();

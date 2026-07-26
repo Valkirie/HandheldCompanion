@@ -2,6 +2,7 @@ using HandheldCompanion.Devices;
 using HandheldCompanion.Shared;
 using System;
 using System.Numerics;
+using Windows.Devices.Enumeration;
 using Windows.Devices.Sensors;
 using static HandheldCompanion.Utils.DeviceUtils;
 
@@ -17,12 +18,39 @@ public class IMUAccelerometer : IMUSensor
         UpdateSensor();
     }
 
+    public static Accelerometer? GetAvailableSensor()
+    {
+        DeviceInformationCollection devices = DeviceInformation.FindAllAsync(Accelerometer.GetDeviceSelector(AccelerometerReadingType.Standard))
+            .AsTask().GetAwaiter().GetResult();
+
+        LogManager.LogTrace("Found {0} accelerometer devices", devices.Count);
+        foreach (DeviceInformation device in devices)
+        {
+            LogManager.LogTrace("Accelerometer: {0} - {1} is {2}", device.Id, device.Name, device.IsEnabled ? "enabled" : "disabled");
+            if (!device.IsEnabled)
+                continue;
+
+            try
+            {
+                Accelerometer? accelerometer = Accelerometer.FromIdAsync(device.Id).AsTask().GetAwaiter().GetResult();
+                if (accelerometer is not null)
+                    return accelerometer;
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Unable to initialise accelerometer {0}: {1}", device.Id, ex.Message);
+            }
+        }
+
+        return null;
+    }
+
     public void UpdateSensor()
     {
         switch (sensorFamily)
         {
             case SensorFamily.Windows:
-                sensor = Accelerometer.GetDefault();
+                sensor = GetAvailableSensor();
                 break;
             case SensorFamily.SerialUSBIMU:
                 sensor = SerialUSBIMU.GetCurrent();

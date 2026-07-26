@@ -1096,8 +1096,8 @@ public abstract class IDevice
 
     public void PullSensors()
     {
-        Gyrometer gyrometer = Gyrometer.GetDefault();
-        Accelerometer accelerometer = Accelerometer.GetDefault();
+        Gyrometer? gyrometer = IMUGyrometer.GetAvailableSensor();
+        Accelerometer? accelerometer = IMUAccelerometer.GetAvailableSensor();
 
         if (gyrometer != null || accelerometer != null)
         {
