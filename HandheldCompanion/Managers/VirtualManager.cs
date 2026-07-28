@@ -33,6 +33,8 @@ namespace HandheldCompanion.Managers
         // settings vars
         public static HIDmode HIDmode = HIDmode.NoController;
         private static HIDmode defaultHIDmode = HIDmode.NoController;
+        private static HIDmode prevHIDmode = HIDmode.NoController;
+
         public static HIDstatus HIDstatus = HIDstatus.Disconnected;
         public static HIDBackend HIDBackend = HIDBackend.ViGEM;
 
@@ -286,11 +288,15 @@ namespace HandheldCompanion.Managers
                 await SetVIIPERStatus(ManagerFactory.settingsManager.GetBoolean("VIIPEREnabled"), false).ConfigureAwait(false);
             }
 
-            await SetControllerMode(HIDmode).ConfigureAwait(false);
+            // Restore the previous HID mode after resuming
+            await SetControllerMode(prevHIDmode).ConfigureAwait(false);
         }
 
         public static async Task Suspend(bool OS)
         {
+            // Store current HIDmode
+            prevHIDmode = HIDmode;
+
             // Disconnect the controller first
             await SetControllerMode(HIDmode.NoController).ConfigureAwait(false);
 

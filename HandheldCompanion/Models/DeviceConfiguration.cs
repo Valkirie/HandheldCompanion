@@ -8,6 +8,8 @@ namespace HandheldCompanion.Models
         public string DeviceClass { get; set; } = "";
         public IMUMatrixData? GyroMatrix { get; set; }
         public IMUMatrixData? AcceleroMatrix { get; set; }
+        public SensorFieldMappingData? WindowsAccelerometerFields { get; set; }
+        public SensorFieldMappingData? WindowsGyrometerFields { get; set; }
 
         // Hardware specifications
         [JsonPropertyName("cTDP")]
@@ -37,5 +39,12 @@ namespace HandheldCompanion.Models
         public float X { get; set; } = 1.0f;
         public float Y { get; set; } = 1.0f;
         public float Z { get; set; } = 1.0f;
+    }
+
+    public class SensorFieldMappingData
+    {
+        public string FriendlyName { get; set; } = string.Empty;
+        public string FormatId { get; set; } = string.Empty;
+        public uint[] PropertyIds { get; set; } = [];
     }
 }

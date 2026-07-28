@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using Windows.Devices.Sensors;
+using static HandheldCompanion.Utils.CommonUtils;
 using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Sensors;
@@ -43,6 +44,21 @@ public abstract class IMUSensor : IDisposable
     protected int updateInterval;
     protected float threshold;
 
+    public string Name
+    {
+        get
+        {
+            return sensor switch
+            {
+                WindowsSensorHandle windowsSensor => windowsSensor.FriendlyName,
+                SerialUSBIMU serialSensor => serialSensor.USBDevice.Name,
+                Gyrometer gyrometer => GetUSBDevice(GetDeviceId(gyrometer.DeviceId))?.Name ?? string.Empty,
+                Accelerometer accelerometer => GetUSBDevice(GetDeviceId(accelerometer.DeviceId))?.Name ?? string.Empty,
+                _ => string.Empty
+            };
+        }
+    }
+
     public event ReadingUpdatedEventHandler? ReadingUpdated;
     public delegate void ReadingUpdatedEventHandler();
 
@@ -67,8 +83,17 @@ public abstract class IMUSensor : IDisposable
     {
     }
 
+    public virtual void UpdateSensor()
+    {
+    }
+
     public virtual void StopListening()
     {
+    }
+
+    public virtual SensorReading GetCurrentReading(bool center = false, bool ratio = false)
+    {
+        return reading;
     }
 
     public override string ToString()
@@ -95,5 +120,10 @@ public abstract class IMUSensor : IDisposable
         }
 
         return string.Empty;
+    }
+
+    private static string GetDeviceId(string rawId)
+    {
+        return Between(rawId, @"\\?\", @"#{")?.Replace("#", @"\") ?? rawId;
     }
 }

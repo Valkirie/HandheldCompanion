@@ -16,12 +16,30 @@
     "Axis": {
       "X": 1.0,
       "Y": 1.0,
-      "Z": 1.0
+      "Z": -1.0
     },
     "AxisSwap": {
       "X": "X",
       "Y": "Z",
       "Z": "Y"
     }
+  },
+  "WindowsGyrometerFields": {
+    "FriendlyName": "Physical Gyrometer",
+    "FormatId": "b14c764f-07cf-41e8-9d82-ebe3d0776a6f",
+    "PropertyIds": [
+      7,
+      8,
+      9
+    ]
+  },
+  "WindowsAccelerometerFields": {
+    "FriendlyName": "Physical Accelerometer",
+    "FormatId": "b14c764f-07cf-41e8-9d82-ebe3d0776a6f",
+    "PropertyIds": [
+      7,
+      8,
+      9
+    ]
   }
 }

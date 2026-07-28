@@ -156,6 +156,8 @@ public abstract class IDevice
 
     public IMUMatrix AcceleroMatrix;
     public IMUMatrix GyroMatrix;
+    public SensorFieldMappingData? WindowsAccelerometerFields;
+    public SensorFieldMappingData? WindowsGyrometerFields;
 
     public GamepadMotion GamepadMotion;
 
@@ -323,6 +325,9 @@ public abstract class IDevice
             AcceleroMatrix = ConvertToIMUMatrix(config.AcceleroMatrix);
             AcceleroMatrix.InvalidateAxisRemapCache();
         }
+
+        WindowsAccelerometerFields = config.WindowsAccelerometerFields;
+        WindowsGyrometerFields = config.WindowsGyrometerFields;
     }
 
     private static IMUMatrix ConvertToIMUMatrix(IMUMatrixData data)
@@ -366,13 +371,25 @@ public abstract class IDevice
         this.GamepadMotion.ResetCalibrationOffset();
     }
 
+    internal void SetWindowsSensorFields(WindowsSensorKind kind, SensorFieldMappingData mapping)
+    {
+        if (kind == WindowsSensorKind.Accelerometer)
+            WindowsAccelerometerFields = mapping;
+        else
+            WindowsGyrometerFields = mapping;
+
+        SaveDeviceConfiguration();
+    }
+
     private void SaveDeviceConfiguration()
     {
         var data = new DeviceConfiguration
         {
             DeviceClass = this.GetType().Name,
             GyroMatrix = ConvertToIMUMatrixData(GyroMatrix),
-            AcceleroMatrix = ConvertToIMUMatrixData(AcceleroMatrix)
+            AcceleroMatrix = ConvertToIMUMatrixData(AcceleroMatrix),
+            WindowsAccelerometerFields = WindowsAccelerometerFields,
+            WindowsGyrometerFields = WindowsGyrometerFields
         };
 
         DeviceConfigurationManager.SaveConfiguration(data);
@@ -1098,16 +1115,14 @@ public abstract class IDevice
     {
         Gyrometer? gyrometer = IMUGyrometer.GetAvailableSensor();
         Accelerometer? accelerometer = IMUAccelerometer.GetAvailableSensor();
+        bool hasLegacyGyrometer = gyrometer is null && IMUGyrometer.HasLegacySensor();
+        bool hasLegacyAccelerometer = accelerometer is null && IMUAccelerometer.HasLegacySensor();
 
-        if (gyrometer != null || accelerometer != null)
+        if (gyrometer != null || accelerometer != null || hasLegacyGyrometer || hasLegacyAccelerometer)
         {
-            // pick the non-null sensor's DeviceId
-            string rawId = (gyrometer != null) ? gyrometer.DeviceId : accelerometer.DeviceId;
-            string deviceId = CommonUtils.Between(rawId, @"\\?\", @"#{")?.Replace("#", @"\") ?? rawId;
-
-            USBDeviceInfo? sensorInfo = GetUSBDevice(deviceId);
-            if (sensorInfo != null)
-                InternalSensorName = sensorInfo.Name;
+            InternalSensorName = SensorsManager.Gyrometer?.Name
+                ?? SensorsManager.Accelerometer?.Name
+                ?? string.Empty;
 
             Capabilities |= DeviceCapabilities.InternalSensor;
         }

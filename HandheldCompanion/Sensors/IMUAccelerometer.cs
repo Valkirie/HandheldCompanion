@@ -10,6 +10,23 @@ namespace HandheldCompanion.Sensors;
 
 public class IMUAccelerometer : IMUSensor
 {
+    public static IMUSensor Create(SensorFamily sensorFamily, int updateInterval)
+    {
+        const bool forceLegacy = false;
+
+        if (sensorFamily == SensorFamily.Windows &&
+            (forceLegacy || GetAvailableSensor() is null))
+            return new IMUWindowsAccelerometer(updateInterval);
+
+        return new IMUAccelerometer(sensorFamily, updateInterval);
+    }
+
+    public static bool HasLegacySensor()
+    {
+        using WindowsSensorHandle? sensor = WindowsSensorManager.Find(WindowsSensorKind.Accelerometer);
+        return sensor is not null;
+    }
+
     public IMUAccelerometer(SensorFamily sensorFamily, int updateInterval)
     {
         this.sensorFamily = sensorFamily;
@@ -45,7 +62,7 @@ public class IMUAccelerometer : IMUSensor
         return null;
     }
 
-    public void UpdateSensor()
+    public override void UpdateSensor()
     {
         switch (sensorFamily)
         {
@@ -163,7 +180,7 @@ public class IMUAccelerometer : IMUSensor
         // throw new NotImplementedException();
     }
 
-    public SensorReading GetCurrentReading(bool center = false, bool ratio = false)
+    public override SensorReading GetCurrentReading(bool center = false, bool ratio = false)
     {
         return this.reading;
     }

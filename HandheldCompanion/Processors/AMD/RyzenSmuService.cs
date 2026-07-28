@@ -606,14 +606,14 @@ namespace HandheldCompanion.Processors.AMD
                 // Step 5: Wait until the RSP register is non-zero
                 if (!WaitForMailboxReadyNoLock(MP1_ADDR_RSP) || !ReadSmuRegisterNoLock(MP1_ADDR_RSP, out uint rspValue))
                 {
-                    LogManager.LogError("MP1 SMU timeout (RSP stayed 0 after command)");
+                    LogManager.LogError("MP1 SMU timeout (RSP stayed 0) after command {0}", $"0x{command:X2}");
                     return SmuStatus.Failed;
                 }
 
                 // Step 6: Check response status
                 if (rspValue != 0x01) // SMU_OK
                 {
-                    LogManager.LogWarning("MP1 SMU returned status {0}", $"0x{rspValue:X2}");
+                    LogManager.LogWarning("MP1 SMU returned status {0} for command {1}", $"0x{rspValue:X2}", $"0x{command:X2}");
                     return (SmuStatus)rspValue;
                 }
 

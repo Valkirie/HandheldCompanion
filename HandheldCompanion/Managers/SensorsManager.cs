@@ -16,8 +16,8 @@ namespace HandheldCompanion.Managers
 {
     public static class SensorsManager
     {
-        private static IMUGyrometer? Gyrometer;
-        private static IMUAccelerometer? Accelerometer;
+        public static IMUSensor? Gyrometer { get; private set; }
+        public static IMUSensor? Accelerometer { get; private set; }
         private static SerialUSBIMU? USBSensor;
 
         private static SensorFamily sensorFamily;
@@ -386,8 +386,8 @@ namespace HandheldCompanion.Managers
             // initialize sensors
             int UpdateInterval = TimerManager.GetPeriod();
 
-            Gyrometer = new IMUGyrometer(sensorFamily, UpdateInterval, IDevice.GetCurrent().GamepadMotion.GetCalibration().GetGyroThreshold());
-            Accelerometer = new IMUAccelerometer(sensorFamily, UpdateInterval);
+            Gyrometer = IMUGyrometer.Create(sensorFamily, UpdateInterval, IDevice.GetCurrent().GamepadMotion.GetCalibration().GetGyroThreshold());
+            Accelerometer = IMUAccelerometer.Create(sensorFamily, UpdateInterval);
         }
 
         public static async void Calibrate(GamepadMotion gamepadMotion)

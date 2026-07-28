@@ -10,6 +10,23 @@ namespace HandheldCompanion.Sensors;
 
 public class IMUGyrometer : IMUSensor
 {
+    public static IMUSensor Create(SensorFamily sensorFamily, int updateInterval, float threshold)
+    {
+        const bool forceLegacy = false;
+
+        if (sensorFamily == SensorFamily.Windows &&
+            (forceLegacy || GetAvailableSensor() is null))
+            return new IMUWindowsGyrometer(updateInterval, threshold);
+
+        return new IMUGyrometer(sensorFamily, updateInterval, threshold);
+    }
+
+    public static bool HasLegacySensor()
+    {
+        using WindowsSensorHandle? sensor = WindowsSensorManager.Find(WindowsSensorKind.Gyrometer);
+        return sensor is not null;
+    }
+
     public IMUGyrometer(SensorFamily sensorFamily, int updateInterval, float threshold)
     {
         this.sensorFamily = sensorFamily;
@@ -46,7 +63,7 @@ public class IMUGyrometer : IMUSensor
         return null;
     }
 
-    public void UpdateSensor()
+    public override void UpdateSensor()
     {
         switch (sensorFamily)
         {
@@ -161,7 +178,7 @@ public class IMUGyrometer : IMUSensor
         base.ReadingChanged();
     }
 
-    public SensorReading GetCurrentReading()
+    public override SensorReading GetCurrentReading(bool center = false, bool ratio = false)
     {
         return this.reading;
     }
