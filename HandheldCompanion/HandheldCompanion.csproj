@@ -242,9 +242,9 @@
 		<PackageReference Include="PrecisionTimer.NET" Version="3.0.0.7" />
 		<PackageReference Include="protobuf-net" Version="3.2.56" />
 		<PackageReference Include="protobuf-net.Core" Version="3.3.0-g6785ecbb35" />
-		<PackageReference Include="RAMSPDToolkit-NDD" Version="1.5.0" />
-		<PackageReference Include="SDL3-CS" Version="3.4.12.3" />
-		<PackageReference Include="Sentry" Version="6.7.0" />
+		<PackageReference Include="RAMSPDToolkit-NDD" Version="1.6.0" />
+		<PackageReference Include="SDL3-CS" Version="3.4.12.4" />
+		<PackageReference Include="Sentry" Version="6.8.0" />
 		<PackageReference Include="SharpDX" Version="4.2.0" />
 		<PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
 		<PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
