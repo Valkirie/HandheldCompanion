@@ -813,8 +813,8 @@ namespace HandheldCompanion.ViewModels
             FrameworkElementFactory factory = new(typeof(JustifiedWrapPanel));
             factory.SetValue(JustifiedWrapPanel.HorizontalSpacingProperty, 6.0);
             factory.SetValue(JustifiedWrapPanel.VerticalSpacingProperty, 6.0);
-            factory.SetValue(JustifiedWrapPanel.TargetRowHeightProperty, 300.0d);
-            factory.SetValue(JustifiedWrapPanel.ItemAspectRatioProperty, 475.0 / 900.0);
+            factory.SetValue(JustifiedWrapPanel.TargetRowHeightProperty, 240.0);
+            factory.SetValue(JustifiedWrapPanel.ItemAspectRatioProperty, 565.0 / 900.0);
 
             return new ItemsPanelTemplate(factory);
         }

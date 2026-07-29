@@ -46,7 +46,19 @@ namespace HandheldCompanion.Actions
         public float Acceleration = 1.0f;     // ≤ 1.0 = off; > 1.0 = boost
         public int Deadzone = 15;        // stick only
         public bool Filtering = false;     // pad only
-        public float FilterCutoff = 0.05f;    // pad only
+        private float filterCutoff = 0.05f;
+        public float FilterCutoff
+        {
+            get => filterCutoff;
+            set
+            {
+                if (filterCutoff == value)
+                    return;
+
+                filterCutoff = value;
+                mouseFilter?.SetFilterCutoff(value);
+            }
+        }
 
         // MoveTo settings
         public double MoveToX = 0;
@@ -225,7 +237,6 @@ namespace HandheldCompanion.Actions
 
             if (Filtering)
             {
-                mouseFilter.SetFilterCutoff(FilterCutoff);
                 deltaVector.X = (float)mouseFilter.axis1Filter.Filter(deltaVector.X, 1);
                 deltaVector.Y = (float)mouseFilter.axis2Filter.Filter(deltaVector.Y, 1);
             }
@@ -242,8 +253,11 @@ namespace HandheldCompanion.Actions
                 MouseSimulator.MoveBy((int)intDelta.X, (int)intDelta.Y);
             else
             {
-                MouseSimulator.HorizontalScroll((int)intDelta.X);
-                MouseSimulator.VerticalScroll((int)-intDelta.Y);
+                if (intDelta.X != 0)
+                    MouseSimulator.HorizontalScroll((int)intDelta.X);
+
+                if (intDelta.Y != 0)
+                    MouseSimulator.VerticalScroll((int)-intDelta.Y);
             }
         }
 

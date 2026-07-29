@@ -113,6 +113,54 @@ begin
 end;
 
 
+function GetUSBipExecutablePath(): string;
+var
+  installLocation, executablePath: string;
+begin
+  Result := '';
+
+  installLocation := regGetUninstallValue('{199505b0-b93d-4521-a8c7-897818e0205a}_is1', 'InstallLocation');
+  if installLocation <> '' then
+  begin
+    executablePath := AddBackslash(RemoveQuotes(installLocation)) + 'usbip.exe';
+    if FileExists(executablePath) then
+    begin
+      Result := executablePath;
+      Exit;
+    end;
+  end;
+
+  executablePath := FileSearch('usbip.exe', GetEnv('PATH'));
+  if executablePath <> '' then
+    Result := executablePath;
+end;
+
+
+function UninstallUSBip(): Boolean;
+var
+  uninstallString: string;
+  resultCode: Integer;
+begin
+  Result := False;
+  uninstallString := regGetUninstallValue('{199505b0-b93d-4521-a8c7-897818e0205a}_is1', 'UninstallString');
+  if uninstallString = '' then
+  begin
+    Log('USBip UninstallString is empty or missing.');
+    Exit;
+  end;
+
+  uninstallString := RemoveQuotes(uninstallString);
+  Log('Running USBip uninstaller: ' + uninstallString);
+  if ShellExec('', uninstallString, '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-', '', SW_SHOWNORMAL, ewWaitUntilTerminated, resultCode) then
+  begin
+    Log('USBip uninstaller finished with exit code ' + IntToStr(resultCode));
+    Result := resultCode = 0;
+  end
+  else
+    Log('Unable to launch USBip uninstaller.');
+end;
+
+
 function isViGemInstalled():boolean;
 begin
   result:= false;

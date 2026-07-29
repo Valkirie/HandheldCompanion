@@ -340,6 +340,8 @@ public class ClawA1M : IDevice
 
     public override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
+        bool shouldReleaseFanControl = ShouldReleaseFanControl(profile);
+
         byte[] fanTable = new byte[8];
         if (profile.FanProfile.fanMode == FanMode.Software)
         {
@@ -352,18 +354,24 @@ public class ClawA1M : IDevice
             fanTable[5] = (byte)(profile.FanProfile.fanSpeeds[8] / 100.0d * 150.0d);    // 80%
             fanTable[6] = (byte)(profile.FanProfile.fanSpeeds[9] / 100.0d * 150.0d);    // 90%
             fanTable[7] = (byte)(profile.FanProfile.fanSpeeds[10] / 100.0d * 150.0d);   // 100%
+
+            // update fan table
+            SetFanTable(fanTable);
+
+            // update fan mode
+            SetFanControl(true);
         }
-        else
+        else if (shouldReleaseFanControl)
         {
             // restore default fan table
             fanTable = new byte[8] { 40, 0, 40, 49, 58, 67, 75, 75 };
+
+            // update fan table
+            SetFanTable(fanTable);
+
+            // update fan mode
+            SetFanControl(false);
         }
-
-        // update fan table
-        SetFanTable(fanTable);
-
-        // update fan mode
-        SetFanControl(profile.FanProfile.fanMode != FanMode.Hardware);
 
         // MSI Center, API_UserScenario
         bool IsDcMode = SystemInformation.PowerStatus.PowerLineStatus == PowerLineStatus.Offline;

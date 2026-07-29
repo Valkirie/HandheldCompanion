@@ -208,8 +208,6 @@
                 <StaticResource x:Key="TopNavigationViewItemForegroundSelected" ResourceKey="NavigationViewSelectionIndicatorForeground" />
                 <StaticResource x:Key="TopNavigationViewItemForegroundSelectedPointerOver" ResourceKey="NavigationViewSelectionIndicatorForeground" />
                 <StaticResource x:Key="TopNavigationViewItemForegroundSelectedPressed" ResourceKey="NavigationViewSelectionIndicatorForeground" />
-                <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
-                <SolidColorBrush x:Key="NavigationViewContentGridBorderBrush" Color="Transparent" />
             </controls:AdaptiveNavigationView.Resources>
 
             <controls:AdaptiveNavigationView.MenuItemContainerStyle>

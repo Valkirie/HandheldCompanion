@@ -1775,6 +1775,9 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(IsControllerPassthroughEnabled));
             OnPropertyChanged(nameof(SelectedSubProfileViewModel));
             OnPropertyChanged(nameof(CanEditHIDMode));
+            OnPropertyChanged(nameof(Cover));
+            OnPropertyChanged(nameof(Artwork));
+            OnPropertyChanged(nameof(Logo));
 
             if (updateProfileContext)
                 OnProfileChanged();

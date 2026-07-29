@@ -232,6 +232,8 @@ public class ROGAlly : IDevice
 
     public override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
+        bool shouldReleaseFanControl = ShouldReleaseFanControl(profile);
+
         if (profile.FanProfile.fanMode == FanMode.Software)
         {
             byte[] asus = ToAsusCurve(profile.FanProfile.fanSpeeds);
@@ -239,7 +241,7 @@ public class ROGAlly : IDevice
             AsusACPI.SetFanCurve(AsusFan.GPU, asus);
             AsusACPI.SetFanCurve(AsusFan.Mid, asus);
         }
-        else
+        else if (shouldReleaseFanControl)
         {
             // restore default fan table
             SetFanControl(false);

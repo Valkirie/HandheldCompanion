@@ -19,7 +19,7 @@
 #define InstallerVersion        "0.2"
 #define MyAppSetupName         "Handheld Companion"
 #define MyBuildId              "HandheldCompanion"
-#define MyAppVersion           "1.0.0.0"
+#define MyAppVersion           "1.0.0.1"
 #define MyAppPublisher         "BenjaminLSR"
 #define MyAppCopyright         "Copyright © BenjaminLSR"
 #define MyAppURL               "https://github.com/Valkirie/HandheldCompanion"
@@ -31,6 +31,10 @@
 #define RTSSHooksLoader64Exe   "RTSSHooksLoader64.exe"
 #define EncoderServerExe       "EncoderServer.exe"
 #define RTSSHooksLoaderExe     "RTSSHooksLoader.exe"
+#define MsiAfterburnerExe      "MSIAfterburner.exe"
+#define MsiAfterburnerService  "MSIAfterburnerService.exe"
+#define USBipService           "usbipd"
+#define USBipProcess            "usbip*.exe"
 
 #define DotNetName             ".NET Desktop Runtime"
 #define DirectXName            "DirectX Runtime"
@@ -53,7 +57,7 @@
 #define HidHideDownloadLink    "https://github.com/nefarius/HidHide/releases/download/v1.5.230.0/HidHide_1.5.230_x64.exe"
 #define RtssDownloadLink       "https://github.com/Valkirie/HandheldCompanion/raw/main/redist/RTSSSetup737.exe"
 #define PawnIODownloadLink     "https://github.com/namazso/PawnIO.Setup/releases/latest/download/PawnIO_setup.exe"
-#define USBipDownloadLink      "https://github.com/vadimgrn/usbip-win2/releases/download/v.0.9.7.8/USBip-0.9.7.8-x64.exe"
+#define USBipDownloadLink      "https://github.com/vadimgrn/usbip-win2/releases/download/v." + NewUSBipVersion + "/USBip-" + NewUSBipVersion + "-x64.exe"
 #define GameControllerDBDownloadLink "https://raw.githubusercontent.com/mdqinc/SDL_GameControllerDB/refs/heads/master/gamecontrollerdb.txt"
 
 ; Registry  
@@ -426,31 +430,59 @@ end;
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 var
   PrepareToInstallResult: String;
+  USBipExecutable: String;
+  ResultCode: Integer;
 begin
   Log('***Enter PrepareToInstall()***');
 
-  // Kill any running RTSS-related processes before installing dependencies
+  // Stop Handheld Companion before replacing dependencies and application files.
+  if IsProcessRunning('{#MyAppExeName}') then
+    StopProcess('{#MyAppExeName}');
+
+  // Kill any running RTSS or MSI Afterburner processes before installing dependencies.
   if IsProcessRunning('{#EncoderServerExe}') or
      IsProcessRunning('{#EncoderServer64Exe}') or
      IsProcessRunning('{#RTSSHooksLoaderExe}') or
      IsProcessRunning('{#RTSSHooksLoader64Exe}') or
-     IsProcessRunning('{#RtssExe}') then
+     IsProcessRunning('{#RtssExe}') or
+     IsProcessRunning('{#MsiAfterburnerExe}') or
+     IsProcessRunning('{#MsiAfterburnerService}') then
   begin
     Dependency_DownloadPage.Show;
-    Dependency_DownloadPage.SetText('Stopping RivaTuner Statistics Server processes...', '');
-    Dependency_DownloadPage.SetProgress(0, 5);
+    Dependency_DownloadPage.SetText('Stopping RTSS and MSI Afterburner processes...', '');
+    Dependency_DownloadPage.SetProgress(0, 7);
     StopProcess('{#EncoderServerExe}');
-    Dependency_DownloadPage.SetProgress(1, 5);
+    Dependency_DownloadPage.SetProgress(1, 7);
     StopProcess('{#EncoderServer64Exe}');
-    Dependency_DownloadPage.SetProgress(2, 5);
+    Dependency_DownloadPage.SetProgress(2, 7);
     StopProcess('{#RTSSHooksLoaderExe}');
-    Dependency_DownloadPage.SetProgress(3, 5);
+    Dependency_DownloadPage.SetProgress(3, 7);
     StopProcess('{#RTSSHooksLoader64Exe}');
-    Dependency_DownloadPage.SetProgress(4, 5);
+    Dependency_DownloadPage.SetProgress(4, 7);
     StopProcess('{#RtssExe}');
-    Dependency_DownloadPage.SetProgress(5, 5);
+    Dependency_DownloadPage.SetProgress(5, 7);
+    StopProcess('{#MsiAfterburnerExe}');
+    Dependency_DownloadPage.SetProgress(6, 7);
+    StopProcess('{#MsiAfterburnerService}');
+    Dependency_DownloadPage.SetProgress(7, 7);
     Dependency_DownloadPage.Hide;
   end;
+
+  // Stop USBip before its uninstaller replaces kernel drivers and services.
+  USBipExecutable := GetUSBipExecutablePath();
+  if USBipExecutable = '' then
+    Log('usbip.exe was not found in USBip InstallLocation or PATH; skipping detach')
+  else if Exec(USBipExecutable, 'detach -p 0', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+    Log('usbip detach exit=' + IntToStr(ResultCode))
+  else
+    Log('Failed to launch usbip detach command from ' + USBipExecutable);
+
+  if Exec(ExpandConstant('{sys}\net.exe'), 'stop {#USBipService}', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+    Log('usbipd stop exit=' + IntToStr(ResultCode))
+  else
+    Log('Failed to launch usbipd stop command');
+  Sleep(1000);
+  StopProcess('{#USBipProcess}');
 
   Log('Restart needed: ' + BoolToStr(NeedsRestart));
   PrepareToInstallResult := Dependency_PrepareToInstall(NeedsRestart);
@@ -732,7 +764,12 @@ begin
         while True do
         begin
           if Dependency_List[DependencyIndex].UninstallBeforeInstall then
-            UninstallMsiByDisplayName(Dependency_List[DependencyIndex].UninstallDisplayName);
+          begin
+            if Dependency_List[DependencyIndex].UninstallDisplayName = '{#USBipName}' then
+              UninstallUSBip
+            else
+              UninstallMsiByDisplayName(Dependency_List[DependencyIndex].UninstallDisplayName);
+          end;
 
           ResultCode := 0;
           if ShellExec('', ExpandConstant('{tmp}\') + Dependency_List[DependencyIndex].Filename, Dependency_List[DependencyIndex].Parameters, '', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
@@ -918,11 +955,11 @@ end;
 
 procedure Dependency_AddUSBip;
 begin
-  Dependency_Add_With_Version('USBip-0.9.7.7-x64.exe', '{#NewUSBipVersion}', RegGetInstalledVersion('{#USBipName}'),
+  Dependency_Add_With_Version('USBip-{#NewUSBipVersion}-x64.exe', '{#NewUSBipVersion}', RegGetInstalledVersion('{#USBipName}'),
     '/VERYSILENT /COMPONENTS=main,client /SUPPRESSMSGBOXES /NORESTART /SP-',
     '{#USBipName}',
     '{#USBipDownloadLink}',
-    '', True, True, False, '');
+    '', True, True, True, '{#USBipName}');
 end;
 
 function BoolToStr(Value: Boolean): String;

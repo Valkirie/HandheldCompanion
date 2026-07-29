@@ -146,6 +146,7 @@ public abstract class IDevice
 
     protected static OpenLibSys? openLibSys;
     protected object updateLock = new();
+    private bool hasAppliedSoftwareFanProfile;
 
     private static IDevice? device;
 
@@ -565,23 +566,36 @@ public abstract class IDevice
 
     public virtual void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
+        bool shouldReleaseFanControl = ShouldReleaseFanControl(profile);
+
         // apply profile Fan mode
-        switch (profile.FanProfile.fanMode)
+        if (profile.FanProfile.fanMode == FanMode.Software)
         {
-            default:
-            case FanMode.Hardware:
-                SetFanControl(false, profile.OEMPowerMode);
-                break;
-            case FanMode.Software:
-                SetFanControl(true, profile.OEMPowerMode);
-                break;
+            SetFanControl(true, profile.OEMPowerMode);
         }
+        else if (shouldReleaseFanControl)
+        {
+            // restore default fan table
+            SetFanControl(false, profile.OEMPowerMode);
+        }
+    }
+
+    protected bool ShouldReleaseFanControl(PowerProfile profile)
+    {
+        if (profile.FanProfile.fanMode != FanMode.Hardware)
+        {
+            hasAppliedSoftwareFanProfile = true;
+            return false;
+        }
+
+        return true;
     }
 
     public virtual void Close()
     {
         // disable fan control
-        SetFanControl(false);
+        if (hasAppliedSoftwareFanProfile)
+            SetFanControl(false);
 
         // Close openLib
         openLibSys?.Dispose();
