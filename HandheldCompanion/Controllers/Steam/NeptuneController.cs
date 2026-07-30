@@ -319,7 +319,7 @@ public class NeptuneController : SteamController
     public override void Unhide(bool powerCycle = true)
     {
         // you shouldn't unhide the controller if steam mode is set to: exclusive
-        bool IsExclusiveMode = ManagerFactory.settingsManager.GetBoolean("SteamControllerMode");
+        bool IsExclusiveMode = ManagerFactory.settingsManager.GetInt("SteamControllerMode") == 1;
         if (IsExclusiveMode)
             return;
 
