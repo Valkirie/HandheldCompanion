@@ -1220,7 +1220,7 @@ public static class ControllerManager
         // Steam Deck specific scenario
         if (IDevice.GetCurrent() is SteamDeck steamDeck)
         {
-            bool IsExclusiveMode = ManagerFactory.settingsManager.GetBoolean("SteamControllerMode");
+            bool IsExclusiveMode = ManagerFactory.settingsManager.GetInt("SteamControllerMode") == 1;
 
             // Making sure current controller is embedded
             if (targetController is NeptuneController neptuneController)
