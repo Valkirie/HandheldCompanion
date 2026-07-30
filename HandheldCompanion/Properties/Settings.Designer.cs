@@ -1284,6 +1284,18 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DisableMsiClawPS2Service {
+            get {
+                return ((bool)(this["DisableMsiClawPS2Service"]));
+            }
+            set {
+                this["DisableMsiClawPS2Service"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int ConfigurableTDPMethod {
             get {

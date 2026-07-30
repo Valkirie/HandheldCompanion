@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
@@ -8,6 +8,7 @@ using HandheldCompanion.Views;
 using HandheldCompanion.Watchers;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
+using System.ServiceProcess;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -56,6 +57,22 @@ namespace HandheldCompanion.ViewModels
                 {
                     _BatteryChargeLimitPercent = value;
                     OnPropertyChanged(nameof(BatteryChargeLimitPercent));
+                }
+            }
+        }
+
+        public bool DisableMsiClawPS2Service
+        {
+            get
+            {
+                return ManagerFactory.settingsManager.GetBoolean("DisableMsiClawPS2Service");
+            }
+            set
+            {
+                if (value != DisableMsiClawPS2Service)
+                {
+                    ManagerFactory.settingsManager.SetProperty("DisableMsiClawPS2Service", value);
+                    OnPropertyChanged(nameof(DisableMsiClawPS2Service));
                 }
             }
         }
@@ -286,6 +303,42 @@ namespace HandheldCompanion.ViewModels
             QuerySettings();
         }
 
+        private static void SetMsiClawPS2ServiceState(bool disable)
+        {
+            try
+            {
+                using (ServiceController service = new("i8042prt"))
+                {
+                    if (disable)
+                        ServiceUtils.ChangeStartMode(service, ServiceStartMode.Disabled, out _);
+                    else
+                        ServiceUtils.ChangeStartMode(service, ServiceStartMode.System, out _);
+                }
+            }
+            catch (Exception)
+            { }
+        }
+
+        private static void RequestRestartConfirmation()
+        {
+            _ = UIHelper.TryInvoke(async () =>
+            {
+                Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+                {
+                    Title = Properties.Resources.Dialog_ForceRestartTitle,
+                    Content = Properties.Resources.Dialog_ForceRestartDesc,
+                    DefaultButton = ContentDialogButton.Close,
+                    CloseButtonText = Properties.Resources.Dialog_No,
+                    PrimaryButtonText = Properties.Resources.Dialog_Yes
+                }.ShowAsync();
+
+                await dialogTask;
+
+                if (dialogTask.Result == ContentDialogResult.Primary)
+                    DeviceUtils.RestartComputer();
+            });
+        }
+
         private void QuerySettings()
         {
             // manage events
@@ -295,6 +348,7 @@ namespace HandheldCompanion.ViewModels
             SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false, false);
             SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetDouble("BatteryChargeLimitPercent"), false, false);
             SettingsManager_SettingValueChanged("GoBackToSleep", ManagerFactory.settingsManager.GetBoolean("GoBackToSleep"), false, false);
+            SettingsManager_SettingValueChanged("DisableMsiClawPS2Service", ManagerFactory.settingsManager.GetBoolean("DisableMsiClawPS2Service"), false, true);
         }
 
         private void CoreIsolationWatcher_StatusChanged(bool enabled)
@@ -375,6 +429,16 @@ namespace HandheldCompanion.ViewModels
                     break;
                 case "GoBackToSleep":
                     GoBackToSleep = Convert.ToBoolean(value);
+                    break;
+                case "DisableMsiClawPS2Service":
+                    bool disableMsiClawPS2Service = Convert.ToBoolean(value);
+                    DisableMsiClawPS2Service = disableMsiClawPS2Service;
+
+                    if (!initializing && CurrentDevice is ClawA1M)
+                    {
+                        SetMsiClawPS2ServiceState(disableMsiClawPS2Service);
+                        RequestRestartConfirmation();
+                    }
                     break;
             }
         }
