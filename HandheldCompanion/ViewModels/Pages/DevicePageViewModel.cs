@@ -13,6 +13,7 @@ using HandheldCompanion.Watchers;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
+using System.ServiceProcess;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -59,6 +60,7 @@ namespace HandheldCompanion.ViewModels
         public bool IsLegionGoLeftControllerVisible => _isLegionGoLeftControllerVisible;
         public bool IsLegionGoRightControllerVisible => _isLegionGoRightControllerVisible;
         public bool IsMsiClawVisible => _isMsiClawVisible;
+
         public bool IsGamingZoneVisible => _isGamingZoneVisible;
         public bool IsColorPickerEnabled => _isColorPickerEnabled;
         public bool IsCalibrationEnabled => _isCalibrationEnabled;
@@ -388,6 +390,7 @@ namespace HandheldCompanion.ViewModels
         }
         #endregion
 
+        #region MSIClaw
         public int ClawControllerIndex
         {
             get
@@ -423,6 +426,23 @@ namespace HandheldCompanion.ViewModels
                 }
             }
         }
+
+        public bool DisableMsiClawPS2Service
+        {
+            get
+            {
+                return ManagerFactory.settingsManager.GetBoolean("DisableMsiClawPS2Service");
+            }
+            set
+            {
+                if (value != DisableMsiClawPS2Service)
+                {
+                    ManagerFactory.settingsManager.SetProperty("DisableMsiClawPS2Service", value);
+                    OnPropertyChanged(nameof(DisableMsiClawPS2Service));
+                }
+            }
+        }
+        #endregion
 
         #region Overlay
         public bool IsOverlayGamepadVisible => App.overlayModel?.Visibility == System.Windows.Visibility.Visible;
@@ -936,6 +956,22 @@ namespace HandheldCompanion.ViewModels
             QuerySettings();
         }
 
+        private static void SetMsiClawPS2ServiceState(bool disable)
+        {
+            try
+            {
+                using (ServiceController service = new("i8042prt"))
+                {
+                    if (disable)
+                        ServiceUtils.ChangeStartMode(service, ServiceStartMode.Disabled, out _);
+                    else
+                        ServiceUtils.ChangeStartMode(service, ServiceStartMode.System, out _);
+                }
+            }
+            catch (Exception)
+            { }
+        }
+
         private void QuerySettings()
         {
             // manage events
@@ -950,6 +986,7 @@ namespace HandheldCompanion.ViewModels
             SettingsManager_SettingValueChanged("LegionControllerSwap", ManagerFactory.settingsManager.GetBoolean("LegionControllerSwap"), false, true);
             SettingsManager_SettingValueChanged("LegionControllerGyroIndex", ManagerFactory.settingsManager.GetInt("LegionControllerGyroIndex"), false, true);
             SettingsManager_SettingValueChanged("ZotacGamingZoneVRAM", ManagerFactory.settingsManager.GetInt("ZotacGamingZoneVRAM"), false, true);
+            SettingsManager_SettingValueChanged("DisableMsiClawPS2Service", ManagerFactory.settingsManager.GetBoolean("DisableMsiClawPS2Service"), false, true);
         }
 
         private void CoreIsolationWatcher_StatusChanged(bool enabled)
@@ -1028,6 +1065,16 @@ namespace HandheldCompanion.ViewModels
                     break;
                 case "ZotacGamingZoneVRAM":
                     SetProperty(ref _gamingZoneVRAM, Convert.ToInt32(value), propertyName: nameof(GamingZoneVRAM));
+                    break;
+                case "DisableMsiClawPS2Service":
+                    bool disableMsiClawPS2Service = Convert.ToBoolean(value);
+                    DisableMsiClawPS2Service = disableMsiClawPS2Service;
+
+                    if (!initializing && CurrentDevice is ClawA1M)
+                    {
+                        SetMsiClawPS2ServiceState(disableMsiClawPS2Service);
+                        RestartConfirmationRequested?.Invoke();
+                    }
                     break;
             }
         }

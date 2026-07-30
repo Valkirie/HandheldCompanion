@@ -25,7 +25,7 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool ToastEnable {
             get {
                 return ((bool)(this["ToastEnable"]));
@@ -1303,6 +1303,18 @@ namespace HandheldCompanion.Properties
             }
             set {
                 this["MSIClawControllerIndex"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool DisableMsiClawPS2Service {
+            get {
+                return ((bool)(this["DisableMsiClawPS2Service"]));
+            }
+            set {
+                this["DisableMsiClawPS2Service"] = value;
             }
         }
         
