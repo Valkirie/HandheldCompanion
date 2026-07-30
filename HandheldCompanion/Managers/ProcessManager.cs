@@ -318,14 +318,7 @@ public class ProcessManager : IManager
         {
             try
             {
-                // Run the call to AutomationElement.FromHandle in a separate task
-                AutomationElement? element = null;
-                Task<AutomationElement> task = Task.Run(() => AutomationElement.FromHandle(hWnd));
-                if (!task.Wait(TimeSpan.FromSeconds(5)))
-                    return false;
-
-                element = task.Result;
-                if (element is null)
+                if (!TryGetAutomationElement(hWnd, out AutomationElement? element) || element is null)
                     return false;
 
                 int processId = 0;
