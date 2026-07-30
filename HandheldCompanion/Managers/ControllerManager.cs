@@ -391,11 +391,7 @@ public static class ControllerManager
 
         // controller is muted
         if (ControllerMuted)
-        {
-            // keep only Special passthrough
-            mutedState.ButtonState[ButtonFlags.Special] = mapped.ButtonState[ButtonFlags.Special];
             mapped = mutedState;
-        }
 
         // Auto-raise pad touch flags when pad axes exceed deadzone, so downstream consumers don't require an explicit touch button mapping from the user.
         // Use deadzone to prevent noise/drift from triggering unwanted input (e.g., phantom scrolling on DualShock4)
