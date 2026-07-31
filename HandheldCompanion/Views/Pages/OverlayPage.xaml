@@ -91,6 +91,19 @@
                         </ComboBox>
                         <ui:SettingsExpander.Items>
                             <ui:SettingsCard
+                                Description="{l:Static resx:Resources.OverlayPage_CustomOrientationDesc}"
+                                Header="{l:Static resx:Resources.OverlayPage_CustomOrientation}"
+                                IsEnabled="{Binding IsCustomOnScreenDisplayLevelEnabled}">
+                                <ComboBox
+                                    HorizontalAlignment="Stretch"
+                                    IsReadOnly="True"
+                                    SelectedIndex="{Binding OnScreenDisplayCustomOrientation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBoxItem Content="{l:Static resx:Resources.OverlayPage_CustomOrientationHorizontal}" />
+                                    <ComboBoxItem Content="{l:Static resx:Resources.OverlayPage_CustomOrientationVertical}" />
+                                </ComboBox>
+                            </ui:SettingsCard>
+
+                            <ui:SettingsCard
                                 Description="{l:Static resx:Resources.OverlayPage_TimeLevelDesc}"
                                 Header="{l:Static resx:Resources.OverlayPage_TimeLevel}"
                                 IsEnabled="{Binding IsCustomOnScreenDisplayLevelEnabled}">

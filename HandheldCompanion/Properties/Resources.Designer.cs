@@ -7426,6 +7426,42 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("OverlayPage_Overlay", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Overlay orientation.
+        /// </summary>
+        public static string OverlayPage_CustomOrientation {
+            get {
+                return ResourceManager.GetString("OverlayPage_CustomOrientation", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Choose how overlay elements are aligned.
+        /// </summary>
+        public static string OverlayPage_CustomOrientationDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_CustomOrientationDesc", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Horizontal.
+        /// </summary>
+        public static string OverlayPage_CustomOrientationHorizontal {
+            get {
+                return ResourceManager.GetString("OverlayPage_CustomOrientationHorizontal", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Vertical.
+        /// </summary>
+        public static string OverlayPage_CustomOrientationVertical {
+            get {
+                return ResourceManager.GetString("OverlayPage_CustomOrientationVertical", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Disabled.

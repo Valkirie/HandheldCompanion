@@ -1449,6 +1449,18 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="OverlayPage_OverlayDisplayCustomLevel_Minimal" xml:space="preserve">
     <value>Minimal</value>
   </data>
+  <data name="OverlayPage_CustomOrientation" xml:space="preserve">
+    <value>Overlay orientation</value>
+  </data>
+  <data name="OverlayPage_CustomOrientationDesc" xml:space="preserve">
+    <value>Choose how overlay elements are aligned</value>
+  </data>
+  <data name="OverlayPage_CustomOrientationHorizontal" xml:space="preserve">
+    <value>Horizontal</value>
+  </data>
+  <data name="OverlayPage_CustomOrientationVertical" xml:space="preserve">
+    <value>Vertical</value>
+  </data>
   <data name="OverlayPage_CustomSettings" xml:space="preserve">
     <value>Custom Settings</value>
   </data>

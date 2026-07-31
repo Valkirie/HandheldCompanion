@@ -78,6 +78,22 @@ namespace HandheldCompanion.ViewModels
 
         public bool IsCustomOnScreenDisplayLevelEnabled => OnScreenDisplayLevel == 4;
 
+        private int _onScreenDisplayCustomOrientation;
+        public int OnScreenDisplayCustomOrientation
+        {
+            get => _onScreenDisplayCustomOrientation;
+            set
+            {
+                if (value != OnScreenDisplayCustomOrientation)
+                {
+                    _onScreenDisplayCustomOrientation = value;
+                    OnPropertyChanged(nameof(OnScreenDisplayCustomOrientation));
+
+                    ManagerFactory.settingsManager.SetProperty(Settings.OnScreenDisplayCustomOrientation, value);
+                }
+            }
+        }
+
         private int _onScreenDisplayTimeLevel;
         public int OnScreenDisplayTimeLevel
         {
@@ -540,6 +556,7 @@ namespace HandheldCompanion.ViewModels
             SettingsManager_SettingValueChanged(Settings.OnScreenDisplayRefreshRate, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayRefreshRate), false, true);
             SettingsManager_SettingValueChanged("OverlayRenderInterval", ManagerFactory.settingsManager.GetDouble("OverlayRenderInterval"), false, true);
             SettingsManager_SettingValueChanged(Settings.OnScreenDisplayLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayLevel), false, true);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayCustomOrientation, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayCustomOrientation), false, true);
             SettingsManager_SettingValueChanged(Settings.OnScreenDisplayTimeLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayTimeLevel), false, true);
             SettingsManager_SettingValueChanged(Settings.OnScreenDisplayFPSLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayFPSLevel), false, true);
             SettingsManager_SettingValueChanged(Settings.OnScreenDisplayCPULevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayCPULevel), false, true);
@@ -783,6 +800,8 @@ namespace HandheldCompanion.ViewModels
                 _onScreenDisplayLevel = Convert.ToInt32(value);
                 OnPropertyChanged(nameof(IsCustomOnScreenDisplayLevelEnabled));
             }
+            else if (name == Settings.OnScreenDisplayCustomOrientation)
+                _onScreenDisplayCustomOrientation = Convert.ToInt32(value);
             else if (name == Settings.OnScreenDisplayTimeLevel)
                 _onScreenDisplayTimeLevel = Convert.ToInt32(value);
             else if (name == Settings.OnScreenDisplayFPSLevel)
