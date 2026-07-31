@@ -11,11 +11,6 @@ namespace HandheldCompanion.Libraries
         public const long ManualArtworkId = -2L;
         public const long ManualLogoId = -3L;
 
-        // Source paths chosen by the user via the file browser
-        public string ManualCoverPath = string.Empty;
-        public string ManualArtworkPath = string.Empty;
-        public string ManualLogoPath = string.Empty;
-
         public ManualEntry(long id, string name) : base(LibraryFamily.Manual, id, name, DateTime.Now)
         { }
 

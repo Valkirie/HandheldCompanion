@@ -9426,7 +9426,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Browse libary.
+        ///   Looks up a localized string similar to Browse library.
         /// </summary>
         public static string ProfilesPage_LibraryDownload {
             get {

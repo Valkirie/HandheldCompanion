@@ -21,6 +21,8 @@ namespace HandheldCompanion.Libraries
 
         public override long GetCoverId()
         {
+            if (!string.IsNullOrEmpty(ManualCoverPath))
+                return base.GetCoverId();
             if (Grid is not null)
                 return Grid.Id;
             return 0;
@@ -28,6 +30,8 @@ namespace HandheldCompanion.Libraries
 
         public override string GetCoverExtension(bool thumbnail)
         {
+            if (!string.IsNullOrEmpty(ManualCoverPath))
+                return base.GetCoverExtension(thumbnail);
             if (Grid is not null)
                 return Path.GetExtension(thumbnail ? Grid.ThumbnailImageUrl : Grid.FullImageUrl);
 
@@ -36,6 +40,8 @@ namespace HandheldCompanion.Libraries
 
         public override long GetArtworkId()
         {
+            if (!string.IsNullOrEmpty(ManualArtworkPath))
+                return base.GetArtworkId();
             if (Hero is not null)
                 return Hero.Id;
             return 0;
@@ -43,6 +49,8 @@ namespace HandheldCompanion.Libraries
 
         public override string GetArtworkExtension(bool thumbnail)
         {
+            if (!string.IsNullOrEmpty(ManualArtworkPath))
+                return base.GetArtworkExtension(thumbnail);
             if (Hero is not null)
                 return Path.GetExtension(thumbnail ? Hero.ThumbnailImageUrl : Hero.FullImageUrl);
 
@@ -51,6 +59,8 @@ namespace HandheldCompanion.Libraries
 
         public override long GetLogoId()
         {
+            if (!string.IsNullOrEmpty(ManualLogoPath))
+                return base.GetLogoId();
             if (Logo is not null)
                 return Logo.Id;
             return 0;
@@ -58,6 +68,8 @@ namespace HandheldCompanion.Libraries
 
         public override string GetLogoExtension(bool thumbnail)
         {
+            if (!string.IsNullOrEmpty(ManualLogoPath))
+                return base.GetLogoExtension(thumbnail);
             if (Logo is not null)
                 return Path.GetExtension(thumbnail ? Logo.ThumbnailImageUrl : Logo.FullImageUrl);
 

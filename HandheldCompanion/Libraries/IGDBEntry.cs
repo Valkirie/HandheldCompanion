@@ -21,6 +21,8 @@ namespace HandheldCompanion.Libraries
 
         public override long GetCoverId()
         {
+            if (!string.IsNullOrEmpty(ManualCoverPath))
+                return base.GetCoverId();
             if (Cover?.Id is long coverId)
                 return coverId;
             return 0;
@@ -28,6 +30,8 @@ namespace HandheldCompanion.Libraries
 
         public override string GetCoverExtension(bool thumbnail)
         {
+            if (!string.IsNullOrEmpty(ManualCoverPath))
+                return base.GetCoverExtension(thumbnail);
             if (Cover is not null)
                 return Path.GetExtension(Cover.Url);
 
@@ -36,6 +40,8 @@ namespace HandheldCompanion.Libraries
 
         public override long GetArtworkId()
         {
+            if (!string.IsNullOrEmpty(ManualArtworkPath))
+                return base.GetArtworkId();
             if (Artwork?.Id is long artworkId)
                 return artworkId;
             return 0;
@@ -43,6 +49,8 @@ namespace HandheldCompanion.Libraries
 
         public override string GetArtworkExtension(bool thumbnail)
         {
+            if (!string.IsNullOrEmpty(ManualArtworkPath))
+                return base.GetArtworkExtension(thumbnail);
             if (Artwork is not null)
                 return Path.GetExtension(Artwork.Url);
 

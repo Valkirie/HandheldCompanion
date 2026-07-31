@@ -35,8 +35,6 @@ namespace HandheldCompanion.ViewModels
         public int ReleaseDateYear => LibEntry.ReleaseDate.Year;
         public LibraryFamily Family => LibEntry.Family;
 
-        public bool IsManualEntry => LibEntry is ManualEntry;
-
         public LibraryEntryViewModel(LibraryEntry libraryEntry)
         {
             // Enable thread-safe access to the collection
@@ -46,17 +44,7 @@ namespace HandheldCompanion.ViewModels
 
             LibEntry = libraryEntry;
 
-            if (LibEntry is ManualEntry manualEntry)
-            {
-                // Full-res extension comes from the cached source file; thumbnail is always a resized PNG.
-                string coverExt = Path.GetExtension(manualEntry.ManualCoverPath);
-                string artworkExt = Path.GetExtension(manualEntry.ManualArtworkPath);
-                string logoExt = Path.GetExtension(manualEntry.ManualLogoPath);
-                LibraryCovers.Add(new(this, ManualEntry.ManualCoverId, coverExt, ".png"));
-                LibraryArtworks.Add(new(this, ManualEntry.ManualArtworkId, artworkExt, ".png"));
-                LibraryLogos.Add(new(this, ManualEntry.ManualLogoId, logoExt, ".png"));
-            }
-            else if (LibEntry is SteamGridEntry steamEntry)
+            if (LibEntry is SteamGridEntry steamEntry)
             {
                 foreach (SteamGridDbGrid grid in steamEntry.Grids)
                     LibraryCovers.Add(new(this, grid.Id, Path.GetExtension(grid.FullImageUrl), Path.GetExtension(grid.ThumbnailImageUrl)));
@@ -72,6 +60,15 @@ namespace HandheldCompanion.ViewModels
                 foreach (Artwork artwork in IGDB.Artworks)
                     LibraryArtworks.Add(new(this, artwork.Id.Value, Path.GetExtension(artwork.Url)));
             }
+
+            if (!string.IsNullOrEmpty(LibEntry.ManualCoverPath))
+                LibraryCovers.Insert(0, new(this, ManualEntry.ManualCoverId, Path.GetExtension(LibEntry.ManualCoverPath), ".png"));
+
+            if (!string.IsNullOrEmpty(LibEntry.ManualArtworkPath))
+                LibraryArtworks.Insert(0, new(this, ManualEntry.ManualArtworkId, Path.GetExtension(LibEntry.ManualArtworkPath), ".png"));
+
+            if (!string.IsNullOrEmpty(LibEntry.ManualLogoPath))
+                LibraryLogos.Insert(0, new(this, ManualEntry.ManualLogoId, Path.GetExtension(LibEntry.ManualLogoPath), ".png"));
         }
 
         /// <summary>
@@ -79,9 +76,6 @@ namespace HandheldCompanion.ViewModels
         /// </summary>
         public void RefreshManualVisual(LibraryType libraryType, string newExtension, string thumbnailExtension = "")
         {
-            if (LibEntry is not ManualEntry)
-                return;
-
             ObservableCollection<LibraryVisualViewModel> target;
             long imageId;
             if (libraryType.HasFlag(LibraryType.cover))
@@ -100,8 +94,13 @@ namespace HandheldCompanion.ViewModels
                 imageId = ManualEntry.ManualLogoId;
             }
 
-            target.Clear();
-            target.Add(new(this, imageId, newExtension, string.IsNullOrEmpty(thumbnailExtension) ? newExtension : thumbnailExtension));
+            for (int index = target.Count - 1; index >= 0; index--)
+            {
+                if (target[index].Id == imageId)
+                    target.RemoveAt(index);
+            }
+
+            target.Insert(0, new(this, imageId, newExtension, string.IsNullOrEmpty(thumbnailExtension) ? newExtension : thumbnailExtension));
         }
 
         public override string ToString()

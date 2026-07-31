@@ -136,8 +136,7 @@
                                                     HorizontalAlignment="Stretch"
                                                     VerticalAlignment="Bottom"
                                                     Command="{Binding BrowseCoverCommand}"
-                                                    Content="Browse"
-                                                    Visibility="{Binding IsManualEntry, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                    Content="Browse" />
                                             </Grid>
 
                                             <ui:PipsPager
@@ -146,7 +145,7 @@
                                                 IsEnabled="False"
                                                 MaxVisiblePips="6"
                                                 NextButtonVisibility="Collapsed"
-                                                NumberOfPages="{Binding LibraryCovers.Count}"
+                                                NumberOfPages="{Binding LibraryCoversPageCount}"
                                                 PreviousButtonVisibility="Collapsed"
                                                 SelectedPageIndex="{Binding SelectedIndex, ElementName=FlipViewCovers, Mode=TwoWay}" />
                                         </StackPanel>
@@ -176,8 +175,7 @@
                                                     HorizontalAlignment="Stretch"
                                                     VerticalAlignment="Bottom"
                                                     Command="{Binding BrowseLogoCommand}"
-                                                    Content="Browse"
-                                                    Visibility="{Binding IsManualEntry, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                    Content="Browse" />
                                             </Grid>
 
                                             <ui:PipsPager
@@ -186,7 +184,7 @@
                                                 IsEnabled="False"
                                                 MaxVisiblePips="6"
                                                 NextButtonVisibility="Collapsed"
-                                                NumberOfPages="{Binding LibraryLogos.Count}"
+                                                 NumberOfPages="{Binding LibraryLogosPageCount}"
                                                 PreviousButtonVisibility="Collapsed"
                                                 SelectedPageIndex="{Binding SelectedIndex, ElementName=FlipViewLogos, Mode=TwoWay}" />
                                         </StackPanel>
@@ -216,8 +214,7 @@
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Bottom"
                                                 Command="{Binding BrowseArtworkCommand}"
-                                                Content="Browse"
-                                                Visibility="{Binding IsManualEntry, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                Content="Browse" />
                                         </Grid>
 
                                         <ui:PipsPager
@@ -226,7 +223,7 @@
                                             IsEnabled="False"
                                             MaxVisiblePips="6"
                                             NextButtonVisibility="Collapsed"
-                                            NumberOfPages="{Binding LibraryArtworks.Count}"
+                                             NumberOfPages="{Binding LibraryArtworksPageCount}"
                                             PreviousButtonVisibility="Collapsed"
                                             SelectedPageIndex="{Binding SelectedIndex, ElementName=FlipViewArtworks, Mode=TwoWay}" />
                                     </StackPanel>

@@ -708,7 +708,7 @@ namespace HandheldCompanion.Controls
                     continue;
                 }
 
-                GeneratorPosition generatorPosition = new(childIndex, 0);
+                GeneratorPosition generatorPosition = ItemContainerGenerator.GeneratorPositionFromIndex(itemIndex);
 
                 if (recyclingGenerator is not null)
                     recyclingGenerator.Recycle(generatorPosition, 1);

@@ -527,6 +527,11 @@ namespace HandheldCompanion.Managers
 
         public async Task<bool> DownloadGameArt(LibraryEntry entry, int index, LibraryType libraryType)
         {
+            if ((libraryType.HasFlag(LibraryType.cover) && !string.IsNullOrEmpty(entry.ManualCoverPath)) ||
+                (libraryType.HasFlag(LibraryType.artwork) && !string.IsNullOrEmpty(entry.ManualArtworkPath)) ||
+                (libraryType.HasFlag(LibraryType.logo) && !string.IsNullOrEmpty(entry.ManualLogoPath)))
+                return true;
+
             if (entry is SteamGridEntry steamEntry)
                 return await DownloadGameArt(steamEntry, index, libraryType);
             else if (entry is IGDBEntry igdbEntry)
@@ -873,18 +878,28 @@ namespace HandheldCompanion.Managers
             // update library entry
             if (entry is SteamGridEntry Steam)
             {
-                if (Steam.Grid is null || coverId != 0)
+                if (coverId > 0)
+                    Steam.ManualCoverPath = string.Empty;
+                if (artworkId > 0)
+                    Steam.ManualArtworkPath = string.Empty;
+                if (logoId > 0)
+                    Steam.ManualLogoPath = string.Empty;
+
+                if (coverId > 0 || (Steam.Grid is null && string.IsNullOrEmpty(Steam.ManualCoverPath)))
                     Steam.Grid = Steam.Grids.FirstOrDefault(g => g.Id == coverId);
 
-                if (Steam.Hero is null || artworkId != 0)
+                if (artworkId > 0 || (Steam.Hero is null && string.IsNullOrEmpty(Steam.ManualArtworkPath)))
                     Steam.Hero = Steam.Heroes.FirstOrDefault(h => h.Id == artworkId);
 
-                if (Steam.Logo is null || logoId != 0)
+                if (logoId > 0 || (Steam.Logo is null && string.IsNullOrEmpty(Steam.ManualLogoPath)))
                     Steam.Logo = Steam.Logos.FirstOrDefault(l => l.Id == logoId);
             }
             else if (entry is IGDBEntry IGDB)
             {
-                if (IGDB.Artwork is null || artworkId != 0)
+                if (artworkId > 0)
+                    IGDB.ManualArtworkPath = string.Empty;
+
+                if (artworkId > 0 || (IGDB.Artwork is null && string.IsNullOrEmpty(IGDB.ManualArtworkPath)))
                     IGDB.Artwork = IGDB.Artworks.FirstOrDefault(a => a.Id == artworkId);
             }
 
