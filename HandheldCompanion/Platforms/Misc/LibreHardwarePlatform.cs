@@ -1,4 +1,5 @@
 using HandheldCompanion.Devices;
+using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using LibreHardwareMonitor.Hardware;
@@ -11,20 +12,12 @@ namespace HandheldCompanion.Platforms.Misc
 {
     public class LibreHardwarePlatform : IPlatform
     {
-        private const int MinimumCpuPollingInterval = 500;
-        private const int MinimumGpuPollingInterval = 500;
-        private const int MinimumMemoryPollingInterval = 2000;
-        private const int MinimumBatteryPollingInterval = 5000;
-
         private Computer computer;
         private bool computerOpened;
 
         private Timer updateTimer;
         private int updateInterval = 1000;
-        private long lastCpuUpdateTick;
-        private long lastGpuUpdateTick;
-        private long lastMemoryUpdateTick;
-        private long lastBatteryUpdateTick;
+        private GPU? hookedGPU;
 
         // CPU
         private float? CPULoad;
@@ -36,6 +29,11 @@ namespace HandheldCompanion.Platforms.Misc
         private float? GPULoad;
         private float? GPUClock;
         private float? GPUPower;
+        private float? GPUCorePower;
+        private float? GPUSoCPower;
+        private float? GPUVoltage;
+        private float? GPUCoreVoltage;
+        private float? GPUSoCVoltage;
         private float? GPUTemperature;
         private float? GPUMemory;
         private float? GPUMemoryDedicated;
@@ -97,6 +95,18 @@ namespace HandheldCompanion.Platforms.Misc
                     break;
             }
 
+            // raise events
+            switch (ManagerFactory.gpuManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.gpuManager.Initialized += GpuManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryGPU();
+                    break;
+            }
+
             if (computer is not null)
             {
                 // open computer, slow task
@@ -120,6 +130,22 @@ namespace HandheldCompanion.Platforms.Misc
             updateTimer?.Start();
 
             return base.Start();
+        }
+
+        private void QueryGPU()
+        {
+            // manage events
+            ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
+            ManagerFactory.gpuManager.Unhooked += GPUManager_Unhooked;
+
+            GPU? gpu = GPUManager.GetCurrent();
+            if (gpu is not null)
+                GPUManager_Hooked(gpu);
+        }
+
+        private void GpuManager_Initialized()
+        {
+            QueryGPU();
         }
 
         private static void ApplyValuesTimeWindow(IHardware hardware, TimeSpan window)
@@ -148,6 +174,11 @@ namespace HandheldCompanion.Platforms.Misc
         {
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
             ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+            ManagerFactory.gpuManager.Initialized -= GpuManager_Initialized;
+            ManagerFactory.gpuManager.Hooked -= GPUManager_Hooked;
+            ManagerFactory.gpuManager.Unhooked -= GPUManager_Unhooked;
+
+            hookedGPU = null;
 
             updateTimer?.Stop();
 
@@ -184,15 +215,11 @@ namespace HandheldCompanion.Platforms.Misc
 
             lock (updateLock)
             {
-                long now = Environment.TickCount64;
-                bool shouldUpdateCpu = ShouldUpdateHardware(now, ref lastCpuUpdateTick, MinimumCpuPollingInterval);
-                bool shouldUpdateGpu = ShouldUpdateHardware(now, ref lastGpuUpdateTick, MinimumGpuPollingInterval);
-                bool shouldUpdateMemory = ShouldUpdateHardware(now, ref lastMemoryUpdateTick, MinimumMemoryPollingInterval);
-                bool shouldUpdateBattery = ShouldUpdateHardware(now, ref lastBatteryUpdateTick, MinimumBatteryPollingInterval);
-
+                IHardware? hookedHardware = GetHookedHardware();
                 foreach (IHardware? hardware in computer.Hardware)
                 {
-                    if (!ShouldUpdateHardware(hardware, shouldUpdateCpu, shouldUpdateGpu, shouldUpdateMemory, shouldUpdateBattery))
+                    bool isGpu = hardware.HardwareType is HardwareType.GpuNvidia or HardwareType.GpuAmd or HardwareType.GpuIntel;
+                    if (isGpu && !ReferenceEquals(hardware, hookedHardware))
                         continue;
 
                     try { hardware.Update(); } catch { /* keep going */ }
@@ -218,35 +245,49 @@ namespace HandheldCompanion.Platforms.Misc
             }
         }
 
-        private int GetPollingInterval(int minimumInterval)
+        private void GPUManager_Hooked(GPU gpu)
         {
-            return Math.Max(updateInterval, minimumInterval);
+            hookedGPU = gpu;
         }
 
-        private bool ShouldUpdateHardware(long now, ref long lastUpdateTick, int minimumInterval)
+        private void GPUManager_Unhooked(GPU gpu)
         {
-            if (lastUpdateTick != 0 && now - lastUpdateTick < GetPollingInterval(minimumInterval))
-                return false;
-
-            lastUpdateTick = now;
-            return true;
+            if (ReferenceEquals(hookedGPU, gpu))
+                hookedGPU = null;
         }
 
-        private static bool ShouldUpdateHardware(IHardware hardware, bool shouldUpdateCpu, bool shouldUpdateGpu, bool shouldUpdateMemory, bool shouldUpdateBattery)
+        private IHardware? GetHookedHardware()
         {
-            return hardware.HardwareType switch
+            if (hookedGPU is null || computer is null)
+                return null;
+
+            string adapterName = NormalizeHardwareName(hookedGPU.adapterInformation.Details.Description);
+            foreach (IHardware hardware in computer.Hardware)
             {
-                HardwareType.Cpu => shouldUpdateCpu,
-                HardwareType.GpuNvidia or HardwareType.GpuAmd or HardwareType.GpuIntel => shouldUpdateGpu,
-                HardwareType.Memory => shouldUpdateMemory,
-                HardwareType.Battery => shouldUpdateBattery,
-                _ => false,
-            };
+                string hardwareName = NormalizeHardwareName(hardware.Name);
+                if (hardwareName == adapterName || hardwareName.Contains(adapterName) || adapterName.Contains(hardwareName))
+                    return hardware;
+            }
+
+            return null;
+        }
+
+        private static string NormalizeHardwareName(string name)
+        {
+            return name.Replace("(TM)", string.Empty, StringComparison.OrdinalIgnoreCase)
+                .Replace("(R)", string.Empty, StringComparison.OrdinalIgnoreCase)
+                .Replace(" ", string.Empty, StringComparison.OrdinalIgnoreCase);
         }
 
         #region gpu updates
         public float? GetGPULoad() => computer?.IsGpuEnabled ?? false ? GPULoad : null;
+        public float? GetGPUClock() => computer?.IsGpuEnabled ?? false ? GPUClock : null;
         public float? GetGPUPower() => computer?.IsGpuEnabled ?? false ? GPUPower : null;
+        public float? GetGPUCorePower() => computer?.IsGpuEnabled ?? false ? GPUCorePower : null;
+        public float? GetGPUSoCPower() => computer?.IsGpuEnabled ?? false ? GPUSoCPower : null;
+        public float? GetGPUVoltage() => computer?.IsGpuEnabled ?? false ? GPUVoltage : null;
+        public float? GetGPUCoreVoltage() => computer?.IsGpuEnabled ?? false ? GPUCoreVoltage : null;
+        public float? GetGPUSoCVoltage() => computer?.IsGpuEnabled ?? false ? GPUSoCVoltage : null;
         public float? GetGPUTemperature() => computer?.IsGpuEnabled ?? false ? GPUTemperature : null;
 
         public float? GetGPUMemory() => computer?.IsGpuEnabled ?? false ? GPUMemory : null;
@@ -276,6 +317,9 @@ namespace HandheldCompanion.Platforms.Misc
                         break;
                     case SensorType.Power:
                         HandleGPU_Power(sensor);
+                        break;
+                    case SensorType.Voltage:
+                        HandleGPU_Voltage(sensor);
                         break;
                     case SensorType.Temperature:
                         HandleGPU_Temperature(sensor);
@@ -386,19 +430,74 @@ namespace HandheldCompanion.Platforms.Misc
             if (!sensorValue.HasValue)
                 return;
 
+            float value = sensorValue.Value;
             switch (sensor.Name)
             {
-                case "GPU SoC":
-                    //case "GPU Package":
+                case "GPU Power":
+                case "GPU Core":
+                    if (GPUCorePower != value)
                     {
-                        float value = sensorValue.Value;
-                        if (GPUPower != value)
-                        {
-                            GPUPower = value;
-                            GPUPowerChanged?.Invoke(GPUPower);
-                        }
+                        GPUCorePower = value;
+                        GPUCorePowerChanged?.Invoke(GPUCorePower);
+                        UpdatePreferredGPUPower();
                     }
                     break;
+                case "GPU SoC":
+                    if (GPUSoCPower != value)
+                    {
+                        GPUSoCPower = value;
+                        GPUSoCPowerChanged?.Invoke(GPUSoCPower);
+                        UpdatePreferredGPUPower();
+                    }
+                    break;
+            }
+        }
+
+        private void UpdatePreferredGPUPower()
+        {
+            float? preferredPower = GPUCorePower ?? GPUSoCPower;
+            if (GPUPower != preferredPower)
+            {
+                GPUPower = preferredPower;
+                GPUPowerChanged?.Invoke(GPUPower);
+            }
+        }
+
+        private void HandleGPU_Voltage(ISensor sensor)
+        {
+            float? sensorValue = sensor.Value;
+            if (!sensorValue.HasValue)
+                return;
+
+            float value = sensorValue.Value;
+            switch (sensor.Name)
+            {
+                case "GPU Core":
+                    if (GPUCoreVoltage != value)
+                    {
+                        GPUCoreVoltage = value;
+                        GPUCoreVoltageChanged?.Invoke(GPUCoreVoltage);
+                        UpdatePreferredGPUVoltage();
+                    }
+                    break;
+                case "GPU SoC":
+                    if (GPUSoCVoltage != value)
+                    {
+                        GPUSoCVoltage = value;
+                        GPUSoCVoltageChanged?.Invoke(GPUSoCVoltage);
+                        UpdatePreferredGPUVoltage();
+                    }
+                    break;
+            }
+        }
+
+        private void UpdatePreferredGPUVoltage()
+        {
+            float? preferredVoltage = GPUCoreVoltage ?? GPUSoCVoltage;
+            if (GPUVoltage != preferredVoltage)
+            {
+                GPUVoltage = preferredVoltage;
+                GPUVoltageChanged?.Invoke(GPUVoltage);
             }
         }
 
@@ -686,6 +785,11 @@ namespace HandheldCompanion.Platforms.Misc
         public event ChangedHandler? GPUPowerChanged;
         public event ChangedHandler? GPUClockChanged;
         public event ChangedHandler? GPUTemperatureChanged;
+        public event ChangedHandler? GPUCorePowerChanged;
+        public event ChangedHandler? GPUSoCPowerChanged;
+        public event ChangedHandler? GPUVoltageChanged;
+        public event ChangedHandler? GPUCoreVoltageChanged;
+        public event ChangedHandler? GPUSoCVoltageChanged;
         public event ChangedHandler? GPUMemoryChanged;
         public event ChangedHandler? GPUMemoryDedicatedChanged;
         public event ChangedHandler? GPUMemorySharedChanged;

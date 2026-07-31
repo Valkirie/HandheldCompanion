@@ -907,7 +907,7 @@ public static class PerformanceManager
                 if (currentGpu is null)
                     return;
 
-                float CurrentGfxClock = currentGpu.GetClock();
+                float CurrentGfxClock = PlatformManager.LibreHardware.GetGPUClock() ?? 0;
 
                 if (CurrentGfxClock != 0)
                     gfxWatchdog.Interval = INTERVAL_DEFAULT;

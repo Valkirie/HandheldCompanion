@@ -24,8 +24,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         private ctl_3d_endurance_gaming_control_t prevEGControl = new();
         private ctl_3d_endurance_gaming_mode_t prevEGMode = new();
 
-        protected ctl_telemetry_data TelemetryData = new();
-
         public override bool HasIntegerScalingSupport()
         {
             if (!IsInitialized)
@@ -176,57 +174,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return Execute(() => IGCLBackend.GetEnduranceGaming(deviceIdx), new());
         }
 
-        private ctl_telemetry_data GetTelemetry()
-        {
-            if (!IsInitialized)
-                return TelemetryData;
-
-            return Execute(() =>
-            {
-                return IGCLBackend.GetTelemetry(deviceIdx);
-            }, TelemetryData);
-        }
-
-        public override bool HasClock()
-        {
-            return TelemetryData.GpuCurrentClockFrequencySupported;
-        }
-
-        public override float GetClock()
-        {
-            return (float)TelemetryData.GpuCurrentClockFrequencyValue;
-        }
-
-        public override bool HasLoad()
-        {
-            return TelemetryData.GlobalActivitySupported;
-        }
-
-        public override float GetLoad()
-        {
-            return (float)TelemetryData.GlobalActivityValue;
-        }
-
-        public override bool HasPower()
-        {
-            return TelemetryData.GpuEnergySupported;
-        }
-
-        public override float GetPower()
-        {
-            return (float)TelemetryData.GpuEnergyValue;
-        }
-
-        public override bool HasTemperature()
-        {
-            return TelemetryData.GpuCurrentTemperatureSupported;
-        }
-
-        public override float GetTemperature()
-        {
-            return (float)TelemetryData.GpuCurrentTemperatureValue;
-        }
-
         public static bool HasServiceStatus(ServiceControllerStatus status)
         {
             try
@@ -246,20 +193,12 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
             IsInitialized = true;
 
-            // pull telemetry once
-            TelemetryData = IGCLBackend.GetTelemetry(deviceIdx);
-
             UpdateTimer = new Timer(UpdateInterval)
             {
                 AutoReset = true
             };
             UpdateTimer.Elapsed += UpdateTimer_Elapsed;
 
-            TelemetryTimer = new Timer(TelemetryInterval)
-            {
-                AutoReset = true
-            };
-            TelemetryTimer.Elapsed += TelemetryTimer_Elapsed;
         }
 
         protected override void UpdateSettings()
@@ -308,25 +247,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 return;
 
             UpdateSettings();
-        }
-
-        private void TelemetryTimer_Elapsed(object? sender, ElapsedEventArgs e)
-        {
-            if (halting)
-                return;
-
-            if (Monitor.TryEnter(telemetryLock))
-            {
-                try
-                {
-                    TelemetryData = GetTelemetry();
-                }
-                catch { }
-                finally
-                {
-                    Monitor.Exit(telemetryLock);
-                }
-            }
         }
 
         public override void Start()

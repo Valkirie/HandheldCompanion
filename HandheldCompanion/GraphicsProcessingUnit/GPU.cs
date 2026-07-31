@@ -36,9 +36,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         protected const int UpdateInterval = 5000;
         protected Timer? UpdateTimer;
 
-        protected const int TelemetryInterval = 1000;
-        protected Timer? TelemetryTimer;
-
         protected bool prevGPUScalingSupport = false;
         protected bool prevGPUScaling = false;
         protected int prevScalingMode = -1;
@@ -174,8 +171,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (UpdateTimer != null && !UpdateTimer.Enabled)
                 StartMonitor();
 
-            if (TelemetryTimer != null && !TelemetryTimer.Enabled)
-                TelemetryTimer.Start();
         }
 
         public virtual void Stop()
@@ -185,9 +180,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
             if (UpdateTimer != null && UpdateTimer.Enabled)
                 StopMonitor();
-
-            if (TelemetryTimer != null && TelemetryTimer.Enabled)
-                TelemetryTimer.Stop();
 
             if (BusyTimer != null && BusyTimer.Enabled)
                 BusyTimer.Stop();
@@ -368,7 +360,11 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return 0.0f;
         }
 
-        // todo: replace me with LHM readings
+        public virtual bool HasVRAMUsage()
+        {
+            return false;
+        }
+
         public virtual float GetVRAMUsage()
         {
             return 0.0f;
@@ -431,10 +427,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 UpdateTimer?.Stop();
                 UpdateTimer?.Dispose();
                 UpdateTimer = null;
-
-                TelemetryTimer?.Stop();
-                TelemetryTimer?.Dispose();
-                TelemetryTimer = null;
 
                 BusyTimer?.Stop();
                 BusyTimer?.Dispose();

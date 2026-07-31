@@ -223,7 +223,7 @@ public abstract class IDevice
 
     // LibreHardwareMonitor
     public bool CpuMonitor = true;
-    public bool GpuMonitor = false;
+    public bool GpuMonitor = true;
     public bool MemoryMonitor = true;
     public bool BatteryMonitor = false;
 

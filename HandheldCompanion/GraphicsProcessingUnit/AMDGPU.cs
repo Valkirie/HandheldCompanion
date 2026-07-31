@@ -38,8 +38,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         private int prevAFMFPerformanceMode = -1;
         private int prevAFMFFastMotionResponse = -1;
 
-        protected AdlxTelemetryData TelemetryData = new();
-
         public bool HasRSRSupport()
         {
             if (!IsInitialized)
@@ -317,84 +315,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return Execute(() => ADLXBackend.SetScalingMode(displayIdx, mode), false);
         }
 
-        private AdlxTelemetryData GetTelemetry()
-        {
-            if (!IsInitialized)
-                return TelemetryData;
-
-            return Execute(() =>
-            {
-                ADLXBackend.GetAdlxTelemetry(deviceIdx, ref TelemetryData);
-                return TelemetryData;
-            }, TelemetryData);
-        }
-
-        public override bool HasClock()
-        {
-            return TelemetryData.gpuClockSpeedSupported;
-        }
-
-        public override float GetClock()
-        {
-            return (float)TelemetryData.gpuClockSpeedValue;
-        }
-
-        public override bool HasLoad()
-        {
-            switch (adapterInformation.Details.Description)
-            {
-                case "AMD Custom GPU 0932":
-                case "AMD Custom GPU 0405":
-                    return false;
-                default:
-                    return TelemetryData.gpuUsageSupported;
-            }
-        }
-
-        public override float GetLoad()
-        {
-            return (float)TelemetryData.gpuUsageValue;
-        }
-
-        public override bool HasPower()
-        {
-            switch (adapterInformation.Details.Description)
-            {
-                case "AMD Custom GPU 0932":
-                case "AMD Custom GPU 0405":
-                    return false;
-                default:
-                    return TelemetryData.gpuPowerSupported;
-            }
-        }
-
-        public override float GetPower()
-        {
-            return (float)TelemetryData.gpuPowerValue;
-        }
-
-        public override bool HasTemperature()
-        {
-            switch (adapterInformation.Details.Description)
-            {
-                case "AMD Custom GPU 0932":
-                case "AMD Custom GPU 0405":
-                    return false;
-                default:
-                    return TelemetryData.gpuTemperatureSupported;
-            }
-        }
-
-        public override float GetTemperature()
-        {
-            return (float)TelemetryData.gpuTemperatureValue;
-        }
-
-        public override float GetVRAMUsage()
-        {
-            return (float)TelemetryData.gpuVramValue;
-        }
-
         static AMDGPU()
         {
             ProcessTargets = new HashSet<string> { "RadeonSoftware", "cncmd" };
@@ -453,39 +373,12 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (!IsInitialized)
                 return;
 
-            // pull telemetry once
-            GetAdlxTelemetry(deviceIdx, ref TelemetryData);
-
             UpdateTimer = new Timer(UpdateInterval)
             {
                 AutoReset = true
             };
             UpdateTimer.Elapsed += UpdateTimer_Elapsed;
 
-            TelemetryTimer = new Timer(TelemetryInterval)
-            {
-                AutoReset = true
-            };
-            TelemetryTimer.Elapsed += TelemetryTimer_Elapsed;
-        }
-
-        private void TelemetryTimer_Elapsed(object? sender, ElapsedEventArgs e)
-        {
-            if (halting)
-                return;
-
-            if (Monitor.TryEnter(telemetryLock))
-            {
-                try
-                {
-                    TelemetryData = GetTelemetry();
-                }
-                catch { }
-                finally
-                {
-                    Monitor.Exit(telemetryLock);
-                }
-            }
         }
 
         public override void Start()
