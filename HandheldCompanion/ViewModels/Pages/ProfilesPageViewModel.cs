@@ -3391,16 +3391,25 @@ namespace HandheldCompanion.ViewModels
 
         private void SelectedLibraryChanged()
         {
-            LibraryArtworksIndex = -1;
-            LibraryArtworksIndex = 0;
-            LibraryCoversIndex = -1;
-            LibraryCoversIndex = 0;
-            LibraryLogosIndex = -1;
-            LibraryLogosIndex = 0;
+            LibraryArtworksIndex = GetLibraryVisualIndex(LibraryArtworks, SelectedLibraryEntry?.GetArtworkId() ?? 0);
+            LibraryCoversIndex = GetLibraryVisualIndex(LibraryCovers, SelectedLibraryEntry?.GetCoverId() ?? 0);
+            LibraryLogosIndex = GetLibraryVisualIndex(LibraryLogos, SelectedLibraryEntry?.GetLogoId() ?? 0);
             OnPropertyChanged(nameof(LibraryCoversPageCount));
             OnPropertyChanged(nameof(LibraryArtworksPageCount));
             OnPropertyChanged(nameof(LibraryLogosPageCount));
             OnPropertyChanged(nameof(IsLibraryOrManualEnabled));
+        }
+
+        private static int GetLibraryVisualIndex(ObservableCollection<LibraryVisualViewModel> visuals, long selectedId)
+        {
+            if (visuals.Count == 0)
+                return -1;
+
+            int selectedIndex = visuals
+                .Select((visual, index) => new { visual.Id, index })
+                .FirstOrDefault(item => item.Id == selectedId)?.index ?? -1;
+
+            return selectedIndex >= 0 ? selectedIndex : 0;
         }
 
         private async Task TriggerGameArtDownloadAsync(int value, LibraryType libraryType)
