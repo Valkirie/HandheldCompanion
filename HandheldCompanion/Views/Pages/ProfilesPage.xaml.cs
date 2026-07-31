@@ -9,6 +9,7 @@ using HandheldCompanion.Views.Pages.Profiles;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Windows;
+using System.Windows.Input;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
@@ -74,6 +75,11 @@ public partial class ProfilesPage : Page
         viewModel.Close();
         page0.Dispose();
         page1.Dispose();
+    }
+
+    private void FlipView_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        e.Handled = true;
     }
 
     // Navigation and dialog events that cannot be bound

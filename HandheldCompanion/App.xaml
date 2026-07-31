@@ -96,6 +96,15 @@
 
             <math:MathConverter x:Key="Math" />
 
+            <Style x:Key="ScrollableContentDialogStyle" TargetType="ui:ContentDialog">
+                <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+                <Style.Resources>
+                    <Thickness x:Key="ContentDialogContentMargin">24,0,24,0</Thickness>
+                    <Thickness x:Key="ContentDialogContentScrollViewerMargin">-24,0,-24,0</Thickness>
+                    <Thickness x:Key="ContentDialogTitleMargin">0,0,24,12</Thickness>
+                </Style.Resources>
+            </Style>
+
             <Style
                 x:Key="CapitalAccentTextBlockStyle"
                 BasedOn="{StaticResource BaseTextBlockStyle}"

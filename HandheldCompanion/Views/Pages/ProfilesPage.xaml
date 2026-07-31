@@ -34,7 +34,8 @@
                 IsEnabled="{Binding IsLibraryOrManualEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                 IsPrimaryButtonEnabled="{Binding CanApplyLibrary, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                 PrimaryButtonCommand="{Binding DownloadLibrary}"
-                PrimaryButtonText="Apply">
+                PrimaryButtonText="Apply"
+                Style="{StaticResource ScrollableContentDialogStyle}">
                 <Grid>
                     <ui:ProgressRing
                         Panel.ZIndex="1"
@@ -99,10 +100,12 @@
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
 
+                            <!--
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <CheckBox IsChecked="{Binding QuerySteamGrid}">SteamGrid</CheckBox>
                                 <CheckBox IsChecked="{Binding QueryIGDB}">IGDB</CheckBox>
                             </StackPanel>
+                            -->
 
                             <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding HasLibraryEntry, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <StackPanel>
@@ -120,6 +123,7 @@
                                                     Height="180"
                                                     HorizontalAlignment="Stretch"
                                                     ItemsSource="{Binding LibraryCovers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    PreviewMouseWheel="FlipView_PreviewMouseWheel"
                                                     SelectedIndex="{Binding LibraryCoversIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                                     <ui:FlipView.ItemTemplate>
                                                         <DataTemplate>
@@ -158,6 +162,7 @@
                                                     x:Name="FlipViewLogos"
                                                     Height="180"
                                                     ItemsSource="{Binding LibraryLogos, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    PreviewMouseWheel="FlipView_PreviewMouseWheel"
                                                     SelectedIndex="{Binding LibraryLogosIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                                     <ui:FlipView.ItemTemplate>
                                                         <DataTemplate>
@@ -198,6 +203,7 @@
                                                 x:Name="FlipViewArtworks"
                                                 Height="180"
                                                 ItemsSource="{Binding LibraryArtworks, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                PreviewMouseWheel="FlipView_PreviewMouseWheel"
                                                 SelectedIndex="{Binding LibraryArtworksIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                                 <ui:FlipView.ItemTemplate>
                                                     <DataTemplate>
