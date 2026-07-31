@@ -507,7 +507,8 @@ namespace HandheldCompanion.Platforms.Misc
             if (!sensorValue.HasValue)
                 return;
 
-            if (sensor.Name == "GPU Core")
+            if (sensor.Name == "GPU Core" ||
+                sensor.Name == "GPU Hot Spot")
             {
                 float value = sensorValue.Value;
                 if (GPUTemperature != value)
