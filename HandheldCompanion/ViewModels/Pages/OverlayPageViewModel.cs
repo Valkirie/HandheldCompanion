@@ -509,6 +509,13 @@ namespace HandheldCompanion.ViewModels
                 PlatformManager.LibreHardware.CPULoadChanged += LibreHardwareMonitor_CPULoadChanged;
             }
 
+            if (IsQuickTools && IDevice.GetCurrent().GpuMonitor)
+            {
+                PlatformManager.LibreHardware.GPUPowerChanged += LibreHardwareMonitor_GPUPowerChanged;
+                PlatformManager.LibreHardware.GPUTemperatureChanged += LibreHardwareMonitor_GPUTemperatureChanged;
+                PlatformManager.LibreHardware.GPULoadChanged += LibreHardwareMonitor_GPULoadChanged;
+            }
+
             RTSS_Updated(PlatformManager.RTSS.Status);
 
             OnPropertyChanged(nameof(IsRunningLHM));
@@ -608,18 +615,14 @@ namespace HandheldCompanion.ViewModels
             if (!_isPageLoaded)
                 return;
 
-            GPU? gpu = GPUManager.GetCurrent();
-            if (gpu is not null)
-            {
-                if (gpu.HasPower())
-                    GPUPower = (float)Math.Round((float)gpu.GetPower());
+            if (PlatformManager.LibreHardware.GetGPUPower() is float gpuPower)
+                GPUPower = (float)Math.Round(gpuPower);
 
-                if (gpu.HasLoad())
-                    GPULoad = (float)Math.Round((float)gpu.GetLoad());
+            if (PlatformManager.LibreHardware.GetGPULoad() is float gpuLoad)
+                GPULoad = (float)Math.Round(gpuLoad);
 
-                if (gpu.HasTemperature())
-                    GPUTemperature = (float)Math.Round((float)gpu.GetTemperature());
-            }
+            if (PlatformManager.LibreHardware.GetGPUTemperature() is float gpuTemperature)
+                GPUTemperature = (float)Math.Round(gpuTemperature);
         }
 
         private void FramerateTimer_Elapsed(object? sender, ElapsedEventArgs e)
@@ -662,19 +665,12 @@ namespace HandheldCompanion.ViewModels
             // localize me
             GPUName = GPU is not null ? GPU.adapterInformation.Details.Description : "No GPU detected";
 
-            HasGPUPower = GPU is not null && GPU.HasPower();
-            HasGPUTemperature = GPU is not null && GPU.HasTemperature();
-            HasGPULoad = GPU is not null && GPU.HasLoad();
-
             if (IDevice.GetCurrent().GpuMonitor)
             {
                 // wait until Platform Manager (LibreHardware) is ready, not ideal ?
                 while (!ManagerFactory.platformManager.IsReady)
                     await Task.Delay(250).ConfigureAwait(false);
 
-                if (!HasGPUPower) PlatformManager.LibreHardware.GPUPowerChanged += LibreHardwareMonitor_GPUPowerChanged;
-                if (!HasGPUTemperature) PlatformManager.LibreHardware.GPUTemperatureChanged += LibreHardwareMonitor_GPUTemperatureChanged;
-                if (!HasGPULoad) PlatformManager.LibreHardware.GPULoadChanged += LibreHardwareMonitor_GPULoadChanged;
             }
         }
 
@@ -707,9 +703,8 @@ namespace HandheldCompanion.ViewModels
             if (!_isPageLoaded) return;
             if (!value.HasValue) return;
 
-            // todo: improve me
             if (!HasGPULoad)
-                HasGPULoad = value != 0.0f;
+                HasGPULoad = true;
 
             GPULoad = (float)Math.Round((float)value);
         }
@@ -719,9 +714,8 @@ namespace HandheldCompanion.ViewModels
             if (!_isPageLoaded) return;
             if (!value.HasValue) return;
 
-            // todo: improve me
             if (!HasGPUTemperature)
-                HasGPUTemperature = value != 0.0f;
+                HasGPUTemperature = true;
 
             GPUTemperature = (float)Math.Round((float)value);
         }
@@ -731,9 +725,8 @@ namespace HandheldCompanion.ViewModels
             if (!_isPageLoaded) return;
             if (!value.HasValue) return;
 
-            // todo: improve me
             if (!HasGPUPower)
-                HasGPUPower = value != 0.0f;
+                HasGPUPower = true;
 
             GPUPower = (float)Math.Round((float)value);
         }

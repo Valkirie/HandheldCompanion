@@ -1,11 +1,12 @@
 using HandheldCompanion.Managers.Overlay.Widget;
+using System;
 using System.Collections.Generic;
 
 namespace HandheldCompanion.Managers.Overlay;
 
 public class WidgetFactory
 {
-    private static readonly Dictionary<string, IWidget> Widgets = new()
+    private static readonly Dictionary<string, IWidget> Widgets = new(StringComparer.OrdinalIgnoreCase)
     {
         {"TIME", new TimeWidget()},
         {"BATT", new BatteryWidget()},
