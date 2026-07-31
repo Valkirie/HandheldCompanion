@@ -184,7 +184,7 @@
                                                 IsEnabled="False"
                                                 MaxVisiblePips="6"
                                                 NextButtonVisibility="Collapsed"
-                                                 NumberOfPages="{Binding LibraryLogosPageCount}"
+                                                NumberOfPages="{Binding LibraryLogosPageCount}"
                                                 PreviousButtonVisibility="Collapsed"
                                                 SelectedPageIndex="{Binding SelectedIndex, ElementName=FlipViewLogos, Mode=TwoWay}" />
                                         </StackPanel>
@@ -223,7 +223,7 @@
                                             IsEnabled="False"
                                             MaxVisiblePips="6"
                                             NextButtonVisibility="Collapsed"
-                                             NumberOfPages="{Binding LibraryArtworksPageCount}"
+                                            NumberOfPages="{Binding LibraryArtworksPageCount}"
                                             PreviousButtonVisibility="Collapsed"
                                             SelectedPageIndex="{Binding SelectedIndex, ElementName=FlipViewArtworks, Mode=TwoWay}" />
                                     </StackPanel>
@@ -391,13 +391,11 @@
                             </Rectangle.Triggers>
                         </Rectangle>
 
-                        <!--
                         <Image
                             MaxWidth="420"
                             MaxHeight="128"
-                            Margin="32,0,0,32"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
                             RenderOptions.BitmapScalingMode="HighQuality"
                             Source="{Binding Logo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
                             Stretch="Uniform">
@@ -415,73 +413,16 @@
                                 </EventTrigger>
                             </Image.Triggers>
                         </Image>
-                        -->
-
-                        <ikw:SimpleStackPanel VerticalAlignment="Center" Spacing="3">
-                            <TextBlock
-                                Margin="8,0,0,0"
-                                Style="{StaticResource TitleBoldTextBlockStyle}"
-                                Text="{Binding CurrentProfileName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                TextWrapping="Wrap" />
-                            <!--
-                            <TextBlock
-                                MaxWidth="840"
-                                HorizontalAlignment="Left"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="{Binding CurrentProfileDescription, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                TextWrapping="Wrap" />
-                            -->
-                        </ikw:SimpleStackPanel>
 
                         <Grid
                             Margin="12"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Bottom">
 
-                            <!--  Play  -->
-                            <!--
-                            <Button
-                                Height="48"
-                                MinWidth="150"
-                                Command="{Binding ToggleProfileProcessCommand}"
-                                IsEnabled="{Binding CanToggleProfileProcess, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                Style="{DynamicResource AccentButtonStyle}"
-                                Visibility="Collapsed">
-                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <ui:FontIcon>
-                                        <ui:FontIcon.Style>
-                                            <Style TargetType="ui:FontIcon">
-                                                <Setter Property="Glyph" Value="&#xf5b0;" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsProfileProcessRunning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                                                        <Setter Property="Glyph" Value="&#xee95;" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </ui:FontIcon.Style>
-                                    </ui:FontIcon>
-
-                                    <TextBlock>
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Text" Value="{l:Static resx:Resources.ProfilesPage_Play}" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsProfileProcessRunning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                                                        <Setter Property="Text" Value="{l:Static resx:Resources.ProfilesPage_StopProcess}" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </ikw:SimpleStackPanel>
-                            </Button>
-                            -->
-
                             <ikw:SimpleStackPanel Spacing="8">
                                 <ui:DropDownButton
                                     Height="48"
                                     MinWidth="150"
-                                    Margin="12,0,0,0"
                                     Style="{DynamicResource AccentButtonStyle}">
                                     <ui:DropDownButton.Content>
                                         <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
@@ -533,11 +474,6 @@
                                         </ui:MenuFlyout>
                                     </ui:DropDownButton.Flyout>
                                 </ui:DropDownButton>
-
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemAccentColorLight2Brush}"
-                                    Style="{StaticResource BaseTextBlockStyle}"
-                                    Text="{Binding SelectedMainProfile.LayoutTitle, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                             </ikw:SimpleStackPanel>
 
                             <ikw:SimpleStackPanel
@@ -856,6 +792,11 @@
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xE7FC;" />
                             </ui:SettingsCard.HeaderIcon>
+
+                            <TextBlock
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource BodyTextBlockStyle}"
+                                Text="{Binding SelectedMainProfile.LayoutTitle, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                         </ui:SettingsCard>
 
                         <!--  Controller type  -->
