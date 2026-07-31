@@ -308,8 +308,7 @@
                             CornerRadius="{DynamicResource ControlCornerRadius}"
                             SnapsToDevicePixels="True">
                             <Grid x:Name="RootGrid">
-
-                                <StackPanel VerticalAlignment="Center">
+                                <StackPanel Margin="0,60,0,0" VerticalAlignment="Center">
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         Style="{StaticResource BaseTextBlockStyle}"
@@ -474,7 +473,7 @@
                             CornerRadius="{DynamicResource ControlCornerRadius}"
                             SnapsToDevicePixels="True">
                             <Grid>
-                                <StackPanel VerticalAlignment="Center">
+                                <StackPanel Margin="0,60,0,0" VerticalAlignment="Center">
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         Style="{StaticResource BaseTextBlockStyle}"
