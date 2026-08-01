@@ -574,7 +574,6 @@ begin
   if not IsViGemInstalled() then
   begin
     Dependency_AddViGem;
-    uninstallViGem();
   end
   else
   begin
@@ -583,7 +582,6 @@ begin
     begin
       Log('{#ViGemName} {#NewViGemVersion} needs update.');
       Dependency_AddViGem;
-      uninstallViGem();
     end;
   end;
 #endif
@@ -923,7 +921,8 @@ begin
     '/quiet /norestart',
     '{#ViGemName}',
     '{#ViGemDownloadLink}',
-    '', True, False, True, 'ViGEm');
+    '',
+    True, False, False, '');
 end;
 
 procedure Dependency_AddHideHide;
@@ -932,7 +931,8 @@ begin
     '/quiet /norestart',
     '{#HidHideName}',
     '{#HidHideDownloadLink}',
-    '', True, False, True, 'HidHide');
+    '',
+    True, False, False, '');
 end;
 
 procedure Dependency_AddRTSS;
