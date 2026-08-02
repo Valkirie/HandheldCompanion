@@ -41,6 +41,7 @@ public class SteamDeck : IDevice
         new DeviceVersion() { Firmware = 0x1030, BoardID = 0x5, PDCS = 0 /* 0x2F */, BatteryTempLE = true },
         new DeviceVersion() { Firmware = 0x1050, BoardID = 0x5, PDCS = 0 /* 0x2F */, BatteryTempLE = true, MaxBatteryCharge = true },
         new DeviceVersion() { Firmware = 0x1090, BoardID = 0x5, PDCS = 0 /* 0x2F */, BatteryTempLE = true, MaxBatteryCharge = true },
+        new DeviceVersion() { Firmware = 0x1100, BoardID = 0x5, PDCS = 0 /* 0x2F */, BatteryTempLE = true, MaxBatteryCharge = true },
     };
 
     public static ushort FirmwareVersion { get; private set; }
@@ -117,7 +118,7 @@ public class SteamDeck : IDevice
             else
                 PDCS = 0xFF;
 
-            LogManager.LogInformation("FirmwareVersion: {0}, BoardID: {1}", FirmwareVersion, BoardID);
+            LogManager.LogInformation("FirmwareVersion: 0x{0:X4}, BoardID: 0x{1:X}, IsSupported: {2}", FirmwareVersion, BoardID, IsSupported);
             return true;
         }
         catch (Exception ex)
