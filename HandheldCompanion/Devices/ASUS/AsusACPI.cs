@@ -120,17 +120,23 @@ namespace HandheldCompanion.Devices.ASUS
 
         private static void Control(uint dwIoControlCode, byte[] lpInBuffer, byte[] lpOutBuffer)
         {
-            uint lpBytesReturned = 0;
-            DeviceIoControl(
-                handle,
-                dwIoControlCode,
-                lpInBuffer,
-                (uint)lpInBuffer.Length,
-                lpOutBuffer,
-                (uint)lpOutBuffer.Length,
-                ref lpBytesReturned,
-                IntPtr.Zero
-            );
+            lock (handleLock)
+            {
+                if (!IsOpen)
+                    return;
+
+                uint lpBytesReturned = 0;
+                DeviceIoControl(
+                    handle,
+                    dwIoControlCode,
+                    lpInBuffer,
+                    (uint)lpInBuffer.Length,
+                    lpOutBuffer,
+                    (uint)lpOutBuffer.Length,
+                    ref lpBytesReturned,
+                    IntPtr.Zero
+                );
+            }
         }
 
         public static bool Open()
