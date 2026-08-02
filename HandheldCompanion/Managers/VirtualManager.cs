@@ -128,12 +128,15 @@ namespace HandheldCompanion.Managers
             // load a few variables
             HIDstatus = (HIDstatus)ManagerFactory.settingsManager.GetInt("HIDstatus");
 
-            SettingsManager_SettingValueChanged("VIIPERPort", ManagerFactory.settingsManager.GetInt("VIIPERPort"), false, false);
-            SettingsManager_SettingValueChanged("VIIPEREnabled", ManagerFactory.settingsManager.GetString("VIIPEREnabled"), false, false);
-            SettingsManager_SettingValueChanged("DSUport", ManagerFactory.settingsManager.GetInt("DSUport"), false, false);
-            SettingsManager_SettingValueChanged("DSUEnabled", ManagerFactory.settingsManager.GetString("DSUEnabled"), false, false);
-            SettingsManager_SettingValueChanged("HIDmode", selectedHIDMode, false, false);
-            SettingsManager_SettingValueChanged("HIDstatus", HIDstatus, false, false);
+            SettingsManager_SettingValueChanged("VIIPERPort", ManagerFactory.settingsManager.GetInt("VIIPERPort"), false, true);
+            SettingsManager_SettingValueChanged("VIIPEREnabled", ManagerFactory.settingsManager.GetString("VIIPEREnabled"), false, true);
+            SettingsManager_SettingValueChanged("DSUport", ManagerFactory.settingsManager.GetInt("DSUport"), false, true);
+            SettingsManager_SettingValueChanged("DSUEnabled", ManagerFactory.settingsManager.GetString("DSUEnabled"), false, true);
+            SettingsManager_SettingValueChanged("HIDmode", selectedHIDMode, false, true);
+            SettingsManager_SettingValueChanged("HIDstatus", HIDstatus, false, true);
+
+            SetVIIPERStatus(ManagerFactory.settingsManager.GetBoolean("VIIPEREnabled")).ConfigureAwait(false);
+            SetControllerModeCore(defaultHIDmode);
         }
 
         public static async Task Stop()
@@ -187,6 +190,10 @@ namespace HandheldCompanion.Managers
                     {
                         // update variable
                         defaultHIDmode = (HIDmode)Convert.ToInt32(value);
+
+                        if (initializing)
+                            return;
+
                         _ = Task.Run(() =>
                         {
                             SetControllerMode(defaultHIDmode).ConfigureAwait(false);
@@ -195,14 +202,18 @@ namespace HandheldCompanion.Managers
                     break;
                 case "HIDstatus":
                     {
-                        // skip on cold boot, retrieved by Start() function and called by SetControllerMode()
-                        if (ManagerFactory.settingsManager.IsReady)
+                        HIDstatus selectedHIDstatus = (HIDstatus)Convert.ToInt32(value);
+
+                        if (initializing)
                         {
-                            _ = Task.Run(() =>
-                            {
-                                SetControllerStatus((HIDstatus)Convert.ToInt32(value)).ConfigureAwait(false);
-                            });
+                            HIDstatus = selectedHIDstatus;
+                            return;
                         }
+
+                        _ = Task.Run(() =>
+                        {
+                            SetControllerStatus((HIDstatus)Convert.ToInt32(value)).ConfigureAwait(false);
+                        });
                     }
                     break;
                 case "DSUEnabled":
@@ -215,10 +226,16 @@ namespace HandheldCompanion.Managers
                         DSUServer.serverPort = Convert.ToInt32(value);
                     break;
                 case "VIIPEREnabled":
-                    _ = Task.Run(() =>
                     {
-                        SetVIIPERStatus(Convert.ToBoolean(value)).ConfigureAwait(false);
-                    });
+                        if (initializing)
+                            return;
+
+                        _ = Task.Run(() =>
+                        {
+                            bool enabled = Convert.ToBoolean(value);
+                            SetVIIPERStatus(enabled).ConfigureAwait(false);
+                        });
+                    }
                     break;
                 case "VIIPERPort":
                     ViiperServerManager.SetPort(Convert.ToInt32(value));
@@ -433,7 +450,8 @@ namespace HandheldCompanion.Managers
                 vTarget.Disconnected -= OnTargetDisconnected;
                 vTarget.Vibrated -= OnTargetVibrated;
                 vTarget.StatusChanged -= OnTargetConnectStatusChanged;
-                vTarget.Disconnect();
+                bool success = vTarget.Disconnect();
+                vTarget.Dispose();
                 vTarget = null;
                 NotifyMasterIntervalOverrideChanged();
             }
