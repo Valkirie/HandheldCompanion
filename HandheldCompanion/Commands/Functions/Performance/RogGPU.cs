@@ -4,6 +4,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using SharpDX.Direct3D9;
 using System;
+using System.Collections.Generic;
 
 namespace HandheldCompanion.Commands.Functions.Performance
 {
@@ -17,7 +18,6 @@ namespace HandheldCompanion.Commands.Functions.Performance
             FontFamily = "Segoe UI Symbol";
             Glyph = "\u2796";
             OnKeyDown = true;
-            deviceType = typeof(ROGAlly);
 
             Update();
 
@@ -30,15 +30,47 @@ namespace HandheldCompanion.Commands.Functions.Performance
             Update();
         }
 
-        public override bool IsToggled => IDevice.GetCurrent() is ROGAlly rOGAlly && AsusACPI.DeviceGet(AsusACPI.GPUXG) == 1;
+        private static readonly HashSet<string> IncompatibleAsusProducts = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "RC72LA", // ROG Ally X
+            "RC73YA", // ROG Xbox Ally
+            "RC73XA", // ROG Xbox Ally X
+        };
+
+        private static bool IsSupported
+        {
+            get
+            {
+                IDevice device = IDevice.GetCurrent();
+
+                if (!device.ManufacturerName.Equals("ASUSTEK COMPUTER INC.", StringComparison.OrdinalIgnoreCase) ||
+                    IncompatibleAsusProducts.Contains(device.ProductName))
+                    return false;
+
+                if (device.Capabilities.HasFlag(DeviceCapabilities.XGMobile))
+                    return AsusACPI.Open();
+
+                // The XG Mobile ACPI endpoint is present on every compatible ASUS host,
+                // including Flow laptops which currently use DefaultDevice in HC.
+                bool isSupported = AsusACPI.Open() && AsusACPI.IsSupported(AsusACPI.GPUXG);
+                if (isSupported)
+                    device.Capabilities |= DeviceCapabilities.XGMobile;
+
+                return isSupported;
+            }
+        }
+
+        public override bool IsToggled => IsSupported && AsusACPI.DeviceGet(AsusACPI.GPUXG) == 1;
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            if (IDevice.GetCurrent() is ROGAlly rOGAlly)
+            if (IsSupported)
             {
-                if (!IsToggled) XGM.Reset();
-                AsusACPI.SetXGMode(IsToggled);
-                if (IsToggled) XGM.Init();
+                bool enable = !IsToggled;
+
+                if (!enable) XGM.Reset();
+                AsusACPI.SetXGMode(enable);
+                if (enable) XGM.Init();
             }
 
             base.Execute(IsKeyDown, IsKeyUp, false);
@@ -46,7 +78,7 @@ namespace HandheldCompanion.Commands.Functions.Performance
 
         public void Update(HIDmode profileMode = HIDmode.NotSelected)
         {
-            IsEnabled = IDevice.GetCurrent() is ROGAlly rOGAlly && AsusACPI.IsXGConnected() == true;
+            IsEnabled = IsSupported;
 
             base.Update();
         }

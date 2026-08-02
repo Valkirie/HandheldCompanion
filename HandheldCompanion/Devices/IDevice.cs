@@ -48,6 +48,7 @@ public enum DeviceCapabilities : ushort
     FanOverride = 512,
     OEMCPU = 1024,
     OEMGPU = 2048,
+    XGMobile = 4096,
 }
 
 public enum TDPMethod

@@ -115,6 +115,11 @@ public class ROGAlly : IDevice
         Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
         Capabilities |= DeviceCapabilities.OEMCPU;
 
+        // Only the original RC71L has the proprietary XG Mobile connector.
+        // Derived Ally X and Xbox Ally models use USB4 instead.
+        if (GetType() == typeof(ROGAlly))
+            Capabilities |= DeviceCapabilities.XGMobile;
+
         // dynamic lighting capacities
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
         DynamicLightingCapabilities |= LEDLevel.Breathing;
