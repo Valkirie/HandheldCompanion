@@ -292,8 +292,11 @@ namespace HandheldCompanion.Views.QuickPages
                         StringBuilder sb = new StringBuilder(2);
                         int cnt = ToUnicodeEx(vk, (uint)sc, st, sb, sb.Capacity, 0, _lastHkl);
 
-                        // ToUnicodeEx can return 0 (dead/no character) leaving sb empty — guard before indexing.
-                        if (cnt > 0 && sb.Length > 0)
+                        // ToUnicodeEx returns 0 for no translation (sb left empty) and a negative
+                        // value for a dead key (a spacing char IS written to sb). Accept both >0 and
+                        // <0 so dead-key layouts keep a valid label; the sb.Length guard prevents
+                        // indexing an empty buffer in the zero case.
+                        if (cnt != 0 && sb.Length > 0)
                             b.Content = sb[0].ToString();
                     }
                 }

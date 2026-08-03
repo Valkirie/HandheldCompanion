@@ -288,8 +288,11 @@ public static class InputsManager
                 if (!chord.silenced)
                     continue;
 
+                // Only act on multi-key firmware combos (3+ keys). A normal key+single-modifier
+                // combo (e.g. a user typing Ctrl+O) must never be swallowed by this direct
+                // suppressor; the X2's KB combo is 4 keys (LCtrl+LWin+RCtrl+O), so this stays safe.
                 List<KeyCode> keys = chord.chords[true];
-                if (keys.Count < 2 || keys[keys.Count - 1] != hookKey)
+                if (keys.Count < 3 || keys[keys.Count - 1] != hookKey)
                     continue;
 
                 bool match = true;
