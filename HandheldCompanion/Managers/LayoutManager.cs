@@ -627,7 +627,19 @@ public class LayoutManager : IManager
                         {
                             var bA = (ButtonActions)action;
                             bA.Execute(button, pressed, shiftSlot, deltaMs);
-                            outputState.ButtonState[bA.Button] |= bA.GetValue();
+                            if (bA is TouchpadActions touchpadAction)
+                            {
+                                if (touchpadAction.TryGetTouch(out int x, out int y, out bool click))
+                                {
+                                    outputState.ButtonState[touchpadAction.Button] = true;
+                                    outputState.AxisState[AxisFlags.RightPadX] = CoordinateToAxis(x, DS4Touch.TOUCHPAD_WIDTH);
+                                    outputState.AxisState[AxisFlags.RightPadY] = CoordinateToAxis(DS4Touch.TOUCHPAD_HEIGHT - 1 - y, DS4Touch.TOUCHPAD_HEIGHT);
+                                }
+                            }
+                            else
+                            {
+                                outputState.ButtonState[bA.Button] |= bA.GetValue();
+                            }
                             break;
                         }
                     case ActionType.Keyboard:
@@ -660,6 +672,13 @@ public class LayoutManager : IManager
                 ApplyActionStateSideEffects(actions, i);
             }
         }
+    }
+
+    private static short CoordinateToAxis(int value, int extent)
+    {
+        int clamped = Math.Clamp(value, 0, extent - 1);
+        return (short)Math.Clamp((long)clamped * ushort.MaxValue / (extent - 1) + short.MinValue,
+            short.MinValue, short.MaxValue);
     }
 
     /// <summary>

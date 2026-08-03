@@ -379,6 +379,15 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public Visibility TouchpadSettingsVisibility => Action is TouchpadActions ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility TouchpadSwipeSettingsVisibility => Action is TouchpadActions touchpad && touchpad.Button == ButtonFlags.TouchpadSwipe
+            ? Visibility.Visible : Visibility.Collapsed;
+        public int TouchpadX { get => Action is TouchpadActions a ? a.X : 0; set { if (Action is TouchpadActions a) { a.X = Math.Clamp(value, 0, DS4Touch.TOUCHPAD_WIDTH - 1); OnPropertyChanged(nameof(TouchpadX)); } } }
+        public int TouchpadY { get => Action is TouchpadActions a ? a.Y : 0; set { if (Action is TouchpadActions a) { a.Y = Math.Clamp(value, 0, DS4Touch.TOUCHPAD_HEIGHT - 1); OnPropertyChanged(nameof(TouchpadY)); } } }
+        public int TouchpadEndX { get => Action is TouchpadActions a ? a.EndX : 0; set { if (Action is TouchpadActions a) { a.EndX = Math.Clamp(value, 0, DS4Touch.TOUCHPAD_WIDTH - 1); OnPropertyChanged(nameof(TouchpadEndX)); } } }
+        public int TouchpadEndY { get => Action is TouchpadActions a ? a.EndY : 0; set { if (Action is TouchpadActions a) { a.EndY = Math.Clamp(value, 0, DS4Touch.TOUCHPAD_HEIGHT - 1); OnPropertyChanged(nameof(TouchpadEndY)); } } }
+        public double TouchpadSwipeDuration { get => Action is TouchpadActions a ? a.SwipeDuration : 300.0; set { if (Action is TouchpadActions a) { a.SwipeDuration = (float)Math.Clamp(value, 16.0, 5000.0); OnPropertyChanged(nameof(TouchpadSwipeDuration)); } } }
+
         public override void OnPropertyChanged(string? propertyName)
         {
             switch (propertyName)
@@ -403,6 +412,8 @@ namespace HandheldCompanion.ViewModels
                     OnPropertyChanged(nameof(AxisVisualizerInnerDeadzoneSize));
                     OnPropertyChanged(nameof(AxisVisualizerOuterDeadzoneSize));
                     OnPropertyChanged(nameof(AxisVisualizerAntiDeadzoneSize));
+                    OnPropertyChanged(nameof(TouchpadSettingsVisibility));
+                    OnPropertyChanged(nameof(TouchpadSwipeSettingsVisibility));
                     break;
             }
 
@@ -635,7 +646,19 @@ namespace HandheldCompanion.ViewModels
             {
                 case ActionType.Button:
                     if (SelectedTarget.Tag is ButtonFlags buttonFlags)
-                        ((ButtonActions)Action).Button = buttonFlags;
+                    {
+                        bool isTouchpadAction = buttonFlags is ButtonFlags.TouchpadCoordinateClick or
+                            ButtonFlags.TouchpadCoordinateTouch or ButtonFlags.TouchpadSwipe;
+
+                        if (isTouchpadAction && Action is not TouchpadActions)
+                            Action = new TouchpadActions(buttonFlags) { pressType = (PressType)_pressTypeFallbackIndex };
+                        else if (!isTouchpadAction && Action is TouchpadActions)
+                            Action = new ButtonActions(buttonFlags) { pressType = (PressType)_pressTypeFallbackIndex };
+                        else
+                            ((ButtonActions)Action).Button = buttonFlags;
+
+                        OnPropertyChanged(string.Empty);
+                    }
                     break;
 
                 case ActionType.Keyboard:

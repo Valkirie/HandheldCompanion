@@ -143,6 +143,43 @@
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
 
+        <!--  DualSense touchpad gesture settings  -->
+        <ikw:SimpleStackPanel Spacing="8" Visibility="{Binding TouchpadSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="DualSense touchpad" />
+            <ikw:SimpleStackPanel Spacing="3">
+                <ui:SettingsCard Header="Start position" Description="DualSense coordinates: X 0–1919, Y 0–942">
+                    <StackPanel>
+                        <DockPanel>
+                            <TextBlock Width="72" VerticalAlignment="Center" Text="{Binding TouchpadX, Mode=OneWay, StringFormat={}X: {0}}" />
+                            <Slider Width="240" Minimum="0" Maximum="1919" TickFrequency="1" IsMoveToPointEnabled="True" Value="{Binding TouchpadX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                        <DockPanel Margin="0,6,0,0">
+                            <TextBlock Width="72" VerticalAlignment="Center" Text="{Binding TouchpadY, Mode=OneWay, StringFormat={}Y: {0}}" />
+                            <Slider Width="240" Minimum="0" Maximum="942" TickFrequency="1" IsMoveToPointEnabled="True" Value="{Binding TouchpadY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </StackPanel>
+                </ui:SettingsCard>
+                <ui:SettingsCard Header="End position" Visibility="{Binding TouchpadSwipeSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <StackPanel>
+                        <DockPanel>
+                            <TextBlock Width="72" VerticalAlignment="Center" Text="{Binding TouchpadEndX, Mode=OneWay, StringFormat={}X: {0}}" />
+                            <Slider Width="240" Minimum="0" Maximum="1919" TickFrequency="1" IsMoveToPointEnabled="True" Value="{Binding TouchpadEndX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                        <DockPanel Margin="0,6,0,0">
+                            <TextBlock Width="72" VerticalAlignment="Center" Text="{Binding TouchpadEndY, Mode=OneWay, StringFormat={}Y: {0}}" />
+                            <Slider Width="240" Minimum="0" Maximum="942" TickFrequency="1" IsMoveToPointEnabled="True" Value="{Binding TouchpadEndY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </StackPanel>
+                </ui:SettingsCard>
+                <ui:SettingsCard Header="Swipe duration" Visibility="{Binding TouchpadSwipeSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <DockPanel>
+                        <TextBox IsReadOnly="True" Text="{Binding TouchpadSwipeDuration, Mode=OneWay, StringFormat={}{0:N0} ms}" />
+                        <Slider Width="220" Margin="6,0,0,0" Minimum="16" Maximum="2000" TickFrequency="16" IsSnapToTickEnabled="True" Value="{Binding TouchpadSwipeDuration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                </ui:SettingsCard>
+            </ikw:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
+
         <!--  Trigger settings  -->
         <ikw:SimpleStackPanel Spacing="8" Visibility="{Binding TriggerSettingsSectionVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Trigger settings" />
