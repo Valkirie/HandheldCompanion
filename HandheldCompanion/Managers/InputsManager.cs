@@ -72,6 +72,7 @@ public static class InputsManager
     private static readonly Dictionary<bool, bool> KeyUsed = new() { { true, false }, { false, false } };
     private static readonly HashSet<Keys> PhysicalModifiersDown = new();
     private static bool X2TurboChordActive;
+    private static bool X2KeyboardChordActive;
     private static bool IsHandlingAltGrRelease;
 
     public static bool IsInitialized;
@@ -301,16 +302,26 @@ public static class InputsManager
             }
         }
 
-        // X2 reserves Win+Ctrl+O for its physical KB button. Suppress the shortcut's O
-        // while its physical modifiers are down; OEM2 arrives independently over HID.
-        if (args.IsKeyDown && fromPhysicalKeyboard && hookKey == KeyCode.O &&
-            IDevice.GetCurrent() is OneXPlayerX2 &&
-            (PhysicalModifiersDown.Contains(Keys.LWin) || PhysicalModifiersDown.Contains(Keys.RWin)) &&
-            (PhysicalModifiersDown.Contains(Keys.LControlKey) ||
-             PhysicalModifiersDown.Contains(Keys.RControlKey) ||
-             PhysicalModifiersDown.Contains(Keys.ControlKey)))
+        // X2's physical KB button emits LCtrl+Win+RCtrl+O. Its modifiers are
+        // released before O, so modifier-state matching alone misses O-up and can
+        // still let Windows open the soft keyboard. Latch the distinctive two-Ctrl
+        // chord on O-down and suppress both halves; OEM2 arrives independently via HID.
+        if (fromPhysicalKeyboard && hookKey == KeyCode.O && IDevice.GetCurrent() is OneXPlayerX2)
         {
-            args.SuppressKeyPress = true;
+            if (args.IsKeyDown &&
+                PhysicalModifiersDown.Contains(Keys.LControlKey) &&
+                PhysicalModifiersDown.Contains(Keys.RControlKey) &&
+                (PhysicalModifiersDown.Contains(Keys.LWin) || PhysicalModifiersDown.Contains(Keys.RWin)))
+            {
+                X2KeyboardChordActive = true;
+            }
+
+            if (X2KeyboardChordActive)
+            {
+                args.SuppressKeyPress = true;
+                if (args.IsKeyUp)
+                    X2KeyboardChordActive = false;
+            }
         }
 
         // pause buffer flush timer
