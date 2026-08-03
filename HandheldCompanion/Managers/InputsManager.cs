@@ -10,6 +10,7 @@ using PrecisionTiming;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsInput.Events;
 using ButtonState = HandheldCompanion.Inputs.ButtonState;
@@ -70,6 +71,7 @@ public static class InputsManager
     private static readonly Dictionary<bool, short> KeyIndexHotkey = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, bool> KeyUsed = new() { { true, false }, { false, false } };
     private static readonly HashSet<Keys> PhysicalModifiersDown = new();
+    private static bool X2TurboChordActive;
     private static bool IsHandlingAltGrRelease;
 
     public static bool IsInitialized;
@@ -261,6 +263,55 @@ public static class InputsManager
                 return;
 
         KeyCode hookKey = (KeyCode)args.KeyValue;
+
+        // X2 Turbo firmware emits Ctrl+Win+Alt, with order and Ctrl side varying
+        // between revisions. Detect the physical modifier set directly and produce
+        // a stable OEM1 pulse instead of relying on the sequential chord matcher.
+        if (IDevice.GetCurrent() is OneXPlayerX2)
+        {
+            bool turboChordDown =
+                (PhysicalModifiersDown.Contains(Keys.LControlKey) ||
+                 PhysicalModifiersDown.Contains(Keys.RControlKey) ||
+                 PhysicalModifiersDown.Contains(Keys.ControlKey)) &&
+                (PhysicalModifiersDown.Contains(Keys.LWin) ||
+                 PhysicalModifiersDown.Contains(Keys.RWin)) &&
+                (PhysicalModifiersDown.Contains(Keys.LMenu) ||
+                 PhysicalModifiersDown.Contains(Keys.RMenu) ||
+                 PhysicalModifiersDown.Contains(Keys.Menu));
+
+            if (args.IsKeyDown && turboChordDown && !X2TurboChordActive)
+            {
+                X2TurboChordActive = true;
+                args.SuppressKeyPress = true;
+
+                ButtonState turboState = new();
+                turboState[ButtonFlags.OEM1] = true;
+                IController? controller = ControllerManager.GetTarget();
+                controller?.InjectState(turboState, true, false);
+
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(100).ConfigureAwait(false);
+                    controller?.InjectState(turboState, false, true);
+                });
+            }
+            else if (!turboChordDown)
+            {
+                X2TurboChordActive = false;
+            }
+        }
+
+        // X2 reserves Win+Ctrl+O for its physical KB button. Suppress the shortcut's O
+        // while its physical modifiers are down; OEM2 arrives independently over HID.
+        if (args.IsKeyDown && fromPhysicalKeyboard && hookKey == KeyCode.O &&
+            IDevice.GetCurrent() is OneXPlayerX2 &&
+            (PhysicalModifiersDown.Contains(Keys.LWin) || PhysicalModifiersDown.Contains(Keys.RWin)) &&
+            (PhysicalModifiersDown.Contains(Keys.LControlKey) ||
+             PhysicalModifiersDown.Contains(Keys.RControlKey) ||
+             PhysicalModifiersDown.Contains(Keys.ControlKey)))
+        {
+            args.SuppressKeyPress = true;
+        }
 
         // pause buffer flush timer
         BufferFlushTimer.Stop();
@@ -750,6 +801,8 @@ public static class InputsManager
             case Keys.LShiftKey:
             case Keys.RShiftKey:
             case Keys.ShiftKey:
+            case Keys.LWin:
+            case Keys.RWin:
                 return true;
 
             default:

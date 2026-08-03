@@ -1,14 +1,23 @@
+using System;
 using System.Linq;
+using System.Management;
 using System.Numerics;
+using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Shared;
 using WindowsInput.Events;
 using static HandheldCompanion.IGCL.IGCLBackend;
 namespace HandheldCompanion.Devices;
 
 public class OneXPlayerX2 : OneXPlayerX1
 {
+    // X2 uses the banked WMI EC address. OneXConsole initializes its application
+    // function/turbo register as decimal 1259 (0x04EB), not legacy port address 0xEB.
+    private const ushort TurboTakeoverRegister = 0x04EB;
+    private const byte TurboTakeoverMask = 0x40;
+
     public OneXPlayerX2()
     {
         // device specific settings
@@ -91,8 +100,19 @@ public class OneXPlayerX2 : OneXPlayerX1
         // to surface the M1/M2 back paddles on the vendor HID channel.
         VendorHidInitProfile = OxpHidInitProfile.X2;
 
-        // OEM1 (Turbo, top button) emits the inherited X1 chord (RControl+LWin+LMenu) once the EC
-        // 0xEB take-over is enabled in OneXPlayerX1.Open(), so keep the inherited chord.
+        // Turbo emits Ctrl+Win+Alt, but its modifier order and Ctrl side vary by
+        // firmware. InputsManager recognizes that set order-independently and emits
+        // OEM1; keep these raw variants silenced and expose OEM1 with an empty chord.
+        OEMChords.RemoveAll(c => c.state.Buttons.Contains(ButtonFlags.OEM1));
+        OEMChords.Add(new KeyboardChord("Turbo",
+            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.LMenu],
+            [KeyCode.LMenu, KeyCode.LWin, KeyCode.RControlKey],
+            true, ButtonFlags.OEM1, flushInterval: 100));
+        OEMChords.Add(new KeyboardChord("Turbo",
+            [KeyCode.LControlKey, KeyCode.LWin, KeyCode.LMenu],
+            [KeyCode.LMenu, KeyCode.LWin, KeyCode.LControlKey],
+            true, ButtonFlags.OEM1, flushInterval: 100));
+        OEMChords.Add(new KeyboardChord("Turbo", null, null, false, ButtonFlags.OEM1));
 
         // The Home button (vendor id 0x21 -> OEM3) fires via the vendor HID monitor and sends no
         // keyboard combo, so declare it with an empty chord purely so it appears in the OEM mapping UI.
@@ -111,6 +131,10 @@ public class OneXPlayerX2 : OneXPlayerX1
             [KeyCode.LControlKey, KeyCode.LWin, KeyCode.RControlKey, KeyCode.O],
             true, ButtonFlags.OEM2, flushInterval: 300));
         OEMChords.Add(new KeyboardChord("Keyboard", null, null, false, ButtonFlags.OEM2));
+
+        // OEM2 is delivered independently by the vendor HID and must remain available
+        // for user mappings. Do not inherit the X1's default on-screen-keyboard action.
+        DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = false;
     }
 
     protected override ButtonFlags MapVendorButton(byte buttonId)
@@ -124,6 +148,71 @@ public class OneXPlayerX2 : OneXPlayerX1
             0x24 => ButtonFlags.OEM2,
             _ => base.MapVendorButton(buttonId),
         };
+    }
+
+    protected override void SetTurboButtonTakeover(bool enabled)
+    {
+        // The X2 firmware exposes its EC through the SuRwECRegInterface ACPI/WMI
+        // provider. WinRing0 port I/O (used by older OXP models) cannot access this
+        // register on the X2, which is why takeover previously worked only after
+        // OneXConsole had initialized it.
+        try
+        {
+            using ManagementObjectSearcher searcher = new(
+                "root\\WMI", "SELECT * FROM SuRwECRegInterface");
+            using ManagementObjectCollection instances = searcher.Get();
+            using ManagementObject? instance = instances.Cast<ManagementObject>().FirstOrDefault();
+
+            if (instance is null)
+                throw new InvalidOperationException("SuRwECRegInterface is unavailable");
+
+            // SuRwECRegInterface packs its fields little-endian: group in bits
+            // 0..7, offset in bits 8..15, and value in bits 16..23. Thus the
+            // X2 takeover write is 0x40EB04 (value 0x40, offset 0xEB, group 4).
+            byte value = enabled ? TurboTakeoverMask : (byte)0x00;
+            byte group = (byte)(TurboTakeoverRegister >> 8);
+            byte offset = (byte)(TurboTakeoverRegister & 0xFF);
+            uint groupOffsetValue = group | ((uint)offset << 8) | ((uint)value << 16);
+            // Use the positional overload. The .NET 10 System.Management package
+            // throws NotFound while resolving this firmware provider's method
+            // parameter class, even though the method itself is callable. The
+            // positional call matches the provider's two parameters directly.
+            object?[] arguments = [groupOffsetValue, null];
+            instance.InvokeMethod("WriteECReg", arguments);
+
+            LogManager.LogInformation(
+                "{0} {1} OEM button through X2 WMI EC interface",
+                enabled ? "Unlocked" : "Locked", ButtonFlags.OEM1);
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogWarning(
+                "Failed to {0} {1} OEM button through X2 WMI EC interface: {2}",
+                enabled ? "unlock" : "lock", ButtonFlags.OEM1, ex.Message);
+        }
+    }
+
+    protected override void VendorHidMonitor_ButtonChanged(byte buttonId, bool pressed)
+    {
+        ButtonFlags button = buttonId switch
+        {
+            0x20 => ButtonFlags.OEM1,
+            0x21 => ButtonFlags.OEM3,
+            0x24 => ButtonFlags.OEM2,
+            _ => ButtonFlags.None,
+        };
+
+        if (button != ButtonFlags.None)
+        {
+            // These vendor-HID press/release reports can be shorter than an input
+            // update. Emit a deterministic pulse for reliable mappings.
+            if (pressed)
+                KeyPressAndRelease(button, 100);
+            return;
+        }
+
+        // Preserve the PR's original behavior for the paddles and unknown IDs.
+        base.VendorHidMonitor_ButtonChanged(buttonId, pressed);
     }
 
     public override string GetGlyph(ButtonFlags button)

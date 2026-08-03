@@ -203,14 +203,7 @@ public class OneXPlayerX1 : OneXAOKZOE
             }
         }
 
-        // Enable the OneX/Turbo button "take-over" so it emits key events (EC reg 0xEB, bit 0x40).
-        // 0xEB is a live status/control register: it briefly reads 0x90 before settling to 0x40, so
-        // OR the bit in (don't clobber the other bits the firmware sets) and re-check after it settles.
-        byte oemState = EcReadByte(0xEB);
-        EcWriteByte(0xEB, (byte)(oemState | 0x40));
-        System.Threading.Thread.Sleep(50);
-        if ((EcReadByte(0xEB) & 0x40) != 0)
-            LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
+        SetTurboButtonTakeover(true);
 
         // start vendor HID listener immediately so devices already present get monitored
         try
@@ -262,13 +255,27 @@ public class OneXPlayerX1 : OneXAOKZOE
             }
         }
 
-        // Clear only the take-over bit; leave the rest of the register as the firmware set it.
-        byte oemState = EcReadByte(0xEB);
-        EcWriteByte(0xEB, (byte)(oemState & ~0x40));
-        if ((EcReadByte(0xEB) & 0x40) == 0)
-            LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
+        SetTurboButtonTakeover(false);
 
         base.Close();
+    }
+
+    protected virtual void SetTurboButtonTakeover(bool enabled)
+    {
+        // 0xEB is a live status/control register. Change only its 0x40 takeover bit.
+        byte oemState = EcReadByte(0xEB);
+        byte requestedState = enabled
+            ? (byte)(oemState | 0x40)
+            : (byte)(oemState & ~0x40);
+
+        EcWriteByte(0xEB, requestedState);
+        System.Threading.Thread.Sleep(50);
+
+        bool actualState = (EcReadByte(0xEB) & 0x40) != 0;
+        if (actualState == enabled)
+            LogManager.LogInformation("{0} {1} OEM button", enabled ? "Unlocked" : "Locked", ButtonFlags.OEM1);
+        else
+            LogManager.LogWarning("Failed to {0} {1} OEM button", enabled ? "unlock" : "lock", ButtonFlags.OEM1);
     }
 
     protected override void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
@@ -520,7 +527,7 @@ public class OneXPlayerX1 : OneXAOKZOE
         _vendorHidMonitor = null;
     }
 
-    private void VendorHidMonitor_ButtonChanged(byte buttonId, bool pressed)
+    protected virtual void VendorHidMonitor_ButtonChanged(byte buttonId, bool pressed)
     {
         ButtonFlags button = MapVendorButton(buttonId);
         if (button == ButtonFlags.None)
