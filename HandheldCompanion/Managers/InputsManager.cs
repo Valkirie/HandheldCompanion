@@ -70,8 +70,6 @@ public static class InputsManager
     private static readonly Dictionary<bool, short> KeyIndexHotkey = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, bool> KeyUsed = new() { { true, false }, { false, false } };
     private static readonly HashSet<Keys> PhysicalModifiersDown = new();
-    private static readonly Dictionary<KeyCode, long> PhysicalKeyDownAt = new();  // key -> down time (ms)
-    private const long OEMChordRecentMs = 2000;  // silenced-chord keys must have gone down within this window
     private static bool IsHandlingAltGrRelease;
 
     public static bool IsInitialized;
@@ -263,50 +261,6 @@ public static class InputsManager
                 return;
 
         KeyCode hookKey = (KeyCode)args.KeyValue;
-
-        // Track when physical keys FIRST went down (used by the silenced-chord suppressor below).
-        // TryAdd (not overwrite) so key auto-repeat doesn't keep refreshing the timestamp and defeat
-        // the recency window, and so a genuinely-held key eventually ages out of it.
-        if (fromPhysicalKeyboard)
-        {
-            if (args.IsKeyDown) PhysicalKeyDownAt.TryAdd(hookKey, Environment.TickCount64);
-            else if (args.IsKeyUp) PhysicalKeyDownAt.Remove(hookKey);
-        }
-
-        // Robust silenced-chord suppression: some OneXPlayer OEM buttons emit a firmware key-combo
-        // whose arrival order can race the sequential matcher (e.g. the X2 KB button's LCtrl+LWin+
-        // RCtrl+O opens the Windows on-screen keyboard). If a silenced OEM chord's final key is
-        // pressed while all its other keys were pressed as a recent burst, suppress it directly —
-        // order- and timing-independent. The recency window ensures a genuinely-held modifier (or a
-        // key whose key-up was missed) can't suppress the letter indefinitely. The button's real
-        // function still arrives via its vendor HID event, so it stays fully mappable.
-        if (args.IsKeyDown && fromPhysicalKeyboard)
-        {
-            long now = Environment.TickCount64;
-            foreach (KeyboardChord chord in IDevice.GetCurrent().OEMChords)
-            {
-                if (!chord.silenced)
-                    continue;
-
-                // Only act on multi-key firmware combos (3+ keys). A normal key+single-modifier
-                // combo (e.g. a user typing Ctrl+O) must never be swallowed by this direct
-                // suppressor; the X2's KB combo is 4 keys (LCtrl+LWin+RCtrl+O), so this stays safe.
-                List<KeyCode> keys = chord.chords[true];
-                if (keys.Count < 3 || keys[keys.Count - 1] != hookKey)
-                    continue;
-
-                bool match = true;
-                for (int i = 0; i < keys.Count - 1; i++)
-                    if (!PhysicalKeyDownAt.TryGetValue(keys[i], out long downAt) || now - downAt > OEMChordRecentMs)
-                    { match = false; break; }
-
-                if (match)
-                {
-                    args.SuppressKeyPress = true;
-                    break;
-                }
-            }
-        }
 
         // pause buffer flush timer
         BufferFlushTimer.Stop();
