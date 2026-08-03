@@ -145,6 +145,10 @@ public class OneXPlayerX1 : OneXAOKZOE
         DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
     }
 
+    // The X1 family exposes M1/M2 back paddles as L4/R4 via the vendor HID monitor (see
+    // MapVendorButton). Declare them so they surface in the controller mapping UI.
+    public override IEnumerable<ButtonFlags> InjectedControllerButtons => [ButtonFlags.L4, ButtonFlags.R4];
+
     public override string GetGlyph(ButtonFlags button)
     {
         switch (button)
@@ -199,10 +203,24 @@ public class OneXPlayerX1 : OneXAOKZOE
             }
         }
 
-        // allow OneX button to pass key inputs
-        EcWriteByte(0xEB, 0x40);
-        if (EcReadByte(0xEB) == 0x40)
+        // Enable the OneX/Turbo button "take-over" so it emits key events (EC reg 0xEB, bit 0x40).
+        // 0xEB is a live status/control register: it briefly reads 0x90 before settling to 0x40, so
+        // OR the bit in (don't clobber the other bits the firmware sets) and re-check after it settles.
+        byte oemState = EcReadByte(0xEB);
+        EcWriteByte(0xEB, (byte)(oemState | 0x40));
+        System.Threading.Thread.Sleep(50);
+        if ((EcReadByte(0xEB) & 0x40) != 0)
             LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
+
+        // start vendor HID listener immediately so devices already present get monitored
+        try
+        {
+            StartVendorHidListener();
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogWarning("Failed to start vendor HID listener: {0}", ex.Message);
+        }
 
         return success;
     }
@@ -244,8 +262,10 @@ public class OneXPlayerX1 : OneXAOKZOE
             }
         }
 
-        EcWriteByte(0xEB, 0x00);
-        if (EcReadByte(0xEB) == 0x00)
+        // Clear only the take-over bit; leave the rest of the register as the firmware set it.
+        byte oemState = EcReadByte(0xEB);
+        EcWriteByte(0xEB, (byte)(oemState & ~0x40));
+        if ((EcReadByte(0xEB) & 0x40) == 0)
             LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
 
         base.Close();
@@ -483,10 +503,11 @@ public class OneXPlayerX1 : OneXAOKZOE
             _vendorHidMonitor.ButtonChanged -= VendorHidMonitor_ButtonChanged;
             _vendorHidMonitor.Dispose();
             _vendorHidMonitor = null;
+            LogManager.LogWarning("Failed to open OneXPlayer vendor HID listener for {0}", ProductModel);
             return;
         }
 
-        LogManager.LogInformation("Started OneXPlayer vendor HID listener");
+        LogManager.LogInformation("Started OneXPlayer vendor HID listener for {0}", ProductModel);
     }
 
     protected virtual void StopVendorHidListener()

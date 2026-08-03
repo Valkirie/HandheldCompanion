@@ -464,6 +464,11 @@ public abstract class IDevice
 
     public IEnumerable<ButtonFlags> OEMButtons => OEMChords.Where(chord => !chord.silenced).SelectMany(chord => chord.state.Buttons).Distinct();
 
+    // Controller buttons (e.g. L4/R4 back paddles) this device injects via vendor HID rather than
+    // through the XInput/SDL controller. Merged into the active controller's SourceButtons so they
+    // appear in the mapping UI (BACKGRIPS section).
+    public virtual IEnumerable<ButtonFlags> InjectedControllerButtons => [];
+
     public virtual bool IsSupported => true;
 
     public Layout DefaultLayout { get; set; } = LayoutTemplate.DefaultLayout.Layout;
@@ -740,6 +745,9 @@ public abstract class IDevice
                         case "ONEXPLAYER APEX":
                         case "ONEXPLAYERAPEX":
                             device = new OneXPlayerApex();
+                            break;
+                        case "ONEXPLAYER X2":
+                            device = new OneXPlayerX2();
                             break;
                         case "ONEXPLAYER G1 i":
                             device = new OneXPlayerG1Intel();

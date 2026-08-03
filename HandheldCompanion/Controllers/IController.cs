@@ -841,6 +841,14 @@ namespace HandheldCompanion.Controllers
             return SourceButtons.Contains(button);
         }
 
+        // Merge extra buttons (e.g. device-injected back paddles) into this controller's mappable set.
+        public void AddSourceButtons(IEnumerable<ButtonFlags> buttons)
+        {
+            foreach (ButtonFlags button in buttons)
+                if (button != ButtonFlags.None && !SourceButtons.Contains(button))
+                    SourceButtons.Add(button);
+        }
+
         public bool HasSourceButton(List<ButtonFlags> buttons)
         {
             return SourceButtons.Any(buttons.Contains);
