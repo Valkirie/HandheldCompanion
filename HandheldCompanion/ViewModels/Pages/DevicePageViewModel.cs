@@ -3,6 +3,7 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using HandheldCompanion.Watchers;
@@ -61,18 +62,18 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool DisableMsiClawPS2Service
+        public bool BlockMsiClawWinGHotkey
         {
             get
             {
-                return ManagerFactory.settingsManager.GetBoolean("DisableMsiClawPS2Service");
+                return ManagerFactory.settingsManager.GetBoolean("BlockMsiClawWinGHotkey");
             }
             set
             {
-                if (value != DisableMsiClawPS2Service)
+                if (value != BlockMsiClawWinGHotkey)
                 {
-                    ManagerFactory.settingsManager.SetProperty("DisableMsiClawPS2Service", value);
-                    OnPropertyChanged(nameof(DisableMsiClawPS2Service));
+                    ManagerFactory.settingsManager.SetProperty("BlockMsiClawWinGHotkey", value);
+                    OnPropertyChanged(nameof(BlockMsiClawWinGHotkey));
                 }
             }
         }
@@ -303,20 +304,33 @@ namespace HandheldCompanion.ViewModels
             QuerySettings();
         }
 
-        private static void SetMsiClawPS2ServiceState(bool disable)
+        private void MigrateMsiClawPS2ServiceSetting()
         {
+            // The old workaround disabled the same ACPI keyboard path used by the volume buttons.
+            // Restore it once and carry the user's Game Bar preference into the hotkey blocker.
+            if (CurrentDevice is not ClawA1M || !ManagerFactory.settingsManager.GetBoolean("DisableMsiClawPS2Service"))
+                return;
+
+            ManagerFactory.settingsManager.SetProperty("BlockMsiClawWinGHotkey", true);
+
             try
             {
                 using (ServiceController service = new("i8042prt"))
                 {
-                    if (disable)
-                        ServiceUtils.ChangeStartMode(service, ServiceStartMode.Disabled, out _);
-                    else
-                        ServiceUtils.ChangeStartMode(service, ServiceStartMode.System, out _);
+                    if (!ServiceUtils.ChangeStartMode(service, ServiceStartMode.System, out _))
+                    {
+                        LogManager.LogError("Failed to restore {0} startup mode while migrating the MSI Claw hotkey setting", service.ServiceName);
+                        return;
+                    }
                 }
+
+                ManagerFactory.settingsManager.SetProperty("DisableMsiClawPS2Service", false);
+                RequestRestartConfirmation();
             }
-            catch (Exception)
-            { }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Failed to restore {0} startup mode while migrating the MSI Claw hotkey setting: {1}", "i8042prt", ex.Message);
+            }
         }
 
         private static void RequestRestartConfirmation()
@@ -344,11 +358,13 @@ namespace HandheldCompanion.ViewModels
             // manage events
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
+            MigrateMsiClawPS2ServiceSetting();
+
             // raise events
             SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false, false);
             SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetDouble("BatteryChargeLimitPercent"), false, false);
             SettingsManager_SettingValueChanged("GoBackToSleep", ManagerFactory.settingsManager.GetBoolean("GoBackToSleep"), false, false);
-            SettingsManager_SettingValueChanged("DisableMsiClawPS2Service", ManagerFactory.settingsManager.GetBoolean("DisableMsiClawPS2Service"), false, true);
+            SettingsManager_SettingValueChanged("BlockMsiClawWinGHotkey", ManagerFactory.settingsManager.GetBoolean("BlockMsiClawWinGHotkey"), false, true);
         }
 
         private void CoreIsolationWatcher_StatusChanged(bool enabled)
@@ -430,15 +446,8 @@ namespace HandheldCompanion.ViewModels
                 case "GoBackToSleep":
                     GoBackToSleep = Convert.ToBoolean(value);
                     break;
-                case "DisableMsiClawPS2Service":
-                    bool disableMsiClawPS2Service = Convert.ToBoolean(value);
-                    DisableMsiClawPS2Service = disableMsiClawPS2Service;
-
-                    if (!initializing && CurrentDevice is ClawA1M)
-                    {
-                        SetMsiClawPS2ServiceState(disableMsiClawPS2Service);
-                        RequestRestartConfirmation();
-                    }
+                case "BlockMsiClawWinGHotkey":
+                    BlockMsiClawWinGHotkey = Convert.ToBoolean(value);
                     break;
             }
         }

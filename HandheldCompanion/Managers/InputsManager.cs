@@ -44,6 +44,9 @@ public static class InputsManager
     private const uint LLKHF_INJECTED = 0x00000010;
     private const uint LLKHF_LOWER_IL_INJECTED = 0x00000002;
 
+    private const string MSI_CLAW_WIN_G_HOTKEY = "MSI Claw Win+G";
+    private const string BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING = "BlockMsiClawWinGHotkey";
+
     // Gamepad variables
     private static readonly PrecisionTimer BufferFlushTimer;
     private static readonly Timer ListenerTimer;
@@ -70,6 +73,7 @@ public static class InputsManager
     private static readonly Dictionary<bool, short> KeyIndexHotkey = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, bool> KeyUsed = new() { { true, false }, { false, false } };
     private static readonly HashSet<Keys> PhysicalModifiersDown = new();
+    private static readonly KeyboardHotkeyBlocker HotkeyBlocker = new();
     private static bool IsHandlingAltGrRelease;
 
     public static bool IsInitialized;
@@ -239,7 +243,10 @@ public static class InputsManager
     {
         // don't catch keyboard inputs until user is logged-in
         if (SystemManager.IsSessionLocked)
+        {
+            HotkeyBlocker.ResetState();
             return;
+        }
 
         KeyEventArgsExt args = (KeyEventArgsExt)e;
 
@@ -255,6 +262,13 @@ public static class InputsManager
             else if (args.IsKeyUp)
                 PhysicalModifiersDown.Remove(args.KeyCode);
         }
+
+        KeyboardHotkeyBlockResult blockResult = HotkeyBlocker.Process(args, Injected || InjectedLL);
+        if (blockResult == KeyboardHotkeyBlockResult.BypassApplication)
+            return;
+
+        if (blockResult == KeyboardHotkeyBlockResult.Suppress)
+            args.SuppressKeyPress = true;
 
         if ((Injected || InjectedLL))
             if (IsListening && currentChord.chordTarget != InputsChordTarget.Output)
@@ -601,8 +615,12 @@ public static class InputsManager
             return;
 
         ControllerManager.InputsUpdated += UpdateInputs;
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         m_GlobalHook?.KeyDown += M_GlobalHook_KeyEvent;
         m_GlobalHook?.KeyUp += M_GlobalHook_KeyEvent;
+
+        SettingsManager_SettingValueChanged(BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING,
+            ManagerFactory.settingsManager.GetBoolean(BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING), false, true);
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -616,8 +634,11 @@ public static class InputsManager
             return;
 
         ControllerManager.InputsUpdated -= UpdateInputs;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         m_GlobalHook?.KeyDown -= M_GlobalHook_KeyEvent;
         m_GlobalHook?.KeyUp -= M_GlobalHook_KeyEvent;
+
+        HotkeyBlocker.Clear();
 
         if (OS)
             DisposeGlobalHook();
@@ -642,6 +663,24 @@ public static class InputsManager
 
         m_GlobalHook.Dispose();
         m_GlobalHook = null;
+    }
+
+    /// <summary>
+    /// Adds, updates, or removes a process-wide keyboard shortcut block.
+    /// Modifier side is intentionally ignored so firmware using either left or right modifiers is handled.
+    /// </summary>
+    public static void SetHotkeyBlocked(string name, Keys actionKey, KeyboardHotkeyModifiers modifiers, bool enabled)
+    {
+        HotkeyBlocker.SetHotkey(name, actionKey, modifiers, enabled);
+    }
+
+    private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
+    {
+        if (name != BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING)
+            return;
+
+        bool enabled = Convert.ToBoolean(value) && IDevice.GetCurrent() is ClawA1M;
+        SetHotkeyBlocked(MSI_CLAW_WIN_G_HOTKEY, Keys.G, KeyboardHotkeyModifiers.Windows, enabled);
     }
 
     private static void UpdateInputs(ControllerState controllerState, bool IsMapped)
