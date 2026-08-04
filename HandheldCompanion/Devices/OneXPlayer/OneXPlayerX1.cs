@@ -145,10 +145,6 @@ public class OneXPlayerX1 : OneXAOKZOE
         DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
     }
 
-    // The X1 family exposes M1/M2 back paddles as L4/R4 via the vendor HID monitor (see
-    // MapVendorButton). Declare them so they surface in the controller mapping UI.
-    public override IEnumerable<ButtonFlags> InjectedControllerButtons => [ButtonFlags.L4, ButtonFlags.R4];
-
     public override string GetGlyph(ButtonFlags button)
     {
         switch (button)
@@ -205,16 +201,6 @@ public class OneXPlayerX1 : OneXAOKZOE
 
         SetTurboButtonTakeover(true);
 
-        // start vendor HID listener immediately so devices already present get monitored
-        try
-        {
-            StartVendorHidListener();
-        }
-        catch (Exception ex)
-        {
-            LogManager.LogWarning("Failed to start vendor HID listener: {0}", ex.Message);
-        }
-
         return success;
     }
 
@@ -262,20 +248,10 @@ public class OneXPlayerX1 : OneXAOKZOE
 
     protected virtual void SetTurboButtonTakeover(bool enabled)
     {
-        // 0xEB is a live status/control register. Change only its 0x40 takeover bit.
-        byte oemState = EcReadByte(0xEB);
-        byte requestedState = enabled
-            ? (byte)(oemState | 0x40)
-            : (byte)(oemState & ~0x40);
-
-        EcWriteByte(0xEB, requestedState);
-        System.Threading.Thread.Sleep(50);
-
-        bool actualState = (EcReadByte(0xEB) & 0x40) != 0;
-        if (actualState == enabled)
+        byte value = enabled ? (byte)0x40 : (byte)0x00;
+        EcWriteByte(0xEB, value);
+        if (EcReadByte(0xEB) == value)
             LogManager.LogInformation("{0} {1} OEM button", enabled ? "Unlocked" : "Locked", ButtonFlags.OEM1);
-        else
-            LogManager.LogWarning("Failed to {0} {1} OEM button", enabled ? "unlock" : "lock", ButtonFlags.OEM1);
     }
 
     protected override void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
@@ -510,11 +486,10 @@ public class OneXPlayerX1 : OneXAOKZOE
             _vendorHidMonitor.ButtonChanged -= VendorHidMonitor_ButtonChanged;
             _vendorHidMonitor.Dispose();
             _vendorHidMonitor = null;
-            LogManager.LogWarning("Failed to open OneXPlayer vendor HID listener for {0}", ProductModel);
             return;
         }
 
-        LogManager.LogInformation("Started OneXPlayer vendor HID listener for {0}", ProductModel);
+        LogManager.LogInformation("Started OneXPlayer vendor HID listener");
     }
 
     protected virtual void StopVendorHidListener()

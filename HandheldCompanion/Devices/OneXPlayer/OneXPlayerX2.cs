@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
-using System.Management;
 using System.Numerics;
 using System.Threading;
 using HandheldCompanion.Commands.Functions.Windows;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
@@ -26,33 +26,11 @@ public class OneXPlayerX2 : OneXPlayerX1
         ProductIllustration = "device_onexplayer_x1";
         ProductModel = "ONEXPLAYERX2";
 
-        // ---------------------------------------------------------------------
-        // Power / thermal envelope
-        // ---------------------------------------------------------------------
-        // SoC: Intel Arc G3 Extreme ("Panther Lake", Core Ultra X7 358H class).
-        //   - Family 6, Model 204 (0xCC), Stepping 2. 14 cores (2 Cougar Cove P
-        //     + 8 Darkmont E + 4 Darkmont LP-E). Base 1.9 GHz, max turbo 4.7 GHz.
-        //   - iGPU: Intel Arc B390 (Xe3 / Battlemage), 12 Xe cores, up to ~2.3 GHz.
-        //   - Intel-rated Processor Base Power 15-25 W, Max Turbo Power up to 80 W,
-        //     configurable-TDP envelope 8-35 W. This is a 35 W-class handheld.
-        // Read live on this unit: MaxClockSpeed 1900 (base), GPU "Intel(R) Arc(TM)
-        //   B390 GPU", EC version 0.11.
-        // nTDP = { sustained (PL1), default, turbo (PL2) }.
         nTDP = new double[] { 25, 25, 35 };
-        // cTDP slider range exposed by the UI. Floor 3 W for a deep battery-saver setting; ceiling
-        //   35 W matches Intel's rated configurable-TDP cap and OneXPlayer's own OneXConsole, which
-        //   tops out at 35 W (the SoC's PL2/Max Turbo still spikes higher on its own).
         cTDP = new double[] { 3, 35 };
-        // iGPU (Arc B390) clock range in MHz.
         GfxClock = new double[] { 100, 2300 };
-        // Max CPU turbo clock in MHz.
         CpuClock = 4700;
 
-        // Intel power profiles (mirrors OneXPlayerX1Intel, tuned for Arc G3 Extreme).
-        // Reuses the existing generic Intel profile resource strings
-        // ("Efficiency" / "Performance" / "Super Performance") - no resx changes.
-
-        // Power Saving
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBattery, Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBatteryDesc)
         {
             Default = true,
@@ -62,12 +40,10 @@ public class OneXPlayerX2 : OneXPlayerX1
             Guid = BetterBatteryGuid,
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d },
-            // Intel Arc "Endurance Gaming" — dynamic GPU power/FPS cap (like the MSI Claw). MAX ~30fps.
             IntelEnduranceGamingEnabled = true,
             IntelEnduranceGamingPreset = (int)ctl_3d_endurance_gaming_mode_t.MAX
         });
 
-        // Performance
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBetterPerformance, Properties.Resources.PowerProfileOneXPlayerX1IntelBetterPerformanceDesc)
         {
             Default = true,
@@ -81,7 +57,6 @@ public class OneXPlayerX2 : OneXPlayerX1
             IntelEnduranceGamingPreset = (int)ctl_3d_endurance_gaming_mode_t.PERFORMANCE
         });
 
-        // Max Performance
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBestPerformance, Properties.Resources.PowerProfileOneXPlayerX1IntelBestPerformanceDesc)
         {
             Default = true,
@@ -97,45 +72,59 @@ public class OneXPlayerX2 : OneXPlayerX1
             IntelEnduranceGamingPreset = (int)ctl_3d_endurance_gaming_mode_t.PERFORMANCE,
         });
 
-        // X2 shares the X1's controllers, but needs the Gen2 intercept-enable (sent after a delay)
-        // to surface the M1/M2 back paddles on the vendor HID channel.
         VendorHidInitProfile = OxpHidInitProfile.X2;
 
-        // Turbo emits Ctrl+Win+Alt, but its modifier order and Ctrl side vary by
-        // firmware. InputsManager recognizes that set order-independently and emits
-        // OEM1; keep these raw variants silenced and expose OEM1 with an empty chord.
+        // Suppress both firmware chord variants; OEM1 is delivered over vendor HID.
         OEMChords.RemoveAll(c => c.state.Buttons.Contains(ButtonFlags.OEM1));
         OEMChords.Add(new KeyboardChord("Turbo",
             [KeyCode.RControlKey, KeyCode.LWin, KeyCode.LMenu],
             [KeyCode.LMenu, KeyCode.LWin, KeyCode.RControlKey],
-            true, ButtonFlags.OEM1, flushInterval: 100));
+            false, ButtonFlags.OEM1, flushInterval: 100, orderIndependent: true));
         OEMChords.Add(new KeyboardChord("Turbo",
             [KeyCode.LControlKey, KeyCode.LWin, KeyCode.LMenu],
             [KeyCode.LMenu, KeyCode.LWin, KeyCode.LControlKey],
-            true, ButtonFlags.OEM1, flushInterval: 100));
-        OEMChords.Add(new KeyboardChord("Turbo", null, null, false, ButtonFlags.OEM1));
+            false, ButtonFlags.OEM1, flushInterval: 100, orderIndependent: true));
 
-        // The Home button (vendor id 0x21 -> OEM3) fires via the vendor HID monitor and sends no
-        // keyboard combo, so declare it with an empty chord purely so it appears in the OEM mapping UI.
+        // Vendor-only buttons use empty chords so they remain visible in the mapping UI.
         OEMChords.Add(new KeyboardChord("Home", null, null, false, ButtonFlags.OEM3));
 
-        // After the EC take-over the KB button emits the firmware combo LCtrl+LWin+RCtrl+O, which
-        // triggers the Windows on-screen keyboard (and the Win flickers Start). OEM2 itself is
-        // delivered by the vendor HID (0x24), so replace the inherited X1 chord (wrong keys for the
-        // X2) with a SILENCED chord matching the real combo to swallow the OS shortcut, and
-        // re-declare OEM2 with an empty chord so it still shows as mappable.
+        // Suppress the X2 keyboard shortcut; OEM2 is delivered over vendor HID.
         OEMChords.RemoveAll(c => c.state.Buttons.Contains(ButtonFlags.OEM2));
-        // Larger flushInterval keeps the buffer captured longer so rapid/double presses (whose
-        // sequences overlap) stay suppressed instead of leaking Win+O to the OS.
         OEMChords.Add(new KeyboardChord("Keyboard",
             [KeyCode.LControlKey, KeyCode.LWin, KeyCode.RControlKey, KeyCode.O],
             [KeyCode.LControlKey, KeyCode.LWin, KeyCode.RControlKey, KeyCode.O],
             true, ButtonFlags.OEM2, flushInterval: 300));
         OEMChords.Add(new KeyboardChord("Keyboard", null, null, false, ButtonFlags.OEM2));
 
-        // OEM2 is delivered independently by the vendor HID and must remain available
-        // for user mappings. Do not inherit the X1's default on-screen-keyboard action.
+        // X2 OEM2 is remappable and has no default keyboard action.
         DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = false;
+    }
+
+    public override IController? CreateController(PnPDetails details)
+    {
+        // The integrated pad uses the standard Xbox 360 identity and is not marked internal.
+        if (details.GetVendorID() == "0x045E" && details.GetProductID() == "0x028E")
+            return new OneXPlayerX2Controller(details);
+
+        return null;
+    }
+
+    public override bool Open()
+    {
+        bool success = base.Open();
+        if (success)
+        {
+            try
+            {
+                StartVendorHidListener();
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to start X2 vendor HID listener: {0}", ex.Message);
+            }
+        }
+
+        return success;
     }
 
     protected override ButtonFlags MapVendorButton(byte buttonId)
@@ -159,23 +148,16 @@ public class OneXPlayerX2 : OneXPlayerX1
         // OneXConsole had initialized it.
         try
         {
-            using ManagementObjectSearcher searcher = new(
-                "root\\WMI", "SELECT * FROM SuRwECRegInterface");
-            using ManagementObjectCollection instances = searcher.Get();
-            using ManagementObject? instance = instances.Cast<ManagementObject>().FirstOrDefault();
-
-            if (instance is null)
-                throw new InvalidOperationException("SuRwECRegInterface is unavailable");
-
-            byte currentValue = ReadWmiEcByte(instance, TurboTakeoverRegister);
+            using OneXPlayerWmiEc ec = new();
+            byte currentValue = ec.ReadByte(TurboTakeoverRegister);
             byte requestedValue = enabled
                 ? (byte)(currentValue | TurboTakeoverMask)
                 : (byte)(currentValue & ~TurboTakeoverMask);
 
-            WriteWmiEcByte(instance, TurboTakeoverRegister, requestedValue);
+            ec.WriteByte(TurboTakeoverRegister, requestedValue);
             Thread.Sleep(50);
 
-            byte actualValue = ReadWmiEcByte(instance, TurboTakeoverRegister);
+            byte actualValue = ec.ReadByte(TurboTakeoverRegister);
             if (((actualValue & TurboTakeoverMask) != 0) != enabled)
                 throw new InvalidOperationException(
                     $"takeover readback was 0x{actualValue:X2}, expected bit 0x{TurboTakeoverMask:X2} " +
@@ -193,56 +175,11 @@ public class OneXPlayerX2 : OneXPlayerX1
         }
     }
 
-    private static byte ReadWmiEcByte(ManagementObject instance, ushort register)
-    {
-        byte group = (byte)(register >> 8);
-        byte offset = (byte)(register & 0xFF);
-        object?[] arguments = [group | ((uint)offset << 8), null];
-        instance.InvokeMethod("ReadECReg", arguments);
-
-        if (arguments[1] is not string response)
-            throw new InvalidOperationException("ReadECReg returned no response");
-
-        string[] fields = response.Split(',', StringSplitOptions.TrimEntries);
-        if (fields.Length < 2 ||
-            !byte.TryParse(fields[0].Replace("0x", string.Empty),
-                System.Globalization.NumberStyles.HexNumber, null, out byte status) ||
-            !byte.TryParse(fields[1].Replace("0x", string.Empty),
-                System.Globalization.NumberStyles.HexNumber, null, out byte value) ||
-            status != 0)
-        {
-            throw new InvalidOperationException($"ReadECReg failed: {response}");
-        }
-
-        return value;
-    }
-
-    private static void WriteWmiEcByte(ManagementObject instance, ushort register, byte value)
-    {
-        byte group = (byte)(register >> 8);
-        byte offset = (byte)(register & 0xFF);
-        uint groupOffsetValue = group | ((uint)offset << 8) | ((uint)value << 16);
-
-        // The positional overload avoids a System.Management NotFound error when
-        // resolving this firmware provider's method parameter class.
-        object?[] arguments = [groupOffsetValue, null];
-        instance.InvokeMethod("WriteECReg", arguments);
-
-        if (arguments[1] is string response && !response.StartsWith("0x00", StringComparison.OrdinalIgnoreCase))
-            throw new InvalidOperationException($"WriteECReg failed: {response}");
-    }
-
     protected override void VendorHidMonitor_ButtonChanged(byte buttonId, bool pressed)
     {
-        ButtonFlags button = buttonId switch
-        {
-            0x20 => ButtonFlags.OEM1,
-            0x21 => ButtonFlags.OEM3,
-            0x24 => ButtonFlags.OEM2,
-            _ => ButtonFlags.None,
-        };
+        ButtonFlags button = MapVendorButton(buttonId);
 
-        if (button != ButtonFlags.None)
+        if (button is ButtonFlags.OEM1 or ButtonFlags.OEM2 or ButtonFlags.OEM3)
         {
             // These vendor-HID press/release reports can be shorter than an input
             // update. Emit a deterministic pulse for reliable mappings.
@@ -251,7 +188,6 @@ public class OneXPlayerX2 : OneXPlayerX1
             return;
         }
 
-        // Preserve the PR's original behavior for the paddles and unknown IDs.
         base.VendorHidMonitor_ButtonChanged(buttonId, pressed);
     }
 
@@ -270,26 +206,9 @@ public class OneXPlayerX2 : OneXPlayerX1
         return base.GetGlyph(button);
     }
 
-    // Battery protection (charge limit / bypass charging) is inherited from the X1
-    // family, which writes to EC 0x4A3 (limit) / 0x4A4 (bypass) and gates on the
-    // reported EC version. This X2 unit reports a *different* EC firmware line
-    // (major 0 / minor 11) than the X1 Intel (which gates on minor >= 67), so the
-    // X1 threshold is meaningless here and the 0x4A3/0x4A4 addresses are UNVERIFIED
-    // on the X2's EC. To avoid writing to an unknown EC register, keep battery
-    // protection disabled (base returns false) until the addresses are confirmed on
-    // real X2 hardware. Flip this to a proper version gate once verified.
+    // X1 battery-protection registers are not verified on X2 hardware.
     public override bool IsBatteryProtectionSupported(int majorVersion, int minorVersion)
     {
         return false;
     }
-
-    // Fan control: ECDetails (AddressFanControl=0x44A, AddressFanDuty=0x44B,
-    // AddressStatusCommandPort=0x4E, AddressDataPort=0x4F, FanValueMin=0,
-    // FanValueMax=184) are inherited from OneXPlayerX1. These are the standard OXP
-    // EC fan registers and are expected to match on the X2 (same ONE-NETBOOK EC
-    // family), but they have NOT been read-back verified on this X2 unit and need
-    // real-world confirmation before relying on manual fan curves.
-    //
-    // Gyro/accelerometer matrices and LED presets/serial-LED protocol are also
-    // inherited from OneXPlayerX1 and left unchanged (no evidence they differ on X2).
 }

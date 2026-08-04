@@ -38,6 +38,7 @@ internal sealed class OneXPlayerOxpHidMonitor : IDisposable
     private readonly bool[] _buttonStates = new bool[0x25];
     private CancellationTokenSource? _cancellationTokenSource;
     private Task? _readTask;
+    private Task? _initializationTask;
     private OxpHidInitProfile _initProfile = OxpHidInitProfile.None;
     private bool _reinitializeRequested;
 
@@ -47,9 +48,7 @@ internal sealed class OneXPlayerOxpHidMonitor : IDisposable
 
     public bool Open(OxpHidInitProfile initProfile)
     {
-        // Try each known vendor control chip in turn, selecting its vendor interface (MI_02).
-        // FE00 is the classic OneXPlayer chip (X1 and earlier); 1305 is the X2's second chip.
-        ushort[] candidatePids = { PID, PID_X2 };
+        ushort[] candidatePids = initProfile == OxpHidInitProfile.X2 ? [PID, PID_X2] : [PID];
 
         foreach (ushort pid in candidatePids)
         {
@@ -97,10 +96,10 @@ internal sealed class OneXPlayerOxpHidMonitor : IDisposable
 
                             LogManager.LogInformation("Opened OneXPlayer vendor interface VID=0x{0:X4} PID=0x{1:X4} MI_{2:X2}", vid, pid, InterfaceNumber);
 
-                            InitializeProfile();
-
-                            _cancellationTokenSource = new CancellationTokenSource();
-                            _readTask = Task.Run(() => ReadLoop(_cancellationTokenSource.Token));
+                            CancellationTokenSource cancellation = new();
+                            _cancellationTokenSource = cancellation;
+                            InitializeProfile(cancellation.Token);
+                            _readTask = Task.Run(() => ReadLoop(cancellation.Token));
                             return true;
                         }
 
@@ -125,21 +124,16 @@ internal sealed class OneXPlayerOxpHidMonitor : IDisposable
 
     public void Close()
     {
-        if (_cancellationTokenSource is not null)
-        {
-            _cancellationTokenSource.Cancel();
-            _cancellationTokenSource.Dispose();
-            _cancellationTokenSource = null;
-        }
+        CancellationTokenSource? cancellation = _cancellationTokenSource;
+        cancellation?.Cancel();
 
-        try
-        {
-            _readTask?.Wait(250);
-        }
-        catch
-        { }
+        WaitForTask(_readTask);
+        WaitForTask(_initializationTask);
 
         _readTask = null;
+        _initializationTask = null;
+        cancellation?.Dispose();
+        _cancellationTokenSource = null;
         _reinitializeRequested = false;
         _initProfile = OxpHidInitProfile.None;
 
@@ -163,6 +157,12 @@ internal sealed class OneXPlayerOxpHidMonitor : IDisposable
     public void Dispose()
     {
         Close();
+    }
+
+    private static void WaitForTask(Task? task)
+    {
+        try { task?.Wait(250); }
+        catch { }
     }
 
     private void ReadLoop(CancellationToken cancellationToken)
@@ -191,7 +191,7 @@ internal sealed class OneXPlayerOxpHidMonitor : IDisposable
 
             if (_reinitializeRequested)
             {
-                InitializeProfile();
+                InitializeProfile(cancellationToken);
                 _reinitializeRequested = false;
             }
 
@@ -235,7 +235,7 @@ internal sealed class OneXPlayerOxpHidMonitor : IDisposable
             _reinitializeRequested = true;
     }
 
-    private void InitializeProfile()
+    private void InitializeProfile(CancellationToken cancellationToken)
     {
         switch (_initProfile)
         {
@@ -261,20 +261,32 @@ internal sealed class OneXPlayerOxpHidMonitor : IDisposable
                 WriteCommand(0xB2, [0x00, 0x01, 0x02]);
                 break;
             case OxpHidInitProfile.X2:
-                // X2 shares the X1's controllers but needs the Gen2 intercept-enable to surface the
-                // M1/M2 paddles (0x22/0x23) on the vendor channel while keeping the XInput gamepad
-                // alive. The 0xB4 remap is accepted immediately, but the firmware silently ignores
-                // the 0xB2 mode command within ~4s of device open, so send it after a delay.
-                WriteCommand(0xB4, BuildRemapPage1(0x01));
-                Thread.Sleep(50);
-                WriteCommand(0xB4, BuildRemapPage2(0x01, 0x67, 0x66));
-                Task.Run(async () =>
-                {
-                    await Task.Delay(4000);
-                    try { WriteCommand(0xB2, [0x01, 0x1F, 0x40, 0x03, 0x02, 0x03, 0x00, 0x00, 0x00, 0x01]); }
-                    catch (Exception ex) { LogManager.LogWarning("X2 delayed intercept-enable failed: {0}", ex.Message); }
-                });
+                InitializeX2(cancellationToken);
                 break;
+        }
+    }
+
+    private void InitializeX2(CancellationToken cancellationToken)
+    {
+        WriteCommand(0xB4, BuildRemapPage1(0x01));
+        Thread.Sleep(50);
+        WriteCommand(0xB4, BuildRemapPage2(0x01, 0x67, 0x66));
+        _initializationTask = EnableX2InterceptAsync(cancellationToken);
+    }
+
+    private async Task EnableX2InterceptAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await Task.Delay(4000, cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            WriteCommand(0xB2, [0x01, 0x1F, 0x40, 0x03, 0x02, 0x03, 0x00, 0x00, 0x00, 0x01]);
+        }
+        catch (OperationCanceledException)
+        { }
+        catch (Exception ex)
+        {
+            LogManager.LogWarning("X2 intercept initialization failed: {0}", ex.Message);
         }
     }
 

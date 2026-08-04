@@ -464,10 +464,9 @@ public abstract class IDevice
 
     public IEnumerable<ButtonFlags> OEMButtons => OEMChords.Where(chord => !chord.silenced).SelectMany(chord => chord.state.Buttons).Distinct();
 
-    // Controller buttons (e.g. L4/R4 back paddles) this device injects via vendor HID rather than
-    // through the XInput/SDL controller. Merged into the active controller's SourceButtons so they
-    // appear in the mapping UI (BACKGRIPS section).
-    public virtual IEnumerable<ButtonFlags> InjectedControllerButtons => [];
+    // Lets devices whose integrated controller has no unique VID/PID select an established
+    // controller implementation without adding model checks to ControllerManager.
+    public virtual IController? CreateController(PnPDetails details) => null;
 
     public virtual bool IsSupported => true;
 

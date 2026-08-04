@@ -601,8 +601,7 @@
                             d:Visibility="Visible"
                             Description="{l:Static resx:Resources.ProfilesPage_RSRDesc}"
                             Header="{l:Static resx:Resources.ProfilesPage_RSR}"
-                            IsEnabled="{Binding HasRSRSupport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            Visibility="{Binding IsAMDGPU, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            IsEnabled="{Binding HasRSRSupport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
 
                             <ui:ToggleSwitch Name="RSRToggle" IsOn="{Binding RSREnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </ui:SettingsCard>

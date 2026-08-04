@@ -10,7 +10,6 @@ using PrecisionTiming;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsInput.Events;
 using ButtonState = HandheldCompanion.Inputs.ButtonState;
@@ -71,8 +70,6 @@ public static class InputsManager
     private static readonly Dictionary<bool, short> KeyIndexHotkey = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, bool> KeyUsed = new() { { true, false }, { false, false } };
     private static readonly HashSet<Keys> PhysicalModifiersDown = new();
-    private static bool X2TurboChordActive;
-    private static bool X2KeyboardChordActive;
     private static bool IsHandlingAltGrRelease;
 
     public static bool IsInitialized;
@@ -265,71 +262,6 @@ public static class InputsManager
 
         KeyCode hookKey = (KeyCode)args.KeyValue;
 
-        // X2 Turbo firmware emits Ctrl+Win+Alt, with order and Ctrl side varying
-        // between revisions. Detect the physical modifier set directly and produce
-        // a stable OEM1 pulse instead of relying on the sequential chord matcher.
-        if (IDevice.GetCurrent() is OneXPlayerX2)
-        {
-            bool isTurboModifier = args.KeyCode is Keys.LControlKey or Keys.RControlKey or
-                Keys.ControlKey or Keys.LWin or Keys.RWin or Keys.LMenu or Keys.RMenu or Keys.Menu;
-            bool turboChordDown =
-                (PhysicalModifiersDown.Contains(Keys.LControlKey) ||
-                 PhysicalModifiersDown.Contains(Keys.RControlKey) ||
-                 PhysicalModifiersDown.Contains(Keys.ControlKey)) &&
-                (PhysicalModifiersDown.Contains(Keys.LWin) ||
-                 PhysicalModifiersDown.Contains(Keys.RWin)) &&
-                (PhysicalModifiersDown.Contains(Keys.LMenu) ||
-                 PhysicalModifiersDown.Contains(Keys.RMenu) ||
-                 PhysicalModifiersDown.Contains(Keys.Menu));
-
-            if (fromPhysicalKeyboard && args.IsKeyDown && turboChordDown && isTurboModifier)
-            {
-                args.SuppressKeyPress = true;
-
-                if (!X2TurboChordActive)
-                {
-                    X2TurboChordActive = true;
-
-                    ButtonState turboState = new();
-                    turboState[ButtonFlags.OEM1] = true;
-                    IController? controller = ControllerManager.GetTarget();
-                    controller?.InjectState(turboState, true, false);
-
-                    _ = Task.Run(async () =>
-                    {
-                        await Task.Delay(100).ConfigureAwait(false);
-                        controller?.InjectState(turboState, false, true);
-                    });
-                }
-            }
-            else if (!turboChordDown)
-            {
-                X2TurboChordActive = false;
-            }
-        }
-
-        // X2's physical KB button emits LCtrl+Win+RCtrl+O. Its modifiers are
-        // released before O, so modifier-state matching alone misses O-up and can
-        // still let Windows open the soft keyboard. Latch the distinctive two-Ctrl
-        // chord on O-down and suppress both halves; OEM2 arrives independently via HID.
-        if (fromPhysicalKeyboard && hookKey == KeyCode.O && IDevice.GetCurrent() is OneXPlayerX2)
-        {
-            if (args.IsKeyDown &&
-                PhysicalModifiersDown.Contains(Keys.LControlKey) &&
-                PhysicalModifiersDown.Contains(Keys.RControlKey) &&
-                (PhysicalModifiersDown.Contains(Keys.LWin) || PhysicalModifiersDown.Contains(Keys.RWin)))
-            {
-                X2KeyboardChordActive = true;
-            }
-
-            if (X2KeyboardChordActive)
-            {
-                args.SuppressKeyPress = true;
-                if (args.IsKeyUp)
-                    X2KeyboardChordActive = false;
-            }
-        }
-
         // pause buffer flush timer
         BufferFlushTimer.Stop();
 
@@ -427,8 +359,10 @@ public static class InputsManager
                 if (KeyIndexOEM[args.IsKeyDown] >= chord.Count)
                     continue;
 
-                KeyCode chordKey = chord[KeyIndexOEM[args.IsKeyDown]];
-                if (chordKey == hookKey)
+                bool keyMatches = pair.orderIndependent
+                    ? chord.Contains(hookKey)
+                    : chord[KeyIndexOEM[args.IsKeyDown]] == hookKey;
+                if (keyMatches)
                 {
                     KeyUsed[args.IsKeyDown] = true;
                     KeyIndexOEM[args.IsKeyDown]++;
@@ -818,8 +752,6 @@ public static class InputsManager
             case Keys.LShiftKey:
             case Keys.RShiftKey:
             case Keys.ShiftKey:
-            case Keys.LWin:
-            case Keys.RWin:
                 return true;
 
             default:

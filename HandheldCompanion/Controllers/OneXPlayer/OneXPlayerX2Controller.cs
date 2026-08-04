@@ -20,10 +20,10 @@ public class OneXPlayerX2Controller : XInputController
     {
         base.InitializeInputOutput();
 
-        // The M1/M2 back paddles (L4/R4) are contributed by the device itself via
-        // IDevice.InjectedControllerButtons (the single source of truth for injected buttons);
-        // this controller only supplies their names/glyphs. The Home button is exposed as OEM3 via
-        // the device vendor HID, so drop the duplicate Guide/Special entry (same physical button).
+        SourceButtons.Add(ButtonFlags.L4);
+        SourceButtons.Add(ButtonFlags.R4);
+
+        // Home is exposed as OEM3 by the vendor interface.
         SourceButtons.Remove(ButtonFlags.Special);
     }
 }

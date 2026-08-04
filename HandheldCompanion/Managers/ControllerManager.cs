@@ -971,13 +971,7 @@ public static class ControllerManager
                     {
                         try
                         {
-                            // The built-in ONEXPLAYER X2 gamepad presents as a generic Xbox 360 controller
-                            // (no unique VID/PID, and it enumerates as external), so it can't be told apart
-                            // from an external Xbox pad pre-creation; wrap it as the X2 controller so its
-                            // device-injected M1/M2 paddles get proper source buttons/labels.
-                            controller = IDevice.GetCurrent() is OneXPlayerX2
-                                ? new OneXPlayerX2Controller(details)
-                                : new XInputController(details);
+                            controller = IDevice.GetCurrent().CreateController(details) ?? new XInputController(details);
                         }
                         catch
                         {
@@ -2297,11 +2291,6 @@ public static class ControllerManager
 
             // update target controller
             targetController = controller;
-
-            // merge device-injected buttons (e.g. OneXPlayer L4/R4 paddles) into the controller's
-            // mappable set so they appear in the mapping UI (BACKGRIPS section)
-            targetController.AddSourceButtons(IDevice.GetCurrent().InjectedControllerButtons);
-
             targetController.Plug();
 
             Color _systemAccent = App.uiSettings.GetColorValue(UIColorType.AccentDark1);
