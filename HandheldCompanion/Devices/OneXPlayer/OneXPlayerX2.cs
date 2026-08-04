@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Management;
 using System.Numerics;
+using System.Threading;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -166,19 +167,19 @@ public class OneXPlayerX2 : OneXPlayerX1
             if (instance is null)
                 throw new InvalidOperationException("SuRwECRegInterface is unavailable");
 
-            // SuRwECRegInterface packs its fields little-endian: group in bits
-            // 0..7, offset in bits 8..15, and value in bits 16..23. Thus the
-            // X2 takeover write is 0x40EB04 (value 0x40, offset 0xEB, group 4).
-            byte value = enabled ? TurboTakeoverMask : (byte)0x00;
-            byte group = (byte)(TurboTakeoverRegister >> 8);
-            byte offset = (byte)(TurboTakeoverRegister & 0xFF);
-            uint groupOffsetValue = group | ((uint)offset << 8) | ((uint)value << 16);
-            // Use the positional overload. The .NET 10 System.Management package
-            // throws NotFound while resolving this firmware provider's method
-            // parameter class, even though the method itself is callable. The
-            // positional call matches the provider's two parameters directly.
-            object?[] arguments = [groupOffsetValue, null];
-            instance.InvokeMethod("WriteECReg", arguments);
+            byte currentValue = ReadWmiEcByte(instance, TurboTakeoverRegister);
+            byte requestedValue = enabled
+                ? (byte)(currentValue | TurboTakeoverMask)
+                : (byte)(currentValue & ~TurboTakeoverMask);
+
+            WriteWmiEcByte(instance, TurboTakeoverRegister, requestedValue);
+            Thread.Sleep(50);
+
+            byte actualValue = ReadWmiEcByte(instance, TurboTakeoverRegister);
+            if (((actualValue & TurboTakeoverMask) != 0) != enabled)
+                throw new InvalidOperationException(
+                    $"takeover readback was 0x{actualValue:X2}, expected bit 0x{TurboTakeoverMask:X2} " +
+                    $"to be {(enabled ? "set" : "clear")}");
 
             LogManager.LogInformation(
                 "{0} {1} OEM button through X2 WMI EC interface",
@@ -190,6 +191,45 @@ public class OneXPlayerX2 : OneXPlayerX1
                 "Failed to {0} {1} OEM button through X2 WMI EC interface: {2}",
                 enabled ? "unlock" : "lock", ButtonFlags.OEM1, ex.Message);
         }
+    }
+
+    private static byte ReadWmiEcByte(ManagementObject instance, ushort register)
+    {
+        byte group = (byte)(register >> 8);
+        byte offset = (byte)(register & 0xFF);
+        object?[] arguments = [group | ((uint)offset << 8), null];
+        instance.InvokeMethod("ReadECReg", arguments);
+
+        if (arguments[1] is not string response)
+            throw new InvalidOperationException("ReadECReg returned no response");
+
+        string[] fields = response.Split(',', StringSplitOptions.TrimEntries);
+        if (fields.Length < 2 ||
+            !byte.TryParse(fields[0].Replace("0x", string.Empty),
+                System.Globalization.NumberStyles.HexNumber, null, out byte status) ||
+            !byte.TryParse(fields[1].Replace("0x", string.Empty),
+                System.Globalization.NumberStyles.HexNumber, null, out byte value) ||
+            status != 0)
+        {
+            throw new InvalidOperationException($"ReadECReg failed: {response}");
+        }
+
+        return value;
+    }
+
+    private static void WriteWmiEcByte(ManagementObject instance, ushort register, byte value)
+    {
+        byte group = (byte)(register >> 8);
+        byte offset = (byte)(register & 0xFF);
+        uint groupOffsetValue = group | ((uint)offset << 8) | ((uint)value << 16);
+
+        // The positional overload avoids a System.Management NotFound error when
+        // resolving this firmware provider's method parameter class.
+        object?[] arguments = [groupOffsetValue, null];
+        instance.InvokeMethod("WriteECReg", arguments);
+
+        if (arguments[1] is string response && !response.StartsWith("0x00", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException($"WriteECReg failed: {response}");
     }
 
     protected override void VendorHidMonitor_ButtonChanged(byte buttonId, bool pressed)

@@ -270,6 +270,8 @@ public static class InputsManager
         // a stable OEM1 pulse instead of relying on the sequential chord matcher.
         if (IDevice.GetCurrent() is OneXPlayerX2)
         {
+            bool isTurboModifier = args.KeyCode is Keys.LControlKey or Keys.RControlKey or
+                Keys.ControlKey or Keys.LWin or Keys.RWin or Keys.LMenu or Keys.RMenu or Keys.Menu;
             bool turboChordDown =
                 (PhysicalModifiersDown.Contains(Keys.LControlKey) ||
                  PhysicalModifiersDown.Contains(Keys.RControlKey) ||
@@ -280,21 +282,25 @@ public static class InputsManager
                  PhysicalModifiersDown.Contains(Keys.RMenu) ||
                  PhysicalModifiersDown.Contains(Keys.Menu));
 
-            if (args.IsKeyDown && turboChordDown && !X2TurboChordActive)
+            if (fromPhysicalKeyboard && args.IsKeyDown && turboChordDown && isTurboModifier)
             {
-                X2TurboChordActive = true;
                 args.SuppressKeyPress = true;
 
-                ButtonState turboState = new();
-                turboState[ButtonFlags.OEM1] = true;
-                IController? controller = ControllerManager.GetTarget();
-                controller?.InjectState(turboState, true, false);
-
-                _ = Task.Run(async () =>
+                if (!X2TurboChordActive)
                 {
-                    await Task.Delay(100).ConfigureAwait(false);
-                    controller?.InjectState(turboState, false, true);
-                });
+                    X2TurboChordActive = true;
+
+                    ButtonState turboState = new();
+                    turboState[ButtonFlags.OEM1] = true;
+                    IController? controller = ControllerManager.GetTarget();
+                    controller?.InjectState(turboState, true, false);
+
+                    _ = Task.Run(async () =>
+                    {
+                        await Task.Delay(100).ConfigureAwait(false);
+                        controller?.InjectState(turboState, false, true);
+                    });
+                }
             }
             else if (!turboChordDown)
             {
