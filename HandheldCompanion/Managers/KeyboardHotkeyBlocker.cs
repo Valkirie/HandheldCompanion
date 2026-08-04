@@ -1,4 +1,5 @@
 using Gma.System.MouseKeyHook;
+using HandheldCompanion.Shared;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -31,6 +32,7 @@ internal sealed class KeyboardHotkeyBlocker
     private const uint MAPVK_VK_TO_VSC = 0;
     private const ushort VK_DUMMY = 0x00FF;
     private const long INJECTED_EVENT_TIMEOUT_MS = 1000;
+    private const int KEY_PRESSED = 0x8000;
 
     private static readonly UIntPtr InjectedMarker = new(0x4843424Cu);
 
@@ -68,53 +70,99 @@ internal sealed class KeyboardHotkeyBlocker
 
     public KeyboardHotkeyBlockResult Process(KeyEventArgsExt args, bool injected)
     {
+        PendingInjection? pending;
+        KeyboardHotkeyBlockResult result;
+
         lock (updateLock)
+            result = ProcessLocked(args, injected, out pending);
+
+        // dispatch off the lock, SendInput can block and we're inside the hook callback
+        if (pending is not null)
+            DispatchPendingInjection(pending.Value);
+
+        return result;
+    }
+
+    private KeyboardHotkeyBlockResult ProcessLocked(KeyEventArgsExt args, bool injected, out PendingInjection? pending)
+    {
+        pending = null;
+
+        DiscardExpiredInjectedEvents();
+
+        if (injected)
         {
-            DiscardExpiredInjectedEvents();
-
-            if (injected)
-            {
-                if (TryConsumeExpectedInjectedEvent(args))
-                    return KeyboardHotkeyBlockResult.BypassApplication;
-
-                return KeyboardHotkeyBlockResult.None;
-            }
-
-            if (args.IsKeyDown)
-                physicalKeysDown.Add(args.KeyCode);
-            else if (args.IsKeyUp)
-                physicalKeysDown.Remove(args.KeyCode);
-            else
-                return KeyboardHotkeyBlockResult.None;
-
-            if (activeHotkey is not null)
-            {
-                bool suppress = args.KeyCode == activeHotkey.ActionKey || releasedModifierKeys.Contains(args.KeyCode);
-
-                if (args.IsKeyUp)
-                    releasedModifierKeys.Remove(args.KeyCode);
-
-                if (!physicalKeysDown.Contains(activeHotkey.ActionKey) && !AreModifiersDown(activeHotkey.Modifiers))
-                    activeHotkey = null;
-
-                if (suppress)
-                    return KeyboardHotkeyBlockResult.Suppress;
-            }
-
-            if (!args.IsKeyDown)
-                return KeyboardHotkeyBlockResult.None;
-
-            foreach (BlockedHotkey hotkey in hotkeys.Values)
-            {
-                if (hotkey.ActionKey != args.KeyCode || !AreModifiersDown(hotkey.Modifiers))
-                    continue;
-
-                activeHotkey = hotkey;
-                ReleasePressedModifiers(hotkey.Modifiers);
-                return KeyboardHotkeyBlockResult.Suppress;
-            }
+            if (TryConsumeExpectedInjectedEvent(args))
+                return KeyboardHotkeyBlockResult.BypassApplication;
 
             return KeyboardHotkeyBlockResult.None;
+        }
+
+        if (args.IsKeyDown)
+            physicalKeysDown.Add(args.KeyCode);
+        else if (args.IsKeyUp)
+            physicalKeysDown.Remove(args.KeyCode);
+        else
+            return KeyboardHotkeyBlockResult.None;
+
+        if (hotkeys.Count == 0 && activeHotkey is null)
+            return KeyboardHotkeyBlockResult.None;
+
+        PruneStaleKeys(args.KeyCode);
+
+        if (activeHotkey is not null)
+        {
+            bool suppress = args.KeyCode == activeHotkey.ActionKey || releasedModifierKeys.Contains(args.KeyCode);
+
+            if (args.IsKeyUp)
+                releasedModifierKeys.Remove(args.KeyCode);
+
+            if (!physicalKeysDown.Contains(activeHotkey.ActionKey) && !AreModifiersDown(activeHotkey.Modifiers))
+                activeHotkey = null;
+
+            if (suppress)
+                return KeyboardHotkeyBlockResult.Suppress;
+        }
+
+        if (!args.IsKeyDown)
+            return KeyboardHotkeyBlockResult.None;
+
+        foreach (BlockedHotkey hotkey in hotkeys.Values)
+        {
+            if (hotkey.ActionKey != args.KeyCode || !AreModifiersDown(hotkey.Modifiers))
+                continue;
+
+            activeHotkey = hotkey;
+            pending = BuildModifierRelease(hotkey);
+            return KeyboardHotkeyBlockResult.Suppress;
+        }
+
+        return KeyboardHotkeyBlockResult.None;
+    }
+
+    /// <summary>
+    /// Drops keys the hardware no longer reports as held. Hooks receive nothing across the secure
+    /// desktop, so a missed KeyUp would leave a modifier stuck down forever.
+    /// </summary>
+    private void PruneStaleKeys(Keys observedKey)
+    {
+        List<Keys>? stale = null;
+
+        foreach (Keys key in physicalKeysDown)
+        {
+            if (key == observedKey || (GetAsyncKeyState((int)key) & KEY_PRESSED) != 0)
+                continue;
+
+            stale ??= [];
+            stale.Add(key);
+        }
+
+        if (stale is null)
+            return;
+
+        foreach (Keys key in stale)
+        {
+            physicalKeysDown.Remove(key);
+            releasedModifierKeys.Remove(key);
         }
     }
 
@@ -160,40 +208,63 @@ internal sealed class KeyboardHotkeyBlocker
         return false;
     }
 
-    private void ReleasePressedModifiers(KeyboardHotkeyModifiers modifiers)
+    private PendingInjection? BuildModifierRelease(BlockedHotkey hotkey)
     {
         List<Keys> modifiersToRelease = [];
 
-        AddPressedModifiers(modifiersToRelease, modifiers, KeyboardHotkeyModifiers.Control, ControlKeys);
-        AddPressedModifiers(modifiersToRelease, modifiers, KeyboardHotkeyModifiers.Alt, AltKeys);
-        AddPressedModifiers(modifiersToRelease, modifiers, KeyboardHotkeyModifiers.Shift, ShiftKeys);
-        AddPressedModifiers(modifiersToRelease, modifiers, KeyboardHotkeyModifiers.Windows, WindowsKeys);
+        AddPressedModifiers(modifiersToRelease, hotkey.Modifiers, KeyboardHotkeyModifiers.Control, ControlKeys);
+        AddPressedModifiers(modifiersToRelease, hotkey.Modifiers, KeyboardHotkeyModifiers.Alt, AltKeys);
+        AddPressedModifiers(modifiersToRelease, hotkey.Modifiers, KeyboardHotkeyModifiers.Shift, ShiftKeys);
+        AddPressedModifiers(modifiersToRelease, hotkey.Modifiers, KeyboardHotkeyModifiers.Windows, WindowsKeys);
 
         if (modifiersToRelease.Count == 0)
-            return;
+            return null;
 
         // Releasing Win or Alt without another key would open Start or activate the menu bar.
         // Send a harmless key first, then release the modifiers Windows already observed.
-        List<KeyboardInput> inputs = new(modifiersToRelease.Count + 2)
+        bool needsDummy = hotkey.Modifiers.HasFlag(KeyboardHotkeyModifiers.Windows)
+            || hotkey.Modifiers.HasFlag(KeyboardHotkeyModifiers.Alt);
+
+        List<KeyboardInput> inputs = new(modifiersToRelease.Count + 2);
+
+        if (needsDummy)
         {
-            CreateKeyInput(VK_DUMMY, false),
-            CreateKeyInput(VK_DUMMY, true),
-        };
+            inputs.Add(CreateKeyInput(VK_DUMMY, false));
+            inputs.Add(CreateKeyInput(VK_DUMMY, true));
+        }
 
         for (int index = modifiersToRelease.Count - 1; index >= 0; index--)
             inputs.Add(CreateKeyInput((ushort)modifiersToRelease[index], true));
 
-        uint sent = SendInput((uint)inputs.Count, inputs.ToArray(), Marshal.SizeOf<KeyboardInput>());
+        return new(hotkey.Name, [.. inputs], needsDummy ? 2 : 0);
+    }
+
+    private void DispatchPendingInjection(PendingInjection pending)
+    {
+        KeyboardInput[] inputs = pending.Inputs;
+
+        uint sent = SendInput((uint)inputs.Length, inputs, Marshal.SizeOf<KeyboardInput>());
+        int error = sent == inputs.Length ? 0 : Marshal.GetLastWin32Error();
         long expiresAt = Environment.TickCount64 + INJECTED_EVENT_TIMEOUT_MS;
 
-        for (int index = 0; index < sent; index++)
+        lock (updateLock)
         {
-            KeyboardInput input = inputs[index];
-            expectedInjectedEvents.Enqueue(new((Keys)input.Data.Keyboard.VirtualKey, (input.Data.Keyboard.Flags & KEYEVENTF_KEYUP) != 0, expiresAt));
+            for (int index = 0; index < sent; index++)
+            {
+                KeybdInput keyboard = inputs[index].Data.Keyboard;
+                expectedInjectedEvents.Enqueue(new((Keys)keyboard.VirtualKey, (keyboard.Flags & KEYEVENTF_KEYUP) != 0, expiresAt));
 
-            if (index >= 2)
-                releasedModifierKeys.Add((Keys)input.Data.Keyboard.VirtualKey);
+                if (index >= pending.ModifierOffset)
+                    releasedModifierKeys.Add((Keys)keyboard.VirtualKey);
+            }
         }
+
+        if (sent == inputs.Length)
+            return;
+
+        // unsent modifiers stay down for Windows, we let their physical KeyUp through
+        LogManager.LogError("Failed to release modifiers for blocked shortcut {0}: sent {1} of {2} inputs, error {3}",
+            pending.Name, sent, inputs.Length, error);
     }
 
     private void AddPressedModifiers(List<Keys> destination, KeyboardHotkeyModifiers modifiers, KeyboardHotkeyModifiers modifier, Keys[] keys)
@@ -254,6 +325,8 @@ internal sealed class KeyboardHotkeyBlocker
 
     private readonly record struct InjectedKeyEvent(Keys Key, bool IsKeyUp, long ExpiresAt);
 
+    private readonly record struct PendingInjection(string Name, KeyboardInput[] Inputs, int ModifierOffset);
+
     [StructLayout(LayoutKind.Sequential)]
     private struct KeyboardInput
     {
@@ -308,4 +381,7 @@ internal sealed class KeyboardHotkeyBlocker
 
     [DllImport("user32.dll")]
     private static extern uint MapVirtualKey(uint code, uint mapType);
+
+    [DllImport("user32.dll")]
+    private static extern short GetAsyncKeyState(int key);
 }

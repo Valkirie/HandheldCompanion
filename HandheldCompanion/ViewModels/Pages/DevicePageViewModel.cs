@@ -12,6 +12,7 @@ using System;
 using System.ServiceProcess;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -311,29 +312,37 @@ namespace HandheldCompanion.ViewModels
             if (CurrentDevice is not ClawA1M || !ManagerFactory.settingsManager.GetBoolean("DisableMsiClawPS2Service"))
                 return;
 
-            ManagerFactory.settingsManager.SetProperty("BlockMsiClawWinGHotkey", true);
-
             try
             {
                 using (ServiceController service = new("i8042prt"))
                 {
-                    if (!ServiceUtils.ChangeStartMode(service, ServiceStartMode.System, out _))
+                    if (!ServiceUtils.ChangeStartMode(service, ServiceStartMode.System, out string error))
                     {
-                        LogManager.LogError("Failed to restore {0} startup mode while migrating the MSI Claw hotkey setting", service.ServiceName);
+                        // keep DisableMsiClawPS2Service set, we retry on the next launch
+                        LogManager.LogError("Failed to restore {0} startup mode while migrating the MSI Claw hotkey setting: {1}", service.ServiceName, error);
                         return;
                     }
                 }
-
-                ManagerFactory.settingsManager.SetProperty("DisableMsiClawPS2Service", false);
-                RequestRestartConfirmation();
             }
             catch (Exception ex)
             {
                 LogManager.LogError("Failed to restore {0} startup mode while migrating the MSI Claw hotkey setting: {1}", "i8042prt", ex.Message);
+                return;
             }
+
+            ManagerFactory.settingsManager.SetProperty("BlockMsiClawWinGHotkey", true);
+            ManagerFactory.settingsManager.SetProperty("DisableMsiClawPS2Service", false);
+
+            RequestRestartConfirmation();
         }
 
         private static void RequestRestartConfirmation()
+        {
+            // not UIHelper.TryInvoke, it runs inline and the migration reaches this from MainWindow's ctor
+            Application.Current?.Dispatcher.BeginInvoke(RequestRestartConfirmationCore, DispatcherPriority.ApplicationIdle);
+        }
+
+        private static void RequestRestartConfirmationCore()
         {
             _ = UIHelper.TryInvoke(async () =>
             {
