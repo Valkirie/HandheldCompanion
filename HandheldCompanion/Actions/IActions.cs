@@ -151,7 +151,7 @@ namespace HandheldCompanion.Actions
 
         public IActions() { }
 
-        public void CopyConfigurationFrom(IActions source)
+        internal void CopyConfigurationFrom(IActions source)
         {
             pressType = source.pressType;
             ActionTimer = source.ActionTimer;

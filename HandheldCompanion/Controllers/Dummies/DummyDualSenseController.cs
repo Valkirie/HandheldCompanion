@@ -13,9 +13,6 @@ namespace HandheldCompanion.Controllers.Dummies
             TargetButtons.Add(ButtonFlags.RightPadClick);
             TargetButtons.Add(ButtonFlags.CenterPadClick);
             TargetButtons.Add(ButtonFlags.MicrophoneMute);
-            TargetButtons.Add(ButtonFlags.TouchpadCoordinateClick);
-            TargetButtons.Add(ButtonFlags.TouchpadCoordinateTouch);
-            TargetButtons.Add(ButtonFlags.TouchpadSwipe);
             TargetAxis.Add(AxisLayoutFlags.LeftPad);
             TargetAxis.Add(AxisLayoutFlags.RightPad);
         }

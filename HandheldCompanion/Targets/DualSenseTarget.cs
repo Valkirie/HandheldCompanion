@@ -14,10 +14,7 @@ namespace HandheldCompanion.Targets
         protected override int InputLength => 33;
 
         private enum ClickRegion : byte { None, Left, Right, Coordinate }
-        private ClickRegion preparedClickRegion;
-        private bool preparedClickEmitted;
-        private int preparedTouchX;
-        private int preparedTouchY;
+        private readonly TouchpadClickSequencer touchpadClickSequencer = new();
 
         public DualSenseTarget(ushort vendorId, ushort productId) : base(vendorId, productId)
         {
@@ -57,42 +54,8 @@ namespace HandheldCompanion.Targets
                 leftPadClick ? ClickRegion.Left :
                 rightPadClick ? ClickRegion.Right : ClickRegion.None;
 
-            // Steam must see the regional touch before the shared click transitions
-            // down. Otherwise it first classifies the press as the center button.
-            bool emitPadClick = centerPadClick;
-            ClickRegion touchClickRegion = requestedRegion;
-            bool consumePreparedClick = false;
-            if (requestedRegion != ClickRegion.None)
-            {
-                if (requestedRegion == ClickRegion.Coordinate)
-                {
-                    preparedTouchX = coordinateX;
-                    preparedTouchY = coordinateY;
-                }
-
-                if (preparedClickRegion == requestedRegion)
-                {
-                    emitPadClick = true;
-                    preparedClickEmitted = true;
-                }
-                else
-                {
-                    preparedClickRegion = requestedRegion;
-                    preparedClickEmitted = false;
-                }
-            }
-            else if (preparedClickRegion != ClickRegion.None && !preparedClickEmitted)
-            {
-                // Preserve a one-report tap long enough to emit the click after
-                // its preparatory touch report.
-                emitPadClick = true;
-                touchClickRegion = preparedClickRegion;
-                consumePreparedClick = true;
-            }
-            else
-            {
-                ClearPreparedClick();
-            }
+            TouchpadClickFrame clickFrame = touchpadClickSequencer.Resolve(
+                requestedRegion, centerPadClick, coordinateX, coordinateY);
 
             uint buttons = 0;
             if (inputs.ButtonState[ButtonFlags.B1]) buttons |= 0x0020;
@@ -106,7 +69,7 @@ namespace HandheldCompanion.Targets
             if (inputs.ButtonState[ButtonFlags.LeftStickClick]) buttons |= 0x4000;
             if (inputs.ButtonState[ButtonFlags.RightStickClick]) buttons |= 0x8000;
             if (inputs.ButtonState[ButtonFlags.Special]) buttons |= 0x00010000;
-            if (emitPadClick) buttons |= 0x00020000;
+            if (clickFrame.EmitClick) buttons |= 0x00020000;
             if (inputs.ButtonState[ButtonFlags.MicrophoneMute]) buttons |= 0x00040000;
             data[4] = (byte)(buttons & 0xFF);
             data[5] = (byte)((buttons >> 8) & 0xFF);
@@ -129,12 +92,11 @@ namespace HandheldCompanion.Targets
                 inputs.ButtonState[ButtonFlags.TouchpadSwipe];
 
             data[15] = 0; // VIIPER Touch1Active validity flag
-            if (touchClickRegion == ClickRegion.Coordinate)
-                WriteTouch(data, coordinateClick ? coordinateX : preparedTouchX,
-                    coordinateClick ? coordinateY : preparedTouchY);
-            else if (touchClickRegion == ClickRegion.Left)
+            if (clickFrame.Region == ClickRegion.Coordinate)
+                WriteTouch(data, clickFrame.X, clickFrame.Y);
+            else if (clickFrame.Region == ClickRegion.Left)
                 WriteTouch(data, DS4Touch.TOUCHPAD_WIDTH / 4, DS4Touch.TOUCHPAD_HEIGHT / 2);
-            else if (touchClickRegion == ClickRegion.Right)
+            else if (clickFrame.Region == ClickRegion.Right)
                 WriteTouch(data, DS4Touch.TOUCHPAD_WIDTH * 3 / 4, DS4Touch.TOUCHPAD_HEIGHT / 2);
             else if (coordinateTouch)
                 WriteTouch(data, coordinateX, coordinateY);
@@ -142,9 +104,6 @@ namespace HandheldCompanion.Targets
                 WriteTouch(data, DS4Touch.LeftPadTouch.X, DS4Touch.LeftPadTouch.Y);
             else if (!centerPadClick && DS4Touch.RightPadTouch.IsActive)
                 WriteTouch(data, DS4Touch.RightPadTouch.X, DS4Touch.RightPadTouch.Y);
-
-            if (consumePreparedClick)
-                ClearPreparedClick();
 
             if (gamepadMotion is not null)
             {
@@ -195,10 +154,62 @@ namespace HandheldCompanion.Targets
             data[15] = 1;
         }
 
-        private void ClearPreparedClick()
+        private readonly record struct TouchpadClickFrame(bool EmitClick, ClickRegion Region, int X, int Y);
+
+        private sealed class TouchpadClickSequencer
         {
-            preparedClickRegion = ClickRegion.None;
-            preparedClickEmitted = false;
+            private ClickRegion preparedRegion;
+            private bool preparedClickEmitted;
+            private int preparedX;
+            private int preparedY;
+
+            public TouchpadClickFrame Resolve(ClickRegion requestedRegion, bool centerClick, int x, int y)
+            {
+                bool emitClick = centerClick;
+                ClickRegion touchRegion = requestedRegion;
+
+                if (requestedRegion != ClickRegion.None)
+                {
+                    if (requestedRegion == ClickRegion.Coordinate)
+                    {
+                        preparedX = x;
+                        preparedY = y;
+                    }
+
+                    if (preparedRegion == requestedRegion)
+                    {
+                        emitClick = true;
+                        preparedClickEmitted = true;
+                    }
+                    else
+                    {
+                        preparedRegion = requestedRegion;
+                        preparedClickEmitted = false;
+                    }
+                }
+                else if (preparedRegion != ClickRegion.None && !preparedClickEmitted)
+                {
+                    // Preserve a one-report tap long enough to emit the click after
+                    // its preparatory touch report.
+                    emitClick = true;
+                    touchRegion = preparedRegion;
+                    Clear();
+                }
+                else
+                {
+                    Clear();
+                }
+
+                return new TouchpadClickFrame(emitClick, touchRegion,
+                    touchRegion == ClickRegion.Coordinate ? preparedX : x,
+                    touchRegion == ClickRegion.Coordinate ? preparedY : y);
+            }
+
+            private void Clear()
+            {
+                preparedRegion = ClickRegion.None;
+                preparedClickEmitted = false;
+            }
         }
     }
 }
