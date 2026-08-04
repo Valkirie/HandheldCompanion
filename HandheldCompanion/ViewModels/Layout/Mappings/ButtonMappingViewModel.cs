@@ -391,7 +391,7 @@ namespace HandheldCompanion.ViewModels
         public int TouchpadY { get => Action is TouchpadActions a ? a.Y : 0; set { if (Action is TouchpadActions a) { a.Y = value; OnPropertyChanged(nameof(TouchpadY)); } } }
         public int TouchpadEndX { get => Action is TouchpadActions a ? a.EndX : 0; set { if (Action is TouchpadActions a) { a.EndX = value; OnPropertyChanged(nameof(TouchpadEndX)); } } }
         public int TouchpadEndY { get => Action is TouchpadActions a ? a.EndY : 0; set { if (Action is TouchpadActions a) { a.EndY = value; OnPropertyChanged(nameof(TouchpadEndY)); } } }
-        public double TouchpadSwipeDuration { get => Action is TouchpadActions a ? a.SwipeDuration : 300.0; set { if (Action is TouchpadActions a) { a.SwipeDuration = (float)value; OnPropertyChanged(nameof(TouchpadSwipeDuration)); } } }
+        public double TouchpadSwipeDuration { get => Action is TouchpadActions a ? a.SwipeDuration : TouchpadActions.DefaultSwipeDuration; set { if (Action is TouchpadActions a) { a.SwipeDuration = (float)value; OnPropertyChanged(nameof(TouchpadSwipeDuration)); } } }
 
         public override void OnPropertyChanged(string? propertyName)
         {

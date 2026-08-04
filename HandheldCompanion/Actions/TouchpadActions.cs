@@ -9,6 +9,7 @@ namespace HandheldCompanion.Actions
     {
         public const float MinimumSwipeDuration = 16.0f;
         public const float MaximumSwipeDuration = 5000.0f;
+        public const float DefaultSwipeDuration = 300.0f;
 
         internal static readonly ButtonFlags[] Targets =
         [
@@ -21,7 +22,7 @@ namespace HandheldCompanion.Actions
         private int y = DS4Touch.TOUCHPAD_HEIGHT / 2;
         private int endX = DS4Touch.TOUCHPAD_WIDTH * 3 / 4;
         private int endY = DS4Touch.TOUCHPAD_HEIGHT / 2;
-        private float swipeDuration = 300.0f;
+        private float swipeDuration = DefaultSwipeDuration;
 
         public int X { get => x; set => x = Math.Clamp(value, 0, DS4Touch.TOUCHPAD_WIDTH - 1); }
         public int Y { get => y; set => y = Math.Clamp(value, 0, DS4Touch.TOUCHPAD_HEIGHT - 1); }
@@ -30,7 +31,9 @@ namespace HandheldCompanion.Actions
         public float SwipeDuration
         {
             get => swipeDuration;
-            set => swipeDuration = Math.Clamp(value, MinimumSwipeDuration, MaximumSwipeDuration);
+            set => swipeDuration = float.IsFinite(value)
+                ? Math.Clamp(value, MinimumSwipeDuration, MaximumSwipeDuration)
+                : DefaultSwipeDuration;
         }
 
         [NonSerialized] private bool wasPressed;
