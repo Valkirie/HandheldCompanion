@@ -913,8 +913,8 @@
                     </ui:SettingsCard>
 
                     <ui:SettingsCard
-                        Description="Prevent the MSI quick settings button from opening Windows Game Bar"
-                        Header="Block Win+G hotkey">
+                        Description="{l:Static resx:Resources.DevicePage_BlockMsiClawWinGHotkeyDesc}"
+                        Header="{l:Static resx:Resources.DevicePage_BlockMsiClawWinGHotkey}">
                         <ui:SettingsCard.HeaderIcon>
                             <ui:FontIcon Glyph="&#xe765;" />
                         </ui:SettingsCard.HeaderIcon>

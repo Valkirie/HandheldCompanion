@@ -90,6 +90,10 @@ public static class InputsManager
 
     static InputsManager()
     {
+#if DEBUG
+        KeyboardHotkeyBlocker.RunSelfCheck();
+#endif
+
         BufferFlushTimer = new PrecisionTimer();
         ConfigureBufferFlushTimer(TIME_FLUSH);
 

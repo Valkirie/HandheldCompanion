@@ -9,10 +9,8 @@ using HandheldCompanion.Views;
 using HandheldCompanion.Watchers;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
-using System.ServiceProcess;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -305,69 +303,10 @@ namespace HandheldCompanion.ViewModels
             QuerySettings();
         }
 
-        private void MigrateMsiClawPS2ServiceSetting()
-        {
-            // The old workaround disabled the same ACPI keyboard path used by the volume buttons.
-            // Restore it once and carry the user's Game Bar preference into the hotkey blocker.
-            if (CurrentDevice is not ClawA1M || !ManagerFactory.settingsManager.GetBoolean("DisableMsiClawPS2Service"))
-                return;
-
-            try
-            {
-                using (ServiceController service = new("i8042prt"))
-                {
-                    if (!ServiceUtils.ChangeStartMode(service, ServiceStartMode.System, out string error))
-                    {
-                        // keep DisableMsiClawPS2Service set, we retry on the next launch
-                        LogManager.LogError("Failed to restore {0} startup mode while migrating the MSI Claw hotkey setting: {1}", service.ServiceName, error);
-                        return;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogError("Failed to restore {0} startup mode while migrating the MSI Claw hotkey setting: {1}", "i8042prt", ex.Message);
-                return;
-            }
-
-            ManagerFactory.settingsManager.SetProperty("BlockMsiClawWinGHotkey", true);
-            ManagerFactory.settingsManager.SetProperty("DisableMsiClawPS2Service", false);
-
-            RequestRestartConfirmation();
-        }
-
-        private static void RequestRestartConfirmation()
-        {
-            // not UIHelper.TryInvoke, it runs inline and the migration reaches this from MainWindow's ctor
-            Application.Current?.Dispatcher.BeginInvoke(RequestRestartConfirmationCore, DispatcherPriority.ApplicationIdle);
-        }
-
-        private static void RequestRestartConfirmationCore()
-        {
-            _ = UIHelper.TryInvoke(async () =>
-            {
-                Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
-                {
-                    Title = Properties.Resources.Dialog_ForceRestartTitle,
-                    Content = Properties.Resources.Dialog_ForceRestartDesc,
-                    DefaultButton = ContentDialogButton.Close,
-                    CloseButtonText = Properties.Resources.Dialog_No,
-                    PrimaryButtonText = Properties.Resources.Dialog_Yes
-                }.ShowAsync();
-
-                await dialogTask;
-
-                if (dialogTask.Result == ContentDialogResult.Primary)
-                    DeviceUtils.RestartComputer();
-            });
-        }
-
         private void QuerySettings()
         {
             // manage events
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
-            MigrateMsiClawPS2ServiceSetting();
 
             // raise events
             SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false, false);

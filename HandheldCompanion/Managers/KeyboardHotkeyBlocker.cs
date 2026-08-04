@@ -45,9 +45,25 @@ internal sealed class KeyboardHotkeyBlocker
     private readonly Dictionary<string, BlockedHotkey> hotkeys = new(StringComparer.Ordinal);
     private readonly HashSet<Keys> physicalKeysDown = [];
     private readonly HashSet<Keys> releasedModifierKeys = [];
-    private readonly Queue<InjectedKeyEvent> expectedInjectedEvents = [];
+    private readonly LinkedList<InjectedKeyEvent> expectedInjectedEvents = [];
+    private readonly Func<KeyboardInput[], InjectionResult> injectKeyboardInput;
+    private readonly Func<Keys, bool>? keyStateOverride;
+    private readonly bool logInjectionFailures;
 
     private BlockedHotkey? activeHotkey;
+
+    public KeyboardHotkeyBlocker()
+        : this(SendKeyboardInput, null, true)
+    {
+    }
+
+    private KeyboardHotkeyBlocker(Func<KeyboardInput[], InjectionResult> injectKeyboardInput,
+        Func<Keys, bool>? keyStateOverride, bool logInjectionFailures)
+    {
+        this.injectKeyboardInput = injectKeyboardInput;
+        this.keyStateOverride = keyStateOverride;
+        this.logInjectionFailures = logInjectionFailures;
+    }
 
     public void SetHotkey(string name, Keys actionKey, KeyboardHotkeyModifiers modifiers, bool enabled)
     {
@@ -71,14 +87,36 @@ internal sealed class KeyboardHotkeyBlocker
     public KeyboardHotkeyBlockResult Process(KeyEventArgsExt args, bool injected)
     {
         PendingInjection? pending;
+        LinkedListNode<InjectedKeyEvent>[]? expectedEvents = null;
         KeyboardHotkeyBlockResult result;
 
         lock (updateLock)
+        {
             result = ProcessLocked(args, injected, out pending);
+
+            // SendInput re-enters the low-level hook before it returns. Register the events first
+            // so our synthetic keys cannot disturb Handheld Companion's chord state.
+            if (pending is not null)
+                expectedEvents = QueueExpectedInjectedEvents(pending.Value.Inputs);
+        }
 
         // dispatch off the lock, SendInput can block and we're inside the hook callback
         if (pending is not null)
-            DispatchPendingInjection(pending.Value);
+        {
+            bool modifierReleased = DispatchPendingInjection(pending.Value, expectedEvents!);
+            if (!modifierReleased)
+            {
+                lock (updateLock)
+                {
+                    if (activeHotkey == pending.Value.Hotkey)
+                        activeHotkey = null;
+                }
+
+                // Nothing changed in Windows' modifier state, so preserve a balanced shortcut
+                // by allowing the original action key through.
+                return KeyboardHotkeyBlockResult.None;
+            }
+        }
 
         return result;
     }
@@ -149,7 +187,7 @@ internal sealed class KeyboardHotkeyBlocker
 
         foreach (Keys key in physicalKeysDown)
         {
-            if (key == observedKey || (GetAsyncKeyState((int)key) & KEY_PRESSED) != 0)
+            if (key == observedKey || IsKeyPressed(key))
                 continue;
 
             stale ??= [];
@@ -236,35 +274,53 @@ internal sealed class KeyboardHotkeyBlocker
         for (int index = modifiersToRelease.Count - 1; index >= 0; index--)
             inputs.Add(CreateKeyInput((ushort)modifiersToRelease[index], true));
 
-        return new(hotkey.Name, [.. inputs], needsDummy ? 2 : 0);
+        return new(hotkey, [.. inputs], needsDummy ? 2 : 0);
     }
 
-    private void DispatchPendingInjection(PendingInjection pending)
+    private LinkedListNode<InjectedKeyEvent>[] QueueExpectedInjectedEvents(KeyboardInput[] inputs)
+    {
+        long expiresAt = Environment.TickCount64 + INJECTED_EVENT_TIMEOUT_MS;
+        LinkedListNode<InjectedKeyEvent>[] expectedEvents = new LinkedListNode<InjectedKeyEvent>[inputs.Length];
+
+        for (int index = 0; index < inputs.Length; index++)
+        {
+            KeybdInput keyboard = inputs[index].Data.Keyboard;
+            expectedEvents[index] = expectedInjectedEvents.AddLast(
+                new InjectedKeyEvent(keyboard.VirtualKey, (keyboard.Flags & KEYEVENTF_KEYUP) != 0, expiresAt));
+        }
+
+        return expectedEvents;
+    }
+
+    private bool DispatchPendingInjection(PendingInjection pending, LinkedListNode<InjectedKeyEvent>[] expectedEvents)
     {
         KeyboardInput[] inputs = pending.Inputs;
-
-        uint sent = SendInput((uint)inputs.Length, inputs, Marshal.SizeOf<KeyboardInput>());
-        int error = sent == inputs.Length ? 0 : Marshal.GetLastWin32Error();
-        long expiresAt = Environment.TickCount64 + INJECTED_EVENT_TIMEOUT_MS;
+        InjectionResult injectionResult = injectKeyboardInput(inputs);
+        int sent = (int)Math.Min(injectionResult.Sent, (uint)inputs.Length);
 
         lock (updateLock)
         {
-            for (int index = 0; index < sent; index++)
+            for (int index = sent; index < expectedEvents.Length; index++)
             {
-                KeybdInput keyboard = inputs[index].Data.Keyboard;
-                expectedInjectedEvents.Enqueue(new((Keys)keyboard.VirtualKey, (keyboard.Flags & KEYEVENTF_KEYUP) != 0, expiresAt));
-
-                if (index >= pending.ModifierOffset)
-                    releasedModifierKeys.Add((Keys)keyboard.VirtualKey);
+                if (expectedEvents[index].List is not null)
+                    expectedInjectedEvents.Remove(expectedEvents[index]);
             }
+
+            for (int index = pending.ModifierOffset; index < sent; index++)
+                releasedModifierKeys.Add((Keys)inputs[index].Data.Keyboard.VirtualKey);
         }
 
         if (sent == inputs.Length)
-            return;
+            return true;
 
         // unsent modifiers stay down for Windows, we let their physical KeyUp through
-        LogManager.LogError("Failed to release modifiers for blocked shortcut {0}: sent {1} of {2} inputs, error {3}",
-            pending.Name, sent, inputs.Length, error);
+        if (logInjectionFailures)
+        {
+            LogManager.LogError("Failed to release modifiers for blocked shortcut {0}: sent {1} of {2} inputs, error {3}",
+                pending.Hotkey.Name, sent, inputs.Length, injectionResult.Error);
+        }
+
+        return sent > pending.ModifierOffset;
     }
 
     private void AddPressedModifiers(List<Keys> destination, KeyboardHotkeyModifiers modifiers, KeyboardHotkeyModifiers modifier, Keys[] keys)
@@ -281,13 +337,17 @@ internal sealed class KeyboardHotkeyBlocker
 
     private bool TryConsumeExpectedInjectedEvent(KeyEventArgsExt args)
     {
-        if (!expectedInjectedEvents.TryPeek(out InjectedKeyEvent expected))
+        if (expectedInjectedEvents.First is not LinkedListNode<InjectedKeyEvent> expectedNode)
             return false;
 
-        if (expected.Key != args.KeyCode || expected.IsKeyUp != args.IsKeyUp)
+        InjectedKeyEvent expected = expectedNode.Value;
+
+        // KeyEventArgsExt normalizes VK_DUMMY (0xFF) to Keys.None in KeyCode, but preserves
+        // the original virtual-key value in KeyValue.
+        if (expected.KeyValue != args.KeyValue || expected.IsKeyUp != args.IsKeyUp)
             return false;
 
-        expectedInjectedEvents.Dequeue();
+        expectedInjectedEvents.RemoveFirst();
         return true;
     }
 
@@ -295,8 +355,73 @@ internal sealed class KeyboardHotkeyBlocker
     {
         long now = Environment.TickCount64;
 
-        while (expectedInjectedEvents.TryPeek(out InjectedKeyEvent expected) && expected.ExpiresAt < now)
-            expectedInjectedEvents.Dequeue();
+        while (expectedInjectedEvents.First is LinkedListNode<InjectedKeyEvent> expectedNode && expectedNode.Value.ExpiresAt < now)
+            expectedInjectedEvents.RemoveFirst();
+    }
+
+    private bool IsKeyPressed(Keys key)
+    {
+        return keyStateOverride?.Invoke(key) ?? (GetAsyncKeyState((int)key) & KEY_PRESSED) != 0;
+    }
+
+    private static InjectionResult SendKeyboardInput(KeyboardInput[] inputs)
+    {
+        uint sent = SendInput((uint)inputs.Length, inputs, Marshal.SizeOf<KeyboardInput>());
+        int error = sent == inputs.Length ? 0 : Marshal.GetLastWin32Error();
+        return new(sent, error);
+    }
+
+    internal static void RunSelfCheck()
+    {
+        KeyboardHotkeyBlocker reentrantBlocker = null!;
+        bool injectedEventsBypassedApplication = true;
+
+        reentrantBlocker = new(
+            inputs =>
+            {
+                foreach (KeyboardInput input in inputs)
+                {
+                    KeybdInput keyboard = input.Data.Keyboard;
+                    bool keyUp = (keyboard.Flags & KEYEVENTF_KEYUP) != 0;
+                    KeyEventArgsExt args = CreateSelfCheckKeyEvent((Keys)keyboard.VirtualKey, keyUp);
+                    injectedEventsBypassedApplication &= reentrantBlocker.Process(args, true) == KeyboardHotkeyBlockResult.BypassApplication;
+                }
+
+                return new((uint)inputs.Length, 0);
+            },
+            _ => true,
+            false);
+
+        reentrantBlocker.SetHotkey("Self-check Win+G", Keys.G, KeyboardHotkeyModifiers.Windows, true);
+        EnsureSelfCheck(reentrantBlocker.Process(CreateSelfCheckKeyEvent(Keys.LWin, false), false) == KeyboardHotkeyBlockResult.None,
+            "modifier KeyDown was unexpectedly suppressed");
+        EnsureSelfCheck(reentrantBlocker.Process(CreateSelfCheckKeyEvent(Keys.G, false), false) == KeyboardHotkeyBlockResult.Suppress,
+            "blocked shortcut was not suppressed");
+        EnsureSelfCheck(injectedEventsBypassedApplication && reentrantBlocker.expectedInjectedEvents.Count == 0,
+            "re-entrant injected events reached application chord handling");
+        EnsureSelfCheck(reentrantBlocker.Process(CreateSelfCheckKeyEvent(Keys.G, true), false) == KeyboardHotkeyBlockResult.Suppress,
+            "blocked action KeyUp was not suppressed");
+        EnsureSelfCheck(reentrantBlocker.Process(CreateSelfCheckKeyEvent(Keys.LWin, true), false) == KeyboardHotkeyBlockResult.Suppress,
+            "synthetically released modifier KeyUp was not suppressed");
+
+        KeyboardHotkeyBlocker failedInjectionBlocker = new(_ => new(0, 5), _ => true, false);
+        failedInjectionBlocker.SetHotkey("Self-check failed Win+G", Keys.G, KeyboardHotkeyModifiers.Windows, true);
+        failedInjectionBlocker.Process(CreateSelfCheckKeyEvent(Keys.LWin, false), false);
+        EnsureSelfCheck(failedInjectionBlocker.Process(CreateSelfCheckKeyEvent(Keys.G, false), false) == KeyboardHotkeyBlockResult.None,
+            "failed injection did not pass the original shortcut through");
+        EnsureSelfCheck(failedInjectionBlocker.expectedInjectedEvents.Count == 0,
+            "failed injection left stale expected events");
+    }
+
+    private static KeyEventArgsExt CreateSelfCheckKeyEvent(Keys key, bool keyUp)
+    {
+        return new(key, 0, 0, !keyUp, keyUp, false, 0);
+    }
+
+    private static void EnsureSelfCheck(bool condition, string message)
+    {
+        if (!condition)
+            throw new InvalidOperationException($"Keyboard hotkey blocker self-check failed: {message}");
     }
 
     private static KeyboardInput CreateKeyInput(ushort key, bool keyUp)
@@ -323,9 +448,11 @@ internal sealed class KeyboardHotkeyBlocker
 
     private sealed record BlockedHotkey(string Name, Keys ActionKey, KeyboardHotkeyModifiers Modifiers);
 
-    private readonly record struct InjectedKeyEvent(Keys Key, bool IsKeyUp, long ExpiresAt);
+    private readonly record struct InjectedKeyEvent(int KeyValue, bool IsKeyUp, long ExpiresAt);
 
-    private readonly record struct PendingInjection(string Name, KeyboardInput[] Inputs, int ModifierOffset);
+    private readonly record struct PendingInjection(BlockedHotkey Hotkey, KeyboardInput[] Inputs, int ModifierOffset);
+
+    private readonly record struct InjectionResult(uint Sent, int Error);
 
     [StructLayout(LayoutKind.Sequential)]
     private struct KeyboardInput
