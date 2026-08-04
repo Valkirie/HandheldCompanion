@@ -143,6 +143,9 @@ namespace HandheldCompanion.ViewModels
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var button in controller.GetTargetButtons())
                 {
+                    if (TouchpadActions.IsTouchpadTarget(button))
+                        continue;
+
                     var mappingTargetVm = CreateTarget(button, controller.GetButtonName(button));
                     targets.Add(mappingTargetVm);
 

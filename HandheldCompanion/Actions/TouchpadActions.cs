@@ -21,6 +21,9 @@ namespace HandheldCompanion.Actions
 
         public TouchpadActions(ButtonFlags button) : base(button) { }
 
+        public static bool IsTouchpadTarget(ButtonFlags button) => button is
+            ButtonFlags.TouchpadCoordinateClick or ButtonFlags.TouchpadCoordinateTouch or ButtonFlags.TouchpadSwipe;
+
         public override void Execute(ButtonFlags button, bool value, ShiftSlot shiftSlot, float delta)
         {
             base.Execute(button, value, shiftSlot, delta);
@@ -45,17 +48,14 @@ namespace HandheldCompanion.Actions
             wasPressed = pressed;
         }
 
-        public bool TryGetTouch(out int x, out int y, out bool click)
+        public bool ConsumeTouch(out int x, out int y)
         {
-            click = Button == ButtonFlags.TouchpadCoordinateClick;
-
             if (Button == ButtonFlags.TouchpadSwipe)
             {
                 float duration = Math.Max(1.0f, SwipeDuration);
                 float progress = Math.Clamp(swipeElapsed / duration, 0.0f, 1.0f);
                 x = (int)MathF.Round(X + (EndX - X) * progress);
                 y = (int)MathF.Round(Y + (EndY - Y) * progress);
-                click = false;
                 bool active = swipeActive;
                 if (swipeEndsAfterReport)
                 {

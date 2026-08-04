@@ -13,9 +13,11 @@ namespace HandheldCompanion.Targets
         protected override string DeviceType => "dualsenseedge";
         protected override int InputLength => 33;
 
-        private enum ClickRegion : byte { None, Left, Right }
+        private enum ClickRegion : byte { None, Left, Right, Coordinate }
         private ClickRegion preparedClickRegion;
-        private bool preparedCoordinateClick;
+        private bool preparedClickEmitted;
+        private int preparedTouchX;
+        private int preparedTouchY;
 
         public DualSenseTarget(ushort vendorId, ushort productId) : base(vendorId, productId)
         {
@@ -43,31 +45,53 @@ namespace HandheldCompanion.Targets
             bool leftPadClick = inputs.ButtonState[ButtonFlags.LeftPadClick];
             bool rightPadClick = inputs.ButtonState[ButtonFlags.RightPadClick];
             bool coordinateClick = inputs.ButtonState[ButtonFlags.TouchpadCoordinateClick];
-            bool centerPadClick = inputs.ButtonState[ButtonFlags.CenterPadClick] ||
-                (DS4Touch.OutputClickButton && !leftPadClick && !rightPadClick);
+            bool centerPadClick = !coordinateClick && !leftPadClick && !rightPadClick &&
+                (inputs.ButtonState[ButtonFlags.CenterPadClick] ||
+                (DS4Touch.OutputClickButton && !leftPadClick && !rightPadClick));
 
-            ClickRegion requestedRegion = leftPadClick ? ClickRegion.Left :
+            int coordinateX = DS4Touch.AxisToCoordinate(inputs.AxisState[AxisFlags.RightPadX], DS4Touch.TOUCHPAD_WIDTH);
+            int coordinateY = DS4Touch.TOUCHPAD_HEIGHT - 1 -
+                DS4Touch.AxisToCoordinate(inputs.AxisState[AxisFlags.RightPadY], DS4Touch.TOUCHPAD_HEIGHT);
+
+            ClickRegion requestedRegion = coordinateClick ? ClickRegion.Coordinate :
+                leftPadClick ? ClickRegion.Left :
                 rightPadClick ? ClickRegion.Right : ClickRegion.None;
 
             // Steam must see the regional touch before the shared click transitions
             // down. Otherwise it first classifies the press as the center button.
             bool emitPadClick = centerPadClick;
-            if (coordinateClick)
+            ClickRegion touchClickRegion = requestedRegion;
+            bool consumePreparedClick = false;
+            if (requestedRegion != ClickRegion.None)
             {
-                emitPadClick = preparedCoordinateClick;
-                preparedCoordinateClick = true;
-                preparedClickRegion = ClickRegion.None;
+                if (requestedRegion == ClickRegion.Coordinate)
+                {
+                    preparedTouchX = coordinateX;
+                    preparedTouchY = coordinateY;
+                }
+
+                if (preparedClickRegion == requestedRegion)
+                {
+                    emitPadClick = true;
+                    preparedClickEmitted = true;
+                }
+                else
+                {
+                    preparedClickRegion = requestedRegion;
+                    preparedClickEmitted = false;
+                }
             }
-            else if (requestedRegion != ClickRegion.None)
+            else if (preparedClickRegion != ClickRegion.None && !preparedClickEmitted)
             {
-                emitPadClick = preparedClickRegion == requestedRegion;
-                preparedClickRegion = requestedRegion;
-                preparedCoordinateClick = false;
+                // Preserve a one-report tap long enough to emit the click after
+                // its preparatory touch report.
+                emitPadClick = true;
+                touchClickRegion = preparedClickRegion;
+                consumePreparedClick = true;
             }
             else
             {
-                preparedClickRegion = ClickRegion.None;
-                preparedCoordinateClick = false;
+                ClearPreparedClick();
             }
 
             uint buttons = 0;
@@ -104,18 +128,23 @@ namespace HandheldCompanion.Targets
             bool coordinateTouch = coordinateClick || inputs.ButtonState[ButtonFlags.TouchpadCoordinateTouch] ||
                 inputs.ButtonState[ButtonFlags.TouchpadSwipe];
 
-            if (coordinateTouch)
-                WriteTouch(data,
-                    AxisToCoordinate(inputs.AxisState[AxisFlags.RightPadX], DS4Touch.TOUCHPAD_WIDTH),
-                    DS4Touch.TOUCHPAD_HEIGHT - 1 - AxisToCoordinate(inputs.AxisState[AxisFlags.RightPadY], DS4Touch.TOUCHPAD_HEIGHT));
-            else if (leftPadClick)
+            data[15] = 0; // VIIPER Touch1Active validity flag
+            if (touchClickRegion == ClickRegion.Coordinate)
+                WriteTouch(data, coordinateClick ? coordinateX : preparedTouchX,
+                    coordinateClick ? coordinateY : preparedTouchY);
+            else if (touchClickRegion == ClickRegion.Left)
                 WriteTouch(data, DS4Touch.TOUCHPAD_WIDTH / 4, DS4Touch.TOUCHPAD_HEIGHT / 2);
-            else if (rightPadClick)
+            else if (touchClickRegion == ClickRegion.Right)
                 WriteTouch(data, DS4Touch.TOUCHPAD_WIDTH * 3 / 4, DS4Touch.TOUCHPAD_HEIGHT / 2);
+            else if (coordinateTouch)
+                WriteTouch(data, coordinateX, coordinateY);
             else if (!centerPadClick && DS4Touch.LeftPadTouch.IsActive)
                 WriteTouch(data, DS4Touch.LeftPadTouch.X, DS4Touch.LeftPadTouch.Y);
             else if (!centerPadClick && DS4Touch.RightPadTouch.IsActive)
                 WriteTouch(data, DS4Touch.RightPadTouch.X, DS4Touch.RightPadTouch.Y);
+
+            if (consumePreparedClick)
+                ClearPreparedClick();
 
             if (gamepadMotion is not null)
             {
@@ -166,10 +195,10 @@ namespace HandheldCompanion.Targets
             data[15] = 1;
         }
 
-        private static int AxisToCoordinate(short value, int extent)
+        private void ClearPreparedClick()
         {
-            return (int)Math.Clamp(((long)value - short.MinValue) * (extent - 1) / ushort.MaxValue,
-                0, extent - 1);
+            preparedClickRegion = ClickRegion.None;
+            preparedClickEmitted = false;
         }
     }
 }

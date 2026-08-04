@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Commands;
 using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Actions;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
@@ -778,6 +779,9 @@ namespace HandheldCompanion.ViewModels
             {
                 foreach (var button in controller.GetTargetButtons())
                 {
+                    if (TouchpadActions.IsTouchpadTarget(button))
+                        continue;
+
                     newValues.Add(new MappingTargetViewModel
                     {
                         Tag = button,

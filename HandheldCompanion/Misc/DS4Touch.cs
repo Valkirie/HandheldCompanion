@@ -168,6 +168,19 @@ public static class DS4Touch
         }
     }
 
+    public static short CoordinateToAxis(int value, int extent)
+    {
+        int clamped = Math.Clamp(value, 0, extent - 1);
+        long numerator = (long)clamped * ushort.MaxValue + (extent - 1) / 2;
+        return (short)Math.Clamp(numerator / (extent - 1) + short.MinValue, short.MinValue, short.MaxValue);
+    }
+
+    public static int AxisToCoordinate(short value, int extent)
+    {
+        long numerator = ((long)value - short.MinValue) * (extent - 1) + ushort.MaxValue / 2;
+        return (int)Math.Clamp(numerator / ushort.MaxValue, 0, extent - 1);
+    }
+
     public class TrackPadTouch
     {
         public byte Id;

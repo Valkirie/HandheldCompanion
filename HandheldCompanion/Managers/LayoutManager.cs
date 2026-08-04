@@ -50,6 +50,9 @@ public class LayoutManager : IManager
     private Dictionary<ButtonFlags, IActions[]> _buttonPlan = new();
     private Dictionary<AxisLayoutFlags, IActions[]> _axisPlan = new();
     private Dictionary<AxisLayoutFlags, IActions> _gyroPlan = new();  // one action per axis flag
+    private long touchpadAxisXSum;
+    private long touchpadAxisYSum;
+    private int touchpadCoordinateCount;
 
     // X/Y AxisFlags for each AxisLayoutFlags — cached to avoid per-tick lookups
     private readonly Dictionary<AxisLayoutFlags, (AxisFlags X, AxisFlags Y)> _axisXY = new();
@@ -543,6 +546,9 @@ public class LayoutManager : IManager
             outputState.ButtonState.Clear();
             outputState.AxisState.Clear();
             outputState.GyroState.CopyFrom(controllerState.GyroState);
+            touchpadAxisXSum = 0;
+            touchpadAxisYSum = 0;
+            touchpadCoordinateCount = 0;
 
             // delta arrives in seconds; all timer logic expects milliseconds
             float deltaMs = delta * 1000f;
@@ -551,6 +557,7 @@ public class LayoutManager : IManager
 
             ProcessButtonActions(controllerState, shiftSlot, deltaMs);
             ProcessAxisActions(controllerState, shiftSlot, deltaMs);
+            ApplyTouchpadCoordinates();
             ProcessGyroActions(controllerState, shiftSlot, deltaMs);
         }
 
@@ -629,11 +636,12 @@ public class LayoutManager : IManager
                             bA.Execute(button, pressed, shiftSlot, deltaMs);
                             if (bA is TouchpadActions touchpadAction)
                             {
-                                if (touchpadAction.TryGetTouch(out int x, out int y, out bool click))
+                                if (touchpadAction.ConsumeTouch(out int x, out int y))
                                 {
-                                    outputState.ButtonState[touchpadAction.Button] = true;
-                                    outputState.AxisState[AxisFlags.RightPadX] = CoordinateToAxis(x, DS4Touch.TOUCHPAD_WIDTH);
-                                    outputState.AxisState[AxisFlags.RightPadY] = CoordinateToAxis(DS4Touch.TOUCHPAD_HEIGHT - 1 - y, DS4Touch.TOUCHPAD_HEIGHT);
+                                    outputState.ButtonState[touchpadAction.Button] |= true;
+                                    touchpadAxisXSum += DS4Touch.CoordinateToAxis(x, DS4Touch.TOUCHPAD_WIDTH);
+                                    touchpadAxisYSum += DS4Touch.CoordinateToAxis(DS4Touch.TOUCHPAD_HEIGHT - 1 - y, DS4Touch.TOUCHPAD_HEIGHT);
+                                    touchpadCoordinateCount++;
                                 }
                             }
                             else
@@ -674,11 +682,15 @@ public class LayoutManager : IManager
         }
     }
 
-    private static short CoordinateToAxis(int value, int extent)
+    private void ApplyTouchpadCoordinates()
     {
-        int clamped = Math.Clamp(value, 0, extent - 1);
-        return (short)Math.Clamp((long)clamped * ushort.MaxValue / (extent - 1) + short.MinValue,
-            short.MinValue, short.MaxValue);
+        if (touchpadCoordinateCount == 0)
+            return;
+
+        outputState.AxisState[AxisFlags.RightPadX] = (short)Math.Clamp(
+            Math.Round((double)touchpadAxisXSum / touchpadCoordinateCount), short.MinValue, short.MaxValue);
+        outputState.AxisState[AxisFlags.RightPadY] = (short)Math.Clamp(
+            Math.Round((double)touchpadAxisYSum / touchpadCoordinateCount), short.MinValue, short.MaxValue);
     }
 
     /// <summary>

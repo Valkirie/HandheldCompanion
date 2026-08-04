@@ -151,6 +151,23 @@ namespace HandheldCompanion.Actions
 
         public IActions() { }
 
+        public void CopyConfigurationFrom(IActions source)
+        {
+            pressType = source.pressType;
+            ActionTimer = source.ActionTimer;
+            HasTurbo = source.HasTurbo;
+            HasToggle = source.HasToggle;
+            HasInterruptable = source.HasInterruptable;
+            TurboDelay = source.TurboDelay;
+            StartDelay = source.StartDelay;
+            ShiftSlot = source.ShiftSlot;
+            ShiftMatchAny = source.ShiftMatchAny;
+            HapticMode = source.HapticMode;
+            HapticStrength = source.HapticStrength;
+            motionDirection = source.motionDirection;
+            motionThreshold = source.motionThreshold;
+        }
+
         /// <summary>
         /// Override to share toggle state across bindings targeting the same key/button,
         /// and to detect external releases. Default uses local toggle state.

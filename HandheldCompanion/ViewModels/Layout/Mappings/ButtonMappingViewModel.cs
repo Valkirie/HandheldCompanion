@@ -382,6 +382,10 @@ namespace HandheldCompanion.ViewModels
         public Visibility TouchpadSettingsVisibility => Action is TouchpadActions ? Visibility.Visible : Visibility.Collapsed;
         public Visibility TouchpadSwipeSettingsVisibility => Action is TouchpadActions touchpad && touchpad.Button == ButtonFlags.TouchpadSwipe
             ? Visibility.Visible : Visibility.Collapsed;
+        public int TouchpadMaxX => DS4Touch.TOUCHPAD_WIDTH - 1;
+        public int TouchpadMaxY => DS4Touch.TOUCHPAD_HEIGHT - 1;
+        public double TouchpadMaxDuration => 5000.0;
+        public string TouchpadCoordinateRangeDescription => $"DualSense coordinates: X 0–{TouchpadMaxX}, Y 0–{TouchpadMaxY}";
         public int TouchpadX { get => Action is TouchpadActions a ? a.X : 0; set { if (Action is TouchpadActions a) { a.X = Math.Clamp(value, 0, DS4Touch.TOUCHPAD_WIDTH - 1); OnPropertyChanged(nameof(TouchpadX)); } } }
         public int TouchpadY { get => Action is TouchpadActions a ? a.Y : 0; set { if (Action is TouchpadActions a) { a.Y = Math.Clamp(value, 0, DS4Touch.TOUCHPAD_HEIGHT - 1); OnPropertyChanged(nameof(TouchpadY)); } } }
         public int TouchpadEndX { get => Action is TouchpadActions a ? a.EndX : 0; set { if (Action is TouchpadActions a) { a.EndX = Math.Clamp(value, 0, DS4Touch.TOUCHPAD_WIDTH - 1); OnPropertyChanged(nameof(TouchpadEndX)); } } }
@@ -651,9 +655,17 @@ namespace HandheldCompanion.ViewModels
                             ButtonFlags.TouchpadCoordinateTouch or ButtonFlags.TouchpadSwipe;
 
                         if (isTouchpadAction && Action is not TouchpadActions)
-                            Action = new TouchpadActions(buttonFlags) { pressType = (PressType)_pressTypeFallbackIndex };
+                        {
+                            IActions previous = Action;
+                            Action = new TouchpadActions(buttonFlags);
+                            Action.CopyConfigurationFrom(previous);
+                        }
                         else if (!isTouchpadAction && Action is TouchpadActions)
-                            Action = new ButtonActions(buttonFlags) { pressType = (PressType)_pressTypeFallbackIndex };
+                        {
+                            IActions previous = Action;
+                            Action = new ButtonActions(buttonFlags);
+                            Action.CopyConfigurationFrom(previous);
+                        }
                         else
                             ((ButtonActions)Action).Button = buttonFlags;
 
