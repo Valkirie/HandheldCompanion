@@ -56,7 +56,7 @@ namespace steam_hidapi.net
             return _hidDevice.RequestFeatureReport(req);
         }
 
-        public virtual byte[] SetHaptic(byte position, ushort amplitude, ushort period, ushort count)
+        public virtual byte[] SetHaptic(byte position, ushort amplitude, ushort period, ushort count, sbyte gain = 0)
         {
             if (!_hidDevice.IsDeviceValid)
                 return null;
@@ -64,11 +64,12 @@ namespace steam_hidapi.net
             SCHapticPacket haptic = new SCHapticPacket
             {
                 packet_type = (byte)SCPacketType.SET_HAPTIC,
-                len = 0x07,
+                len = 0x08,
                 position = position,
                 amplitude = amplitude,
                 period = period,
-                count = count
+                count = count,
+                gain = gain
             };
 
             byte[] data = haptic.ToBytes();

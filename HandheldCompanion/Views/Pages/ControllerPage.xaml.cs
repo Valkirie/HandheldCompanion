@@ -58,6 +58,7 @@ public partial class ControllerPage : Page
         SettingsManager_SettingValueChanged("HIDvibrateonconnect", ManagerFactory.settingsManager.GetString("HIDvibrateonconnect"), false, false);
         SettingsManager_SettingValueChanged("VibrationStrength", ManagerFactory.settingsManager.GetString("VibrationStrength"), false, false);
         SettingsManager_SettingValueChanged("SteamControllerMode", ManagerFactory.settingsManager.GetString("SteamControllerMode"), false, false);
+        SettingsManager_SettingValueChanged("SteamTrackpadClickHaptics", ManagerFactory.settingsManager.GetString("SteamTrackpadClickHaptics"), false, false);
         SettingsManager_SettingValueChanged("SteamControllerRumbleInterval", ManagerFactory.settingsManager.GetString("SteamControllerRumbleInterval"), false, false);
         SettingsManager_SettingValueChanged("HIDmode", ManagerFactory.settingsManager.GetString("HIDmode"), false, false);
         SettingsManager_SettingValueChanged("HIDstatus", ManagerFactory.settingsManager.GetString("HIDstatus"), false, false);
@@ -94,6 +95,9 @@ public partial class ControllerPage : Page
                     break;
                 case "SteamControllerMode":
                     cB_SCModeController.SelectedIndex = Convert.ToInt32(value);
+                    break;
+                case "SteamTrackpadClickHaptics":
+                    cB_SteamTrackpadClickHaptics.SelectedIndex = Convert.ToInt32(value);
                     break;
                 case "SteamControllerRumbleInterval":
                     SliderInterval.Value = Convert.ToDouble(value);
@@ -285,6 +289,14 @@ public partial class ControllerPage : Page
             return;
 
         ManagerFactory.settingsManager.SetProperty("SteamControllerMode", cB_SCModeController.SelectedIndex);
+    }
+
+    private void cB_SteamTrackpadClickHaptics_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!IsLoaded || cB_SteamTrackpadClickHaptics.SelectedIndex == -1)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("SteamTrackpadClickHaptics", cB_SteamTrackpadClickHaptics.SelectedIndex);
     }
 
     private void cB_ControllerPlugBehavior_SelectionChanged(object sender, SelectionChangedEventArgs e)

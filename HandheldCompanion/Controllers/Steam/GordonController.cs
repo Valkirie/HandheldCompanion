@@ -183,6 +183,9 @@ namespace HandheldCompanion.Controllers.Steam
             // Right Pad
             Inputs.ButtonState[ButtonFlags.RightPadTouch] = input.State.ButtonState[GordonControllerButton.BtnRPadTouch];
             Inputs.ButtonState[ButtonFlags.RightPadClick] = input.State.ButtonState[GordonControllerButton.BtnRPadPress];
+            UpdateTrackpadClickHaptics(
+                Inputs.ButtonState[ButtonFlags.LeftPadClick],
+                Inputs.ButtonState[ButtonFlags.RightPadClick]);
 
             Inputs.AxisState[AxisFlags.RightPadX] = input.State.AxesState[GordonControllerAxis.RightPadX];
             Inputs.AxisState[AxisFlags.RightPadY] = input.State.AxesState[GordonControllerAxis.RightPadY];
@@ -326,6 +329,20 @@ namespace HandheldCompanion.Controllers.Steam
                 _ => 0,
             };
             Controller?.SetHaptic((byte)GetMotorForButton(button), value, 0, 1);
+        }
+
+        protected override void SendTrackpadClickHaptic(SCHapticMotor motor, int strength, bool released)
+        {
+            ushort duration = released ? (ushort)5000 : (ushort)10000;
+            sbyte gain = strength switch
+            {
+                1 => 0,
+                2 => 3,
+                3 => 6,
+                _ => 3,
+            };
+
+            Controller?.SetHaptic((byte)motor, duration, 0, 1, gain);
         }
     }
 }

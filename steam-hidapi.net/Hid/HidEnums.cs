@@ -87,11 +87,12 @@ namespace steam_hidapi.net.Hid
     internal struct SCHapticPacket
     {
         public byte packet_type; // = 0x8f;
-        public byte len;         // = 0x07;
+        public byte len;         // = 0x08;
         public byte position;    // = 0|1;
         public UInt16 amplitude;
         public UInt16 period;
         public UInt16 count;
+        public sbyte gain;        // decibels, -24..+6
     }
 
     // GORDON CONTROLLER SPECIFIC
