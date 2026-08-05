@@ -898,12 +898,7 @@ public static class ControllerManager
                     }
                     else
                     {
-                        // Give the host device first chance to identify an integrated controller
-                        // whose USB identity is otherwise indistinguishable from a generic pad.
-                        controller = IDevice.GetCurrent().CreateController(details);
-
-                        if (controller is null)
-                            switch (details.GetVendorID())
+                        switch (details.GetVendorID())
                         {
                             // Asus
                             case "0x0B05":
@@ -976,7 +971,7 @@ public static class ControllerManager
                     {
                         try
                         {
-                            controller = new XInputController(details);
+                            controller = IDevice.GetCurrent().CreateController(details) ?? new XInputController(details);
                         }
                         catch
                         {
