@@ -103,7 +103,7 @@ public class OneXPlayerX2 : OneXPlayerX1
     public override IController? CreateController(PnPDetails details)
     {
         // The integrated pad uses the standard Xbox 360 identity and is not marked internal.
-        if (details.GetVendorID() == "0x045E" && details.GetProductID() == "0x028E")
+        if (details.VendorID == 0x045E && details.ProductID == 0x028E)
             return new OneXPlayerX2Controller(details);
 
         return null;
