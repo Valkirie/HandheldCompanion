@@ -330,6 +330,10 @@ namespace HandheldCompanion.ViewModels
         public virtual Visibility AxisDirectionVisibility => Visibility.Collapsed;
         public virtual Visibility AxisThresholdVisibility => Visibility.Collapsed;
 
+        // DualSense touchpad gesture settings are only supported by button mappings.
+        public virtual Visibility TouchpadSettingsVisibility => Visibility.Collapsed;
+        public virtual Visibility TouchpadSwipeSettingsVisibility => Visibility.Collapsed;
+
         // Combined visibility for settings that apply to both Button mappings and Axis2Button mappings
         // This avoids duplication - shows when ActionTypeIndex is Button/Keyboard/Mouse/Trigger/Shift
         // OR when it's an Axis mapping converting to Button

@@ -380,9 +380,12 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public Visibility TouchpadSettingsVisibility => Action is TouchpadActions ? Visibility.Visible : Visibility.Collapsed;
-        public Visibility TouchpadSwipeSettingsVisibility => Action is TouchpadActions touchpad && touchpad.Button == ButtonFlags.TouchpadSwipe
-            ? Visibility.Visible : Visibility.Collapsed;
+        public override Visibility TouchpadSettingsVisibility =>
+            ActionTypeIndex == (int)ActionType.Button && Action is TouchpadActions
+                ? Visibility.Visible : Visibility.Collapsed;
+        public override Visibility TouchpadSwipeSettingsVisibility =>
+            ActionTypeIndex == (int)ActionType.Button && Action is TouchpadActions { Button: ButtonFlags.TouchpadSwipe }
+                ? Visibility.Visible : Visibility.Collapsed;
         public int TouchpadMaxX => DS4Touch.TOUCHPAD_WIDTH - 1;
         public int TouchpadMaxY => DS4Touch.TOUCHPAD_HEIGHT - 1;
         public double TouchpadMaxDuration => TouchpadActions.MaximumSwipeDuration;
