@@ -1,7 +1,6 @@
 ﻿using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
-using HandheldCompanion.Controllers.Dummies;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Properties;
@@ -386,15 +385,6 @@ namespace HandheldCompanion.ViewModels
         public override Visibility TouchpadSwipeSettingsVisibility =>
             ActionTypeIndex == (int)ActionType.Button && Action is TouchpadActions { Button: ButtonFlags.TouchpadSwipe }
                 ? Visibility.Visible : Visibility.Collapsed;
-        public int TouchpadMaxX => DS4Touch.TOUCHPAD_WIDTH - 1;
-        public int TouchpadMaxY => DS4Touch.TOUCHPAD_HEIGHT - 1;
-        public double TouchpadMaxDuration => TouchpadActions.MaximumSwipeDuration;
-        public string TouchpadCoordinateRangeDescription => $"DualSense coordinates: X 0–{TouchpadMaxX}, Y 0–{TouchpadMaxY}";
-        public int TouchpadX { get => Action is TouchpadActions a ? a.X : 0; set { if (Action is TouchpadActions a) { a.X = value; OnPropertyChanged(nameof(TouchpadX)); } } }
-        public int TouchpadY { get => Action is TouchpadActions a ? a.Y : 0; set { if (Action is TouchpadActions a) { a.Y = value; OnPropertyChanged(nameof(TouchpadY)); } } }
-        public int TouchpadEndX { get => Action is TouchpadActions a ? a.EndX : 0; set { if (Action is TouchpadActions a) { a.EndX = value; OnPropertyChanged(nameof(TouchpadEndX)); } } }
-        public int TouchpadEndY { get => Action is TouchpadActions a ? a.EndY : 0; set { if (Action is TouchpadActions a) { a.EndY = value; OnPropertyChanged(nameof(TouchpadEndY)); } } }
-        public double TouchpadSwipeDuration { get => Action is TouchpadActions a ? a.SwipeDuration : TouchpadActions.DefaultSwipeDuration; set { if (Action is TouchpadActions a) { a.SwipeDuration = (float)value; OnPropertyChanged(nameof(TouchpadSwipeDuration)); } } }
 
         public override void OnPropertyChanged(string? propertyName)
         {
@@ -493,27 +483,13 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 MappingTargetViewModel? matchingTargetVm = null;
-                foreach (var button in controller.GetTargetButtons())
+                foreach (var button in GetButtonTargets(controller))
                 {
                     var mappingTargetVm = CreateTarget(button, controller.GetButtonName(button));
                     targets.Add(mappingTargetVm);
 
                     if (button == ((ButtonActions)Action).Button)
                         matchingTargetVm = mappingTargetVm;
-                }
-
-                // Parameterized touchpad gestures are mapping actions rather than
-                // physical controller buttons. Expose them only in the button editor.
-                if (controller is DummyDualSenseController)
-                {
-                    foreach (var button in TouchpadActions.Targets)
-                    {
-                        var mappingTargetVm = CreateTarget(button, controller.GetButtonName(button));
-                        targets.Add(mappingTargetVm);
-
-                        if (button == ((ButtonActions)Action).Button)
-                            matchingTargetVm = mappingTargetVm;
-                    }
                 }
 
                 if (matchingTargetVm is null && preserveMissingTarget)
@@ -669,22 +645,7 @@ namespace HandheldCompanion.ViewModels
                 case ActionType.Button:
                     if (SelectedTarget.Tag is ButtonFlags buttonFlags)
                     {
-                        bool isTouchpadAction = TouchpadActions.IsTouchpadTarget(buttonFlags);
-
-                        if (isTouchpadAction && Action is not TouchpadActions)
-                        {
-                            IActions previous = Action;
-                            Action = new TouchpadActions(buttonFlags);
-                            Action.CopyConfigurationFrom(previous);
-                        }
-                        else if (!isTouchpadAction && Action is TouchpadActions)
-                        {
-                            IActions previous = Action;
-                            Action = new ButtonActions(buttonFlags);
-                            Action.CopyConfigurationFrom(previous);
-                        }
-                        else
-                            ((ButtonActions)Action).Button = buttonFlags;
+                        SetButtonTarget(buttonFlags);
 
                         OnPropertyChanged(string.Empty);
                     }

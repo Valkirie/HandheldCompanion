@@ -551,7 +551,7 @@ public class LayoutManager : IManager
             ShiftSlot shiftSlot = ComputeShiftSlot(controllerState, deltaMs);
 
             ProcessButtonActions(controllerState, shiftSlot, deltaMs, ref touchpadSample);
-            ProcessAxisActions(controllerState, shiftSlot, deltaMs);
+            ProcessAxisActions(controllerState, shiftSlot, deltaMs, ref touchpadSample);
             ApplyTouchpadCoordinates(touchpadSample);
             ProcessGyroActions(controllerState, shiftSlot, deltaMs);
         }
@@ -692,7 +692,8 @@ public class LayoutManager : IManager
     /// <summary>
     /// Third pass: process axis (stick / pad / trigger) actions and write to outputState.
     /// </summary>
-    private void ProcessAxisActions(ControllerState state, ShiftSlot shiftSlot, float deltaMs)
+    private void ProcessAxisActions(ControllerState state, ShiftSlot shiftSlot, float deltaMs,
+        ref TouchpadSample? selectedTouchpadSample)
     {
         for (int a = 0; a < _plannedAxes.Length; a++)
         {
@@ -718,7 +719,20 @@ public class LayoutManager : IManager
                         {
                             var bA = (ButtonActions)action;
                             bA.Execute(layout, shiftSlot, deltaMs);
-                            outputState.ButtonState[bA.Button] |= bA.GetValue();
+                            if (bA is TouchpadActions touchpadAction)
+                            {
+                                if (touchpadAction.TryGetTouch(out TouchpadSample sample))
+                                {
+                                    outputState.ButtonState[touchpadAction.Button] |= true;
+                                    if (selectedTouchpadSample is null ||
+                                        sample.Priority > selectedTouchpadSample.Value.Priority)
+                                        selectedTouchpadSample = sample;
+                                }
+                            }
+                            else
+                            {
+                                outputState.ButtonState[bA.Button] |= bA.GetValue();
+                            }
                             break;
                         }
                     case ActionType.Keyboard:
