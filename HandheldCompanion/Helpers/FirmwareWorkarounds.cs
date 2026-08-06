@@ -7,8 +7,14 @@ using System.Windows.Forms;
 
 namespace HandheldCompanion.Helpers
 {
+    /// <summary>
+    /// Groups firmware-specific input workarounds by device manufacturer.
+    /// </summary>
     public static class FirmwareWorkarounds
     {
+        /// <summary>
+        /// Handles MSI firmware input quirks.
+        /// </summary>
         public sealed class MSI
         {
             private const uint INPUT_KEYBOARD = 1;
@@ -27,6 +33,9 @@ namespace HandheldCompanion.Helpers
             private bool releasedRightWin;
             private bool injecting;
 
+            /// <summary>
+            /// Gets or sets whether MSI firmware workarounds are active.
+            /// </summary>
             public bool Enabled
             {
                 get => enabled;
@@ -38,6 +47,11 @@ namespace HandheldCompanion.Helpers
                 }
             }
 
+            /// <summary>
+            /// Applies the MSI Claw Win+G workaround to a keyboard hook event.
+            /// </summary>
+            /// <param name="args">The keyboard hook event to inspect and, when required, suppress.</param>
+            /// <param name="injected">Whether Windows marked the event as injected.</param>
             /// <returns>True when the event was injected by this workaround and should bypass InputsManager.</returns>
             public bool ProcessKeyboardEvent(KeyEventArgsExt args, bool injected)
             {
@@ -163,6 +177,9 @@ namespace HandheldCompanion.Helpers
                 }
             }
 
+            /// <summary>
+            /// Clears tracked keyboard and shortcut state without changing whether the workaround is enabled.
+            /// </summary>
             public void Reset()
             {
                 leftWinDown = false;
@@ -195,6 +212,9 @@ namespace HandheldCompanion.Helpers
                 public UIntPtr ExtraInfo;
             }
 
+            /// <summary>
+            /// Injects the keyboard sequence used to clear the MSI firmware shortcut state.
+            /// </summary>
             [DllImport("user32.dll", SetLastError = true)]
             private static extern uint SendInput(uint count, KeyboardInput[] inputs, int inputSize);
         }

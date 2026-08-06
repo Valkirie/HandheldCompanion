@@ -526,6 +526,13 @@ public partial class App : Application
         }
     }
 
+    /// <summary>
+    /// Restores the PS/2 keyboard driver disabled by the legacy MSI Claw setting and migrates
+    /// that setting to the Win+G firmware workaround.
+    /// </summary>
+    /// <param name="reportStatus">Optional callback used to report migration progress.</param>
+    /// <param name="restartRequired">True when restoring the driver requires Windows to restart.</param>
+    /// <returns>True when no migration is needed or the driver and settings were restored successfully.</returns>
     private static bool RestoreLegacyMsiClawKeyboardSetting(Action<string>? reportStatus, out bool restartRequired)
     {
         restartRequired = false;
@@ -563,11 +570,17 @@ public partial class App : Application
         }
     }
 
+    /// <summary>
+    /// Schedules the migration restart prompt after the main window has finished loading.
+    /// </summary>
     private static void RequestRestartConfirmation()
     {
         Current.Dispatcher.BeginInvoke(RequestRestartConfirmationCore, DispatcherPriority.ApplicationIdle);
     }
 
+    /// <summary>
+    /// Displays the migration restart prompt and restarts Windows when the user confirms.
+    /// </summary>
     private static void RequestRestartConfirmationCore()
     {
         _ = UIHelper.TryInvoke(async () =>

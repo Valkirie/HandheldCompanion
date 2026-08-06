@@ -661,6 +661,9 @@ public static class InputsManager
         m_GlobalHook = null;
     }
 
+    /// <summary>
+    /// Applies the MSI Claw Win+G workaround setting when running on affected hardware.
+    /// </summary>
     private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
     {
         if (name != BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING)
