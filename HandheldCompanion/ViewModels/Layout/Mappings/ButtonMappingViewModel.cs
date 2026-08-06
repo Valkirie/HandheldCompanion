@@ -379,6 +379,13 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public override Visibility TouchpadSettingsVisibility =>
+            ActionTypeIndex == (int)ActionType.Button && Action is TouchpadActions
+                ? Visibility.Visible : Visibility.Collapsed;
+        public override Visibility TouchpadSwipeSettingsVisibility =>
+            ActionTypeIndex == (int)ActionType.Button && Action is TouchpadActions { Button: ButtonFlags.TouchpadSwipe }
+                ? Visibility.Visible : Visibility.Collapsed;
+
         public override void OnPropertyChanged(string? propertyName)
         {
             switch (propertyName)
@@ -403,6 +410,8 @@ namespace HandheldCompanion.ViewModels
                     OnPropertyChanged(nameof(AxisVisualizerInnerDeadzoneSize));
                     OnPropertyChanged(nameof(AxisVisualizerOuterDeadzoneSize));
                     OnPropertyChanged(nameof(AxisVisualizerAntiDeadzoneSize));
+                    OnPropertyChanged(nameof(TouchpadSettingsVisibility));
+                    OnPropertyChanged(nameof(TouchpadSwipeSettingsVisibility));
                     break;
             }
 
@@ -474,7 +483,7 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 MappingTargetViewModel? matchingTargetVm = null;
-                foreach (var button in controller.GetTargetButtons())
+                foreach (var button in GetButtonTargets(controller))
                 {
                     var mappingTargetVm = CreateTarget(button, controller.GetButtonName(button));
                     targets.Add(mappingTargetVm);
@@ -635,7 +644,11 @@ namespace HandheldCompanion.ViewModels
             {
                 case ActionType.Button:
                     if (SelectedTarget.Tag is ButtonFlags buttonFlags)
-                        ((ButtonActions)Action).Button = buttonFlags;
+                    {
+                        SetButtonTarget(buttonFlags);
+
+                        OnPropertyChanged(string.Empty);
+                    }
                     break;
 
                 case ActionType.Keyboard:

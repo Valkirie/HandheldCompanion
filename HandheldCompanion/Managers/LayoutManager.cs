@@ -543,14 +543,16 @@ public class LayoutManager : IManager
             outputState.ButtonState.Clear();
             outputState.AxisState.Clear();
             outputState.GyroState.CopyFrom(controllerState.GyroState);
+            TouchpadSample? touchpadSample = null;
 
             // delta arrives in seconds; all timer logic expects milliseconds
             float deltaMs = delta * 1000f;
 
             ShiftSlot shiftSlot = ComputeShiftSlot(controllerState, deltaMs);
 
-            ProcessButtonActions(controllerState, shiftSlot, deltaMs);
-            ProcessAxisActions(controllerState, shiftSlot, deltaMs);
+            ProcessButtonActions(controllerState, shiftSlot, deltaMs, ref touchpadSample);
+            ProcessAxisActions(controllerState, shiftSlot, deltaMs, ref touchpadSample);
+            ApplyTouchpadCoordinates(touchpadSample);
             ProcessGyroActions(controllerState, shiftSlot, deltaMs);
         }
 
@@ -609,7 +611,8 @@ public class LayoutManager : IManager
     /// <summary>
     /// Second pass: process all non-Shift button actions and write to outputState.
     /// </summary>
-    private void ProcessButtonActions(ControllerState state, ShiftSlot shiftSlot, float deltaMs)
+    private void ProcessButtonActions(ControllerState state, ShiftSlot shiftSlot, float deltaMs,
+        ref TouchpadSample? selectedTouchpadSample)
     {
         for (int b = 0; b < _plannedButtons.Length; b++)
         {
@@ -627,7 +630,20 @@ public class LayoutManager : IManager
                         {
                             var bA = (ButtonActions)action;
                             bA.Execute(button, pressed, shiftSlot, deltaMs);
-                            outputState.ButtonState[bA.Button] |= bA.GetValue();
+                            if (bA is TouchpadActions touchpadAction)
+                            {
+                                if (touchpadAction.TryGetTouch(out TouchpadSample sample))
+                                {
+                                    outputState.ButtonState[touchpadAction.Button] |= true;
+                                    if (selectedTouchpadSample is null ||
+                                        sample.Priority > selectedTouchpadSample.Value.Priority)
+                                        selectedTouchpadSample = sample;
+                                }
+                            }
+                            else
+                            {
+                                outputState.ButtonState[bA.Button] |= bA.GetValue();
+                            }
                             break;
                         }
                     case ActionType.Keyboard:
@@ -662,10 +678,22 @@ public class LayoutManager : IManager
         }
     }
 
+    private void ApplyTouchpadCoordinates(TouchpadSample? sample)
+    {
+        if (sample is null)
+            return;
+
+        outputState.AxisState[AxisFlags.RightPadX] = DS4Touch.CoordinateToAxis(
+            sample.Value.X, DS4Touch.TOUCHPAD_WIDTH);
+        outputState.AxisState[AxisFlags.RightPadY] = DS4Touch.CoordinateToAxis(
+            DS4Touch.TOUCHPAD_HEIGHT - 1 - sample.Value.Y, DS4Touch.TOUCHPAD_HEIGHT);
+    }
+
     /// <summary>
     /// Third pass: process axis (stick / pad / trigger) actions and write to outputState.
     /// </summary>
-    private void ProcessAxisActions(ControllerState state, ShiftSlot shiftSlot, float deltaMs)
+    private void ProcessAxisActions(ControllerState state, ShiftSlot shiftSlot, float deltaMs,
+        ref TouchpadSample? selectedTouchpadSample)
     {
         for (int a = 0; a < _plannedAxes.Length; a++)
         {
@@ -691,7 +719,20 @@ public class LayoutManager : IManager
                         {
                             var bA = (ButtonActions)action;
                             bA.Execute(layout, shiftSlot, deltaMs);
-                            outputState.ButtonState[bA.Button] |= bA.GetValue();
+                            if (bA is TouchpadActions touchpadAction)
+                            {
+                                if (touchpadAction.TryGetTouch(out TouchpadSample sample))
+                                {
+                                    outputState.ButtonState[touchpadAction.Button] |= true;
+                                    if (selectedTouchpadSample is null ||
+                                        sample.Priority > selectedTouchpadSample.Value.Priority)
+                                        selectedTouchpadSample = sample;
+                                }
+                            }
+                            else
+                            {
+                                outputState.ButtonState[bA.Button] |= bA.GetValue();
+                            }
                             break;
                         }
                     case ActionType.Keyboard:

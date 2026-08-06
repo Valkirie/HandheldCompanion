@@ -179,5 +179,13 @@ public enum ButtonFlags : byte
 
     HOTKEY_END = 150,
 
-    Max = 151
+    [Description("Center Pad Click")] CenterPadClick = 151,
+
+    [Description("Microphone Mute")] MicrophoneMute = 152,
+
+    [Description("Touchpad Click (Coordinate)")] TouchpadCoordinateClick = 153,
+    [Description("Touchpad Touch (Coordinate)")] TouchpadCoordinateTouch = 154,
+    [Description("Touchpad Swipe")] TouchpadSwipe = 155,
+
+    Max = 156
 }
