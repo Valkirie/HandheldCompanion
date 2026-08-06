@@ -1,6 +1,7 @@
 using hidapi;
 using hidapi.Native;
 using System;
+using HandheldCompanion.Shared;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,12 +13,16 @@ public enum OxpHidInitProfile
     X1 = 1,
     X1Mini = 2,
     Apex = 3,
+    X2 = 4,
 }
 
 internal sealed class OneXPlayerOxpHidMonitor : IDisposable
 {
     public const ushort VID = 0x1A86;
     public const ushort PID = 0xFE00;
+    // OneXPlayer X2 exposes a second CH34x control chip that older models don't have;
+    // the paddle/OEM button reports live on either chip's vendor interface (MI_02).
+    public const ushort PID_X2 = 0x1305;
     public const int InterfaceNumber = 0x02;
     public const ushort InputReportLength = 64;
 
@@ -26,37 +31,83 @@ internal sealed class OneXPlayerOxpHidMonitor : IDisposable
     private const byte StatusCommandId = 0xB8;
     private const byte VibrationCommandId = 0xB3;
 
-    private readonly HidDevice _hidDevice = new(VID, PID, InputReportLength, -1);
+    private HidDevice? _hidDevice;
+    // Actual input-report length of the opened interface. X1 = 64; X2's FE00 MI_02 = 65
+    // (numbered report / leading report-ID byte), so it must not be hardcoded.
+    private int _reportLength = InputReportLength;
     private readonly bool[] _buttonStates = new bool[0x25];
     private CancellationTokenSource? _cancellationTokenSource;
     private Task? _readTask;
+    private Task? _initializationTask;
     private OxpHidInitProfile _initProfile = OxpHidInitProfile.None;
     private bool _reinitializeRequested;
 
     public event Action<byte, bool>? ButtonChanged;
 
-    public bool IsOpen => _hidDevice.IsDeviceValid;
+    public bool IsOpen => _hidDevice is not null && _hidDevice.IsDeviceValid;
 
     public bool Open(OxpHidInitProfile initProfile)
     {
-        IntPtr devEnum = HidApiNative.hid_enumerate(VID, PID);
-        IntPtr deviceInfo = devEnum;
+        ushort[] candidatePids = initProfile == OxpHidInitProfile.X2 ? [PID, PID_X2] : [PID];
+
+        foreach (ushort pid in candidatePids)
+        {
+            if (TryOpenVendorInterface(VID, pid, initProfile))
+                return true;
+        }
+
+        LogManager.LogWarning("No OneXPlayer vendor HID interface (MI_{0:X2}) could be opened", InterfaceNumber);
+        return false;
+    }
+
+    private bool TryOpenVendorInterface(ushort vid, ushort pid, OxpHidInitProfile initProfile)
+    {
+        IntPtr devEnum = HidApiNative.hid_enumerate(vid, pid);
+        if (devEnum == IntPtr.Zero)
+            return false;
 
         try
         {
+            IntPtr deviceInfo = devEnum;
             while (deviceInfo != IntPtr.Zero)
             {
                 HidDeviceInfo hidDeviceInfo = new(deviceInfo);
+
+                // Only the vendor interface (MI_02) carries the button-remap protocol.
                 if (hidDeviceInfo.InterfaceNumber == InterfaceNumber)
                 {
-                    if (_hidDevice.OpenDevice(hidDeviceInfo.Path))
-                    {
-                        _initProfile = initProfile;
-                        InitializeProfile();
+                    // Open with the interface's ACTUAL report length (X2 MI_02 is 65, not 64);
+                    // otherwise OpenDevice() rejects it on its report-length check.
+                    ushort openLen;
+                    try { openLen = HidDevice.GetInputReportByteLength(hidDeviceInfo.Path); }
+                    catch { openLen = 0; }
+                    if (openLen == 0)
+                        openLen = InputReportLength;
 
-                        _cancellationTokenSource = new CancellationTokenSource();
-                        _readTask = Task.Run(() => ReadLoop(_cancellationTokenSource.Token));
-                        return true;
+                    try
+                    {
+                        HidDevice candidate = new(vid, pid, openLen, -1, hidDeviceInfo.Path);
+                        // The constructor does NOT open the device; OpenDevice() opens the handle.
+                        if (candidate.OpenDevice(hidDeviceInfo.Path))
+                        {
+                            _hidDevice = candidate;
+                            _initProfile = initProfile;
+                            _reportLength = openLen;
+
+                            LogManager.LogInformation("Opened OneXPlayer vendor interface VID=0x{0:X4} PID=0x{1:X4} MI_{2:X2}", vid, pid, InterfaceNumber);
+
+                            CancellationTokenSource cancellation = new();
+                            _cancellationTokenSource = cancellation;
+                            InitializeProfile(cancellation.Token);
+                            _readTask = Task.Run(() => ReadLoop(cancellation.Token));
+                            return true;
+                        }
+
+                        candidate.Dispose();
+                    }
+                    catch (Exception ex)
+                    {
+                        LogManager.LogWarning("Exception opening OneXPlayer vendor interface: {0}", ex.Message);
                     }
                 }
 
@@ -73,26 +124,34 @@ internal sealed class OneXPlayerOxpHidMonitor : IDisposable
 
     public void Close()
     {
-        if (_cancellationTokenSource is not null)
-        {
-            _cancellationTokenSource.Cancel();
-            _cancellationTokenSource.Dispose();
-            _cancellationTokenSource = null;
-        }
+        CancellationTokenSource? cancellation = _cancellationTokenSource;
+        cancellation?.Cancel();
 
-        try
-        {
-            _readTask?.Wait(250);
-        }
-        catch
-        { }
+        WaitForTask(_readTask);
+        WaitForTask(_initializationTask);
 
         _readTask = null;
+        _initializationTask = null;
+        cancellation?.Dispose();
+        _cancellationTokenSource = null;
         _reinitializeRequested = false;
         _initProfile = OxpHidInitProfile.None;
 
         Array.Clear(_buttonStates, 0, _buttonStates.Length);
-        _hidDevice.Close();
+
+        if (_hidDevice is not null)
+        {
+            try
+            {
+                _hidDevice.Close();
+            }
+            catch
+            { }
+            finally
+            {
+                _hidDevice = null;
+            }
+        }
     }
 
     public void Dispose()
@@ -100,32 +159,49 @@ internal sealed class OneXPlayerOxpHidMonitor : IDisposable
         Close();
     }
 
+    private static void WaitForTask(Task? task)
+    {
+        try { task?.Wait(250); }
+        catch { }
+    }
+
     private void ReadLoop(CancellationToken cancellationToken)
     {
-        byte[] report = new byte[InputReportLength];
+        HidDevice? device = _hidDevice;
+        if (device is null)
+            return;
+
+        int reportLength = _reportLength;
+        byte[] report = new byte[reportLength];
 
         while (!cancellationToken.IsCancellationRequested)
         {
             int bytesRead;
             try
             {
-                bytesRead = _hidDevice.Read(report, 10);
+                bytesRead = device.Read(report, 10);
             }
             catch
             {
                 break;
             }
 
-            if (bytesRead < InputReportLength)
+            if (bytesRead <= 0)
                 continue;
 
             if (_reinitializeRequested)
             {
-                InitializeProfile();
+                InitializeProfile(cancellationToken);
                 _reinitializeRequested = false;
             }
 
-            if (report[1] != FrameMarker || report[InputReportLength - 2] != FrameMarker)
+            // Button reports are framed B2 3F ... 3F B2. hidapi returns 64 payload bytes on both
+            // X1 (report length 64) and X2 (65, leading report-ID byte stripped), so parse using
+            // the actual bytesRead rather than the interface's declared report length.
+            if (bytesRead < 14)
+                continue;
+
+            if (report[1] != FrameMarker || report[bytesRead - 2] != FrameMarker)
                 continue;
 
             if (report[0] == StatusCommandId)
@@ -159,7 +235,7 @@ internal sealed class OneXPlayerOxpHidMonitor : IDisposable
             _reinitializeRequested = true;
     }
 
-    private void InitializeProfile()
+    private void InitializeProfile(CancellationToken cancellationToken)
     {
         switch (_initProfile)
         {
@@ -184,6 +260,33 @@ internal sealed class OneXPlayerOxpHidMonitor : IDisposable
                 Thread.Sleep(200);
                 WriteCommand(0xB2, [0x00, 0x01, 0x02]);
                 break;
+            case OxpHidInitProfile.X2:
+                InitializeX2(cancellationToken);
+                break;
+        }
+    }
+
+    private void InitializeX2(CancellationToken cancellationToken)
+    {
+        WriteCommand(0xB4, BuildRemapPage1(0x01));
+        Thread.Sleep(50);
+        WriteCommand(0xB4, BuildRemapPage2(0x01, 0x67, 0x66));
+        _initializationTask = EnableX2InterceptAsync(cancellationToken);
+    }
+
+    private async Task EnableX2InterceptAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await Task.Delay(4000, cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            WriteCommand(0xB2, [0x01, 0x1F, 0x40, 0x03, 0x02, 0x03, 0x00, 0x00, 0x00, 0x01]);
+        }
+        catch (OperationCanceledException)
+        { }
+        catch (Exception ex)
+        {
+            LogManager.LogWarning("X2 intercept initialization failed: {0}", ex.Message);
         }
     }
 
@@ -192,34 +295,26 @@ internal sealed class OneXPlayerOxpHidMonitor : IDisposable
         return [0x01, 0x05, level];
     }
 
-    private void InitializeRemap()
-    {
-        WriteCommand(0xB2, [0x01, 0x1F, 0x40, 0x03, 0x02, 0x03, 0x00, 0x00, 0x00, 0x01]);
-        Thread.Sleep(50);
-        WriteCommand(0xB4, BuildRemapPage1(0x01));
-        Thread.Sleep(50);
-        WriteCommand(0xB4, BuildRemapPage2(0x01, 0x66, 0x67));
-        Thread.Sleep(50);
-        WriteCommand(0xB2, [0x00, 0x01, 0x02]);
-    }
-
     private void WriteCommand(byte commandId, byte[] payload)
     {
-        _hidDevice.Write(BuildCommand(commandId, payload));
+        _hidDevice?.Write(BuildCommand(commandId, payload));
     }
 
-    private static byte[] BuildCommand(byte commandId, byte[] payload, byte index = 0x01)
+    // Report-length aware: X1 builds a 64-byte command (markers at 62/63); the X2's report is
+    // 65 bytes, so the trailing markers must sit at 63/64 or the firmware rejects the command.
+    private byte[] BuildCommand(byte commandId, byte[] payload, byte index = 0x01)
     {
-        byte[] command = new byte[InputReportLength];
+        int length = _reportLength;
+        byte[] command = new byte[length];
         command[0] = commandId;
         command[1] = FrameMarker;
         command[2] = index;
 
-        int count = Math.Min(payload.Length, InputReportLength - 5);
+        int count = Math.Min(payload.Length, length - 5);
         Array.Copy(payload, 0, command, 3, count);
 
-        command[InputReportLength - 2] = FrameMarker;
-        command[InputReportLength - 1] = commandId;
+        command[length - 2] = FrameMarker;
+        command[length - 1] = commandId;
         return command;
     }
 

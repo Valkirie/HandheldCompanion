@@ -900,6 +900,16 @@ public static class ControllerManager
                     {
                         switch (details.GetVendorID())
                         {
+                            // OneXPlayer X2
+                            case "0x045E":
+                                switch (details.GetProductID())
+                                {
+                                    case "0x028E":
+                                        try { controller = new OneXPlayerX2Controller(details); } catch { }
+                                        break;
+                                }
+                                break;
+
                             // Asus
                             case "0x0B05":
                                 {

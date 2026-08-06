@@ -13,6 +13,7 @@ using System.Linq;
 using System.Management;
 using System.Numerics;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using WindowsInput.Events;
@@ -199,10 +200,7 @@ public class OneXPlayerX1 : OneXAOKZOE
             }
         }
 
-        // allow OneX button to pass key inputs
-        EcWriteByte(0xEB, 0x40);
-        if (EcReadByte(0xEB) == 0x40)
-            LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
+        SetTurboButtonTakeover(true);
 
         return success;
     }
@@ -244,11 +242,21 @@ public class OneXPlayerX1 : OneXAOKZOE
             }
         }
 
-        EcWriteByte(0xEB, 0x00);
-        if (EcReadByte(0xEB) == 0x00)
-            LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
+        SetTurboButtonTakeover(false);
 
         base.Close();
+    }
+
+    protected virtual void SetTurboButtonTakeover(bool enabled)
+    {
+        byte value = enabled ? (byte)0x40 : (byte)0x00;
+
+        EcWriteByte(0xEB, value);
+        Thread.Sleep(50);
+        if (EcReadByte(0xEB) == value)
+            LogManager.LogInformation("{0} {1} OEM button", enabled ? "Unlocked" : "Locked", ButtonFlags.OEM1);
+        else
+            LogManager.LogWarning("Failed to {0} OEM button", enabled ? "unlock" : "lock");
     }
 
     protected override void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
@@ -499,7 +507,7 @@ public class OneXPlayerX1 : OneXAOKZOE
         _vendorHidMonitor = null;
     }
 
-    private void VendorHidMonitor_ButtonChanged(byte buttonId, bool pressed)
+    protected virtual void VendorHidMonitor_ButtonChanged(byte buttonId, bool pressed)
     {
         ButtonFlags button = MapVendorButton(buttonId);
         if (button == ButtonFlags.None)
