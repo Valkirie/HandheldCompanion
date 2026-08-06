@@ -151,6 +151,23 @@ namespace HandheldCompanion.Actions
 
         public IActions() { }
 
+        internal void CopyConfigurationFrom(IActions source)
+        {
+            pressType = source.pressType;
+            ActionTimer = source.ActionTimer;
+            HasTurbo = source.HasTurbo;
+            HasToggle = source.HasToggle;
+            HasInterruptable = source.HasInterruptable;
+            TurboDelay = source.TurboDelay;
+            StartDelay = source.StartDelay;
+            ShiftSlot = source.ShiftSlot;
+            ShiftMatchAny = source.ShiftMatchAny;
+            HapticMode = source.HapticMode;
+            HapticStrength = source.HapticStrength;
+            motionDirection = source.motionDirection;
+            motionThreshold = source.motionThreshold;
+        }
+
         /// <summary>
         /// Override to share toggle state across bindings targeting the same key/button,
         /// and to detect external releases. Default uses local toggle state.
@@ -159,6 +176,26 @@ namespace HandheldCompanion.Actions
 
         public virtual void SetHaptic(ButtonFlags button, bool released)
         {
+            bool isTrackpadClick = button is
+                ButtonFlags.LeftPadClick or
+                ButtonFlags.LeftPadClickUp or
+                ButtonFlags.LeftPadClickDown or
+                ButtonFlags.LeftPadClickLeft or
+                ButtonFlags.LeftPadClickRight or
+                ButtonFlags.RightPadClick or
+                ButtonFlags.RightPadClickUp or
+                ButtonFlags.RightPadClickDown or
+                ButtonFlags.RightPadClickLeft or
+                ButtonFlags.RightPadClickRight;
+
+            if (isTrackpadClick &&
+                ControllerManager.GetTarget() is HandheldCompanion.Controllers.Steam.SteamController)
+            {
+                // Physical Steam trackpad clicks are handled once at controller level so the
+                // shared Controller-page setting applies regardless of the mapped action type.
+                return;
+            }
+
             if (HapticMode == HapticMode.Off) return;
             if (HapticMode == HapticMode.Down && released) return;
             if (HapticMode == HapticMode.Up && !released) return;
@@ -175,7 +212,8 @@ namespace HandheldCompanion.Actions
         /// <summary>AxisLayout version: zeroes the vector when the slot is masked.</summary>
         public virtual void Execute(AxisLayout layout, ShiftSlot shiftSlot, float delta)
         {
-            if (!IsShiftAllowed(shiftSlot, ShiftSlot, ShiftMatchAny))
+            axisSlotDisabled = !IsShiftAllowed(shiftSlot, ShiftSlot, ShiftMatchAny);
+            if (axisSlotDisabled)
                 outVector = Vector2.Zero;
         }
 

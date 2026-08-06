@@ -1,7 +1,10 @@
 ﻿using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Controllers.Dummies;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
@@ -329,6 +332,53 @@ namespace HandheldCompanion.ViewModels
         // Axis Direction and Threshold should only be visible for Axis mappings converting to Button
         public virtual Visibility AxisDirectionVisibility => Visibility.Collapsed;
         public virtual Visibility AxisThresholdVisibility => Visibility.Collapsed;
+
+        // DualSense touchpad gesture settings are only supported by button mappings.
+        public virtual Visibility TouchpadSettingsVisibility => Visibility.Collapsed;
+        public virtual Visibility TouchpadSwipeSettingsVisibility => Visibility.Collapsed;
+        public int TouchpadMaxX => DS4Touch.TOUCHPAD_WIDTH - 1;
+        public int TouchpadMaxY => DS4Touch.TOUCHPAD_HEIGHT - 1;
+        public double TouchpadMaxDuration => TouchpadActions.MaximumSwipeDuration;
+        public string TouchpadCoordinateRangeDescription => $"DualSense coordinates: X 0–{TouchpadMaxX}, Y 0–{TouchpadMaxY}";
+        public int TouchpadX { get => Action is TouchpadActions a ? a.X : 0; set { if (Action is TouchpadActions a) { a.X = value; OnPropertyChanged(nameof(TouchpadX)); } } }
+        public int TouchpadY { get => Action is TouchpadActions a ? a.Y : 0; set { if (Action is TouchpadActions a) { a.Y = value; OnPropertyChanged(nameof(TouchpadY)); } } }
+        public int TouchpadEndX { get => Action is TouchpadActions a ? a.EndX : 0; set { if (Action is TouchpadActions a) { a.EndX = value; OnPropertyChanged(nameof(TouchpadEndX)); } } }
+        public int TouchpadEndY { get => Action is TouchpadActions a ? a.EndY : 0; set { if (Action is TouchpadActions a) { a.EndY = value; OnPropertyChanged(nameof(TouchpadEndY)); } } }
+        public double TouchpadSwipeDuration { get => Action is TouchpadActions a ? a.SwipeDuration : TouchpadActions.DefaultSwipeDuration; set { if (Action is TouchpadActions a) { a.SwipeDuration = (float)value; OnPropertyChanged(nameof(TouchpadSwipeDuration)); } } }
+
+        protected static IEnumerable<ButtonFlags> GetButtonTargets(IController controller)
+        {
+            foreach (ButtonFlags button in controller.GetTargetButtons())
+                yield return button;
+
+            if (controller is DummyDualSenseController)
+            {
+                foreach (ButtonFlags button in TouchpadActions.Targets)
+                    yield return button;
+            }
+        }
+
+        protected void SetButtonTarget(ButtonFlags button)
+        {
+            bool isTouchpadAction = TouchpadActions.IsTouchpadTarget(button);
+            if (isTouchpadAction && Action is not TouchpadActions)
+            {
+                IActions? previous = Action;
+                Action = new TouchpadActions(button);
+                if (previous is not null)
+                    Action.CopyConfigurationFrom(previous);
+            }
+            else if (!isTouchpadAction && Action is TouchpadActions)
+            {
+                IActions previous = Action;
+                Action = new ButtonActions(button);
+                Action.CopyConfigurationFrom(previous);
+            }
+            else if (Action is ButtonActions buttonAction)
+            {
+                buttonAction.Button = button;
+            }
+        }
 
         // Combined visibility for settings that apply to both Button mappings and Axis2Button mappings
         // This avoids duplication - shows when ActionTypeIndex is Button/Keyboard/Mouse/Trigger/Shift

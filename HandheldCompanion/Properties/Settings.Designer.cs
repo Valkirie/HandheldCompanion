@@ -502,7 +502,19 @@ namespace HandheldCompanion.Properties
                 this["SteamControllerMode"] = value;
             }
         }
-        
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int SteamTrackpadClickHaptics {
+            get {
+                return ((int)(this["SteamTrackpadClickHaptics"]));
+            }
+            set {
+                this["SteamTrackpadClickHaptics"] = value;
+            }
+        }
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]

@@ -26,7 +26,8 @@ public partial class ControllerPage : Page
         DataContext = ViewModel;
         InitializeComponent();
 
-        SteamDeckPanel.Visibility = IDevice.GetCurrent() is SteamDeck ? Visibility.Visible : Visibility.Collapsed;
+        UpdateSteamSettingsVisibility();
+        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
         // manage events
         switch (ManagerFactory.settingsManager.Status)
@@ -58,6 +59,7 @@ public partial class ControllerPage : Page
         SettingsManager_SettingValueChanged("HIDvibrateonconnect", ManagerFactory.settingsManager.GetString("HIDvibrateonconnect"), false, false);
         SettingsManager_SettingValueChanged("VibrationStrength", ManagerFactory.settingsManager.GetString("VibrationStrength"), false, false);
         SettingsManager_SettingValueChanged("SteamControllerMode", ManagerFactory.settingsManager.GetString("SteamControllerMode"), false, false);
+        SettingsManager_SettingValueChanged("SteamTrackpadClickHaptics", ManagerFactory.settingsManager.GetString("SteamTrackpadClickHaptics"), false, false);
         SettingsManager_SettingValueChanged("SteamControllerRumbleInterval", ManagerFactory.settingsManager.GetString("SteamControllerRumbleInterval"), false, false);
         SettingsManager_SettingValueChanged("HIDmode", ManagerFactory.settingsManager.GetString("HIDmode"), false, false);
         SettingsManager_SettingValueChanged("HIDstatus", ManagerFactory.settingsManager.GetString("HIDstatus"), false, false);
@@ -94,6 +96,9 @@ public partial class ControllerPage : Page
                     break;
                 case "SteamControllerMode":
                     cB_SCModeController.SelectedIndex = Convert.ToInt32(value);
+                    break;
+                case "SteamTrackpadClickHaptics":
+                    cB_SteamTrackpadClickHaptics.SelectedIndex = Convert.ToInt32(value);
                     break;
                 case "SteamControllerRumbleInterval":
                     SliderInterval.Value = Convert.ToDouble(value);
@@ -136,7 +141,24 @@ public partial class ControllerPage : Page
     public void Page_Closed()
     {
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
         ViewModel.Dispose();
+    }
+
+    private void ControllerManager_ControllerSelected(HandheldCompanion.Controllers.IController controller)
+    {
+        UIHelper.TryInvoke(UpdateSteamSettingsVisibility);
+    }
+
+    private void UpdateSteamSettingsVisibility()
+    {
+        bool isSteamDeck = IDevice.GetCurrent() is SteamDeck;
+        bool hasSteamTrackpads = ControllerManager.GetTarget() is HandheldCompanion.Controllers.Steam.SteamController;
+
+        SteamDeckPanel.Visibility = isSteamDeck ? Visibility.Visible : Visibility.Collapsed;
+        SteamTrackpadHapticsPanel.Visibility = isSteamDeck || hasSteamTrackpads
+            ? Visibility.Visible
+            : Visibility.Collapsed;
     }
 
     private string GetResourceString(string baseKey, int attempts)
@@ -285,6 +307,14 @@ public partial class ControllerPage : Page
             return;
 
         ManagerFactory.settingsManager.SetProperty("SteamControllerMode", cB_SCModeController.SelectedIndex);
+    }
+
+    private void cB_SteamTrackpadClickHaptics_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!IsLoaded || cB_SteamTrackpadClickHaptics.SelectedIndex == -1)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("SteamTrackpadClickHaptics", cB_SteamTrackpadClickHaptics.SelectedIndex);
     }
 
     private void cB_ControllerPlugBehavior_SelectionChanged(object sender, SelectionChangedEventArgs e)

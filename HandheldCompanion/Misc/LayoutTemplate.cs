@@ -104,7 +104,7 @@ namespace HandheldCompanion.Misc
             };
         }
 
-        private static MouseActions CreateMouseAction(MouseActionsType mouseType, ModifierSet modifiers = ModifierSet.None, Utils.DeflectionDirection motionDirection = Utils.DeflectionDirection.None, float motionThreshold = 4000)
+        private static MouseActions CreateMouseAction(MouseActionsType mouseType, ModifierSet modifiers = ModifierSet.None, Utils.DeflectionDirection motionDirection = Utils.DeflectionDirection.None, float motionThreshold = 4000, HapticMode hapticMode = HapticMode.Off)
         {
             return new MouseActions
             {
@@ -112,6 +112,7 @@ namespace HandheldCompanion.Misc
                 Modifiers = modifiers,
                 motionDirection = motionDirection,
                 motionThreshold = motionThreshold,
+                HapticMode = hapticMode,
             };
         }
 
@@ -154,8 +155,8 @@ namespace HandheldCompanion.Misc
                         {
                             { AxisLayoutFlags.LeftStick, new List<IActions>() { CreateMouseAction(MouseActionsType.Scroll) } },
                             { AxisLayoutFlags.RightStick, new List<IActions>() { CreateMouseAction(MouseActionsType.Move) } },
-                            { AxisLayoutFlags.LeftPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Scroll) } },
-                            { AxisLayoutFlags.RightPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Move) } },
+                            { AxisLayoutFlags.LeftPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Scroll, hapticMode: HapticMode.Down) } },
+                            { AxisLayoutFlags.RightPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Move, hapticMode: HapticMode.Down) } },
                             {
                                 AxisLayoutFlags.L2, new List<IActions>()
                                 {
@@ -208,7 +209,7 @@ namespace HandheldCompanion.Misc
                         Layout.AxisLayout = new()
                         {
                             { AxisLayoutFlags.RightStick, new List<IActions>() { CreateMouseAction(MouseActionsType.Move) } },
-                            { AxisLayoutFlags.RightPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Move) } },
+                            { AxisLayoutFlags.RightPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Move, hapticMode: HapticMode.Down) } },
                             {
                                 AxisLayoutFlags.LeftStick, new List<IActions>()
                                 {
@@ -265,7 +266,7 @@ namespace HandheldCompanion.Misc
 
                 case "GamepadMouse":
                     {
-                        Layout.AxisLayout[AxisLayoutFlags.RightPad] = new List<IActions>() { CreateMouseAction(MouseActionsType.Move) };
+                        Layout.AxisLayout[AxisLayoutFlags.RightPad] = new List<IActions>() { CreateMouseAction(MouseActionsType.Move, hapticMode: HapticMode.Down) };
                     }
                     break;
 

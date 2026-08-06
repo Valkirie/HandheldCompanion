@@ -377,6 +377,12 @@ namespace HandheldCompanion.ViewModels
         public override Visibility Axis2JoystickVisibility => Axis2MouseVisibility == Visibility.Visible && JoystickVisibility == Visibility.Visible ? Visibility.Visible : Visibility.Collapsed;
 
         public override bool IsAxisMapping => true;
+        public override Visibility TouchpadSettingsVisibility =>
+            ActionTypeIndex == (int)ActionType.Button && Action is TouchpadActions
+                ? Visibility.Visible : Visibility.Collapsed;
+        public override Visibility TouchpadSwipeSettingsVisibility =>
+            ActionTypeIndex == (int)ActionType.Button && Action is TouchpadActions { Button: ButtonFlags.TouchpadSwipe }
+                ? Visibility.Visible : Visibility.Collapsed;
 
         // Axis Direction and Threshold are only visible when converting Axis to Button
         public override Visibility AxisDirectionVisibility => Axis2ButtonVisibility;
@@ -749,7 +755,7 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 MappingTargetViewModel? matchingTargetVm = null;
-                foreach (var button in controller.GetTargetButtons())
+                foreach (var button in GetButtonTargets(controller))
                 {
                     var mappingTargetVm = CreateTarget(button, controller.GetButtonName(button));
                     targets.Add(mappingTargetVm);
@@ -843,7 +849,10 @@ namespace HandheldCompanion.ViewModels
             {
                 case ActionType.Button:
                     if (SelectedTarget.Tag is ButtonFlags buttonFlags)
-                        ((ButtonActions)Action).Button = buttonFlags;
+                    {
+                        SetButtonTarget(buttonFlags);
+                        OnPropertyChanged(string.Empty);
+                    }
                     break;
 
                 case ActionType.Keyboard:

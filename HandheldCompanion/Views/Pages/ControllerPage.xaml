@@ -342,6 +342,29 @@
                     </ikw:SimpleStackPanel>
                 </ikw:SimpleStackPanel>
 
+                <!--  Steam trackpad settings  -->
+
+                <ikw:SimpleStackPanel Spacing="8">
+                    <TextBlock
+                        Style="{StaticResource BaseTextBlockStyle}"
+                        Text="Steam trackpad settings"
+                        Visibility="{Binding ElementName=SteamTrackpadHapticsPanel, Path=Visibility}" />
+                    <ikw:SimpleStackPanel Name="SteamTrackpadHapticsPanel" Spacing="3">
+                        <ui:SettingsCard Description="Controls press and release feedback for both Steam trackpads" Header="Trackpad click haptics">
+                            <ui:SettingsCard.HeaderIcon>
+                                <ui:FontIcon Glyph="&#xE877;" />
+                            </ui:SettingsCard.HeaderIcon>
+
+                            <ComboBox Name="cB_SteamTrackpadClickHaptics" Width="120" SelectionChanged="cB_SteamTrackpadClickHaptics_SelectionChanged">
+                                <ComboBoxItem Content="Off" />
+                                <ComboBoxItem Content="Low" />
+                                <ComboBoxItem Content="Medium" />
+                                <ComboBoxItem Content="High" />
+                            </ComboBox>
+                        </ui:SettingsCard>
+                    </ikw:SimpleStackPanel>
+                </ikw:SimpleStackPanel>
+
                 <!--  Physical controller settings  -->
                 <ikw:SimpleStackPanel Spacing="8">
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_PhysicalDeviceSettings}" />

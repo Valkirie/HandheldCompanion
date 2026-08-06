@@ -24,6 +24,8 @@ public class NeptuneController : SteamController
     public const sbyte MinIntensity = -2;
     public const sbyte MaxIntensity = 10;
 
+    public override bool IsLizardModeEnabled => Controller?.LizardModeEnabled ?? true;
+
     // TODO: why not use TimerManager.Tick?
     private Thread? rumbleThread;
     private bool rumbleThreadRunning;
@@ -215,6 +217,10 @@ public class NeptuneController : SteamController
         }
 
         Inputs.ButtonState[ButtonFlags.RightPadClick] = input.State.ButtonState[NeptuneControllerButton.BtnRPadPress];
+        UpdateTrackpadClickHaptics(
+            Inputs.ButtonState[ButtonFlags.LeftPadClick],
+            Inputs.ButtonState[ButtonFlags.RightPadClick]);
+
         if (Inputs.ButtonState[ButtonFlags.RightPadClick])
         {
             Inputs.ButtonState[ButtonFlags.RightPadClickUp] = Inputs.AxisState[AxisFlags.RightPadY] >= TrackPadInner;
@@ -466,5 +472,27 @@ public class NeptuneController : SteamController
             _ => 0,
         };
         Controller?.SetHaptic((byte)GetMotorForButton(button), value, 0, 1);
+    }
+
+    protected override void SendTrackpadClickHaptic(SCHapticMotor motor, int strength, bool released)
+    {
+        // Steam Deck's newer haptic command exposes real waveform style and calibrated
+        // intensity. Keep the levels intentionally far apart so each setting is distinct.
+        // Its motor numbering is opposite to the legacy pulse command used by SCHapticMotor.
+        motor = motor == SCHapticMotor.Left ? SCHapticMotor.Right : SCHapticMotor.Left;
+
+        NCHapticStyle style = strength == 1 ? NCHapticStyle.Weak : NCHapticStyle.Strong;
+        sbyte intensity = strength switch
+        {
+            1 => -7,
+            2 => -1,
+            3 => 5,
+            _ => -1,
+        };
+
+        if (released)
+            intensity = (sbyte)Math.Max(-7, intensity - 3);
+
+        Controller?.SetHaptic2(motor, style, intensity);
     }
 }

@@ -13,6 +13,9 @@ namespace HandheldCompanion.Targets
         protected override string DeviceType => "dualsenseedge";
         protected override int InputLength => 33;
 
+        private enum ClickRegion : byte { None, Left, Right, Coordinate }
+        private readonly TouchpadClickSequencer touchpadClickSequencer = new();
+
         public DualSenseTarget(ushort vendorId, ushort productId) : base(vendorId, productId)
         {
             HID = HIDmode.DualSenseController;
@@ -36,6 +39,24 @@ namespace HandheldCompanion.Targets
             data[2] = (byte)(inputs.AxisState[AxisFlags.RightStickX] >> 8);
             data[3] = (byte)(InputUtils.NegateClampToShort((short)inputs.AxisState[AxisFlags.RightStickY]) >> 8);
 
+            bool leftPadClick = inputs.ButtonState[ButtonFlags.LeftPadClick];
+            bool rightPadClick = inputs.ButtonState[ButtonFlags.RightPadClick];
+            bool coordinateClick = inputs.ButtonState[ButtonFlags.TouchpadCoordinateClick];
+            bool centerPadClick = !coordinateClick && !leftPadClick && !rightPadClick &&
+                (inputs.ButtonState[ButtonFlags.CenterPadClick] ||
+                (DS4Touch.OutputClickButton && !leftPadClick && !rightPadClick));
+
+            int coordinateX = DS4Touch.AxisToCoordinate(inputs.AxisState[AxisFlags.RightPadX], DS4Touch.TOUCHPAD_WIDTH);
+            int coordinateY = DS4Touch.TOUCHPAD_HEIGHT - 1 -
+                DS4Touch.AxisToCoordinate(inputs.AxisState[AxisFlags.RightPadY], DS4Touch.TOUCHPAD_HEIGHT);
+
+            ClickRegion requestedRegion = coordinateClick ? ClickRegion.Coordinate :
+                leftPadClick ? ClickRegion.Left :
+                rightPadClick ? ClickRegion.Right : ClickRegion.None;
+
+            TouchpadClickFrame clickFrame = touchpadClickSequencer.Resolve(
+                requestedRegion, centerPadClick, coordinateX, coordinateY);
+
             uint buttons = 0;
             if (inputs.ButtonState[ButtonFlags.B1]) buttons |= 0x0020;
             if (inputs.ButtonState[ButtonFlags.B2]) buttons |= 0x0040;
@@ -48,7 +69,8 @@ namespace HandheldCompanion.Targets
             if (inputs.ButtonState[ButtonFlags.LeftStickClick]) buttons |= 0x4000;
             if (inputs.ButtonState[ButtonFlags.RightStickClick]) buttons |= 0x8000;
             if (inputs.ButtonState[ButtonFlags.Special]) buttons |= 0x00010000;
-            if (inputs.ButtonState[ButtonFlags.LeftPadClick] || inputs.ButtonState[ButtonFlags.RightPadClick] || DS4Touch.OutputClickButton) buttons |= 0x00020000;
+            if (clickFrame.EmitClick) buttons |= 0x00020000;
+            if (inputs.ButtonState[ButtonFlags.MicrophoneMute]) buttons |= 0x00040000;
             data[4] = (byte)(buttons & 0xFF);
             data[5] = (byte)((buttons >> 8) & 0xFF);
             data[6] = (byte)((buttons >> 16) & 0xFF);
@@ -63,18 +85,25 @@ namespace HandheldCompanion.Targets
             data[9] = (byte)inputs.AxisState[AxisFlags.L2];
             data[10] = (byte)inputs.AxisState[AxisFlags.R2];
 
-            if (DS4Touch.RightPadTouch.IsActive)
-            {
-                ushort touchX = InputUtils.ClampToUShort((int)DS4Touch.RightPadTouch.X, 0, DS4Touch.TOUCHPAD_WIDTH - 1);
-                ushort touchYRaw = InputUtils.ClampToUShort((int)DS4Touch.RightPadTouch.Y, 0, DS4Touch.TOUCHPAD_HEIGHT - 1);
-                ushort touchXScaled = InputUtils.ClampToUShort(touchX * DS4Touch.TOUCHPAD_WIDTH / 1023, 0, DS4Touch.TOUCHPAD_WIDTH);
-                ushort touchYScaled = InputUtils.ClampToUShort(touchYRaw * 1080 / (DS4Touch.TOUCHPAD_HEIGHT - 1), 0, 1080);
-                data[11] = (byte)(touchXScaled & 0xFF);
-                data[12] = (byte)((touchXScaled >> 8) & 0xFF);
-                data[13] = (byte)(touchYScaled & 0xFF);
-                data[14] = (byte)((touchYScaled >> 8) & 0xFF);
-                data[15] = 1;
-            }
+            // A DualSense only has one physical touchpad-click button. Steam splits
+            // left and right from center using a touch which is already active when
+            // that button goes down. A center click is sent without an active touch.
+            bool coordinateTouch = coordinateClick || inputs.ButtonState[ButtonFlags.TouchpadCoordinateTouch] ||
+                inputs.ButtonState[ButtonFlags.TouchpadSwipe];
+
+            data[15] = 0; // VIIPER Touch1Active validity flag
+            if (clickFrame.Region == ClickRegion.Coordinate)
+                WriteTouch(data, clickFrame.X, clickFrame.Y);
+            else if (clickFrame.Region == ClickRegion.Left)
+                WriteTouch(data, DS4Touch.TOUCHPAD_WIDTH / 4, DS4Touch.TOUCHPAD_HEIGHT / 2);
+            else if (clickFrame.Region == ClickRegion.Right)
+                WriteTouch(data, DS4Touch.TOUCHPAD_WIDTH * 3 / 4, DS4Touch.TOUCHPAD_HEIGHT / 2);
+            else if (coordinateTouch)
+                WriteTouch(data, coordinateX, coordinateY);
+            else if (!centerPadClick && DS4Touch.LeftPadTouch.IsActive)
+                WriteTouch(data, DS4Touch.LeftPadTouch.X, DS4Touch.LeftPadTouch.Y);
+            else if (!centerPadClick && DS4Touch.RightPadTouch.IsActive)
+                WriteTouch(data, DS4Touch.RightPadTouch.X, DS4Touch.RightPadTouch.Y);
 
             if (gamepadMotion is not null)
             {
@@ -112,6 +141,75 @@ namespace HandheldCompanion.Targets
             }
 
             return data;
+        }
+
+        private static void WriteTouch(byte[] data, int x, int y)
+        {
+            ushort touchX = InputUtils.ClampToUShort(x, 0, DS4Touch.TOUCHPAD_WIDTH - 1);
+            ushort touchY = InputUtils.ClampToUShort(y, 0, DS4Touch.TOUCHPAD_HEIGHT - 1);
+            data[11] = (byte)(touchX & 0xFF);
+            data[12] = (byte)((touchX >> 8) & 0xFF);
+            data[13] = (byte)(touchY & 0xFF);
+            data[14] = (byte)((touchY >> 8) & 0xFF);
+            data[15] = 1;
+        }
+
+        private readonly record struct TouchpadClickFrame(bool EmitClick, ClickRegion Region, int X, int Y);
+
+        private sealed class TouchpadClickSequencer
+        {
+            private ClickRegion preparedRegion;
+            private bool preparedClickEmitted;
+            private int preparedX;
+            private int preparedY;
+
+            public TouchpadClickFrame Resolve(ClickRegion requestedRegion, bool centerClick, int x, int y)
+            {
+                bool emitClick = centerClick;
+                ClickRegion touchRegion = requestedRegion;
+
+                if (requestedRegion != ClickRegion.None)
+                {
+                    if (requestedRegion == ClickRegion.Coordinate)
+                    {
+                        preparedX = x;
+                        preparedY = y;
+                    }
+
+                    if (preparedRegion == requestedRegion)
+                    {
+                        emitClick = true;
+                        preparedClickEmitted = true;
+                    }
+                    else
+                    {
+                        preparedRegion = requestedRegion;
+                        preparedClickEmitted = false;
+                    }
+                }
+                else if (preparedRegion != ClickRegion.None && !preparedClickEmitted)
+                {
+                    // Preserve a one-report tap long enough to emit the click after
+                    // its preparatory touch report.
+                    emitClick = true;
+                    touchRegion = preparedRegion;
+                    Clear();
+                }
+                else
+                {
+                    Clear();
+                }
+
+                return new TouchpadClickFrame(emitClick, touchRegion,
+                    touchRegion == ClickRegion.Coordinate ? preparedX : x,
+                    touchRegion == ClickRegion.Coordinate ? preparedY : y);
+            }
+
+            private void Clear()
+            {
+                preparedRegion = ClickRegion.None;
+                preparedClickEmitted = false;
+            }
         }
     }
 }
