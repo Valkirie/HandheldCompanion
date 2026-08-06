@@ -744,6 +744,9 @@ public abstract class IDevice
                         case "ONEXPLAYER X2":
                             device = new OneXPlayerX2();
                             break;
+                        case "ONEXPLAYER X2Mini PRO":
+                            device = new OneXPlayerX2MiniPro();
+                            break;
                         case "ONEXPLAYER G1 i":
                             device = new OneXPlayerG1Intel();
                             break;
