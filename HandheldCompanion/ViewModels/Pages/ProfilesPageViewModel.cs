@@ -1,4 +1,5 @@
 using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Helpers;
@@ -534,7 +535,7 @@ namespace HandheldCompanion.ViewModels
 
         /// <summary>
         /// The currently selected sub-profile ViewModel, used for ComboBox SelectedItem binding.
-        /// Works correctly with sorted views — no index mapping required.
+        /// Works correctly with sorted views - no index mapping required.
         /// Setting this (by user ComboBox interaction) triggers profile application.
         /// </summary>
         public ProfileViewModel? SelectedSubProfileViewModel
@@ -567,10 +568,12 @@ namespace HandheldCompanion.ViewModels
                     // Preserve existing MotionInput and MotionMode if switching between output types
                     MotionInput preservedMotionInput = MotionInput.LocalSpace;
                     MotionMode preservedMotionMode = Utils.MotionMode.Off;
+                    float preservedGyroWeight = GyroActions.DefaultGyroWeight;
                     if (gyroActions is GyroActions existingGyroAction)
                     {
                         preservedMotionInput = existingGyroAction.MotionInput;
                         preservedMotionMode = existingGyroAction.MotionMode;
+                        preservedGyroWeight = existingGyroAction.gyroWeight;
                     }
 
                     MotionOutput motionOutput = (MotionOutput)value;
@@ -589,7 +592,8 @@ namespace HandheldCompanion.ViewModels
                                     Axis = AxisLayoutFlags.LeftStick,
                                     MotionTrigger = (ButtonState)GyroHotkey.inputsChord.ButtonState.Clone(),
                                     MotionInput = preservedMotionInput,
-                                    MotionMode = preservedMotionMode
+                                    MotionMode = preservedMotionMode,
+                                    gyroWeight = preservedGyroWeight
                                 };
                             }
                             else if (gyroActions is AxisActions aa)
@@ -606,7 +610,8 @@ namespace HandheldCompanion.ViewModels
                                     Axis = AxisLayoutFlags.RightStick,
                                     MotionTrigger = (ButtonState)GyroHotkey.inputsChord.ButtonState.Clone(),
                                     MotionInput = preservedMotionInput,
-                                    MotionMode = preservedMotionMode
+                                    MotionMode = preservedMotionMode,
+                                    gyroWeight = preservedGyroWeight
                                 };
                             }
                             else if (gyroActions is AxisActions aa)
@@ -625,7 +630,29 @@ namespace HandheldCompanion.ViewModels
                                     Deadzone = GyroActions.DefaultDeadzone,
                                     MotionTrigger = (ButtonState)GyroHotkey.inputsChord.ButtonState.Clone(),
                                     MotionInput = preservedMotionInput,
-                                    MotionMode = preservedMotionMode
+                                    MotionMode = preservedMotionMode,
+                                    gyroWeight = preservedGyroWeight
+                                };
+                            }
+                            break;
+                        case MotionOutput.LeftPad:
+                        case MotionOutput.RightPad:
+                            AxisLayoutFlags axis = motionOutput == MotionOutput.LeftPad
+                                ? AxisLayoutFlags.LeftPad
+                                : AxisLayoutFlags.RightPad;
+
+                            if (gyroActions is TouchpadActions touchpadActions)
+                            {
+                                touchpadActions.SetTarget(axis);
+                            }
+                            else
+                            {
+                                gyroActions = new TouchpadActions(axis)
+                                {
+                                    MotionTrigger = (ButtonState)GyroHotkey.inputsChord.ButtonState.Clone(),
+                                    MotionInput = preservedMotionInput,
+                                    MotionMode = preservedMotionMode,
+                                    gyroWeight = preservedGyroWeight
                                 };
                             }
                             break;
@@ -634,6 +661,7 @@ namespace HandheldCompanion.ViewModels
                     if (gyroActions is not null)
                         SelectedProfile.Layout.UpdateLayout(AxisLayoutFlags.Gyroscope, gyroActions);
 
+                    RefreshMotionOutputModes();
                     SubmitProfile();
                 }
             }
@@ -962,6 +990,7 @@ namespace HandheldCompanion.ViewModels
                 {
                     SelectedProfile.HID = mode;
                     OnPropertyChanged(nameof(HIDModeIndex));
+                    RefreshMotionOutputModes();
 
                     if (!isLoadingProfile)
                         UpdateProfile();
@@ -1863,11 +1892,7 @@ namespace HandheldCompanion.ViewModels
             SubProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.SortOrder), ListSortDirection.Ascending));
             SubProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.Name), ListSortDirection.Ascending));
 
-            // Initialize MotionOutput modes
-            foreach (var mode in Enum.GetValues<MotionOutput>())
-            {
-                MotionOutputModes.Add(new MotionOutputViewModel(mode));
-            }
+            RefreshMotionOutputModes();
 
             // Initialize MotionInput modes
             foreach (var mode in (MotionInput[])Enum.GetValues(typeof(MotionInput)))
@@ -2068,7 +2093,7 @@ namespace HandheldCompanion.ViewModels
                 }
                 else
                 {
-                    // No online results — select manual
+                    // No online results - select manual
                     SelectedLibraryEntry = manualEntry;
                 }
 
@@ -2284,7 +2309,7 @@ namespace HandheldCompanion.ViewModels
             Microsoft.WindowsAPICodePack.Dialogs.CommonOpenFileDialog dlg = new();
             if (libraryType.HasFlag(LibraryType.logo))
             {
-                // Logo requires transparency — PNG only
+                // Logo requires transparency - PNG only
                 dlg.Filters.Add(new Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogFilter("PNG Image", "*.png"));
             }
             else
@@ -3061,6 +3086,8 @@ namespace HandheldCompanion.ViewModels
 
             using (new LoadingScope(this))
             {
+                RefreshMotionOutputModes();
+
                 GPUScalingEnabled = SelectedProfile.GPUScaling;
                 RSREnabled = SelectedProfile.RSREnabled;
                 RSRValue = SelectedProfile.RSRSharpness;
@@ -3085,6 +3112,16 @@ namespace HandheldCompanion.ViewModels
                     else if (gyroActions is MouseActions mouseActions)
                     {
                         OutputMode = (int)MotionOutput.MoveCursor;
+                    }
+                    else if (gyroActions is TouchpadActions { TargetType: TouchpadTargetType.Axis } touchpadActions)
+                    {
+                        GyroWeightValue = touchpadActions.gyroWeight;
+                        OutputMode = touchpadActions.Axis switch
+                        {
+                            AxisLayoutFlags.LeftPad => (int)MotionOutput.LeftPad,
+                            AxisLayoutFlags.RightPad => (int)MotionOutput.RightPad,
+                            _ => (int)MotionOutput.Disabled
+                        };
                     }
 
                     if (gyroActions is GyroActions gyroAction)
@@ -3114,6 +3151,56 @@ namespace HandheldCompanion.ViewModels
                 UpdateControlsEnabledState();
                 NotifyWrapperProperties();
             }
+        }
+
+        private void RefreshMotionOutputModes()
+        {
+            HashSet<MotionOutput> availableModes =
+            [
+                MotionOutput.Disabled,
+                MotionOutput.LeftStick,
+                MotionOutput.RightStick,
+                MotionOutput.MoveCursor,
+                MotionOutput.ScrollWheel,
+            ];
+
+            if (SelectedProfile is not null)
+            {
+                IController controller = ControllerManager.GetDefault(!IsQuickTools);
+                foreach (AxisLayoutFlags axis in TouchpadActions.GetAxisTargets(controller))
+                {
+                    if (axis == AxisLayoutFlags.LeftPad)
+                        availableModes.Add(MotionOutput.LeftPad);
+                    else if (axis == AxisLayoutFlags.RightPad)
+                        availableModes.Add(MotionOutput.RightPad);
+                }
+
+                if (SelectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions? action) &&
+                    action is TouchpadActions { TargetType: TouchpadTargetType.Axis } touchpadAction)
+                {
+                    if (touchpadAction.Axis == AxisLayoutFlags.LeftPad)
+                        availableModes.Add(MotionOutput.LeftPad);
+                    else if (touchpadAction.Axis == AxisLayoutFlags.RightPad)
+                        availableModes.Add(MotionOutput.RightPad);
+                }
+            }
+
+            MotionOutput[] desiredModes = Enum.GetValues<MotionOutput>()
+                .Where(availableModes.Contains)
+                .ToArray();
+
+            for (int index = 0; index < desiredModes.Length; index++)
+            {
+                MotionOutput mode = desiredModes[index];
+                MotionOutputViewModel? existing = MotionOutputModes.FirstOrDefault(item => item.Value == mode);
+                if (existing is null)
+                    MotionOutputModes.Insert(index, new MotionOutputViewModel(mode));
+                else if (MotionOutputModes.IndexOf(existing) != index)
+                    MotionOutputModes.Move(MotionOutputModes.IndexOf(existing), index);
+            }
+
+            while (MotionOutputModes.Count > desiredModes.Length)
+                MotionOutputModes.RemoveAt(MotionOutputModes.Count - 1);
         }
 
         /// <summary>
