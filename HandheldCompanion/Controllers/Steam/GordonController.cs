@@ -3,7 +3,6 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
-using SharpDX.XInput;
 using steam_hidapi.net;
 using steam_hidapi.net.Hid;
 using System;
@@ -131,11 +130,11 @@ namespace HandheldCompanion.Controllers.Steam
             var L2 = input.State.AxesState[GordonControllerAxis.L2];
             var R2 = input.State.AxesState[GordonControllerAxis.R2];
 
-            Inputs.ButtonState[ButtonFlags.L2Soft] |= L2 > Gamepad.TriggerThreshold;
-            Inputs.ButtonState[ButtonFlags.R2Soft] |= R2 > Gamepad.TriggerThreshold;
+            Inputs.ButtonState[ButtonFlags.L2Soft] |= L2 > TriggerThreshold;
+            Inputs.ButtonState[ButtonFlags.R2Soft] |= R2 > TriggerThreshold;
 
-            Inputs.ButtonState[ButtonFlags.L2Full] |= L2 > Gamepad.TriggerThreshold * 8;
-            Inputs.ButtonState[ButtonFlags.R2Full] |= R2 > Gamepad.TriggerThreshold * 8;
+            Inputs.ButtonState[ButtonFlags.L2Full] |= L2 > TriggerThreshold * 8;
+            Inputs.ButtonState[ButtonFlags.R2Full] |= R2 > TriggerThreshold * 8;
 
             Inputs.AxisState[AxisFlags.L2] = L2;
             Inputs.AxisState[AxisFlags.R2] = R2;

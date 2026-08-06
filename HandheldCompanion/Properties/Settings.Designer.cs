@@ -949,6 +949,18 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool LegionControllerPhysicalXInput {
+            get {
+                return ((bool)(this["LegionControllerPhysicalXInput"]));
+            }
+            set {
+                this["LegionControllerPhysicalXInput"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool OnScreenDisplayToggle {
             get {
@@ -1315,6 +1327,18 @@ namespace HandheldCompanion.Properties
             }
             set {
                 this["MSIClawControllerIndex"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MSIClawOverBoost {
+            get {
+                return ((bool)(this["MSIClawOverBoost"]));
+            }
+            set {
+                this["MSIClawOverBoost"] = value;
             }
         }
         
@@ -1771,6 +1795,18 @@ namespace HandheldCompanion.Properties
             }
             set {
                 this["SkinTemperatureLimit"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int LegionControllerMode {
+            get {
+                return ((int)(this["LegionControllerMode"]));
+            }
+            set {
+                this["LegionControllerMode"] = value;
             }
         }
     }

@@ -75,12 +75,12 @@ public class XInputController : IController
             return;
 
         if (!commit)
-            UpdateXInputState();
+            UpdateState();
         else
             base.Tick(ticks, delta);
     }
 
-    protected bool UpdateXInputState()
+    protected virtual bool UpdateState()
     {
         ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
 
@@ -104,11 +104,11 @@ public class XInputController : IController
             Inputs.ButtonState[ButtonFlags.Start] |= Gamepad.Buttons.HasFlag(GamepadButtonFlags.Start);
             Inputs.ButtonState[ButtonFlags.Back] |= Gamepad.Buttons.HasFlag(GamepadButtonFlags.Back);
 
-            Inputs.ButtonState[ButtonFlags.L2Soft] |= Gamepad.LeftTrigger > Gamepad.TriggerThreshold;
-            Inputs.ButtonState[ButtonFlags.R2Soft] |= Gamepad.RightTrigger > Gamepad.TriggerThreshold;
+            Inputs.ButtonState[ButtonFlags.L2Soft] |= Gamepad.LeftTrigger > TriggerThreshold;
+            Inputs.ButtonState[ButtonFlags.R2Soft] |= Gamepad.RightTrigger > TriggerThreshold;
 
-            Inputs.ButtonState[ButtonFlags.L2Full] |= Gamepad.LeftTrigger > Gamepad.TriggerThreshold * 8;
-            Inputs.ButtonState[ButtonFlags.R2Full] |= Gamepad.RightTrigger > Gamepad.TriggerThreshold * 8;
+            Inputs.ButtonState[ButtonFlags.L2Full] |= Gamepad.LeftTrigger > TriggerThreshold * 8;
+            Inputs.ButtonState[ButtonFlags.R2Full] |= Gamepad.RightTrigger > TriggerThreshold * 8;
 
             Inputs.ButtonState[ButtonFlags.LeftStickClick] |= Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb);
             Inputs.ButtonState[ButtonFlags.RightStickClick] |= Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);

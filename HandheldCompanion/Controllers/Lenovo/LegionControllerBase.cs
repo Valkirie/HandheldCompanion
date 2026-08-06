@@ -5,7 +5,7 @@ using System;
 
 namespace HandheldCompanion.Controllers.Lenovo
 {
-    public abstract class LegionControllerBase : XInputController
+    public abstract class LegionControllerBase : IController
     {
         protected controller_hidapi.net.LegionController? Controller;
         protected byte[] data = new byte[64];
@@ -15,7 +15,10 @@ namespace HandheldCompanion.Controllers.Lenovo
 
         public LegionControllerBase() : base() { }
 
-        public LegionControllerBase(PnPDetails details) : base(details) { }
+        public LegionControllerBase(PnPDetails details) : base()
+        {
+            AttachDetails(details);
+        }
 
         protected virtual void Open()
         {
@@ -80,6 +83,8 @@ namespace HandheldCompanion.Controllers.Lenovo
 
             base.Unplug();
         }
+
+        protected virtual bool UpdateState() => false;
 
         protected override void QuerySettings()
         {

@@ -36,9 +36,6 @@ namespace HandheldCompanion.ViewModels
         private bool _isCalibrationEnabled, _isExternalSensorExpanderEnabled, _isInternalSensorExpanderEnabled;
         private bool _isSolidColorSupported, _isBreathingSupported, _isRainbowSupported, _isWaveSupported;
         private bool _isWheelSupported, _isGradientSupported, _isAmbilightSupported, _isPresetSupported;
-        private bool _legionControllerPassthrough, _legionControllerSwap;
-        private int _legionControllerGyroIndex;
-        private int _gamingZoneVRAM;
         private bool _legionSettingsInitialized;
         private double _leftJoystickDeadzone, _leftAutoSleepTime;
         private double _rightJoystickDeadzone, _rightAutoSleepTime;
@@ -69,8 +66,18 @@ namespace HandheldCompanion.ViewModels
 
         public bool LegionControllerPassthrough
         {
-            get => _legionControllerPassthrough;
-            set => SetProperty(ref _legionControllerPassthrough, value, () => ManagerFactory.settingsManager.SetProperty("LegionControllerPassthrough", value));
+            get
+            {
+                return ManagerFactory.settingsManager.GetBoolean("LegionControllerPassthrough");
+            }
+            set
+            {
+                if (value != LegionControllerPassthrough)
+                {
+                    ManagerFactory.settingsManager.SetProperty("LegionControllerPassthrough", value);
+                    OnPropertyChanged(nameof(LegionControllerPassthrough));
+                }
+            }
         }
 
         private void SensorsManager_SensorSelectionChanged(SensorFamily sensorFamily) => UpdateSensorSelection(sensorFamily);
@@ -79,28 +86,78 @@ namespace HandheldCompanion.ViewModels
 
         public bool LegionControllerSwap
         {
-            get => _legionControllerSwap;
-            set => SetProperty(ref _legionControllerSwap, value, () => ManagerFactory.settingsManager.SetProperty("LegionControllerSwap", value));
+            get
+            {
+                return ManagerFactory.settingsManager.GetBoolean("LegionControllerSwap");
+            }
+            set
+            {
+                if (value != LegionControllerSwap)
+                {
+                    ManagerFactory.settingsManager.SetProperty("LegionControllerSwap", value);
+                    OnPropertyChanged(nameof(LegionControllerSwap));
+                }
+            }
         }
 
         public int LegionControllerGyroIndex
         {
-            get => _legionControllerGyroIndex;
-            set => SetProperty(ref _legionControllerGyroIndex, value, () => ManagerFactory.settingsManager.SetProperty("LegionControllerGyroIndex", value));
+            get
+            {
+                return ManagerFactory.settingsManager.GetInt("LegionControllerGyroIndex");
+            }
+            set
+            {
+                if (value != LegionControllerGyroIndex)
+                {
+                    ManagerFactory.settingsManager.SetProperty("LegionControllerGyroIndex", value);
+                    OnPropertyChanged(nameof(LegionControllerGyroIndex));
+                }
+            }
+        }
+
+        public int LegionControllerMode
+        {
+            get
+            {
+                return ManagerFactory.settingsManager.GetInt("LegionControllerMode");
+            }
+            set
+            {
+                if (value != LegionControllerMode)
+                {
+                    ManagerFactory.settingsManager.SetProperty("LegionControllerMode", value);
+                    OnPropertyChanged(nameof(LegionControllerMode));
+                }
+            }
+        }
+
+        public bool LegionControllerPhysicalXInput
+        {
+            get => ManagerFactory.settingsManager.GetBoolean("LegionControllerPhysicalXInput");
+            set
+            {
+                if (value != LegionControllerPhysicalXInput)
+                {
+                    ManagerFactory.settingsManager.SetProperty("LegionControllerPhysicalXInput", value);
+                    OnPropertyChanged(nameof(LegionControllerPhysicalXInput));
+                }
+            }
         }
 
         public int GamingZoneVRAM
         {
-            get => _gamingZoneVRAM;
+            get
+            {
+                return ManagerFactory.settingsManager.GetInt("ZotacGamingZoneVRAM");
+            }
             set
             {
-                if (!SetProperty(ref _gamingZoneVRAM, value))
-                    return;
-
-                if (CurrentDevice is Devices.Zotac.GamingZone gamingZone)
-                    gamingZone.SetVRamSize((uint)value);
-
-                ManagerFactory.settingsManager.SetProperty("ZotacGamingZoneVRAM", value);
+                if (value != GamingZoneVRAM)
+                {
+                    ManagerFactory.settingsManager.SetProperty("ZotacGamingZoneVRAM", value);
+                    OnPropertyChanged(nameof(GamingZoneVRAM));
+                }
             }
         }
 
@@ -322,35 +379,33 @@ namespace HandheldCompanion.ViewModels
         public Visibility BatteryBypassModeVisibility => CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.BatteryBypassCharging) ? Visibility.Visible : Visibility.Collapsed;
         public bool BatteryChargeLimitCapacity => CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimit);
 
-        private bool _BatteryChargeLimit;
         public bool BatteryChargeLimit
         {
             get
             {
-                return _BatteryChargeLimit;
+                return ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit");
             }
             set
             {
-                if (value != _BatteryChargeLimit)
+                if (value != BatteryChargeLimit)
                 {
-                    _BatteryChargeLimit = value;
+                    ManagerFactory.settingsManager.SetProperty("BatteryChargeLimit", value);
                     OnPropertyChanged(nameof(BatteryChargeLimit));
                 }
             }
         }
 
-        private double _BatteryChargeLimitPercent = 100.0d;
         public double BatteryChargeLimitPercent
         {
             get
             {
-                return _BatteryChargeLimitPercent;
+                return ManagerFactory.settingsManager.GetDouble("BatteryChargeLimitPercent");
             }
             set
             {
-                if (value != _BatteryChargeLimitPercent)
+                if (value != BatteryChargeLimitPercent)
                 {
-                    _BatteryChargeLimitPercent = value;
+                    ManagerFactory.settingsManager.SetProperty("BatteryChargeLimitPercent", value);
                     OnPropertyChanged(nameof(BatteryChargeLimitPercent));
                 }
             }
@@ -360,15 +415,17 @@ namespace HandheldCompanion.ViewModels
         #region Power options
         public bool HasWMIMethod => CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.OEMCPU);
 
-        private bool _GoBackToSleep;
         public bool GoBackToSleep
         {
-            get => _GoBackToSleep;
+            get
+            {
+                return ManagerFactory.settingsManager.GetBoolean("GoBackToSleep");
+            }
             set
             {
-                if (value != _GoBackToSleep)
+                if (value != GoBackToSleep)
                 {
-                    _GoBackToSleep = value;
+                    ManagerFactory.settingsManager.SetProperty("GoBackToSleep", value);
                     OnPropertyChanged(nameof(GoBackToSleep));
                 }
             }
@@ -419,9 +476,7 @@ namespace HandheldCompanion.ViewModels
             {
                 if (value != ClawOverBoost)
                 {
-                    if (CurrentDevice is ClawA1M clawA1M)
-                        clawA1M.SetOverBoost(value);
-
+                    ManagerFactory.settingsManager.SetProperty("MSIClawOverBoost", value);
                     OnPropertyChanged(nameof(ClawOverBoost));
                 }
             }
@@ -983,9 +1038,12 @@ namespace HandheldCompanion.ViewModels
             SettingsManager_SettingValueChanged("GoBackToSleep", ManagerFactory.settingsManager.GetBoolean("GoBackToSleep"), false, true);
             SettingsManager_SettingValueChanged("LEDSettingsUseAccentColor", ManagerFactory.settingsManager.GetBoolean("LEDSettingsUseAccentColor"), false, true);
             SettingsManager_SettingValueChanged("LegionControllerPassthrough", ManagerFactory.settingsManager.GetBoolean("LegionControllerPassthrough"), false, true);
+            SettingsManager_SettingValueChanged("LegionControllerPhysicalXInput", ManagerFactory.settingsManager.GetBoolean("LegionControllerPhysicalXInput"), false, true);
             SettingsManager_SettingValueChanged("LegionControllerSwap", ManagerFactory.settingsManager.GetBoolean("LegionControllerSwap"), false, true);
             SettingsManager_SettingValueChanged("LegionControllerGyroIndex", ManagerFactory.settingsManager.GetInt("LegionControllerGyroIndex"), false, true);
+            SettingsManager_SettingValueChanged("LegionControllerMode", ManagerFactory.settingsManager.GetInt("LegionControllerMode"), false, true);
             SettingsManager_SettingValueChanged("ZotacGamingZoneVRAM", ManagerFactory.settingsManager.GetInt("ZotacGamingZoneVRAM"), false, true);
+            SettingsManager_SettingValueChanged("MSIClawOverBoost", ManagerFactory.settingsManager.GetBoolean("MSIClawOverBoost"), false, true);
             SettingsManager_SettingValueChanged("DisableMsiClawPS2Service", ManagerFactory.settingsManager.GetBoolean("DisableMsiClawPS2Service"), false, true);
         }
 
@@ -1055,16 +1113,25 @@ namespace HandheldCompanion.ViewModels
                     UpdateAccentColorState(Convert.ToBoolean(value));
                     break;
                 case "LegionControllerPassthrough":
-                    SetProperty(ref _legionControllerPassthrough, Convert.ToBoolean(value), propertyName: nameof(LegionControllerPassthrough));
+                    OnPropertyChanged(nameof(LegionControllerPassthrough));
+                    break;
+                case "LegionControllerPhysicalXInput":
+                    OnPropertyChanged(nameof(LegionControllerPhysicalXInput));
                     break;
                 case "LegionControllerSwap":
-                    SetProperty(ref _legionControllerSwap, Convert.ToBoolean(value), propertyName: nameof(LegionControllerSwap));
+                    OnPropertyChanged(nameof(LegionControllerSwap));
                     break;
                 case "LegionControllerGyroIndex":
-                    SetProperty(ref _legionControllerGyroIndex, Convert.ToInt32(value), propertyName: nameof(LegionControllerGyroIndex));
+                    OnPropertyChanged(nameof(LegionControllerGyroIndex));
+                    break;
+                case "LegionControllerMode":
+                    OnPropertyChanged(nameof(LegionControllerMode));
                     break;
                 case "ZotacGamingZoneVRAM":
-                    SetProperty(ref _gamingZoneVRAM, Convert.ToInt32(value), propertyName: nameof(GamingZoneVRAM));
+                    OnPropertyChanged(nameof(GamingZoneVRAM));
+                    break;
+                case "MSIClawOverBoost":
+                    OnPropertyChanged(nameof(ClawOverBoost));
                     break;
                 case "DisableMsiClawPS2Service":
                     bool disableMsiClawPS2Service = Convert.ToBoolean(value);

@@ -233,6 +233,9 @@
     <Setting Name="LegionControllerPassthrough" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="LegionControllerPhysicalXInput" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
     <Setting Name="OnScreenDisplayToggle" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
@@ -325,6 +328,9 @@
     </Setting>
     <Setting Name="MSIClawControllerIndex" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">2</Value>
+    </Setting>
+    <Setting Name="MSIClawOverBoost" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="DisableMsiClawPS2Service" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -438,6 +444,9 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="SkinTemperatureLimit" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="LegionControllerMode" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>

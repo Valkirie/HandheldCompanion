@@ -1,6 +1,7 @@
 ﻿using GregsStack.InputSimulatorStandard.Native;
 
 using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Localization;
 
@@ -159,13 +160,13 @@ namespace HandheldCompanion.Misc
                             {
                                 AxisLayoutFlags.L2, new List<IActions>()
                                 {
-                                    CreateMouseAction(MouseActionsType.RightButton, motionDirection: Utils.DeflectionDirection.Up, motionThreshold: Gamepad.TriggerThreshold)
+                                    CreateMouseAction(MouseActionsType.RightButton, motionDirection: Utils.DeflectionDirection.Up, motionThreshold: IController.TriggerThreshold)
                                 }
                             },
                             {
                                 AxisLayoutFlags.R2, new List<IActions>()
                                 {
-                                    CreateMouseAction(MouseActionsType.LeftButton, motionDirection: Utils.DeflectionDirection.Up, motionThreshold: Gamepad.TriggerThreshold)
+                                    CreateMouseAction(MouseActionsType.LeftButton, motionDirection: Utils.DeflectionDirection.Up, motionThreshold: IController.TriggerThreshold)
                                 }
                             }
                         };
@@ -221,13 +222,13 @@ namespace HandheldCompanion.Misc
                             {
                                 AxisLayoutFlags.L2, new List<IActions>()
                                 {
-                                    CreateMouseAction(MouseActionsType.RightButton, motionDirection: Utils.DeflectionDirection.Up, motionThreshold: Gamepad.TriggerThreshold)
+                                    CreateMouseAction(MouseActionsType.RightButton, motionDirection: Utils.DeflectionDirection.Up, motionThreshold: IController.TriggerThreshold)
                                 }
                             },
                             {
                                 AxisLayoutFlags.R2, new List<IActions>()
                                 {
-                                    CreateMouseAction(MouseActionsType.LeftButton, motionDirection: Utils.DeflectionDirection.Up, motionThreshold: Gamepad.TriggerThreshold)
+                                    CreateMouseAction(MouseActionsType.LeftButton, motionDirection: Utils.DeflectionDirection.Up, motionThreshold: IController.TriggerThreshold)
                                 }
                             }
                         };

@@ -10,7 +10,7 @@
             if (_hidDevice != null && IsDeviceValid)
             {
                 byte[] Data = _hidDevice.Read();
-                if (Data != null)
+                if (Data != null && idx < Data.Length - 1)
                     return Data[idx];
             }
 

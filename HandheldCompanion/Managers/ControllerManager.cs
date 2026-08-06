@@ -521,7 +521,7 @@ public static class ControllerManager
 
                         if (controller != null)
                         {
-                            if (controller is XInputController) return;
+                            if (controller is XInputController or LegionControllerXInput) return;
                             if (controller is DInputController) return;
 
                             IsPowerCycling = true;
@@ -698,7 +698,7 @@ public static class ControllerManager
 
                     if (controller is not null)
                     {
-                        if (controller is XInputController) return;
+                        if (controller is XInputController or LegionControllerXInput) return;
                         if (controller is SDLController) return;
 
                         controller.AttachDetails(details);
@@ -749,10 +749,17 @@ public static class ControllerManager
                             case 0x17EF:
                                 switch (ProductId)
                                 {
-                                    case 0x6183:
-                                    case 0x6184:
-                                    case 0x61EC:
-                                    case 0x61ED:
+                                    case 0x6184: // dual_dinput
+                                    case 0x61ED: // dual_dinput (2025 FW)
+                                        if (details.GetMI() == 2)
+                                        {
+                                            details.isDongle = true;
+                                            try { controller = new LegionControllerDInput(details); } catch { }
+                                        }
+                                        break;
+                                    case 0x6183: // dinput
+                                    case 0x61EC: // dinput (2025 FW)
+                                        try { controller = new LegionControllerDInput(details); } catch { }
                                         break;
                                     case 0xE311:
                                         break;
@@ -842,7 +849,7 @@ public static class ControllerManager
                     }
 
                     if (controller == null) return;
-                    if (controller is XInputController) return;
+                    if (controller is XInputController or LegionControllerXInput) return;
                     if (controller is SDLController) return;
 
                     PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
@@ -941,7 +948,7 @@ public static class ControllerManager
                                 {
                                     case "0x6182":
                                     case "0x61EB":
-                                        try { controller = new LegionController(details); } catch { }
+                                        try { controller = new LegionControllerXInput(details); } catch { }
                                         break;
 
                                     case "0xE310":

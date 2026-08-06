@@ -5,7 +5,6 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -138,7 +137,7 @@ namespace HandheldCompanion.ViewModels
             {
                 bool preserveMissingTarget = Action is ButtonActions;
                 if (!preserveMissingTarget)
-                    Action = new ButtonActions() { motionThreshold = Gamepad.TriggerThreshold, motionDirection = DeflectionDirection.Up };
+                    Action = new ButtonActions() { motionThreshold = IController.TriggerThreshold, motionDirection = DeflectionDirection.Up };
 
                 MappingTargetViewModel? matchingTargetVm = null;
                 foreach (var button in controller.GetTargetButtons())
@@ -165,7 +164,7 @@ namespace HandheldCompanion.ViewModels
                 {
                     Action = new KeyboardActions
                     {
-                        motionThreshold = Gamepad.TriggerThreshold,
+                        motionThreshold = IController.TriggerThreshold,
                         motionDirection = DeflectionDirection.Up,
                         Modifiers = ModifierSet.None,
                         ShiftSlot = ShiftSlot.Any,
@@ -182,7 +181,7 @@ namespace HandheldCompanion.ViewModels
                 {
                     Action = new MouseActions
                     {
-                        motionThreshold = Gamepad.TriggerThreshold,
+                        motionThreshold = IController.TriggerThreshold,
                         motionDirection = DeflectionDirection.Up,
                         Modifiers = ModifierSet.None,
                         ShiftSlot = ShiftSlot.Any,
@@ -236,7 +235,7 @@ namespace HandheldCompanion.ViewModels
             else if (actionType == ActionType.Shift)
             {
                 if (Action is null || Action is not ShiftActions)
-                    Action = new ShiftActions() { motionThreshold = Gamepad.TriggerThreshold, motionDirection = DeflectionDirection.Up };
+                    Action = new ShiftActions() { motionThreshold = IController.TriggerThreshold, motionDirection = DeflectionDirection.Up };
 
                 MappingTargetViewModel? matchingTargetVm = null;
                 // Only show individual shift slots (A, B, C, D), not None or combined values

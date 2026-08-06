@@ -5,7 +5,7 @@ using System;
 
 namespace HandheldCompanion.Controllers.Lenovo
 {
-    public class LegionControllerS : LegionControllerBase
+    public class LegionControllerS : LegionControllerXInput
     {
         public override bool IsReady => true;
         public override string ToString() => "Legion Controller";
@@ -71,7 +71,7 @@ namespace HandheldCompanion.Controllers.Lenovo
             if (IsBusy || !IsPlugged || _disposing || _disposed)
                 return;
 
-            if (!UpdateXInputState())
+            if (!UpdateState())
                 return;
 
             // Front buttons (byte 0)

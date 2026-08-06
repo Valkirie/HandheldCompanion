@@ -1,5 +1,6 @@
 ﻿using controller_hidapi.net;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.DirectInput;
 using System;
@@ -64,6 +65,7 @@ public class DInputController : IController
                     {
                         joystick = lookup_joystick;
                         controller = new GenericController(details.VendorID, details.ProductID, 64, -1);
+                        UserIndex = (byte)joystick.Properties.JoystickId;
                         break;
                     }
                 }
@@ -73,10 +75,7 @@ public class DInputController : IController
 
         // unsupported controller
         if (joystick is null)
-            throw new Exception($"Couldn't find matching DirectInput controller: VID:{details.GetVendorID()} and PID:{details.GetProductID()}");
-
-        // update UserIndex
-        UserIndex = (byte)joystick.Properties.JoystickId;
+            LogManager.LogError($"Couldn't find matching DirectInput controller: VID:{details.GetVendorID()} and PID:{details.GetProductID()}");
 
         base.AttachDetails(details);
     }
@@ -91,16 +90,7 @@ public class DInputController : IController
         return $"DInput Controller {UserIndex}";
     }
 
-    public override bool IsConnected()
-    {
-        if (joystick is null)
-            return false;
-
-        if (joystick.IsDisposed)
-            return false;
-
-        return true;
-    }
+    public override bool IsConnected() => joystick is not null && !joystick.IsDisposed;
 
     public override void Plug()
     {

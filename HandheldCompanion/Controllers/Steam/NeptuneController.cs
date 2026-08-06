@@ -3,7 +3,6 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
-using SharpDX.XInput;
 using steam_hidapi.net;
 using steam_hidapi.net.Hid;
 using System;
@@ -128,11 +127,11 @@ public class NeptuneController : SteamController
         var L2 = input.State.AxesState[NeptuneControllerAxis.L2] * byte.MaxValue / short.MaxValue;
         var R2 = input.State.AxesState[NeptuneControllerAxis.R2] * byte.MaxValue / short.MaxValue;
 
-        Inputs.ButtonState[ButtonFlags.L2Soft] |= L2 > Gamepad.TriggerThreshold;
-        Inputs.ButtonState[ButtonFlags.R2Soft] |= R2 > Gamepad.TriggerThreshold;
+        Inputs.ButtonState[ButtonFlags.L2Soft] |= L2 > TriggerThreshold;
+        Inputs.ButtonState[ButtonFlags.R2Soft] |= R2 > TriggerThreshold;
 
-        Inputs.ButtonState[ButtonFlags.L2Full] |= L2 > Gamepad.TriggerThreshold * 8;
-        Inputs.ButtonState[ButtonFlags.R2Full] |= R2 > Gamepad.TriggerThreshold * 8;
+        Inputs.ButtonState[ButtonFlags.L2Full] |= L2 > TriggerThreshold * 8;
+        Inputs.ButtonState[ButtonFlags.R2Full] |= R2 > TriggerThreshold * 8;
 
         Inputs.AxisState[AxisFlags.L2] = (short)L2;
         Inputs.AxisState[AxisFlags.R2] = (short)R2;

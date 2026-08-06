@@ -1,6 +1,7 @@
 ﻿// #define USE_SAPIENTIAUSB
 using HandheldCompanion.Actions;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
 using HidLibrary;
 using System;
 using System.Collections.Generic;
@@ -86,6 +87,38 @@ namespace HandheldCompanion.Devices.Lenovo
             DefaultLayout.ButtonLayout[ButtonFlags.B8] = [new MouseActions { MouseType = MouseActionsType.ScrollDown }];
         }
 
+        protected override void QuerySettings()
+        {
+            // raise events
+            SettingsManager_SettingValueChanged("LegionControllerMode", ManagerFactory.settingsManager.GetInt("LegionControllerMode"), false, true);
+            // SettingsManager_SettingValueChanged("LegionControllerPhysicalXInput", ManagerFactory.settingsManager.GetBoolean("LegionControllerPhysicalXInput"), false, true);
+
+            base.QuerySettings();
+        }
+
+        protected override void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
+        {
+            switch (name)
+            {
+                case "LegionControllerMode":
+                    {
+                        int controllerMode = Convert.ToInt32(value) + 1;
+                        ApplyGamepadMode(controllerMode);
+                    }
+                    break;
+                    /*
+                case "LegionControllerPhysicalXInput":
+                    {
+                        bool enabled = Convert.ToBoolean(value);
+                        SetPhysicalXInputEnabled(enabled);
+                    }
+                    break;
+                    */
+            }
+
+            base.SettingsManager_SettingValueChanged(name, value, temporary, initializing);
+        }
+
         protected override async void Device_Inserted(bool reScan = false)
         {
             // if you still want to automatically re-attach:
@@ -148,6 +181,31 @@ namespace HandheldCompanion.Devices.Lenovo
         private byte[] SetSteamOSMode(bool enabled)
         {
             return new byte[] { 0x05, 0x06, 0x69, 0x09, 0x01, (byte)(enabled ? 0x02 : 0x01), 0x01 };
+        }
+
+        public bool ApplyGamepadMode(int mode)
+        {
+            // 1 = XInput, 2 = DInput  (0 = "unknown" — never send)
+            if (mode != 1 && mode != 2)
+                return false;
+
+            if (!hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
+                return false;
+
+            return device.Write([0x05, 0x00, 0x04, 0x0E, 0x03, (byte)mode]);
+        }
+
+        public bool SetPhysicalXInputEnabled(bool enabled)
+        {
+            if (!hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
+                return false;
+
+            byte value = enabled ? (byte)0x01 : (byte)0x02;
+            bool result = true;
+            result &= device.Write([0x05, 0x00, 0x04, 0x0F, 0x00, value]);
+            result &= device.Write([0x05, 0x00, 0x04, 0x0F, LeftJoyconIndex, value]);
+            result &= device.Write([0x05, 0x00, 0x04, 0x0F, RightJoyconIndex, value]);
+            return result;
         }
 
         public override void SetPassthrough(bool enabled)

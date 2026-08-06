@@ -401,6 +401,7 @@ public class ClawA1M : IDevice
     {
         // raise events
         SettingsManager_SettingValueChanged("MSIClawControllerIndex", ManagerFactory.settingsManager.GetInt("MSIClawControllerIndex"), false, true);
+        SettingsManager_SettingValueChanged("MSIClawOverBoost", ManagerFactory.settingsManager.GetBoolean("MSIClawOverBoost"), false, true);
         SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetInt("BatteryChargeLimit"), false, true);
         SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPercent"), false, true);
 
@@ -412,8 +413,10 @@ public class ClawA1M : IDevice
         switch (name)
         {
             case "BatteryChargeLimit":
-                bool enabled = Convert.ToBoolean(value);
-                SetBatteryMaster(enabled);
+                {
+                    bool enabled = Convert.ToBoolean(value);
+                    SetBatteryMaster(enabled);
+                }
                 break;
             case "BatteryChargeLimitPercent":
                 int percent = Convert.ToInt32(value);
@@ -424,6 +427,12 @@ public class ClawA1M : IDevice
                     gamepadMode = (GamepadMode)Convert.ToInt32(value);
                     ApplyM12Configuration();
                     SwitchMode(gamepadMode);
+                }
+                break;
+            case "MSIClawOverBoost":
+                {
+                    bool enabled = Convert.ToBoolean(value);
+                    SetOverBoost(enabled);
                 }
                 break;
         }

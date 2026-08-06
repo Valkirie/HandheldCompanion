@@ -69,6 +69,8 @@ namespace HandheldCompanion.Controllers
             ButtonFlags.RightStickUp, ButtonFlags.RightStickDown, ButtonFlags.RightStickLeft, ButtonFlags.RightStickRight */
         ];
 
+        public static readonly byte TriggerThreshold = 30;
+
         protected static readonly FontFamily GlyphFontFamily = new("PromptFont");
         protected static readonly string defaultGlyph = "\u2753";
 

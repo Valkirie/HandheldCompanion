@@ -1167,6 +1167,28 @@
                         Text="{l:Static resx:Resources.DevicePage_DeviceSettings}"
                         Visibility="{Binding ElementName=LegionGoPanel, Path=Visibility}" />
 
+                    <ui:SettingsCard Description="Select the desired controller mode" Header="Controller mode">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon Glyph="&#xE7FC;" />
+                        </ui:SettingsCard.HeaderIcon>
+
+                        <ComboBox SelectedIndex="{Binding LegionControllerMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="XInput" />
+                            <ComboBoxItem Content="DInput" />
+                        </ComboBox>
+                    </ui:SettingsCard>
+
+                    <!--
+                    <ui:SettingsCard
+                        Description="Disables the pad's physical XInput output to cloak it from GameInput and prevent InputRedirection from starving the virtual controller when GameBar, the Xbox app in fullscreen exclusive, or the gamepad-mode virtual keyboard is in the foreground"
+                        Header="Experimental: Cloak physical pad from GameInput">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon Glyph="&#xE7FC;" />
+                        </ui:SettingsCard.HeaderIcon>
+                        <ui:ToggleSwitch IsOn="{Binding LegionControllerPhysicalXInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </ui:SettingsCard>
+                    -->
+
                     <ui:SettingsCard
                         Name="LegionGoPassthrough"
                         Description="{l:Static resx:Resources.ControllerPage_LegionGoPassthroughDesc}"

@@ -1,3 +1,4 @@
+using HandheldCompanion.Devices;
 using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
@@ -6,6 +7,8 @@ using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace HandheldCompanion.Controllers.Lenovo
 {
@@ -145,7 +148,7 @@ namespace HandheldCompanion.Controllers.Lenovo
 
         public override bool IsWireless() =>
             Controller?.GetStatus(LCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless ||
-            Controller?.GetStatus(RCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless;
+            Controller?.GetStatus(RCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless || base.IsWireless();
 
         /// <summary>
         /// Detects if the HID report is misaligned (borked state).
@@ -194,16 +197,7 @@ namespace HandheldCompanion.Controllers.Lenovo
             }
 
             if (IsHidReportMisaligned())
-            {
                 LogManager.LogWarning("Legion Controller HID report misalignment detected. Device should be restarted.");
-
-                LCONTROLLER_STATE_IDX -= 2;
-                RCONTROLLER_STATE_IDX -= 2;
-                TOUCH_IDX -= 2;
-                FRONT_IDX -= 2;
-                BACK_IDX -= 2;
-                EXTRA_IDX -= 2;
-            }
 
             // manage gamepad motion from right controller
             gamepadMotions[1] = new($"{details.baseContainerDeviceInstanceId}\\{LegionGoTablet.RightJoyconIndex}", SensorsManager.ActiveCalibrationMode);
@@ -214,7 +208,7 @@ namespace HandheldCompanion.Controllers.Lenovo
             if (IsBusy || !IsPlugged || _disposing || _disposed)
                 return;
 
-            if (!UpdateXInputState())
+            if (!UpdateState())
                 return;
 
             FrontEnum frontButton = (FrontEnum)data[FRONT_IDX];
@@ -455,6 +449,33 @@ namespace HandheldCompanion.Controllers.Lenovo
             gamepadIndex = (byte)idx;
         }
 
+        public override bool CyclePort()
+        {
+            if (IsWireless())
+            {
+                if (IDevice.GetCurrent() is LegionGoTablet device)
+                {
+                    // set status
+                    IsBusy = true;
+                    ControllerManager.PowerCyclers[GetContainerInstanceId()] = true;
+
+                    device.ApplyGamepadMode(this.GetType() == typeof(LegionControllerDInput) ? 1 : 2);
+                    Thread.Sleep(3000);
+                    device.ApplyGamepadMode(this.GetType() == typeof(LegionControllerDInput) ? 2 : 1);
+                    Thread.Sleep(3000);
+
+
+                    // set status
+                    IsBusy = false;
+                    ControllerManager.PowerCyclers[GetContainerInstanceId()] = false;
+
+                    return true;
+                }
+            }
+
+            return base.CyclePort();
+        }
+
         public override string GetFontFamily(ButtonFlags button)
         {
             switch (button)
@@ -471,6 +492,32 @@ namespace HandheldCompanion.Controllers.Lenovo
         {
             switch (button)
             {
+                case ButtonFlags.B1:
+                    return "\u21D3";
+                case ButtonFlags.B2:
+                    return "\u21D2";
+                case ButtonFlags.B3:
+                    return "\u21D0";
+                case ButtonFlags.B4:
+                    return "\u21D1";
+                case ButtonFlags.L1:
+                    return "\u2198";
+                case ButtonFlags.R1:
+                    return "\u2199";
+                case ButtonFlags.Back:
+                    return "\u21FA";
+                case ButtonFlags.Start:
+                    return "\u21FB";
+                case ButtonFlags.L2Soft:
+                    return "\u21DC";
+                case ButtonFlags.L2Full:
+                    return "\u2196";
+                case ButtonFlags.R2Soft:
+                    return "\u21DD";
+                case ButtonFlags.R2Full:
+                    return "\u2197";
+                case ButtonFlags.Special:
+                    return "\uE001";
                 case ButtonFlags.B11:
                     return "\u2212";        // M1
                 case ButtonFlags.B5:
@@ -481,7 +528,6 @@ namespace HandheldCompanion.Controllers.Lenovo
                     return "\u27F0";        // Scroll up
                 case ButtonFlags.B8:
                     return "\u27F1";        // Scroll down
-
                 case ButtonFlags.B9:
                     return "\ueca5";        // Page
                 case ButtonFlags.B10:
@@ -489,6 +535,32 @@ namespace HandheldCompanion.Controllers.Lenovo
             }
 
             return base.GetGlyph(button);
+        }
+
+        public override string GetGlyph(AxisFlags axis)
+        {
+            switch (axis)
+            {
+                case AxisFlags.L2:
+                    return "\u2196";
+                case AxisFlags.R2:
+                    return "\u2197";
+            }
+
+            return base.GetGlyph(axis);
+        }
+
+        public override string GetGlyph(AxisLayoutFlags axis)
+        {
+            switch (axis)
+            {
+                case AxisLayoutFlags.L2:
+                    return "\u2196";
+                case AxisLayoutFlags.R2:
+                    return "\u2197";
+            }
+
+            return base.GetGlyph(axis);
         }
     }
 }

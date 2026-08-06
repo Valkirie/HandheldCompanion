@@ -197,7 +197,7 @@ namespace HandheldCompanion.Controllers.GameSir
             if (IsBusy || !IsPlugged || _disposing || _disposed)
                 return;
 
-            if (!UpdateXInputState())
+            if (!UpdateState())
                 return;
 
             // update layout

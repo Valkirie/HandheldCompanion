@@ -36,7 +36,7 @@ namespace HandheldCompanion.ViewModels
         public bool IsWireless => _controller?.IsWireless() == true;
         public bool IsDongle => _controller?.IsDongle() == true;
         public bool IsLegionWireless => _controller is LegionController && _controller.IsWireless();
-        public int VisibleUserIndexCount => _controller is XInputController ? 4 : 8;
+        public int VisibleUserIndexCount => _controller is XInputController or LegionControllerXInput ? 4 : 8;
 
         private string _LayoutGlyph = "\ue001"; // Default icon for layout
         public string LayoutGlyph
@@ -59,12 +59,13 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
-                if (Controller is XInputController xInputController)
+                if (Controller is TarantulaProController)
                 {
-                    if (xInputController is TarantulaProController)
-                        return "\u243C";    // generic icon
-                    else
-                        return "\u2442";    // Xbox360 icon
+                    return "\u243C";    // generic icon
+                }
+                else if (Controller is XInputController or LegionControllerXInput)
+                {
+                    return "\u2442";    // Xbox360 icon
                 }
                 else if (Controller is SDLController sdlController)
                 {
