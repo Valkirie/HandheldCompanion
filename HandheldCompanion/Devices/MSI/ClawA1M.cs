@@ -278,12 +278,19 @@ public class ClawA1M : IDevice
         ));
 
         // Hacky, BIOS 10F
-        OEMChords.Add(new KeyboardChord("QS", [KeyCode.LWin, KeyCode.G], [KeyCode.G, KeyCode.LWin], false, ButtonFlags.OEM2));
+        OEMChords.Add(new KeyboardChord("QS", [KeyCode.LWin, KeyCode.G], [KeyCode.G, KeyCode.LWin], false, ButtonFlags.OEM2, releasePressedModifiers: true));
+        OEMChords.Add(new KeyboardChord("QS", [KeyCode.RWin, KeyCode.G], [KeyCode.G, KeyCode.RWin], false, ButtonFlags.OEM2, releasePressedModifiers: true));
         OEMChords.Add(new KeyboardChord("QS, Long-press", [KeyCode.LWin, KeyCode.Tab], [KeyCode.Tab, KeyCode.LWin], false, ButtonFlags.OEM2));
 
         // prepare hotkeys
         DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
         DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
+    }
+
+    private void SetModifierReleaseEnabled(bool enabled)
+    {
+        foreach (KeyboardChord chord in OEMChords.Where(chord => chord.releasePressedModifiers))
+            chord.releasePressedModifiersEnabled = enabled;
     }
 
     public override bool Open()
@@ -415,6 +422,7 @@ public class ClawA1M : IDevice
         SettingsManager_SettingValueChanged("MSIClawControllerIndex", ManagerFactory.settingsManager.GetInt("MSIClawControllerIndex"), false, false);
         SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetInt("BatteryChargeLimit"), false, false);
         SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPercent"), false, false);
+        SettingsManager_SettingValueChanged("BlockMsiClawWinGHotkey", ManagerFactory.settingsManager.GetBoolean("BlockMsiClawWinGHotkey"), false, false);
 
         base.QuerySettings();
     }
@@ -438,6 +446,9 @@ public class ClawA1M : IDevice
                     SwitchMode(gamepadMode);
                 }
                 break;
+            case "BlockMsiClawWinGHotkey":
+                SetModifierReleaseEnabled(Convert.ToBoolean(value));
+                break;
         }
 
         base.SettingsManager_SettingValueChanged(name, value, temporary, initializing);
@@ -445,6 +456,7 @@ public class ClawA1M : IDevice
 
     public override void Close()
     {
+        SetModifierReleaseEnabled(false);
         SetFanFullSpeed(false);
 
         // stop WMI event monitor

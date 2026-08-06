@@ -15,13 +15,17 @@ public class KeyboardChord
 
     public string name;
     public bool silenced;
+    public bool releasePressedModifiers;
+    public bool releasePressedModifiersEnabled;
     public short flushInterval;
     public ButtonState state = new();
 
-    public KeyboardChord(string name, List<KeyCode>? chordDown = null, List<KeyCode>? chordUP = null, bool silenced = false, ButtonFlags button = ButtonFlags.None, short flushInterval = 20)
+    public KeyboardChord(string name, List<KeyCode>? chordDown = null, List<KeyCode>? chordUP = null, bool silenced = false, ButtonFlags button = ButtonFlags.None, short flushInterval = 20, bool releasePressedModifiers = false)
     {
         this.name = name;
         this.silenced = silenced;
+        this.releasePressedModifiers = releasePressedModifiers;
+        releasePressedModifiersEnabled = releasePressedModifiers;
         this.flushInterval = flushInterval;
         state[button] = true;
 

@@ -1,6 +1,8 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
 using System.Collections.Generic;
 using System.Numerics;
+using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;
 
@@ -81,5 +83,9 @@ public class MinisforumV3 : IDevice
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 28.0d, 28.0d, 28.0d }
         });
+
+        // temp, eraseme
+        OEMChords.Add(new KeyboardChord("QS", [KeyCode.LWin, KeyCode.G], [KeyCode.G, KeyCode.LWin], false, ButtonFlags.OEM2, releasePressedModifiers: true));
+        OEMChords.Add(new KeyboardChord("QS", [KeyCode.RWin, KeyCode.G], [KeyCode.G, KeyCode.RWin], false, ButtonFlags.OEM2, releasePressedModifiers: true));
     }
 }

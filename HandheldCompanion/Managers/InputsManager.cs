@@ -45,10 +45,7 @@ public static class InputsManager
     private const uint LLKHF_INJECTED = 0x00000010;
     private const uint LLKHF_LOWER_IL_INJECTED = 0x00000002;
 
-    private const string BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING = "BlockMsiClawWinGHotkey";
-
-    // MSI firmware workaround: sending a dummy key before releasing Win clears the shell's
-    // shortcut state when suppressing Win+G.
+    // Sending a dummy key before releasing Win clears the shell's shortcut state on affected devices.
     private const uint INPUT_KEYBOARD = 1;
     private const uint KEYEVENTF_EXTENDEDKEY = 0x0001;
     private const uint KEYEVENTF_KEYUP = 0x0002;
@@ -80,13 +77,10 @@ public static class InputsManager
     private static readonly Dictionary<bool, short> KeyIndexHotkey = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, bool> KeyUsed = new() { { true, false }, { false, false } };
     private static readonly HashSet<Keys> PhysicalModifiersDown = new();
-    private static readonly UIntPtr MsiClawInjectedMarker = new(0x4843424Cu);
-    private static bool IsMsiClawWinGWorkaroundEnabled;
-    private static bool IsMsiClawWinGWorkaroundActive;
-    private static bool IsMsiClawGDown;
-    private static bool IsMsiClawLeftWinReleased;
-    private static bool IsMsiClawRightWinReleased;
-    private static bool IsMsiClawInjecting;
+    private static readonly HashSet<Keys> ReleasedModifiers = new();
+    private static readonly HashSet<Keys> SuppressedChordKeys = new();
+    private static readonly UIntPtr ModifierReleaseInjectedMarker = new(0x4843424Cu);
+    private static bool IsInjecting;
     private static bool IsHandlingAltGrRelease;
 
     public static bool IsInitialized;
@@ -259,7 +253,9 @@ public static class InputsManager
         {
             PhysicalModifiersDown.Remove(Keys.LWin);
             PhysicalModifiersDown.Remove(Keys.RWin);
-            ResetMsiClawWinGWorkaround();
+            ReleasedModifiers.Clear();
+            SuppressedChordKeys.Clear();
+            ResetModifierRelease();
             return;
         }
 
@@ -278,16 +274,24 @@ public static class InputsManager
                 PhysicalModifiersDown.Remove(args.KeyCode);
         }
 
-        MsiClawWinGWorkaroundResult workaroundResult = ApplyMsiClawWinGWorkaround(args, Injected || InjectedLL);
-        if (workaroundResult == MsiClawWinGWorkaroundResult.BypassApplication)
-            return;
+        if (Injected || InjectedLL)
+        {
+            if (IsInjecting)
+                return;
 
-        if (workaroundResult == MsiClawWinGWorkaroundResult.Suppress)
-            args.SuppressKeyPress = true;
-
-        if ((Injected || InjectedLL))
             if (IsListening && currentChord.chordTarget != InputsChordTarget.Output)
                 return;
+        }
+
+        if (fromPhysicalKeyboard && args.IsKeyUp)
+        {
+            bool suppressed = SuppressedChordKeys.Remove(args.KeyCode);
+            suppressed |= ReleasedModifiers.Remove(args.KeyCode);
+            args.SuppressKeyPress |= suppressed;
+        }
+
+        if (args.IsKeyUp && SuppressedChordKeys.Count == 0 && ReleasedModifiers.Count == 0)
+            ResetModifierRelease();
 
         KeyCode hookKey = (KeyCode)args.KeyValue;
 
@@ -394,6 +398,16 @@ public static class InputsManager
                     KeyUsed[args.IsKeyDown] = true;
                     KeyIndexOEM[args.IsKeyDown]++;
                     matchedOEMChord = pair;
+
+                    if (pair.releasePressedModifiersEnabled
+                        && KeyIndexOEM[args.IsKeyDown] == chord.Count)
+                    {
+                        args.SuppressKeyPress = true;
+                        foreach (KeyCode key in pair.chords[true])
+                            SuppressedChordKeys.Add((Keys)key);
+                        ReleasePressedModifiers(pair);
+                    }
+
                     break;
                 }
             }
@@ -630,12 +644,8 @@ public static class InputsManager
             return;
 
         ControllerManager.InputsUpdated += UpdateInputs;
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         m_GlobalHook?.KeyDown += M_GlobalHook_KeyEvent;
         m_GlobalHook?.KeyUp += M_GlobalHook_KeyEvent;
-
-        SettingsManager_SettingValueChanged(BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING,
-            ManagerFactory.settingsManager.GetBoolean(BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING), false, true);
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -649,11 +659,10 @@ public static class InputsManager
             return;
 
         ControllerManager.InputsUpdated -= UpdateInputs;
-        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         m_GlobalHook?.KeyDown -= M_GlobalHook_KeyEvent;
         m_GlobalHook?.KeyUp -= M_GlobalHook_KeyEvent;
 
-        SetMsiClawWinGWorkaroundEnabled(false);
+        ResetModifierRelease();
 
         if (OS)
             DisposeGlobalHook();
@@ -678,15 +687,6 @@ public static class InputsManager
 
         m_GlobalHook.Dispose();
         m_GlobalHook = null;
-    }
-
-    private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
-    {
-        if (name != BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING)
-            return;
-
-        bool enabled = Convert.ToBoolean(value) && IDevice.GetCurrent() is ClawA1M;
-        SetMsiClawWinGWorkaroundEnabled(enabled);
     }
 
     private static void UpdateInputs(ControllerState controllerState, bool IsMapped)
@@ -901,119 +901,39 @@ public static class InputsManager
         StopListening();
     }
 
-    private enum MsiClawWinGWorkaroundResult
+    private static void ResetModifierRelease()
     {
-        None,
-        Suppress,
-        BypassApplication,
+        ReleasedModifiers.Clear();
+        SuppressedChordKeys.Clear();
+        IsInjecting = false;
     }
 
-    private static MsiClawWinGWorkaroundResult ApplyMsiClawWinGWorkaround(KeyEventArgsExt args, bool injected)
-    {
-        if (injected && IsMsiClawInjecting)
-            return MsiClawWinGWorkaroundResult.BypassApplication;
-
-        if ((!IsMsiClawWinGWorkaroundEnabled && !IsMsiClawWinGWorkaroundActive)
-            || (!args.IsKeyDown && !args.IsKeyUp))
-        {
-            return MsiClawWinGWorkaroundResult.None;
-        }
-
-        if (args.KeyCode is Keys.LWin or Keys.RWin)
-        {
-            bool released = args.KeyCode switch
-            {
-                Keys.LWin => IsMsiClawLeftWinReleased,
-                Keys.RWin => IsMsiClawRightWinReleased,
-                _ => false,
-            };
-
-            if (!args.IsKeyUp || !released)
-                return MsiClawWinGWorkaroundResult.None;
-
-            if (args.KeyCode == Keys.LWin)
-                IsMsiClawLeftWinReleased = false;
-            else
-                IsMsiClawRightWinReleased = false;
-
-            if (!IsMsiClawLeftWinReleased && !IsMsiClawRightWinReleased)
-                IsMsiClawWinGWorkaroundActive = false;
-
-            return MsiClawWinGWorkaroundResult.Suppress;
-        }
-
-        if (args.KeyCode != Keys.G)
-            return MsiClawWinGWorkaroundResult.None;
-
-        bool windowsKeyDown = PhysicalModifiersDown.Contains(Keys.LWin) || PhysicalModifiersDown.Contains(Keys.RWin);
-        if (!windowsKeyDown && !IsMsiClawGDown && !IsMsiClawWinGWorkaroundActive)
-            return MsiClawWinGWorkaroundResult.None;
-
-        if (args.IsKeyDown && windowsKeyDown && !IsMsiClawWinGWorkaroundActive)
-        {
-            IsMsiClawGDown = true;
-            IsMsiClawWinGWorkaroundActive = true;
-
-            if (!ReleaseMsiClawWindowsKeys())
-            {
-                IsMsiClawWinGWorkaroundActive = false;
-                IsMsiClawGDown = false;
-
-                // The ordinary InputsManager chord path still decides whether to suppress Win+G.
-                return MsiClawWinGWorkaroundResult.None;
-            }
-        }
-        else if (args.IsKeyUp)
-        {
-            IsMsiClawGDown = false;
-        }
-
-        return MsiClawWinGWorkaroundResult.Suppress;
-    }
-
-    private static void SetMsiClawWinGWorkaroundEnabled(bool enabled)
-    {
-        IsMsiClawWinGWorkaroundEnabled = enabled;
-        if (!enabled)
-            ResetMsiClawWinGWorkaround();
-    }
-
-    private static void ResetMsiClawWinGWorkaround()
-    {
-        IsMsiClawWinGWorkaroundActive = false;
-        IsMsiClawGDown = false;
-        IsMsiClawLeftWinReleased = false;
-        IsMsiClawRightWinReleased = false;
-        IsMsiClawInjecting = false;
-    }
-
-    private static bool ReleaseMsiClawWindowsKeys()
+    private static void ReleasePressedModifiers(KeyboardChord chord)
     {
         List<KeyboardInput> inputs = new(4)
         {
-            CreateMsiClawKeyInput(VK_DUMMY, false),
-            CreateMsiClawKeyInput(VK_DUMMY, true),
+            CreateModifierReleaseInput(VK_DUMMY, false),
+            CreateModifierReleaseInput(VK_DUMMY, true),
         };
 
-        int leftWinIndex = -1;
-        int rightWinIndex = -1;
-
-        if (PhysicalModifiersDown.Contains(Keys.LWin))
+        List<Keys> modifiers = PhysicalModifiersDown
+            .Where(IsModifierKey)
+            .Concat(chord.chords[true]
+                .Select(key => (Keys)key)
+                .Where(IsModifierKey))
+            .Distinct()
+            .ToList();
+        Dictionary<Keys, int> modifierIndexes = new(modifiers.Count);
+        foreach (Keys modifier in modifiers)
         {
-            leftWinIndex = inputs.Count;
-            inputs.Add(CreateMsiClawKeyInput((ushort)Keys.LWin, true));
-        }
-
-        if (PhysicalModifiersDown.Contains(Keys.RWin))
-        {
-            rightWinIndex = inputs.Count;
-            inputs.Add(CreateMsiClawKeyInput((ushort)Keys.RWin, true));
+            modifierIndexes[modifier] = inputs.Count;
+            inputs.Add(CreateModifierReleaseInput((ushort)modifier, true));
         }
 
         KeyboardInput[] inputArray = [.. inputs];
         uint sent;
         int error;
-        IsMsiClawInjecting = true;
+        IsInjecting = true;
         try
         {
             sent = SendInput((uint)inputArray.Length, inputArray, Marshal.SizeOf<KeyboardInput>());
@@ -1021,22 +941,28 @@ public static class InputsManager
         }
         finally
         {
-            IsMsiClawInjecting = false;
+            IsInjecting = false;
         }
 
-        IsMsiClawLeftWinReleased = leftWinIndex >= 0 && sent > leftWinIndex;
-        IsMsiClawRightWinReleased = rightWinIndex >= 0 && sent > rightWinIndex;
+        ReleasedModifiers.Clear();
+        foreach ((Keys modifier, int index) in modifierIndexes)
+        {
+            if (sent > index)
+                ReleasedModifiers.Add(modifier);
+        }
 
         if (sent != inputArray.Length)
         {
-            LogManager.LogError("Failed to apply MSI Claw Win+G firmware workaround: sent {0} of {1} inputs, error {2}",
+            LogManager.LogError("Failed to release modifiers for OEM chord: sent {0} of {1} inputs, error {2}",
                 sent, inputArray.Length, error);
         }
-
-        return IsMsiClawLeftWinReleased || IsMsiClawRightWinReleased;
+        else
+        {
+            LogManager.LogInformation("Released modifiers for OEM chord: {0}", string.Join(", ", ReleasedModifiers));
+        }
     }
 
-    private static KeyboardInput CreateMsiClawKeyInput(ushort key, bool keyUp)
+    private static KeyboardInput CreateModifierReleaseInput(ushort key, bool keyUp)
     {
         uint flags = keyUp ? KEYEVENTF_KEYUP : 0;
         if (key is (ushort)Keys.LWin or (ushort)Keys.RWin)
@@ -1049,7 +975,7 @@ public static class InputsManager
             {
                 VirtualKey = key,
                 Flags = flags,
-                ExtraInfo = MsiClawInjectedMarker,
+                ExtraInfo = ModifierReleaseInjectedMarker,
             }
         };
     }
