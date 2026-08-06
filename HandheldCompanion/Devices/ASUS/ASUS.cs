@@ -1,5 +1,3 @@
-using HandheldCompanion.Devices;
-
 namespace HandheldCompanion.Devices.ASUS;
 
 public class ASUS : IDevice

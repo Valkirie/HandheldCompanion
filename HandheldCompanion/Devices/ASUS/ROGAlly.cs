@@ -11,8 +11,8 @@ using System.Collections.Generic;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
-using Task = System.Threading.Tasks.Task;
 using AsusDevice = HandheldCompanion.Devices.ASUS.ASUS;
+using Task = System.Threading.Tasks.Task;
 
 namespace HandheldCompanion.Devices;
 

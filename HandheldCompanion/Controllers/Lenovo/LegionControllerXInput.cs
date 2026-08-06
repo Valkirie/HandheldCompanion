@@ -1,6 +1,5 @@
 using HandheldCompanion.Inputs;
 using SharpDX.XInput;
-using System;
 
 namespace HandheldCompanion.Controllers.Lenovo
 {
