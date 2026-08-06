@@ -1,14 +1,15 @@
-using System;
-using System.Linq;
-using System.Numerics;
-using System.Threading;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
+using System;
+using System.Linq;
+using System.Numerics;
+using System.Threading;
 using WindowsInput.Events;
+using YamlDotNet.Core.Tokens;
 using static HandheldCompanion.IGCL.IGCLBackend;
 namespace HandheldCompanion.Devices;
 
@@ -100,15 +101,6 @@ public class OneXPlayerX2 : OneXPlayerX1
         DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = false;
     }
 
-    public override IController? CreateController(PnPDetails details)
-    {
-        // The integrated pad uses the standard Xbox 360 identity and is not marked internal.
-        if (details.GetVendorID() == "0x045E" && details.GetProductID() == "0x028E")
-            return new OneXPlayerX2Controller(details);
-
-        return null;
-    }
-
     public override bool Open()
     {
         bool success = base.Open();
@@ -148,30 +140,24 @@ public class OneXPlayerX2 : OneXPlayerX1
         // OneXConsole had initialized it.
         try
         {
-            using OneXPlayerWmiEc ec = new();
-            byte currentValue = ec.ReadByte(TurboTakeoverRegister);
-            byte requestedValue = enabled
-                ? (byte)(currentValue | TurboTakeoverMask)
-                : (byte)(currentValue & ~TurboTakeoverMask);
+            using (OneXPlayerWmiEc ec = new())
+            {
+                byte currentValue = ec.ReadByte(TurboTakeoverRegister);
+                byte value = enabled ? (byte)(currentValue | TurboTakeoverMask) : (byte)(currentValue & ~TurboTakeoverMask);
 
-            ec.WriteByte(TurboTakeoverRegister, requestedValue);
-            Thread.Sleep(50);
+                ec.WriteByte(TurboTakeoverRegister, value);
+                Thread.Sleep(50);
+                byte actualValue = ec.ReadByte(TurboTakeoverRegister);
 
-            byte actualValue = ec.ReadByte(TurboTakeoverRegister);
-            if (((actualValue & TurboTakeoverMask) != 0) != enabled)
-                throw new InvalidOperationException(
-                    $"takeover readback was 0x{actualValue:X2}, expected bit 0x{TurboTakeoverMask:X2} " +
-                    $"to be {(enabled ? "set" : "clear")}");
-
-            LogManager.LogInformation(
-                "{0} {1} OEM button through X2 WMI EC interface",
-                enabled ? "Unlocked" : "Locked", ButtonFlags.OEM1);
+                if (ec.ReadByte(0xEB) == value)
+                    LogManager.LogInformation("{0} {1} OEM button through X2 WMI EC interface", enabled ? "Unlocked" : "Locked", ButtonFlags.OEM1);
+                else
+                    LogManager.LogWarning("Failed to {0} OEM button through X2 WMI EC interface (expected 0x{1:X2}, actual 0x{2:X2})", enabled ? "unlock" : "lock", value, actualValue);
+            }
         }
         catch (Exception ex)
         {
-            LogManager.LogWarning(
-                "Failed to {0} {1} OEM button through X2 WMI EC interface: {2}",
-                enabled ? "unlock" : "lock", ButtonFlags.OEM1, ex.Message);
+            LogManager.LogWarning("Failed to {0} {1} OEM button through X2 WMI EC interface: {2}", enabled ? "unlock" : "lock", ButtonFlags.OEM1, ex.Message);
         }
     }
 
@@ -179,13 +165,14 @@ public class OneXPlayerX2 : OneXPlayerX1
     {
         ButtonFlags button = MapVendorButton(buttonId);
 
-        if (button is ButtonFlags.OEM1 or ButtonFlags.OEM2 or ButtonFlags.OEM3)
+        switch (button)
         {
-            // These vendor-HID press/release reports can be shorter than an input
-            // update. Emit a deterministic pulse for reliable mappings.
-            if (pressed)
-                KeyPressAndRelease(button, 100);
-            return;
+            case ButtonFlags.OEM1:
+            case ButtonFlags.OEM2:
+            case ButtonFlags.OEM3:
+                if (pressed)
+                    KeyPressAndRelease(button, 100);
+                return;
         }
 
         base.VendorHidMonitor_ButtonChanged(buttonId, pressed);

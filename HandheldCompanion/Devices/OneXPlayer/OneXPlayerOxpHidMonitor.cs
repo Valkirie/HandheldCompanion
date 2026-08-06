@@ -295,17 +295,6 @@ internal sealed class OneXPlayerOxpHidMonitor : IDisposable
         return [0x01, 0x05, level];
     }
 
-    private void InitializeRemap()
-    {
-        WriteCommand(0xB2, [0x01, 0x1F, 0x40, 0x03, 0x02, 0x03, 0x00, 0x00, 0x00, 0x01]);
-        Thread.Sleep(50);
-        WriteCommand(0xB4, BuildRemapPage1(0x01));
-        Thread.Sleep(50);
-        WriteCommand(0xB4, BuildRemapPage2(0x01, 0x66, 0x67));
-        Thread.Sleep(50);
-        WriteCommand(0xB2, [0x00, 0x01, 0x02]);
-    }
-
     private void WriteCommand(byte commandId, byte[] payload)
     {
         _hidDevice?.Write(BuildCommand(commandId, payload));

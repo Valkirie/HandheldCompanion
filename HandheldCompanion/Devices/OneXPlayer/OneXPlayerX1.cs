@@ -13,6 +13,7 @@ using System.Linq;
 using System.Management;
 using System.Numerics;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using WindowsInput.Events;
@@ -249,9 +250,13 @@ public class OneXPlayerX1 : OneXAOKZOE
     protected virtual void SetTurboButtonTakeover(bool enabled)
     {
         byte value = enabled ? (byte)0x40 : (byte)0x00;
+
         EcWriteByte(0xEB, value);
+        Thread.Sleep(50);
         if (EcReadByte(0xEB) == value)
             LogManager.LogInformation("{0} {1} OEM button", enabled ? "Unlocked" : "Locked", ButtonFlags.OEM1);
+        else
+            LogManager.LogWarning("Failed to {0} OEM button", enabled ? "unlock" : "lock");
     }
 
     protected override void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)

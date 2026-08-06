@@ -464,10 +464,6 @@ public abstract class IDevice
 
     public IEnumerable<ButtonFlags> OEMButtons => OEMChords.Where(chord => !chord.silenced).SelectMany(chord => chord.state.Buttons).Distinct();
 
-    // Lets devices whose integrated controller has no unique VID/PID select an established
-    // controller implementation without adding model checks to ControllerManager.
-    public virtual IController? CreateController(PnPDetails details) => null;
-
     public virtual bool IsSupported => true;
 
     public Layout DefaultLayout { get; set; } = LayoutTemplate.DefaultLayout.Layout;
