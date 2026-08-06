@@ -197,13 +197,22 @@ namespace HandheldCompanion.Actions
             if (!touched)
                 ResetTrackpadHaptics();
 
-            outVector = layout.vector;
+            Vector2 rawVector = layout.vector;
+            outVector = rawVector;
             base.Execute(layout, shiftSlot, delta);
+
+            bool isTrackpad = layout.flags is AxisLayoutFlags.LeftPad or AxisLayoutFlags.RightPad;
+            if (axisSlotDisabled && isTrackpad)
+            {
+                rawVector.Y *= -1;
+                prevVector = rawVector;
+                ResetTrackpadHaptics();
+                return;
+            }
 
             // Invert Y so that "up" on a stick or pad moves the cursor up
             outVector.Y *= -1;
 
-            bool isTrackpad = layout.flags is AxisLayoutFlags.LeftPad or AxisLayoutFlags.RightPad;
             if (firstTouch && isTrackpad)
             {
                 prevVector = outVector;
@@ -211,7 +220,8 @@ namespace HandheldCompanion.Actions
                 return;
             }
 
-            if (outVector == Vector2.Zero) return;
+            // Zero is the center of an absolute trackpad, not an absence of input.
+            if (outVector == Vector2.Zero && (!isTrackpad || !touched)) return;
 
             Vector2 deltaVector;
             float sensitivityScale;
@@ -266,10 +276,11 @@ namespace HandheldCompanion.Actions
                 return;
             }
 
-            // Firmware-provided trackpad feedback is lost when Steam lizard mode is disabled.
-            // Only replace it for physical Steam controllers; other trackpads may provide their
-            // own feedback and should not receive controller-rumble pulses while moving.
-            if (ControllerManager.GetTarget() is not HandheldCompanion.Controllers.Steam.SteamController steamController ||
+            // Steam firmware provides its own feedback in lizard mode. Other controllers can use
+            // their normal haptic implementation when the mapped action enables feedback.
+            var targetController = ControllerManager.GetTarget();
+            if (targetController is null ||
+                targetController is HandheldCompanion.Controllers.Steam.SteamController steamController &&
                 steamController.IsLizardModeEnabled)
             {
                 ResetTrackpadHaptics();

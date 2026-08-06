@@ -212,7 +212,8 @@ namespace HandheldCompanion.Actions
         /// <summary>AxisLayout version: zeroes the vector when the slot is masked.</summary>
         public virtual void Execute(AxisLayout layout, ShiftSlot shiftSlot, float delta)
         {
-            if (!IsShiftAllowed(shiftSlot, ShiftSlot, ShiftMatchAny))
+            axisSlotDisabled = !IsShiftAllowed(shiftSlot, ShiftSlot, ShiftMatchAny);
+            if (axisSlotDisabled)
                 outVector = Vector2.Zero;
         }
 

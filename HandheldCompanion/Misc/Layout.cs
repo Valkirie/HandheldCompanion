@@ -5,18 +5,12 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 
 namespace HandheldCompanion;
 
 [Serializable]
 public partial class Layout : ICloneable, IDisposable
 {
-    private const int CurrentSchemaVersion = 1;
-
-    [JsonProperty]
-    public int SchemaVersion { get; private set; } = CurrentSchemaVersion;
-
     public SortedDictionary<ButtonFlags, List<IActions>> ButtonLayout { get; set; } = [];
     public SortedDictionary<AxisLayoutFlags, List<IActions>> AxisLayout { get; set; } = [];
     public SortedDictionary<AxisLayoutFlags, IActions> GyroLayout { get; set; } = [];
@@ -27,39 +21,6 @@ public partial class Layout : ICloneable, IDisposable
 
     public Layout()
     {
-    }
-
-    [OnDeserializing]
-    private void OnDeserializing(StreamingContext _)
-    {
-        // A saved layout without this property predates schema versioning.
-        SchemaVersion = 0;
-    }
-
-    [OnDeserialized]
-    private void OnDeserialized(StreamingContext _)
-    {
-        if (SchemaVersion < CurrentSchemaVersion)
-            EnableTrackpadHaptics();
-
-        SchemaVersion = CurrentSchemaVersion;
-    }
-
-    private void EnableTrackpadHaptics()
-    {
-        foreach (AxisLayoutFlags axis in new[] { AxisLayoutFlags.LeftPad, AxisLayoutFlags.RightPad })
-        {
-            if (!AxisLayout.TryGetValue(axis, out List<IActions>? actions))
-                continue;
-
-            foreach (MouseActions action in actions.OfType<MouseActions>())
-            {
-                if (action.MouseType is MouseActionsType.Move or MouseActionsType.Scroll &&
-                    action.HapticMode == HapticMode.Off)
-                    action.HapticMode = HapticMode.Down;
-            }
-        }
-
     }
 
     ~Layout()
