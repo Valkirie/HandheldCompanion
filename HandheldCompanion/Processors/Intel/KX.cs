@@ -79,8 +79,13 @@ public class KX
                         if (returned == 0xFFFFFFFF)
                             continue;
 
-                        // store mchbar and leave loop
-                        mchbar = address + pnt_limit;
+                        // mchbar_addresses hold the full 32-bit MCHBAR base (low 16 bits = 0).
+                        // KX.exe forms its target address by concatenating hex strings, so the RAPL
+                        // register address is built as <base high 16 bits> + pnt_limit (0x59) + pointer
+                        // (0xa0/0xa4), e.g. "0xfedc" + "59" + "a0" => 0xFEDC59A0 (MCHBAR base + 0x59A0).
+                        // Concatenating the full "0xfedc0000" base instead would yield 0xFEDC000059A0,
+                        // an out-of-range physical address whose reads/writes are silently ignored.
+                        mchbar = address.Substring(0, 6) + pnt_limit;
                         return true;
                     }
                 }
