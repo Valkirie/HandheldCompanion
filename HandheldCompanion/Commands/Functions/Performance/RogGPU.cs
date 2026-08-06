@@ -17,7 +17,6 @@ namespace HandheldCompanion.Commands.Functions.Performance
             FontFamily = "Segoe UI Symbol";
             Glyph = "\u2796";
             OnKeyDown = true;
-            deviceType = typeof(ROGAlly);
 
             Update();
 
@@ -30,15 +29,35 @@ namespace HandheldCompanion.Commands.Functions.Performance
             Update();
         }
 
-        public override bool IsToggled => IDevice.GetCurrent() is ROGAlly rOGAlly && AsusACPI.DeviceGet(AsusACPI.GPUXG) == 1;
+        private static bool IsSupported()
+        {
+            return IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.XGMobile);
+        }
+
+        private static bool TryGetState(out bool toggled)
+        {
+            toggled = false;
+            if (!IsSupported())
+                return false;
+
+            bool? state = AsusACPI.GetXGMode();
+            if (state is null)
+                return false;
+
+            toggled = state.Value;
+            return true;
+        }
+
+        public override bool IsToggled => AsusACPI.GetXGMode() == true;
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            if (IDevice.GetCurrent() is ROGAlly rOGAlly)
+            if (TryGetState(out bool toggled))
             {
-                if (!IsToggled) XGM.Reset();
-                AsusACPI.SetXGMode(IsToggled);
-                if (IsToggled) XGM.Init();
+                bool enable = !toggled;
+
+                if (!enable) XGM.Reset();
+                if (AsusACPI.SetXGMode(enable) && enable) XGM.Init();
             }
 
             base.Execute(IsKeyDown, IsKeyUp, false);
@@ -46,7 +65,7 @@ namespace HandheldCompanion.Commands.Functions.Performance
 
         public void Update(HIDmode profileMode = HIDmode.NotSelected)
         {
-            IsEnabled = IDevice.GetCurrent() is ROGAlly rOGAlly && AsusACPI.IsXGConnected() == true;
+            IsEnabled = TryGetState(out _);
 
             base.Update();
         }

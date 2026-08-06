@@ -1,4 +1,4 @@
-using HandheldCompanion.Commands.Functions.HC;
+﻿using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Devices.AYANEO;
 using HandheldCompanion.Devices.Lenovo;
@@ -28,6 +28,7 @@ using System.Windows.Media;
 using Windows.Devices.Sensors;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
+using AsusDevice = HandheldCompanion.Devices.ASUS.ASUS;
 
 namespace HandheldCompanion.Devices;
 
@@ -47,6 +48,7 @@ public enum DeviceCapabilities : ushort
     FanOverride = 512,
     OEMCPU = 1024,
     OEMGPU = 2048,
+    XGMobile = 4096,
 }
 
 public enum TDPMethod
@@ -1005,6 +1007,9 @@ public abstract class IDevice
                             break;
                         case "RC73XA":
                             device = new XboxROGAllyX();
+                            break;
+                        default:
+                            device = new AsusDevice();
                             break;
                     }
                 }

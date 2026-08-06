@@ -104,7 +104,9 @@ namespace HandheldCompanion.Devices.ASUS
         private const uint FILE_SHARE_READ = 1;
         private const uint FILE_SHARE_WRITE = 2;
 
-        private static IntPtr handle;
+        private static readonly IntPtr INVALID_HANDLE_VALUE = new(-1);
+        private static readonly object handleLock = new();
+        private static IntPtr handle = INVALID_HANDLE_VALUE;
 
         // Event handling attempt
 
@@ -114,48 +116,65 @@ namespace HandheldCompanion.Devices.ASUS
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool WaitForSingleObject(IntPtr hHandle, int dwMilliseconds);
 
-        public static bool IsOpen => handle != new IntPtr(-1);
+        public static bool IsOpen => handle != IntPtr.Zero && handle != INVALID_HANDLE_VALUE;
 
         private static void Control(uint dwIoControlCode, byte[] lpInBuffer, byte[] lpOutBuffer)
         {
-            uint lpBytesReturned = 0;
-            DeviceIoControl(
-                handle,
-                dwIoControlCode,
-                lpInBuffer,
-                (uint)lpInBuffer.Length,
-                lpOutBuffer,
-                (uint)lpOutBuffer.Length,
-                ref lpBytesReturned,
-                IntPtr.Zero
-            );
+            lock (handleLock)
+            {
+                if (!IsOpen)
+                    return;
+
+                uint lpBytesReturned = 0;
+                DeviceIoControl(
+                    handle,
+                    dwIoControlCode,
+                    lpInBuffer,
+                    (uint)lpInBuffer.Length,
+                    lpOutBuffer,
+                    (uint)lpOutBuffer.Length,
+                    ref lpBytesReturned,
+                    IntPtr.Zero
+                );
+            }
         }
 
         public static bool Open()
         {
-            handle = CreateFile(
-                FILE_NAME,
-                GENERIC_READ | GENERIC_WRITE,
-                FILE_SHARE_READ | FILE_SHARE_WRITE,
-                IntPtr.Zero,
-                OPEN_EXISTING,
-                FILE_ATTRIBUTE_NORMAL,
-                IntPtr.Zero
-            );
-
-            if (!IsOpen)
+            lock (handleLock)
             {
-                LogManager.LogError("Can't connect to Asus ACPI");
-                return false;
-            }
+                if (IsOpen)
+                    return true;
 
-            return true;
+                handle = CreateFile(
+                    FILE_NAME,
+                    GENERIC_READ | GENERIC_WRITE,
+                    FILE_SHARE_READ | FILE_SHARE_WRITE,
+                    IntPtr.Zero,
+                    OPEN_EXISTING,
+                    FILE_ATTRIBUTE_NORMAL,
+                    IntPtr.Zero
+                );
+
+                if (!IsOpen)
+                {
+                    LogManager.LogError("Can't connect to Asus ACPI");
+                    return false;
+                }
+
+                return true;
+            }
         }
 
         public static void Close()
         {
-            if (IsOpen)
-                CloseHandle(handle);
+            lock (handleLock)
+            {
+                if (IsOpen)
+                    CloseHandle(handle);
+
+                handle = INVALID_HANDLE_VALUE;
+            }
         }
 
         public static byte[] CallMethod(uint MethodID, byte[] args)
@@ -184,7 +203,7 @@ namespace HandheldCompanion.Devices.ASUS
             return CallMethod(WDOG, args);
         }
 
-        public static int DeviceSet(uint DeviceID, int Status)
+        private static int DeviceSet(uint DeviceID, int Status)
         {
             byte[] args = new byte[8];
             BitConverter.GetBytes(DeviceID).CopyTo(args, 0);
@@ -196,7 +215,7 @@ namespace HandheldCompanion.Devices.ASUS
             return result;
         }
 
-        public static int DeviceSet(uint DeviceID, byte[] Params, string logName)
+        private static int DeviceSet(uint DeviceID, byte[] Params, string logName)
         {
             byte[] args = new byte[4 + Params.Length];
             BitConverter.GetBytes(DeviceID).CopyTo(args, 0);
@@ -208,13 +227,18 @@ namespace HandheldCompanion.Devices.ASUS
             return BitConverter.ToInt32(status, 0);
         }
 
-        public static int DeviceGet(uint DeviceID)
+        private static int DeviceGet(uint DeviceID)
         {
             byte[] args = new byte[8];
             BitConverter.GetBytes(DeviceID).CopyTo(args, 0);
             byte[] status = CallMethod(DSTS, args);
 
             return BitConverter.ToInt32(status, 0) - 65536;
+        }
+
+        public static bool IsSupported(uint DeviceID)
+        {
+            return IsOpen && DeviceGet(DeviceID) >= 0;
         }
 
         public static byte[] DeviceGetBuffer(uint DeviceID, uint Status = 0)
@@ -240,6 +264,12 @@ namespace HandheldCompanion.Devices.ASUS
             if (currentState < 0) return false; // Failed to retrieve state
 
             return (currentState == (enable ? 1 : 0)) || DeviceSet(GPUXG, enable ? 1 : 0) == 0;
+        }
+
+        public static bool? GetXGMode()
+        {
+            int state = DeviceGet(GPUXG);
+            return state < 0 ? null : state == 1;
         }
 
         public static int SetFanRange(AsusFan device, byte[] curve)
@@ -330,6 +360,42 @@ namespace HandheldCompanion.Devices.ASUS
                 default:
                     return DeviceGetBuffer(DevsCPUFanCurve, fan_mode);
             }
+        }
+
+        public static float GetFanDuty(AsusFan device)
+        {
+            if (!IsOpen)
+                return 100.0f;
+
+            uint fan = device switch
+            {
+                AsusFan.GPU => GPU_Fan,
+                AsusFan.Mid => Mid_Fan,
+                _ => CPU_Fan
+            };
+
+            int duty = DeviceGet(fan);
+            if (duty < 0)
+                return 100.0f;
+
+            return duty;
+        }
+
+        public static void SetBatteryChargeLimit(int chargeLimit)
+        {
+            if (chargeLimit >= 0 && chargeLimit <= 100)
+                DeviceSet(BatteryLimit, chargeLimit);
+        }
+
+        public static void SetLongPowerLimit(int limit)
+        {
+            DeviceSet(PPT_APUA3, limit);
+        }
+
+        public static void SetShortPowerLimit(int limit)
+        {
+            DeviceSet(PPT_APUA0, limit);
+            DeviceSet(PPT_APUC1, limit);
         }
 
         public static bool IsInvalidCurve(byte[] curve)
