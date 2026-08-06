@@ -20,6 +20,8 @@ namespace HandheldCompanion.Helpers
             private const uint INPUT_KEYBOARD = 1;
             private const uint KEYEVENTF_EXTENDEDKEY = 0x0001;
             private const uint KEYEVENTF_KEYUP = 0x0002;
+
+            // PowerToys uses the undocumented 0xFF key as a no-op between modifier events.
             private const ushort VK_DUMMY = 0x00FF;
 
             private static readonly UIntPtr InjectedMarker = new(0x4843424Cu);
@@ -126,6 +128,23 @@ namespace HandheldCompanion.Helpers
                     {
                         sent = SendInput((uint)inputArray.Length, inputArray, Marshal.SizeOf<KeyboardInput>());
                         error = sent == inputArray.Length ? 0 : Marshal.GetLastWin32Error();
+                        if (sent != inputArray.Length)
+                        {
+                            LogManager.LogError("Failed to apply MSI Claw Win+G firmware workaround: sent {0} of {1} inputs, error {2}",
+                                sent, inputArray.Length, error);
+
+                            // The dummy key-down is the only non-key-up record in this fixed sequence.
+                            if (sent == 1)
+                            {
+                                KeyboardInput[] cleanupInput = [CreateKeyInput(VK_DUMMY, true)];
+                                uint cleanupSent = SendInput(1, cleanupInput, Marshal.SizeOf<KeyboardInput>());
+                                if (cleanupSent != 1)
+                                {
+                                    LogManager.LogError("Failed to release the MSI Claw firmware workaround dummy key, error {0}",
+                                        Marshal.GetLastWin32Error());
+                                }
+                            }
+                        }
                     }
                     finally
                     {
@@ -134,12 +153,6 @@ namespace HandheldCompanion.Helpers
 
                     releasedLeftWin = leftWinIndex >= 0 && sent > leftWinIndex;
                     releasedRightWin = rightWinIndex >= 0 && sent > rightWinIndex;
-
-                    if (sent != inputArray.Length)
-                    {
-                        LogManager.LogError("Failed to apply MSI Claw Win+G firmware workaround: sent {0} of {1} inputs, error {2}",
-                            sent, inputArray.Length, error);
-                    }
 
                     if (!releasedLeftWin && !releasedRightWin)
                     {
