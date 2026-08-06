@@ -2,6 +2,7 @@ using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices.AYANEO;
+using HandheldCompanion.Devices.ASUS;
 using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Devices.MSI;
 using HandheldCompanion.Devices.OneXPlayer;
@@ -29,6 +30,7 @@ using Windows.Devices.Sensors;
 using WindowsInput.Events;
 using static HandheldCompanion.Devices.IDevice;
 using static HandheldCompanion.Utils.DeviceUtils;
+using AsusDevice = HandheldCompanion.Devices.ASUS.ASUS;
 
 namespace HandheldCompanion.Devices;
 
@@ -831,6 +833,9 @@ public abstract class IDevice
                             break;
                         case "RC73XA":
                             device = new XboxROGAllyX();
+                            break;
+                        default:
+                            device = new AsusDevice();
                             break;
                     }
                 }
