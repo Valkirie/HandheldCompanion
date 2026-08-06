@@ -611,12 +611,20 @@ public static class InputsManager
             return;
 
         ControllerManager.InputsUpdated += UpdateInputs;
-        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         m_GlobalHook?.KeyDown += M_GlobalHook_KeyEvent;
         m_GlobalHook?.KeyUp += M_GlobalHook_KeyEvent;
 
-        SettingsManager_SettingValueChanged(BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING,
-            ManagerFactory.settingsManager.GetBoolean(BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING), false, true);
+        // raise events
+        switch (ManagerFactory.settingsManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
+        }
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -630,6 +638,7 @@ public static class InputsManager
             return;
 
         ControllerManager.InputsUpdated -= UpdateInputs;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         m_GlobalHook?.KeyDown -= M_GlobalHook_KeyEvent;
         m_GlobalHook?.KeyUp -= M_GlobalHook_KeyEvent;
@@ -642,6 +651,20 @@ public static class InputsManager
         IsInitialized = false;
 
         LogManager.LogInformation("{0} has stopped", "InputsManager");
+    }
+
+    private static void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
+    private static void QuerySettings()
+    {
+        // manage events
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        // raise events
+        SettingsManager_SettingValueChanged(BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING, ManagerFactory.settingsManager.GetBoolean(BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING), false, false);
     }
 
     private static void InitGlobalHook()
@@ -661,15 +684,15 @@ public static class InputsManager
         m_GlobalHook = null;
     }
 
-    /// <summary>
-    /// Applies the MSI Claw Win+G workaround setting when running on affected hardware.
-    /// </summary>
     private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
     {
-        if (name != BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING)
-            return;
-
-        MsiFirmwareWorkaround.Enabled = Convert.ToBoolean(value) && IDevice.GetCurrent() is ClawA1M;
+        switch (name)
+        {
+            case BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING:
+                bool enabled = Convert.ToBoolean(value);
+                MsiFirmwareWorkaround.Enabled = enabled && IDevice.GetCurrent() is ClawA1M;
+                break;
+        }
     }
 
     private static void UpdateInputs(ControllerState controllerState, bool IsMapped)
