@@ -1,14 +1,11 @@
 ﻿using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
+using HandheldCompanion.Actions;
 using steam_hidapi.net.Hid;
 
 namespace HandheldCompanion.Controllers.Steam
 {
     public abstract class SteamController : IController
     {
-        private bool leftPadClickPressed;
-        private bool rightPadClickPressed;
-
         public abstract bool IsLizardModeEnabled { get; }
 
         protected bool isVirtualMuted = false;
@@ -202,24 +199,9 @@ namespace HandheldCompanion.Controllers.Steam
             }
         }
 
-        protected void UpdateTrackpadClickHaptics(bool leftPressed, bool rightPressed)
+        public override void SetTrackpadClickHaptic(HapticStrength strength, ButtonFlags button, bool released)
         {
-            UpdateTrackpadClickHaptic(SCHapticMotor.Left, leftPressed, ref leftPadClickPressed);
-            UpdateTrackpadClickHaptic(SCHapticMotor.Right, rightPressed, ref rightPadClickPressed);
-        }
-
-        private void UpdateTrackpadClickHaptic(SCHapticMotor motor, bool pressed, ref bool wasPressed)
-        {
-            if (pressed == wasPressed)
-                return;
-
-            wasPressed = pressed;
-
-            int strength = ManagerFactory.settingsManager.GetInt("SteamTrackpadClickHaptics");
-            if (strength <= 0)
-                return;
-
-            SendTrackpadClickHaptic(motor, System.Math.Clamp(strength, 1, 3), released: !pressed);
+            SendTrackpadClickHaptic(GetMotorForButton(button), (int)strength + 1, released);
         }
 
         protected abstract void SendTrackpadClickHaptic(SCHapticMotor motor, int strength, bool released);

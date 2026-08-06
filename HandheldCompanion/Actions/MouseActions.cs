@@ -1,5 +1,4 @@
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Simulators;
 using HandheldCompanion.Utils;
 using System;
@@ -30,8 +29,6 @@ namespace HandheldCompanion.Actions
 
         private const int ScrollAmountInClicks = 20;
         private const float FilterBeta = 0.5f;
-        private const float TrackpadHapticStep = (short.MaxValue - short.MinValue) / 10.0f;
-        private const float TrackpadHapticJitterThreshold = 128.0f;
 
         // Runtime
         private bool isCursorDown = false;
@@ -40,8 +37,6 @@ namespace HandheldCompanion.Actions
         private KeyCode[]? modifiersPressed;
         private OneEuroFilterPair mouseFilter;
         private float accelMemory = 0f;
-        private float trackpadHapticDistance = 0f;
-        private Vector2 trackpadHapticJitter = new();
 
         // Click settings
         public ModifierSet Modifiers = ModifierSet.None;
@@ -194,9 +189,6 @@ namespace HandheldCompanion.Actions
         {
             bool firstTouch = ConsumeNewTouch(touched);
 
-            if (!touched)
-                ResetTrackpadHaptics();
-
             Vector2 rawVector = layout.vector;
             outVector = rawVector;
             base.Execute(layout, shiftSlot, delta);
@@ -206,7 +198,6 @@ namespace HandheldCompanion.Actions
             {
                 rawVector.Y *= -1;
                 prevVector = rawVector;
-                ResetTrackpadHaptics();
                 return;
             }
 
@@ -216,7 +207,6 @@ namespace HandheldCompanion.Actions
             if (firstTouch && isTrackpad)
             {
                 prevVector = outVector;
-                ResetTrackpadHaptics();
                 return;
             }
 
@@ -240,7 +230,6 @@ namespace HandheldCompanion.Actions
                 case AxisLayoutFlags.RightPad:
                     Vector2 trackpadDelta = outVector - prevVector;
                     prevVector = outVector;
-                    UpdateTrackpadHaptics(layout.flags, touched, trackpadDelta);
 
                     deltaVector = trackpadDelta / short.MaxValue;
                     sensitivityScale = MouseType == MouseActionsType.Move ? 9.0f : 3.0f;
@@ -266,49 +255,6 @@ namespace HandheldCompanion.Actions
                 MouseSimulator.MoveBy((int)intDelta.X, (int)intDelta.Y);
             else
                 MouseSimulator.VerticalScroll((int)-intDelta.Y);
-        }
-
-        private void UpdateTrackpadHaptics(AxisLayoutFlags axis, bool touched, Vector2 delta)
-        {
-            if (!touched || HapticMode == HapticMode.Off)
-            {
-                ResetTrackpadHaptics();
-                return;
-            }
-
-            // Steam firmware provides its own feedback in lizard mode. Other controllers can use
-            // their normal haptic implementation when the mapped action enables feedback.
-            var targetController = ControllerManager.GetTarget();
-            if (targetController is null ||
-                targetController is HandheldCompanion.Controllers.Steam.SteamController steamController &&
-                steamController.IsLizardModeEnabled)
-            {
-                ResetTrackpadHaptics();
-                return;
-            }
-
-            trackpadHapticJitter += delta;
-            float distance = trackpadHapticJitter.Length();
-            if (distance < TrackpadHapticJitterThreshold)
-                return;
-
-            trackpadHapticJitter = Vector2.Zero;
-            trackpadHapticDistance += distance;
-            if (trackpadHapticDistance < TrackpadHapticStep)
-                return;
-
-            trackpadHapticDistance %= TrackpadHapticStep;
-
-            ButtonFlags button = axis == AxisLayoutFlags.LeftPad
-                ? ButtonFlags.LeftPadTouch
-                : ButtonFlags.RightPadTouch;
-            SetHaptic(button, released: false);
-        }
-
-        private void ResetTrackpadHaptics()
-        {
-            trackpadHapticDistance = 0f;
-            trackpadHapticJitter = Vector2.Zero;
         }
 
         private Vector2 ComputeStickDelta(Vector2 raw)

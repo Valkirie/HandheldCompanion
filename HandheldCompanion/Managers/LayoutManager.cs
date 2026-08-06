@@ -3,8 +3,10 @@ using HandheldCompanion.Controllers;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Notifications;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
+using iNKORE.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -38,6 +40,13 @@ public class LayoutManager : IManager
     private Layout? desktopLayout = null;
 
     private readonly ControllerState outputState = new();
+    private readonly TouchpadActions touchpadHaptics = new();
+    private readonly Notification trackpadClickHapticOverrideNotification = new(
+        Properties.Resources.ControllerPage_TrackpadClickHapticsOverride,
+        Properties.Resources.ControllerPage_TrackpadClickHapticsOverrideDesc,
+        string.Empty,
+        InfoBarSeverity.Warning);
+    private bool hasTrackpadClickHapticOverrides;
 
     private const string desktopLayoutFile = "desktop";
 
@@ -515,6 +524,8 @@ public class LayoutManager : IManager
             {
                 if (action is AxisActions aa) EnsureAxisXY(aa.Axis);
                 if (action is TriggerActions ta) EnsureAxisXY(ta.Axis);
+                if (action is TouchpadActions { TargetType: TouchpadTargetType.Axis } touchpadAction)
+                    EnsureAxisXY(touchpadAction.Axis);
             }
 
         foreach (var actions in _buttonPlan.Values)
@@ -522,7 +533,35 @@ public class LayoutManager : IManager
             {
                 if (action is AxisActions aa) EnsureAxisXY(aa.Axis);
                 if (action is TriggerActions ta) EnsureAxisXY(ta.Axis);
+                if (action is TouchpadActions { TargetType: TouchpadTargetType.Axis } touchpadAction)
+                    EnsureAxisXY(touchpadAction.Axis);
             }
+
+        foreach (var action in _gyroPlan.Values)
+        {
+            if (action is AxisActions axisAction)
+                EnsureAxisXY(axisAction.Axis);
+            if (action is TouchpadActions { TargetType: TouchpadTargetType.Axis } touchpadAction)
+                EnsureAxisXY(touchpadAction.Axis);
+        }
+
+        UpdateTrackpadClickHapticOverrideNotification();
+    }
+
+    private void UpdateTrackpadClickHapticOverrideNotification()
+    {
+        bool hasOverrides = _buttonPlan.Any(pair =>
+            TouchpadActions.IsPhysicalClick(pair.Key) &&
+            pair.Value.Any(TouchpadActions.HasCustomHapticSettings));
+
+        if (hasOverrides == hasTrackpadClickHapticOverrides)
+            return;
+
+        hasTrackpadClickHapticOverrides = hasOverrides;
+        if (hasOverrides)
+            ManagerFactory.notificationManager.Add(trackpadClickHapticOverrideNotification);
+        else
+            ManagerFactory.notificationManager.Discard(trackpadClickHapticOverrideNotification);
     }
 
     private void EnsureAxisXY(AxisLayoutFlags flag)
@@ -549,11 +588,12 @@ public class LayoutManager : IManager
             float deltaMs = delta * 1000f;
 
             ShiftSlot shiftSlot = ComputeShiftSlot(controllerState, deltaMs);
+            touchpadHaptics.UpdateClickHaptics(controllerState, shiftSlot, _buttonPlan);
 
             ProcessButtonActions(controllerState, shiftSlot, deltaMs, ref touchpadSample);
             ProcessAxisActions(controllerState, shiftSlot, deltaMs, ref touchpadSample);
-            ApplyTouchpadCoordinates(touchpadSample);
             ProcessGyroActions(controllerState, shiftSlot, deltaMs);
+            ApplyTouchpadCoordinates(touchpadSample);
         }
 
         return outputState;
@@ -630,20 +670,14 @@ public class LayoutManager : IManager
                         {
                             var bA = (ButtonActions)action;
                             bA.Execute(button, pressed, shiftSlot, deltaMs);
-                            if (bA is TouchpadActions touchpadAction)
-                            {
-                                if (touchpadAction.TryGetTouch(out TouchpadSample sample))
-                                {
-                                    outputState.ButtonState[touchpadAction.Button] |= true;
-                                    if (selectedTouchpadSample is null ||
-                                        sample.Priority > selectedTouchpadSample.Value.Priority)
-                                        selectedTouchpadSample = sample;
-                                }
-                            }
-                            else
-                            {
-                                outputState.ButtonState[bA.Button] |= bA.GetValue();
-                            }
+                            outputState.ButtonState[bA.Button] |= bA.GetValue();
+                            break;
+                        }
+                    case ActionType.Touchpad:
+                        {
+                            var tA = (TouchpadActions)action;
+                            tA.Execute(button, pressed, shiftSlot, deltaMs);
+                            ApplyTouchpadAction(tA, ref selectedTouchpadSample);
                             break;
                         }
                     case ActionType.Keyboard:
@@ -709,6 +743,9 @@ public class LayoutManager : IManager
             if (ControllerState.AxisTouchButtons.TryGetValue(layout.flags, out var touchButton))
                 touched = state.ButtonState[touchButton];
 
+            if (TouchpadActions.IsTouchpadAxis(flag))
+                touchpadHaptics.UpdateMovementHaptics(flag, layout.vector, touched, shiftSlot, actions);
+
             for (int i = 0; i < actions.Length; i++)
             {
                 var action = actions[i];
@@ -719,20 +756,14 @@ public class LayoutManager : IManager
                         {
                             var bA = (ButtonActions)action;
                             bA.Execute(layout, shiftSlot, deltaMs);
-                            if (bA is TouchpadActions touchpadAction)
-                            {
-                                if (touchpadAction.TryGetTouch(out TouchpadSample sample))
-                                {
-                                    outputState.ButtonState[touchpadAction.Button] |= true;
-                                    if (selectedTouchpadSample is null ||
-                                        sample.Priority > selectedTouchpadSample.Value.Priority)
-                                        selectedTouchpadSample = sample;
-                                }
-                            }
-                            else
-                            {
-                                outputState.ButtonState[bA.Button] |= bA.GetValue();
-                            }
+                            outputState.ButtonState[bA.Button] |= bA.GetValue();
+                            break;
+                        }
+                    case ActionType.Touchpad:
+                        {
+                            var tA = (TouchpadActions)action;
+                            tA.Execute(layout, touched, shiftSlot, deltaMs);
+                            ApplyTouchpadAction(tA, ref selectedTouchpadSample);
                             break;
                         }
                     case ActionType.Keyboard:
@@ -764,6 +795,34 @@ public class LayoutManager : IManager
                 ApplyActionStateSideEffects(actions, i);
             }
         }
+    }
+
+    private void ApplyTouchpadAction(TouchpadActions action, ref TouchpadSample? selectedTouchpadSample)
+    {
+        if (action.TargetType == TouchpadTargetType.Axis)
+        {
+            var xyOut = _axisXY[action.Axis];
+            Vector2 value = action.GetAxisValue();
+            outputState.AxisState[xyOut.X] = ClampShort(outputState.AxisState[xyOut.X] + value.X);
+            outputState.AxisState[xyOut.Y] = ClampShort(outputState.AxisState[xyOut.Y] + value.Y);
+
+            if (ControllerState.AxisTouchButtons.TryGetValue(action.Axis, out ButtonFlags touchButton))
+                outputState.ButtonState[touchButton] |= action.GetTouchValue();
+            return;
+        }
+
+        if (TouchpadActions.IsCoordinateTarget(action.Button))
+        {
+            if (action.TryGetTouch(out TouchpadSample sample))
+            {
+                outputState.ButtonState[action.Button] |= true;
+                if (selectedTouchpadSample is null || sample.Priority > selectedTouchpadSample.Value.Priority)
+                    selectedTouchpadSample = sample;
+            }
+            return;
+        }
+
+        outputState.ButtonState[action.Button] |= action.GetButtonValue();
     }
 
     /// <summary>
@@ -810,6 +869,26 @@ public class LayoutManager : IManager
                             touched = state.ButtonState[touchButton];
 
                         mA.Execute(layout, touched, shiftSlot, deltaMs);
+                    }
+                    break;
+
+                case ActionType.Touchpad:
+                    if (action is TouchpadActions { TargetType: TouchpadTargetType.Axis } touchpadAction)
+                    {
+                        touchpadAction.Execute(layout, touched: false, shiftSlot, deltaMs);
+
+                        var xyOut = _axisXY[touchpadAction.Axis];
+                        var current = new Vector2(outputState.AxisState[xyOut.X], outputState.AxisState[xyOut.Y]);
+
+                        float padNorm = Math.Clamp(current.Length() / short.MaxValue, 0f, 1f);
+                        float weightFactor = touchpadAction.gyroWeight - padNorm;
+                        var blended = current + touchpadAction.GetAxisValue() * weightFactor;
+
+                        outputState.AxisState[xyOut.X] = ClampShort(blended.X);
+                        outputState.AxisState[xyOut.Y] = ClampShort(blended.Y);
+
+                        if (ControllerState.AxisTouchButtons.TryGetValue(touchpadAction.Axis, out ButtonFlags touchButton))
+                            outputState.ButtonState[touchButton] |= touchpadAction.GetTouchValue();
                     }
                     break;
             }

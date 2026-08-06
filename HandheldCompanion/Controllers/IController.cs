@@ -372,6 +372,11 @@ namespace HandheldCompanion.Controllers
         // let the controller decide itself what motor to use for a specific button
         public virtual void SetHaptic(HapticStrength strength, ButtonFlags button)
         {
+            SetHapticCore(strength, button);
+        }
+
+        private void SetHapticCore(HapticStrength strength, ButtonFlags button)
+        {
             int delay;
             switch (strength)
             {
@@ -389,23 +394,36 @@ namespace HandheldCompanion.Controllers
                     break;
             }
 
-            switch (button)
+            RumbleHaptic(delay, byte.MaxValue, button);
+        }
+
+        public virtual void SetTrackpadClickHaptic(HapticStrength strength, ButtonFlags button, bool released)
+        {
+            (int delay, byte amplitude) = strength switch
             {
-                case ButtonFlags.B1:
-                case ButtonFlags.B2:
-                case ButtonFlags.B3:
-                case ButtonFlags.B4:
-                case ButtonFlags.L1:
-                case ButtonFlags.L2Soft:
-                case ButtonFlags.Start:
-                case ButtonFlags.RightStickClick:
-                case ButtonFlags.RightPadClick:
-                    Rumble(delay, 0, byte.MaxValue);
-                    break;
-                default:
-                    Rumble(delay, byte.MaxValue, 0);
-                    break;
+                HapticStrength.Low => (85, (byte)96),
+                HapticStrength.Medium => (105, (byte)176),
+                _ => (125, byte.MaxValue),
+            };
+
+            RumbleHaptic(delay, amplitude, button);
+        }
+
+        private void RumbleHaptic(int delay, byte amplitude, ButtonFlags button)
+        {
+            if (button is
+                ButtonFlags.B1 or ButtonFlags.B2 or ButtonFlags.B3 or ButtonFlags.B4 or
+                ButtonFlags.L1 or ButtonFlags.L2Soft or ButtonFlags.Start or
+                ButtonFlags.RightStickTouch or ButtonFlags.RightStickClick or
+                ButtonFlags.RightPadTouch or ButtonFlags.RightPadClick or
+                ButtonFlags.RightPadClickUp or ButtonFlags.RightPadClickDown or
+                ButtonFlags.RightPadClickLeft or ButtonFlags.RightPadClickRight)
+            {
+                Rumble(delay, 0, amplitude);
+                return;
             }
+
+            Rumble(delay, amplitude, 0);
         }
 
         public virtual bool IsConnected()
@@ -427,7 +445,8 @@ namespace HandheldCompanion.Controllers
                 rumbleCts?.Cancel();
                 rumbleCts = new CancellationTokenSource();
 
-                var token = rumbleCts.Token;
+                CancellationTokenSource currentCts = rumbleCts;
+                var token = currentCts.Token;
                 rumbleTask = Task.Run(async () =>
                 {
                     try
@@ -438,10 +457,19 @@ namespace HandheldCompanion.Controllers
                     catch (OperationCanceledException) { }
                     finally
                     {
-                        try { SetVibration(0, 0); }
-                        catch { }
+                        lock (rumbleLock)
+                        {
+                            if (ReferenceEquals(rumbleCts, currentCts))
+                            {
+                                try { SetVibration(0, 0); }
+                                catch { }
+                                rumbleCts = null;
+                            }
+
+                            currentCts.Dispose();
+                        }
                     }
-                }, token);
+                });
             }
         }
 

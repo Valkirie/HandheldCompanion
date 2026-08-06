@@ -185,9 +185,6 @@ namespace HandheldCompanion.Controllers.Steam
             // Right Pad
             Inputs.ButtonState[ButtonFlags.RightPadTouch] = input.State.ButtonState[GordonControllerButton.BtnRPadTouch];
             Inputs.ButtonState[ButtonFlags.RightPadClick] = input.State.ButtonState[GordonControllerButton.BtnRPadPress];
-            UpdateTrackpadClickHaptics(
-                Inputs.ButtonState[ButtonFlags.LeftPadClick],
-                Inputs.ButtonState[ButtonFlags.RightPadClick]);
 
             Inputs.AxisState[AxisFlags.RightPadX] = input.State.AxesState[GordonControllerAxis.RightPadX];
             Inputs.AxisState[AxisFlags.RightPadY] = input.State.AxesState[GordonControllerAxis.RightPadY];

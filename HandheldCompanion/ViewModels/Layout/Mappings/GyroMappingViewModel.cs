@@ -297,7 +297,8 @@ namespace HandheldCompanion.ViewModels
 
             if (actionType == ActionType.Joystick)
             {
-                if (Action is null || Action is not AxisActions)
+                bool preserveMissingTarget = Action is AxisActions;
+                if (!preserveMissingTarget)
                 {
                     Action = new AxisActions()
                     {
@@ -308,7 +309,7 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 MappingTargetViewModel? matchingTargetVm = null;
-                foreach (var axis in controller.GetTargetAxis())
+                foreach (var axis in GetJoystickTargets(controller))
                 {
                     var mappingTargetVm = new MappingTargetViewModel
                     {
@@ -323,13 +324,45 @@ namespace HandheldCompanion.ViewModels
                     }
                 }
 
-                lock (_collectionLock)
+                if (matchingTargetVm is null && preserveMissingTarget)
                 {
-                    Targets.Clear();
-                    foreach (var t in targets)
-                        Targets.Add(t);
+                    matchingTargetVm = CreateUnsupportedTarget(((AxisActions)Action).Axis,
+                        controller.GetAxisName(((AxisActions)Action).Axis));
+                    targets.Add(matchingTargetVm);
                 }
-                SelectedTarget = matchingTargetVm ?? Targets.First();
+
+                ReplaceTargets(targets, matchingTargetVm);
+            }
+            else if (actionType == ActionType.Touchpad)
+            {
+                bool preserveMissingTarget = Action is TouchpadActions;
+                TouchpadActions touchpadAction = Action as TouchpadActions ?? new TouchpadActions
+                {
+                    MotionTrigger = (ButtonState)GyroHotkey.inputsChord.ButtonState.Clone()
+                };
+                if (!preserveMissingTarget)
+                    Action = touchpadAction;
+
+                MappingTargetViewModel? matchingTargetVm = null;
+                foreach (AxisLayoutFlags axis in TouchpadActions.GetAxisTargets(controller))
+                {
+                    var mappingTargetVm = CreateTarget(axis, controller.GetAxisName(axis));
+                    targets.Add(mappingTargetVm);
+
+                    if (touchpadAction.TargetType == TouchpadTargetType.Axis && axis == touchpadAction.Axis)
+                        matchingTargetVm = mappingTargetVm;
+                }
+
+                if (matchingTargetVm is null && preserveMissingTarget &&
+                    touchpadAction.TargetType == TouchpadTargetType.Axis &&
+                    touchpadAction.Axis != AxisLayoutFlags.None)
+                {
+                    matchingTargetVm = CreateUnsupportedTarget(touchpadAction.Axis,
+                        controller.GetAxisName(touchpadAction.Axis));
+                    targets.Add(matchingTargetVm);
+                }
+
+                ReplaceTargets(targets, matchingTargetVm);
             }
             else if (actionType == ActionType.Mouse)
             {
@@ -397,6 +430,11 @@ namespace HandheldCompanion.ViewModels
                 case ActionType.Mouse:
                     if (SelectedTarget.Tag is MouseActionsType mouseActionsType)
                         ((MouseActions)Action).MouseType = mouseActionsType;
+                    break;
+
+                case ActionType.Touchpad:
+                    if (SelectedTarget.Tag is not null)
+                        SetTouchpadTarget(SelectedTarget.Tag);
                     break;
             }
         }

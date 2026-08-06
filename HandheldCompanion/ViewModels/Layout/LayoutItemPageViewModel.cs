@@ -121,6 +121,7 @@ namespace HandheldCompanion.ViewModels
                     5 => "Trigger",
                     6 => "Shift",
                     7 => "Inherit",
+                    8 => "Touchpad",
                     _ => "Unknown"
                 };
 

@@ -23,6 +23,7 @@ namespace HandheldCompanion.Actions
         Trigger = 5,
         Shift = 6,
         Inherit = 7,
+        Touchpad = 8,
     }
 
     [Serializable]
@@ -137,6 +138,7 @@ namespace HandheldCompanion.Actions
         // --- Haptics ---
         public HapticMode HapticMode = HapticMode.Off;
         public HapticStrength HapticStrength = HapticStrength.Low;
+        public bool? HapticOverride = null;
 
         // --- Axis/motion ---
         public DeflectionDirection motionDirection = DeflectionDirection.None;
@@ -164,6 +166,7 @@ namespace HandheldCompanion.Actions
             ShiftMatchAny = source.ShiftMatchAny;
             HapticMode = source.HapticMode;
             HapticStrength = source.HapticStrength;
+            HapticOverride = source.HapticOverride;
             motionDirection = source.motionDirection;
             motionThreshold = source.motionThreshold;
         }
@@ -176,26 +179,7 @@ namespace HandheldCompanion.Actions
 
         public virtual void SetHaptic(ButtonFlags button, bool released)
         {
-            bool isTrackpadClick = button is
-                ButtonFlags.LeftPadClick or
-                ButtonFlags.LeftPadClickUp or
-                ButtonFlags.LeftPadClickDown or
-                ButtonFlags.LeftPadClickLeft or
-                ButtonFlags.LeftPadClickRight or
-                ButtonFlags.RightPadClick or
-                ButtonFlags.RightPadClickUp or
-                ButtonFlags.RightPadClickDown or
-                ButtonFlags.RightPadClickLeft or
-                ButtonFlags.RightPadClickRight;
-
-            if (isTrackpadClick &&
-                ControllerManager.GetTarget() is HandheldCompanion.Controllers.Steam.SteamController)
-            {
-                // Physical Steam trackpad clicks are handled once at controller level so the
-                // shared Controller-page setting applies regardless of the mapped action type.
-                return;
-            }
-
+            if (TouchpadActions.IsPhysicalClick(button)) return;
             if (HapticMode == HapticMode.Off) return;
             if (HapticMode == HapticMode.Down && released) return;
             if (HapticMode == HapticMode.Up && !released) return;

@@ -914,7 +914,88 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("ControllerPage_TestControllerInputs", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Trackpad click haptics.
+        /// </summary>
+        public static string ControllerPage_TrackpadClickHaptics {
+            get {
+                return ResourceManager.GetString("ControllerPage_TrackpadClickHaptics", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Controls press and release feedback for trackpad clicks.
+        /// </summary>
+        public static string ControllerPage_TrackpadClickHapticsDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_TrackpadClickHapticsDesc", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to High.
+        /// </summary>
+        public static string ControllerPage_TrackpadClickHapticsHigh {
+            get {
+                return ResourceManager.GetString("ControllerPage_TrackpadClickHapticsHigh", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Low.
+        /// </summary>
+        public static string ControllerPage_TrackpadClickHapticsLow {
+            get {
+                return ResourceManager.GetString("ControllerPage_TrackpadClickHapticsLow", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Medium.
+        /// </summary>
+        public static string ControllerPage_TrackpadClickHapticsMedium {
+            get {
+                return ResourceManager.GetString("ControllerPage_TrackpadClickHapticsMedium", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Off.
+        /// </summary>
+        public static string ControllerPage_TrackpadClickHapticsOff {
+            get {
+                return ResourceManager.GetString("ControllerPage_TrackpadClickHapticsOff", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Trackpad click haptics overridden.
+        /// </summary>
+        public static string ControllerPage_TrackpadClickHapticsOverride {
+            get {
+                return ResourceManager.GetString("ControllerPage_TrackpadClickHapticsOverride", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The active layout has custom trackpad click haptic settings. Those settings take precedence over the global Controller page setting.
+        /// </summary>
+        public static string ControllerPage_TrackpadClickHapticsOverrideDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_TrackpadClickHapticsOverrideDesc", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Trackpad settings.
+        /// </summary>
+        public static string ControllerPage_TrackpadSettings {
+            get {
+                return ResourceManager.GetString("ControllerPage_TrackpadSettings", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Troobleshooting bluetooth controllers connection issues.
         /// </summary>
@@ -3299,6 +3380,15 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("Enum_MotionOutput_LeftStick", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Left Pad.
+        /// </summary>
+        public static string Enum_MotionOutput_LeftPad {
+            get {
+                return ResourceManager.GetString("Enum_MotionOutput_LeftPad", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Move Cursor.
@@ -3315,6 +3405,15 @@ namespace HandheldCompanion.Properties {
         public static string Enum_MotionOutput_RightStick {
             get {
                 return ResourceManager.GetString("Enum_MotionOutput_RightStick", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Right Pad.
+        /// </summary>
+        public static string Enum_MotionOutput_RightPad {
+            get {
+                return ResourceManager.GetString("Enum_MotionOutput_RightPad", resourceCulture);
             }
         }
         
@@ -6198,7 +6297,61 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("LayoutPage_ActionType_Trigger", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Touchpad.
+        /// </summary>
+        public static string LayoutPage_ActionType_Touchpad {
+            get {
+                return ResourceManager.GetString("LayoutPage_ActionType_Touchpad", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Touchpad coordinates: X 0-{0}, Y 0-{1}.
+        /// </summary>
+        public static string LayoutPage_TouchpadCoordinateRange {
+            get {
+                return ResourceManager.GetString("LayoutPage_TouchpadCoordinateRange", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to End position.
+        /// </summary>
+        public static string LayoutPage_TouchpadEndPosition {
+            get {
+                return ResourceManager.GetString("LayoutPage_TouchpadEndPosition", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Touchpad.
+        /// </summary>
+        public static string LayoutPage_TouchpadSettings {
+            get {
+                return ResourceManager.GetString("LayoutPage_TouchpadSettings", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Start position.
+        /// </summary>
+        public static string LayoutPage_TouchpadStartPosition {
+            get {
+                return ResourceManager.GetString("LayoutPage_TouchpadStartPosition", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Swipe duration.
+        /// </summary>
+        public static string LayoutPage_TouchpadSwipeDuration {
+            get {
+                return ResourceManager.GetString("LayoutPage_TouchpadSwipeDuration", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Apply template.
         /// </summary>
@@ -6306,7 +6459,16 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("LayoutPage_HapticFeedback", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Use global click haptics.
+        /// </summary>
+        public static string LayoutPage_UseGlobalTrackpadClickHaptics {
+            get {
+                return ResourceManager.GetString("LayoutPage_UseGlobalTrackpadClickHaptics", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Hold to repeat.
         /// </summary>

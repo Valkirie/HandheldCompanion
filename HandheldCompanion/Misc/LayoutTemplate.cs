@@ -46,38 +46,38 @@ namespace HandheldCompanion.Misc
 
             template.Layout.ButtonLayout[ButtonFlags.DPadUp] =
             [
-                CreateAxisAction(AxisLayoutFlags.LeftPad, y: 28672),
-                CreateButtonAction(ButtonFlags.LeftPadTouch),
-                CreateButtonAction(ButtonFlags.LeftPadClick)
+                CreateTouchpadAction(AxisLayoutFlags.LeftPad, y: 28672),
+                new TouchpadActions(ButtonFlags.LeftPadTouch),
+                new TouchpadActions(ButtonFlags.LeftPadClick)
             ];
 
             template.Layout.ButtonLayout[ButtonFlags.DPadDown] =
             [
-                CreateButtonAction(ButtonFlags.LeftPadClick),
-                CreateAxisAction(AxisLayoutFlags.LeftPad, y: -28672),
-                CreateButtonAction(ButtonFlags.LeftPadTouch)
+                new TouchpadActions(ButtonFlags.LeftPadClick),
+                CreateTouchpadAction(AxisLayoutFlags.LeftPad, y: -28672),
+                new TouchpadActions(ButtonFlags.LeftPadTouch)
             ];
 
             template.Layout.ButtonLayout[ButtonFlags.DPadLeft] =
             [
-                CreateButtonAction(ButtonFlags.LeftPadClick),
-                CreateButtonAction(ButtonFlags.LeftPadTouch),
-                CreateAxisAction(AxisLayoutFlags.LeftPad, x: -28672)
+                new TouchpadActions(ButtonFlags.LeftPadClick),
+                new TouchpadActions(ButtonFlags.LeftPadTouch),
+                CreateTouchpadAction(AxisLayoutFlags.LeftPad, x: -28672)
             ];
 
             template.Layout.ButtonLayout[ButtonFlags.DPadRight] =
             [
-                CreateButtonAction(ButtonFlags.LeftPadTouch),
-                CreateButtonAction(ButtonFlags.LeftPadClick),
-                CreateAxisAction(AxisLayoutFlags.LeftPad, x: 28672)
+                new TouchpadActions(ButtonFlags.LeftPadTouch),
+                new TouchpadActions(ButtonFlags.LeftPadClick),
+                CreateTouchpadAction(AxisLayoutFlags.LeftPad, x: 28672)
             ];
 
-            template.Layout.ButtonLayout[ButtonFlags.RightStickClick] = [CreateButtonAction(ButtonFlags.RightPadClick)];
+            template.Layout.ButtonLayout[ButtonFlags.RightStickClick] = [new TouchpadActions(ButtonFlags.RightPadClick)];
 
             template.Layout.AxisLayout[AxisLayoutFlags.RightStick] =
             [
-                CreateAxisAction(AxisLayoutFlags.RightPad),
-                CreateButtonAction(ButtonFlags.RightPadTouch, Utils.DeflectionDirection.Any, 1000)
+                new TouchpadActions(AxisLayoutFlags.RightPad),
+                CreateTouchpadAction(ButtonFlags.RightPadTouch, Utils.DeflectionDirection.Any, 1000)
             ];
 
             return template;
@@ -123,6 +123,24 @@ namespace HandheldCompanion.Misc
                 Axis = axis,
                 ButtonX = x,
                 ButtonY = y,
+            };
+        }
+
+        private static TouchpadActions CreateTouchpadAction(AxisLayoutFlags axis, short x = 0, short y = 0)
+        {
+            return new TouchpadActions(axis)
+            {
+                ButtonX = x,
+                ButtonY = y,
+            };
+        }
+
+        private static TouchpadActions CreateTouchpadAction(ButtonFlags button, Utils.DeflectionDirection motionDirection, float motionThreshold)
+        {
+            return new TouchpadActions(button)
+            {
+                motionDirection = motionDirection,
+                motionThreshold = motionThreshold,
             };
         }
 

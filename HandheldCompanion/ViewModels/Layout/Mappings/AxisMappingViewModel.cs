@@ -378,10 +378,13 @@ namespace HandheldCompanion.ViewModels
 
         public override bool IsAxisMapping => true;
         public override Visibility TouchpadSettingsVisibility =>
-            ActionTypeIndex == (int)ActionType.Button && Action is TouchpadActions
+            ActionTypeIndex == (int)ActionType.Touchpad &&
+            Action is TouchpadActions { TargetType: TouchpadTargetType.Button } touchpadAction &&
+            TouchpadActions.IsCoordinateTarget(touchpadAction.Button)
                 ? Visibility.Visible : Visibility.Collapsed;
         public override Visibility TouchpadSwipeSettingsVisibility =>
-            ActionTypeIndex == (int)ActionType.Button && Action is TouchpadActions { Button: ButtonFlags.TouchpadSwipe }
+            ActionTypeIndex == (int)ActionType.Touchpad &&
+            Action is TouchpadActions { TargetType: TouchpadTargetType.Button, Button: ButtonFlags.TouchpadSwipe }
                 ? Visibility.Visible : Visibility.Collapsed;
 
         // Axis Direction and Threshold are only visible when converting Axis to Button
@@ -721,7 +724,7 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 MappingTargetViewModel? matchingTargetVm = null;
-                foreach (var axis in controller.GetTargetAxis())
+                foreach (var axis in GetJoystickTargets(controller))
                 {
                     var mappingTargetVm = CreateTarget(axis, controller.GetAxisName(axis));
                     targets.Add(mappingTargetVm);
@@ -769,6 +772,56 @@ namespace HandheldCompanion.ViewModels
                     matchingTargetVm = CreateUnsupportedTarget(((ButtonActions)Action).Button,
                         controller.GetButtonName(((ButtonActions)Action).Button));
                     targets.Add(matchingTargetVm);
+                }
+
+                ReplaceTargets(targets, matchingTargetVm);
+            }
+            else if (actionType == ActionType.Touchpad)
+            {
+                bool preserveMissingTarget = Action is TouchpadActions;
+                TouchpadActions touchpadAction = Action as TouchpadActions ?? new TouchpadActions
+                {
+                    motionThreshold = Gamepad.LeftThumbDeadZone,
+                    ShiftSlot = ShiftSlot.Any,
+                    ShiftMatchAny = false
+                };
+                if (!preserveMissingTarget)
+                    Action = touchpadAction;
+
+                MappingTargetViewModel? matchingTargetVm = null;
+
+                foreach (AxisLayoutFlags axis in TouchpadActions.GetAxisTargets(controller))
+                {
+                    var mappingTargetVm = CreateTarget(axis, controller.GetAxisName(axis));
+                    targets.Add(mappingTargetVm);
+
+                    if (touchpadAction.TargetType == TouchpadTargetType.Axis && axis == touchpadAction.Axis)
+                        matchingTargetVm = mappingTargetVm;
+                }
+
+                foreach (ButtonFlags button in TouchpadActions.GetButtonTargets(controller))
+                {
+                    var mappingTargetVm = CreateTarget(button, controller.GetButtonName(button));
+                    targets.Add(mappingTargetVm);
+
+                    if (touchpadAction.TargetType == TouchpadTargetType.Button && button == touchpadAction.Button)
+                        matchingTargetVm = mappingTargetVm;
+                }
+
+                if (matchingTargetVm is null && preserveMissingTarget)
+                {
+                    if (touchpadAction.TargetType == TouchpadTargetType.Axis && touchpadAction.Axis != AxisLayoutFlags.None)
+                    {
+                        matchingTargetVm = CreateUnsupportedTarget(touchpadAction.Axis,
+                            controller.GetAxisName(touchpadAction.Axis));
+                        targets.Add(matchingTargetVm);
+                    }
+                    else if (touchpadAction.TargetType == TouchpadTargetType.Button && touchpadAction.Button != ButtonFlags.None)
+                    {
+                        matchingTargetVm = CreateUnsupportedTarget(touchpadAction.Button,
+                            controller.GetButtonName(touchpadAction.Button));
+                        targets.Add(matchingTargetVm);
+                    }
                 }
 
                 ReplaceTargets(targets, matchingTargetVm);
@@ -849,8 +902,13 @@ namespace HandheldCompanion.ViewModels
             {
                 case ActionType.Button:
                     if (SelectedTarget.Tag is ButtonFlags buttonFlags)
+                        ((ButtonActions)Action).Button = buttonFlags;
+                    break;
+
+                case ActionType.Touchpad:
+                    if (SelectedTarget.Tag is not null)
                     {
-                        SetButtonTarget(buttonFlags);
+                        SetTouchpadTarget(SelectedTarget.Tag);
                         OnPropertyChanged(string.Empty);
                     }
                     break;

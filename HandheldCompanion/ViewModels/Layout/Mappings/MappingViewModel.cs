@@ -11,6 +11,7 @@ using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 
@@ -206,6 +207,10 @@ namespace HandheldCompanion.ViewModels
                 if (currentActionType == ActionType.Button || currentActionType == ActionType.Keyboard)
                     return Visibility.Visible;
 
+                if (currentActionType == ActionType.Touchpad &&
+                    Action is TouchpadActions { TargetType: TouchpadTargetType.Button })
+                    return Visibility.Visible;
+
                 // For Mouse actions, ensure a target exists and check its action type
                 if (currentActionType == ActionType.Mouse && SelectedTarget != null)
                 {
@@ -296,6 +301,8 @@ namespace HandheldCompanion.ViewModels
         public virtual int Button2AxisX { get => 0; set { } }
         public virtual int Button2AxisY { get => 0; set { } }
         public virtual Visibility AxisResponseCurveVisibility => Visibility.Collapsed;
+        public virtual Visibility AxisOutputShapeVisibility =>
+            ActionTypeIndex == (int)ActionType.Joystick ? Visibility.Visible : Visibility.Collapsed;
 
         // Visibility for Axis invert properties - only Axis mappings
         public virtual Visibility AxisInvertVisibility => Visibility.Collapsed;
@@ -333,13 +340,44 @@ namespace HandheldCompanion.ViewModels
         public virtual Visibility AxisDirectionVisibility => Visibility.Collapsed;
         public virtual Visibility AxisThresholdVisibility => Visibility.Collapsed;
 
-        // DualSense touchpad gesture settings are only supported by button mappings.
-        public virtual Visibility TouchpadSettingsVisibility => Visibility.Collapsed;
-        public virtual Visibility TouchpadSwipeSettingsVisibility => Visibility.Collapsed;
+        public Visibility TouchpadActionTypeVisibility
+        {
+            get
+            {
+                IController controller = ControllerManager.GetDefault(true);
+                return Action is TouchpadActions || TouchpadActions.HasTargets(controller)
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+        }
+
+        public Visibility TouchpadAxisActionTypeVisibility
+        {
+            get
+            {
+                IController controller = ControllerManager.GetDefault(true);
+                return Action is TouchpadActions || TouchpadActions.GetAxisTargets(controller).Any()
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+        }
+
+        public virtual Visibility TouchpadSettingsVisibility =>
+            ActionTypeIndex == (int)ActionType.Touchpad &&
+            Action is TouchpadActions { TargetType: TouchpadTargetType.Button } touchpadAction &&
+            TouchpadActions.IsCoordinateTarget(touchpadAction.Button)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        public virtual Visibility TouchpadSwipeSettingsVisibility =>
+            ActionTypeIndex == (int)ActionType.Touchpad &&
+            Action is TouchpadActions { TargetType: TouchpadTargetType.Button, Button: ButtonFlags.TouchpadSwipe }
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         public int TouchpadMaxX => DS4Touch.TOUCHPAD_WIDTH - 1;
         public int TouchpadMaxY => DS4Touch.TOUCHPAD_HEIGHT - 1;
         public double TouchpadMaxDuration => TouchpadActions.MaximumSwipeDuration;
-        public string TouchpadCoordinateRangeDescription => $"DualSense coordinates: X 0–{TouchpadMaxX}, Y 0–{TouchpadMaxY}";
+        public string TouchpadCoordinateRangeDescription => string.Format(
+            Resources.LayoutPage_TouchpadCoordinateRange, TouchpadMaxX, TouchpadMaxY);
         public int TouchpadX { get => Action is TouchpadActions a ? a.X : 0; set { if (Action is TouchpadActions a) { a.X = value; OnPropertyChanged(nameof(TouchpadX)); } } }
         public int TouchpadY { get => Action is TouchpadActions a ? a.Y : 0; set { if (Action is TouchpadActions a) { a.Y = value; OnPropertyChanged(nameof(TouchpadY)); } } }
         public int TouchpadEndX { get => Action is TouchpadActions a ? a.EndX : 0; set { if (Action is TouchpadActions a) { a.EndX = value; OnPropertyChanged(nameof(TouchpadEndX)); } } }
@@ -349,35 +387,24 @@ namespace HandheldCompanion.ViewModels
         protected static IEnumerable<ButtonFlags> GetButtonTargets(IController controller)
         {
             foreach (ButtonFlags button in controller.GetTargetButtons())
-                yield return button;
-
-            if (controller is DummyDualSenseController)
             {
-                foreach (ButtonFlags button in TouchpadActions.Targets)
+                if (!TouchpadActions.IsTouchpadButton(button))
                     yield return button;
             }
         }
 
-        protected void SetButtonTarget(ButtonFlags button)
+        protected static IEnumerable<AxisLayoutFlags> GetJoystickTargets(IController controller) =>
+            controller.GetTargetAxis().Where(axis => !TouchpadActions.IsTouchpadAxis(axis));
+
+        protected void SetTouchpadTarget(object target)
         {
-            bool isTouchpadAction = TouchpadActions.IsTouchpadTarget(button);
-            if (isTouchpadAction && Action is not TouchpadActions)
-            {
-                IActions? previous = Action;
-                Action = new TouchpadActions(button);
-                if (previous is not null)
-                    Action.CopyConfigurationFrom(previous);
-            }
-            else if (!isTouchpadAction && Action is TouchpadActions)
-            {
-                IActions previous = Action;
-                Action = new ButtonActions(button);
-                Action.CopyConfigurationFrom(previous);
-            }
-            else if (Action is ButtonActions buttonAction)
-            {
-                buttonAction.Button = button;
-            }
+            if (Action is not TouchpadActions touchpadAction)
+                return;
+
+            if (target is ButtonFlags button)
+                touchpadAction.SetTarget(button);
+            else if (target is AxisLayoutFlags axis)
+                touchpadAction.SetTarget(axis);
         }
 
         // Combined visibility for settings that apply to both Button mappings and Axis2Button mappings
@@ -391,7 +418,8 @@ namespace HandheldCompanion.ViewModels
                 // Show for Button, Keyboard, Mouse, Trigger, Shift
                 if (currentActionType == ActionType.Button || currentActionType == ActionType.Keyboard ||
                     currentActionType == ActionType.Mouse || currentActionType == ActionType.Trigger ||
-                    currentActionType == ActionType.Shift || currentActionType == ActionType.Joystick)
+                    currentActionType == ActionType.Shift || currentActionType == ActionType.Joystick ||
+                    currentActionType == ActionType.Touchpad)
                     return Visibility.Visible;
 
                 // For Axis mappings converting to Button, also show
@@ -435,6 +463,9 @@ namespace HandheldCompanion.ViewModels
             get
             {
                 ActionType currentActionType = (ActionType)ActionTypeIndex;
+                if (currentActionType == ActionType.Touchpad && Button2AxisVisibility == Visibility.Visible)
+                    return Visibility.Visible;
+
                 if (currentActionType != ActionType.Joystick)
                     return Visibility.Collapsed;
 
@@ -505,7 +536,10 @@ namespace HandheldCompanion.ViewModels
                 if (Action is not null && value != HapticModeIndex)
                 {
                     Action.HapticMode = (HapticMode)value;
+                    Action.HapticOverride = true;
                     OnPropertyChanged(nameof(HapticModeIndex));
+                    OnPropertyChanged(nameof(UseGlobalTrackpadClickHaptics));
+                    OnPropertyChanged(nameof(HapticControlsEnabled));
                 }
             }
         }
@@ -518,10 +552,36 @@ namespace HandheldCompanion.ViewModels
                 if (Action is not null && value != HapticStrengthIndex)
                 {
                     Action.HapticStrength = (HapticStrength)value;
+                    Action.HapticOverride = true;
                     OnPropertyChanged(nameof(HapticStrengthIndex));
+                    OnPropertyChanged(nameof(UseGlobalTrackpadClickHaptics));
+                    OnPropertyChanged(nameof(HapticControlsEnabled));
                 }
             }
         }
+
+        public Visibility TrackpadClickHapticOverrideVisibility =>
+            Value is ButtonFlags button && TouchpadActions.IsPhysicalClick(button)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+        public bool UseGlobalTrackpadClickHaptics
+        {
+            get => Action is null || !TouchpadActions.HasCustomHapticSettings(Action);
+            set
+            {
+                if (Action is null || value == UseGlobalTrackpadClickHaptics)
+                    return;
+
+                Action.HapticOverride = !value;
+                OnPropertyChanged(nameof(UseGlobalTrackpadClickHaptics));
+                OnPropertyChanged(nameof(HapticControlsEnabled));
+            }
+        }
+
+        public bool HapticControlsEnabled =>
+            TrackpadClickHapticOverrideVisibility != Visibility.Visible ||
+            !UseGlobalTrackpadClickHaptics;
 
         // Shift properties - default to Always enabled (index 1)
         public virtual int ShiftModeIndex
@@ -682,6 +742,10 @@ namespace HandheldCompanion.ViewModels
             nameof(TurboDisplayName),
             nameof(ToggleDisplayName),
             nameof(InputShiftDisplayName),
+            nameof(TouchpadActionTypeVisibility),
+            nameof(TouchpadAxisActionTypeVisibility),
+            nameof(TrackpadClickHapticOverrideVisibility),
+            nameof(HapticControlsEnabled),
         ];
 
         public override void OnPropertyChanged(string? propertyName)
@@ -703,6 +767,8 @@ namespace HandheldCompanion.ViewModels
                     base.OnPropertyChanged(nameof(TurboDisplayName));
                     base.OnPropertyChanged(nameof(ToggleDisplayName));
                     base.OnPropertyChanged(nameof(InputShiftDisplayName));
+                    base.OnPropertyChanged(nameof(TouchpadActionTypeVisibility));
+                    base.OnPropertyChanged(nameof(TouchpadAxisActionTypeVisibility));
                     break;
             }
 

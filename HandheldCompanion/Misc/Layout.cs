@@ -62,7 +62,9 @@ public partial class Layout : ICloneable, IDisposable
             if (ButtonState.UIButtons.Contains(button) || ButtonState.OEMButtons.Contains(button))
                 continue;
 
-            ButtonLayout[button] = new List<IActions> { new ButtonActions { Button = button } };
+            ButtonLayout[button] = TouchpadActions.IsTouchpadButton(button)
+                ? [new TouchpadActions(button)]
+                : [new ButtonActions { Button = button }];
         }
 
         // Generic axis mappings
@@ -71,7 +73,9 @@ public partial class Layout : ICloneable, IDisposable
             switch (axis)
             {
                 default:
-                    AxisLayout[axis] = new List<IActions> { new AxisActions { Axis = axis } };
+                    AxisLayout[axis] = TouchpadActions.IsTouchpadAxis(axis)
+                        ? [new TouchpadActions(axis)]
+                        : [new AxisActions { Axis = axis }];
                     break;
                 case AxisLayoutFlags.Gyroscope:
                     break;

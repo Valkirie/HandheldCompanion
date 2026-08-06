@@ -225,7 +225,12 @@ namespace HandheldCompanion.ViewModels
 
         public override int Button2AxisX
         {
-            get => (Action is AxisActions axisAction) ? axisAction.ButtonX : 0;
+            get => Action switch
+            {
+                AxisActions axisAction => axisAction.ButtonX,
+                TouchpadActions { TargetType: TouchpadTargetType.Axis } touchpadAction => touchpadAction.ButtonX,
+                _ => 0,
+            };
             set
             {
                 if (Action is AxisActions axisAction && value != Button2AxisX)
@@ -235,12 +240,24 @@ namespace HandheldCompanion.ViewModels
                     OnPropertyChanged(nameof(AxisVisualizerDotX));
                     OnPropertyChanged(nameof(AxisVisualizerDotTranslateX));
                 }
+                else if (Action is TouchpadActions { TargetType: TouchpadTargetType.Axis } touchpadAction && value != Button2AxisX)
+                {
+                    touchpadAction.ButtonX = (short)Math.Clamp(value, short.MinValue, short.MaxValue);
+                    OnPropertyChanged(nameof(Button2AxisX));
+                    OnPropertyChanged(nameof(AxisVisualizerDotX));
+                    OnPropertyChanged(nameof(AxisVisualizerDotTranslateX));
+                }
             }
         }
 
         public override int Button2AxisY
         {
-            get => (Action is AxisActions axisAction) ? axisAction.ButtonY : 0;
+            get => Action switch
+            {
+                AxisActions axisAction => axisAction.ButtonY,
+                TouchpadActions { TargetType: TouchpadTargetType.Axis } touchpadAction => touchpadAction.ButtonY,
+                _ => 0,
+            };
             set
             {
                 if (Action is AxisActions axisAction && value != Button2AxisY)
@@ -250,12 +267,25 @@ namespace HandheldCompanion.ViewModels
                     OnPropertyChanged(nameof(AxisVisualizerDotY));
                     OnPropertyChanged(nameof(AxisVisualizerDotTranslateY));
                 }
+                else if (Action is TouchpadActions { TargetType: TouchpadTargetType.Axis } touchpadAction && value != Button2AxisY)
+                {
+                    touchpadAction.ButtonY = (short)Math.Clamp(value, short.MinValue, short.MaxValue);
+                    OnPropertyChanged(nameof(Button2AxisY));
+                    OnPropertyChanged(nameof(AxisVisualizerDotY));
+                    OnPropertyChanged(nameof(AxisVisualizerDotTranslateY));
+                }
             }
         }
 
-        public override Visibility Button2AxisVisibility => ActionTypeIndex == (int)ActionType.Joystick ? Visibility.Visible : Visibility.Collapsed;
-        public override Visibility AxisInvertVisibility => Button2AxisVisibility;
-        public override Visibility AxisVisualizerVisibility => ActionTypeIndex == (int)ActionType.Joystick ? Visibility.Visible : Visibility.Collapsed;
+        public override Visibility Button2AxisVisibility =>
+            ActionTypeIndex == (int)ActionType.Joystick ||
+            ActionTypeIndex == (int)ActionType.Touchpad &&
+            Action is TouchpadActions { TargetType: TouchpadTargetType.Axis }
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        public override Visibility AxisInvertVisibility =>
+            ActionTypeIndex == (int)ActionType.Joystick ? Visibility.Visible : Visibility.Collapsed;
+        public override Visibility AxisVisualizerVisibility => Button2AxisVisibility;
 
         public override double AxisVisualizerDotX => GetVisualizerDotOffset(GetVisualizerVector().X);
         public override double AxisVisualizerDotY => GetVisualizerDotOffset(GetVisualizerVector().Y);
@@ -267,10 +297,10 @@ namespace HandheldCompanion.ViewModels
 
         private Vector2 GetVisualizerVector()
         {
-            if (Action is not AxisActions axisAction)
-                return Vector2.Zero;
-
             Vector2 vector = new(Button2AxisX, Button2AxisY);
+
+            if (Action is not AxisActions axisAction)
+                return vector;
 
             return axisAction.OutputShape switch
             {
@@ -305,7 +335,10 @@ namespace HandheldCompanion.ViewModels
                 if (Action is not null && value != HapticModeIndex)
                 {
                     Action.HapticMode = (HapticMode)value;
+                    Action.HapticOverride = true;
                     OnPropertyChanged(nameof(HapticModeIndex));
+                    OnPropertyChanged(nameof(UseGlobalTrackpadClickHaptics));
+                    OnPropertyChanged(nameof(HapticControlsEnabled));
                 }
             }
         }
@@ -318,7 +351,10 @@ namespace HandheldCompanion.ViewModels
                 if (Action is not null && value != HapticStrengthIndex)
                 {
                     Action.HapticStrength = (HapticStrength)value;
+                    Action.HapticOverride = true;
                     OnPropertyChanged(nameof(HapticStrengthIndex));
+                    OnPropertyChanged(nameof(UseGlobalTrackpadClickHaptics));
+                    OnPropertyChanged(nameof(HapticControlsEnabled));
                 }
             }
         }
@@ -380,10 +416,13 @@ namespace HandheldCompanion.ViewModels
         }
 
         public override Visibility TouchpadSettingsVisibility =>
-            ActionTypeIndex == (int)ActionType.Button && Action is TouchpadActions
+            ActionTypeIndex == (int)ActionType.Touchpad &&
+            Action is TouchpadActions { TargetType: TouchpadTargetType.Button } touchpadAction &&
+            TouchpadActions.IsCoordinateTarget(touchpadAction.Button)
                 ? Visibility.Visible : Visibility.Collapsed;
         public override Visibility TouchpadSwipeSettingsVisibility =>
-            ActionTypeIndex == (int)ActionType.Button && Action is TouchpadActions { Button: ButtonFlags.TouchpadSwipe }
+            ActionTypeIndex == (int)ActionType.Touchpad &&
+            Action is TouchpadActions { TargetType: TouchpadTargetType.Button, Button: ButtonFlags.TouchpadSwipe }
                 ? Visibility.Visible : Visibility.Collapsed;
 
         public override void OnPropertyChanged(string? propertyName)
@@ -501,6 +540,55 @@ namespace HandheldCompanion.ViewModels
 
                 ReplaceTargets(targets, matchingTargetVm);
             }
+            else if (actionType == ActionType.Touchpad)
+            {
+                bool preserveMissingTarget = Action is TouchpadActions;
+                TouchpadActions touchpadAction = Action as TouchpadActions ?? new TouchpadActions
+                {
+                    pressType = fallbackPressType,
+                    ShiftSlot = ShiftSlot.Any,
+                    ShiftMatchAny = false
+                };
+                if (!preserveMissingTarget)
+                    Action = touchpadAction;
+
+                MappingTargetViewModel? matchingTargetVm = null;
+                foreach (ButtonFlags button in TouchpadActions.GetButtonTargets(controller))
+                {
+                    var mappingTargetVm = CreateTarget(button, controller.GetButtonName(button));
+                    targets.Add(mappingTargetVm);
+
+                    if (touchpadAction.TargetType == TouchpadTargetType.Button && button == touchpadAction.Button)
+                        matchingTargetVm = mappingTargetVm;
+                }
+
+                foreach (AxisLayoutFlags axis in TouchpadActions.GetAxisTargets(controller))
+                {
+                    var mappingTargetVm = CreateTarget(axis, controller.GetAxisName(axis));
+                    targets.Add(mappingTargetVm);
+
+                    if (touchpadAction.TargetType == TouchpadTargetType.Axis && axis == touchpadAction.Axis)
+                        matchingTargetVm = mappingTargetVm;
+                }
+
+                if (matchingTargetVm is null && preserveMissingTarget)
+                {
+                    if (touchpadAction.TargetType == TouchpadTargetType.Button && touchpadAction.Button != ButtonFlags.None)
+                    {
+                        matchingTargetVm = CreateUnsupportedTarget(touchpadAction.Button,
+                            controller.GetButtonName(touchpadAction.Button));
+                        targets.Add(matchingTargetVm);
+                    }
+                    else if (touchpadAction.TargetType == TouchpadTargetType.Axis && touchpadAction.Axis != AxisLayoutFlags.None)
+                    {
+                        matchingTargetVm = CreateUnsupportedTarget(touchpadAction.Axis,
+                            controller.GetAxisName(touchpadAction.Axis));
+                        targets.Add(matchingTargetVm);
+                    }
+                }
+
+                ReplaceTargets(targets, matchingTargetVm);
+            }
             else if (actionType == ActionType.Keyboard)
             {
                 if (Action is null || Action is not KeyboardActions)
@@ -530,7 +618,7 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 MappingTargetViewModel? matchingTargetVm = null;
-                foreach (var axis in controller.GetTargetAxis())
+                foreach (var axis in GetJoystickTargets(controller))
                 {
                     var mappingTargetVm = CreateTarget(axis, controller.GetAxisName(axis));
                     targets.Add(mappingTargetVm);
@@ -644,9 +732,13 @@ namespace HandheldCompanion.ViewModels
             {
                 case ActionType.Button:
                     if (SelectedTarget.Tag is ButtonFlags buttonFlags)
-                    {
-                        SetButtonTarget(buttonFlags);
+                        ((ButtonActions)Action).Button = buttonFlags;
+                    break;
 
+                case ActionType.Touchpad:
+                    if (SelectedTarget.Tag is not null)
+                    {
+                        SetTouchpadTarget(SelectedTarget.Tag);
                         OnPropertyChanged(string.Empty);
                     }
                     break;

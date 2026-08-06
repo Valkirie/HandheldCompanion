@@ -35,6 +35,7 @@
                         <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="True" />
                         <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="True" />
                         <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="True" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Touchpad}" IsEnabled="True" Visibility="{Binding TouchpadActionTypeVisibility, Mode=OneWay}" />
                     </ComboBox>
                 </ui:SettingsCard>
 
@@ -122,8 +123,15 @@
                 </ui:SettingsCard>
 
                 <!--  Haptic Feedback  -->
-                <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_HapticFeedback}" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6}">
-                    <DockPanel>
+                <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_HapticFeedback}" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6|8}">
+                    <StackPanel>
+                        <DockPanel Margin="0,0,0,6" Visibility="{Binding TrackpadClickHapticOverrideVisibility, Mode=OneWay}">
+                            <ui:ToggleSwitch
+                                DockPanel.Dock="Right"
+                                IsOn="{Binding UseGlobalTrackpadClickHaptics, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.LayoutPage_UseGlobalTrackpadClickHaptics}" />
+                        </DockPanel>
+                    <DockPanel IsEnabled="{Binding HapticControlsEnabled, Mode=OneWay}">
                         <ComboBox Width="105" SelectedIndex="{Binding HapticModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                             <ComboBoxItem Content="Off" />
                             <ComboBoxItem Content="Down" />
@@ -139,39 +147,40 @@
                             <ComboBoxItem Content="High" />
                         </ComboBox>
                     </DockPanel>
+                    </StackPanel>
                 </ui:SettingsCard>
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
 
-        <!--  DualSense touchpad gesture settings  -->
+        <!--  Touchpad gesture settings  -->
         <ikw:SimpleStackPanel Spacing="8" Visibility="{Binding TouchpadSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="DualSense touchpad" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.LayoutPage_TouchpadSettings}" />
             <ikw:SimpleStackPanel Spacing="3">
-                <ui:SettingsCard Header="Start position" Description="{Binding TouchpadCoordinateRangeDescription, Mode=OneWay}">
+                <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_TouchpadStartPosition}" Description="{Binding TouchpadCoordinateRangeDescription, Mode=OneWay}">
                     <StackPanel>
                         <DockPanel>
                             <TextBlock Width="72" VerticalAlignment="Center" Text="{Binding TouchpadX, Mode=OneWay, StringFormat={}X: {0}}" />
-                            <Slider Width="240" Minimum="0" Maximum="{Binding TouchpadMaxX, Mode=OneWay}" TickFrequency="1" IsMoveToPointEnabled="True" Value="{Binding TouchpadX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Slider Width="240" Minimum="0" Maximum="{Binding TouchpadMaxX, Mode=OneWay}" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" Value="{Binding TouchpadX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
                         <DockPanel Margin="0,6,0,0">
                             <TextBlock Width="72" VerticalAlignment="Center" Text="{Binding TouchpadY, Mode=OneWay, StringFormat={}Y: {0}}" />
-                            <Slider Width="240" Minimum="0" Maximum="{Binding TouchpadMaxY, Mode=OneWay}" TickFrequency="1" IsMoveToPointEnabled="True" Value="{Binding TouchpadY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Slider Width="240" Minimum="0" Maximum="{Binding TouchpadMaxY, Mode=OneWay}" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" Value="{Binding TouchpadY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
                     </StackPanel>
                 </ui:SettingsCard>
-                <ui:SettingsCard Header="End position" Visibility="{Binding TouchpadSwipeSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_TouchpadEndPosition}" Visibility="{Binding TouchpadSwipeSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                     <StackPanel>
                         <DockPanel>
                             <TextBlock Width="72" VerticalAlignment="Center" Text="{Binding TouchpadEndX, Mode=OneWay, StringFormat={}X: {0}}" />
-                            <Slider Width="240" Minimum="0" Maximum="{Binding TouchpadMaxX, Mode=OneWay}" TickFrequency="1" IsMoveToPointEnabled="True" Value="{Binding TouchpadEndX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Slider Width="240" Minimum="0" Maximum="{Binding TouchpadMaxX, Mode=OneWay}" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" Value="{Binding TouchpadEndX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
                         <DockPanel Margin="0,6,0,0">
                             <TextBlock Width="72" VerticalAlignment="Center" Text="{Binding TouchpadEndY, Mode=OneWay, StringFormat={}Y: {0}}" />
-                            <Slider Width="240" Minimum="0" Maximum="{Binding TouchpadMaxY, Mode=OneWay}" TickFrequency="1" IsMoveToPointEnabled="True" Value="{Binding TouchpadEndY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Slider Width="240" Minimum="0" Maximum="{Binding TouchpadMaxY, Mode=OneWay}" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" Value="{Binding TouchpadEndY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
                     </StackPanel>
                 </ui:SettingsCard>
-                <ui:SettingsCard Header="Swipe duration" Visibility="{Binding TouchpadSwipeSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_TouchpadSwipeDuration}" Visibility="{Binding TouchpadSwipeSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                     <DockPanel>
                         <TextBox IsReadOnly="True" Text="{Binding TouchpadSwipeDuration, Mode=OneWay, StringFormat={}{0:N0} ms}" />
                         <Slider Width="220" Margin="6,0,0,0" Minimum="16" Maximum="{Binding TouchpadMaxDuration, Mode=OneWay}" TickFrequency="16" IsSnapToTickEnabled="True" Value="{Binding TouchpadSwipeDuration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -377,7 +386,7 @@
                 </ui:SettingsCard>
 
                 <!--  Output shape  -->
-                <ui:SettingsCard Header="Output shape">
+                <ui:SettingsCard Header="Output shape" Visibility="{Binding AxisOutputShapeVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <ComboBox SelectedIndex="{Binding Axis2AxisOutputShapeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         <ComboBoxItem>Default</ComboBoxItem>
                         <ComboBoxItem>Circle</ComboBoxItem>

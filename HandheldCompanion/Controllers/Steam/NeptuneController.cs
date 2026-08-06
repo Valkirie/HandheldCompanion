@@ -217,10 +217,6 @@ public class NeptuneController : SteamController
         }
 
         Inputs.ButtonState[ButtonFlags.RightPadClick] = input.State.ButtonState[NeptuneControllerButton.BtnRPadPress];
-        UpdateTrackpadClickHaptics(
-            Inputs.ButtonState[ButtonFlags.LeftPadClick],
-            Inputs.ButtonState[ButtonFlags.RightPadClick]);
-
         if (Inputs.ButtonState[ButtonFlags.RightPadClick])
         {
             Inputs.ButtonState[ButtonFlags.RightPadClickUp] = Inputs.AxisState[AxisFlags.RightPadY] >= TrackPadInner;

@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
@@ -26,7 +27,7 @@ public partial class ControllerPage : Page
         DataContext = ViewModel;
         InitializeComponent();
 
-        UpdateSteamSettingsVisibility();
+        UpdateTrackpadSettingsVisibility();
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
         // manage events
@@ -59,7 +60,7 @@ public partial class ControllerPage : Page
         SettingsManager_SettingValueChanged("HIDvibrateonconnect", ManagerFactory.settingsManager.GetString("HIDvibrateonconnect"), false, false);
         SettingsManager_SettingValueChanged("VibrationStrength", ManagerFactory.settingsManager.GetString("VibrationStrength"), false, false);
         SettingsManager_SettingValueChanged("SteamControllerMode", ManagerFactory.settingsManager.GetString("SteamControllerMode"), false, false);
-        SettingsManager_SettingValueChanged("SteamTrackpadClickHaptics", ManagerFactory.settingsManager.GetString("SteamTrackpadClickHaptics"), false, false);
+        SettingsManager_SettingValueChanged("TrackpadClickHaptics", ManagerFactory.settingsManager.GetString("TrackpadClickHaptics"), false, false);
         SettingsManager_SettingValueChanged("SteamControllerRumbleInterval", ManagerFactory.settingsManager.GetString("SteamControllerRumbleInterval"), false, false);
         SettingsManager_SettingValueChanged("HIDmode", ManagerFactory.settingsManager.GetString("HIDmode"), false, false);
         SettingsManager_SettingValueChanged("HIDstatus", ManagerFactory.settingsManager.GetString("HIDstatus"), false, false);
@@ -97,8 +98,8 @@ public partial class ControllerPage : Page
                 case "SteamControllerMode":
                     cB_SCModeController.SelectedIndex = Convert.ToInt32(value);
                     break;
-                case "SteamTrackpadClickHaptics":
-                    cB_SteamTrackpadClickHaptics.SelectedIndex = Convert.ToInt32(value);
+                case "TrackpadClickHaptics":
+                    cB_TrackpadClickHaptics.SelectedIndex = Convert.ToInt32(value);
                     break;
                 case "SteamControllerRumbleInterval":
                     SliderInterval.Value = Convert.ToDouble(value);
@@ -147,16 +148,19 @@ public partial class ControllerPage : Page
 
     private void ControllerManager_ControllerSelected(HandheldCompanion.Controllers.IController controller)
     {
-        UIHelper.TryInvoke(UpdateSteamSettingsVisibility);
+        UIHelper.TryInvoke(UpdateTrackpadSettingsVisibility);
     }
 
-    private void UpdateSteamSettingsVisibility()
+    private void UpdateTrackpadSettingsVisibility()
     {
         bool isSteamDeck = IDevice.GetCurrent() is SteamDeck;
-        bool hasSteamTrackpads = ControllerManager.GetTarget() is HandheldCompanion.Controllers.Steam.SteamController;
+        var controller = ControllerManager.GetTarget();
+        bool hasTrackpadClicks = controller?.HasSourceButton(ButtonFlags.LeftPadClick) == true ||
+            controller?.HasSourceButton(ButtonFlags.RightPadClick) == true ||
+            controller?.HasSourceButton(ButtonFlags.CenterPadClick) == true;
 
         SteamDeckPanel.Visibility = isSteamDeck ? Visibility.Visible : Visibility.Collapsed;
-        SteamTrackpadHapticsPanel.Visibility = isSteamDeck || hasSteamTrackpads
+        TrackpadHapticsPanel.Visibility = isSteamDeck || hasTrackpadClicks
             ? Visibility.Visible
             : Visibility.Collapsed;
     }
@@ -309,12 +313,12 @@ public partial class ControllerPage : Page
         ManagerFactory.settingsManager.SetProperty("SteamControllerMode", cB_SCModeController.SelectedIndex);
     }
 
-    private void cB_SteamTrackpadClickHaptics_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void cB_TrackpadClickHaptics_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (!IsLoaded || cB_SteamTrackpadClickHaptics.SelectedIndex == -1)
+        if (!IsLoaded || cB_TrackpadClickHaptics.SelectedIndex == -1)
             return;
 
-        ManagerFactory.settingsManager.SetProperty("SteamTrackpadClickHaptics", cB_SteamTrackpadClickHaptics.SelectedIndex);
+        ManagerFactory.settingsManager.SetProperty("TrackpadClickHaptics", cB_TrackpadClickHaptics.SelectedIndex);
     }
 
     private void cB_ControllerPlugBehavior_SelectionChanged(object sender, SelectionChangedEventArgs e)
