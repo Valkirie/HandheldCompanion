@@ -2,6 +2,7 @@ using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Localization;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
@@ -9,6 +10,7 @@ using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
 using HandheldCompanion.Watchers;
 using iNKORE.UI.WPF.Modern.Common;
+using iNKORE.UI.WPF.Modern.Controls;
 using Sentry;
 using System;
 using System.Diagnostics;
@@ -18,11 +20,13 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using Windows.UI.ViewManagement;
+using ApplicationSettings = HandheldCompanion.Properties.Settings;
 using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
 
 namespace HandheldCompanion;
@@ -55,6 +59,7 @@ public partial class App : Application
     public static OverlayQuickTools overlayquickTools = null!;
 
     private const string UninstallRestoreArgument = "--uninstall-restore";
+    private bool restartRequiredAfterMsiClawMigration;
     public static string ApplicationName
     {
         get => Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
@@ -267,6 +272,9 @@ public partial class App : Application
             ManagerFactory.settingsManager.SetProperty("LastVersion", fileVersionInfo?.FileVersion);
             MainWindow.Show();
             Task.Run(() => StartNonUIInit(exePath, IsFirstStart, newUpdate, splashScreen.SetStatus));
+
+            if (restartRequiredAfterMsiClawMigration)
+                RequestRestartConfirmation();
         }
         catch (Exception ex)
         {
@@ -336,6 +344,7 @@ public partial class App : Application
         }
 
         MigrateSettings();
+        _ = RestoreLegacyMsiClawKeyboardSetting(null, out restartRequiredAfterMsiClawMigration);
         return true;
     }
 
@@ -439,7 +448,8 @@ public partial class App : Application
             splashScreen.Show();
             splashScreen.SetStatus("Preparing uninstall restore...");
 
-            bool success = ControllerManager.RestoreAllControllersForUninstall(splashScreen.SetStatus);
+            bool success = RestoreLegacyMsiClawKeyboardSetting(splashScreen.SetStatus, out _);
+            success &= ControllerManager.RestoreAllControllersForUninstall(splashScreen.SetStatus);
             success &= RestoreOemSoftwareStack(splashScreen.SetStatus);
             success &= RestoreControllerMode(splashScreen.SetStatus);
 
@@ -512,6 +522,58 @@ public partial class App : Application
             LogManager.LogError("Failed to restore controller mode: {0}", ex.Message);
             return false;
         }
+    }
+
+    private static bool RestoreLegacyMsiClawKeyboardSetting(Action<string>? reportStatus, out bool restartRequired)
+    {
+        restartRequired = false;
+
+        if (!ApplicationSettings.Default.DisableMsiClawPS2Service)
+            return true;
+
+        reportStatus?.Invoke("Restoring MSI Claw keyboard driver...");
+
+        try
+        {
+            using ServiceController service = new("i8042prt");
+            if (!ServiceUtils.ChangeStartMode(service, ServiceStartMode.System, out string error))
+            {
+                LogManager.LogError("Failed to restore {0} startup mode while migrating the MSI Claw hotkey setting: {1}", service.ServiceName, error);
+                return false;
+            }
+
+            ApplicationSettings.Default.BlockMsiClawWinGHotkey = true;
+            ApplicationSettings.Default.DisableMsiClawPS2Service = false;
+            ApplicationSettings.Default.Save();
+            restartRequired = true;
+            LogManager.LogInformation("Restored {0} startup mode and migrated the MSI Claw hotkey setting", service.ServiceName);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Failed to restore {0} startup mode while migrating the MSI Claw hotkey setting: {1}", "i8042prt", ex.Message);
+            return false;
+        }
+    }
+
+    private static void RequestRestartConfirmation()
+    {
+        UIHelper.TryInvoke(RequestRestartConfirmationCore, DispatcherPriority.ApplicationIdle);
+    }
+
+    private static async void RequestRestartConfirmationCore()
+    {
+        ContentDialogResult result = await new Dialog(Views.MainWindow.GetCurrent())
+        {
+            Title = HandheldCompanion.Properties.Resources.Dialog_ForceRestartTitle,
+            Content = HandheldCompanion.Properties.Resources.Dialog_ForceRestartDesc,
+            DefaultButton = ContentDialogButton.Close,
+            CloseButtonText = HandheldCompanion.Properties.Resources.Dialog_No,
+            PrimaryButtonText = HandheldCompanion.Properties.Resources.Dialog_Yes
+        }.ShowAsync();
+
+        if (result == ContentDialogResult.Primary)
+            DeviceUtils.RestartComputer();
     }
 
     private void MigrateSettings()

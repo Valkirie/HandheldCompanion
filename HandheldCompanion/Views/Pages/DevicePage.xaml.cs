@@ -37,9 +37,6 @@ namespace HandheldCompanion.Views.Pages
         {
             this.Tag = Tag;
 
-            if (DataContext is DevicePageViewModel viewModel)
-                viewModel.RestartConfirmationRequested += ShowRestartConfirmation;
-
             App.uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
             // raise events
@@ -108,35 +105,9 @@ namespace HandheldCompanion.Views.Pages
 
         public void Dispose()
         {
-            if (DataContext is DevicePageViewModel viewModel)
-                viewModel.RestartConfirmationRequested -= ShowRestartConfirmation;
-
             App.uiSettings.ColorValuesChanged -= OnColorValuesChanged;
             ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-        }
-
-        private async void ShowRestartConfirmation()
-        {
-            if (!Dispatcher.CheckAccess())
-            {
-                await Dispatcher.InvokeAsync(ShowRestartConfirmation);
-                return;
-            }
-
-            if (DataContext is not DevicePageViewModel viewModel)
-                return;
-
-            ContentDialogResult result = await new Dialog(MainWindow.GetCurrent())
-            {
-                Title = Properties.Resources.Dialog_ForceRestartTitle,
-                Content = Properties.Resources.Dialog_ForceRestartDesc,
-                DefaultButton = ContentDialogButton.Close,
-                CloseButtonText = Properties.Resources.Dialog_No,
-                PrimaryButtonText = Properties.Resources.Dialog_Yes
-            }.ShowAsync();
-
-            viewModel.CompleteRestartConfirmation(result == ContentDialogResult.Primary);
         }
 
         private void SettingsManager_SettingValueChanged(string? name, object? value, bool temporary, bool initializing)

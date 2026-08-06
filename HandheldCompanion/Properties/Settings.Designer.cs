@@ -21,6 +21,7 @@ namespace HandheldCompanion.Properties
             get {
                 return defaultInstance;
             }
+
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
@@ -44,6 +45,18 @@ namespace HandheldCompanion.Properties
             }
             set {
                 this["RunAtStartup"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool BlockMsiClawWinGHotkey {
+            get {
+                return ((bool)(this["BlockMsiClawWinGHotkey"]));
+            }
+            set {
+                this["BlockMsiClawWinGHotkey"] = value;
             }
         }
         

@@ -31,6 +31,24 @@ namespace HandheldCompanion.Properties {
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Resources() {
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Block Win+G hotkey.
+        /// </summary>
+        public static string DevicePage_BlockMsiClawWinGHotkey {
+            get {
+                return ResourceManager.GetString("DevicePage_BlockMsiClawWinGHotkey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Prevent the MSI quick settings button from opening Windows Game Bar.
+        /// </summary>
+        public static string DevicePage_BlockMsiClawWinGHotkeyDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_BlockMsiClawWinGHotkeyDesc", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.

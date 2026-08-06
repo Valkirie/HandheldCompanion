@@ -6,14 +6,12 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Models;
 using HandheldCompanion.Processors;
-using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels.Commands;
 using HandheldCompanion.Views;
 using HandheldCompanion.Watchers;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
-using System.ServiceProcess;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -24,8 +22,6 @@ namespace HandheldCompanion.ViewModels
 {
     public class DevicePageViewModel : BaseViewModel
     {
-        public event Action? RestartConfirmationRequested;
-
         #region private vars
         private IDevice CurrentDevice => IDevice.GetCurrent();
 
@@ -482,18 +478,18 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool DisableMsiClawPS2Service
+        public bool BlockMsiClawWinGHotkey
         {
             get
             {
-                return ManagerFactory.settingsManager.GetBoolean("DisableMsiClawPS2Service");
+                return ManagerFactory.settingsManager.GetBoolean("BlockMsiClawWinGHotkey");
             }
             set
             {
-                if (value != DisableMsiClawPS2Service)
+                if (value != BlockMsiClawWinGHotkey)
                 {
-                    ManagerFactory.settingsManager.SetProperty("DisableMsiClawPS2Service", value);
-                    OnPropertyChanged(nameof(DisableMsiClawPS2Service));
+                    ManagerFactory.settingsManager.SetProperty("BlockMsiClawWinGHotkey", value);
+                    OnPropertyChanged(nameof(BlockMsiClawWinGHotkey));
                 }
             }
         }
@@ -1011,22 +1007,6 @@ namespace HandheldCompanion.ViewModels
             QuerySettings();
         }
 
-        private static void SetMsiClawPS2ServiceState(bool disable)
-        {
-            try
-            {
-                using (ServiceController service = new("i8042prt"))
-                {
-                    if (disable)
-                        ServiceUtils.ChangeStartMode(service, ServiceStartMode.Disabled, out _);
-                    else
-                        ServiceUtils.ChangeStartMode(service, ServiceStartMode.System, out _);
-                }
-            }
-            catch (Exception)
-            { }
-        }
-
         private void QuerySettings()
         {
             // manage events
@@ -1044,7 +1024,7 @@ namespace HandheldCompanion.ViewModels
             SettingsManager_SettingValueChanged("LegionControllerMode", ManagerFactory.settingsManager.GetInt("LegionControllerMode"), false, true);
             SettingsManager_SettingValueChanged("ZotacGamingZoneVRAM", ManagerFactory.settingsManager.GetInt("ZotacGamingZoneVRAM"), false, true);
             SettingsManager_SettingValueChanged("MSIClawOverBoost", ManagerFactory.settingsManager.GetBoolean("MSIClawOverBoost"), false, true);
-            SettingsManager_SettingValueChanged("DisableMsiClawPS2Service", ManagerFactory.settingsManager.GetBoolean("DisableMsiClawPS2Service"), false, true);
+            SettingsManager_SettingValueChanged("BlockMsiClawWinGHotkey", ManagerFactory.settingsManager.GetBoolean("BlockMsiClawWinGHotkey"), false, true);
         }
 
         private void CoreIsolationWatcher_StatusChanged(bool enabled)
@@ -1078,22 +1058,13 @@ namespace HandheldCompanion.ViewModels
                     ManagerFactory.notificationManager.Add(notification);
                     break;
                 case false:
-                    {
-                        ManagerFactory.notificationManager.Discard(notification);
-                        RestartConfirmationRequested?.Invoke();
-                    }
+                    ManagerFactory.notificationManager.Discard(notification);
                     break;
             }
 
             // update flag
             ManufacturerAppBusy = false;
             OnPropertyChanged(nameof(ManufacturerAppStatus));
-        }
-
-        public void CompleteRestartConfirmation(bool restart)
-        {
-            if (restart)
-                DeviceUtils.RestartComputer();
         }
 
         private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
@@ -1133,15 +1104,8 @@ namespace HandheldCompanion.ViewModels
                 case "MSIClawOverBoost":
                     OnPropertyChanged(nameof(ClawOverBoost));
                     break;
-                case "DisableMsiClawPS2Service":
-                    bool disableMsiClawPS2Service = Convert.ToBoolean(value);
-                    DisableMsiClawPS2Service = disableMsiClawPS2Service;
-
-                    if (!initializing && CurrentDevice is ClawA1M)
-                    {
-                        SetMsiClawPS2ServiceState(disableMsiClawPS2Service);
-                        RestartConfirmationRequested?.Invoke();
-                    }
+                case "BlockMsiClawWinGHotkey":
+                    OnPropertyChanged(nameof(BlockMsiClawWinGHotkey));
                     break;
             }
         }

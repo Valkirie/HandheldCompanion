@@ -3,6 +3,7 @@ using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Commands;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Simulators;
@@ -43,6 +44,7 @@ public static class InputsManager
 
     private const uint LLKHF_INJECTED = 0x00000010;
     private const uint LLKHF_LOWER_IL_INJECTED = 0x00000002;
+    private const string BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING = "BlockMsiClawWinGHotkey";
 
     // Gamepad variables
     private static readonly PrecisionTimer BufferFlushTimer;
@@ -70,6 +72,7 @@ public static class InputsManager
     private static readonly Dictionary<bool, short> KeyIndexHotkey = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, bool> KeyUsed = new() { { true, false }, { false, false } };
     private static readonly HashSet<Keys> PhysicalModifiersDown = new();
+    private static readonly FirmwareWorkarounds.MSI MsiFirmwareWorkaround = new();
     private static bool IsHandlingAltGrRelease;
 
     public static bool IsInitialized;
@@ -239,7 +242,10 @@ public static class InputsManager
     {
         // don't catch keyboard inputs until user is logged-in
         if (SystemManager.IsSessionLocked)
+        {
+            MsiFirmwareWorkaround.Reset();
             return;
+        }
 
         KeyEventArgsExt args = (KeyEventArgsExt)e;
 
@@ -255,6 +261,9 @@ public static class InputsManager
             else if (args.IsKeyUp)
                 PhysicalModifiersDown.Remove(args.KeyCode);
         }
+
+        if (MsiFirmwareWorkaround.ProcessKeyboardEvent(args, Injected || InjectedLL))
+            return;
 
         if ((Injected || InjectedLL))
             if (IsListening && currentChord.chordTarget != InputsChordTarget.Output)
@@ -604,6 +613,17 @@ public static class InputsManager
         m_GlobalHook?.KeyDown += M_GlobalHook_KeyEvent;
         m_GlobalHook?.KeyUp += M_GlobalHook_KeyEvent;
 
+        switch (ManagerFactory.settingsManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
+        }
+
         IsInitialized = true;
         Initialized?.Invoke();
 
@@ -616,8 +636,12 @@ public static class InputsManager
             return;
 
         ControllerManager.InputsUpdated -= UpdateInputs;
+        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         m_GlobalHook?.KeyDown -= M_GlobalHook_KeyEvent;
         m_GlobalHook?.KeyUp -= M_GlobalHook_KeyEvent;
+
+        MsiFirmwareWorkaround.Enabled = false;
 
         if (OS)
             DisposeGlobalHook();
@@ -625,6 +649,24 @@ public static class InputsManager
         IsInitialized = false;
 
         LogManager.LogInformation("{0} has stopped", "InputsManager");
+    }
+
+    private static void SettingsManager_Initialized() => QuerySettings();
+
+    private static void QuerySettings()
+    {
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        SettingsManager_SettingValueChanged(
+            BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING,
+            ManagerFactory.settingsManager.GetBoolean(BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING),
+            false,
+            false);
+    }
+
+    private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
+    {
+        if (name == BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING)
+            MsiFirmwareWorkaround.Enabled = Convert.ToBoolean(value) && IDevice.GetCurrent() is ClawA1M;
     }
 
     private static void InitGlobalHook()
