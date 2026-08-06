@@ -9,6 +9,8 @@ namespace HandheldCompanion.Controllers.Steam
         private bool leftPadClickPressed;
         private bool rightPadClickPressed;
 
+        public abstract bool IsLizardModeEnabled { get; }
+
         protected bool isVirtualMuted = false;
 
         public SteamController() : base()

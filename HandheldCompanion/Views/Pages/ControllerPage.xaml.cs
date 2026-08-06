@@ -26,7 +26,8 @@ public partial class ControllerPage : Page
         DataContext = ViewModel;
         InitializeComponent();
 
-        SteamDeckPanel.Visibility = IDevice.GetCurrent() is SteamDeck ? Visibility.Visible : Visibility.Collapsed;
+        UpdateSteamSettingsVisibility();
+        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
         // manage events
         switch (ManagerFactory.settingsManager.Status)
@@ -140,7 +141,24 @@ public partial class ControllerPage : Page
     public void Page_Closed()
     {
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+        ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
         ViewModel.Dispose();
+    }
+
+    private void ControllerManager_ControllerSelected(HandheldCompanion.Controllers.IController controller)
+    {
+        UIHelper.TryInvoke(UpdateSteamSettingsVisibility);
+    }
+
+    private void UpdateSteamSettingsVisibility()
+    {
+        bool isSteamDeck = IDevice.GetCurrent() is SteamDeck;
+        bool hasSteamTrackpads = ControllerManager.GetTarget() is HandheldCompanion.Controllers.Steam.SteamController;
+
+        SteamDeckPanel.Visibility = isSteamDeck ? Visibility.Visible : Visibility.Collapsed;
+        SteamTrackpadHapticsPanel.Visibility = isSteamDeck || hasSteamTrackpads
+            ? Visibility.Visible
+            : Visibility.Collapsed;
     }
 
     private string GetResourceString(string baseKey, int attempts)

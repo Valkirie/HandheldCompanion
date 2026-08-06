@@ -19,6 +19,8 @@ namespace HandheldCompanion.Controllers.Steam
         private const short TrackPadInner = short.MaxValue / 2;
         public const ushort MaxRumbleIntensity = 2048;
 
+        public override bool IsLizardModeEnabled => Controller?.LizardModeEnabled ?? true;
+
         public override bool IsWireless()
         {
             return GetProductID() != 0x1102;

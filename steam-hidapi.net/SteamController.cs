@@ -19,6 +19,7 @@ namespace steam_hidapi.net
 
         // device configuration
         protected bool _lizard = true;
+        public bool LizardModeEnabled => _lizard;
 
         public string SerialNumber { get; private set; }
 

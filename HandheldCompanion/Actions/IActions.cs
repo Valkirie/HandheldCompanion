@@ -176,6 +176,26 @@ namespace HandheldCompanion.Actions
 
         public virtual void SetHaptic(ButtonFlags button, bool released)
         {
+            bool isTrackpadClick = button is
+                ButtonFlags.LeftPadClick or
+                ButtonFlags.LeftPadClickUp or
+                ButtonFlags.LeftPadClickDown or
+                ButtonFlags.LeftPadClickLeft or
+                ButtonFlags.LeftPadClickRight or
+                ButtonFlags.RightPadClick or
+                ButtonFlags.RightPadClickUp or
+                ButtonFlags.RightPadClickDown or
+                ButtonFlags.RightPadClickLeft or
+                ButtonFlags.RightPadClickRight;
+
+            if (isTrackpadClick &&
+                ControllerManager.GetTarget() is HandheldCompanion.Controllers.Steam.SteamController)
+            {
+                // Physical Steam trackpad clicks are handled once at controller level so the
+                // shared Controller-page setting applies regardless of the mapped action type.
+                return;
+            }
+
             if (HapticMode == HapticMode.Off) return;
             if (HapticMode == HapticMode.Down && released) return;
             if (HapticMode == HapticMode.Up && !released) return;

@@ -41,6 +41,7 @@ namespace HandheldCompanion.Actions
         private OneEuroFilterPair mouseFilter;
         private float accelMemory = 0f;
         private float trackpadHapticDistance = 0f;
+        private Vector2 trackpadHapticJitter = new();
 
         // Click settings
         public ModifierSet Modifiers = ModifierSet.None;
@@ -156,31 +157,6 @@ namespace HandheldCompanion.Actions
             }
         }
 
-        public override void SetHaptic(ButtonFlags button, bool released)
-        {
-            bool isTrackpadClick = button is
-                ButtonFlags.LeftPadClick or
-                ButtonFlags.LeftPadClickUp or
-                ButtonFlags.LeftPadClickDown or
-                ButtonFlags.LeftPadClickLeft or
-                ButtonFlags.LeftPadClickRight or
-                ButtonFlags.RightPadClick or
-                ButtonFlags.RightPadClickUp or
-                ButtonFlags.RightPadClickDown or
-                ButtonFlags.RightPadClickLeft or
-                ButtonFlags.RightPadClickRight;
-
-            if (isTrackpadClick &&
-                ControllerManager.GetTarget() is HandheldCompanion.Controllers.Steam.SteamController)
-            {
-                // Physical Steam trackpad clicks are handled once at controller level so the
-                // shared Controller-page setting applies to both pads, regardless of mapping.
-                return;
-            }
-
-            base.SetHaptic(button, released);
-        }
-
         public void Execute(AxisLayout layout, bool touched, ShiftSlot shiftSlot, float delta)
         {
             switch (MouseType)
@@ -219,15 +195,23 @@ namespace HandheldCompanion.Actions
             bool firstTouch = ConsumeNewTouch(touched);
 
             if (!touched)
-                trackpadHapticDistance = 0f;
+                ResetTrackpadHaptics();
 
             outVector = layout.vector;
             base.Execute(layout, shiftSlot, delta);
 
-            if (outVector == Vector2.Zero) return;
-
             // Invert Y so that "up" on a stick or pad moves the cursor up
             outVector.Y *= -1;
+
+            bool isTrackpad = layout.flags is AxisLayoutFlags.LeftPad or AxisLayoutFlags.RightPad;
+            if (firstTouch && isTrackpad)
+            {
+                prevVector = outVector;
+                ResetTrackpadHaptics();
+                return;
+            }
+
+            if (outVector == Vector2.Zero) return;
 
             Vector2 deltaVector;
             float sensitivityScale;
@@ -244,13 +228,6 @@ namespace HandheldCompanion.Actions
 
                 case AxisLayoutFlags.LeftPad:
                 case AxisLayoutFlags.RightPad:
-                    if (firstTouch)
-                    {
-                        prevVector = outVector;
-                        trackpadHapticDistance = 0f;
-                        return;
-                    }
-
                     Vector2 trackpadDelta = outVector - prevVector;
                     prevVector = outVector;
                     UpdateTrackpadHaptics(layout.flags, touched, trackpadDelta);
@@ -284,18 +261,27 @@ namespace HandheldCompanion.Actions
         private void UpdateTrackpadHaptics(AxisLayoutFlags axis, bool touched, Vector2 delta)
         {
             if (!touched || HapticMode == HapticMode.Off)
+            {
+                ResetTrackpadHaptics();
                 return;
+            }
 
             // Firmware-provided trackpad feedback is lost when Steam lizard mode is disabled.
             // Only replace it for physical Steam controllers; other trackpads may provide their
             // own feedback and should not receive controller-rumble pulses while moving.
-            if (ControllerManager.GetTarget() is not HandheldCompanion.Controllers.Steam.SteamController)
+            if (ControllerManager.GetTarget() is not HandheldCompanion.Controllers.Steam.SteamController steamController ||
+                steamController.IsLizardModeEnabled)
+            {
+                ResetTrackpadHaptics();
                 return;
+            }
 
-            float distance = delta.Length();
+            trackpadHapticJitter += delta;
+            float distance = trackpadHapticJitter.Length();
             if (distance < TrackpadHapticJitterThreshold)
                 return;
 
+            trackpadHapticJitter = Vector2.Zero;
             trackpadHapticDistance += distance;
             if (trackpadHapticDistance < TrackpadHapticStep)
                 return;
@@ -306,6 +292,12 @@ namespace HandheldCompanion.Actions
                 ? ButtonFlags.LeftPadTouch
                 : ButtonFlags.RightPadTouch;
             SetHaptic(button, released: false);
+        }
+
+        private void ResetTrackpadHaptics()
+        {
+            trackpadHapticDistance = 0f;
+            trackpadHapticJitter = Vector2.Zero;
         }
 
         private Vector2 ComputeStickDelta(Vector2 raw)

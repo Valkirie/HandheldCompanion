@@ -24,6 +24,8 @@ public class NeptuneController : SteamController
     public const sbyte MinIntensity = -2;
     public const sbyte MaxIntensity = 10;
 
+    public override bool IsLizardModeEnabled => Controller?.LizardModeEnabled ?? true;
+
     // TODO: why not use TimerManager.Tick?
     private Thread? rumbleThread;
     private bool rumbleThreadRunning;
