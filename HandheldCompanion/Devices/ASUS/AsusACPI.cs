@@ -104,7 +104,9 @@ namespace HandheldCompanion.Devices.ASUS
         private const uint FILE_SHARE_READ = 1;
         private const uint FILE_SHARE_WRITE = 2;
 
-        private static IntPtr handle;
+        private static readonly IntPtr INVALID_HANDLE_VALUE = new(-1);
+        private static readonly object handleLock = new();
+        private static IntPtr handle = INVALID_HANDLE_VALUE;
 
         // Event handling attempt
 
@@ -114,48 +116,65 @@ namespace HandheldCompanion.Devices.ASUS
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool WaitForSingleObject(IntPtr hHandle, int dwMilliseconds);
 
-        public static bool IsOpen => handle != new IntPtr(-1);
+        public static bool IsOpen => handle != IntPtr.Zero && handle != INVALID_HANDLE_VALUE;
 
         private static void Control(uint dwIoControlCode, byte[] lpInBuffer, byte[] lpOutBuffer)
         {
-            uint lpBytesReturned = 0;
-            DeviceIoControl(
-                handle,
-                dwIoControlCode,
-                lpInBuffer,
-                (uint)lpInBuffer.Length,
-                lpOutBuffer,
-                (uint)lpOutBuffer.Length,
-                ref lpBytesReturned,
-                IntPtr.Zero
-            );
+            lock (handleLock)
+            {
+                if (!IsOpen)
+                    return;
+
+                uint lpBytesReturned = 0;
+                DeviceIoControl(
+                    handle,
+                    dwIoControlCode,
+                    lpInBuffer,
+                    (uint)lpInBuffer.Length,
+                    lpOutBuffer,
+                    (uint)lpOutBuffer.Length,
+                    ref lpBytesReturned,
+                    IntPtr.Zero
+                );
+            }
         }
 
         public static bool Open()
         {
-            handle = CreateFile(
-                FILE_NAME,
-                GENERIC_READ | GENERIC_WRITE,
-                FILE_SHARE_READ | FILE_SHARE_WRITE,
-                IntPtr.Zero,
-                OPEN_EXISTING,
-                FILE_ATTRIBUTE_NORMAL,
-                IntPtr.Zero
-            );
-
-            if (!IsOpen)
+            lock (handleLock)
             {
-                LogManager.LogError("Can't connect to Asus ACPI");
-                return false;
-            }
+                if (IsOpen)
+                    return true;
 
-            return true;
+                handle = CreateFile(
+                    FILE_NAME,
+                    GENERIC_READ | GENERIC_WRITE,
+                    FILE_SHARE_READ | FILE_SHARE_WRITE,
+                    IntPtr.Zero,
+                    OPEN_EXISTING,
+                    FILE_ATTRIBUTE_NORMAL,
+                    IntPtr.Zero
+                );
+
+                if (!IsOpen)
+                {
+                    LogManager.LogError("Can't connect to Asus ACPI");
+                    return false;
+                }
+
+                return true;
+            }
         }
 
         public static void Close()
         {
-            if (IsOpen)
-                CloseHandle(handle);
+            lock (handleLock)
+            {
+                if (IsOpen)
+                    CloseHandle(handle);
+
+                handle = INVALID_HANDLE_VALUE;
+            }
         }
 
         public static byte[] CallMethod(uint MethodID, byte[] args)
@@ -215,6 +234,11 @@ namespace HandheldCompanion.Devices.ASUS
             byte[] status = CallMethod(DSTS, args);
 
             return BitConverter.ToInt32(status, 0) - 65536;
+        }
+
+        public static bool IsSupported(uint DeviceID)
+        {
+            return IsOpen && DeviceGet(DeviceID) >= 0;
         }
 
         public static byte[] DeviceGetBuffer(uint DeviceID, uint Status = 0)
