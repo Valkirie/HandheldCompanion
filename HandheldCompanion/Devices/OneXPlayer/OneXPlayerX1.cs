@@ -505,7 +505,7 @@ public class OneXPlayerX1 : OneXAOKZOE
         WriteVendorHidCommand(0xB4, BuildRemapPage1(0x01));
         Thread.Sleep(50);
         WriteVendorHidCommand(0xB4, BuildRemapPage2(0x01, 0x67, 0x66));
-        _ = ReadVendorHidLoopAsync(device);
+        _ = ReadLoopAsync(device);
     }
 
     public override bool IsReady()
@@ -527,7 +527,7 @@ public class OneXPlayerX1 : OneXAOKZOE
 
     private bool IsReading;
 
-    private async Task ReadVendorHidLoopAsync(HidDevice device)
+    private async Task ReadLoopAsync(HidDevice device)
     {
         try
         {
