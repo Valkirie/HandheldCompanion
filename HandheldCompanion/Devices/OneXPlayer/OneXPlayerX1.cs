@@ -6,6 +6,7 @@ using HandheldCompanion.Misc.Threading.Tasks;
 using HandheldCompanion.Models;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Shared;
+using HidLibrary;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -23,9 +24,15 @@ namespace HandheldCompanion.Devices;
 
 public class OneXPlayerX1 : OneXAOKZOE
 {
+    protected const int VendorHidId = 0;
+
     private SerialPort? _serialPort; // COM3 SerialPort for Device control of OneXPlayer
-    private OneXPlayerOxpHidMonitor? _vendorHidMonitor;
-    protected OxpHidInitProfile VendorHidInitProfile = OxpHidInitProfile.X1;
+
+    private const byte FrameMarker = 0x3F;
+    private const byte ButtonCommandId = 0xB2;
+    private const byte StatusCommandId = 0xB8;
+    protected const byte VibrationCommandId = 0xB3;
+    private readonly bool[] _buttonStates = new bool[0x25];
 
     // Enable COM Port for LED Control
     public bool EnableSerialPort = true;
@@ -53,6 +60,9 @@ public class OneXPlayerX1 : OneXAOKZOE
 
     public OneXPlayerX1()
     {
+        vendorId = 0x1A86;
+        productIds = [0xFE00];
+
         // device specific settings
         ProductIllustration = "device_onexplayer_x1";
         ProductModel = "ONEXPLAYERX1";
@@ -226,7 +236,7 @@ public class OneXPlayerX1 : OneXAOKZOE
 
     public override void Close()
     {
-        StopVendorHidListener();
+        Device_Removed();
 
         if (_serialPort is not null)
         {
@@ -470,7 +480,13 @@ public class OneXPlayerX1 : OneXAOKZOE
 
     protected override void Device_Removed()
     {
-        StopVendorHidListener();
+        IsReading = false;
+        Array.Clear(_buttonStates);
+
+        if (hidDevices.Remove(VendorHidId, out HidDevice? device))
+        {
+            try { device.Dispose(); } catch { }
+        }
     }
 
     protected override async void Device_Inserted(bool reScan = false)
@@ -478,39 +494,81 @@ public class OneXPlayerX1 : OneXAOKZOE
         if (reScan)
             await WaitUntilReady();
 
-        StopVendorHidListener();
-        StartVendorHidListener();
+        if (!hidDevices.TryGetValue(VendorHidId, out HidDevice? device))
+            return;
+
+        device.OpenDevice();
+        if (!device.IsOpen)
+            return;
+
+        IsReading = true;
+        WriteVendorHidCommand(0xB4, BuildRemapPage1(0x01));
+        Thread.Sleep(50);
+        WriteVendorHidCommand(0xB4, BuildRemapPage2(0x01, 0x67, 0x66));
+        _ = ReadVendorHidLoopAsync(device);
     }
 
-    protected virtual void StartVendorHidListener()
+    public override bool IsReady()
     {
-        if (_vendorHidMonitor is not null)
-            return;
+        if (hidDevices.TryGetValue(VendorHidId, out HidDevice? boundDevice) && boundDevice.IsConnected)
+            return true;
 
-        _vendorHidMonitor = new OneXPlayerOxpHidMonitor();
-        _vendorHidMonitor.ButtonChanged += VendorHidMonitor_ButtonChanged;
-        if (!_vendorHidMonitor.Open(VendorHidInitProfile))
+        foreach (HidDevice device in GetHidDevices(vendorId, productIds, 0))
         {
-            _vendorHidMonitor.ButtonChanged -= VendorHidMonitor_ButtonChanged;
-            _vendorHidMonitor.Dispose();
-            _vendorHidMonitor = null;
-            return;
+            if (!device.IsConnected)
+                continue;
+
+            hidDevices[VendorHidId] = device;
+            return true;
         }
 
-        LogManager.LogInformation("Started OneXPlayer vendor HID listener");
+        return false;
     }
 
-    protected virtual void StopVendorHidListener()
+    private bool IsReading;
+
+    private async Task ReadVendorHidLoopAsync(HidDevice device)
     {
-        if (_vendorHidMonitor is null)
-            return;
+        try
+        {
+            while (IsReading)
+            {
+                HidReport report = await device.ReadReportAsync().ConfigureAwait(false);
+                if (report?.Data is null || report.Data.Length < 14)
+                    continue;
 
-        _vendorHidMonitor.ButtonChanged -= VendorHidMonitor_ButtonChanged;
-        _vendorHidMonitor.Dispose();
-        _vendorHidMonitor = null;
+                byte[] data = report.Data;
+                if (data[1] != FrameMarker || data[^2] != FrameMarker)
+                    continue;
+
+                if (data[0] == StatusCommandId)
+                {
+                    HandleStatusReport(data);
+                    continue;
+                }
+
+                if (data[0] != ButtonCommandId)
+                    continue;
+
+                byte buttonId = data[6];
+                if (buttonId >= _buttonStates.Length)
+                    continue;
+
+                bool pressed = data[12] == 0x01;
+                if (_buttonStates[buttonId] == pressed)
+                    continue;
+
+                _buttonStates[buttonId] = pressed;
+                HandleEvent(buttonId, pressed);
+            }
+        }
+        catch { }
     }
 
-    protected virtual void VendorHidMonitor_ButtonChanged(byte buttonId, bool pressed)
+    protected virtual void HandleStatusReport(byte[] report)
+    { }
+
+    protected virtual void HandleEvent(byte buttonId, bool pressed)
     {
         ButtonFlags button = MapVendorButton(buttonId);
         if (button == ButtonFlags.None)
@@ -521,6 +579,51 @@ public class OneXPlayerX1 : OneXAOKZOE
         else
             KeyRelease(button);
     }
+
+    protected void WriteVendorHidCommand(byte commandId, byte[] payload)
+    {
+        if (!hidDevices.TryGetValue(VendorHidId, out HidDevice? device))
+            return;
+
+        HidReport report = device.CreateReport();
+        report.ReportId = 0;
+        int count = Math.Min(payload.Length, report.Data.Length - 5);
+        report.Data[0] = commandId;
+        report.Data[1] = FrameMarker;
+        report.Data[2] = 0x01;
+        Array.Copy(payload, 0, report.Data, 3, count);
+        report.Data[^2] = FrameMarker;
+        report.Data[^1] = commandId;
+        device.WriteReport(report);
+    }
+
+    protected static byte[] BuildRemapPage1(byte preset) =>
+    [
+        0x02, 0x38, 0x20, 0x01, preset,
+        0x01, 0x01, 0x01, 0x00, 0x00, 0x00,
+        0x02, 0x01, 0x02, 0x00, 0x00, 0x00,
+        0x03, 0x01, 0x03, 0x00, 0x00, 0x00,
+        0x04, 0x01, 0x04, 0x00, 0x00, 0x00,
+        0x05, 0x01, 0x05, 0x00, 0x00, 0x00,
+        0x06, 0x01, 0x06, 0x00, 0x00, 0x00,
+        0x07, 0x01, 0x07, 0x00, 0x00, 0x00,
+        0x08, 0x01, 0x08, 0x00, 0x00, 0x00,
+        0x09, 0x01, 0x09, 0x00, 0x00, 0x00,
+    ];
+
+    protected static byte[] BuildRemapPage2(byte preset, byte m1KeyCode, byte m2KeyCode) =>
+    [
+        0x02, 0x38, 0x20, 0x02, preset,
+        0x0A, 0x01, 0x0A, 0x00, 0x00, 0x00,
+        0x0B, 0x01, 0x0B, 0x00, 0x00, 0x00,
+        0x0C, 0x01, 0x0C, 0x00, 0x00, 0x00,
+        0x0D, 0x01, 0x0D, 0x00, 0x00, 0x00,
+        0x0E, 0x01, 0x0E, 0x00, 0x00, 0x00,
+        0x0F, 0x01, 0x0F, 0x00, 0x00, 0x00,
+        0x10, 0x01, 0x10, 0x00, 0x00, 0x00,
+        0x22, 0x02, 0x01, m1KeyCode, 0x00, 0x00,
+        0x23, 0x02, 0x01, m2KeyCode, 0x00, 0x00,
+    ];
 
     protected virtual ButtonFlags MapVendorButton(byte buttonId)
     {

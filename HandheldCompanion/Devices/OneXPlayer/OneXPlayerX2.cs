@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
+using System.Threading.Tasks;
 using WindowsInput.Events;
 using YamlDotNet.Core.Tokens;
 using static HandheldCompanion.IGCL.IGCLBackend;
@@ -73,9 +74,8 @@ public class OneXPlayerX2 : OneXPlayerX1
             IntelEnduranceGamingPreset = (int)ctl_3d_endurance_gaming_mode_t.PERFORMANCE,
         });
 
-        VendorHidInitProfile = OxpHidInitProfile.X2;
-        vendorId = OneXPlayerOxpHidMonitor.VID;
-        productIds = [OneXPlayerOxpHidMonitor.PID, OneXPlayerOxpHidMonitor.PID_X2];
+        vendorId = 0x1A86;
+        productIds = [0xFE00, 0x1305];
 
         // Suppress both firmware chord variants; OEM1 is delivered over vendor HID.
         OEMChords.RemoveAll(c => c.state.Buttons.Contains(ButtonFlags.OEM1));
@@ -103,27 +103,19 @@ public class OneXPlayerX2 : OneXPlayerX1
         DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = false;
     }
 
+    protected override async void Device_Inserted(bool reScan = false)
+    {
+        if (reScan)
+            await WaitUntilReady();
+
+        base.Device_Inserted();
+        await Task.Delay(4000);
+        WriteVendorHidCommand(0xB2, [0x01, 0x1F, 0x40, 0x03, 0x02, 0x03, 0x00, 0x00, 0x00, 0x01]);
+    }
+
     public override XInputController? CreateController(PnPDetails details)
     {
         return new OneXPlayerX2Controller(details);
-    }
-
-    public override bool Open()
-    {
-        bool success = base.Open();
-        if (success)
-        {
-            try
-            {
-                StartVendorHidListener();
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogWarning("Failed to start X2 vendor HID listener: {0}", ex.Message);
-            }
-        }
-
-        return success;
     }
 
     protected override ButtonFlags MapVendorButton(byte buttonId)
@@ -170,7 +162,7 @@ public class OneXPlayerX2 : OneXPlayerX1
         }
     }
 
-    protected override void VendorHidMonitor_ButtonChanged(byte buttonId, bool pressed)
+    protected override void HandleEvent(byte buttonId, bool pressed)
     {
         ButtonFlags button = MapVendorButton(buttonId);
 
@@ -184,7 +176,7 @@ public class OneXPlayerX2 : OneXPlayerX1
                 return;
         }
 
-        base.VendorHidMonitor_ButtonChanged(buttonId, pressed);
+        base.HandleEvent(buttonId, pressed);
     }
 
     public override string GetGlyph(ButtonFlags button)

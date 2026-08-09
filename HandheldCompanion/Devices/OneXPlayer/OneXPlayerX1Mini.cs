@@ -1,6 +1,7 @@
 ﻿using HidLibrary;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Threading;
 using System.Windows.Media;
 using static HandheldCompanion.Utils.DeviceUtils;
 
@@ -8,7 +9,6 @@ namespace HandheldCompanion.Devices;
 
 public class OneXPlayerX1Mini : OneXPlayerX1
 {
-    protected HidDevice? hidDevice;
     protected const int PID_LED = 0xFE00;
 
     public OneXPlayerX1Mini()
@@ -40,13 +40,22 @@ public class OneXPlayerX1Mini : OneXPlayerX1
         {
             { PID_LED, new HidFilter(unchecked((short)0xFF00), unchecked(0x0001)) },
         };
-        VendorHidInitProfile = OxpHidInitProfile.X1Mini;
+    }
+
+    protected override async void Device_Inserted(bool reScan = false)
+    {
+        if (reScan)
+            await WaitUntilReady();
+
+        base.Device_Inserted();
+        Thread.Sleep(50);
+        WriteVendorHidCommand(VibrationCommandId, [0x01, 0x05, 0x05]);
     }
 
     public override bool IsReady()
     {
         // Early return if device is already bound and connected
-        if (hidDevice != null && hidDevice.IsConnected /* && hidDevice.IsOpen */)
+        if (hidDevices.TryGetValue(VendorHidId, out HidDevice? boundDevice) && boundDevice.IsConnected)
             return true;
 
         // Reuse the same pattern as OneXPlayerOneXFly to grab the LED HID device
@@ -63,11 +72,20 @@ public class OneXPlayerX1Mini : OneXPlayerX1
                 device.Capabilities.Usage != hidFilter.Usage)
                 continue;
 
-            hidDevice = device;
+            hidDevices[VendorHidId] = device;
             return true;
         }
 
         return false;
+    }
+
+    protected override void HandleStatusReport(byte[] report)
+    {
+        if (report[3] == 0xFE)
+        {
+            Device_Removed();
+            Device_Inserted();
+        }
     }
 
     public override bool SetLedColor(Color mainColor, Color secondaryColor, LEDLevel level, int speed = 100)
@@ -77,8 +95,8 @@ public class OneXPlayerX1Mini : OneXPlayerX1
 
         return level switch
         {
-            LEDLevel.SolidColor => SendV1SolidColor(hidDevice, mainColor, 0x00),
-            LEDLevel.Rainbow => SendV1Rainbow(hidDevice, 0x00),
+            LEDLevel.SolidColor => SendV1SolidColor(GetVendorHidDevice(), mainColor, 0x00),
+            LEDLevel.Rainbow => SendV1Rainbow(GetVendorHidDevice(), 0x00),
             _ => false
         };
     }
@@ -86,7 +104,12 @@ public class OneXPlayerX1Mini : OneXPlayerX1
     public override bool SetLedBrightness(int brightness)
     {
         // X1 Mini uses the HID v1 vendor protocol (cid 0xB8, "brightness" command)
-        return SendV1Brightness(hidDevice, brightness, 0x00);
+        return SendV1Brightness(GetVendorHidDevice(), brightness, 0x00);
+    }
+
+    private HidDevice? GetVendorHidDevice()
+    {
+        return hidDevices.GetValueOrDefault(VendorHidId);
     }
 
     public override bool IsBatteryProtectionSupported(int majorVersion, int minorVersion)

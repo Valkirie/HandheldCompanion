@@ -7,8 +7,10 @@ public class OneXPlayerX2MiniPro : OneXPlayerApex
 {
     public OneXPlayerX2MiniPro()
     {
+        // todo: ProductIllustration
+        // ProductIllustration = "device_onexplayer_apex";
         ProductModel = "ONEXPLAYER X2Mini PRO";
-        VendorHidInitProfile = OxpHidInitProfile.Apex;
+
         nTDP = new double[] { 15, 35, 54 };
         cTDP = new double[] { 15, 54 };
     }
