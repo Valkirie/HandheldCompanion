@@ -379,7 +379,7 @@ namespace HandheldCompanion.ViewModels
         private int _responseCurveDragIndex = -1;
         private const double Epsilon = 0.0001;
 
-        public Func<double, string> ResponseCurveAxisYFormatter { get; } = v => v.ToString("0.0");
+        public Func<double, string> ResponseCurveAxisYFormatter { get; } = v => Math.Round(v, 1).ToString("0.0");
 
         public event Action<double[]>? ResponseCurveUpdateRequested;
 
