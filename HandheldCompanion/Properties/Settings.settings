@@ -320,6 +320,9 @@
     <Setting Name="DisableMsiClawPS2Service" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="BlockMsiClawWinGHotkey" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
     <Setting Name="ConfigurableTDPMethod" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>

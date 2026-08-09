@@ -1184,7 +1184,25 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("DevicePage_BatteryOptions", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Block Win+G hotkey.
+        /// </summary>
+        public static string DevicePage_BlockMsiClawWinGHotkey {
+            get {
+                return ResourceManager.GetString("DevicePage_BlockMsiClawWinGHotkey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Prevent the MSI quick settings button from opening Windows Game Bar.
+        /// </summary>
+        public static string DevicePage_BlockMsiClawWinGHotkeyDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_BlockMsiClawWinGHotkeyDesc", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Core isolation.
         /// </summary>
