@@ -374,6 +374,15 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("Controller_Calibrate", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Ping.
+        /// </summary>
+        public static string Controller_Ping {
+            get {
+                return ResourceManager.GetString("Controller_Ping", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Connect.

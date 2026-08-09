@@ -24,4 +24,6 @@ public enum VirtualManagerStatus
     Retrying = 0,
     Connected = 1,
     Failed = 2,
+    Processing = 3,
+    Ready = 4,
 }

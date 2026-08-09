@@ -162,7 +162,7 @@
                                 <ui:FontIcon Glyph="&#xECF0;" />
                             </ui:SettingsCard.HeaderIcon>
 
-                            <ComboBox Name="cB_ServiceSwitch" SelectionChanged="cB_ServiceSwitch_SelectionChanged">
+                            <ComboBox Name="cB_ServiceSwitch" IsEnabled="{Binding VirtualControllerSettingsEnabled}" SelectionChanged="cB_ServiceSwitch_SelectionChanged">
                                 <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDstatus_Disconnected}" />
                                 <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDstatus_Connected}" />
                             </ComboBox>

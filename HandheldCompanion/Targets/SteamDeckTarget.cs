@@ -39,7 +39,7 @@ namespace HandheldCompanion.Targets
             data[0] = 0x01;
             data[1] = 0x00;
             data[2] = InputReportId;
-            data[3] = (byte)InputLength;
+            data[3] = (byte)InputPayloadLength;
 
             byte buttons8 = 0;
             if (inputs.ButtonState[ButtonFlags.B1]) buttons8 |= 0x80;

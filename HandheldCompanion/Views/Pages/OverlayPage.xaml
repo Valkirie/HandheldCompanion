@@ -381,12 +381,12 @@
                         <ui:SettingsCard.HeaderIcon>
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
                         </ui:SettingsCard.HeaderIcon>
-                        <DockPanel>
-                            <colorpicker:PortableColorPicker
-                                Name="ColorPicker"
-                                ColorChanged="StandardColorPicker_ColorChanged"
-                                Style="{StaticResource DefaultColorPickerStyle}" />
-                        </DockPanel>
+                        <colorpicker:PortableColorPicker
+                            Name="ColorPicker"
+                            Width="32"
+                            Height="31"
+                            ColorChanged="StandardColorPicker_ColorChanged"
+                            Style="{StaticResource DefaultColorPickerStyle}" />
                     </ui:SettingsCard>
 
                     <!--  AlwaysOnTop  -->

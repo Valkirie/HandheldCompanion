@@ -39,6 +39,7 @@ namespace HandheldCompanion.Managers
         public static HIDBackend HIDBackend = HIDBackend.ViGEM;
 
         private static readonly SemaphoreSlim controllerLock = new SemaphoreSlim(1, 1);
+        private static int controllerOperationCount;
 
         public static ushort VendorId = 0x45E;
         public static ushort ProductId = 0x28E;
@@ -522,34 +523,48 @@ namespace HandheldCompanion.Managers
 
         public static async Task SetControllerMode(HIDmode mode)
         {
-            if (!await controllerLock.WaitAsync(3000).ConfigureAwait(false))
-                return;
+            BeginControllerOperation();
 
             try
             {
-                SetControllerModeCore(mode);
+                await controllerLock.WaitAsync().ConfigureAwait(false);
+                await Task.Run(() => SetControllerModeCore(mode)).ConfigureAwait(false);
             }
             catch { }
             finally
             {
                 controllerLock.Release();
+                EndControllerOperation();
             }
         }
 
         public static async Task SetControllerStatus(HIDstatus status)
         {
-            if (!await controllerLock.WaitAsync(3000).ConfigureAwait(false))
-                return;
+            BeginControllerOperation();
 
             try
             {
-                SetControllerStatusCore(status);
+                await controllerLock.WaitAsync().ConfigureAwait(false);
+                await Task.Run(() => SetControllerStatusCore(status)).ConfigureAwait(false);
             }
             catch { }
             finally
             {
                 controllerLock.Release();
+                EndControllerOperation();
             }
+        }
+
+        private static void BeginControllerOperation()
+        {
+            if (Interlocked.Increment(ref controllerOperationCount) == 1)
+                StatusChanged?.Invoke(VirtualManagerStatus.Processing, 0, 0);
+        }
+
+        private static void EndControllerOperation()
+        {
+            if (Interlocked.Decrement(ref controllerOperationCount) == 0)
+                StatusChanged?.Invoke(VirtualManagerStatus.Ready, 0, 0);
         }
 
         private static void SetControllerModeCore(HIDmode mode)
@@ -574,44 +589,15 @@ namespace HandheldCompanion.Managers
             }
 
             // Create a new target based on the requested mode
-            switch (mode)
+            vTarget = CreateTarget(mode);
+
+            if (mode == HIDmode.NoController)
             {
-                case HIDmode.NoController:
-                    {
-                        HIDmode = mode;
-                        ControllerSelected?.Invoke(mode);
-                        NotifyMasterIntervalOverrideChanged();
-                        SetControllerStatusCore(HIDstatus);
-                    }
-                    return;
-
-                case HIDmode.DualShock4Controller:
-                    vTarget = HIDBackend == HIDBackend.ViGEM
-                        ? new ViDualShock4Target(0x054C, 0x05C4)
-                        : new DualShock4Target(0x054C, 0x05C4);
-                    break;
-
-                case HIDmode.DualSenseController:
-                    vTarget = new DualSenseTarget(0x054C, 0x0CE6); // DualSense wireless controller (PS5)
-                    break;
-
-                case HIDmode.SteamDeckController:
-                    vTarget = new SteamDeckTarget(0x28DE, 0x1205); // StemDeck Controller
-                    break;
-
-                case HIDmode.SteamController:
-                    vTarget = new SteamControllerTarget(0x28DE, 0x1102); // Valve Steam Controller (wired)
-                    break;
-
-                case HIDmode.SwitchProController:
-                    vTarget = new SwitchProTarget(0x057E, 0x2069); // Nintendo Switch Pro 2 Controller
-                    break;
-
-                case HIDmode.Xbox360Controller:
-                    vTarget = HIDBackend == HIDBackend.ViGEM
-                        ? new ViXbox360Target(VendorId, ProductId)
-                        : new Xbox360Target(VendorId, ProductId);
-                    break;
+                HIDmode = mode;
+                ControllerSelected?.Invoke(mode);
+                NotifyMasterIntervalOverrideChanged();
+                SetControllerStatusCore(HIDstatus);
+                return;
             }
 
             // If target creation failed, log an error (unless it's the NoController case)
@@ -631,10 +617,7 @@ namespace HandheldCompanion.Managers
                 return;
             }
 
-            vTarget.Connected += (t) => OnTargetConnected(t);
-            vTarget.Disconnected += (t) => OnTargetDisconnected(t);
-            vTarget.Vibrated += OnTargetVibrated;
-            vTarget.StatusChanged += (t, status, attempt, maxAttempts) => OnTargetConnectStatusChanged(t, status, attempt, maxAttempts);
+            AttachTargetHandlers(vTarget);
 
             // Update the current mode
             HIDmode = mode;
@@ -644,6 +627,28 @@ namespace HandheldCompanion.Managers
             NotifyMasterIntervalOverrideChanged();
 
             SetControllerStatusCore(HIDstatus);
+        }
+
+        private static VTarget? CreateTarget(HIDmode mode)
+        {
+            return mode switch
+            {
+                HIDmode.DualShock4Controller => HIDBackend == HIDBackend.ViGEM ? new ViDualShock4Target(0x054C, 0x05C4) : new DualShock4Target(0x054C, 0x05C4),
+                HIDmode.DualSenseController => new DualSenseTarget(0x054C, 0x0CE6),
+                HIDmode.SteamDeckController => new SteamDeckTarget(0x28DE, 0x1205),
+                HIDmode.SteamController => new SteamControllerTarget(0x28DE, 0x1102),
+                HIDmode.SwitchProController => new SwitchProTarget(0x057E, 0x2069),
+                HIDmode.Xbox360Controller => HIDBackend == HIDBackend.ViGEM ? new ViXbox360Target(VendorId, ProductId) : new Xbox360Target(VendorId, ProductId),
+                _ => null
+            };
+        }
+
+        private static void AttachTargetHandlers(VTarget target)
+        {
+            target.Connected += (t) => OnTargetConnected(t);
+            target.Disconnected += (t) => OnTargetDisconnected(t);
+            target.Vibrated += OnTargetVibrated;
+            target.StatusChanged += (t, status, attempt, maxAttempts) => OnTargetConnectStatusChanged(t, status, attempt, maxAttempts);
         }
 
         private static void SetControllerStatusCore(HIDstatus status)

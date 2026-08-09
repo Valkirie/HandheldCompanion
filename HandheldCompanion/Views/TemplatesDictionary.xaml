@@ -1062,7 +1062,6 @@
                         <ToggleButton
                             VerticalAlignment="Stretch"
                             Command="{Binding HideCommand}"
-                            FontSize="14"
                             IsChecked="{Binding IsHidden, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                             <ToggleButton.Style>
                                 <Style BasedOn="{StaticResource {x:Type ToggleButton}}" TargetType="ToggleButton">
@@ -1076,14 +1075,12 @@
                             </ToggleButton.Style>
                         </ToggleButton>
 
-                        <!--  Calibrate  -->
+                        <!--  Ping  -->
                         <Button
                             VerticalAlignment="Stretch"
-                            Command="{Binding CalibrateCommand}"
-                            Content="{l:Static resx:Resources.Controller_Calibrate}"
-                            FontSize="14"
-                            Style="{DynamicResource DefaultButtonStyle}"
-                            Visibility="{Binding CanCalibrate, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            Command="{Binding PingCommand}"
+                            Content="{l:Static resx:Resources.Controller_Ping}"
+                            Style="{DynamicResource DefaultButtonStyle}" />
 
                         <!--  Switch layout (WIP)  -->
                         <Button

@@ -10,10 +10,7 @@ namespace HandheldCompanion.Targets
 {
     public abstract class VIIPERTarget : VTarget
     {
-
-        protected ViiperService? viiperService;
-        protected uint deviceId;
-        protected uint? busId;
+        private HandheldCompanion.Managers.ViiperDeviceHandle? viiperDevice;
         private bool _disposed = false;
 
         public override int? MasterIntervalOverrideHz => null;
@@ -24,16 +21,10 @@ namespace HandheldCompanion.Targets
 
         protected override bool SendInput(byte[] data)
         {
-            if (!IsConnected || isDisconnecting || viiperService is null || !busId.HasValue || deviceId == 0)
+            if (!IsConnected || isDisconnecting || !viiperDevice.HasValue)
                 return false;
 
-            bool ok = viiperService.SetInput(busId.Value, deviceId, data);
-            if (!ok)
-            {
-                ViiperServerManager.InvalidateBusId(busId.Value);
-                HandleDisconnect();
-            }
-
+            bool ok = ViiperServerManager.SetInput(viiperDevice.Value, data);
             return ok;
         }
 
@@ -46,30 +37,23 @@ namespace HandheldCompanion.Targets
 
         protected virtual void HandleOutput(byte[] buffer)
         {
+            if (buffer.Length < 2)
+                return;
+
             SendVibrate(buffer[0], buffer[1]);
         }
 
         private void HandleOutput(uint callbackBusId, uint callbackDeviceId, byte[] buffer)
         {
-            if (!busId.HasValue || callbackBusId != busId.Value || callbackDeviceId != deviceId)
+            if (!viiperDevice.HasValue || callbackBusId != viiperDevice.Value.BusId || callbackDeviceId != viiperDevice.Value.DeviceId)
                 return;
 
             HandleOutput(buffer);
         }
 
-        private void HandleDisconnect()
-        {
-            if (isDisconnecting || !IsConnected)
-                return;
-
-            IsConnected = false;
-            RaiseDisconnected();
-            LogManager.LogInformation("{0} disconnected by VIIPER server", ToString());
-        }
-
         private void Close()
         {
-            viiperService?.FeedbackReceived -= HandleOutput;
+            ViiperServerManager.FeedbackReceived -= HandleOutput;
         }
 
         public override bool Connect()
@@ -87,29 +71,14 @@ namespace HandheldCompanion.Targets
                     return false;
                 }
 
-                viiperService = ViiperServerManager.Service;
-                if (viiperService is null)
-                    throw new InvalidOperationException("VIIPER service is not available.");
+                if (!CanUseViiperDevice)
+                    throw new InvalidOperationException("VIIPER device type is not configured.");
 
-                var bus = ViiperServerManager.GetOrCreateBusId();
-                uint currentBusId = bus.BusId;
-                busId = currentBusId;
-
-                var addedDevice = viiperService.AddDevice(currentBusId, DeviceType, vendorId, productId);
-                if (!addedDevice.Success)
-                {
-                    ViiperServerManager.InvalidateBusId(currentBusId);
-                    bus = ViiperServerManager.GetOrCreateBusId();
-                    currentBusId = bus.BusId;
-                    busId = currentBusId;
-                    addedDevice = viiperService.AddDevice(currentBusId, DeviceType, vendorId, productId);
-                }
-
-                if (!addedDevice.Success)
+                if (!ViiperServerManager.TryCreateDevice(DeviceType, vendorId, productId, out var handle))
                     throw new InvalidOperationException("VIIPER device creation failed.");
 
-                deviceId = addedDevice.DeviceId;
-                viiperService.FeedbackReceived += HandleOutput;
+                viiperDevice = handle;
+                ViiperServerManager.FeedbackReceived += HandleOutput;
 
                 IsConnected = true;
                 RaiseConnected();
@@ -129,13 +98,15 @@ namespace HandheldCompanion.Targets
 
         public override bool Disconnect()
         {
-            if (!IsConnected && deviceId == 0)
+            if (!IsConnected && !viiperDevice.HasValue)
                 return false;
 
+            bool wasConnected = IsConnected;
             isDisconnecting = true;
             Cleanup();
             IsConnected = false;
-            RaiseDisconnected();
+            if (wasConnected)
+                RaiseDisconnected();
             LogManager.LogInformation("{0} disconnected", ToString());
             return true;
         }
@@ -147,17 +118,32 @@ namespace HandheldCompanion.Targets
 
             try
             {
-                if (viiperService is not null && busId.HasValue && deviceId != 0)
-                    success = viiperService.RemoveDevice(busId.Value, deviceId);
+                if (viiperDevice.HasValue)
+                    success = ViiperServerManager.RemoveDevice(viiperDevice.Value);
 
-                deviceId = 0;
-                busId = null;
-                viiperService = null;
+                viiperDevice = null;
                 isDisconnecting = false;
             }
             catch { }
 
             return success;
+        }
+
+        internal bool TrySwitchDeviceType(VIIPERTarget replacement)
+        {
+            if (!viiperDevice.HasValue || !IsConnected)
+                return false;
+
+            if (!ViiperServerManager.TrySwitchDeviceType(viiperDevice.Value, replacement.DeviceType, replacement.vendorId, replacement.productId, out var handle))
+                return false;
+
+            Close();
+            viiperDevice = null;
+            IsConnected = false;
+            replacement.viiperDevice = handle;
+            replacement.IsConnected = true;
+            ViiperServerManager.FeedbackReceived += replacement.HandleOutput;
+            return true;
         }
 
         public override void UpdateInputs(ControllerState inputs, GamepadMotion gamepadMotion)

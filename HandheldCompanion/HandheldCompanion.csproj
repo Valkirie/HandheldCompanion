@@ -11,7 +11,7 @@
 		<StartupObject>HandheldCompanion.App</StartupObject>
 		<OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
 		<ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-		<Version>1.0.1.0</Version>
+		<Version>1.0.2.0</Version>
 		<Platforms>x64</Platforms>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
@@ -233,8 +233,8 @@
 		<PackageReference Include="NAudio" Version="2.3.0" />
 		<PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
 		<PackageReference Include="Nefarius.Drivers.HidHide" Version="3.4.0" />
-		<PackageReference Include="Nefarius.Utilities.Bluetooth" Version="1.8.2" />
-		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="5.2.0" />
+		<PackageReference Include="Nefarius.Utilities.Bluetooth" Version="1.9.1" />
+		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="6.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 		<PackageReference Include="NJsonSchema.Annotations" Version="11.6.1" />
 		<PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
@@ -243,7 +243,7 @@
 		<PackageReference Include="protobuf-net" Version="3.2.56" />
 		<PackageReference Include="protobuf-net.Core" Version="3.3.0-g6785ecbb35" />
 		<PackageReference Include="RAMSPDToolkit-NDD" Version="1.6.0" />
-		<PackageReference Include="SDL3-CS" Version="3.4.12.4" />
+		<PackageReference Include="SDL3-CS" Version="3.4.14" />
 		<PackageReference Include="Sentry" Version="6.8.0" />
 		<PackageReference Include="SharpDX" Version="4.2.0" />
 		<PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />

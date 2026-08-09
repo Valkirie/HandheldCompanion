@@ -48,7 +48,7 @@ namespace HandheldCompanion.Targets
         // Divide gyro by 3 so the integrated sum over 3 frames equals the intended single-frame value.
         private const float GyroFrameDivider = 3.0f;
 
-        private const int InputStateSize = 24; // ns2pro InputWireSize
+        private const int InputStateSize = 27; // ns2pro InputWireSize
         protected override int InputLength => InputStateSize;
 
         protected override string DeviceType => "ns2pro";

@@ -329,8 +329,14 @@ public class DeviceManager : IManager
                 // update root
                 root = PnPDevice.GetDeviceByInstanceId(rootId);
 
-                string? Name = root.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc);
-                if (!string.IsNullOrEmpty(Name) && Name.Contains(@"USB Hub", StringComparison.InvariantCultureIgnoreCase))
+                // break if device desc is "USB Hub"
+                string? rootDesc = root.GetProperty<string>(DevicePropertyKey.Device_BusReportedDeviceDesc);
+                if (!string.IsNullOrEmpty(rootDesc) && rootDesc.Contains("USB Hub", StringComparison.InvariantCultureIgnoreCase))
+                    break;
+
+                // break if friendly name is "USB Hub"
+                string? rootFriendlyName = root.GetProperty<string>(DevicePropertyKey.DeviceInterface_FriendlyName);
+                if (!string.IsNullOrEmpty(rootFriendlyName) && rootFriendlyName.Contains("USB Hub", StringComparison.InvariantCultureIgnoreCase))
                     break;
 
                 // update parent InstanceId
@@ -342,12 +348,20 @@ public class DeviceManager : IManager
             bool IsDisableable = Device_DevNodeStatus.HasFlag(DeviceStatus.DN_DISABLEABLE);
             bool IsRemovable = Device_DevNodeStatus.HasFlag(DeviceStatus.DN_REMOVABLE);
 
+            // get name
+            string DeviceDesc = usbDevice.GetProperty<string>(DevicePropertyKey.Device_BusReportedDeviceDesc) ?? string.Empty;
+            string FriendlyName = usbDevice.GetProperty<string>(DevicePropertyKey.DeviceContainer_FriendlyName) ?? string.Empty;
+            string DriverDesc = usbDevice.GetProperty<string>(DevicePropertyKey.Device_DriverDesc) ?? string.Empty;
+
+            string hidDeviceDesc = hidDevice.GetProperty<string>(DevicePropertyKey.Device_BusReportedDeviceDesc) ?? string.Empty;
+            string hidFriendlyName = hidDevice.GetProperty<string>(DevicePropertyKey.DeviceContainer_FriendlyName) ?? string.Empty;
+
             // get details
             PnPDetails details = new PnPDetails
             {
                 devicePath = path,
                 SymLink = SymLinkToInstanceId(path, DeviceInterfaceIds.HidDevice.ToString()),
-                Name = usbDevice.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc) ?? string.Empty,
+                Name = DriverDesc ?? DeviceDesc ?? FriendlyName ?? string.Empty,
                 EnumeratorName = usbDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName) ?? string.Empty,
                 deviceInstanceId = hidDevice.InstanceId.ToUpper(),
                 baseContainerDeviceInstanceId = usbDevice.InstanceId.ToUpper(),
@@ -358,16 +372,6 @@ public class DeviceManager : IManager
                 isXInput = hidDevice.InstanceId.Contains("IG_", StringComparison.InvariantCultureIgnoreCase),
             };
             details.isExternal = IsDisableable || IsRemovable || details.isBluetooth;
-
-            // get name
-            string DeviceDesc = usbDevice.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc) ?? string.Empty;
-            string FriendlyName = usbDevice.GetProperty<string>(DevicePropertyKey.Device_FriendlyName) ?? string.Empty;
-
-            if (!string.IsNullOrEmpty(FriendlyName))
-                details.Name = FriendlyName;
-            else if (!string.IsNullOrEmpty(DeviceDesc))
-                details.Name = DeviceDesc;
-
             // one more check
             details.isXInput |= details.Name.Contains("XINPUT", StringComparison.InvariantCultureIgnoreCase);
 

@@ -90,7 +90,7 @@ namespace HandheldCompanion.ViewModels
 
         public ICommand ConnectCommand { get; private set; } = null!;
         public ICommand HideCommand { get; private set; } = null!;
-        public ICommand CalibrateCommand { get; private set; } = null!;
+        public ICommand PingCommand { get; private set; } = null!;
         public ICommand SwitchLayoutCommand { get; private set; } = null!;
 
         public ControllerViewModel() { }
@@ -125,10 +125,7 @@ namespace HandheldCompanion.ViewModels
                 });
             });
 
-            CalibrateCommand = new DelegateCommand(async () =>
-            {
-                Controller?.Calibrate();
-            });
+            PingCommand = new DelegateCommand(() => Controller?.Rumble(250, 64, 64));
 
             SwitchLayoutCommand = new DelegateCommand(async () =>
             {

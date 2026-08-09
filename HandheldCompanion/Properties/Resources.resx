@@ -3252,6 +3252,9 @@ Thank you for using HC and helping us make it better.</value>
   <data name="Controller_Calibrate" xml:space="preserve">
     <value>Calibrate</value>
   </data>
+  <data name="Controller_Ping" xml:space="preserve">
+    <value>Ping</value>
+  </data>
   <data name="DevicePage_BatteryOptions" xml:space="preserve">
     <value>Battery options</value>
   </data>

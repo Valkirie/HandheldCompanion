@@ -96,7 +96,6 @@ namespace HandheldCompanion.Targets
             catch (Exception ex)
             {
                 LogManager.LogError("Failed to send input to ViGEM device: {0}", ex.Message);
-                HandleDisconnect();
                 return false;
             }
         }
@@ -107,16 +106,6 @@ namespace HandheldCompanion.Targets
         }
 
         protected abstract void UpdateVirtualController(IVirtualGamepad controller, byte[] reportData);
-
-        private void HandleDisconnect()
-        {
-            if (isDisconnecting || !IsConnected)
-                return;
-
-            IsConnected = false;
-            RaiseDisconnected();
-            LogManager.LogInformation("{0} disconnected by ViGEM", ToString());
-        }
 
         public override void Dispose()
         {
