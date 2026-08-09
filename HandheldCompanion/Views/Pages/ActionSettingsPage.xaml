@@ -2,6 +2,7 @@
     x:Class="HandheldCompanion.Views.Pages.ActionSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:actions="clr-namespace:HandheldCompanion.Actions"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
@@ -27,15 +28,19 @@
                 <!--  Target Type  -->
                 <ui:SettingsCard Name="ActionTypeCard" Header="Output type">
                     <ComboBox MinWidth="120" SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="True" />
-                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="True" />
-                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Joystick}" IsEnabled="True" />
-                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Keyboard}" IsEnabled="True" />
-                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Mouse}" IsEnabled="True" />
-                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="True" />
-                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="True" />
-                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="True" />
-                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Touchpad}" IsEnabled="True" Visibility="{Binding TouchpadActionTypeVisibility, Mode=OneWay}" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Disabled}}" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Button}}" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Joystick}" IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Joystick}}" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Keyboard}" IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Keyboard}}" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Mouse}" IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Mouse}}" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Trigger}}" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Shift}}" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Inherit}}" />
+                        <ComboBoxItem
+                            Content="{x:Static resx:Resources.LayoutPage_ActionType_Touchpad}"
+                            IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Touchpad}}"
+                            Visibility="{Binding TouchpadActionTypeVisibility, Mode=OneWay}">
+                        </ComboBoxItem>
                     </ComboBox>
                 </ui:SettingsCard>
 
@@ -126,27 +131,25 @@
                 <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_HapticFeedback}" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6|8}">
                     <StackPanel>
                         <DockPanel Margin="0,0,0,6" Visibility="{Binding TrackpadClickHapticOverrideVisibility, Mode=OneWay}">
-                            <ui:ToggleSwitch
-                                DockPanel.Dock="Right"
-                                IsOn="{Binding UseGlobalTrackpadClickHaptics, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ui:ToggleSwitch DockPanel.Dock="Right" IsOn="{Binding UseGlobalTrackpadClickHaptics, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.LayoutPage_UseGlobalTrackpadClickHaptics}" />
                         </DockPanel>
-                    <DockPanel IsEnabled="{Binding HapticControlsEnabled, Mode=OneWay}">
-                        <ComboBox Width="105" SelectedIndex="{Binding HapticModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="Off" />
-                            <ComboBoxItem Content="Down" />
-                            <ComboBoxItem Content="Up" />
-                            <ComboBoxItem Content="Both" />
-                        </ComboBox>
-                        <ComboBox
-                            Width="105"
-                            Margin="3,0,0,0"
-                            SelectedIndex="{Binding HapticStrengthIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="Low" />
-                            <ComboBoxItem Content="Medium" />
-                            <ComboBoxItem Content="High" />
-                        </ComboBox>
-                    </DockPanel>
+                        <DockPanel IsEnabled="{Binding HapticControlsEnabled, Mode=OneWay}">
+                            <ComboBox Width="105" SelectedIndex="{Binding HapticModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBoxItem Content="Off" />
+                                <ComboBoxItem Content="Down" />
+                                <ComboBoxItem Content="Up" />
+                                <ComboBoxItem Content="Both" />
+                            </ComboBox>
+                            <ComboBox
+                                Width="105"
+                                Margin="3,0,0,0"
+                                SelectedIndex="{Binding HapticStrengthIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBoxItem Content="Low" />
+                                <ComboBoxItem Content="Medium" />
+                                <ComboBoxItem Content="High" />
+                            </ComboBox>
+                        </DockPanel>
                     </StackPanel>
                 </ui:SettingsCard>
             </ikw:SimpleStackPanel>
@@ -156,34 +159,81 @@
         <ikw:SimpleStackPanel Spacing="8" Visibility="{Binding TouchpadSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.LayoutPage_TouchpadSettings}" />
             <ikw:SimpleStackPanel Spacing="3">
-                <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_TouchpadStartPosition}" Description="{Binding TouchpadCoordinateRangeDescription, Mode=OneWay}">
+                <ui:SettingsCard Description="{Binding TouchpadCoordinateRangeDescription, Mode=OneWay}" Header="{x:Static resx:Resources.LayoutPage_TouchpadStartPosition}">
                     <StackPanel>
                         <DockPanel>
-                            <TextBlock Width="72" VerticalAlignment="Center" Text="{Binding TouchpadX, Mode=OneWay, StringFormat={}X: {0}}" />
-                            <Slider Width="240" Minimum="0" Maximum="{Binding TouchpadMaxX, Mode=OneWay}" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" Value="{Binding TouchpadX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock
+                                Width="72"
+                                VerticalAlignment="Center"
+                                Text="{Binding TouchpadX, Mode=OneWay, StringFormat={}X: {0}}" />
+                            <Slider
+                                Width="240"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="{Binding TouchpadMaxX, Mode=OneWay}"
+                                Minimum="0"
+                                TickFrequency="1"
+                                Value="{Binding TouchpadX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
                         <DockPanel Margin="0,6,0,0">
-                            <TextBlock Width="72" VerticalAlignment="Center" Text="{Binding TouchpadY, Mode=OneWay, StringFormat={}Y: {0}}" />
-                            <Slider Width="240" Minimum="0" Maximum="{Binding TouchpadMaxY, Mode=OneWay}" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" Value="{Binding TouchpadY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock
+                                Width="72"
+                                VerticalAlignment="Center"
+                                Text="{Binding TouchpadY, Mode=OneWay, StringFormat={}Y: {0}}" />
+                            <Slider
+                                Width="240"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="{Binding TouchpadMaxY, Mode=OneWay}"
+                                Minimum="0"
+                                TickFrequency="1"
+                                Value="{Binding TouchpadY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
                     </StackPanel>
                 </ui:SettingsCard>
                 <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_TouchpadEndPosition}" Visibility="{Binding TouchpadSwipeSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                     <StackPanel>
                         <DockPanel>
-                            <TextBlock Width="72" VerticalAlignment="Center" Text="{Binding TouchpadEndX, Mode=OneWay, StringFormat={}X: {0}}" />
-                            <Slider Width="240" Minimum="0" Maximum="{Binding TouchpadMaxX, Mode=OneWay}" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" Value="{Binding TouchpadEndX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock
+                                Width="72"
+                                VerticalAlignment="Center"
+                                Text="{Binding TouchpadEndX, Mode=OneWay, StringFormat={}X: {0}}" />
+                            <Slider
+                                Width="240"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="{Binding TouchpadMaxX, Mode=OneWay}"
+                                Minimum="0"
+                                TickFrequency="1"
+                                Value="{Binding TouchpadEndX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
                         <DockPanel Margin="0,6,0,0">
-                            <TextBlock Width="72" VerticalAlignment="Center" Text="{Binding TouchpadEndY, Mode=OneWay, StringFormat={}Y: {0}}" />
-                            <Slider Width="240" Minimum="0" Maximum="{Binding TouchpadMaxY, Mode=OneWay}" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" Value="{Binding TouchpadEndY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock
+                                Width="72"
+                                VerticalAlignment="Center"
+                                Text="{Binding TouchpadEndY, Mode=OneWay, StringFormat={}Y: {0}}" />
+                            <Slider
+                                Width="240"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="{Binding TouchpadMaxY, Mode=OneWay}"
+                                Minimum="0"
+                                TickFrequency="1"
+                                Value="{Binding TouchpadEndY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
                     </StackPanel>
                 </ui:SettingsCard>
                 <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_TouchpadSwipeDuration}" Visibility="{Binding TouchpadSwipeSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                     <DockPanel>
                         <TextBox IsReadOnly="True" Text="{Binding TouchpadSwipeDuration, Mode=OneWay, StringFormat={}{0:N0} ms}" />
-                        <Slider Width="220" Margin="6,0,0,0" Minimum="16" Maximum="{Binding TouchpadMaxDuration, Mode=OneWay}" TickFrequency="16" IsSnapToTickEnabled="True" Value="{Binding TouchpadSwipeDuration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <Slider
+                            Width="220"
+                            Margin="6,0,0,0"
+                            IsSnapToTickEnabled="True"
+                            Maximum="{Binding TouchpadMaxDuration, Mode=OneWay}"
+                            Minimum="16"
+                            TickFrequency="16"
+                            Value="{Binding TouchpadSwipeDuration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
                 </ui:SettingsCard>
             </ikw:SimpleStackPanel>

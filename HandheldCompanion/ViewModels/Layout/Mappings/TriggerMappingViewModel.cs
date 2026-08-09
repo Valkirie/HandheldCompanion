@@ -16,6 +16,18 @@ namespace HandheldCompanion.ViewModels
 {
     public class TriggerMappingViewModel : MappingViewModel
     {
+        public override ActionType[] SupportedActionTypes =>
+        [
+            ActionType.Disabled,
+            ActionType.Button,
+            ActionType.Keyboard,
+            ActionType.Mouse,
+            ActionType.Trigger,
+            ActionType.Shift,
+            ActionType.Inherit,
+            ActionType.Touchpad
+        ];
+
         private static readonly HashSet<MouseActionsType> _unsupportedMouseActionTypes =
         [
             MouseActionsType.Move,

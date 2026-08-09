@@ -15,6 +15,15 @@ namespace HandheldCompanion.ViewModels
 {
     public class GyroMappingViewModel : MappingViewModel
     {
+        public override ActionType[] SupportedActionTypes =>
+        [
+            ActionType.Disabled,
+            ActionType.Joystick,
+            ActionType.Mouse,
+            ActionType.Touchpad,
+            ActionType.Inherit
+        ];
+
         private static readonly HashSet<MouseActionsType> _unsupportedMouseActionTypes =
         [
             MouseActionsType.LeftButton,

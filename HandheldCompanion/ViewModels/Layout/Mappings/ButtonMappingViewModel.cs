@@ -17,6 +17,19 @@ namespace HandheldCompanion.ViewModels
 {
     public class ButtonMappingViewModel : MappingViewModel
     {
+        public override ActionType[] SupportedActionTypes =>
+        [
+            ActionType.Disabled,
+            ActionType.Button,
+            ActionType.Joystick,
+            ActionType.Keyboard,
+            ActionType.Mouse,
+            ActionType.Trigger,
+            ActionType.Shift,
+            ActionType.Inherit,
+            ActionType.Touchpad
+        ];
+
         private static HashSet<MouseActionsType> _unsupportedMouseActionTypes =
         [
             MouseActionsType.Move,

@@ -20,6 +20,16 @@ namespace HandheldCompanion.ViewModels
 {
     public class AxisMappingViewModel : MappingViewModel
     {
+        public override ActionType[] SupportedActionTypes =>
+        [
+            ActionType.Disabled,
+            ActionType.Button,
+            ActionType.Joystick,
+            ActionType.Keyboard,
+            ActionType.Mouse,
+            ActionType.Touchpad
+        ];
+
         #region Axis Action Properties
 
         #region Axis2Button

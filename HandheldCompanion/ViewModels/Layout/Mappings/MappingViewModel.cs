@@ -44,9 +44,12 @@ namespace HandheldCompanion.ViewModels
                 {
                     ActionTypeChanged((ActionType)value);
                     OnPropertyChanged(nameof(ActionTypeIndex));
+                    OnPropertyChanged(nameof(SupportedActionTypes));
                 }
             }
         }
+
+        public virtual ActionType[] SupportedActionTypes => [ActionType.Disabled];
 
         public string ActionTypeName => ((ActionType)ActionTypeIndex).ToString();
 
@@ -463,7 +466,7 @@ namespace HandheldCompanion.ViewModels
             get
             {
                 ActionType currentActionType = (ActionType)ActionTypeIndex;
-                if (currentActionType == ActionType.Touchpad && Button2AxisVisibility == Visibility.Visible)
+                if (currentActionType == ActionType.Touchpad || currentActionType == ActionType.Button || currentActionType == ActionType.Keyboard || currentActionType == ActionType.Mouse)
                     return Visibility.Visible;
 
                 if (currentActionType != ActionType.Joystick)
