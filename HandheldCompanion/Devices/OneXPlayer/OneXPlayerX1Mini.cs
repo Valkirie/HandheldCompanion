@@ -84,7 +84,7 @@ public class OneXPlayerX1Mini : OneXPlayerX1
         if (report[3] == 0xFE)
         {
             Device_Removed();
-            Device_Inserted();
+            Device_Inserted(true);
         }
     }
 
