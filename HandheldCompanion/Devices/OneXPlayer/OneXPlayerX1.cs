@@ -481,6 +481,12 @@ public class OneXPlayerX1 : OneXAOKZOE
     protected override void Device_Removed()
     {
         IsReading = false;
+
+        // release pressed vendor buttons before clearing their state
+        for (byte buttonId = 0; buttonId < _buttonStates.Length; buttonId++)
+            if (_buttonStates[buttonId])
+                HandleEvent(buttonId, false);
+
         Array.Clear(_buttonStates);
 
         if (hidDevices.Remove(VendorHidId, out HidDevice? device))
