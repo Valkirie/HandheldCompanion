@@ -342,6 +342,7 @@ namespace HandheldCompanion.ViewModels
         // Axis Direction and Threshold should only be visible for Axis mappings converting to Button
         public virtual Visibility AxisDirectionVisibility => Visibility.Collapsed;
         public virtual Visibility AxisThresholdVisibility => Visibility.Collapsed;
+        public virtual Visibility Trigger2ButtonVisibility => Visibility.Collapsed;
 
         public Visibility TouchpadActionTypeVisibility
         {
@@ -772,6 +773,8 @@ namespace HandheldCompanion.ViewModels
                     base.OnPropertyChanged(nameof(InputShiftDisplayName));
                     base.OnPropertyChanged(nameof(TouchpadActionTypeVisibility));
                     base.OnPropertyChanged(nameof(TouchpadAxisActionTypeVisibility));
+                    base.OnPropertyChanged(nameof(Axis2ButtonVisibility));
+                    base.OnPropertyChanged(nameof(Trigger2ButtonVisibility));
                     break;
             }
 

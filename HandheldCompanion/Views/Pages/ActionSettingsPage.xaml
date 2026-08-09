@@ -39,8 +39,7 @@
                         <ComboBoxItem
                             Content="{x:Static resx:Resources.LayoutPage_ActionType_Touchpad}"
                             IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Touchpad}}"
-                            Visibility="{Binding TouchpadActionTypeVisibility, Mode=OneWay}">
-                        </ComboBoxItem>
+                            Visibility="{Binding TouchpadActionTypeVisibility, Mode=OneWay}" />
                     </ComboBox>
                 </ui:SettingsCard>
 
@@ -399,7 +398,7 @@
 
                 <!--  Axis Direction  -->
                 <ui:SettingsCard Header="Axis direction" Visibility="{Binding AxisDirectionVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
-                    <StackPanel>
+                    <StackPanel Visibility="{Binding IsAxisMapping, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <WrapPanel Orientation="Horizontal">
                             <CheckBox Content="Up" IsChecked="{Binding IsUp, Mode=TwoWay}" />
                             <CheckBox Content="Down" IsChecked="{Binding IsDown, Mode=TwoWay}" />
@@ -429,6 +428,30 @@
                             Minimum="1000"
                             SmallChange="1000"
                             TickFrequency="2000"
+                            TickPlacement="BottomRight"
+                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                            Value="{Binding Axis2ButtonThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                </ui:SettingsCard>
+
+                <!--  Trigger Threshold  -->
+                <ui:SettingsCard Header="Trigger threshold" Visibility="{Binding Trigger2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                    <DockPanel>
+                        <TextBox
+                            HorizontalContentAlignment="Center"
+                            IsReadOnly="True"
+                            Text="{Binding Axis2ButtonThreshold, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" />
+
+                        <Slider
+                            Width="200"
+                            Margin="3,0,0,0"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            LargeChange="32"
+                            Maximum="255"
+                            Minimum="16"
+                            SmallChange="1"
+                            TickFrequency="16"
                             TickPlacement="BottomRight"
                             ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                             Value="{Binding Axis2ButtonThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

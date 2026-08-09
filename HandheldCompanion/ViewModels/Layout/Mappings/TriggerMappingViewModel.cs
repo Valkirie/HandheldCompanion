@@ -35,6 +35,7 @@ namespace HandheldCompanion.ViewModels
         ];
 
         public override bool IsTriggerMapping => true;
+        public override Visibility Trigger2ButtonVisibility => Axis2ButtonVisibility;
         public override Visibility TouchpadSettingsVisibility =>
             ActionTypeIndex == (int)ActionType.Touchpad &&
             Action is TouchpadActions { TargetType: TouchpadTargetType.Button } touchpadAction &&
@@ -341,6 +342,7 @@ namespace HandheldCompanion.ViewModels
             {
                 case "SelectedTarget":
                 case "ActionTypeIndex":
+                    OnPropertyChanged(nameof(Trigger2ButtonVisibility));
                     OnPropertyChanged(nameof(TriggerDeadzoneVisibility));
                     OnPropertyChanged(nameof(TriggerSettingsSectionVisibility));
                     OnPropertyChanged(nameof(GeneralActionVisibility));
