@@ -74,6 +74,8 @@ public class OneXPlayerX2 : OneXPlayerX1
         });
 
         VendorHidInitProfile = OxpHidInitProfile.X2;
+        vendorId = OneXPlayerOxpHidMonitor.VID;
+        productIds = [OneXPlayerOxpHidMonitor.PID, OneXPlayerOxpHidMonitor.PID_X2];
 
         // Suppress both firmware chord variants; OEM1 is delivered over vendor HID.
         OEMChords.RemoveAll(c => c.state.Buttons.Contains(ButtonFlags.OEM1));
@@ -99,6 +101,11 @@ public class OneXPlayerX2 : OneXPlayerX1
 
         // X2 OEM2 is remappable and has no default keyboard action.
         DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = false;
+    }
+
+    public override XInputController? CreateController(PnPDetails details)
+    {
+        return new OneXPlayerX2Controller(details);
     }
 
     public override bool Open()
@@ -146,10 +153,12 @@ public class OneXPlayerX2 : OneXPlayerX1
                 byte value = enabled ? (byte)(currentValue | TurboTakeoverMask) : (byte)(currentValue & ~TurboTakeoverMask);
 
                 ec.WriteByte(TurboTakeoverRegister, value);
-                Thread.Sleep(50);
-                byte actualValue = ec.ReadByte(TurboTakeoverRegister);
 
-                if (ec.ReadByte(0xEB) == value)
+                // wait a bit for the EC to process the change
+                Thread.Sleep(50);
+
+                byte actualValue = ec.ReadByte(TurboTakeoverRegister);
+                if (actualValue == value)
                     LogManager.LogInformation("{0} {1} OEM button through X2 WMI EC interface", enabled ? "Unlocked" : "Locked", ButtonFlags.OEM1);
                 else
                     LogManager.LogWarning("Failed to {0} OEM button through X2 WMI EC interface (expected 0x{1:X2}, actual 0x{2:X2})", enabled ? "unlock" : "lock", value, actualValue);

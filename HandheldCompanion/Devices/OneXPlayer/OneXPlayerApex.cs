@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices.OneXPlayer
@@ -84,6 +87,24 @@ namespace HandheldCompanion.Devices.OneXPlayer
             DeviceHotkeys[typeof(MainWindowCommands)].InputsChordType = InputsChordType.Click;
             DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
             DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
+        }
+
+        public override bool Open()
+        {
+            bool success = base.Open();
+            if (success)
+            {
+                try
+                {
+                    StartVendorHidListener();
+                }
+                catch (Exception ex)
+                {
+                    LogManager.LogWarning("Failed to start Apex vendor HID listener: {0}", ex.Message);
+                }
+            }
+
+            return success;
         }
 
         protected override ButtonFlags MapVendorButton(byte buttonId)

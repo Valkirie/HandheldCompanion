@@ -35,6 +35,7 @@ internal sealed class OneXPlayerOxpHidMonitor : IDisposable
     // Actual input-report length of the opened interface. X1 = 64; X2's FE00 MI_02 = 65
     // (numbered report / leading report-ID byte), so it must not be hardcoded.
     private int _reportLength = InputReportLength;
+    private int _outputReportLength = InputReportLength;
     private readonly bool[] _buttonStates = new bool[0x25];
     private CancellationTokenSource? _cancellationTokenSource;
     private Task? _readTask;
@@ -78,21 +79,28 @@ internal sealed class OneXPlayerOxpHidMonitor : IDisposable
                 {
                     // Open with the interface's ACTUAL report length (X2 MI_02 is 65, not 64);
                     // otherwise OpenDevice() rejects it on its report-length check.
-                    ushort openLen;
-                    try { openLen = HidDevice.GetInputReportByteLength(hidDeviceInfo.Path); }
-                    catch { openLen = 0; }
-                    if (openLen == 0)
-                        openLen = InputReportLength;
+                    ushort inputReportLength;
+                    try { inputReportLength = HidDevice.GetInputReportByteLength(hidDeviceInfo.Path); }
+                    catch { inputReportLength = 0; }
+                    if (inputReportLength == 0)
+                        inputReportLength = InputReportLength;
+
+                    ushort outputReportLength;
+                    try { outputReportLength = HidDevice.GetOutputReportByteLength(hidDeviceInfo.Path); }
+                    catch { outputReportLength = 0; }
+                    if (outputReportLength == 0)
+                        outputReportLength = inputReportLength;
 
                     try
                     {
-                        HidDevice candidate = new(vid, pid, openLen, -1, hidDeviceInfo.Path);
+                        HidDevice candidate = new(vid, pid, inputReportLength, -1, hidDeviceInfo.Path, outputReportLength);
                         // The constructor does NOT open the device; OpenDevice() opens the handle.
                         if (candidate.OpenDevice(hidDeviceInfo.Path))
                         {
                             _hidDevice = candidate;
                             _initProfile = initProfile;
-                            _reportLength = openLen;
+                            _reportLength = inputReportLength;
+                            _outputReportLength = outputReportLength;
 
                             LogManager.LogInformation("Opened OneXPlayer vendor interface VID=0x{0:X4} PID=0x{1:X4} MI_{2:X2}", vid, pid, InterfaceNumber);
 
@@ -300,11 +308,11 @@ internal sealed class OneXPlayerOxpHidMonitor : IDisposable
         _hidDevice?.Write(BuildCommand(commandId, payload));
     }
 
-    // Report-length aware: X1 builds a 64-byte command (markers at 62/63); the X2's report is
-    // 65 bytes, so the trailing markers must sit at 63/64 or the firmware rejects the command.
+    // Report-length aware: the trailing markers must use the output report's final bytes or the
+    // firmware rejects the command when input and output report lengths differ.
     private byte[] BuildCommand(byte commandId, byte[] payload, byte index = 0x01)
     {
-        int length = _reportLength;
+        int length = _outputReportLength;
         byte[] command = new byte[length];
         command[0] = commandId;
         command[1] = FrameMarker;

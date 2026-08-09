@@ -8,7 +8,7 @@ namespace hidapi
 {
     public class HidDevice : IDisposable
     {
-        private ushort _vid, _pid, _inputBufferLen;
+        private ushort _vid, _pid, _inputBufferLen, _outputBufferLen;
         private byte[] _buffer;
         private byte[] _writeBuffer;
         private byte[] _readReturnBuffer;
@@ -25,19 +25,54 @@ namespace hidapi
         public bool Reading => _reading;
         public ushort ReleaseNumber => _releaseNumber;
         public string DevicePath => _devicePath;
+        public ushort OutputBufferLength => _outputBufferLen;
         public Action<HidDeviceInputReceivedEventArgs> OnInputReceived;
 
-        public HidDevice(ushort vendorId, ushort productId, ushort inputBufferLen, short index, string devicePath = null)
+        public HidDevice(ushort vendorId, ushort productId, ushort inputBufferLen, short index, string devicePath = null, ushort outputBufferLen = 0)
         {
             _vid = vendorId;
             _pid = productId;
             _inputBufferLen = inputBufferLen;
+            _outputBufferLen = outputBufferLen == 0 ? inputBufferLen : outputBufferLen;
             _buffer = new byte[inputBufferLen];
-            _writeBuffer = new byte[inputBufferLen];
+            _writeBuffer = new byte[_outputBufferLen];
             _readReturnBuffer = new byte[inputBufferLen];
             _eventArgs = new HidDeviceInputReceivedEventArgs(this, new byte[inputBufferLen], true);
             _index = index;
             _devicePath = devicePath;
+        }
+
+        public static ushort GetOutputReportByteLength(string devicePath)
+        {
+            IntPtr deviceHandle = HidApiNative.CreateFile(devicePath, 0, 3, IntPtr.Zero, 3, 0, IntPtr.Zero);
+            if (deviceHandle == IntPtr.Zero)
+            {
+                throw new IOException("Unable to open HID device", Marshal.GetLastWin32Error());
+            }
+
+            try
+            {
+                if (!HidApiNative.HidD_GetPreparsedData(deviceHandle, out IntPtr preparsedData))
+                {
+                    throw new IOException("Unable to get preparsed data", Marshal.GetLastWin32Error());
+                }
+
+                try
+                {
+                    if (HidApiNative.HidP_GetCaps(preparsedData, out HIDP_CAPS caps) != 0)
+                        return caps.OutputReportByteLength;
+
+                    throw new IOException("Unable to get HID capabilities");
+                }
+                finally
+                {
+                    HidApiNative.HidD_FreePreparsedData(preparsedData);
+                }
+            }
+            finally
+            {
+                HidApiNative.CloseHandle(deviceHandle);
+            }
         }
 
         private void ThrowIfDeviceInvalid()
@@ -254,8 +289,8 @@ namespace hidapi
         public System.Threading.Tasks.Task WriteAsync(byte[] data) => System.Threading.Tasks.Task.Run(() => Write(data));
         public void Write(byte[] data)
         {
-            if (data.Length > _inputBufferLen)
-                throw new ArgumentException("Data length is greater than input buffer length.");
+            if (data.Length > _outputBufferLen)
+                throw new ArgumentException("Data length is greater than output buffer length.");
 
             ThrowIfDeviceInvalid();
 

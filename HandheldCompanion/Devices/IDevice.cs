@@ -1296,4 +1296,9 @@ public abstract class IDevice
 
         return defaultGlyph;
     }
+
+    public virtual XInputController? CreateController(PnPDetails details)
+    {
+        return null;
+    }
 }

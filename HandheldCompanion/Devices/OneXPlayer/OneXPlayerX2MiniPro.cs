@@ -9,6 +9,8 @@ public class OneXPlayerX2MiniPro : OneXPlayerApex
     {
         ProductModel = "ONEXPLAYER X2Mini PRO";
         VendorHidInitProfile = OxpHidInitProfile.Apex;
+        nTDP = new double[] { 15, 35, 54 };
+        cTDP = new double[] { 15, 54 };
     }
 
     protected override ButtonFlags MapVendorButton(byte buttonId)

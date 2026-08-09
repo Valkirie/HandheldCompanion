@@ -252,7 +252,10 @@ public class OneXPlayerX1 : OneXAOKZOE
         byte value = enabled ? (byte)0x40 : (byte)0x00;
 
         EcWriteByte(0xEB, value);
+        
+        // wait a bit for the EC to process the change
         Thread.Sleep(50);
+
         if (EcReadByte(0xEB) == value)
             LogManager.LogInformation("{0} {1} OEM button", enabled ? "Unlocked" : "Locked", ButtonFlags.OEM1);
         else
