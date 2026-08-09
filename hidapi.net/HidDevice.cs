@@ -21,6 +21,7 @@ namespace hidapi
         private Thread _readThread;
         private HidDeviceInputReceivedEventArgs _eventArgs;
         private ushort _releaseNumber;
+        private const int HIDP_STATUS_SUCCESS = 0x00110000;
         public bool IsDeviceValid => _deviceHandle != IntPtr.Zero;
         public bool Reading => _reading;
         public ushort ReleaseNumber => _releaseNumber;
@@ -59,7 +60,7 @@ namespace hidapi
 
                 try
                 {
-                    if (HidApiNative.HidP_GetCaps(preparsedData, out HIDP_CAPS caps) != 0)
+                    if (HidApiNative.HidP_GetCaps(preparsedData, out HIDP_CAPS caps) == HIDP_STATUS_SUCCESS)
                         return caps.OutputReportByteLength;
 
                     throw new IOException("Unable to get HID capabilities");
@@ -207,7 +208,7 @@ namespace hidapi
 
                 try
                 {
-                    if (HidApiNative.HidP_GetCaps(preparsedData, out HIDP_CAPS caps) != 0)
+                    if (HidApiNative.HidP_GetCaps(preparsedData, out HIDP_CAPS caps) == HIDP_STATUS_SUCCESS)
                     {
                         return caps.InputReportByteLength;
                     }
