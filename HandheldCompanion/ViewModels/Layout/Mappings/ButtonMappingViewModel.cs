@@ -576,15 +576,6 @@ namespace HandheldCompanion.ViewModels
                         matchingTargetVm = mappingTargetVm;
                 }
 
-                foreach (AxisLayoutFlags axis in TouchpadActions.GetAxisTargets(controller))
-                {
-                    var mappingTargetVm = CreateTarget(axis, controller.GetAxisName(axis));
-                    targets.Add(mappingTargetVm);
-
-                    if (touchpadAction.TargetType == TouchpadTargetType.Axis && axis == touchpadAction.Axis)
-                        matchingTargetVm = mappingTargetVm;
-                }
-
                 if (matchingTargetVm is null && preserveMissingTarget)
                 {
                     if (touchpadAction.TargetType == TouchpadTargetType.Button && touchpadAction.Button != ButtonFlags.None)
