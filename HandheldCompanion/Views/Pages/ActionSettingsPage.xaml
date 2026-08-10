@@ -14,7 +14,7 @@
     Title="Action Settings"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:ButtonMappingViewModel}"
-    d:DesignHeight="4100"
+    d:DesignHeight="4300"
     d:DesignWidth="1000"
     mc:Ignorable="d">
 

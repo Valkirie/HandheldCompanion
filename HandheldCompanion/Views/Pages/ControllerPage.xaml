@@ -16,7 +16,7 @@
     Margin="20"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:ControllerPageViewModel}"
-    d:DesignHeight="1800"
+    d:DesignHeight="2200"
     d:DesignWidth="1000"
     KeepAlive="True"
     Loaded="Page_Loaded"
@@ -288,12 +288,11 @@
                 </ikw:SimpleStackPanel>
 
                 <!--  Steam Deck settings  -->
-
-                <ikw:SimpleStackPanel Spacing="8">
-                    <TextBlock
-                        Style="{StaticResource BaseTextBlockStyle}"
-                        Text="Steam Deck settings"
-                        Visibility="{Binding ElementName=SteamDeckPanel, Path=Visibility}" />
+                <ikw:SimpleStackPanel
+                    d:Visibility="Visible"
+                    Spacing="8"
+                    Visibility="{Binding ElementName=SteamDeckPanel, Path=Visibility}">
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Steam Deck settings" />
                     <ikw:SimpleStackPanel Name="SteamDeckPanel" Spacing="3">
                         <!--  Mute virtual controller (Steam Deck)  -->
                         <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_SteamControllerModeDesc}" Header="{l:Static resx:Resources.ControllerPage_SteamControllerMode}">
@@ -343,19 +342,21 @@
                 </ikw:SimpleStackPanel>
 
                 <!--  Trackpad settings  -->
-
-                <ikw:SimpleStackPanel Spacing="8">
-                    <TextBlock
-                        Style="{StaticResource BaseTextBlockStyle}"
-                        Text="{l:Static resx:Resources.ControllerPage_TrackpadSettings}"
-                        Visibility="{Binding ElementName=TrackpadHapticsPanel, Path=Visibility}" />
+                <ikw:SimpleStackPanel
+                    d:Visibility="Visible"
+                    Spacing="8"
+                    Visibility="{Binding ElementName=TrackpadHapticsPanel, Path=Visibility}">
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_TrackpadSettings}" />
                     <ikw:SimpleStackPanel Name="TrackpadHapticsPanel" Spacing="3">
                         <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_TrackpadClickHapticsDesc}" Header="{l:Static resx:Resources.ControllerPage_TrackpadClickHaptics}">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xE877;" />
                             </ui:SettingsCard.HeaderIcon>
 
-                            <ComboBox Name="cB_TrackpadClickHaptics" Width="120" SelectionChanged="cB_TrackpadClickHaptics_SelectionChanged">
+                            <ComboBox
+                                Name="cB_TrackpadClickHaptics"
+                                Width="120"
+                                SelectionChanged="cB_TrackpadClickHaptics_SelectionChanged">
                                 <ComboBoxItem Content="{l:Static resx:Resources.ControllerPage_TrackpadClickHapticsOff}" />
                                 <ComboBoxItem Content="{l:Static resx:Resources.ControllerPage_TrackpadClickHapticsLow}" />
                                 <ComboBoxItem Content="{l:Static resx:Resources.ControllerPage_TrackpadClickHapticsMedium}" />

@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Devices;
+﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -154,14 +155,14 @@ public partial class ControllerPage : Page
     private void UpdateTrackpadSettingsVisibility()
     {
         bool isSteamDeck = IDevice.GetCurrent() is SteamDeck;
-        var controller = ControllerManager.GetTarget();
-        bool hasTrackpadClicks = controller?.HasSourceButton(ButtonFlags.LeftPadClick) == true ||
-            controller?.HasSourceButton(ButtonFlags.RightPadClick) == true;
+        IController? controller = ControllerManager.GetTarget();
+        if (controller is null)
+            return;
+
+        bool hasTrackpadClicks = controller.HasSourceButton(ButtonFlags.LeftPadClick) || controller.HasSourceButton(ButtonFlags.RightPadClick);
 
         SteamDeckPanel.Visibility = isSteamDeck ? Visibility.Visible : Visibility.Collapsed;
-        TrackpadHapticsPanel.Visibility = isSteamDeck || hasTrackpadClicks
-            ? Visibility.Visible
-            : Visibility.Collapsed;
+        TrackpadHapticsPanel.Visibility = isSteamDeck || hasTrackpadClicks ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private string GetResourceString(string baseKey, int attempts)
