@@ -3577,11 +3577,13 @@ namespace HandheldCompanion.ViewModels
             if (SelectedProfile is null)
                 return;
 
-            SelectedProfile.LayoutTitle = layoutTemplate.Name;
-
-            SelectedProfile.Layout.ButtonLayout = layoutTemplate.Layout.ButtonLayout;
-            SelectedProfile.Layout.AxisLayout = layoutTemplate.Layout.AxisLayout;
-            SelectedProfile.Layout.GyroLayout = layoutTemplate.Layout.GyroLayout;
+            lock (SelectedProfile.SyncRoot)
+            {
+                SelectedProfile.LayoutTitle = layoutTemplate.Name;
+                SelectedProfile.Layout.ButtonLayout = layoutTemplate.Layout.ButtonLayout;
+                SelectedProfile.Layout.AxisLayout = layoutTemplate.Layout.AxisLayout;
+                SelectedProfile.Layout.GyroLayout = layoutTemplate.Layout.GyroLayout;
+            }
 
             UpdateProfile();
         }

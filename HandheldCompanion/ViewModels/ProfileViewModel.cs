@@ -422,10 +422,13 @@ namespace HandheldCompanion.ViewModels
                     items.Add(new CollectionMenuItemViewModel(col.Name, Profile.Collections.Contains(colId),
                         new DelegateCommand(() =>
                         {
-                            if (Profile.Collections.Contains(colId))
-                                Profile.Collections.Remove(colId);
-                            else
-                                Profile.Collections.Add(colId);
+                            lock (Profile.SyncRoot)
+                            {
+                                if (Profile.Collections.Contains(colId))
+                                    Profile.Collections.Remove(colId);
+                                else
+                                    Profile.Collections.Add(colId);
+                            }
                             OnPropertyChanged(nameof(CollectionMenuItems));
                             ManagerFactory.profileManager.UpdateOrCreateProfile(Profile);
                         })));
@@ -447,7 +450,8 @@ namespace HandheldCompanion.ViewModels
                         if (result != ContentDialogResult.Primary || string.IsNullOrWhiteSpace(textBox.Text))
                             return;
                         GameCollection newCol = ManagerFactory.collectionManager.CreateCollection(textBox.Text.Trim());
-                        Profile.Collections.Add(newCol.Id);
+                        lock (Profile.SyncRoot)
+                            Profile.Collections.Add(newCol.Id);
                         OnPropertyChanged(nameof(CollectionMenuItems));
                         ManagerFactory.profileManager.UpdateOrCreateProfile(Profile);
                     }), isCheckable: false));

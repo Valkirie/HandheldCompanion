@@ -659,7 +659,11 @@ public class ProfileManager : IManager
     {
         foreach (Profile profile in GetProfiles())
         {
-            if (profile.Collections.Remove(collectionId))
+            bool removed;
+            lock (profile.SyncRoot)
+                removed = profile.Collections.Remove(collectionId);
+
+            if (removed)
                 SerializeProfile(profile);
         }
     }
@@ -979,10 +983,18 @@ public class ProfileManager : IManager
         string profilePath = Path.Combine(ManagerPath, profile.GetFileName());
         pendingCreation.TryAdd(profilePath, 0);
 
-        // update profile version to current build
-        profile.Version = App.CurrentVersion;
+        Profile snapshot;
+        lock (profile.SyncRoot)
+        {
+            lock (profile.Layout.SyncRoot)
+            {
+                // update profile version to current build
+                profile.Version = App.CurrentVersion;
+                snapshot = (Profile)profile.Clone();
+            }
+        }
 
-        string jsonString = JsonConvert.SerializeObject(profile, Formatting.Indented, new JsonSerializerSettings
+        string jsonString = JsonConvert.SerializeObject(snapshot, Formatting.Indented, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.All
         });
@@ -1070,7 +1082,8 @@ public class ProfileManager : IManager
         if (ManagerFactory.collectionManager.Status == ManagerStatus.Initialized)
         {
             HashSet<Guid> knownIds = ManagerFactory.collectionManager.GetCollections().Select(c => c.Id).ToHashSet();
-            profileToSanitize.Collections.RemoveWhere(id => id != GameCollection.FavoritesId && !knownIds.Contains(id));
+            lock (profileToSanitize.SyncRoot)
+                profileToSanitize.Collections.RemoveWhere(id => id != GameCollection.FavoritesId && !knownIds.Contains(id));
         }
     }
 
