@@ -87,17 +87,18 @@ namespace HandheldCompanion.Actions
         [NonSerialized] private float swipeElapsed;
         [NonSerialized] private bool isKeyDown;
         [NonSerialized] private bool isTouched;
-        [NonSerialized] private MovementHapticState leftHaptics = new();
-        [NonSerialized] private MovementHapticState rightHaptics = new();
-        [NonSerialized] private IController? movementController;
-        [NonSerialized] private bool leftClickPressed;
-        [NonSerialized] private bool rightClickPressed;
-        [NonSerialized] private bool genericClickPressed;
-        [NonSerialized] private ButtonFlags genericClickButton = ButtonFlags.RightPadClick;
-        [NonSerialized] private IController? clickController;
-        [NonSerialized] private ClickHapticProfile leftClickProfile;
-        [NonSerialized] private ClickHapticProfile rightClickProfile;
-        [NonSerialized] private ClickHapticProfile genericClickProfile;
+        private static MovementHapticState leftHaptics = new();
+        private static MovementHapticState rightHaptics = new();
+        private static IController? movementController;
+        private static bool leftClickPressed;
+        private static bool rightClickPressed;
+        private static bool genericClickPressed;
+        private static ButtonFlags genericClickButton = ButtonFlags.RightPadClick;
+        private static IController? clickController;
+        private static ClickHapticProfile leftClickProfile;
+        private static ClickHapticProfile rightClickProfile;
+        private static ClickHapticProfile genericClickProfile;
+        private static TouchpadSample?[] outputSamples = new TouchpadSample?[2];
 
         public TouchpadActions()
         {
@@ -308,7 +309,51 @@ namespace HandheldCompanion.Actions
             return active;
         }
 
-        internal void UpdateClickHaptics(ControllerState state, ShiftSlot shiftSlot,
+        internal static void BeginOutputFrame()
+        {
+            Array.Clear(outputSamples);
+            DS4Touch.ClearOutputTouches();
+        }
+
+        internal void ApplyOutput(ControllerState outputState,
+            AxisFlags outputAxisX = AxisFlags.None, AxisFlags outputAxisY = AxisFlags.None)
+        {
+            if (TargetType == TouchpadTargetType.Axis)
+            {
+                Vector2 value = GetAxisValue();
+                outputState.AxisState[outputAxisX] = ClampShort(outputState.AxisState[outputAxisX] + value.X);
+                outputState.AxisState[outputAxisY] = ClampShort(outputState.AxisState[outputAxisY] + value.Y);
+
+                if (ControllerState.AxisTouchButtons.TryGetValue(Axis, out ButtonFlags touchButton))
+                    outputState.ButtonState[touchButton] |= GetTouchValue();
+                return;
+            }
+
+            if (IsGestureTarget(Button))
+            {
+                if (!TryGetTouch(out TouchpadSample sample))
+                    return;
+
+                outputState.ButtonState[Button] |= true;
+                int fingerIndex = sample.Finger - 1;
+                if (outputSamples[fingerIndex] is null || sample.Priority > outputSamples[fingerIndex]!.Value.Priority)
+                    outputSamples[fingerIndex] = sample;
+                return;
+            }
+
+            outputState.ButtonState[Button] |= GetButtonValue();
+        }
+
+        internal static void CommitOutputFrame()
+        {
+            foreach (TouchpadSample? sample in outputSamples)
+            {
+                if (sample is TouchpadSample value)
+                    DS4Touch.SetOutputTouch(value.Finger, value.X, value.Y);
+            }
+        }
+
+        internal static void UpdateClickHaptics(ControllerState state, ShiftSlot shiftSlot,
             IReadOnlyDictionary<ButtonFlags, IActions[]> buttonPlan)
         {
             IController? controller = ControllerManager.GetTarget();
@@ -443,7 +488,7 @@ namespace HandheldCompanion.Actions
                     (HapticStrength)Math.Clamp(globalStrength - 1, 0, 2));
         }
 
-        internal void UpdateMovementHaptics(AxisLayoutFlags axis, Vector2 position, bool touched,
+        internal static void UpdateMovementHaptics(AxisLayoutFlags axis, Vector2 position, bool touched,
             ShiftSlot shiftSlot, IActions[] actions)
         {
             MovementHapticState state = axis == AxisLayoutFlags.LeftPad ? leftHaptics : rightHaptics;
@@ -520,6 +565,8 @@ namespace HandheldCompanion.Actions
         }
 
         private readonly record struct ClickHapticProfile(HapticMode Mode, HapticStrength Strength);
+
+        private static short ClampShort(float value) => (short)Math.Clamp(value, short.MinValue, short.MaxValue);
     }
 
     internal readonly record struct TouchpadSample(ButtonFlags Target, byte Finger, int X, int Y)
