@@ -297,9 +297,7 @@ namespace HandheldCompanion.Actions
             }
             else
             {
-                x = Button == ButtonFlags.TouchpadClick
-                    ? Finger == 1 ? DS4Touch.TOUCHPAD_WIDTH / 4 : DS4Touch.TOUCHPAD_WIDTH * 3 / 4
-                    : X;
+                x = X;
                 y = Y;
                 active = outBool;
             }

@@ -34,7 +34,6 @@ public static class DS4Touch
     public static TrackPadTouch OutputLeftPadTouch = new(TOUCH0_ID, true);
     public static TrackPadTouch OutputRightPadTouch = new(TOUCH1_ID, true);
     public static byte TouchPacketCounter;
-    public static byte OutputFinger;
 
     private static short TouchX, TouchY;
     public static bool OutputClickButton;

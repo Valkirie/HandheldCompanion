@@ -13,8 +13,8 @@ namespace HandheldCompanion.Targets
         protected override string DeviceType => "dualsenseedge";
         protected override int InputLength => 33;
 
-        private enum ClickRegion : byte { None, Left, Right }
-        private readonly TouchpadClickSequencer touchpadClickSequencer = new();
+        private byte preparedClickFinger;
+        private bool preparedClickEmitted;
 
         public DualSenseTarget(ushort vendorId, ushort productId) : base(vendorId, productId)
         {
@@ -43,24 +43,15 @@ namespace HandheldCompanion.Targets
             bool rightPadClick = inputs.ButtonState[ButtonFlags.RightPadClick];
             bool touchpadClick = inputs.ButtonState[ButtonFlags.TouchpadClick];
 
-            int coordinateX = DS4Touch.AxisToCoordinate(inputs.AxisState[AxisFlags.RightPadX], DS4Touch.TOUCHPAD_WIDTH);
-            var leftOutputTouch = DS4Touch.OutputLeftPadTouch.IsActive
-                ? DS4Touch.OutputLeftPadTouch
-                : DS4Touch.LeftPadTouch;
-            var rightOutputTouch = DS4Touch.OutputRightPadTouch.IsActive
-                ? DS4Touch.OutputRightPadTouch
-                : DS4Touch.RightPadTouch;
+            var leftOutputTouch = DS4Touch.OutputLeftPadTouch.IsActive ? DS4Touch.OutputLeftPadTouch : DS4Touch.LeftPadTouch;
+            var rightOutputTouch = DS4Touch.OutputRightPadTouch.IsActive ? DS4Touch.OutputRightPadTouch : DS4Touch.RightPadTouch;
 
-            ClickRegion requestedRegion = touchpadClick ?
-                DS4Touch.OutputLeftPadTouch.IsActive && !DS4Touch.OutputRightPadTouch.IsActive
-                    ? ClickRegion.Left :
-                DS4Touch.OutputRightPadTouch.IsActive && !DS4Touch.OutputLeftPadTouch.IsActive
-                    ? ClickRegion.Right :
-                coordinateX < DS4Touch.TOUCHPAD_WIDTH / 2 ? ClickRegion.Left : ClickRegion.Right :
-                leftPadClick ? ClickRegion.Left :
-                rightPadClick ? ClickRegion.Right : ClickRegion.None;
-
-            TouchpadClickFrame clickFrame = touchpadClickSequencer.Resolve(requestedRegion, touchpadClick);
+            byte requestedClickFinger = touchpadClick
+                ? DS4Touch.OutputLeftPadTouch.IsActive ? (byte)1
+                    : DS4Touch.OutputRightPadTouch.IsActive ? (byte)2 : (byte)0
+                : leftPadClick ? (byte)1
+                : rightPadClick ? (byte)2 : (byte)0;
+            ResolveClickFinger(requestedClickFinger, touchpadClick, out bool emitClick);
 
             uint buttons = 0;
             if (inputs.ButtonState[ButtonFlags.B1]) buttons |= 0x0020;
@@ -74,7 +65,7 @@ namespace HandheldCompanion.Targets
             if (inputs.ButtonState[ButtonFlags.LeftStickClick]) buttons |= 0x4000;
             if (inputs.ButtonState[ButtonFlags.RightStickClick]) buttons |= 0x8000;
             if (inputs.ButtonState[ButtonFlags.Special]) buttons |= 0x00010000;
-            if (touchpadClick || clickFrame.EmitClick) buttons |= 0x00020000;
+            if (touchpadClick || emitClick) buttons |= 0x00020000;
             if (inputs.ButtonState[ButtonFlags.MicrophoneMute]) buttons |= 0x00040000;
             data[4] = (byte)(buttons & 0xFF);
             data[5] = (byte)((buttons >> 8) & 0xFF);
@@ -94,11 +85,6 @@ namespace HandheldCompanion.Targets
                 WriteTouch(data, 11, leftOutputTouch.X, leftOutputTouch.Y);
             if (rightOutputTouch.IsActive)
                 WriteTouch(data, 16, rightOutputTouch.X, rightOutputTouch.Y);
-
-            if (clickFrame.Region == ClickRegion.Left && !leftOutputTouch.IsActive)
-                WriteTouch(data, 11, DS4Touch.TOUCHPAD_WIDTH / 4, DS4Touch.TOUCHPAD_HEIGHT / 2);
-            else if (clickFrame.Region == ClickRegion.Right && !rightOutputTouch.IsActive)
-                WriteTouch(data, 16, DS4Touch.TOUCHPAD_WIDTH * 3 / 4, DS4Touch.TOUCHPAD_HEIGHT / 2);
 
             if (gamepadMotion is not null)
             {
@@ -149,52 +135,40 @@ namespace HandheldCompanion.Targets
             data[offset + 4] = 1;
         }
 
-        private readonly record struct TouchpadClickFrame(bool EmitClick, ClickRegion Region);
-
-        private sealed class TouchpadClickSequencer
+        private void ResolveClickFinger(byte requestedFinger, bool directClick, out bool emitClick)
         {
-            private ClickRegion preparedRegion;
-            private bool preparedClickEmitted;
-            public TouchpadClickFrame Resolve(ClickRegion requestedRegion, bool directClick)
-            {
-                bool emitClick = false;
-                ClickRegion touchRegion = requestedRegion;
+            emitClick = false;
 
-                if (requestedRegion != ClickRegion.None)
+            if (requestedFinger != 0)
+            {
+                if (preparedClickFinger == requestedFinger)
                 {
-                    if (preparedRegion == requestedRegion)
-                    {
-                        emitClick = directClick && !preparedClickEmitted || !directClick;
-                        preparedClickEmitted = true;
-                    }
-                    else
-                    {
-                        preparedRegion = requestedRegion;
-                        preparedClickEmitted = directClick;
-                        emitClick = directClick;
-                    }
-                }
-                else if (preparedRegion != ClickRegion.None && !preparedClickEmitted)
-                {
-                    // Preserve a one-report tap long enough to emit the click after
-                    // its preparatory touch report.
-                    emitClick = true;
-                    touchRegion = preparedRegion;
-                    Clear();
+                    emitClick = directClick && !preparedClickEmitted || !directClick;
+                    preparedClickEmitted = true;
                 }
                 else
                 {
-                    Clear();
+                    preparedClickFinger = requestedFinger;
+                    preparedClickEmitted = directClick;
+                    emitClick = directClick;
                 }
-
-                return new TouchpadClickFrame(emitClick, touchRegion);
             }
-
-            private void Clear()
+            else if (preparedClickFinger != 0 && !preparedClickEmitted)
             {
-                preparedRegion = ClickRegion.None;
-                preparedClickEmitted = false;
+                emitClick = true;
+                ClearPreparedClick();
             }
+            else
+            {
+                ClearPreparedClick();
+            }
+
+        }
+
+        private void ClearPreparedClick()
+        {
+            preparedClickFinger = 0;
+            preparedClickEmitted = false;
         }
     }
 }

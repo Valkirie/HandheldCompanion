@@ -715,7 +715,6 @@ public class LayoutManager : IManager
 
     private void ApplyTouchpadCoordinates(TouchpadSample?[] samples)
     {
-        TouchpadSample? primarySample = null;
         foreach (TouchpadSample? sample in samples)
         {
             if (sample is null)
@@ -723,17 +722,7 @@ public class LayoutManager : IManager
 
             TouchpadSample value = sample.Value;
             DS4Touch.SetOutputTouch(value.Finger, value.X, value.Y);
-            if (primarySample is null || value.Priority > primarySample.Value.Priority)
-                primarySample = value;
         }
-
-        if (primarySample is null)
-            return;
-
-        outputState.AxisState[AxisFlags.RightPadX] = DS4Touch.CoordinateToAxis(
-            primarySample.Value.X, DS4Touch.TOUCHPAD_WIDTH);
-        outputState.AxisState[AxisFlags.RightPadY] = DS4Touch.CoordinateToAxis(
-            DS4Touch.TOUCHPAD_HEIGHT - 1 - primarySample.Value.Y, DS4Touch.TOUCHPAD_HEIGHT);
     }
 
     /// <summary>
