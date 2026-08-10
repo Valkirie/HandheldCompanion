@@ -464,6 +464,7 @@ namespace HandheldCompanion.ViewModels
                     OnPropertyChanged(nameof(AxisVisualizerAntiDeadzoneSize));
                     OnPropertyChanged(nameof(TouchpadSettingsVisibility));
                     OnPropertyChanged(nameof(TouchpadSwipeSettingsVisibility));
+                    OnPropertyChanged(nameof(TouchpadVisualizerVisibility));
                     break;
             }
 

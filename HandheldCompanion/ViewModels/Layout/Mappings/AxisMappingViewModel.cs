@@ -356,6 +356,7 @@ namespace HandheldCompanion.ViewModels
                     OnPropertyChanged(nameof(AxisThresholdVisibility));
                     OnPropertyChanged(nameof(GeneralActionVisibility));
                     OnPropertyChanged(nameof(AxisInvertVisibility));
+                    OnPropertyChanged(nameof(TouchpadVisualizerVisibility));
                     break;
             }
 

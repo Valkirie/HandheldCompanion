@@ -2059,7 +2059,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Left-finger swipe.
+        ///   Looks up a localized string similar to Left-finger touch.
         /// </summary>
         public static string Enum_DualShock4Controller_AxisLayoutFlags_LeftPad {
             get {
@@ -2068,7 +2068,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Right-finger swipe.
+        ///   Looks up a localized string similar to Right-finger touch.
         /// </summary>
         public static string Enum_DualShock4Controller_AxisLayoutFlags_RightPad {
             get {

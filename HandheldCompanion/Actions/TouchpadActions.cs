@@ -166,17 +166,20 @@ namespace HandheldCompanion.Actions
         public static bool IsTouchpadAxis(AxisLayoutFlags axis) => axis is
             AxisLayoutFlags.LeftPad or AxisLayoutFlags.RightPad;
 
+        private static bool SupportsCoordinateTargets(IController controller) => controller is
+            DummyDualShock4Controller or DummyDualSenseController;
+
         public static bool HasTargets(IController controller) =>
             controller.GetTargetButtons().Any(IsTouchpadButton) ||
             controller.GetTargetAxis().Any(IsTouchpadAxis) ||
-            controller is DummyDualSenseController;
+            SupportsCoordinateTargets(controller);
 
         public static IEnumerable<ButtonFlags> GetButtonTargets(IController controller)
         {
             foreach (ButtonFlags button in controller.GetTargetButtons().Where(IsTouchpadButton))
                 yield return button;
 
-            if (controller is DummyDualSenseController)
+            if (SupportsCoordinateTargets(controller))
             {
                 foreach (ButtonFlags button in CoordinateTargets)
                     yield return button;
