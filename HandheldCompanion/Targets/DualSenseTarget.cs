@@ -42,18 +42,25 @@ namespace HandheldCompanion.Targets
             bool leftPadClick = inputs.ButtonState[ButtonFlags.LeftPadClick];
             bool rightPadClick = inputs.ButtonState[ButtonFlags.RightPadClick];
             bool touchpadClick = inputs.ButtonState[ButtonFlags.TouchpadClick];
-            bool touchpadTouch = inputs.ButtonState[ButtonFlags.TouchpadTouch];
 
             int coordinateX = DS4Touch.AxisToCoordinate(inputs.AxisState[AxisFlags.RightPadX], DS4Touch.TOUCHPAD_WIDTH);
-            int coordinateY = DS4Touch.TOUCHPAD_HEIGHT - 1 -
-                DS4Touch.AxisToCoordinate(inputs.AxisState[AxisFlags.RightPadY], DS4Touch.TOUCHPAD_HEIGHT);
+            var leftOutputTouch = DS4Touch.OutputLeftPadTouch.IsActive
+                ? DS4Touch.OutputLeftPadTouch
+                : DS4Touch.LeftPadTouch;
+            var rightOutputTouch = DS4Touch.OutputRightPadTouch.IsActive
+                ? DS4Touch.OutputRightPadTouch
+                : DS4Touch.RightPadTouch;
 
-            ClickRegion requestedRegion = touchpadClick ? coordinateX < DS4Touch.TOUCHPAD_WIDTH / 2
-                ? ClickRegion.Left : ClickRegion.Right :
+            ClickRegion requestedRegion = touchpadClick ?
+                DS4Touch.OutputLeftPadTouch.IsActive && !DS4Touch.OutputRightPadTouch.IsActive
+                    ? ClickRegion.Left :
+                DS4Touch.OutputRightPadTouch.IsActive && !DS4Touch.OutputLeftPadTouch.IsActive
+                    ? ClickRegion.Right :
+                coordinateX < DS4Touch.TOUCHPAD_WIDTH / 2 ? ClickRegion.Left : ClickRegion.Right :
                 leftPadClick ? ClickRegion.Left :
                 rightPadClick ? ClickRegion.Right : ClickRegion.None;
 
-            TouchpadClickFrame clickFrame = touchpadClickSequencer.Resolve(requestedRegion);
+            TouchpadClickFrame clickFrame = touchpadClickSequencer.Resolve(requestedRegion, touchpadClick);
 
             uint buttons = 0;
             if (inputs.ButtonState[ButtonFlags.B1]) buttons |= 0x0020;
@@ -67,7 +74,7 @@ namespace HandheldCompanion.Targets
             if (inputs.ButtonState[ButtonFlags.LeftStickClick]) buttons |= 0x4000;
             if (inputs.ButtonState[ButtonFlags.RightStickClick]) buttons |= 0x8000;
             if (inputs.ButtonState[ButtonFlags.Special]) buttons |= 0x00010000;
-            if (clickFrame.EmitClick) buttons |= 0x00020000;
+            if (touchpadClick || clickFrame.EmitClick) buttons |= 0x00020000;
             if (inputs.ButtonState[ButtonFlags.MicrophoneMute]) buttons |= 0x00040000;
             data[4] = (byte)(buttons & 0xFF);
             data[5] = (byte)((buttons >> 8) & 0xFF);
@@ -83,20 +90,15 @@ namespace HandheldCompanion.Targets
             data[9] = (byte)inputs.AxisState[AxisFlags.L2];
             data[10] = (byte)inputs.AxisState[AxisFlags.R2];
 
-            bool coordinateTouch = touchpadTouch ||
-                inputs.ButtonState[ButtonFlags.TouchpadSwipe];
+            if (leftOutputTouch.IsActive)
+                WriteTouch(data, 11, leftOutputTouch.X, leftOutputTouch.Y);
+            if (rightOutputTouch.IsActive)
+                WriteTouch(data, 16, rightOutputTouch.X, rightOutputTouch.Y);
 
-            data[15] = 0; // VIIPER Touch1Active validity flag
-            if (clickFrame.Region == ClickRegion.Left)
-                WriteTouch(data, DS4Touch.TOUCHPAD_WIDTH / 4, DS4Touch.TOUCHPAD_HEIGHT / 2);
-            else if (clickFrame.Region == ClickRegion.Right)
-                WriteTouch(data, DS4Touch.TOUCHPAD_WIDTH * 3 / 4, DS4Touch.TOUCHPAD_HEIGHT / 2);
-            else if (coordinateTouch)
-                WriteTouch(data, coordinateX, coordinateY);
-            else if (DS4Touch.LeftPadTouch.IsActive)
-                WriteTouch(data, DS4Touch.LeftPadTouch.X, DS4Touch.LeftPadTouch.Y);
-            else if (DS4Touch.RightPadTouch.IsActive)
-                WriteTouch(data, DS4Touch.RightPadTouch.X, DS4Touch.RightPadTouch.Y);
+            if (clickFrame.Region == ClickRegion.Left && !leftOutputTouch.IsActive)
+                WriteTouch(data, 11, DS4Touch.TOUCHPAD_WIDTH / 4, DS4Touch.TOUCHPAD_HEIGHT / 2);
+            else if (clickFrame.Region == ClickRegion.Right && !rightOutputTouch.IsActive)
+                WriteTouch(data, 16, DS4Touch.TOUCHPAD_WIDTH * 3 / 4, DS4Touch.TOUCHPAD_HEIGHT / 2);
 
             if (gamepadMotion is not null)
             {
@@ -136,15 +138,15 @@ namespace HandheldCompanion.Targets
             return data;
         }
 
-        private static void WriteTouch(byte[] data, int x, int y)
+        private static void WriteTouch(byte[] data, int offset, int x, int y)
         {
             ushort touchX = InputUtils.ClampToUShort(x, 0, DS4Touch.TOUCHPAD_WIDTH - 1);
             ushort touchY = InputUtils.ClampToUShort(y, 0, DS4Touch.TOUCHPAD_HEIGHT - 1);
-            data[11] = (byte)(touchX & 0xFF);
-            data[12] = (byte)((touchX >> 8) & 0xFF);
-            data[13] = (byte)(touchY & 0xFF);
-            data[14] = (byte)((touchY >> 8) & 0xFF);
-            data[15] = 1;
+            data[offset] = (byte)(touchX & 0xFF);
+            data[offset + 1] = (byte)((touchX >> 8) & 0xFF);
+            data[offset + 2] = (byte)(touchY & 0xFF);
+            data[offset + 3] = (byte)((touchY >> 8) & 0xFF);
+            data[offset + 4] = 1;
         }
 
         private readonly record struct TouchpadClickFrame(bool EmitClick, ClickRegion Region);
@@ -153,7 +155,7 @@ namespace HandheldCompanion.Targets
         {
             private ClickRegion preparedRegion;
             private bool preparedClickEmitted;
-            public TouchpadClickFrame Resolve(ClickRegion requestedRegion)
+            public TouchpadClickFrame Resolve(ClickRegion requestedRegion, bool directClick)
             {
                 bool emitClick = false;
                 ClickRegion touchRegion = requestedRegion;
@@ -162,13 +164,14 @@ namespace HandheldCompanion.Targets
                 {
                     if (preparedRegion == requestedRegion)
                     {
-                        emitClick = true;
+                        emitClick = directClick && !preparedClickEmitted || !directClick;
                         preparedClickEmitted = true;
                     }
                     else
                     {
                         preparedRegion = requestedRegion;
-                        preparedClickEmitted = false;
+                        preparedClickEmitted = directClick;
+                        emitClick = directClick;
                     }
                 }
                 else if (preparedRegion != ClickRegion.None && !preparedClickEmitted)

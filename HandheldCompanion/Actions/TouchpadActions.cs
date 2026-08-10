@@ -305,7 +305,7 @@ namespace HandheldCompanion.Actions
             }
 
             sample = active
-                ? new TouchpadSample(Button, x, y)
+                ? new TouchpadSample(Button, Finger, x, y)
                 : default;
             return active;
         }
@@ -524,7 +524,7 @@ namespace HandheldCompanion.Actions
         private readonly record struct ClickHapticProfile(HapticMode Mode, HapticStrength Strength);
     }
 
-    internal readonly record struct TouchpadSample(ButtonFlags Target, int X, int Y)
+    internal readonly record struct TouchpadSample(ButtonFlags Target, byte Finger, int X, int Y)
     {
         public int Priority => Target switch
         {

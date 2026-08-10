@@ -31,10 +31,27 @@ public static class DS4Touch
 
     public static TrackPadTouch LeftPadTouch = new(TOUCH0_ID, true);
     public static TrackPadTouch RightPadTouch = new(TOUCH1_ID, true);
+    public static TrackPadTouch OutputLeftPadTouch = new(TOUCH0_ID, true);
+    public static TrackPadTouch OutputRightPadTouch = new(TOUCH1_ID, true);
     public static byte TouchPacketCounter;
+    public static byte OutputFinger;
 
     private static short TouchX, TouchY;
     public static bool OutputClickButton;
+
+    public static void ClearOutputTouches()
+    {
+        OutputLeftPadTouch.IsActive = false;
+        OutputRightPadTouch.IsActive = false;
+    }
+
+    public static void SetOutputTouch(byte finger, int x, int y)
+    {
+        TrackPadTouch touch = finger == 1 ? OutputLeftPadTouch : OutputRightPadTouch;
+        touch.X = (short)Math.Clamp(x, short.MinValue, short.MaxValue);
+        touch.Y = (short)Math.Clamp(y, short.MinValue, short.MaxValue);
+        touch.IsActive = true;
+    }
 
     private static bool prevLeftPadTouch, prevRightPadTouch;
     private static bool prevLeftPadClick, prevRightPadClick;

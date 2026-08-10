@@ -199,21 +199,21 @@
                                 Y1="{Binding TouchpadVisualizerLineStartY, Mode=OneWay}"
                                 Y2="{Binding TouchpadVisualizerLineEndY, Mode=OneWay}" />
                             <Ellipse
+                                Canvas.Left="{Binding TouchpadVisualizerStartX, Mode=OneWay}"
+                                Canvas.Top="{Binding TouchpadVisualizerStartY, Mode=OneWay}"
                                 Width="8"
                                 Height="8"
                                 Fill="#FFFFFFFF"
                                 Stroke="#FF9AA0AA"
-                                StrokeThickness="1"
-                                Canvas.Left="{Binding TouchpadVisualizerStartX, Mode=OneWay}"
-                                Canvas.Top="{Binding TouchpadVisualizerStartY, Mode=OneWay}" />
+                                StrokeThickness="1" />
                             <Ellipse
+                                Canvas.Left="{Binding TouchpadVisualizerEndX, Mode=OneWay}"
+                                Canvas.Top="{Binding TouchpadVisualizerEndY, Mode=OneWay}"
                                 Width="8"
                                 Height="8"
                                 Fill="#FF5AC8FA"
                                 Stroke="#FFB7E9FF"
                                 StrokeThickness="1"
-                                Canvas.Left="{Binding TouchpadVisualizerEndX, Mode=OneWay}"
-                                Canvas.Top="{Binding TouchpadVisualizerEndY, Mode=OneWay}"
                                 Visibility="{Binding TouchpadSwipeSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                         </Canvas>
                     </Border>
@@ -249,6 +249,12 @@
                                 Value="{Binding TouchpadY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DockPanel>
                     </StackPanel>
+                </ui:SettingsCard>
+                <ui:SettingsCard Header="Touchpad finger">
+                    <ComboBox SelectedIndex="{Binding TouchpadFingerIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBoxItem Content="Left" />
+                        <ComboBoxItem Content="Right" />
+                    </ComboBox>
                 </ui:SettingsCard>
                 <ui:SettingsCard
                     d:Visibility="Visible"

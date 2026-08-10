@@ -407,6 +407,18 @@ namespace HandheldCompanion.ViewModels
         public int TouchpadMaxX => DS4Touch.TOUCHPAD_WIDTH - 1;
         public int TouchpadMaxY => DS4Touch.TOUCHPAD_HEIGHT - 1;
         public double TouchpadMaxDuration => TouchpadActions.MaximumSwipeDuration;
+        public int TouchpadFingerIndex
+        {
+            get => Action is TouchpadActions a ? a.Finger - 1 : 0;
+            set
+            {
+                if (Action is TouchpadActions a && value is >= 0 and <= 1)
+                {
+                    a.Finger = (byte)(value + 1);
+                    OnPropertyChanged(nameof(TouchpadFingerIndex));
+                }
+            }
+        }
         public string TouchpadCoordinateRangeDescription => string.Format(
             Resources.LayoutPage_TouchpadCoordinateRange, TouchpadMaxX, TouchpadMaxY);
         public int TouchpadX { get => Action is TouchpadActions a ? a.X : 0; set { if (Action is TouchpadActions a) { a.X = value; OnPropertyChanged(nameof(TouchpadX)); NotifyTouchpadVisualizer(nameof(TouchpadVisualizerStartX), nameof(TouchpadVisualizerStartY), nameof(TouchpadVisualizerLineStartX), nameof(TouchpadVisualizerLineStartY)); } } }
