@@ -66,7 +66,7 @@ namespace HandheldCompanion.Targets
             if (inputs.ButtonState[ButtonFlags.RightStickClick]) buttons |= 0x8000;
             if (inputs.ButtonState[ButtonFlags.Special]) buttons |= 0x00010000;
             if (touchpadClick || emitClick) buttons |= 0x00020000;
-            if (inputs.ButtonState[ButtonFlags.MicrophoneMute]) buttons |= 0x00040000;
+            if (inputs.ButtonState[ButtonFlags.B5]) buttons |= 0x00040000;
             data[4] = (byte)(buttons & 0xFF);
             data[5] = (byte)((buttons >> 8) & 0xFF);
             data[6] = (byte)((buttons >> 16) & 0xFF);

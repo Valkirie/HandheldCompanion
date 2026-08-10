@@ -11,7 +11,7 @@ namespace HandheldCompanion.Controllers.Dummies
             // it is not an input device and must not advertise source touchpads.
             TargetButtons.Add(ButtonFlags.TouchpadClick);
             TargetButtons.Add(ButtonFlags.TouchpadTouch);
-            TargetButtons.Add(ButtonFlags.MicrophoneMute);
+            TargetButtons.Add(ButtonFlags.B5);
             TargetAxis.Add(AxisLayoutFlags.LeftPad);
             TargetAxis.Add(AxisLayoutFlags.RightPad);
         }

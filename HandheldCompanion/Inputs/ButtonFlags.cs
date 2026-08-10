@@ -179,8 +179,6 @@ public enum ButtonFlags : byte
 
     HOTKEY_END = 150,
 
-    [Description("Microphone Mute")] MicrophoneMute = 152,
-
     [Description("Touchpad Click")] TouchpadClick = 153,
     [Description("Touchpad Touch")] TouchpadTouch = 154,
     [Description("Touchpad Swipe")] TouchpadSwipe = 155,
