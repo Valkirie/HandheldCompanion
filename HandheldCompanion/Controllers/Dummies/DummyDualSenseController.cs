@@ -9,9 +9,8 @@ namespace HandheldCompanion.Controllers.Dummies
         {
             // The dummy describes mapping destinations on the emulated DualSense;
             // it is not an input device and must not advertise source touchpads.
-            TargetButtons.Add(ButtonFlags.LeftPadClick);
-            TargetButtons.Add(ButtonFlags.RightPadClick);
-            TargetButtons.Add(ButtonFlags.CenterPadClick);
+            TargetButtons.Add(ButtonFlags.TouchpadClick);
+            TargetButtons.Add(ButtonFlags.TouchpadTouch);
             TargetButtons.Add(ButtonFlags.MicrophoneMute);
             TargetAxis.Add(AxisLayoutFlags.LeftPad);
             TargetAxis.Add(AxisLayoutFlags.RightPad);

@@ -20,9 +20,10 @@ namespace HandheldCompanion.Controllers.SDL
                     return "\u2208";
                 case ButtonFlags.LeftPadClick:
                 case ButtonFlags.RightPadClick:
-                case ButtonFlags.CenterPadClick:
                 case ButtonFlags.LeftPadTouch:
                 case ButtonFlags.RightPadTouch:
+                case ButtonFlags.TouchpadClick:
+                case ButtonFlags.TouchpadTouch:
                     return "\u2207";
             }
 

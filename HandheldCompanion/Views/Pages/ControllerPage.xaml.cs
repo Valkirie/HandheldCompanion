@@ -156,8 +156,7 @@ public partial class ControllerPage : Page
         bool isSteamDeck = IDevice.GetCurrent() is SteamDeck;
         var controller = ControllerManager.GetTarget();
         bool hasTrackpadClicks = controller?.HasSourceButton(ButtonFlags.LeftPadClick) == true ||
-            controller?.HasSourceButton(ButtonFlags.RightPadClick) == true ||
-            controller?.HasSourceButton(ButtonFlags.CenterPadClick) == true;
+            controller?.HasSourceButton(ButtonFlags.RightPadClick) == true;
 
         SteamDeckPanel.Visibility = isSteamDeck ? Visibility.Visible : Visibility.Collapsed;
         TrackpadHapticsPanel.Visibility = isSteamDeck || hasTrackpadClicks

@@ -41,8 +41,7 @@ namespace HandheldCompanion.Actions
             ButtonFlags.RightPadClickRight,
         ];
 
-        private static readonly ButtonFlags[] AllClickSources =
-            [.. LeftClickSources, .. RightClickSources, ButtonFlags.CenterPadClick];
+        private static readonly ButtonFlags[] AllClickSources = [.. LeftClickSources, .. RightClickSources];
 
         public const float MinimumSwipeDuration = 16.0f;
         public const float MaximumSwipeDuration = 5000.0f;
@@ -51,10 +50,8 @@ namespace HandheldCompanion.Actions
         private const float HapticStep = (short.MaxValue - short.MinValue) / 10.0f;
         private const float HapticJitterThreshold = 128.0f;
 
-        internal static readonly ButtonFlags[] CoordinateTargets =
+        internal static readonly ButtonFlags[] GestureTargets =
         [
-            ButtonFlags.TouchpadCoordinateClick,
-            ButtonFlags.TouchpadCoordinateTouch,
             ButtonFlags.TouchpadSwipe,
         ];
 
@@ -63,6 +60,7 @@ namespace HandheldCompanion.Actions
         public AxisLayoutFlags Axis;
         public short ButtonX;
         public short ButtonY;
+        private byte finger = 1;
 
         private int x = DS4Touch.TOUCHPAD_WIDTH / 2;
         private int y = DS4Touch.TOUCHPAD_HEIGHT / 2;
@@ -74,6 +72,7 @@ namespace HandheldCompanion.Actions
         public int Y { get => y; set => y = Math.Clamp(value, 0, DS4Touch.TOUCHPAD_HEIGHT - 1); }
         public int EndX { get => endX; set => endX = Math.Clamp(value, 0, DS4Touch.TOUCHPAD_WIDTH - 1); }
         public int EndY { get => endY; set => endY = Math.Clamp(value, 0, DS4Touch.TOUCHPAD_HEIGHT - 1); }
+        public byte Finger { get => finger; set => finger = (byte)Math.Clamp((int)value, 1, 2); }
         public float SwipeDuration
         {
             get => swipeDuration;
@@ -137,17 +136,17 @@ namespace HandheldCompanion.Actions
             Button = ButtonFlags.None;
         }
 
-        public static bool IsCoordinateTarget(ButtonFlags button) => button is
-            ButtonFlags.TouchpadCoordinateClick or ButtonFlags.TouchpadCoordinateTouch or ButtonFlags.TouchpadSwipe;
+        public static bool IsGestureTarget(ButtonFlags button) => button is
+            ButtonFlags.TouchpadClick or ButtonFlags.TouchpadTouch or ButtonFlags.TouchpadSwipe;
 
         public static bool IsTouchpadButton(ButtonFlags button) => button is
             ButtonFlags.LeftPadTouch or ButtonFlags.RightPadTouch or
-            ButtonFlags.LeftPadClick or ButtonFlags.RightPadClick or ButtonFlags.CenterPadClick or
+            ButtonFlags.LeftPadClick or ButtonFlags.RightPadClick or
             ButtonFlags.LeftPadClickUp or ButtonFlags.LeftPadClickDown or
             ButtonFlags.LeftPadClickLeft or ButtonFlags.LeftPadClickRight or
             ButtonFlags.RightPadClickUp or ButtonFlags.RightPadClickDown or
             ButtonFlags.RightPadClickLeft or ButtonFlags.RightPadClickRight or
-            ButtonFlags.TouchpadCoordinateClick or ButtonFlags.TouchpadCoordinateTouch or ButtonFlags.TouchpadSwipe;
+            ButtonFlags.TouchpadClick or ButtonFlags.TouchpadTouch or ButtonFlags.TouchpadSwipe;
 
         public static bool IsLeftPadClick(ButtonFlags button) => button is
             ButtonFlags.LeftPadClick or ButtonFlags.LeftPadClickUp or ButtonFlags.LeftPadClickDown or
@@ -157,8 +156,7 @@ namespace HandheldCompanion.Actions
             ButtonFlags.RightPadClick or ButtonFlags.RightPadClickUp or ButtonFlags.RightPadClickDown or
             ButtonFlags.RightPadClickLeft or ButtonFlags.RightPadClickRight;
 
-        public static bool IsPhysicalClick(ButtonFlags button) =>
-            IsLeftPadClick(button) || IsRightPadClick(button) || button == ButtonFlags.CenterPadClick;
+        public static bool IsPhysicalClick(ButtonFlags button) => IsLeftPadClick(button) || IsRightPadClick(button);
 
         public static bool HasCustomHapticSettings(IActions action) =>
             action.HapticOverride == true;
@@ -166,22 +164,22 @@ namespace HandheldCompanion.Actions
         public static bool IsTouchpadAxis(AxisLayoutFlags axis) => axis is
             AxisLayoutFlags.LeftPad or AxisLayoutFlags.RightPad;
 
-        private static bool SupportsCoordinateTargets(IController controller) => controller is
+        private static bool SupportsGestureTargets(IController controller) => controller is
             DummyDualShock4Controller or DummyDualSenseController;
 
         public static bool HasTargets(IController controller) =>
             controller.GetTargetButtons().Any(IsTouchpadButton) ||
             controller.GetTargetAxis().Any(IsTouchpadAxis) ||
-            SupportsCoordinateTargets(controller);
+            SupportsGestureTargets(controller);
 
         public static IEnumerable<ButtonFlags> GetButtonTargets(IController controller)
         {
             foreach (ButtonFlags button in controller.GetTargetButtons().Where(IsTouchpadButton))
                 yield return button;
 
-            if (SupportsCoordinateTargets(controller))
+            if (SupportsGestureTargets(controller))
             {
-                foreach (ButtonFlags button in CoordinateTargets)
+                foreach (ButtonFlags button in GestureTargets)
                     yield return button;
             }
         }
@@ -275,7 +273,7 @@ namespace HandheldCompanion.Actions
 
         internal bool TryGetTouch(out TouchpadSample sample)
         {
-            if (TargetType != TouchpadTargetType.Button || !IsCoordinateTarget(Button))
+            if (TargetType != TouchpadTargetType.Button || !IsGestureTarget(Button))
             {
                 sample = default;
                 return false;
@@ -299,7 +297,9 @@ namespace HandheldCompanion.Actions
             }
             else
             {
-                x = X;
+                x = Button == ButtonFlags.TouchpadClick
+                    ? Finger == 1 ? DS4Touch.TOUCHPAD_WIDTH / 4 : DS4Touch.TOUCHPAD_WIDTH * 3 / 4
+                    : X;
                 y = Y;
                 active = outBool;
             }
@@ -324,8 +324,6 @@ namespace HandheldCompanion.Actions
                 state.ButtonState[ButtonFlags.RightPadClickDown] ||
                 state.ButtonState[ButtonFlags.RightPadClickLeft] ||
                 state.ButtonState[ButtonFlags.RightPadClickRight];
-            bool centerPressed = state.ButtonState[ButtonFlags.CenterPadClick];
-
             if (controller is null)
             {
                 clickController = null;
@@ -343,7 +341,7 @@ namespace HandheldCompanion.Actions
                 clickController = controller;
                 leftClickPressed = leftPressed;
                 rightClickPressed = rightPressed;
-                genericClickPressed = leftPressed || rightPressed || centerPressed;
+                genericClickPressed = leftPressed || rightPressed;
                 genericClickButton = GetPressedClickButton(leftPressed, rightPressed);
                 leftClickProfile = default;
                 rightClickProfile = default;
@@ -356,7 +354,7 @@ namespace HandheldCompanion.Actions
             {
                 leftClickPressed = leftPressed;
                 rightClickPressed = rightPressed;
-                genericClickPressed = leftPressed || rightPressed || centerPressed;
+                genericClickPressed = leftPressed || rightPressed;
                 leftClickProfile = default;
                 rightClickProfile = default;
                 genericClickProfile = default;
@@ -374,7 +372,7 @@ namespace HandheldCompanion.Actions
                 return;
             }
 
-            bool pressed = leftPressed || rightPressed || centerPressed;
+            bool pressed = leftPressed || rightPressed;
             if (pressed && !genericClickPressed)
                 genericClickButton = GetPressedClickButton(leftPressed, rightPressed);
 
@@ -388,7 +386,7 @@ namespace HandheldCompanion.Actions
                 ? ButtonFlags.LeftPadClick
                 : rightPressed
                     ? ButtonFlags.RightPadClick
-                    : ButtonFlags.CenterPadClick;
+                    : ButtonFlags.None;
 
         private static void UpdateClickHaptic(IController controller, ButtonFlags button, bool pressed,
             ref bool wasPressed, ref ClickHapticProfile profile, ControllerState state, ShiftSlot shiftSlot,
@@ -530,9 +528,9 @@ namespace HandheldCompanion.Actions
     {
         public int Priority => Target switch
         {
-            ButtonFlags.TouchpadCoordinateClick => 3,
+            ButtonFlags.TouchpadClick => 3,
             ButtonFlags.TouchpadSwipe => 2,
-            ButtonFlags.TouchpadCoordinateTouch => 1,
+            ButtonFlags.TouchpadTouch => 1,
             _ => 0,
         };
     }

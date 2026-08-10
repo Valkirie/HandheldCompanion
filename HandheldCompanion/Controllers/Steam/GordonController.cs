@@ -54,8 +54,8 @@ namespace HandheldCompanion.Controllers.Steam
             TargetButtons.Add(ButtonFlags.L4);
             TargetButtons.Add(ButtonFlags.R4);
 
-            TargetButtons.Add(ButtonFlags.LeftPadClick);
-            TargetButtons.Add(ButtonFlags.RightPadClick);
+            TargetButtons.Add(ButtonFlags.TouchpadClick);
+            TargetButtons.Add(ButtonFlags.TouchpadTouch);
 
             TargetAxis.Add(AxisLayoutFlags.LeftPad);
             TargetAxis.Add(AxisLayoutFlags.RightPad);

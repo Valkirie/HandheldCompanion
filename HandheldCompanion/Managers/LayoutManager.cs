@@ -811,7 +811,7 @@ public class LayoutManager : IManager
             return;
         }
 
-        if (TouchpadActions.IsCoordinateTarget(action.Button))
+        if (TouchpadActions.IsGestureTarget(action.Button))
         {
             if (action.TryGetTouch(out TouchpadSample sample))
             {

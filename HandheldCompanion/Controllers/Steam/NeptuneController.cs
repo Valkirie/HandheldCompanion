@@ -57,8 +57,8 @@ public class NeptuneController : SteamController
         TargetButtons.Add(ButtonFlags.R5);
         TargetButtons.Add(ButtonFlags.Special2);
 
-        TargetButtons.Add(ButtonFlags.LeftPadClick);
-        TargetButtons.Add(ButtonFlags.RightPadClick);
+        TargetButtons.Add(ButtonFlags.TouchpadClick);
+        TargetButtons.Add(ButtonFlags.TouchpadTouch);
 
         TargetAxis.Add(AxisLayoutFlags.LeftPad);
         TargetAxis.Add(AxisLayoutFlags.RightPad);

@@ -391,7 +391,7 @@ namespace HandheldCompanion.ViewModels
         public override Visibility TouchpadSettingsVisibility =>
             ActionTypeIndex == (int)ActionType.Touchpad &&
             Action is TouchpadActions { TargetType: TouchpadTargetType.Button } touchpadAction &&
-            TouchpadActions.IsCoordinateTarget(touchpadAction.Button)
+            TouchpadActions.IsGestureTarget(touchpadAction.Button)
                 ? Visibility.Visible : Visibility.Collapsed;
         public override Visibility TouchpadSwipeSettingsVisibility =>
             ActionTypeIndex == (int)ActionType.Touchpad &&
