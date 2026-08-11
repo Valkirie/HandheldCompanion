@@ -201,7 +201,7 @@ namespace HandheldCompanion.Managers
                     ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
                     break;
                 case ManagerStatus.Initialized:
-                    QuerySettings();
+                    await QuerySettings().ConfigureAwait(false);
                     break;
             }
 
@@ -211,12 +211,12 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has started", "VirtualManager");
         }
 
-        private static void SettingsManager_Initialized()
+        private static async void SettingsManager_Initialized()
         {
-            QuerySettings();
+            await QuerySettings().ConfigureAwait(false);
         }
 
-        private static void QuerySettings()
+        private static async Task QuerySettings()
         {
             // manage events
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
@@ -241,7 +241,7 @@ namespace HandheldCompanion.Managers
             SettingsManager_SettingValueChanged("HIDmode", selectedHIDMode, false, true);
             SettingsManager_SettingValueChanged("HIDstatus", ManagerFactory.settingsManager.GetString("HIDstatus"), false, true);
 
-            SetControllerModeCore(defaultHIDmode);
+            await SetControllerMode(defaultHIDmode).ConfigureAwait(false);
         }
 
         public static async Task Stop()
