@@ -292,9 +292,10 @@ namespace HandheldCompanion.Views.QuickPages
                         StringBuilder sb = new StringBuilder(2);
                         int cnt = ToUnicodeEx(vk, (uint)sc, st, sb, sb.Capacity, 0, _lastHkl);
 
-                        string content = sb[0].ToString();
-                        if (cnt > 0 && !string.IsNullOrEmpty(content))
-                            b.Content = content;
+                        // A negative result represents a dead key and still writes its spacing
+                        // character to the buffer. Zero is the only no-translation result.
+                        if (cnt != 0 && sb.Length > 0)
+                            b.Content = sb[0].ToString();
                     }
                 }
             }

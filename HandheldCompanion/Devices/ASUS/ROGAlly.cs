@@ -14,10 +14,11 @@ using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
 using Task = System.Threading.Tasks.Task;
+using AsusDevice = HandheldCompanion.Devices.ASUS.ASUS;
 
 namespace HandheldCompanion.Devices;
 
-public class ROGAlly : IDevice
+public class ROGAlly : AsusDevice
 {
     private readonly Dictionary<byte, ButtonFlags> keyMapping = new()
     {
@@ -36,7 +37,7 @@ public class ROGAlly : IDevice
     static byte[] MESSAGE_APPLY = { AURA_HID_ID, 0xb4 };
     static byte[] MESSAGE_SET = { AURA_HID_ID, 0xb5, 0, 0, 0 };
 
-    public override bool IsOpen => hidDevices.ContainsKey(INPUT_HID_ID) && hidDevices[INPUT_HID_ID].IsOpen && AsusACPI.IsOpen;
+    public override bool IsOpen => hidDevices.ContainsKey(INPUT_HID_ID) && hidDevices[INPUT_HID_ID].IsOpen && base.IsOpen;
 
     private enum AuraMode
     {
@@ -208,16 +209,6 @@ public class ROGAlly : IDevice
     private byte[] commitReset3of4 = new byte[] { 0x5A, 0xD1, 0x04, 0x04, 0x00, 0x64, 0x00, 0x64 };
     private byte[] commitReset4of4 = new byte[] { 0x5A, 0xD1, 0x05, 0x04, 0x00, 0x64, 0x00, 0x64 };
     #endregion
-
-    public override bool Open()
-    {
-        bool success = base.Open();
-        if (!success)
-            return false;
-
-        // open Asus ACPI
-        return AsusACPI.Open();
-    }
 
     public override void OpenEvents()
     {
