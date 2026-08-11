@@ -161,8 +161,8 @@ public static class ControllerManager
         SDL.SetHint(SDL.Hints.XInputEnabled, "0");
         // Prevent SDL from exposing the Steam virtual controller and Steam Deck built-in
         // controller through the HID API, avoiding double-enumeration with our own paths.
-        SDL.SetHint(SDL.Hints.JoystickHIDAPISteam, "0");
-        SDL.SetHint(SDL.Hints.JoystickHIDAPISteamdeck, "0");
+        SDL.SetHint(SDL.Hints.JoystickHIDAPISteam, "1");
+        SDL.SetHint(SDL.Hints.JoystickHIDAPISteamdeck, "1");
 
         // Initialize the SDL Gamepad subsystem
         if (!SDL.Init(SDL.InitFlags.Gamepad))
@@ -551,7 +551,33 @@ public static class ControllerManager
                                 default:
                                 case SDL.GamepadType.Unknown:
                                 case SDL.GamepadType.Standard:
-                                    controller = new Xbox360Controller(gamepad, deviceIndex, details);
+                                    {
+                                        int VendorId = details.VendorID;
+                                        int ProductId = details.ProductID;
+
+                                        switch (VendorId)
+                                        {
+                                            case 0x28DE:
+                                                switch (ProductId)
+                                                {
+                                                    case 0x1102:
+                                                    case 0x1142:
+                                                    case 0x1205: // Steam Deck Controller (Neptune)
+                                                    case 0x12f0: // SteamOS Handheld Controller
+                                                        break;
+
+                                                    case 0x1302: // Steam Controller 2026 (Wired)
+                                                    case 0x1304: // Steam Controller 2026 (Wireless)
+                                                        controller = new Xbox360Controller(gamepad, deviceIndex, details);
+                                                        break;
+                                                }
+                                                break;
+
+                                            default:
+                                                controller = new Xbox360Controller(gamepad, deviceIndex, details);
+                                                break;
+                                        }
+                                    }
                                     break;
 
                                 case SDL.GamepadType.Xbox360:
@@ -734,6 +760,9 @@ public static class ControllerManager
                                     case 0x1205: // Steam Deck Controller (Neptune)
                                     case 0x12f0: // SteamOS Handheld Controller
                                         try { controller = new NeptuneController(details); } catch { }
+                                        break;
+                                    case 0x1302: // Steam Controller 2026 (Wired)
+                                    case 0x1304: // Steam Controller 2026 (Wireless)
                                         break;
                                 }
                                 break;
