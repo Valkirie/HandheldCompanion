@@ -130,6 +130,7 @@ public static class ControllerManager
     private static bool ControllerMuted;
 
     private static readonly object targetLock = new();
+    private static readonly object targetTransitionLock = new();
     public static ControllerManagerStatus managerStatus = ControllerManagerStatus.Pending;
 
     private static Timer scenarioTimer = new(100) { AutoReset = false };
@@ -2285,9 +2286,16 @@ public static class ControllerManager
 
     private static void ClearTargetController()
     {
-        lock (targetLock)
+        lock (targetTransitionLock)
         {
-            ClearTargetControllerInternal();
+            IController? controller;
+            lock (targetLock)
+            {
+                controller = targetController;
+                targetController = null;
+            }
+
+            ClearTargetController(controller);
         }
     }
 
@@ -2299,25 +2307,31 @@ public static class ControllerManager
     /// </summary>
     private static bool ClearTargetIfMatch(string instanceId)
     {
-        lock (targetLock)
+        lock (targetTransitionLock)
         {
-            if (targetController?.GetInstanceId() != instanceId)
-                return false;
+            IController? controller;
+            lock (targetLock)
+            {
+                if (targetController?.GetInstanceId() != instanceId)
+                    return false;
 
-            ClearTargetControllerInternal();
+                controller = targetController;
+                targetController = null;
+            }
+
+            ClearTargetController(controller);
             return true;
         }
     }
 
-    private static void ClearTargetControllerInternal()
+    private static void ClearTargetController(IController? controller)
     {
-        if (targetController is null)
+        if (controller is null)
             return;
 
-        targetController.SetLightColor(0, 0, 0);
-        targetController.StopRumble(waitForCompletion: false);
-        targetController.Unplug();
-        targetController = null;
+        controller.SetLightColor(0, 0, 0);
+        controller.StopRumble(waitForCompletion: false);
+        controller.Unplug();
         ManagerFactory.settingsManager.SetProperty("HIDInstancePath", string.Empty);
     }
 
@@ -2334,28 +2348,35 @@ public static class ControllerManager
         IController? controllerToHide = null;
         bool hideWithPowerCycle = false;
 
-        lock (targetLock)
+        lock (targetTransitionLock)
         {
             // look for new controller
             if (!Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController? controller))
                 return;
 
             // already self
-            if (IsTargetController(controller.GetInstanceId()))
+            bool isCurrentTarget;
+            IController? previousController;
+            lock (targetLock)
+            {
+                isCurrentTarget = targetController?.GetInstanceId() == controller.GetInstanceId();
+                previousController = targetController;
+
+                if (!isCurrentTarget)
+                    targetController = controller;
+            }
+
+            if (isCurrentTarget)
             {
                 controller.Plug();
                 return;
             }
 
-            // clear current target
-            ClearTargetControllerInternal();
-
-            // update target controller
-            targetController = controller;
-            targetController.Plug();
+            ClearTargetController(previousController);
+            controller.Plug();
 
             Color _systemAccent = App.uiSettings.GetColorValue(UIColorType.AccentDark1);
-            targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
+            controller.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
 
             // update HIDInstancePath
             ManagerFactory.settingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstanceId);
@@ -2366,19 +2387,19 @@ public static class ControllerManager
                 {
                     bool powerCycle = true;
 
-                    if (targetController is LegionController)
+                    if (controller is LegionController legionController)
                     {
                         // todo:    Look for a byte within hid report that'd tend to mean both controllers are synced.
                         //          Then I guess we could try and power cycle them.
-                        powerCycle = !((LegionController)targetController).IsWireless();
+                        powerCycle = !legionController.IsWireless();
                     }
 
-                    // Capture for post-lock call: Hide() -> CyclePort() can block for seconds
+                    // Capture for post-transition call: Hide() -> CyclePort() can block for seconds
                     // and fires IsBusy which dispatches to the UI thread — invoking it while
                     // holding targetLock deadlocks if the UI thread is also waiting for the lock.
-                    if (!targetController.IsHidden())
+                    if (!controller.IsHidden())
                     {
-                        controllerToHide = targetController;
+                        controllerToHide = controller;
                         hideWithPowerCycle = powerCycle;
                     }
                 }
@@ -2391,20 +2412,20 @@ public static class ControllerManager
             PowerCyclers.TryGetValue(baseContainerDeviceInstanceId, out IsPowerCycling);
 
             // stop any ongoing rumble
-            targetController.StopRumble(waitForCompletion: false);
+            controller.StopRumble(waitForCompletion: false);
 
             // vibrate on connect, except when controller is power cycling
             if (ManagerFactory.settingsManager.GetBoolean("HIDvibrateonconnect") && !IsPowerCycling)
-                targetController.Rumble();
+                controller.Rumble();
 
             // Never invoke external code while holding targetLock.
             // Subscribers may touch UI / managers that also take locks during shutdown.
-            selectedController = targetController;
+            selectedController = controller;
             selectedHandlers = ControllerSelected;
         }
 
         // Hide() -> CyclePort() blocks for up to 3 s (Bluetooth) and fires IsBusy/StateChanged
-        // which marshals OnPropertyChanged to the UI thread. Must run after releasing targetLock.
+        // which marshals OnPropertyChanged to the UI thread. Must run after releasing targetTransitionLock.
         controllerToHide?.Hide(hideWithPowerCycle);
 
         try
