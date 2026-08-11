@@ -24,6 +24,8 @@ public class NeptuneController : SteamController
     public const sbyte MinIntensity = -2;
     public const sbyte MaxIntensity = 10;
 
+    public override bool IsLizardModeEnabled => Controller?.LizardModeEnabled ?? true;
+
     // TODO: why not use TimerManager.Tick?
     private Thread? rumbleThread;
     private bool rumbleThreadRunning;
@@ -55,8 +57,8 @@ public class NeptuneController : SteamController
         TargetButtons.Add(ButtonFlags.R5);
         TargetButtons.Add(ButtonFlags.Special2);
 
-        TargetButtons.Add(ButtonFlags.LeftPadClick);
-        TargetButtons.Add(ButtonFlags.RightPadClick);
+        TargetButtons.Add(ButtonFlags.TouchpadClick);
+        TargetButtons.Add(ButtonFlags.TouchpadTouch);
 
         TargetAxis.Add(AxisLayoutFlags.LeftPad);
         TargetAxis.Add(AxisLayoutFlags.RightPad);
@@ -456,15 +458,23 @@ public class NeptuneController : SteamController
         }
     }
 
-    public override void SetHaptic(HapticStrength strength, ButtonFlags button)
+    public override void SetHaptic(HapticStrength strength, ButtonFlags button, bool released)
     {
-        ushort value = strength switch
+        SCHapticMotor motor = GetMotorForButton(button);
+        motor = motor == SCHapticMotor.Left ? SCHapticMotor.Right : SCHapticMotor.Left;
+
+        NCHapticStyle style = strength == HapticStrength.Low ? NCHapticStyle.Weak : NCHapticStyle.Strong;
+        sbyte intensity = strength switch
         {
-            HapticStrength.Low => 512,
-            HapticStrength.Medium => 1024,
-            HapticStrength.High => 2048,
-            _ => 0,
+            HapticStrength.Low => -7,
+            HapticStrength.Medium => -1,
+            HapticStrength.High => 5,
+            _ => -1,
         };
-        Controller?.SetHaptic((byte)GetMotorForButton(button), value, 0, 1);
+
+        if (released)
+            intensity = (sbyte)Math.Max(-7, intensity - 3);
+
+        Controller?.SetHaptic2(motor, style, intensity);
     }
 }

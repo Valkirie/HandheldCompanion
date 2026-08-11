@@ -17,6 +17,8 @@ public class MotionOutputToNameConverter : IValueConverter
                 2 => "Right Stick",
                 3 => "Move Cursor",
                 4 => "Scroll Wheel",
+                5 => "Left Pad",
+                6 => "Right Pad",
                 _ => "Unknown"
             };
         }

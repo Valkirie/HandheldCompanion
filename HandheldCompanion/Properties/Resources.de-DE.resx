@@ -3055,10 +3055,10 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
     <value>Optionen</value>
   </data>
   <data name="Enum_DualShock4Controller_AxisLayoutFlags_LeftPad" xml:space="preserve">
-    <value>Left-finger swipe</value>
+    <value>Left-finger touch</value>
   </data>
   <data name="Enum_DualShock4Controller_AxisLayoutFlags_RightPad" xml:space="preserve">
-    <value>Right-finger swipe</value>
+    <value>Right-finger touch</value>
   </data>
   <data name="Enum_DualShock4Controller_ButtonFlags_LeftPadClick" xml:space="preserve">
     <value>Left-finger click</value>

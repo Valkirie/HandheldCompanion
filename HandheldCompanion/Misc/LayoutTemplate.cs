@@ -46,38 +46,58 @@ namespace HandheldCompanion.Misc
 
             template.Layout.ButtonLayout[ButtonFlags.DPadUp] =
             [
-                CreateAxisAction(AxisLayoutFlags.LeftPad, y: 28672),
-                CreateButtonAction(ButtonFlags.LeftPadTouch),
-                CreateButtonAction(ButtonFlags.LeftPadClick)
+                new TouchpadActions(ButtonFlags.TouchpadClick)
+                {
+                    Finger = 1,
+                    UseCoordinates = true,
+                    Y = -28672,
+                }
             ];
 
             template.Layout.ButtonLayout[ButtonFlags.DPadDown] =
             [
-                CreateButtonAction(ButtonFlags.LeftPadClick),
-                CreateAxisAction(AxisLayoutFlags.LeftPad, y: -28672),
-                CreateButtonAction(ButtonFlags.LeftPadTouch)
+                new TouchpadActions(ButtonFlags.TouchpadClick)
+                {
+                    Finger = 1,
+                    UseCoordinates = true,
+                    Y = 28672,
+                }
             ];
 
             template.Layout.ButtonLayout[ButtonFlags.DPadLeft] =
             [
-                CreateButtonAction(ButtonFlags.LeftPadClick),
-                CreateButtonAction(ButtonFlags.LeftPadTouch),
-                CreateAxisAction(AxisLayoutFlags.LeftPad, x: -28672)
+                new TouchpadActions(ButtonFlags.TouchpadClick)
+                {
+                    Finger = 1,
+                    UseCoordinates = true,
+                    X = -28672,
+                }
             ];
 
             template.Layout.ButtonLayout[ButtonFlags.DPadRight] =
             [
-                CreateButtonAction(ButtonFlags.LeftPadTouch),
-                CreateButtonAction(ButtonFlags.LeftPadClick),
-                CreateAxisAction(AxisLayoutFlags.LeftPad, x: 28672)
+                new TouchpadActions(ButtonFlags.TouchpadClick)
+                {
+                    Finger = 1,
+                    UseCoordinates = true,
+                    X = 28672,
+                }
             ];
 
-            template.Layout.ButtonLayout[ButtonFlags.RightStickClick] = [CreateButtonAction(ButtonFlags.RightPadClick)];
+            template.Layout.ButtonLayout[ButtonFlags.RightStickClick] =
+            [
+                new TouchpadActions(ButtonFlags.TouchpadClick)
+                {
+                    Finger = 2
+                }
+            ];
 
             template.Layout.AxisLayout[AxisLayoutFlags.RightStick] =
             [
-                CreateAxisAction(AxisLayoutFlags.RightPad),
-                CreateButtonAction(ButtonFlags.RightPadTouch, Utils.DeflectionDirection.Any, 1000)
+                new TouchpadActions(AxisLayoutFlags.RightPad)
+                {
+                    AxisDeadZoneInner   = 5
+                }
             ];
 
             return template;
@@ -104,7 +124,7 @@ namespace HandheldCompanion.Misc
             };
         }
 
-        private static MouseActions CreateMouseAction(MouseActionsType mouseType, ModifierSet modifiers = ModifierSet.None, Utils.DeflectionDirection motionDirection = Utils.DeflectionDirection.None, float motionThreshold = 4000)
+        private static MouseActions CreateMouseAction(MouseActionsType mouseType, ModifierSet modifiers = ModifierSet.None, Utils.DeflectionDirection motionDirection = Utils.DeflectionDirection.None, float motionThreshold = 4000, HapticMode hapticMode = HapticMode.Off)
         {
             return new MouseActions
             {
@@ -112,6 +132,7 @@ namespace HandheldCompanion.Misc
                 Modifiers = modifiers,
                 motionDirection = motionDirection,
                 motionThreshold = motionThreshold,
+                HapticMode = hapticMode,
             };
         }
 
@@ -122,6 +143,24 @@ namespace HandheldCompanion.Misc
                 Axis = axis,
                 ButtonX = x,
                 ButtonY = y,
+            };
+        }
+
+        private static TouchpadActions CreateTouchpadAction(AxisLayoutFlags axis, short x = 0, short y = 0)
+        {
+            return new TouchpadActions(axis)
+            {
+                ButtonX = x,
+                ButtonY = y,
+            };
+        }
+
+        private static TouchpadActions CreateTouchpadAction(ButtonFlags button, Utils.DeflectionDirection motionDirection, float motionThreshold)
+        {
+            return new TouchpadActions(button)
+            {
+                motionDirection = motionDirection,
+                motionThreshold = motionThreshold,
             };
         }
 
@@ -154,8 +193,8 @@ namespace HandheldCompanion.Misc
                         {
                             { AxisLayoutFlags.LeftStick, new List<IActions>() { CreateMouseAction(MouseActionsType.Scroll) } },
                             { AxisLayoutFlags.RightStick, new List<IActions>() { CreateMouseAction(MouseActionsType.Move) } },
-                            { AxisLayoutFlags.LeftPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Scroll) } },
-                            { AxisLayoutFlags.RightPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Move) } },
+                            { AxisLayoutFlags.LeftPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Scroll, hapticMode: HapticMode.Down) } },
+                            { AxisLayoutFlags.RightPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Move, hapticMode: HapticMode.Down) } },
                             {
                                 AxisLayoutFlags.L2, new List<IActions>()
                                 {
@@ -208,7 +247,7 @@ namespace HandheldCompanion.Misc
                         Layout.AxisLayout = new()
                         {
                             { AxisLayoutFlags.RightStick, new List<IActions>() { CreateMouseAction(MouseActionsType.Move) } },
-                            { AxisLayoutFlags.RightPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Move) } },
+                            { AxisLayoutFlags.RightPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Move, hapticMode: HapticMode.Down) } },
                             {
                                 AxisLayoutFlags.LeftStick, new List<IActions>()
                                 {
@@ -265,7 +304,7 @@ namespace HandheldCompanion.Misc
 
                 case "GamepadMouse":
                     {
-                        Layout.AxisLayout[AxisLayoutFlags.RightPad] = new List<IActions>() { CreateMouseAction(MouseActionsType.Move) };
+                        Layout.AxisLayout[AxisLayoutFlags.RightPad] = new List<IActions>() { CreateMouseAction(MouseActionsType.Move, hapticMode: HapticMode.Down) };
                     }
                     break;
 

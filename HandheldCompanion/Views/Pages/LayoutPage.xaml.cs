@@ -313,9 +313,12 @@ public partial class LayoutPage : Page
                         // because they both have important Update notifitications set
                         using (Layout newLayout = (Layout)layoutTemplate.Layout.Clone())
                         {
-                            currentTemplate.Layout.AxisLayout = CloningHelper.DeepClone(newLayout.AxisLayout);
-                            currentTemplate.Layout.ButtonLayout = CloningHelper.DeepClone(newLayout.ButtonLayout);
-                            currentTemplate.Layout.GyroLayout = CloningHelper.DeepClone(newLayout.GyroLayout);
+                            lock (currentTemplate.Layout.SyncRoot)
+                            {
+                                currentTemplate.Layout.AxisLayout = CloningHelper.DeepClone(newLayout.AxisLayout);
+                                currentTemplate.Layout.ButtonLayout = CloningHelper.DeepClone(newLayout.ButtonLayout);
+                                currentTemplate.Layout.GyroLayout = CloningHelper.DeepClone(newLayout.GyroLayout);
+                            }
                         }
 
                         currentTemplate.Name = layoutTemplate.Name;
@@ -362,15 +365,18 @@ public partial class LayoutPage : Page
                     Profile currentProfile = ProfilesPage.selectedProfile;
 
                     // Clear the layout
-                    currentTemplate.Layout.ButtonLayout.Clear();
-                    currentTemplate.Layout.AxisLayout.Clear();
-                    currentTemplate.Layout.GyroLayout.Clear();
+                    lock (currentTemplate.Layout.SyncRoot)
+                    {
+                        currentTemplate.Layout.ButtonLayout.Clear();
+                        currentTemplate.Layout.AxisLayout.Clear();
+                        currentTemplate.Layout.GyroLayout.Clear();
 
-                    // Fill with appropriate defaults
-                    if (currentProfile.Default)
-                        currentTemplate.Layout.FillDefault();
-                    else
-                        currentTemplate.Layout.FillInherit();
+                        // Fill with appropriate defaults
+                        if (currentProfile.Default)
+                            currentTemplate.Layout.FillDefault();
+                        else
+                            currentTemplate.Layout.FillInherit();
+                    }
 
                     currentTemplate.Name = LayoutTemplate.DefaultLayout.Name;
 

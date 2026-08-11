@@ -13,6 +13,9 @@ namespace HandheldCompanion.Targets
         protected override string DeviceType => "dualsenseedge";
         protected override int InputLength => 33;
 
+        private byte preparedClickFinger;
+        private bool preparedClickEmitted;
+
         public DualSenseTarget(ushort vendorId, ushort productId) : base(vendorId, productId)
         {
             HID = HIDmode.DualSenseController;
@@ -36,6 +39,20 @@ namespace HandheldCompanion.Targets
             data[2] = (byte)(inputs.AxisState[AxisFlags.RightStickX] >> 8);
             data[3] = (byte)(InputUtils.NegateClampToShort((short)inputs.AxisState[AxisFlags.RightStickY]) >> 8);
 
+            bool leftPadClick = inputs.ButtonState[ButtonFlags.LeftPadClick];
+            bool rightPadClick = inputs.ButtonState[ButtonFlags.RightPadClick];
+            bool touchpadClick = inputs.ButtonState[ButtonFlags.TouchpadClick];
+
+            var leftOutputTouch = DS4Touch.OutputLeftPadTouch.IsActive ? DS4Touch.OutputLeftPadTouch : DS4Touch.LeftPadTouch;
+            var rightOutputTouch = DS4Touch.OutputRightPadTouch.IsActive ? DS4Touch.OutputRightPadTouch : DS4Touch.RightPadTouch;
+
+            byte requestedClickFinger = touchpadClick
+                ? DS4Touch.OutputLeftPadTouch.IsActive ? (byte)1
+                    : DS4Touch.OutputRightPadTouch.IsActive ? (byte)2 : (byte)0
+                : leftPadClick ? (byte)1
+                : rightPadClick ? (byte)2 : (byte)0;
+            ResolveClickFinger(requestedClickFinger, touchpadClick, out bool emitClick);
+
             uint buttons = 0;
             if (inputs.ButtonState[ButtonFlags.B1]) buttons |= 0x0020;
             if (inputs.ButtonState[ButtonFlags.B2]) buttons |= 0x0040;
@@ -48,7 +65,8 @@ namespace HandheldCompanion.Targets
             if (inputs.ButtonState[ButtonFlags.LeftStickClick]) buttons |= 0x4000;
             if (inputs.ButtonState[ButtonFlags.RightStickClick]) buttons |= 0x8000;
             if (inputs.ButtonState[ButtonFlags.Special]) buttons |= 0x00010000;
-            if (inputs.ButtonState[ButtonFlags.LeftPadClick] || inputs.ButtonState[ButtonFlags.RightPadClick] || DS4Touch.OutputClickButton) buttons |= 0x00020000;
+            if (touchpadClick || emitClick) buttons |= 0x00020000;
+            if (inputs.ButtonState[ButtonFlags.B5]) buttons |= 0x00040000;
             data[4] = (byte)(buttons & 0xFF);
             data[5] = (byte)((buttons >> 8) & 0xFF);
             data[6] = (byte)((buttons >> 16) & 0xFF);
@@ -63,18 +81,10 @@ namespace HandheldCompanion.Targets
             data[9] = (byte)inputs.AxisState[AxisFlags.L2];
             data[10] = (byte)inputs.AxisState[AxisFlags.R2];
 
-            if (DS4Touch.RightPadTouch.IsActive)
-            {
-                ushort touchX = InputUtils.ClampToUShort((int)DS4Touch.RightPadTouch.X, 0, DS4Touch.TOUCHPAD_WIDTH - 1);
-                ushort touchYRaw = InputUtils.ClampToUShort((int)DS4Touch.RightPadTouch.Y, 0, DS4Touch.TOUCHPAD_HEIGHT - 1);
-                ushort touchXScaled = InputUtils.ClampToUShort(touchX * DS4Touch.TOUCHPAD_WIDTH / 1023, 0, DS4Touch.TOUCHPAD_WIDTH);
-                ushort touchYScaled = InputUtils.ClampToUShort(touchYRaw * 1080 / (DS4Touch.TOUCHPAD_HEIGHT - 1), 0, 1080);
-                data[11] = (byte)(touchXScaled & 0xFF);
-                data[12] = (byte)((touchXScaled >> 8) & 0xFF);
-                data[13] = (byte)(touchYScaled & 0xFF);
-                data[14] = (byte)((touchYScaled >> 8) & 0xFF);
-                data[15] = 1;
-            }
+            if (leftOutputTouch.IsActive)
+                WriteTouch(data, 11, leftOutputTouch.X, leftOutputTouch.Y);
+            if (rightOutputTouch.IsActive)
+                WriteTouch(data, 16, rightOutputTouch.X, rightOutputTouch.Y);
 
             if (gamepadMotion is not null)
             {
@@ -112,6 +122,53 @@ namespace HandheldCompanion.Targets
             }
 
             return data;
+        }
+
+        private static void WriteTouch(byte[] data, int offset, int x, int y)
+        {
+            ushort touchX = InputUtils.ClampToUShort(x, 0, DS4Touch.TOUCHPAD_WIDTH - 1);
+            ushort touchY = InputUtils.ClampToUShort(y, 0, DS4Touch.TOUCHPAD_HEIGHT - 1);
+            data[offset] = (byte)(touchX & 0xFF);
+            data[offset + 1] = (byte)((touchX >> 8) & 0xFF);
+            data[offset + 2] = (byte)(touchY & 0xFF);
+            data[offset + 3] = (byte)((touchY >> 8) & 0xFF);
+            data[offset + 4] = 1;
+        }
+
+        private void ResolveClickFinger(byte requestedFinger, bool directClick, out bool emitClick)
+        {
+            emitClick = false;
+
+            if (requestedFinger != 0)
+            {
+                if (preparedClickFinger == requestedFinger)
+                {
+                    emitClick = directClick && !preparedClickEmitted || !directClick;
+                    preparedClickEmitted = true;
+                }
+                else
+                {
+                    preparedClickFinger = requestedFinger;
+                    preparedClickEmitted = directClick;
+                    emitClick = directClick;
+                }
+            }
+            else if (preparedClickFinger != 0 && !preparedClickEmitted)
+            {
+                emitClick = true;
+                ClearPreparedClick();
+            }
+            else
+            {
+                ClearPreparedClick();
+            }
+
+        }
+
+        private void ClearPreparedClick()
+        {
+            preparedClickFinger = 0;
+            preparedClickEmitted = false;
         }
     }
 }

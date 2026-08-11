@@ -44,7 +44,7 @@ namespace HandheldCompanion.Targets
             if (inputs.ButtonState[ButtonFlags.LeftStickClick]) buttons |= 0x4000;
             if (inputs.ButtonState[ButtonFlags.RightStickClick]) buttons |= 0x8000;
             if (inputs.ButtonState[ButtonFlags.Special]) buttons |= 0x0001;
-            if (inputs.ButtonState[ButtonFlags.LeftPadClick] || inputs.ButtonState[ButtonFlags.RightPadClick] || DS4Touch.OutputClickButton) buttons |= 0x0002;
+            if (inputs.ButtonState[ButtonFlags.LeftPadClick] || inputs.ButtonState[ButtonFlags.RightPadClick] || inputs.ButtonState[ButtonFlags.TouchpadClick] || DS4Touch.OutputClickButton) buttons |= 0x0002;
             data[4] = (byte)(buttons & 0xFF);
             data[5] = (byte)((buttons >> 8) & 0xFF);
 
@@ -57,10 +57,13 @@ namespace HandheldCompanion.Targets
             data[7] = (byte)inputs.AxisState[AxisFlags.L2];
             data[8] = (byte)inputs.AxisState[AxisFlags.R2];
 
-            if (DS4Touch.LeftPadTouch.IsActive)
+            var leftPadTouch = DS4Touch.OutputLeftPadTouch.IsActive
+                ? DS4Touch.OutputLeftPadTouch
+                : DS4Touch.LeftPadTouch;
+            if (leftPadTouch.IsActive)
             {
-                ushort x = InputUtils.ClampToUShort((int)DS4Touch.LeftPadTouch.X, 0, DS4Touch.TOUCHPAD_WIDTH - 1);
-                ushort y = InputUtils.ClampToUShort((int)DS4Touch.LeftPadTouch.Y, 0, DS4Touch.TOUCHPAD_HEIGHT - 1);
+                ushort x = InputUtils.ClampToUShort((int)leftPadTouch.X, 0, DS4Touch.TOUCHPAD_WIDTH - 1);
+                ushort y = InputUtils.ClampToUShort((int)leftPadTouch.Y, 0, DS4Touch.TOUCHPAD_HEIGHT - 1);
                 data[9] = (byte)(x & 0xFF);
                 data[10] = (byte)((x >> 8) & 0xFF);
                 data[11] = (byte)(y & 0xFF);
@@ -68,10 +71,13 @@ namespace HandheldCompanion.Targets
                 data[13] = 1;
             }
 
-            if (DS4Touch.RightPadTouch.IsActive)
+            var rightPadTouch = DS4Touch.OutputRightPadTouch.IsActive
+                ? DS4Touch.OutputRightPadTouch
+                : DS4Touch.RightPadTouch;
+            if (rightPadTouch.IsActive)
             {
-                ushort x = InputUtils.ClampToUShort((int)DS4Touch.RightPadTouch.X, 0, DS4Touch.TOUCHPAD_WIDTH - 1);
-                ushort y = InputUtils.ClampToUShort((int)DS4Touch.RightPadTouch.Y, 0, DS4Touch.TOUCHPAD_HEIGHT - 1);
+                ushort x = InputUtils.ClampToUShort((int)rightPadTouch.X, 0, DS4Touch.TOUCHPAD_WIDTH - 1);
+                ushort y = InputUtils.ClampToUShort((int)rightPadTouch.Y, 0, DS4Touch.TOUCHPAD_HEIGHT - 1);
                 data[14] = (byte)(x & 0xFF);
                 data[15] = (byte)((x >> 8) & 0xFF);
                 data[16] = (byte)(y & 0xFF);

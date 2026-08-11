@@ -38,7 +38,7 @@ namespace HandheldCompanion.Utils
         JoystickSteering = 3
     }
 
-    public enum MotionOutput { Disabled, LeftStick, RightStick, MoveCursor, ScrollWheel }
+    public enum MotionOutput { Disabled, LeftStick, RightStick, MoveCursor, ScrollWheel, LeftPad, RightPad }
     public enum MotionMode { Off, On, Toggle }
 
     [Flags]

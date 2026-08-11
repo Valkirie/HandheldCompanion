@@ -1,13 +1,17 @@
 ﻿using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Controllers.Dummies;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 
@@ -28,6 +32,8 @@ namespace HandheldCompanion.ViewModels
 
     public abstract class MappingViewModel : BaseViewModel
     {
+        #region Core action properties
+
         protected object Value { get; set; }
         public IActions? Action { get; protected set; }
 
@@ -40,9 +46,12 @@ namespace HandheldCompanion.ViewModels
                 {
                     ActionTypeChanged((ActionType)value);
                     OnPropertyChanged(nameof(ActionTypeIndex));
+                    OnPropertyChanged(nameof(SupportedActionTypes));
                 }
             }
         }
+
+        public virtual ActionType[] SupportedActionTypes => [ActionType.Disabled];
 
         public string ActionTypeName => ((ActionType)ActionTypeIndex).ToString();
 
@@ -170,6 +179,10 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        #endregion
+
+        #region Mouse mapping properties
+
         // Shows the Axis2 panel for Mouse actions of type Scroll or Move
         public Visibility Axis2MouseVisibility
         {
@@ -201,6 +214,10 @@ namespace HandheldCompanion.ViewModels
             {
                 ActionType currentActionType = (ActionType)ActionTypeIndex;
                 if (currentActionType == ActionType.Button || currentActionType == ActionType.Keyboard)
+                    return Visibility.Visible;
+
+                if (currentActionType == ActionType.Touchpad &&
+                    Action is TouchpadActions { TargetType: TouchpadTargetType.Button })
                     return Visibility.Visible;
 
                 // For Mouse actions, ensure a target exists and check its action type
@@ -258,6 +275,17 @@ namespace HandheldCompanion.ViewModels
             set { }
         }
 
+        // Axis to Mouse properties (for Mouse actions) - default to 0/false
+        public virtual int Axis2MousePointerSpeed { get => 0; set { } }
+        public virtual float Axis2MouseAcceleration { get => 0; set { } }
+        public virtual int Axis2MouseDeadzone { get => 0; set { } }
+        public virtual bool Axis2MouseFiltering { get => false; set { } }
+        public virtual float Axis2MouseFilterCutoff { get => 0; set { } }
+
+        #endregion
+
+        #region Axis mapping properties
+
         // Axis direction properties (for Axis2Button) - default to false
         // These should only be visible for AxisMappingViewModel, not ButtonMappingViewModel
         public virtual bool IsUp { get => false; set { } }
@@ -267,6 +295,54 @@ namespace HandheldCompanion.ViewModels
 
         // Property to check if this is an Axis mapping (for visibility conditions)
         public virtual bool IsAxisMapping => false;
+
+        // Axis to Axis properties (for Joystick actions) - default to 0/false
+        // Should only be visible for Axis -> Joystick mappings
+        public virtual int Axis2AxisOutputShapeIndex { get => 0; set { } }
+        public virtual bool Axis2AxisInvertHorizontal { get => false; set { } }
+        public virtual bool Axis2AxisInvertVertical { get => false; set { } }
+        public virtual int Axis2AxisInnerDeadzone { get => 0; set { } }
+        public virtual int Axis2AxisOuterDeadzone { get => 0; set { } }
+        public virtual int Axis2AxisAntiDeadzone { get => 0; set { } }
+        public virtual int Button2AxisX { get => 0; set { } }
+        public virtual int Button2AxisY { get => 0; set { } }
+        public virtual Visibility AxisResponseCurveVisibility => Visibility.Collapsed;
+        public virtual Visibility AxisOutputShapeVisibility =>
+            ActionTypeIndex == (int)ActionType.Joystick ? Visibility.Visible : Visibility.Collapsed;
+
+        // Visibility for Axis invert properties - only Axis mappings
+        public virtual Visibility AxisInvertVisibility => Visibility.Collapsed;
+        public virtual Visibility AxisDeadzoneVisibility => Visibility.Collapsed;
+        public virtual Visibility Button2AxisVisibility => Visibility.Collapsed;
+        public virtual Visibility AxisVisualizerVisibility => Visibility.Collapsed;
+        public virtual double AxisVisualizerDotX => 0.0d;
+        public virtual double AxisVisualizerDotY => 0.0d;
+        public virtual double AxisVisualizerDotTranslateX => 0.0d;
+        public virtual double AxisVisualizerDotTranslateY => 0.0d;
+        public virtual double AxisVisualizerInnerDeadzoneSize => 0.0d;
+        public virtual double AxisVisualizerOuterDeadzoneSize => 0.0d;
+        public virtual double AxisVisualizerAntiDeadzoneSize => 0.0d;
+
+        // Axis visibility properties - default to Collapsed
+        public virtual Visibility Axis2TouchpadVisibility => Visibility.Collapsed;
+        public virtual Visibility Axis2JoystickVisibility => Visibility.Collapsed;
+
+        // Axis Direction and Threshold should only be visible for Axis mappings converting to Button
+        public virtual Visibility AxisDirectionVisibility => Visibility.Collapsed;
+        public virtual Visibility AxisThresholdVisibility => Visibility.Collapsed;
+
+        #endregion
+
+        #region Trigger mapping properties
+
+        // Trigger to Trigger/Axis deadzone properties - default to 0
+        // Should only be visible for Trigger -> Trigger/Axis mappings
+        public virtual int Trigger2TriggerInnerDeadzone { get => 0; set { } }
+        public virtual int Trigger2TriggerOuterDeadzone { get => 0; set { } }
+        public virtual int Trigger2TriggerAntiDeadzone { get => 0; set { } }
+
+        // Visibility for Trigger deadzone properties - only Trigger -> Trigger/Axis
+        public virtual Visibility TriggerDeadzoneVisibility => Visibility.Collapsed;
 
         // Property to check if this is a Trigger mapping (for visibility conditions)
         public virtual bool IsTriggerMapping => false;
@@ -281,54 +357,130 @@ namespace HandheldCompanion.ViewModels
 
         // Visibility for Trigger output - only Button -> Trigger
         public virtual Visibility TriggerOutputVisibility => Visibility.Collapsed;
+        public virtual Visibility Trigger2ButtonVisibility => Visibility.Collapsed;
 
-        // Axis to Axis properties (for Joystick actions) - default to 0/false
-        // Should only be visible for Axis -> Joystick mappings
-        public virtual int Axis2AxisOutputShapeIndex { get => 0; set { } }
-        public virtual bool Axis2AxisInvertHorizontal { get => false; set { } }
-        public virtual bool Axis2AxisInvertVertical { get => false; set { } }
-        public virtual int Axis2AxisInnerDeadzone { get => 0; set { } }
-        public virtual int Axis2AxisOuterDeadzone { get => 0; set { } }
-        public virtual int Axis2AxisAntiDeadzone { get => 0; set { } }
-        public virtual int Button2AxisX { get => 0; set { } }
-        public virtual int Button2AxisY { get => 0; set { } }
-        public virtual Visibility AxisResponseCurveVisibility => Visibility.Collapsed;
+        #endregion
 
-        // Visibility for Axis invert properties - only Axis mappings
-        public virtual Visibility AxisInvertVisibility => Visibility.Collapsed;
-        public virtual Visibility Button2AxisVisibility => Visibility.Collapsed;
-        public virtual Visibility AxisVisualizerVisibility => Visibility.Collapsed;
-        public virtual double AxisVisualizerDotX => 0.0d;
-        public virtual double AxisVisualizerDotY => 0.0d;
-        public virtual double AxisVisualizerDotTranslateX => 0.0d;
-        public virtual double AxisVisualizerDotTranslateY => 0.0d;
-        public virtual double AxisVisualizerInnerDeadzoneSize => 0.0d;
-        public virtual double AxisVisualizerOuterDeadzoneSize => 0.0d;
-        public virtual double AxisVisualizerAntiDeadzoneSize => 0.0d;
+        #region Touchpad mapping properties
 
-        // Trigger to Trigger/Axis deadzone properties - default to 0
-        // Should only be visible for Trigger -> Trigger/Axis mappings
-        public virtual int Trigger2TriggerInnerDeadzone { get => 0; set { } }
-        public virtual int Trigger2TriggerOuterDeadzone { get => 0; set { } }
-        public virtual int Trigger2TriggerAntiDeadzone { get => 0; set { } }
+        public Visibility TouchpadActionTypeVisibility
+        {
+            get
+            {
+                IController controller = ControllerManager.GetDefault(true);
+                return Action is TouchpadActions || TouchpadActions.HasTargets(controller)
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+        }
 
-        // Visibility for Trigger deadzone properties - only Trigger -> Trigger/Axis
-        public virtual Visibility TriggerDeadzoneVisibility => Visibility.Collapsed;
+        public Visibility TouchpadAxisActionTypeVisibility
+        {
+            get
+            {
+                IController controller = ControllerManager.GetDefault(true);
+                return Action is TouchpadActions || TouchpadActions.GetAxisTargets(controller).Any()
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+        }
 
-        // Axis to Mouse properties (for Mouse actions) - default to 0/false
-        public virtual int Axis2MousePointerSpeed { get => 0; set { } }
-        public virtual float Axis2MouseAcceleration { get => 0; set { } }
-        public virtual int Axis2MouseDeadzone { get => 0; set { } }
-        public virtual bool Axis2MouseFiltering { get => false; set { } }
-        public virtual float Axis2MouseFilterCutoff { get => 0; set { } }
+        public virtual Visibility TouchpadSettingsVisibility =>
+            ActionTypeIndex == (int)ActionType.Touchpad &&
+            Action is TouchpadActions { TargetType: TouchpadTargetType.Button } touchpadAction &&
+            TouchpadActions.IsGestureTarget(touchpadAction.Button)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        public virtual Visibility TouchpadSwipeSettingsVisibility =>
+            ActionTypeIndex == (int)ActionType.Touchpad &&
+            Action is TouchpadActions { TargetType: TouchpadTargetType.Button, Button: ButtonFlags.TouchpadSwipe }
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        public virtual Visibility TouchpadCoordinateSettingsVisibility =>
+            ActionTypeIndex == (int)ActionType.Touchpad &&
+            Action is TouchpadActions { TargetType: TouchpadTargetType.Button, Button: ButtonFlags.TouchpadClick or ButtonFlags.TouchpadTouch }
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        public virtual bool TouchpadUseCoordinates
+        {
+            get => Action is TouchpadActions a && a.UseCoordinates;
+            set
+            {
+                if (Action is TouchpadActions a && value != a.UseCoordinates)
+                {
+                    a.UseCoordinates = value;
+                    OnPropertyChanged(nameof(TouchpadUseCoordinates));
+                    OnPropertyChanged(nameof(TouchpadVisualizerVisibility));
+                }
+            }
+        }
+        public virtual Visibility TouchpadVisualizerVisibility => TouchpadSettingsVisibility;
+        public double TouchpadVisualizerStartX => TouchpadVisualizerPosition(TouchpadX, TouchpadMaxX, 232.0d);
+        public double TouchpadVisualizerStartY => TouchpadVisualizerPosition(TouchpadY, TouchpadMaxY, 112.0d);
+        public double TouchpadVisualizerEndX => TouchpadVisualizerPosition(TouchpadEndX, TouchpadMaxX, 232.0d);
+        public double TouchpadVisualizerEndY => TouchpadVisualizerPosition(TouchpadEndY, TouchpadMaxY, 112.0d);
+        public double TouchpadVisualizerLineStartX => TouchpadVisualizerStartX + 4.0d;
+        public double TouchpadVisualizerLineStartY => TouchpadVisualizerStartY + 4.0d;
+        public double TouchpadVisualizerLineEndX => TouchpadVisualizerEndX + 4.0d;
+        public double TouchpadVisualizerLineEndY => TouchpadVisualizerEndY + 4.0d;
+        public int TouchpadMaxX => DS4Touch.TOUCHPAD_WIDTH - 1;
+        public int TouchpadMaxY => DS4Touch.TOUCHPAD_HEIGHT - 1;
+        public double TouchpadMaxDuration => TouchpadActions.MaximumSwipeDuration;
+        public int TouchpadFingerIndex
+        {
+            get => Action is TouchpadActions a ? a.Finger - 1 : 0;
+            set
+            {
+                if (Action is TouchpadActions a && value is >= 0 and <= 1)
+                {
+                    a.Finger = (byte)(value + 1);
+                    OnPropertyChanged(nameof(TouchpadFingerIndex));
+                }
+            }
+        }
+        public string TouchpadCoordinateRangeDescription => string.Format(
+            Resources.LayoutPage_TouchpadCoordinateRange, TouchpadMaxX, TouchpadMaxY);
+        public int TouchpadX { get => Action is TouchpadActions a ? a.X : 0; set { if (Action is TouchpadActions a) { a.X = value; OnPropertyChanged(nameof(TouchpadX)); NotifyTouchpadVisualizer(nameof(TouchpadVisualizerStartX), nameof(TouchpadVisualizerStartY), nameof(TouchpadVisualizerLineStartX), nameof(TouchpadVisualizerLineStartY)); } } }
+        public int TouchpadY { get => Action is TouchpadActions a ? a.Y : 0; set { if (Action is TouchpadActions a) { a.Y = value; OnPropertyChanged(nameof(TouchpadY)); NotifyTouchpadVisualizer(nameof(TouchpadVisualizerStartX), nameof(TouchpadVisualizerStartY), nameof(TouchpadVisualizerLineStartX), nameof(TouchpadVisualizerLineStartY)); } } }
+        public int TouchpadEndX { get => Action is TouchpadActions a ? a.EndX : 0; set { if (Action is TouchpadActions a) { a.EndX = value; OnPropertyChanged(nameof(TouchpadEndX)); NotifyTouchpadVisualizer(nameof(TouchpadVisualizerEndX), nameof(TouchpadVisualizerLineEndX)); } } }
+        public int TouchpadEndY { get => Action is TouchpadActions a ? a.EndY : 0; set { if (Action is TouchpadActions a) { a.EndY = value; OnPropertyChanged(nameof(TouchpadEndY)); NotifyTouchpadVisualizer(nameof(TouchpadVisualizerEndY), nameof(TouchpadVisualizerLineEndY)); } } }
+        public double TouchpadSwipeDuration { get => Action is TouchpadActions a ? a.SwipeDuration : TouchpadActions.DefaultSwipeDuration; set { if (Action is TouchpadActions a) { a.SwipeDuration = (float)value; OnPropertyChanged(nameof(TouchpadSwipeDuration)); } } }
 
-        // Axis visibility properties - default to Collapsed
-        public virtual Visibility Axis2TouchpadVisibility => Visibility.Collapsed;
-        public virtual Visibility Axis2JoystickVisibility => Visibility.Collapsed;
+        private static double TouchpadVisualizerPosition(int value, int maximum, double available) =>
+            maximum == 0 ? 0.0d : value * available / maximum;
 
-        // Axis Direction and Threshold should only be visible for Axis mappings converting to Button
-        public virtual Visibility AxisDirectionVisibility => Visibility.Collapsed;
-        public virtual Visibility AxisThresholdVisibility => Visibility.Collapsed;
+        private void NotifyTouchpadVisualizer(params string[] propertyNames)
+        {
+            foreach (string propertyName in propertyNames)
+                OnPropertyChanged(propertyName);
+        }
+
+        protected static IEnumerable<ButtonFlags> GetButtonTargets(IController controller)
+        {
+            foreach (ButtonFlags button in controller.GetTargetButtons())
+            {
+                if (!TouchpadActions.IsTouchpadButton(button))
+                    yield return button;
+            }
+        }
+
+        protected static IEnumerable<AxisLayoutFlags> GetJoystickTargets(IController controller) =>
+            controller.GetTargetAxis().Where(axis => !TouchpadActions.IsTouchpadAxis(axis));
+
+        protected void SetTouchpadTarget(object target)
+        {
+            if (Action is not TouchpadActions touchpadAction)
+                return;
+
+            if (target is ButtonFlags button)
+                touchpadAction.SetTarget(button);
+            else if (target is AxisLayoutFlags axis)
+                touchpadAction.SetTarget(axis);
+        }
+
+        #endregion
+
+        #region Section visibility
 
         // Combined visibility for settings that apply to both Button mappings and Axis2Button mappings
         // This avoids duplication - shows when ActionTypeIndex is Button/Keyboard/Mouse/Trigger/Shift
@@ -341,7 +493,8 @@ namespace HandheldCompanion.ViewModels
                 // Show for Button, Keyboard, Mouse, Trigger, Shift
                 if (currentActionType == ActionType.Button || currentActionType == ActionType.Keyboard ||
                     currentActionType == ActionType.Mouse || currentActionType == ActionType.Trigger ||
-                    currentActionType == ActionType.Shift || currentActionType == ActionType.Joystick)
+                    currentActionType == ActionType.Shift || currentActionType == ActionType.Joystick ||
+                    currentActionType == ActionType.Touchpad)
                     return Visibility.Visible;
 
                 // For Axis mappings converting to Button, also show
@@ -385,6 +538,9 @@ namespace HandheldCompanion.ViewModels
             get
             {
                 ActionType currentActionType = (ActionType)ActionTypeIndex;
+                if (currentActionType == ActionType.Touchpad || currentActionType == ActionType.Button || currentActionType == ActionType.Keyboard || currentActionType == ActionType.Mouse)
+                    return Visibility.Visible;
+
                 if (currentActionType != ActionType.Joystick)
                     return Visibility.Collapsed;
 
@@ -436,6 +592,10 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        #endregion
+
+        #region Modifier and press properties
+
         // Modifier properties (for Keyboard/Mouse actions) - default to 0/false
         public virtual int ModifierIndex { get => 0; set { } }
         public virtual bool HasModifier => false;
@@ -445,6 +605,10 @@ namespace HandheldCompanion.ViewModels
         public virtual string PressTypeTooltip => string.Empty;
         public virtual bool HasDuration => false;
         public virtual float LongPressDelay { get => 0; set { } }
+
+        #endregion
+
+        #region Haptic properties
 
         // Haptic properties - default to 0
         public virtual int HapticModeIndex
@@ -472,6 +636,10 @@ namespace HandheldCompanion.ViewModels
                 }
             }
         }
+
+        #endregion
+
+        #region Shift properties
 
         // Shift properties - default to Always enabled (index 1)
         public virtual int ShiftModeIndex
@@ -574,6 +742,10 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        #endregion
+
+        #region Display helpers
+
         protected string GetActionTypeDisplayName()
         {
             ActionType actionType = (ActionType)ActionTypeIndex;
@@ -622,6 +794,10 @@ namespace HandheldCompanion.ViewModels
                 : EnumUtils.GetDescriptionFromEnumValue(ShiftSlot.None);
         }
 
+        #endregion
+
+        #region Notifications and lifecycle
+
         // Purely UI related properties, they should NOT update the Layout
         // Avoid unnecessary save/update calls
         protected HashSet<string> ExcludedUpdateProperties =
@@ -632,6 +808,9 @@ namespace HandheldCompanion.ViewModels
             nameof(TurboDisplayName),
             nameof(ToggleDisplayName),
             nameof(InputShiftDisplayName),
+            nameof(TouchpadActionTypeVisibility),
+            nameof(TouchpadAxisActionTypeVisibility),
+            nameof(TouchpadCoordinateSettingsVisibility),
         ];
 
         public override void OnPropertyChanged(string? propertyName)
@@ -653,6 +832,10 @@ namespace HandheldCompanion.ViewModels
                     base.OnPropertyChanged(nameof(TurboDisplayName));
                     base.OnPropertyChanged(nameof(ToggleDisplayName));
                     base.OnPropertyChanged(nameof(InputShiftDisplayName));
+                    base.OnPropertyChanged(nameof(TouchpadActionTypeVisibility));
+                    base.OnPropertyChanged(nameof(TouchpadAxisActionTypeVisibility));
+                    base.OnPropertyChanged(nameof(Axis2ButtonVisibility));
+                    base.OnPropertyChanged(nameof(Trigger2ButtonVisibility));
                     break;
             }
 
@@ -783,5 +966,7 @@ namespace HandheldCompanion.ViewModels
             ActionTypeIndex = 0;
             SelectedTarget = null;
         }
+
+        #endregion
     }
 }

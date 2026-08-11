@@ -3,8 +3,10 @@ using HandheldCompanion.Controllers;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Notifications;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
+using iNKORE.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -38,7 +40,6 @@ public class LayoutManager : IManager
     private Layout? desktopLayout = null;
 
     private readonly ControllerState outputState = new();
-
     private const string desktopLayoutFile = "desktop";
 
     public string TemplatesPath;
@@ -513,16 +514,27 @@ public class LayoutManager : IManager
         foreach (var actions in _axisPlan.Values)
             foreach (var action in actions)
             {
-                if (action is AxisActions aa) EnsureAxisXY(aa.Axis);
-                if (action is TriggerActions ta) EnsureAxisXY(ta.Axis);
+                if (action is AxisActions axisAction) EnsureAxisXY(axisAction.Axis);
+                if (action is TriggerActions triggerAction) EnsureAxisXY(triggerAction.Axis);
+                if (action is TouchpadActions touchpadAction) EnsureAxisXY(touchpadAction.Axis);
             }
 
         foreach (var actions in _buttonPlan.Values)
             foreach (var action in actions)
             {
-                if (action is AxisActions aa) EnsureAxisXY(aa.Axis);
-                if (action is TriggerActions ta) EnsureAxisXY(ta.Axis);
+                if (action is AxisActions axisAction) EnsureAxisXY(axisAction.Axis);
+                if (action is TriggerActions triggerAction) EnsureAxisXY(triggerAction.Axis);
+                if (action is TouchpadActions touchpadAction) EnsureAxisXY(touchpadAction.Axis);
             }
+
+        foreach (var action in _gyroPlan.Values)
+        {
+            if (action is AxisActions axisAction)
+                EnsureAxisXY(axisAction.Axis);
+            if (action is TouchpadActions touchpadAction)
+                EnsureAxisXY(touchpadAction.Axis);
+        }
+
     }
 
     private void EnsureAxisXY(AxisLayoutFlags flag)
@@ -543,8 +555,9 @@ public class LayoutManager : IManager
             outputState.ButtonState.Clear();
             outputState.AxisState.Clear();
             outputState.GyroState.CopyFrom(controllerState.GyroState);
+            DS4Touch.ClearOutputTouches();
 
-            // delta arrives in seconds; all timer logic expects milliseconds
+            // delta arrives in seconds; all timer logic expoodects milliseconds
             float deltaMs = delta * 1000f;
 
             ShiftSlot shiftSlot = ComputeShiftSlot(controllerState, deltaMs);
@@ -630,6 +643,13 @@ public class LayoutManager : IManager
                             outputState.ButtonState[bA.Button] |= bA.GetValue();
                             break;
                         }
+                    case ActionType.Touchpad:
+                        {
+                            var tA = (TouchpadActions)action;
+                            tA.Execute(button, pressed, shiftSlot, deltaMs);
+                            tA.ApplyOutput(outputState);
+                            break;
+                        }
                     case ActionType.Keyboard:
                         ((KeyboardActions)action).Execute(button, pressed, shiftSlot, deltaMs);
                         break;
@@ -692,6 +712,13 @@ public class LayoutManager : IManager
                             var bA = (ButtonActions)action;
                             bA.Execute(layout, shiftSlot, deltaMs);
                             outputState.ButtonState[bA.Button] |= bA.GetValue();
+                            break;
+                        }
+                    case ActionType.Touchpad:
+                        {
+                            var tA = (TouchpadActions)action;
+                            tA.Execute(layout, touched, shiftSlot, deltaMs);
+                            tA.ApplyOutput(outputState);
                             break;
                         }
                     case ActionType.Keyboard:
@@ -769,6 +796,14 @@ public class LayoutManager : IManager
                             touched = state.ButtonState[touchButton];
 
                         mA.Execute(layout, touched, shiftSlot, deltaMs);
+                    }
+                    break;
+
+                case ActionType.Touchpad:
+                    if (action is TouchpadActions { TargetType: TouchpadTargetType.Axis } touchpadAction)
+                    {
+                        touchpadAction.Execute(layout, touched: false, shiftSlot, deltaMs);
+                        touchpadAction.ApplyGyroOutput(outputState);
                     }
                     break;
             }
