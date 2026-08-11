@@ -19,7 +19,11 @@ public partial class AxisState : ICloneable, IDisposable
         AxisFlags.RightStickX,
         AxisFlags.RightStickY,
         AxisFlags.L2,
-        AxisFlags.R2
+        AxisFlags.R2,
+        AxisFlags.LeftPadX,
+        AxisFlags.LeftPadY,
+        AxisFlags.RightPadX,
+        AxisFlags.RightPadY
     };
 
     // Runtime storage (no locks, no dictionaries)
