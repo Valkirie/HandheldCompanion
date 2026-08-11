@@ -9,13 +9,21 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
 using System.Windows.Data;
 
 namespace HandheldCompanion.ViewModels
 {
     public class GyroMappingViewModel : MappingViewModel
     {
+        public override ActionType[] SupportedActionTypes =>
+        [
+            ActionType.Disabled,
+            ActionType.Joystick,
+            ActionType.Mouse,
+            ActionType.Touchpad,
+            ActionType.Inherit
+        ];
+
         private static readonly HashSet<MouseActionsType> _unsupportedMouseActionTypes =
         [
             MouseActionsType.LeftButton,
@@ -218,17 +226,8 @@ namespace HandheldCompanion.ViewModels
             InputsManager.StoppedListening += InputsManager_StoppedListening;
 
             // store hotkey to manager
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
-            {
+            lock (_collectionLock)
                 HotkeysList.Add(new HotkeyViewModel(GyroHotkey));
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
             ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
         }
 
@@ -247,20 +246,13 @@ namespace HandheldCompanion.ViewModels
             GyroHotkey = hotkey;
 
             // update hotkey UI
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
+            lock (_collectionLock)
             {
                 HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
                 if (foundHotkey is null)
                     HotkeysList.Add(new HotkeyViewModel(hotkey));
                 else
                     foundHotkey.Hotkey = hotkey;
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
             }
 
             Update();
@@ -314,7 +306,8 @@ namespace HandheldCompanion.ViewModels
 
             if (actionType == ActionType.Joystick)
             {
-                if (Action is null || Action is not AxisActions)
+                bool preserveMissingTarget = Action is AxisActions;
+                if (!preserveMissingTarget)
                 {
                     Action = new AxisActions()
                     {
@@ -325,7 +318,7 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 MappingTargetViewModel? matchingTargetVm = null;
-                foreach (var axis in controller.GetTargetAxis())
+                foreach (var axis in GetJoystickTargets(controller))
                 {
                     var mappingTargetVm = new MappingTargetViewModel
                     {
@@ -340,20 +333,45 @@ namespace HandheldCompanion.ViewModels
                     }
                 }
 
-                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                    return;
+                if (matchingTargetVm is null && preserveMissingTarget)
+                {
+                    matchingTargetVm = CreateUnsupportedTarget(((AxisActions)Action).Axis,
+                        controller.GetAxisName(((AxisActions)Action).Axis));
+                    targets.Add(matchingTargetVm);
+                }
 
-                try
+                ReplaceTargets(targets, matchingTargetVm);
+            }
+            else if (actionType == ActionType.Touchpad)
+            {
+                bool preserveMissingTarget = Action is TouchpadActions;
+                TouchpadActions touchpadAction = Action as TouchpadActions ?? new TouchpadActions
                 {
-                    Targets.Clear();
-                    foreach (var t in targets)
-                        Targets.Add(t);
-                }
-                finally
+                    MotionTrigger = (ButtonState)GyroHotkey.inputsChord.ButtonState.Clone()
+                };
+                if (!preserveMissingTarget)
+                    Action = touchpadAction;
+
+                MappingTargetViewModel? matchingTargetVm = null;
+                foreach (AxisLayoutFlags axis in TouchpadActions.GetAxisTargets(controller))
                 {
-                    Monitor.Exit(_collectionLock);
+                    var mappingTargetVm = CreateTarget(axis, controller.GetAxisName(axis));
+                    targets.Add(mappingTargetVm);
+
+                    if (touchpadAction.TargetType == TouchpadTargetType.Axis && axis == touchpadAction.Axis)
+                        matchingTargetVm = mappingTargetVm;
                 }
-                SelectedTarget = matchingTargetVm ?? Targets.First();
+
+                if (matchingTargetVm is null && preserveMissingTarget &&
+                    touchpadAction.TargetType == TouchpadTargetType.Axis &&
+                    touchpadAction.Axis != AxisLayoutFlags.None)
+                {
+                    matchingTargetVm = CreateUnsupportedTarget(touchpadAction.Axis,
+                        controller.GetAxisName(touchpadAction.Axis));
+                    targets.Add(matchingTargetVm);
+                }
+
+                ReplaceTargets(targets, matchingTargetVm);
             }
             else if (actionType == ActionType.Mouse)
             {
@@ -385,18 +403,11 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 // Update list and selected target
-                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                    return;
-
-                try
+                lock (_collectionLock)
                 {
                     Targets.Clear();
                     foreach (var t in targets)
                         Targets.Add(t);
-                }
-                finally
-                {
-                    Monitor.Exit(_collectionLock);
                 }
                 SelectedTarget = matchingTargetVm ?? Targets.First();
             }
@@ -428,6 +439,11 @@ namespace HandheldCompanion.ViewModels
                 case ActionType.Mouse:
                     if (SelectedTarget.Tag is MouseActionsType mouseActionsType)
                         ((MouseActions)Action).MouseType = mouseActionsType;
+                    break;
+
+                case ActionType.Touchpad:
+                    if (SelectedTarget.Tag is not null)
+                        SetTouchpadTarget(SelectedTarget.Tag);
                     break;
             }
         }

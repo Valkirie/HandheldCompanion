@@ -23,6 +23,7 @@ namespace HandheldCompanion.Actions
         Trigger = 5,
         Shift = 6,
         Inherit = 7,
+        Touchpad = 8,
     }
 
     [Serializable]
@@ -151,6 +152,23 @@ namespace HandheldCompanion.Actions
 
         public IActions() { }
 
+        internal void CopyConfigurationFrom(IActions source)
+        {
+            pressType = source.pressType;
+            ActionTimer = source.ActionTimer;
+            HasTurbo = source.HasTurbo;
+            HasToggle = source.HasToggle;
+            HasInterruptable = source.HasInterruptable;
+            TurboDelay = source.TurboDelay;
+            StartDelay = source.StartDelay;
+            ShiftSlot = source.ShiftSlot;
+            ShiftMatchAny = source.ShiftMatchAny;
+            HapticMode = source.HapticMode;
+            HapticStrength = source.HapticStrength;
+            motionDirection = source.motionDirection;
+            motionThreshold = source.motionThreshold;
+        }
+
         /// <summary>
         /// Override to share toggle state across bindings targeting the same key/button,
         /// and to detect external releases. Default uses local toggle state.
@@ -163,7 +181,7 @@ namespace HandheldCompanion.Actions
             if (HapticMode == HapticMode.Down && released) return;
             if (HapticMode == HapticMode.Up && !released) return;
 
-            ControllerManager.GetTarget()?.SetHaptic(HapticStrength, button);
+            ControllerManager.GetTarget()?.SetHaptic(HapticStrength, button, released);
         }
 
         /// <summary>AxisFlags version: computes shift-slot gating only.</summary>
@@ -175,7 +193,8 @@ namespace HandheldCompanion.Actions
         /// <summary>AxisLayout version: zeroes the vector when the slot is masked.</summary>
         public virtual void Execute(AxisLayout layout, ShiftSlot shiftSlot, float delta)
         {
-            if (!IsShiftAllowed(shiftSlot, ShiftSlot, ShiftMatchAny))
+            axisSlotDisabled = !IsShiftAllowed(shiftSlot, ShiftSlot, ShiftMatchAny);
+            if (axisSlotDisabled)
                 outVector = Vector2.Zero;
         }
 

@@ -3,6 +3,7 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
+using SharpDX.XInput;
 using steam_hidapi.net;
 using steam_hidapi.net.Hid;
 using System;
@@ -17,6 +18,8 @@ namespace HandheldCompanion.Controllers.Steam
 
         private const short TrackPadInner = short.MaxValue / 2;
         public const ushort MaxRumbleIntensity = 2048;
+
+        public override bool IsLizardModeEnabled => Controller?.LizardModeEnabled ?? true;
 
         public override bool IsWireless()
         {
@@ -51,8 +54,8 @@ namespace HandheldCompanion.Controllers.Steam
             TargetButtons.Add(ButtonFlags.L4);
             TargetButtons.Add(ButtonFlags.R4);
 
-            TargetButtons.Add(ButtonFlags.LeftPadClick);
-            TargetButtons.Add(ButtonFlags.RightPadClick);
+            TargetButtons.Add(ButtonFlags.TouchpadClick);
+            TargetButtons.Add(ButtonFlags.TouchpadTouch);
 
             TargetAxis.Add(AxisLayoutFlags.LeftPad);
             TargetAxis.Add(AxisLayoutFlags.RightPad);
@@ -130,11 +133,11 @@ namespace HandheldCompanion.Controllers.Steam
             var L2 = input.State.AxesState[GordonControllerAxis.L2];
             var R2 = input.State.AxesState[GordonControllerAxis.R2];
 
-            Inputs.ButtonState[ButtonFlags.L2Soft] |= L2 > TriggerThreshold;
-            Inputs.ButtonState[ButtonFlags.R2Soft] |= R2 > TriggerThreshold;
+            Inputs.ButtonState[ButtonFlags.L2Soft] |= L2 > Gamepad.TriggerThreshold;
+            Inputs.ButtonState[ButtonFlags.R2Soft] |= R2 > Gamepad.TriggerThreshold;
 
-            Inputs.ButtonState[ButtonFlags.L2Full] |= L2 > TriggerThreshold * 8;
-            Inputs.ButtonState[ButtonFlags.R2Full] |= R2 > TriggerThreshold * 8;
+            Inputs.ButtonState[ButtonFlags.L2Full] |= L2 > Gamepad.TriggerThreshold * 8;
+            Inputs.ButtonState[ButtonFlags.R2Full] |= R2 > Gamepad.TriggerThreshold * 8;
 
             Inputs.AxisState[AxisFlags.L2] = L2;
             Inputs.AxisState[AxisFlags.R2] = R2;
@@ -315,16 +318,18 @@ namespace HandheldCompanion.Controllers.Steam
             Controller?.SetHaptic((byte)SCHapticMotor.Right, rightAmplitude, 0, 1);
         }
 
-        public override void SetHaptic(HapticStrength strength, ButtonFlags button)
+        public override void SetHaptic(HapticStrength strength, ButtonFlags button, bool released)
         {
-            ushort value = strength switch
+            ushort duration = released ? (ushort)5000 : (ushort)10000;
+            sbyte gain = strength switch
             {
-                HapticStrength.Low => 512,
-                HapticStrength.Medium => 1024,
-                HapticStrength.High => 2048,
-                _ => 0,
+                HapticStrength.Low => 0,
+                HapticStrength.Medium => 3,
+                HapticStrength.High => 6,
+                _ => 3,
             };
-            Controller?.SetHaptic((byte)GetMotorForButton(button), value, 0, 1);
+
+            Controller?.SetHaptic((byte)GetMotorForButton(button), duration, 0, 1, gain);
         }
     }
 }

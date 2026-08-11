@@ -31,10 +31,26 @@ public static class DS4Touch
 
     public static TrackPadTouch LeftPadTouch = new(TOUCH0_ID, true);
     public static TrackPadTouch RightPadTouch = new(TOUCH1_ID, true);
+    public static TrackPadTouch OutputLeftPadTouch = new(TOUCH0_ID, true);
+    public static TrackPadTouch OutputRightPadTouch = new(TOUCH1_ID, true);
     public static byte TouchPacketCounter;
 
     private static short TouchX, TouchY;
     public static bool OutputClickButton;
+
+    public static void ClearOutputTouches()
+    {
+        OutputLeftPadTouch.IsActive = false;
+        OutputRightPadTouch.IsActive = false;
+    }
+
+    public static void SetOutputTouch(byte finger, int x, int y)
+    {
+        TrackPadTouch touch = finger == 1 ? OutputLeftPadTouch : OutputRightPadTouch;
+        touch.X = (short)Math.Clamp(x, short.MinValue, short.MaxValue);
+        touch.Y = (short)Math.Clamp(y, short.MinValue, short.MaxValue);
+        touch.IsActive = true;
+    }
 
     private static bool prevLeftPadTouch, prevRightPadTouch;
     private static bool prevLeftPadClick, prevRightPadClick;
@@ -166,6 +182,19 @@ public static class DS4Touch
             prevLeftPadClick = Inputs.ButtonState[ButtonFlags.LeftPadClick];
             prevRightPadClick = Inputs.ButtonState[ButtonFlags.RightPadClick];
         }
+    }
+
+    public static short CoordinateToAxis(int value, int extent)
+    {
+        int clamped = Math.Clamp(value, 0, extent - 1);
+        long numerator = (long)clamped * ushort.MaxValue + (extent - 1) / 2;
+        return (short)Math.Clamp(numerator / (extent - 1) + short.MinValue, short.MinValue, short.MaxValue);
+    }
+
+    public static int AxisToCoordinate(short value, int extent)
+    {
+        long numerator = ((long)value - short.MinValue) * (extent - 1) + ushort.MaxValue / 2;
+        return (int)Math.Clamp(numerator / ushort.MaxValue, 0, extent - 1);
     }
 
     public class TrackPadTouch

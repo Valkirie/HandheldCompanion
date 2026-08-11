@@ -5,6 +5,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,18 @@ namespace HandheldCompanion.ViewModels
 {
     public class TriggerMappingViewModel : MappingViewModel
     {
+        public override ActionType[] SupportedActionTypes =>
+        [
+            ActionType.Disabled,
+            ActionType.Button,
+            ActionType.Keyboard,
+            ActionType.Mouse,
+            ActionType.Trigger,
+            ActionType.Shift,
+            ActionType.Inherit,
+            ActionType.Touchpad
+        ];
+
         private static readonly HashSet<MouseActionsType> _unsupportedMouseActionTypes =
         [
             MouseActionsType.Move,
@@ -22,6 +35,16 @@ namespace HandheldCompanion.ViewModels
         ];
 
         public override bool IsTriggerMapping => true;
+        public override Visibility Trigger2ButtonVisibility => Axis2ButtonVisibility;
+        public override Visibility TouchpadSettingsVisibility =>
+            ActionTypeIndex == (int)ActionType.Touchpad &&
+            Action is TouchpadActions { TargetType: TouchpadTargetType.Button } touchpadAction &&
+            TouchpadActions.IsGestureTarget(touchpadAction.Button)
+                ? Visibility.Visible : Visibility.Collapsed;
+        public override Visibility TouchpadSwipeSettingsVisibility =>
+            ActionTypeIndex == (int)ActionType.Touchpad &&
+            Action is TouchpadActions { TargetType: TouchpadTargetType.Button, Button: ButtonFlags.TouchpadSwipe }
+                ? Visibility.Visible : Visibility.Collapsed;
 
         public override int Trigger2TriggerInnerDeadzone
         {
@@ -137,10 +160,10 @@ namespace HandheldCompanion.ViewModels
             {
                 bool preserveMissingTarget = Action is ButtonActions;
                 if (!preserveMissingTarget)
-                    Action = new ButtonActions() { motionThreshold = IController.TriggerThreshold, motionDirection = DeflectionDirection.Up };
+                    Action = new ButtonActions() { motionThreshold = Gamepad.TriggerThreshold, motionDirection = DeflectionDirection.Up };
 
                 MappingTargetViewModel? matchingTargetVm = null;
-                foreach (var button in controller.GetTargetButtons())
+                foreach (var button in GetButtonTargets(controller))
                 {
                     var mappingTargetVm = CreateTarget(button, controller.GetButtonName(button));
                     targets.Add(mappingTargetVm);
@@ -158,13 +181,54 @@ namespace HandheldCompanion.ViewModels
 
                 ReplaceTargets(targets, matchingTargetVm);
             }
+            else if (actionType == ActionType.Touchpad)
+            {
+                bool preserveMissingTarget = Action is TouchpadActions;
+                TouchpadActions touchpadAction = Action as TouchpadActions ?? new TouchpadActions
+                {
+                    motionThreshold = Gamepad.TriggerThreshold,
+                    motionDirection = DeflectionDirection.Up,
+                    ShiftSlot = ShiftSlot.Any,
+                    ShiftMatchAny = false
+                };
+                if (!preserveMissingTarget)
+                    Action = touchpadAction;
+
+                MappingTargetViewModel? matchingTargetVm = null;
+                foreach (ButtonFlags button in TouchpadActions.GetButtonTargets(controller))
+                {
+                    var mappingTargetVm = CreateTarget(button, controller.GetButtonName(button));
+                    targets.Add(mappingTargetVm);
+
+                    if (touchpadAction.TargetType == TouchpadTargetType.Button && button == touchpadAction.Button)
+                        matchingTargetVm = mappingTargetVm;
+                }
+
+                if (matchingTargetVm is null && preserveMissingTarget)
+                {
+                    if (touchpadAction.TargetType == TouchpadTargetType.Button && touchpadAction.Button != ButtonFlags.None)
+                    {
+                        matchingTargetVm = CreateUnsupportedTarget(touchpadAction.Button,
+                            controller.GetButtonName(touchpadAction.Button));
+                        targets.Add(matchingTargetVm);
+                    }
+                    else if (touchpadAction.TargetType == TouchpadTargetType.Axis && touchpadAction.Axis != AxisLayoutFlags.None)
+                    {
+                        matchingTargetVm = CreateUnsupportedTarget(touchpadAction.Axis,
+                            controller.GetAxisName(touchpadAction.Axis));
+                        targets.Add(matchingTargetVm);
+                    }
+                }
+
+                ReplaceTargets(targets, matchingTargetVm);
+            }
             else if (actionType == ActionType.Keyboard)
             {
                 if (Action is null || Action is not KeyboardActions)
                 {
                     Action = new KeyboardActions
                     {
-                        motionThreshold = IController.TriggerThreshold,
+                        motionThreshold = Gamepad.TriggerThreshold,
                         motionDirection = DeflectionDirection.Up,
                         Modifiers = ModifierSet.None,
                         ShiftSlot = ShiftSlot.Any,
@@ -181,7 +245,7 @@ namespace HandheldCompanion.ViewModels
                 {
                     Action = new MouseActions
                     {
-                        motionThreshold = IController.TriggerThreshold,
+                        motionThreshold = Gamepad.TriggerThreshold,
                         motionDirection = DeflectionDirection.Up,
                         Modifiers = ModifierSet.None,
                         ShiftSlot = ShiftSlot.Any,
@@ -235,7 +299,7 @@ namespace HandheldCompanion.ViewModels
             else if (actionType == ActionType.Shift)
             {
                 if (Action is null || Action is not ShiftActions)
-                    Action = new ShiftActions() { motionThreshold = IController.TriggerThreshold, motionDirection = DeflectionDirection.Up };
+                    Action = new ShiftActions() { motionThreshold = Gamepad.TriggerThreshold, motionDirection = DeflectionDirection.Up };
 
                 MappingTargetViewModel? matchingTargetVm = null;
                 // Only show individual shift slots (A, B, C, D), not None or combined values
@@ -269,6 +333,7 @@ namespace HandheldCompanion.ViewModels
             {
                 case "SelectedTarget":
                 case "ActionTypeIndex":
+                    OnPropertyChanged(nameof(Trigger2ButtonVisibility));
                     OnPropertyChanged(nameof(TriggerDeadzoneVisibility));
                     OnPropertyChanged(nameof(TriggerSettingsSectionVisibility));
                     OnPropertyChanged(nameof(GeneralActionVisibility));
@@ -288,6 +353,14 @@ namespace HandheldCompanion.ViewModels
                 case ActionType.Button:
                     if (SelectedTarget.Tag is ButtonFlags buttonFlags)
                         ((ButtonActions)Action).Button = buttonFlags;
+                    break;
+
+                case ActionType.Touchpad:
+                    if (SelectedTarget.Tag is not null)
+                    {
+                        SetTouchpadTarget(SelectedTarget.Tag);
+                        OnPropertyChanged(string.Empty);
+                    }
                     break;
 
                 case ActionType.Keyboard:

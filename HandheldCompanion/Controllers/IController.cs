@@ -69,10 +69,9 @@ namespace HandheldCompanion.Controllers
             ButtonFlags.RightStickUp, ButtonFlags.RightStickDown, ButtonFlags.RightStickLeft, ButtonFlags.RightStickRight */
         ];
 
-        public static readonly byte TriggerThreshold = 30;
-
         protected static readonly FontFamily GlyphFontFamily = new("PromptFont");
         protected static readonly string defaultGlyph = "\u2753";
+        public const byte TriggerThreshold = 30;
 
         public ControllerCapabilities Capabilities = ControllerCapabilities.None;
         protected SortedDictionary<AxisLayoutFlags, Color> ColoredAxis = [];
@@ -141,7 +140,7 @@ namespace HandheldCompanion.Controllers
 
         public IController()
         {
-            gamepadMotions[gamepadIndex] = new(string.Empty, SensorsManager.ActiveCalibrationMode);
+            gamepadMotions[gamepadIndex] = new(string.Empty, CalibrationMode.Manual);
             InitializeInputOutput();
 
             // raise events
@@ -183,7 +182,7 @@ namespace HandheldCompanion.Controllers
             this.Details.isHooked = true;
 
             // manage gamepad motion
-            gamepadMotions[gamepadIndex] = new(details.baseContainerDeviceInstanceId, SensorsManager.ActiveCalibrationMode);
+            gamepadMotions[gamepadIndex] = new(details.baseContainerDeviceInstanceId);
             InitializeInputOutput();
         }
 
@@ -372,41 +371,65 @@ namespace HandheldCompanion.Controllers
         { }
 
         // let the controller decide itself what motor to use for a specific button
-        public virtual void SetHaptic(HapticStrength strength, ButtonFlags button)
+        public virtual void SetHaptic(HapticStrength strength, ButtonFlags button, bool released)
         {
             int delay;
+            byte amplitude = byte.MaxValue;
+
             switch (strength)
             {
                 default:
                 case HapticStrength.Low:
-                    delay = 85;
+                    delay = 40;
                     break;
 
                 case HapticStrength.Medium:
-                    delay = 105;
+                    delay = 80;
                     break;
 
                 case HapticStrength.High:
-                    delay = 125;
+                    delay = 120;
                     break;
             }
 
+            RumbleHaptic(delay, amplitude, button, released);
+        }
+
+        // Select the physical rumble motor associated with the button.
+        // Rumble arguments are ordered as delay, large motor, small motor.
+        private void RumbleHaptic(int delay, byte amplitude, ButtonFlags button, bool released)
+        {
             switch (button)
             {
+                // right motor
                 case ButtonFlags.B1:
                 case ButtonFlags.B2:
                 case ButtonFlags.B3:
                 case ButtonFlags.B4:
-                case ButtonFlags.L1:
-                case ButtonFlags.L2Soft:
+                case ButtonFlags.R1:
+                case ButtonFlags.R2Soft:
                 case ButtonFlags.Start:
                 case ButtonFlags.RightStickClick:
+                case ButtonFlags.RightStickTouch:
                 case ButtonFlags.RightPadClick:
-                    Rumble(delay, 0, byte.MaxValue);
+                case ButtonFlags.RightPadClickUp:
+                case ButtonFlags.RightPadClickDown:
+                case ButtonFlags.RightPadClickLeft:
+                case ButtonFlags.RightPadClickRight:
+                    Rumble(delay, 0, amplitude);
+                    return;
+
+                // both motors
+                case ButtonFlags.TouchpadTouch:
+                case ButtonFlags.LeftPadTouch:
+                case ButtonFlags.RightPadTouch:
+                    Rumble(delay / 4, amplitude, amplitude);
                     break;
+
+                // left motor
                 default:
-                    Rumble(delay, byte.MaxValue, 0);
-                    break;
+                    Rumble(delay, amplitude, 0);
+                    return;
             }
         }
 
@@ -429,7 +452,8 @@ namespace HandheldCompanion.Controllers
                 rumbleCts?.Cancel();
                 rumbleCts = new CancellationTokenSource();
 
-                var token = rumbleCts.Token;
+                CancellationTokenSource currentCts = rumbleCts;
+                var token = currentCts.Token;
                 rumbleTask = Task.Run(async () =>
                 {
                     try
@@ -440,10 +464,19 @@ namespace HandheldCompanion.Controllers
                     catch (OperationCanceledException) { }
                     finally
                     {
-                        try { SetVibration(0, 0); }
-                        catch { }
+                        lock (rumbleLock)
+                        {
+                            if (ReferenceEquals(rumbleCts, currentCts))
+                            {
+                                try { SetVibration(0, 0); }
+                                catch { }
+                                rumbleCts = null;
+                            }
+
+                            currentCts.Dispose();
+                        }
                     }
-                }, token);
+                });
             }
         }
 
@@ -930,6 +963,8 @@ namespace HandheldCompanion.Controllers
             {
                 if (!disposing)
                     return;
+
+                StopRumble();
 
                 // manage events
                 ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;

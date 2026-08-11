@@ -1,10 +1,13 @@
 ﻿using HandheldCompanion.Inputs;
+using HandheldCompanion.Actions;
 using steam_hidapi.net.Hid;
 
 namespace HandheldCompanion.Controllers.Steam
 {
     public abstract class SteamController : IController
     {
+        public abstract bool IsLizardModeEnabled { get; }
+
         protected bool isVirtualMuted = false;
 
         public SteamController() : base()

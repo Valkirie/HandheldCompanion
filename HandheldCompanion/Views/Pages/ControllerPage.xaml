@@ -13,11 +13,13 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Controller"
     Title="{l:Static resx:Resources.ControllerPage_Controller}"
+    Margin="20"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:ControllerPageViewModel}"
-    d:DesignHeight="1800"
+    d:DesignHeight="2200"
     d:DesignWidth="1000"
     KeepAlive="True"
+    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -42,6 +44,12 @@
         </Image>
 
         <StackPanel>
+            <TextBlock
+                Margin="0,0,0,8"
+                behaviors:TextBlockUpperCase.IsUpperCase="True"
+                Style="{StaticResource CapitalAccentTextBlockStyle}"
+                Text="{Binding Name, RelativeSource={RelativeSource AncestorType=Page}}" />
+
             <ikw:SimpleStackPanel IsEnabled="{Binding ScanHardwareCardEnabled}" Spacing="28">
 
                 <!--  Virtual devices  -->
@@ -162,7 +170,7 @@
                                 <ui:FontIcon Glyph="&#xECF0;" />
                             </ui:SettingsCard.HeaderIcon>
 
-                            <ComboBox Name="cB_ServiceSwitch" IsEnabled="{Binding VirtualControllerSettingsEnabled}" SelectionChanged="cB_ServiceSwitch_SelectionChanged">
+                            <ComboBox Name="cB_ServiceSwitch" SelectionChanged="cB_ServiceSwitch_SelectionChanged">
                                 <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDstatus_Disconnected}" />
                                 <ComboBoxItem Content="{l:Static resx:Resources.Enum_HIDstatus_Connected}" />
                             </ComboBox>
@@ -280,12 +288,11 @@
                 </ikw:SimpleStackPanel>
 
                 <!--  Steam Deck settings  -->
-
-                <ikw:SimpleStackPanel Spacing="8">
-                    <TextBlock
-                        Style="{StaticResource BaseTextBlockStyle}"
-                        Text="Steam Deck settings"
-                        Visibility="{Binding ElementName=SteamDeckPanel, Path=Visibility}" />
+                <ikw:SimpleStackPanel
+                    d:Visibility="Visible"
+                    Spacing="8"
+                    Visibility="{Binding ElementName=SteamDeckPanel, Path=Visibility}">
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Steam Deck settings" />
                     <ikw:SimpleStackPanel Name="SteamDeckPanel" Spacing="3">
                         <!--  Mute virtual controller (Steam Deck)  -->
                         <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_SteamControllerModeDesc}" Header="{l:Static resx:Resources.ControllerPage_SteamControllerMode}">

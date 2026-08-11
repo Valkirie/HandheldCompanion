@@ -3,6 +3,7 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
+using SharpDX.XInput;
 using steam_hidapi.net;
 using steam_hidapi.net.Hid;
 using System;
@@ -22,6 +23,8 @@ public class NeptuneController : SteamController
 
     public const sbyte MinIntensity = -2;
     public const sbyte MaxIntensity = 10;
+
+    public override bool IsLizardModeEnabled => Controller?.LizardModeEnabled ?? true;
 
     // TODO: why not use TimerManager.Tick?
     private Thread? rumbleThread;
@@ -54,8 +57,8 @@ public class NeptuneController : SteamController
         TargetButtons.Add(ButtonFlags.R5);
         TargetButtons.Add(ButtonFlags.Special2);
 
-        TargetButtons.Add(ButtonFlags.LeftPadClick);
-        TargetButtons.Add(ButtonFlags.RightPadClick);
+        TargetButtons.Add(ButtonFlags.TouchpadClick);
+        TargetButtons.Add(ButtonFlags.TouchpadTouch);
 
         TargetAxis.Add(AxisLayoutFlags.LeftPad);
         TargetAxis.Add(AxisLayoutFlags.RightPad);
@@ -127,11 +130,11 @@ public class NeptuneController : SteamController
         var L2 = input.State.AxesState[NeptuneControllerAxis.L2] * byte.MaxValue / short.MaxValue;
         var R2 = input.State.AxesState[NeptuneControllerAxis.R2] * byte.MaxValue / short.MaxValue;
 
-        Inputs.ButtonState[ButtonFlags.L2Soft] |= L2 > TriggerThreshold;
-        Inputs.ButtonState[ButtonFlags.R2Soft] |= R2 > TriggerThreshold;
+        Inputs.ButtonState[ButtonFlags.L2Soft] |= L2 > Gamepad.TriggerThreshold;
+        Inputs.ButtonState[ButtonFlags.R2Soft] |= R2 > Gamepad.TriggerThreshold;
 
-        Inputs.ButtonState[ButtonFlags.L2Full] |= L2 > TriggerThreshold * 8;
-        Inputs.ButtonState[ButtonFlags.R2Full] |= R2 > TriggerThreshold * 8;
+        Inputs.ButtonState[ButtonFlags.L2Full] |= L2 > Gamepad.TriggerThreshold * 8;
+        Inputs.ButtonState[ButtonFlags.R2Full] |= R2 > Gamepad.TriggerThreshold * 8;
 
         Inputs.AxisState[AxisFlags.L2] = (short)L2;
         Inputs.AxisState[AxisFlags.R2] = (short)R2;
@@ -383,7 +386,7 @@ public class NeptuneController : SteamController
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        SettingsManager_SettingValueChanged("SteamControllerRumbleInterval", ManagerFactory.settingsManager.GetInt("SteamControllerRumbleInterval"), false, true);
+        SettingsManager_SettingValueChanged("SteamControllerRumbleInterval", ManagerFactory.settingsManager.GetInt("SteamControllerRumbleInterval"), false, false);
     }
 
     protected override void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
@@ -455,15 +458,23 @@ public class NeptuneController : SteamController
         }
     }
 
-    public override void SetHaptic(HapticStrength strength, ButtonFlags button)
+    public override void SetHaptic(HapticStrength strength, ButtonFlags button, bool released)
     {
-        ushort value = strength switch
+        SCHapticMotor motor = GetMotorForButton(button);
+        motor = motor == SCHapticMotor.Left ? SCHapticMotor.Right : SCHapticMotor.Left;
+
+        NCHapticStyle style = strength == HapticStrength.Low ? NCHapticStyle.Weak : NCHapticStyle.Strong;
+        sbyte intensity = strength switch
         {
-            HapticStrength.Low => 512,
-            HapticStrength.Medium => 1024,
-            HapticStrength.High => 2048,
-            _ => 0,
+            HapticStrength.Low => -7,
+            HapticStrength.Medium => -1,
+            HapticStrength.High => 5,
+            _ => -1,
         };
-        Controller?.SetHaptic((byte)GetMotorForButton(button), value, 0, 1);
+
+        if (released)
+            intensity = (sbyte)Math.Max(-7, intensity - 3);
+
+        Controller?.SetHaptic2(motor, style, intensity);
     }
 }

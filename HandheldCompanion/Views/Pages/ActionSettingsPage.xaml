@@ -2,6 +2,7 @@
     x:Class="HandheldCompanion.Views.Pages.ActionSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:actions="clr-namespace:HandheldCompanion.Actions"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
@@ -13,7 +14,7 @@
     Title="Action Settings"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:ButtonMappingViewModel}"
-    d:DesignHeight="3000"
+    d:DesignHeight="4300"
     d:DesignWidth="1000"
     mc:Ignorable="d">
 
@@ -27,14 +28,19 @@
                 <!--  Target Type  -->
                 <ui:SettingsCard Name="ActionTypeCard" Header="Output type">
                     <ComboBox MinWidth="120" SelectedIndex="{Binding ActionTypeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="True" />
-                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="True" />
-                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Joystick}" IsEnabled="True" />
-                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Keyboard}" IsEnabled="True" />
-                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Mouse}" IsEnabled="True" />
-                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="True" />
-                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="True" />
-                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="True" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Disabled}" IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Disabled}}" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Button}" IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Button}}" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Joystick}" IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Joystick}}" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Keyboard}" IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Keyboard}}" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Mouse}" IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Mouse}}" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Trigger}}" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Shift}}" />
+                        <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Inherit}}" />
+                        <ComboBoxItem
+                            d:Visibility="Visible"
+                            Content="{x:Static resx:Resources.LayoutPage_ActionType_Touchpad}"
+                            IsEnabled="{Binding SupportedActionTypes, Converter={StaticResource ActionTypeSupportedConverter}, ConverterParameter={x:Static actions:ActionType.Touchpad}}"
+                            Visibility="{Binding TouchpadActionTypeVisibility, Mode=OneWay}" />
                     </ComboBox>
                 </ui:SettingsCard>
 
@@ -65,7 +71,10 @@
                 </ui:SettingsCard>
 
                 <!--  Modifiers  -->
-                <ui:SettingsCard Header="Modifier(s)" Visibility="{Binding HasModifier, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Modifier(s)"
+                    Visibility="{Binding HasModifier, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ComboBox SelectedIndex="{Binding ModifierIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         <ComboBoxItem Content="None" />
                         <ComboBoxItem Content="Shift" />
@@ -80,6 +89,7 @@
 
                 <!--  Input Type and Shifting  -->
                 <ui:SettingsCard
+                    d:Visibility="Visible"
                     Description="{x:Static resx:Resources.LayoutPage_InputShiftDesc}"
                     Header="{x:Static resx:Resources.LayoutPage_InputShift}"
                     Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
@@ -90,7 +100,7 @@
                             <ComboBoxItem Content="Enabled on shift (strict)" />
                             <ComboBoxItem Content="Enabled on shift (any)" />
                         </ComboBox>
-                        <ikw:SimpleStackPanel Visibility="{Binding ShowShiftSelection, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <ikw:SimpleStackPanel d:Visibility="Visible" Visibility="{Binding ShowShiftSelection, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <WrapPanel>
                                 <CheckBox Content="A" IsChecked="{Binding ShiftA, Mode=TwoWay}" />
                                 <CheckBox Content="B" IsChecked="{Binding ShiftB, Mode=TwoWay}" />
@@ -105,6 +115,7 @@
 
                 <!--  Action type (Press Type)  -->
                 <ui:SettingsCard
+                    d:Visibility="Visible"
                     Description="{Binding PressTypeTooltip, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                     Header="{x:Static resx:Resources.LayoutPage_PressType}"
                     Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6|7|8|9|10}">
@@ -117,39 +128,200 @@
                 </ui:SettingsCard>
 
                 <!--  Interruptable  -->
-                <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_Interruptable}" Visibility="{Binding GeneralActionVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="{x:Static resx:Resources.LayoutPage_Interruptable}"
+                    Visibility="{Binding GeneralActionVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <ui:ToggleSwitch IsOn="{Binding HasInterruptable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard>
 
                 <!--  Haptic Feedback  -->
-                <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_HapticFeedback}" Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="{x:Static resx:Resources.LayoutPage_HapticFeedback}"
+                    Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6|8}">
                     <DockPanel>
-                        <ComboBox Width="105" SelectedIndex="{Binding HapticModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="Off" />
-                            <ComboBoxItem Content="Down" />
-                            <ComboBoxItem Content="Up" />
-                            <ComboBoxItem Content="Both" />
-                        </ComboBox>
-                        <ComboBox
-                            Width="105"
-                            Margin="3,0,0,0"
-                            SelectedIndex="{Binding HapticStrengthIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBoxItem Content="Low" />
-                            <ComboBoxItem Content="Medium" />
-                            <ComboBoxItem Content="High" />
-                        </ComboBox>
+                            <ComboBox Width="105" SelectedIndex="{Binding HapticModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBoxItem Content="Off" />
+                                <ComboBoxItem Content="Down" />
+                                <ComboBoxItem Content="Up" />
+                                <ComboBoxItem Content="Both" />
+                            </ComboBox>
+                            <ComboBox
+                                Width="105"
+                                Margin="3,0,0,0"
+                                SelectedIndex="{Binding HapticStrengthIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBoxItem Content="Low" />
+                                <ComboBoxItem Content="Medium" />
+                                <ComboBoxItem Content="High" />
+                            </ComboBox>
+                    </DockPanel>
+                </ui:SettingsCard>
+            </ikw:SimpleStackPanel>
+        </ikw:SimpleStackPanel>
+
+        <!--  Touchpad gesture settings  -->
+        <ikw:SimpleStackPanel
+            d:Visibility="Visible"
+            Spacing="8"
+            Visibility="{Binding TouchpadSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.LayoutPage_TouchpadSettings}" />
+            <ikw:SimpleStackPanel Spacing="3">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Touchpad visualizer"
+                    Visibility="{Binding TouchpadVisualizerVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <Border
+                        Width="240"
+                        Height="120"
+                        HorizontalAlignment="Center"
+                        Background="#22262C"
+                        BorderBrush="#4A4F57"
+                        BorderThickness="1"
+                        CornerRadius="3">
+                        <Canvas Width="238" Height="118">
+                            <Line
+                                Stroke="#80FFFFFF"
+                                StrokeDashArray="2,2"
+                                StrokeThickness="1"
+                                Visibility="{Binding TouchpadSwipeSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                X1="{Binding TouchpadVisualizerLineStartX, Mode=OneWay}"
+                                X2="{Binding TouchpadVisualizerLineEndX, Mode=OneWay}"
+                                Y1="{Binding TouchpadVisualizerLineStartY, Mode=OneWay}"
+                                Y2="{Binding TouchpadVisualizerLineEndY, Mode=OneWay}" />
+                            <Ellipse
+                                Canvas.Left="{Binding TouchpadVisualizerStartX, Mode=OneWay}"
+                                Canvas.Top="{Binding TouchpadVisualizerStartY, Mode=OneWay}"
+                                Width="8"
+                                Height="8"
+                                Fill="#FFFFFFFF"
+                                Stroke="#FF9AA0AA"
+                                StrokeThickness="1" />
+                            <Ellipse
+                                Canvas.Left="{Binding TouchpadVisualizerEndX, Mode=OneWay}"
+                                Canvas.Top="{Binding TouchpadVisualizerEndY, Mode=OneWay}"
+                                Width="8"
+                                Height="8"
+                                Fill="#FF5AC8FA"
+                                Stroke="#FFB7E9FF"
+                                StrokeThickness="1"
+                                Visibility="{Binding TouchpadSwipeSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </Canvas>
+                    </Border>
+                </ui:SettingsCard>
+                <ui:SettingsCard
+                    Header="Use touchpad coordinates"
+                    Visibility="{Binding TouchpadCoordinateSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ui:ToggleSwitch IsOn="{Binding TouchpadUseCoordinates, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </ui:SettingsCard>
+                <ui:SettingsCard
+                    Description="{Binding TouchpadCoordinateRangeDescription, Mode=OneWay}"
+                    Header="{x:Static resx:Resources.LayoutPage_TouchpadStartPosition}"
+                    IsEnabled="{Binding TouchpadUseCoordinates, Mode=OneWay}">
+                    <StackPanel>
+                        <DockPanel>
+                            <TextBlock
+                                Width="72"
+                                VerticalAlignment="Center"
+                                Text="{Binding TouchpadX, Mode=OneWay, StringFormat={}X: {0}}" />
+                            <Slider
+                                Width="240"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="{Binding TouchpadMaxX, Mode=OneWay}"
+                                Minimum="0"
+                                TickFrequency="1"
+                                Value="{Binding TouchpadX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                        <DockPanel Margin="0,6,0,0">
+                            <TextBlock
+                                Width="72"
+                                VerticalAlignment="Center"
+                                Text="{Binding TouchpadY, Mode=OneWay, StringFormat={}Y: {0}}" />
+                            <Slider
+                                Width="240"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="{Binding TouchpadMaxY, Mode=OneWay}"
+                                Minimum="0"
+                                TickFrequency="1"
+                                Value="{Binding TouchpadY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </StackPanel>
+                </ui:SettingsCard>
+                <ui:SettingsCard Header="Touchpad finger">
+                    <ComboBox SelectedIndex="{Binding TouchpadFingerIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBoxItem Content="Left" />
+                        <ComboBoxItem Content="Right" />
+                    </ComboBox>
+                </ui:SettingsCard>
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="{x:Static resx:Resources.LayoutPage_TouchpadEndPosition}"
+                    Visibility="{Binding TouchpadSwipeSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <StackPanel>
+                        <DockPanel>
+                            <TextBlock
+                                Width="72"
+                                VerticalAlignment="Center"
+                                Text="{Binding TouchpadEndX, Mode=OneWay, StringFormat={}X: {0}}" />
+                            <Slider
+                                Width="240"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="{Binding TouchpadMaxX, Mode=OneWay}"
+                                Minimum="0"
+                                TickFrequency="1"
+                                Value="{Binding TouchpadEndX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                        <DockPanel Margin="0,6,0,0">
+                            <TextBlock
+                                Width="72"
+                                VerticalAlignment="Center"
+                                Text="{Binding TouchpadEndY, Mode=OneWay, StringFormat={}Y: {0}}" />
+                            <Slider
+                                Width="240"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="{Binding TouchpadMaxY, Mode=OneWay}"
+                                Minimum="0"
+                                TickFrequency="1"
+                                Value="{Binding TouchpadEndY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </StackPanel>
+                </ui:SettingsCard>
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="{x:Static resx:Resources.LayoutPage_TouchpadSwipeDuration}"
+                    Visibility="{Binding TouchpadSwipeSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <DockPanel>
+                        <TextBox IsReadOnly="True" Text="{Binding TouchpadSwipeDuration, Mode=OneWay, StringFormat={}{0:N0} ms}" />
+                        <Slider
+                            Width="220"
+                            Margin="6,0,0,0"
+                            IsSnapToTickEnabled="True"
+                            Maximum="{Binding TouchpadMaxDuration, Mode=OneWay}"
+                            Minimum="16"
+                            TickFrequency="16"
+                            Value="{Binding TouchpadSwipeDuration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
                 </ui:SettingsCard>
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
 
         <!--  Trigger settings  -->
-        <ikw:SimpleStackPanel Spacing="8" Visibility="{Binding TriggerSettingsSectionVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+        <ikw:SimpleStackPanel
+            d:Visibility="Visible"
+            Spacing="8"
+            Visibility="{Binding TriggerSettingsSectionVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Trigger settings" />
 
             <ikw:SimpleStackPanel Spacing="3">
                 <!--  Trigger value  -->
-                <ui:SettingsCard Header="Trigger value" Visibility="{Binding TriggerOutputVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Trigger value"
+                    Visibility="{Binding TriggerOutputVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <DockPanel Margin="12,0,0,0">
                         <TextBox
                             HorizontalContentAlignment="Center"
@@ -171,7 +343,10 @@
                 </ui:SettingsCard>
 
                 <!--  Trigger Inner deadzone  -->
-                <ui:SettingsCard Header="Inner deadzone" Visibility="{Binding TriggerDeadzoneVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Inner deadzone"
+                    Visibility="{Binding TriggerDeadzoneVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <DockPanel>
                         <TextBox
                             HorizontalContentAlignment="Center"
@@ -193,7 +368,10 @@
                 </ui:SettingsCard>
 
                 <!--  Trigger Outer deadzone  -->
-                <ui:SettingsCard Header="Outer deadzone" Visibility="{Binding TriggerDeadzoneVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Outer deadzone"
+                    Visibility="{Binding TriggerDeadzoneVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <DockPanel>
                         <TextBox
                             HorizontalContentAlignment="Center"
@@ -215,7 +393,10 @@
                 </ui:SettingsCard>
 
                 <!--  Trigger Anti deadzone  -->
-                <ui:SettingsCard Header="Anti deadzone" Visibility="{Binding TriggerDeadzoneVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Anti deadzone"
+                    Visibility="{Binding TriggerDeadzoneVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <DockPanel>
                         <TextBox
                             HorizontalContentAlignment="Center"
@@ -239,12 +420,18 @@
         </ikw:SimpleStackPanel>
 
         <!--  Axis settings  -->
-        <ikw:SimpleStackPanel Spacing="8" Visibility="{Binding AxisSettingsSectionVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+        <ikw:SimpleStackPanel
+            d:Visibility="Visible"
+            Spacing="8"
+            Visibility="{Binding AxisSettingsSectionVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Axis settings" />
 
             <ikw:SimpleStackPanel Spacing="3">
                 <!--  Axis visualizer  -->
-                <ui:SettingsCard Header="Axis visualizer" Visibility="{Binding AxisVisualizerVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Axis visualizer"
+                    Visibility="{Binding AxisVisualizerVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <Grid
                         Width="200"
                         Height="200"
@@ -302,8 +489,11 @@
                 </ui:SettingsCard>
 
                 <!--  Axis Direction  -->
-                <ui:SettingsCard Header="Axis direction" Visibility="{Binding AxisDirectionVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
-                    <StackPanel>
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Axis direction"
+                    Visibility="{Binding AxisDirectionVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                    <StackPanel d:Visibility="Visible" Visibility="{Binding IsAxisMapping, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <WrapPanel Orientation="Horizontal">
                             <CheckBox Content="Up" IsChecked="{Binding IsUp, Mode=TwoWay}" />
                             <CheckBox Content="Down" IsChecked="{Binding IsDown, Mode=TwoWay}" />
@@ -316,7 +506,10 @@
                 </ui:SettingsCard>
 
                 <!--  Axis Threshold  -->
-                <ui:SettingsCard Header="Axis threshold" Visibility="{Binding AxisThresholdVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Axis threshold"
+                    Visibility="{Binding AxisThresholdVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <DockPanel>
                         <TextBox
                             HorizontalContentAlignment="Center"
@@ -339,8 +532,38 @@
                     </DockPanel>
                 </ui:SettingsCard>
 
+                <!--  Trigger Threshold  -->
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Trigger threshold"
+                    Visibility="{Binding Trigger2ButtonVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                    <DockPanel>
+                        <TextBox
+                            HorizontalContentAlignment="Center"
+                            IsReadOnly="True"
+                            Text="{Binding Axis2ButtonThreshold, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" />
+
+                        <Slider
+                            Width="200"
+                            Margin="3,0,0,0"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            LargeChange="32"
+                            Maximum="255"
+                            Minimum="16"
+                            SmallChange="1"
+                            TickFrequency="16"
+                            TickPlacement="BottomRight"
+                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                            Value="{Binding Axis2ButtonThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                </ui:SettingsCard>
+
                 <!--  Output shape  -->
-                <ui:SettingsCard Header="Output shape">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Output shape"
+                    Visibility="{Binding AxisOutputShapeVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <ComboBox SelectedIndex="{Binding Axis2AxisOutputShapeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         <ComboBoxItem>Default</ComboBoxItem>
                         <ComboBoxItem>Circle</ComboBoxItem>
@@ -350,7 +573,10 @@
                 </ui:SettingsCard>
 
                 <!--  Button axis output X/Y  -->
-                <ui:SettingsCard Header="Axis output" Visibility="{Binding Button2AxisVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Axis output"
+                    Visibility="{Binding Button2AxisVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <StackPanel>
                         <DockPanel>
                             <TextBlock VerticalAlignment="Center" Text="X" />
@@ -396,17 +622,26 @@
                 </ui:SettingsCard>
 
                 <!--  Invert horizontal  -->
-                <ui:SettingsCard ContentAlignment="Left" Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    ContentAlignment="Left"
+                    Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <CheckBox Content="Invert horizontal axis" IsChecked="{Binding Axis2AxisInvertHorizontal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard>
 
                 <!--  Invert vertical  -->
-                <ui:SettingsCard ContentAlignment="Left" Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    ContentAlignment="Left"
+                    Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <CheckBox Content="Invert vertical axis" IsChecked="{Binding Axis2AxisInvertVertical, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard>
 
                 <!--  Axis Inner deadzone  -->
-                <ui:SettingsCard Header="Inner deadzone" Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Inner deadzone"
+                    Visibility="{Binding AxisDeadzoneVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <DockPanel>
                         <TextBox
                             HorizontalContentAlignment="Center"
@@ -428,7 +663,10 @@
                 </ui:SettingsCard>
 
                 <!--  Axis Outer deadzone  -->
-                <ui:SettingsCard Header="Outer deadzone" Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Outer deadzone"
+                    Visibility="{Binding AxisDeadzoneVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <DockPanel>
                         <TextBox
                             HorizontalContentAlignment="Center"
@@ -450,7 +688,10 @@
                 </ui:SettingsCard>
 
                 <!--  Anti deadzone  -->
-                <ui:SettingsCard Header="Anti deadzone" Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Anti deadzone"
+                    Visibility="{Binding AxisDeadzoneVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <DockPanel>
                         <TextBox
                             HorizontalContentAlignment="Center"
@@ -529,12 +770,18 @@
         </ikw:SimpleStackPanel>
 
         <!--  Mouse settings  -->
-        <ikw:SimpleStackPanel Spacing="8" Visibility="{Binding MouseSettingsSectionVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+        <ikw:SimpleStackPanel
+            d:Visibility="Visible"
+            Spacing="8"
+            Visibility="{Binding MouseSettingsSectionVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Mouse settings" />
 
             <ikw:SimpleStackPanel Spacing="3">
                 <!--  Move mouse cursor to X,Y (Button)  -->
-                <ui:SettingsCard Header="Mouse position" Visibility="{Binding Button2MouseTo, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Mouse position"
+                    Visibility="{Binding Button2MouseTo, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <ikw:SimpleStackPanel Spacing="3">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock VerticalAlignment="Center" Text="X" />
@@ -558,12 +805,18 @@
                 </ui:SettingsCard>
 
                 <!--  Restore previous position (Button)  -->
-                <ui:SettingsCard Header="Restore previous position" Visibility="{Binding Button2MouseTo, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Restore previous position"
+                    Visibility="{Binding Button2MouseTo, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <ui:ToggleSwitch IsOn="{Binding Button2MouseRestore, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard>
 
                 <!--  Move mouse cursor to X,Y (Axis)  -->
-                <ui:SettingsCard Header="Mouse position" Visibility="{Binding Axis2MouseTo, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Mouse position"
+                    Visibility="{Binding Axis2MouseTo, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <StackPanel>
                         <WrapPanel Orientation="Horizontal">
                             <TextBlock VerticalAlignment="Center" Text="X" />
@@ -587,12 +840,18 @@
                 </ui:SettingsCard>
 
                 <!--  Restore previous position (Axis)  -->
-                <ui:SettingsCard Header="Restore previous position" Visibility="{Binding Axis2MouseTo, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Restore previous position"
+                    Visibility="{Binding Axis2MouseTo, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <ui:ToggleSwitch IsOn="{Binding Axis2MouseRestore, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard>
 
                 <!--  Sensitivity  -->
-                <ui:SettingsCard Header="Sensitivity" Visibility="{Binding Axis2MouseVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Sensitivity"
+                    Visibility="{Binding Axis2MouseVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <DockPanel>
                         <TextBox
                             HorizontalContentAlignment="Center"
@@ -614,7 +873,10 @@
                 </ui:SettingsCard>
 
                 <!--  Acceleration  -->
-                <ui:SettingsCard Header="Acceleration" Visibility="{Binding Axis2MouseVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Acceleration"
+                    Visibility="{Binding Axis2MouseVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <DockPanel>
                         <TextBox
                             HorizontalContentAlignment="Center"
@@ -637,12 +899,18 @@
                 </ui:SettingsCard>
 
                 <!--  Filtering  -->
-                <ui:SettingsCard Header="Filtering" Visibility="{Binding Axis2TouchpadVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Filtering"
+                    Visibility="{Binding Axis2TouchpadVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <ui:ToggleSwitch IsOn="{Binding Axis2MouseFiltering, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard>
 
                 <!--  Filtering cutoff  -->
-                <ui:SettingsCard Header="Filtering cutoff (less is more filter)" Visibility="{Binding Axis2MouseFiltering, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Filtering cutoff (less is more filter)"
+                    Visibility="{Binding Axis2MouseFiltering, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <DockPanel>
                         <TextBox
                             HorizontalContentAlignment="Center"
@@ -665,7 +933,10 @@
                 </ui:SettingsCard>
 
                 <!--  Deadzone (Mouse)  -->
-                <ui:SettingsCard Header="Deadzone" Visibility="{Binding Axis2JoystickVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Deadzone"
+                    Visibility="{Binding Axis2JoystickVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <DockPanel>
                         <TextBox
                             HorizontalContentAlignment="Center"
@@ -689,22 +960,32 @@
         </ikw:SimpleStackPanel>
 
         <!--  Timing settings  -->
-        <ikw:SimpleStackPanel Spacing="8" Visibility="{Binding TimingSettingsSectionVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+        <ikw:SimpleStackPanel
+            d:Visibility="Visible"
+            Spacing="8"
+            Visibility="{Binding TimingSettingsSectionVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Timing settings" />
 
             <ikw:SimpleStackPanel Spacing="3">
                 <!--  Press to Toggle  -->
-                <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_PressToToggle}" Visibility="{Binding GeneralActionVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="{x:Static resx:Resources.LayoutPage_PressToToggle}"
+                    Visibility="{Binding GeneralActionVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <ui:ToggleSwitch IsOn="{Binding HasToggle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard>
 
                 <!--  Hold to Repeat  -->
-                <ui:SettingsCard Header="{x:Static resx:Resources.LayoutPage_HoldToRepeat}" Visibility="{Binding GeneralActionVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="{x:Static resx:Resources.LayoutPage_HoldToRepeat}"
+                    Visibility="{Binding GeneralActionVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <ui:ToggleSwitch HorizontalAlignment="Right" IsOn="{Binding HasTurbo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard>
 
                 <!--  Repeat rate  -->
                 <ui:SettingsCard
+                    d:Visibility="Visible"
                     Header="Repeat rate"
                     IsEnabled="{Binding HasTurbo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                     Visibility="{Binding HasTurbo, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -730,7 +1011,10 @@
                 </ui:SettingsCard>
 
                 <!--  Start delay  -->
-                <ui:SettingsCard Header="Start delay" Visibility="{Binding GeneralActionVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                <ui:SettingsCard
+                    d:Visibility="Visible"
+                    Header="Start delay"
+                    Visibility="{Binding GeneralActionVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <DockPanel>
                         <TextBox
                             HorizontalContentAlignment="Center"
@@ -753,6 +1037,7 @@
 
                 <!--  Press duration  -->
                 <ui:SettingsCard
+                    d:Visibility="Visible"
                     Header="Press duration"
                     IsEnabled="{Binding HasDuration, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                     Visibility="{Binding HasDuration, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -778,4 +1063,3 @@
         </ikw:SimpleStackPanel>
     </ikw:SimpleStackPanel>
 </Page>
-

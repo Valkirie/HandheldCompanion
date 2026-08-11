@@ -21,6 +21,7 @@ public class ActionTypeIndexToNameConverter : IValueConverter
                 5 => Resources.LayoutPage_ActionType_Trigger,
                 6 => Resources.LayoutPage_ActionType_Shift,
                 7 => Resources.LayoutPage_ActionType_Inherit,
+                8 => Resources.LayoutPage_ActionType_Touchpad,
                 _ => "Unknown"
             };
         }

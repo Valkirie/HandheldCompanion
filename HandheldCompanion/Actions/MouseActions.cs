@@ -46,19 +46,7 @@ namespace HandheldCompanion.Actions
         public float Acceleration = 1.0f;     // ≤ 1.0 = off; > 1.0 = boost
         public int Deadzone = 15;        // stick only
         public bool Filtering = false;     // pad only
-        private float filterCutoff = 0.05f;
-        public float FilterCutoff
-        {
-            get => filterCutoff;
-            set
-            {
-                if (filterCutoff == value)
-                    return;
-
-                filterCutoff = value;
-                mouseFilter?.SetFilterCutoff(value);
-            }
-        }
+        public float FilterCutoff = 0.05f;    // pad only
 
         // MoveTo settings
         public double MoveToX = 0;
@@ -201,13 +189,29 @@ namespace HandheldCompanion.Actions
         {
             bool firstTouch = ConsumeNewTouch(touched);
 
-            outVector = layout.vector;
+            Vector2 rawVector = layout.vector;
+            outVector = rawVector;
             base.Execute(layout, shiftSlot, delta);
 
-            if (outVector == Vector2.Zero) return;
+            bool isTrackpad = layout.flags is AxisLayoutFlags.LeftPad or AxisLayoutFlags.RightPad;
+            if (axisSlotDisabled && isTrackpad)
+            {
+                rawVector.Y *= -1;
+                prevVector = rawVector;
+                return;
+            }
 
             // Invert Y so that "up" on a stick or pad moves the cursor up
             outVector.Y *= -1;
+
+            if (firstTouch && isTrackpad)
+            {
+                prevVector = outVector;
+                return;
+            }
+
+            // Zero is the center of an absolute trackpad, not an absence of input.
+            if (outVector == Vector2.Zero && (!isTrackpad || !touched)) return;
 
             Vector2 deltaVector;
             float sensitivityScale;
@@ -224,19 +228,17 @@ namespace HandheldCompanion.Actions
 
                 case AxisLayoutFlags.LeftPad:
                 case AxisLayoutFlags.RightPad:
-                    if (firstTouch)
-                    {
-                        prevVector = outVector;
-                        return;
-                    }
-                    deltaVector = (outVector - prevVector) / short.MaxValue;
+                    Vector2 trackpadDelta = outVector - prevVector;
                     prevVector = outVector;
+
+                    deltaVector = trackpadDelta / short.MaxValue;
                     sensitivityScale = MouseType == MouseActionsType.Move ? 9.0f : 3.0f;
                     break;
             }
 
             if (Filtering)
             {
+                mouseFilter.SetFilterCutoff(FilterCutoff);
                 deltaVector.X = (float)mouseFilter.axis1Filter.Filter(deltaVector.X, 1);
                 deltaVector.Y = (float)mouseFilter.axis2Filter.Filter(deltaVector.Y, 1);
             }
@@ -252,13 +254,7 @@ namespace HandheldCompanion.Actions
             if (MouseType == MouseActionsType.Move)
                 MouseSimulator.MoveBy((int)intDelta.X, (int)intDelta.Y);
             else
-            {
-                if (intDelta.X != 0)
-                    MouseSimulator.HorizontalScroll((int)intDelta.X);
-
-                if (intDelta.Y != 0)
-                    MouseSimulator.VerticalScroll((int)-intDelta.Y);
-            }
+                MouseSimulator.VerticalScroll((int)-intDelta.Y);
         }
 
         private Vector2 ComputeStickDelta(Vector2 raw)

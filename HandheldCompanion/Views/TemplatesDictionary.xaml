@@ -67,7 +67,6 @@
     <ControlTemplate x:Key="LibraryManageMenuItemsTemplate" TargetType="MenuItem">
         <MenuItem Header="Manage">
             <MenuItem Command="{Binding OpenLayout}" Header="Edit controller layout" />
-            <MenuItem Command="{Binding DownloadMetadataAndArtworks}" Header="Download metadata and artworks" />
             <MenuItem
                 Command="{Binding OpenExecutableLocation}"
                 Header="Open executable location"
@@ -121,7 +120,6 @@
         </MenuItem>
         <MenuItem Header="Manage">
             <MenuItem Command="{Binding OpenLayout}" Header="Edit controller layout" />
-            <MenuItem Command="{Binding DownloadMetadataAndArtworks}" Header="Download metadata and artworks" />
             <MenuItem
                 Command="{Binding OpenExecutableLocation}"
                 Header="Open executable location"
@@ -308,18 +306,10 @@
                             CornerRadius="{DynamicResource ControlCornerRadius}"
                             SnapsToDevicePixels="True">
                             <Grid x:Name="RootGrid">
-                                <StackPanel Margin="0,60,0,0" VerticalAlignment="Center">
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        Style="{StaticResource BaseTextBlockStyle}"
-                                        Text="{Binding Name}"
-                                        TextWrapping="NoWrap" />
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{Binding Description}"
-                                        TextWrapping="Wrap" />
-                                </StackPanel>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="60" />
+                                </Grid.RowDefinitions>
 
                                 <ui:ProgressRing
                                     Grid.Row="0"
@@ -330,7 +320,7 @@
                                     IsIndeterminate="{Binding IsBusy, UpdateSourceTrigger=PropertyChanged}"
                                     Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                                <Border ClipToBounds="True">
+                                <Border Grid.Row="0" ClipToBounds="True">
                                     <Grid>
                                         <Image
                                             x:Name="MainImage"
@@ -359,6 +349,24 @@
                                             Style="{StaticResource LibraryImageFadeStyle}" />
                                     </Grid>
                                 </Border>
+
+                                <Grid Grid.Row="1" Margin="12">
+                                    <Viewbox
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Stretch="None">
+                                        <StackPanel>
+                                            <TextBlock
+                                                Style="{StaticResource BaseTextBlockStyle}"
+                                                Text="{Binding Name}"
+                                                TextWrapping="NoWrap" />
+                                            <TextBlock
+                                                Style="{StaticResource BodyTextBlockStyle}"
+                                                Text="{Binding Description}"
+                                                TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Viewbox>
+                                </Grid>
 
                                 <Image
                                     Width="32"
@@ -473,20 +481,13 @@
                             CornerRadius="{DynamicResource ControlCornerRadius}"
                             SnapsToDevicePixels="True">
                             <Grid>
-                                <StackPanel Margin="0,60,0,0" VerticalAlignment="Center">
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        Style="{StaticResource BaseTextBlockStyle}"
-                                        Text="{Binding Name}"
-                                        TextWrapping="NoWrap" />
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{Binding Description}"
-                                        TextWrapping="Wrap" />
-                                </StackPanel>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="60" />
+                                </Grid.RowDefinitions>
 
                                 <ui:ProgressRing
+                                    Grid.Row="0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Panel.ZIndex="999"
@@ -494,7 +495,7 @@
                                     IsIndeterminate="{Binding IsBusy, UpdateSourceTrigger=PropertyChanged}"
                                     Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                                <Border ClipToBounds="True">
+                                <Border Grid.Row="0" ClipToBounds="True">
                                     <Image
                                         x:Name="MainImage"
                                         HorizontalAlignment="Center"
@@ -513,9 +514,27 @@
                                     </Image>
                                 </Border>
 
+                                <Grid Grid.Row="1" Margin="12">
+                                    <Viewbox
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Stretch="None">
+                                        <StackPanel>
+                                            <TextBlock
+                                                Style="{StaticResource BaseTextBlockStyle}"
+                                                Text="{Binding Name}"
+                                                TextWrapping="NoWrap" />
+                                            <TextBlock
+                                                Style="{StaticResource BodyTextBlockStyle}"
+                                                Text="{Binding Description}"
+                                                TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Viewbox>
+                                </Grid>
+
                                 <Image
-                                    Width="28"
-                                    Height="28"
+                                    Width="32"
+                                    Height="32"
                                     Margin="4"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Bottom"
@@ -1062,6 +1081,7 @@
                         <ToggleButton
                             VerticalAlignment="Stretch"
                             Command="{Binding HideCommand}"
+                            FontSize="14"
                             IsChecked="{Binding IsHidden, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                             <ToggleButton.Style>
                                 <Style BasedOn="{StaticResource {x:Type ToggleButton}}" TargetType="ToggleButton">
@@ -1075,12 +1095,14 @@
                             </ToggleButton.Style>
                         </ToggleButton>
 
-                        <!--  Ping  -->
+                        <!--  Calibrate  -->
                         <Button
                             VerticalAlignment="Stretch"
-                            Command="{Binding PingCommand}"
-                            Content="{l:Static resx:Resources.Controller_Ping}"
-                            Style="{DynamicResource DefaultButtonStyle}" />
+                            Command="{Binding CalibrateCommand}"
+                            Content="{l:Static resx:Resources.Controller_Calibrate}"
+                            FontSize="14"
+                            Style="{DynamicResource DefaultButtonStyle}"
+                            Visibility="{Binding CanCalibrate, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                         <!--  Switch layout (WIP)  -->
                         <Button
@@ -1109,11 +1131,6 @@
                                 <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_USB}" />
 
                                 <Style.Triggers>
-                                    <!--  Trigger for Legion Wireless  -->
-                                    <DataTrigger Binding="{Binding IsLegionWireless}" Value="True">
-                                        <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_LegionWireless}" />
-                                    </DataTrigger>
-
                                     <!--  Trigger for USB  -->
                                     <DataTrigger Binding="{Binding Enumerator}" Value="USB">
                                         <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_USB}" />
@@ -1222,6 +1239,10 @@
                     <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="False" />
                     <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="False" />
                     <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="False" />
+                    <ComboBoxItem
+                        Content="{x:Static resx:Resources.LayoutPage_ActionType_Touchpad}"
+                        IsEnabled="True"
+                        Visibility="{Binding TouchpadAxisActionTypeVisibility, Mode=OneWay}" />
                 </ComboBox>
             </ui:SettingsCard>
 
@@ -1417,9 +1438,9 @@
             <!--  Joystick  -->
             <!--  Gyrometer weight  -->
             <ui:SettingsCard
-                Description="Modify the gyrometer weight when applied against joystick movements"
+                Description="Modify the gyrometer weight when combined with target axis movements"
                 Header="Gyrometer weight"
-                Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2|8}">
                 <DockPanel>
                     <TextBox Text="{Binding GyroWeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}" TextAlignment="Center" />
                     <Slider

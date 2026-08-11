@@ -8,7 +8,7 @@ namespace HandheldCompanion.ViewModels
     {
         private static readonly List<ButtonFlags> _leftButtons =
         [
-            ButtonFlags.LeftPadClick, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown,
+            ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClick, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown,
             ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight
         ];
 
@@ -16,7 +16,7 @@ namespace HandheldCompanion.ViewModels
 
         private static readonly List<ButtonFlags> _rightButtons =
         [
-            ButtonFlags.RightPadClick, ButtonFlags.RightPadClickUp,
+            ButtonFlags.RightPadTouch, ButtonFlags.RightPadClick, ButtonFlags.RightPadClickUp,
             ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight
         ];
 

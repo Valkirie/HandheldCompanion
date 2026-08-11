@@ -39,6 +39,10 @@ namespace HandheldCompanion.Extensions
                     return "\uE962";
                 case MotionOutput.ScrollWheel:
                     return "\uEC8F";
+                case MotionOutput.LeftPad:
+                    return "\u2264";
+                case MotionOutput.RightPad:
+                    return "\u2265";
             }
         }
     }

@@ -76,6 +76,8 @@ public class ProcessWindowSettings
 [Serializable]
 public partial class Profile : ICloneable, IComparable, INotifyPropertyChanged
 {
+    internal object SyncRoot { get; } = new();
+
     [JsonIgnore]
     public const int SensivityArraySize = 49; // x + 1 (hidden)
 
@@ -168,16 +170,23 @@ public partial class Profile : ICloneable, IComparable, INotifyPropertyChanged
     // automatically migrate on deserialization — the setter adds FavoritesId.
     public bool IsLiked
     {
-        get => Collections.Contains(GameCollection.FavoritesId);
+        get
+        {
+            lock (SyncRoot)
+                return Collections.Contains(GameCollection.FavoritesId);
+        }
         set
         {
-            if (Collections.Contains(GameCollection.FavoritesId) == value)
-                return;
-            if (value)
-                Collections.Add(GameCollection.FavoritesId);
-            else
-                Collections.Remove(GameCollection.FavoritesId);
-            OnPropertyChanged();
+            lock (SyncRoot)
+            {
+                if (Collections.Contains(GameCollection.FavoritesId) == value)
+                    return;
+                if (value)
+                    Collections.Add(GameCollection.FavoritesId);
+                else
+                    Collections.Remove(GameCollection.FavoritesId);
+                OnPropertyChanged();
+            }
         }
     }
 

@@ -27,6 +27,7 @@ public partial class LayoutPage : Page
     // Getter to update layout in ViewModels
     public Layout CurrentLayout => currentTemplate.Layout;
     public LayoutTemplate currentTemplate = new();
+    protected object updateLock = new();
 
     // page vars
     private Dictionary<string, (ILayoutPage, NavigationViewItem)>? pages;
@@ -140,7 +141,7 @@ public partial class LayoutPage : Page
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        SettingsManager_SettingValueChanged("LayoutFilterOnDevice", ManagerFactory.settingsManager.GetString("LayoutFilterOnDevice"), false, true);
+        SettingsManager_SettingValueChanged("LayoutFilterOnDevice", ManagerFactory.settingsManager.GetString("LayoutFilterOnDevice"), false, false);
     }
 
     private void SettingsManager_Initialized()
@@ -182,7 +183,7 @@ public partial class LayoutPage : Page
         }
 
         // UI thread
-        UIHelper.TryBeginInvoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             if (sender is ILayoutPage layoutPage)
             {
@@ -219,7 +220,7 @@ public partial class LayoutPage : Page
     private void SettingsManager_SettingValueChanged(string? name, object? value, bool temporary, bool initializing)
     {
         // UI thread
-        UIHelper.TryBeginInvoke(() =>
+        UIHelper.TryInvoke(() =>
         {
             switch (name)
             {
@@ -230,7 +231,11 @@ public partial class LayoutPage : Page
         });
     }
 
-    public void Dispose()
+    private void Page_Loaded(object sender, RoutedEventArgs e)
+    {
+    }
+
+    public void Page_Closed()
     {
         ((LayoutPageViewModel)DataContext).Dispose();
 
@@ -241,6 +246,8 @@ public partial class LayoutPage : Page
         ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
         ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
     }
+
+    public void Dispose() => Page_Closed();
 
     public void UpdateLayout(Layout layout)
     {
@@ -269,13 +276,16 @@ public partial class LayoutPage : Page
         // This is a very important lock, it blocks backward events to the layout when
         // this is actually the backend that triggered the update. Notifications on higher
         // levels (pages and mappings) could potentially be blocked for optimization.
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
-            // Invoke Layout Updated to trigger ViewModel updates
-            LayoutUpdated?.Invoke(currentTemplate.Layout);
+            lock (updateLock)
+            {
+                // Invoke Layout Updated to trigger ViewModel updates
+                LayoutUpdated?.Invoke(currentTemplate.Layout);
 
-            // clear layout selection
-            cB_Layouts.SelectedValue = null;
+                // clear layout selection
+                cB_Layouts.SelectedValue = null;
+            }
         });
     }
 
@@ -305,9 +315,12 @@ public partial class LayoutPage : Page
                         // because they both have important Update notifitications set
                         using (Layout newLayout = (Layout)layoutTemplate.Layout.Clone())
                         {
-                            currentTemplate.Layout.AxisLayout = CloningHelper.DeepClone(newLayout.AxisLayout);
-                            currentTemplate.Layout.ButtonLayout = CloningHelper.DeepClone(newLayout.ButtonLayout);
-                            currentTemplate.Layout.GyroLayout = CloningHelper.DeepClone(newLayout.GyroLayout);
+                            lock (currentTemplate.Layout.SyncRoot)
+                            {
+                                currentTemplate.Layout.AxisLayout = CloningHelper.DeepClone(newLayout.AxisLayout);
+                                currentTemplate.Layout.ButtonLayout = CloningHelper.DeepClone(newLayout.ButtonLayout);
+                                currentTemplate.Layout.GyroLayout = CloningHelper.DeepClone(newLayout.GyroLayout);
+                            }
                         }
 
                         currentTemplate.Name = layoutTemplate.Name;
@@ -354,15 +367,18 @@ public partial class LayoutPage : Page
                     Profile currentProfile = ProfilesPage.selectedProfile;
 
                     // Clear the layout
-                    currentTemplate.Layout.ButtonLayout.Clear();
-                    currentTemplate.Layout.AxisLayout.Clear();
-                    currentTemplate.Layout.GyroLayout.Clear();
+                    lock (currentTemplate.Layout.SyncRoot)
+                    {
+                        currentTemplate.Layout.ButtonLayout.Clear();
+                        currentTemplate.Layout.AxisLayout.Clear();
+                        currentTemplate.Layout.GyroLayout.Clear();
 
-                    // Fill with appropriate defaults
-                    if (currentProfile.Default)
-                        currentTemplate.Layout.FillDefault();
-                    else
-                        currentTemplate.Layout.FillInherit();
+                        // Fill with appropriate defaults
+                        if (currentProfile.Default)
+                            currentTemplate.Layout.FillDefault();
+                        else
+                            currentTemplate.Layout.FillInherit();
+                    }
 
                     currentTemplate.Name = LayoutTemplate.DefaultLayout.Name;
 
