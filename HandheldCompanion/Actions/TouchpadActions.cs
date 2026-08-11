@@ -131,14 +131,11 @@ namespace HandheldCompanion.Actions
 
         public static bool IsPhysicalClick(ButtonFlags button) => IsLeftPadClick(button) || IsRightPadClick(button);
 
-        public static bool HasCustomHapticSettings(IActions action) =>
-            action.HapticOverride == true;
-
         public static bool IsTouchpadAxis(AxisLayoutFlags axis) => axis is
             AxisLayoutFlags.LeftPad or AxisLayoutFlags.RightPad;
 
         private static bool SupportsGestureTargets(IController controller) => controller is
-            DummyDualShock4Controller or DummyDualSenseController;
+            DummyDualShock4Controller or DummyDualSenseController or SteamController;
 
         public static bool HasTargets(IController controller) =>
             controller.GetTargetButtons().Any(IsTouchpadButton) ||

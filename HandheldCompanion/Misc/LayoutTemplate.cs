@@ -92,7 +92,7 @@ namespace HandheldCompanion.Misc
             [
                 new TouchpadActions(AxisLayoutFlags.RightPad)
                 {
-                    AxisDeadZoneInner = 5
+                    AxisDeadZoneInner   = 5
                 }
             ];
 

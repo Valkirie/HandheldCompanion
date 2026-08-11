@@ -601,10 +601,7 @@ namespace HandheldCompanion.ViewModels
                 if (Action is not null && value != HapticModeIndex)
                 {
                     Action.HapticMode = (HapticMode)value;
-                    Action.HapticOverride = true;
                     OnPropertyChanged(nameof(HapticModeIndex));
-                    OnPropertyChanged(nameof(UseGlobalTrackpadClickHaptics));
-                    OnPropertyChanged(nameof(HapticControlsEnabled));
                 }
             }
         }
@@ -617,36 +614,10 @@ namespace HandheldCompanion.ViewModels
                 if (Action is not null && value != HapticStrengthIndex)
                 {
                     Action.HapticStrength = (HapticStrength)value;
-                    Action.HapticOverride = true;
                     OnPropertyChanged(nameof(HapticStrengthIndex));
-                    OnPropertyChanged(nameof(UseGlobalTrackpadClickHaptics));
-                    OnPropertyChanged(nameof(HapticControlsEnabled));
                 }
             }
         }
-
-        public Visibility TrackpadClickHapticOverrideVisibility =>
-            Value is ButtonFlags button && TouchpadActions.IsPhysicalClick(button)
-                ? Visibility.Visible
-                : Visibility.Collapsed;
-
-        public bool UseGlobalTrackpadClickHaptics
-        {
-            get => Action is null || !TouchpadActions.HasCustomHapticSettings(Action);
-            set
-            {
-                if (Action is null || value == UseGlobalTrackpadClickHaptics)
-                    return;
-
-                Action.HapticOverride = !value;
-                OnPropertyChanged(nameof(UseGlobalTrackpadClickHaptics));
-                OnPropertyChanged(nameof(HapticControlsEnabled));
-            }
-        }
-
-        public bool HapticControlsEnabled =>
-            TrackpadClickHapticOverrideVisibility != Visibility.Visible ||
-            !UseGlobalTrackpadClickHaptics;
 
         #endregion
 
@@ -821,8 +792,6 @@ namespace HandheldCompanion.ViewModels
             nameof(InputShiftDisplayName),
             nameof(TouchpadActionTypeVisibility),
             nameof(TouchpadAxisActionTypeVisibility),
-            nameof(TrackpadClickHapticOverrideVisibility),
-            nameof(HapticControlsEnabled),
         ];
 
         public override void OnPropertyChanged(string? propertyName)

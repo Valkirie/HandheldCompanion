@@ -138,7 +138,6 @@ namespace HandheldCompanion.Actions
         // --- Haptics ---
         public HapticMode HapticMode = HapticMode.Off;
         public HapticStrength HapticStrength = HapticStrength.Low;
-        public bool? HapticOverride = null;
 
         // --- Axis/motion ---
         public DeflectionDirection motionDirection = DeflectionDirection.None;
@@ -166,7 +165,6 @@ namespace HandheldCompanion.Actions
             ShiftMatchAny = source.ShiftMatchAny;
             HapticMode = source.HapticMode;
             HapticStrength = source.HapticStrength;
-            HapticOverride = source.HapticOverride;
             motionDirection = source.motionDirection;
             motionThreshold = source.motionThreshold;
         }

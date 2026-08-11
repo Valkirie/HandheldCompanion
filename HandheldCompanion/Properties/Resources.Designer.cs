@@ -6407,15 +6407,6 @@ namespace HandheldCompanion.Properties {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Use global click haptics.
-        /// </summary>
-        public static string LayoutPage_UseGlobalTrackpadClickHaptics {
-            get {
-                return ResourceManager.GetString("LayoutPage_UseGlobalTrackpadClickHaptics", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to Hold to repeat.
         /// </summary>
         public static string LayoutPage_HoldToRepeat {

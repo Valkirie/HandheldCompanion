@@ -40,13 +40,6 @@ public class LayoutManager : IManager
     private Layout? desktopLayout = null;
 
     private readonly ControllerState outputState = new();
-    private readonly Notification trackpadClickHapticOverrideNotification = new(
-        Properties.Resources.ControllerPage_TrackpadClickHapticsOverride,
-        Properties.Resources.ControllerPage_TrackpadClickHapticsOverrideDesc,
-        string.Empty,
-        InfoBarSeverity.Warning);
-    private bool hasTrackpadClickHapticOverrides;
-
     private const string desktopLayoutFile = "desktop";
 
     public string TemplatesPath;
@@ -542,23 +535,6 @@ public class LayoutManager : IManager
                 EnsureAxisXY(touchpadAction.Axis);
         }
 
-        UpdateTrackpadClickHapticOverrideNotification();
-    }
-
-    private void UpdateTrackpadClickHapticOverrideNotification()
-    {
-        bool hasOverrides = _buttonPlan.Any(pair =>
-            TouchpadActions.IsPhysicalClick(pair.Key) &&
-            pair.Value.Any(TouchpadActions.HasCustomHapticSettings));
-
-        if (hasOverrides == hasTrackpadClickHapticOverrides)
-            return;
-
-        hasTrackpadClickHapticOverrides = hasOverrides;
-        if (hasOverrides)
-            ManagerFactory.notificationManager.Add(trackpadClickHapticOverrideNotification);
-        else
-            ManagerFactory.notificationManager.Discard(trackpadClickHapticOverrideNotification);
     }
 
     private void EnsureAxisXY(AxisLayoutFlags flag)

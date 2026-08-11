@@ -348,10 +348,7 @@ namespace HandheldCompanion.ViewModels
                 if (Action is not null && value != HapticModeIndex)
                 {
                     Action.HapticMode = (HapticMode)value;
-                    Action.HapticOverride = true;
                     OnPropertyChanged(nameof(HapticModeIndex));
-                    OnPropertyChanged(nameof(UseGlobalTrackpadClickHaptics));
-                    OnPropertyChanged(nameof(HapticControlsEnabled));
                 }
             }
         }
@@ -364,10 +361,7 @@ namespace HandheldCompanion.ViewModels
                 if (Action is not null && value != HapticStrengthIndex)
                 {
                     Action.HapticStrength = (HapticStrength)value;
-                    Action.HapticOverride = true;
                     OnPropertyChanged(nameof(HapticStrengthIndex));
-                    OnPropertyChanged(nameof(UseGlobalTrackpadClickHaptics));
-                    OnPropertyChanged(nameof(HapticControlsEnabled));
                 }
             }
         }
