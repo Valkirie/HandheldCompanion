@@ -43,6 +43,7 @@ namespace HandheldCompanion.Actions
         public int AxisAntiDeadZone = 0;
         public int AxisDeadZoneInner = 0;
         public int AxisDeadZoneOuter = 0;
+        public bool UseCoordinates;
         private byte finger = 1;
 
         private int x = DS4Touch.TOUCHPAD_WIDTH / 2;
@@ -88,18 +89,14 @@ namespace HandheldCompanion.Actions
             SetTarget(axis);
         }
 
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            actionType = ActionType.Touchpad;
-            movementHaptics ??= new();
-        }
-
         public void SetTarget(ButtonFlags button)
         {
             TargetType = TouchpadTargetType.Button;
             Button = button;
             Axis = AxisLayoutFlags.None;
+
+            if (button == ButtonFlags.TouchpadSwipe)
+                UseCoordinates = true;
         }
 
         public void SetTarget(AxisLayoutFlags axis)
@@ -268,8 +265,8 @@ namespace HandheldCompanion.Actions
                 return false;
             }
 
-            int x;
-            int y;
+            int? x;
+            int? y;
             bool active;
 
             if (Button == ButtonFlags.TouchpadSwipe)
@@ -286,8 +283,8 @@ namespace HandheldCompanion.Actions
             }
             else
             {
-                x = X;
-                y = Y;
+                x = UseCoordinates ? X : null;
+                y = UseCoordinates ? Y : null;
                 active = outBool;
             }
 
@@ -319,7 +316,8 @@ namespace HandheldCompanion.Actions
                     return;
 
                 outputState.ButtonState[Button] |= true;
-                DS4Touch.SetOutputTouch(sample.Finger, sample.X, sample.Y);
+                if (sample.X is int x && sample.Y is int y)
+                    DS4Touch.SetOutputTouch(sample.Finger, x, y);
                 return;
             }
 
@@ -400,6 +398,6 @@ namespace HandheldCompanion.Actions
         private static short ClampShort(float value) => (short)Math.Clamp(value, short.MinValue, short.MaxValue);
     }
 
-    internal readonly record struct TouchpadSample(ButtonFlags Target, byte Finger, int X, int Y)
+    internal readonly record struct TouchpadSample(ButtonFlags Target, byte Finger, int? X, int? Y)
     { }
 }

@@ -49,6 +49,7 @@ namespace HandheldCompanion.Misc
                 new TouchpadActions(ButtonFlags.TouchpadClick)
                 {
                     Finger = 1,
+                    UseCoordinates = true,
                     Y = -28672,
                 }
             ];
@@ -58,6 +59,7 @@ namespace HandheldCompanion.Misc
                 new TouchpadActions(ButtonFlags.TouchpadClick)
                 {
                     Finger = 1,
+                    UseCoordinates = true,
                     Y = 28672,
                 }
             ];
@@ -67,6 +69,7 @@ namespace HandheldCompanion.Misc
                 new TouchpadActions(ButtonFlags.TouchpadClick)
                 {
                     Finger = 1,
+                    UseCoordinates = true,
                     X = -28672,
                 }
             ];
@@ -76,6 +79,7 @@ namespace HandheldCompanion.Misc
                 new TouchpadActions(ButtonFlags.TouchpadClick)
                 {
                     Finger = 1,
+                    UseCoordinates = true,
                     X = 28672,
                 }
             ];

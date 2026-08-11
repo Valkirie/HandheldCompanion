@@ -209,7 +209,15 @@
                         </Canvas>
                     </Border>
                 </ui:SettingsCard>
-                <ui:SettingsCard Description="{Binding TouchpadCoordinateRangeDescription, Mode=OneWay}" Header="{x:Static resx:Resources.LayoutPage_TouchpadStartPosition}">
+                <ui:SettingsCard
+                    Header="Use touchpad coordinates"
+                    Visibility="{Binding TouchpadCoordinateSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ui:ToggleSwitch IsOn="{Binding TouchpadUseCoordinates, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </ui:SettingsCard>
+                <ui:SettingsCard
+                    Description="{Binding TouchpadCoordinateRangeDescription, Mode=OneWay}"
+                    Header="{x:Static resx:Resources.LayoutPage_TouchpadStartPosition}"
+                    IsEnabled="{Binding TouchpadUseCoordinates, Mode=OneWay}">
                     <StackPanel>
                         <DockPanel>
                             <TextBlock

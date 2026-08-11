@@ -396,6 +396,24 @@ namespace HandheldCompanion.ViewModels
             Action is TouchpadActions { TargetType: TouchpadTargetType.Button, Button: ButtonFlags.TouchpadSwipe }
                 ? Visibility.Visible
                 : Visibility.Collapsed;
+        public virtual Visibility TouchpadCoordinateSettingsVisibility =>
+            ActionTypeIndex == (int)ActionType.Touchpad &&
+            Action is TouchpadActions { TargetType: TouchpadTargetType.Button, Button: ButtonFlags.TouchpadClick or ButtonFlags.TouchpadTouch }
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        public virtual bool TouchpadUseCoordinates
+        {
+            get => Action is TouchpadActions a && a.UseCoordinates;
+            set
+            {
+                if (Action is TouchpadActions a && value != a.UseCoordinates)
+                {
+                    a.UseCoordinates = value;
+                    OnPropertyChanged(nameof(TouchpadUseCoordinates));
+                    OnPropertyChanged(nameof(TouchpadVisualizerVisibility));
+                }
+            }
+        }
         public virtual Visibility TouchpadVisualizerVisibility => TouchpadSettingsVisibility;
         public double TouchpadVisualizerStartX => TouchpadVisualizerPosition(TouchpadX, TouchpadMaxX, 232.0d);
         public double TouchpadVisualizerStartY => TouchpadVisualizerPosition(TouchpadY, TouchpadMaxY, 112.0d);
@@ -792,6 +810,7 @@ namespace HandheldCompanion.ViewModels
             nameof(InputShiftDisplayName),
             nameof(TouchpadActionTypeVisibility),
             nameof(TouchpadAxisActionTypeVisibility),
+            nameof(TouchpadCoordinateSettingsVisibility),
         ];
 
         public override void OnPropertyChanged(string? propertyName)

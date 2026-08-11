@@ -64,8 +64,8 @@ public partial class Layout : ICloneable, IDisposable
 
             ButtonLayout[button] = button switch
             {
-                // ButtonFlags.LeftPadTouch => [new TouchpadActions(ButtonFlags.TouchpadTouch) { Finger = 1 }],
-                // ButtonFlags.RightPadTouch => [new TouchpadActions(ButtonFlags.TouchpadTouch) { Finger = 2 }],
+                ButtonFlags.LeftPadTouch => [new TouchpadActions(ButtonFlags.TouchpadTouch) { Finger = 1 }],
+                ButtonFlags.RightPadTouch => [new TouchpadActions(ButtonFlags.TouchpadTouch) { Finger = 2 }],
                 ButtonFlags.LeftPadClick => [new TouchpadActions(ButtonFlags.TouchpadClick) { Finger = 1 }],
                 ButtonFlags.RightPadClick => [new TouchpadActions(ButtonFlags.TouchpadClick) { Finger = 2 }],
                 _ when TouchpadActions.IsTouchpadButton(button) => [new TouchpadActions(button)],
