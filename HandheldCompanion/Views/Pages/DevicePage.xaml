@@ -912,9 +912,7 @@
                         <ui:ToggleSwitch IsOn="{Binding ClawOverBoost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </ui:SettingsCard>
 
-                    <ui:SettingsCard
-                        Description="Disable the PS/2 Windows service to mute the virtual keyboard used to open Game Bar"
-                        Header="Disable PS/2 Windows service">
+                    <ui:SettingsCard Description="Disable the PS/2 Windows service to mute the virtual keyboard used to open Game Bar" Header="Disable PS/2 Windows service">
                         <ui:SettingsCard.HeaderIcon>
                             <ui:FontIcon Glyph="&#xe765;" />
                         </ui:SettingsCard.HeaderIcon>

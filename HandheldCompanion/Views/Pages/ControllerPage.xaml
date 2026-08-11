@@ -341,31 +341,6 @@
                     </ikw:SimpleStackPanel>
                 </ikw:SimpleStackPanel>
 
-                <!--  Trackpad settings  -->
-                <ikw:SimpleStackPanel
-                    d:Visibility="Visible"
-                    Spacing="8"
-                    Visibility="{Binding ElementName=TrackpadHapticsPanel, Path=Visibility}">
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_TrackpadSettings}" />
-                    <ikw:SimpleStackPanel Name="TrackpadHapticsPanel" Spacing="3">
-                        <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_TrackpadClickHapticsDesc}" Header="{l:Static resx:Resources.ControllerPage_TrackpadClickHaptics}">
-                            <ui:SettingsCard.HeaderIcon>
-                                <ui:FontIcon Glyph="&#xE877;" />
-                            </ui:SettingsCard.HeaderIcon>
-
-                            <ComboBox
-                                Name="cB_TrackpadClickHaptics"
-                                Width="120"
-                                SelectionChanged="cB_TrackpadClickHaptics_SelectionChanged">
-                                <ComboBoxItem Content="{l:Static resx:Resources.ControllerPage_TrackpadClickHapticsOff}" />
-                                <ComboBoxItem Content="{l:Static resx:Resources.ControllerPage_TrackpadClickHapticsLow}" />
-                                <ComboBoxItem Content="{l:Static resx:Resources.ControllerPage_TrackpadClickHapticsMedium}" />
-                                <ComboBoxItem Content="{l:Static resx:Resources.ControllerPage_TrackpadClickHapticsHigh}" />
-                            </ComboBox>
-                        </ui:SettingsCard>
-                    </ikw:SimpleStackPanel>
-                </ikw:SimpleStackPanel>
-
                 <!--  Physical controller settings  -->
                 <ikw:SimpleStackPanel Spacing="8">
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.ControllerPage_PhysicalDeviceSettings}" />

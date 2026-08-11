@@ -458,31 +458,17 @@ public class NeptuneController : SteamController
         }
     }
 
-    public override void SetHaptic(HapticStrength strength, ButtonFlags button)
+    public override void SetHaptic(HapticStrength strength, ButtonFlags button, bool released)
     {
-        ushort value = strength switch
-        {
-            HapticStrength.Low => 512,
-            HapticStrength.Medium => 1024,
-            HapticStrength.High => 2048,
-            _ => 0,
-        };
-        Controller?.SetHaptic((byte)GetMotorForButton(button), value, 0, 1);
-    }
-
-    protected override void SendTrackpadClickHaptic(SCHapticMotor motor, int strength, bool released)
-    {
-        // Steam Deck's newer haptic command exposes real waveform style and calibrated
-        // intensity. Keep the levels intentionally far apart so each setting is distinct.
-        // Its motor numbering is opposite to the legacy pulse command used by SCHapticMotor.
+        SCHapticMotor motor = GetMotorForButton(button);
         motor = motor == SCHapticMotor.Left ? SCHapticMotor.Right : SCHapticMotor.Left;
 
-        NCHapticStyle style = strength == 1 ? NCHapticStyle.Weak : NCHapticStyle.Strong;
+        NCHapticStyle style = strength == HapticStrength.Low ? NCHapticStyle.Weak : NCHapticStyle.Strong;
         sbyte intensity = strength switch
         {
-            1 => -7,
-            2 => -1,
-            3 => 5,
+            HapticStrength.Low => -7,
+            HapticStrength.Medium => -1,
+            HapticStrength.High => 5,
             _ => -1,
         };
 

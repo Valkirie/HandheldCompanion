@@ -179,12 +179,11 @@ namespace HandheldCompanion.Actions
 
         public virtual void SetHaptic(ButtonFlags button, bool released)
         {
-            if (TouchpadActions.IsPhysicalClick(button)) return;
             if (HapticMode == HapticMode.Off) return;
             if (HapticMode == HapticMode.Down && released) return;
             if (HapticMode == HapticMode.Up && !released) return;
 
-            ControllerManager.GetTarget()?.SetHaptic(HapticStrength, button);
+            ControllerManager.GetTarget()?.SetHaptic(HapticStrength, button, released);
         }
 
         /// <summary>AxisFlags version: computes shift-slot gating only.</summary>

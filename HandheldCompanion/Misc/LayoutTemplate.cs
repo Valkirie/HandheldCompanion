@@ -46,38 +46,54 @@ namespace HandheldCompanion.Misc
 
             template.Layout.ButtonLayout[ButtonFlags.DPadUp] =
             [
-                CreateTouchpadAction(AxisLayoutFlags.LeftPad, y: 28672),
-                new TouchpadActions(ButtonFlags.LeftPadTouch),
-                new TouchpadActions(ButtonFlags.LeftPadClick)
+                new TouchpadActions(ButtonFlags.TouchpadClick)
+                {
+                    Finger = 1,
+                    Y = -28672,
+                }
             ];
 
             template.Layout.ButtonLayout[ButtonFlags.DPadDown] =
             [
-                new TouchpadActions(ButtonFlags.LeftPadClick),
-                CreateTouchpadAction(AxisLayoutFlags.LeftPad, y: -28672),
-                new TouchpadActions(ButtonFlags.LeftPadTouch)
+                new TouchpadActions(ButtonFlags.TouchpadClick)
+                {
+                    Finger = 1,
+                    Y = 28672,
+                }
             ];
 
             template.Layout.ButtonLayout[ButtonFlags.DPadLeft] =
             [
-                new TouchpadActions(ButtonFlags.LeftPadClick),
-                new TouchpadActions(ButtonFlags.LeftPadTouch),
-                CreateTouchpadAction(AxisLayoutFlags.LeftPad, x: -28672)
+                new TouchpadActions(ButtonFlags.TouchpadClick)
+                {
+                    Finger = 1,
+                    X = -28672,
+                }
             ];
 
             template.Layout.ButtonLayout[ButtonFlags.DPadRight] =
             [
-                new TouchpadActions(ButtonFlags.LeftPadTouch),
-                new TouchpadActions(ButtonFlags.LeftPadClick),
-                CreateTouchpadAction(AxisLayoutFlags.LeftPad, x: 28672)
+                new TouchpadActions(ButtonFlags.TouchpadClick)
+                {
+                    Finger = 1,
+                    X = 28672,
+                }
             ];
 
-            template.Layout.ButtonLayout[ButtonFlags.RightStickClick] = [new TouchpadActions(ButtonFlags.RightPadClick)];
+            template.Layout.ButtonLayout[ButtonFlags.RightStickClick] =
+            [
+                new TouchpadActions(ButtonFlags.TouchpadClick)
+                {
+                    Finger = 2
+                }
+            ];
 
             template.Layout.AxisLayout[AxisLayoutFlags.RightStick] =
             [
-                new TouchpadActions(AxisLayoutFlags.RightPad),
-                CreateTouchpadAction(ButtonFlags.RightPadTouch, Utils.DeflectionDirection.Any, 1000)
+                new TouchpadActions(AxisLayoutFlags.RightPad)
+                {
+                    AxisDeadZoneInner = 5
+                }
             ];
 
             return template;

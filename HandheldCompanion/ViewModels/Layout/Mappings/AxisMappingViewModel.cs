@@ -111,7 +111,13 @@ namespace HandheldCompanion.ViewModels
 
         public override int Axis2AxisInnerDeadzone
         {
-            get => (Action is AxisActions axisAction) ? axisAction.AxisDeadZoneInner : (Action is TriggerActions triggerAction) ? triggerAction.AxisDeadZoneInner : 0;
+            get => Action switch
+            {
+                AxisActions axisAction => axisAction.AxisDeadZoneInner,
+                TouchpadActions touchpadAction => touchpadAction.AxisDeadZoneInner,
+                TriggerActions triggerAction => triggerAction.AxisDeadZoneInner,
+                _ => 0,
+            };
             set
             {
                 if (Action is AxisActions axisAction && value != Axis2AxisInnerDeadzone)
@@ -119,6 +125,11 @@ namespace HandheldCompanion.ViewModels
                     axisAction.AxisDeadZoneInner = value;
                     OnPropertyChanged(nameof(Axis2AxisInnerDeadzone));
                     OnPropertyChanged(nameof(AxisVisualizerInnerDeadzoneSize));
+                }
+                else if (Action is TouchpadActions touchpadAction && value != Axis2AxisInnerDeadzone)
+                {
+                    touchpadAction.AxisDeadZoneInner = value;
+                    OnPropertyChanged(nameof(Axis2AxisInnerDeadzone));
                 }
                 else if (Action is TriggerActions triggerAction && value != Axis2AxisInnerDeadzone)
                 {
@@ -131,7 +142,13 @@ namespace HandheldCompanion.ViewModels
 
         public override int Axis2AxisOuterDeadzone
         {
-            get => (Action is AxisActions axisAction) ? axisAction.AxisDeadZoneOuter : (Action is TriggerActions triggerAction) ? triggerAction.AxisDeadZoneOuter : 0;
+            get => Action switch
+            {
+                AxisActions axisAction => axisAction.AxisDeadZoneOuter,
+                TouchpadActions touchpadAction => touchpadAction.AxisDeadZoneOuter,
+                TriggerActions triggerAction => triggerAction.AxisDeadZoneOuter,
+                _ => 0,
+            };
             set
             {
                 if (Action is AxisActions axisAction && value != Axis2AxisOuterDeadzone)
@@ -139,6 +156,11 @@ namespace HandheldCompanion.ViewModels
                     axisAction.AxisDeadZoneOuter = value;
                     OnPropertyChanged(nameof(Axis2AxisOuterDeadzone));
                     OnPropertyChanged(nameof(AxisVisualizerOuterDeadzoneSize));
+                }
+                else if (Action is TouchpadActions touchpadAction && value != Axis2AxisOuterDeadzone)
+                {
+                    touchpadAction.AxisDeadZoneOuter = value;
+                    OnPropertyChanged(nameof(Axis2AxisOuterDeadzone));
                 }
                 else if (Action is TriggerActions triggerAction && value != Axis2AxisOuterDeadzone)
                 {
@@ -151,7 +173,13 @@ namespace HandheldCompanion.ViewModels
 
         public override int Axis2AxisAntiDeadzone
         {
-            get => (Action is AxisActions axisAction) ? axisAction.AxisAntiDeadZone : (Action is TriggerActions triggerAction) ? triggerAction.AxisAntiDeadZone : 0;
+            get => Action switch
+            {
+                AxisActions axisAction => axisAction.AxisAntiDeadZone,
+                TouchpadActions touchpadAction => touchpadAction.AxisAntiDeadZone,
+                TriggerActions triggerAction => triggerAction.AxisAntiDeadZone,
+                _ => 0,
+            };
             set
             {
                 if (Action is AxisActions axisAction && value != Axis2AxisAntiDeadzone)
@@ -159,6 +187,11 @@ namespace HandheldCompanion.ViewModels
                     axisAction.AxisAntiDeadZone = value;
                     OnPropertyChanged(nameof(Axis2AxisAntiDeadzone));
                     OnPropertyChanged(nameof(AxisVisualizerAntiDeadzoneSize));
+                }
+                else if (Action is TouchpadActions touchpadAction && value != Axis2AxisAntiDeadzone)
+                {
+                    touchpadAction.AxisAntiDeadZone = value;
+                    OnPropertyChanged(nameof(Axis2AxisAntiDeadzone));
                 }
                 else if (Action is TriggerActions triggerAction && value != Axis2AxisAntiDeadzone)
                 {
@@ -168,6 +201,11 @@ namespace HandheldCompanion.ViewModels
                 }
             }
         }
+
+        public override Visibility AxisDeadzoneVisibility =>
+            ActionTypeIndex is (int)ActionType.Joystick or (int)ActionType.Touchpad
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
         public override Visibility AxisResponseCurveVisibility
         {
@@ -356,6 +394,7 @@ namespace HandheldCompanion.ViewModels
                     OnPropertyChanged(nameof(AxisThresholdVisibility));
                     OnPropertyChanged(nameof(GeneralActionVisibility));
                     OnPropertyChanged(nameof(AxisInvertVisibility));
+                    OnPropertyChanged(nameof(AxisVisualizerVisibility));
                     OnPropertyChanged(nameof(TouchpadVisualizerVisibility));
                     break;
             }
@@ -412,7 +451,7 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public override Visibility AxisVisualizerVisibility => AxisInvertVisibility;
+        public override Visibility AxisVisualizerVisibility => AxisDeadzoneVisibility;
         public override double AxisVisualizerDotX => 0.0d;
         public override double AxisVisualizerDotY => 0.0d;
         public override double AxisVisualizerDotTranslateX => 0.0d;

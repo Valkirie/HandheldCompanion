@@ -505,18 +505,6 @@ namespace HandheldCompanion.Properties
 
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3")]
-        public int TrackpadClickHaptics {
-            get {
-                return ((int)(this["TrackpadClickHaptics"]));
-            }
-            set {
-                this["TrackpadClickHaptics"] = value;
-            }
-        }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool HIDcloakonconnect {
             get {

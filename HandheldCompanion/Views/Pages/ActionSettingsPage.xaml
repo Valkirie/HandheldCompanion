@@ -642,7 +642,7 @@
                 <ui:SettingsCard
                     d:Visibility="Visible"
                     Header="Inner deadzone"
-                    Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                    Visibility="{Binding AxisDeadzoneVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <DockPanel>
                         <TextBox
                             HorizontalContentAlignment="Center"
@@ -667,7 +667,7 @@
                 <ui:SettingsCard
                     d:Visibility="Visible"
                     Header="Outer deadzone"
-                    Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                    Visibility="{Binding AxisDeadzoneVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <DockPanel>
                         <TextBox
                             HorizontalContentAlignment="Center"
@@ -692,7 +692,7 @@
                 <ui:SettingsCard
                     d:Visibility="Visible"
                     Header="Anti deadzone"
-                    Visibility="{Binding AxisInvertVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                    Visibility="{Binding AxisDeadzoneVisibility, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                     <DockPanel>
                         <TextBox
                             HorizontalContentAlignment="Center"

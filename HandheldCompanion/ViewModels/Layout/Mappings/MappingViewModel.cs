@@ -312,6 +312,7 @@ namespace HandheldCompanion.ViewModels
 
         // Visibility for Axis invert properties - only Axis mappings
         public virtual Visibility AxisInvertVisibility => Visibility.Collapsed;
+        public virtual Visibility AxisDeadzoneVisibility => Visibility.Collapsed;
         public virtual Visibility Button2AxisVisibility => Visibility.Collapsed;
         public virtual Visibility AxisVisualizerVisibility => Visibility.Collapsed;
         public virtual double AxisVisualizerDotX => 0.0d;

@@ -916,60 +916,6 @@ namespace HandheldCompanion.Properties {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Trackpad click haptics.
-        /// </summary>
-        public static string ControllerPage_TrackpadClickHaptics {
-            get {
-                return ResourceManager.GetString("ControllerPage_TrackpadClickHaptics", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Controls press and release feedback for trackpad clicks.
-        /// </summary>
-        public static string ControllerPage_TrackpadClickHapticsDesc {
-            get {
-                return ResourceManager.GetString("ControllerPage_TrackpadClickHapticsDesc", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to High.
-        /// </summary>
-        public static string ControllerPage_TrackpadClickHapticsHigh {
-            get {
-                return ResourceManager.GetString("ControllerPage_TrackpadClickHapticsHigh", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Low.
-        /// </summary>
-        public static string ControllerPage_TrackpadClickHapticsLow {
-            get {
-                return ResourceManager.GetString("ControllerPage_TrackpadClickHapticsLow", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Medium.
-        /// </summary>
-        public static string ControllerPage_TrackpadClickHapticsMedium {
-            get {
-                return ResourceManager.GetString("ControllerPage_TrackpadClickHapticsMedium", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Off.
-        /// </summary>
-        public static string ControllerPage_TrackpadClickHapticsOff {
-            get {
-                return ResourceManager.GetString("ControllerPage_TrackpadClickHapticsOff", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to Trackpad click haptics overridden.
         /// </summary>
         public static string ControllerPage_TrackpadClickHapticsOverride {
@@ -979,7 +925,7 @@ namespace HandheldCompanion.Properties {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to The active layout has custom trackpad click haptic settings. Those settings take precedence over the global Controller page setting.
+        ///   Looks up a localized string similar to The active layout has custom trackpad click haptic settings.
         /// </summary>
         public static string ControllerPage_TrackpadClickHapticsOverrideDesc {
             get {

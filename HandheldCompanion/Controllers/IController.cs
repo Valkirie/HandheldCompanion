@@ -370,60 +370,66 @@ namespace HandheldCompanion.Controllers
         { }
 
         // let the controller decide itself what motor to use for a specific button
-        public virtual void SetHaptic(HapticStrength strength, ButtonFlags button)
-        {
-            SetHapticCore(strength, button);
-        }
-
-        private void SetHapticCore(HapticStrength strength, ButtonFlags button)
+        public virtual void SetHaptic(HapticStrength strength, ButtonFlags button, bool released)
         {
             int delay;
+            byte amplitude = byte.MaxValue;
+
             switch (strength)
             {
                 default:
                 case HapticStrength.Low:
-                    delay = 85;
+                    delay = 40;
                     break;
 
                 case HapticStrength.Medium:
-                    delay = 105;
+                    delay = 80;
                     break;
 
                 case HapticStrength.High:
-                    delay = 125;
+                    delay = 120;
                     break;
             }
 
-            RumbleHaptic(delay, byte.MaxValue, button);
+            RumbleHaptic(delay, amplitude, button, released);
         }
 
-        public virtual void SetTrackpadClickHaptic(HapticStrength strength, ButtonFlags button, bool released)
+        // Select the physical rumble motor associated with the button.
+        // Rumble arguments are ordered as delay, large motor, small motor.
+        private void RumbleHaptic(int delay, byte amplitude, ButtonFlags button, bool released)
         {
-            (int delay, byte amplitude) = strength switch
+            switch (button)
             {
-                HapticStrength.Low => (85, (byte)96),
-                HapticStrength.Medium => (105, (byte)176),
-                _ => (125, byte.MaxValue),
-            };
+                // right motor
+                case ButtonFlags.B1:
+                case ButtonFlags.B2:
+                case ButtonFlags.B3:
+                case ButtonFlags.B4:
+                case ButtonFlags.R1:
+                case ButtonFlags.R2Soft:
+                case ButtonFlags.Start:
+                case ButtonFlags.RightStickClick:
+                case ButtonFlags.RightStickTouch:
+                case ButtonFlags.RightPadClick:
+                case ButtonFlags.RightPadClickUp:
+                case ButtonFlags.RightPadClickDown:
+                case ButtonFlags.RightPadClickLeft:
+                case ButtonFlags.RightPadClickRight:
+                    Rumble(delay, 0, amplitude);
+                    return;
 
-            RumbleHaptic(delay, amplitude, button);
-        }
+                // both motors
+                case ButtonFlags.TouchpadTouch:
+                case ButtonFlags.LeftPadTouch:
+                case ButtonFlags.RightPadTouch:
+                    Rumble(delay / 4, amplitude, amplitude);
+                    break;
 
-        private void RumbleHaptic(int delay, byte amplitude, ButtonFlags button)
-        {
-            if (button is
-                ButtonFlags.B1 or ButtonFlags.B2 or ButtonFlags.B3 or ButtonFlags.B4 or
-                ButtonFlags.L1 or ButtonFlags.L2Soft or ButtonFlags.Start or
-                ButtonFlags.RightStickTouch or ButtonFlags.RightStickClick or
-                ButtonFlags.RightPadTouch or ButtonFlags.RightPadClick or
-                ButtonFlags.RightPadClickUp or ButtonFlags.RightPadClickDown or
-                ButtonFlags.RightPadClickLeft or ButtonFlags.RightPadClickRight)
-            {
-                Rumble(delay, 0, amplitude);
-                return;
+                // left motor
+                default:
+                    Rumble(delay, amplitude, 0);
+                    return;
             }
-
-            Rumble(delay, amplitude, 0);
         }
 
         public virtual bool IsConnected()

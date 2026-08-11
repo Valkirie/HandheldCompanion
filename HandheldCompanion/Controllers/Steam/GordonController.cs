@@ -318,30 +318,18 @@ namespace HandheldCompanion.Controllers.Steam
             Controller?.SetHaptic((byte)SCHapticMotor.Right, rightAmplitude, 0, 1);
         }
 
-        public override void SetHaptic(HapticStrength strength, ButtonFlags button)
-        {
-            ushort value = strength switch
-            {
-                HapticStrength.Low => 512,
-                HapticStrength.Medium => 1024,
-                HapticStrength.High => 2048,
-                _ => 0,
-            };
-            Controller?.SetHaptic((byte)GetMotorForButton(button), value, 0, 1);
-        }
-
-        protected override void SendTrackpadClickHaptic(SCHapticMotor motor, int strength, bool released)
+        public override void SetHaptic(HapticStrength strength, ButtonFlags button, bool released)
         {
             ushort duration = released ? (ushort)5000 : (ushort)10000;
             sbyte gain = strength switch
             {
-                1 => 0,
-                2 => 3,
-                3 => 6,
+                HapticStrength.Low => 0,
+                HapticStrength.Medium => 3,
+                HapticStrength.High => 6,
                 _ => 3,
             };
 
-            Controller?.SetHaptic((byte)motor, duration, 0, 1, gain);
+            Controller?.SetHaptic((byte)GetMotorForButton(button), duration, 0, 1, gain);
         }
     }
 }

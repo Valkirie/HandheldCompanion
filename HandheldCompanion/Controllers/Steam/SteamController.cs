@@ -198,12 +198,5 @@ namespace HandheldCompanion.Controllers.Steam
 
             }
         }
-
-        public override void SetTrackpadClickHaptic(HapticStrength strength, ButtonFlags button, bool released)
-        {
-            SendTrackpadClickHaptic(GetMotorForButton(button), (int)strength + 1, released);
-        }
-
-        protected abstract void SendTrackpadClickHaptic(SCHapticMotor motor, int strength, bool released);
     }
 }

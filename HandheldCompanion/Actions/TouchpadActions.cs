@@ -23,26 +23,6 @@ namespace HandheldCompanion.Actions
     [Serializable]
     public sealed class TouchpadActions : GyroActions
     {
-        private static readonly ButtonFlags[] LeftClickSources =
-        [
-            ButtonFlags.LeftPadClick,
-            ButtonFlags.LeftPadClickUp,
-            ButtonFlags.LeftPadClickDown,
-            ButtonFlags.LeftPadClickLeft,
-            ButtonFlags.LeftPadClickRight,
-        ];
-
-        private static readonly ButtonFlags[] RightClickSources =
-        [
-            ButtonFlags.RightPadClick,
-            ButtonFlags.RightPadClickUp,
-            ButtonFlags.RightPadClickDown,
-            ButtonFlags.RightPadClickLeft,
-            ButtonFlags.RightPadClickRight,
-        ];
-
-        private static readonly ButtonFlags[] AllClickSources = [.. LeftClickSources, .. RightClickSources];
-
         public const float MinimumSwipeDuration = 16.0f;
         public const float MaximumSwipeDuration = 5000.0f;
         public const float DefaultSwipeDuration = 300.0f;
@@ -60,6 +40,9 @@ namespace HandheldCompanion.Actions
         public AxisLayoutFlags Axis;
         public short ButtonX;
         public short ButtonY;
+        public int AxisAntiDeadZone = 0;
+        public int AxisDeadZoneInner = 0;
+        public int AxisDeadZoneOuter = 0;
         private byte finger = 1;
 
         private int x = DS4Touch.TOUCHPAD_WIDTH / 2;
@@ -87,18 +70,8 @@ namespace HandheldCompanion.Actions
         [NonSerialized] private float swipeElapsed;
         [NonSerialized] private bool isKeyDown;
         [NonSerialized] private bool isTouched;
-        private static MovementHapticState leftHaptics = new();
-        private static MovementHapticState rightHaptics = new();
-        private static IController? movementController;
-        private static bool leftClickPressed;
-        private static bool rightClickPressed;
-        private static bool genericClickPressed;
-        private static ButtonFlags genericClickButton = ButtonFlags.RightPadClick;
-        private static IController? clickController;
-        private static ClickHapticProfile leftClickProfile;
-        private static ClickHapticProfile rightClickProfile;
-        private static ClickHapticProfile genericClickProfile;
-        private static TouchpadSample?[] outputSamples = new TouchpadSample?[2];
+        [NonSerialized] private bool clickPressed;
+        [NonSerialized] private MovementHapticState movementHaptics = new();
 
         public TouchpadActions()
         {
@@ -119,8 +92,7 @@ namespace HandheldCompanion.Actions
         private void OnDeserialized(StreamingContext context)
         {
             actionType = ActionType.Touchpad;
-            leftHaptics ??= new();
-            rightHaptics ??= new();
+            movementHaptics ??= new();
         }
 
         public void SetTarget(ButtonFlags button)
@@ -201,11 +173,18 @@ namespace HandheldCompanion.Actions
 
             isTouched = outBool;
 
-            if (outBool != isKeyDown)
+            if (outBool)
             {
-                isKeyDown = outBool;
-                if (button != ButtonFlags.None)
-                    SetHaptic(button, released: !outBool);
+                if (!isKeyDown)
+                {
+                    isKeyDown = true;
+                    SetHaptic(button, released: false);
+                }
+            }
+            else if (isKeyDown)
+            {
+                isKeyDown = false;
+                SetHaptic(button, released: true);
             }
 
             UpdateGestureState(delta);
@@ -217,9 +196,12 @@ namespace HandheldCompanion.Actions
             {
                 outVector = layout.vector;
                 base.Execute(layout, shiftSlot, delta);
+                ApplyAxisDeadzones();
                 bool sourceReportsTouch = ControllerState.AxisTouchButtons.ContainsKey(layout.flags);
                 isTouched = !axisSlotDisabled &&
-                    (sourceReportsTouch ? touched : outVector != Vector2.Zero);
+                    outVector != Vector2.Zero &&
+                    (!sourceReportsTouch || touched);
+                UpdateMovementHaptics(isTouched, outVector);
                 return;
             }
 
@@ -239,6 +221,15 @@ namespace HandheldCompanion.Actions
                 _ => ButtonFlags.None,
             };
             Execute(sourceButton, pressed, shiftSlot, delta);
+        }
+
+        private void ApplyAxisDeadzones()
+        {
+            if (outVector == Vector2.Zero)
+                return;
+
+            outVector = InputUtils.ThumbScaledRadialInnerOuterDeadzone(outVector, AxisDeadZoneInner, AxisDeadZoneOuter);
+            outVector = InputUtils.ApplyAntiDeadzone(outVector, AxisAntiDeadZone);
         }
 
         public bool GetButtonValue() => outBool;
@@ -309,18 +300,14 @@ namespace HandheldCompanion.Actions
             return active;
         }
 
-        internal static void BeginOutputFrame()
-        {
-            Array.Clear(outputSamples);
-            DS4Touch.ClearOutputTouches();
-        }
-
-        internal void ApplyOutput(ControllerState outputState,
-            AxisFlags outputAxisX = AxisFlags.None, AxisFlags outputAxisY = AxisFlags.None)
+        internal void ApplyOutput(ControllerState outputState)
         {
             if (TargetType == TouchpadTargetType.Axis)
             {
                 Vector2 value = GetAxisValue();
+                var layout = AxisLayout.Layouts[Axis];
+                AxisFlags outputAxisX = layout.GetAxisFlags('X');
+                AxisFlags outputAxisY = layout.GetAxisFlags('Y');
                 outputState.AxisState[outputAxisX] = ClampShort(outputState.AxisState[outputAxisX] + value.X);
                 outputState.AxisState[outputAxisY] = ClampShort(outputState.AxisState[outputAxisY] + value.Y);
 
@@ -335,216 +322,63 @@ namespace HandheldCompanion.Actions
                     return;
 
                 outputState.ButtonState[Button] |= true;
-                int fingerIndex = sample.Finger - 1;
-                if (outputSamples[fingerIndex] is null || sample.Priority > outputSamples[fingerIndex]!.Value.Priority)
-                    outputSamples[fingerIndex] = sample;
+                DS4Touch.SetOutputTouch(sample.Finger, sample.X, sample.Y);
                 return;
             }
 
             outputState.ButtonState[Button] |= GetButtonValue();
         }
 
-        internal static void CommitOutputFrame()
+        internal void ApplyGyroOutput(ControllerState outputState)
         {
-            foreach (TouchpadSample? sample in outputSamples)
-            {
-                if (sample is TouchpadSample value)
-                    DS4Touch.SetOutputTouch(value.Finger, value.X, value.Y);
-            }
+            var layout = AxisLayout.Layouts[Axis];
+            var outputAxisX = layout.GetAxisFlags('X');
+            var outputAxisY = layout.GetAxisFlags('Y');
+            var current = new Vector2(outputState.AxisState[outputAxisX], outputState.AxisState[outputAxisY]);
+            float padNorm = Math.Clamp(current.Length() / short.MaxValue, 0f, 1f);
+            float weightFactor = gyroWeight - padNorm;
+            var blended = current + GetAxisValue() * weightFactor;
+
+            outputState.AxisState[outputAxisX] = ClampShort(blended.X);
+            outputState.AxisState[outputAxisY] = ClampShort(blended.Y);
+
+            if (ControllerState.AxisTouchButtons.TryGetValue(Axis, out ButtonFlags touchButton))
+                outputState.ButtonState[touchButton] |= GetTouchValue();
         }
 
-        internal static void UpdateClickHaptics(ControllerState state, ShiftSlot shiftSlot,
-            IReadOnlyDictionary<ButtonFlags, IActions[]> buttonPlan)
+        private void UpdateMovementHaptics(bool touched, Vector2 position)
         {
-            IController? controller = ControllerManager.GetTarget();
-            bool leftPressed = state.ButtonState[ButtonFlags.LeftPadClick] ||
-                state.ButtonState[ButtonFlags.LeftPadClickUp] ||
-                state.ButtonState[ButtonFlags.LeftPadClickDown] ||
-                state.ButtonState[ButtonFlags.LeftPadClickLeft] ||
-                state.ButtonState[ButtonFlags.LeftPadClickRight];
-            bool rightPressed = state.ButtonState[ButtonFlags.RightPadClick] ||
-                state.ButtonState[ButtonFlags.RightPadClickUp] ||
-                state.ButtonState[ButtonFlags.RightPadClickDown] ||
-                state.ButtonState[ButtonFlags.RightPadClickLeft] ||
-                state.ButtonState[ButtonFlags.RightPadClickRight];
-            if (controller is null)
+            if (!touched || HapticMode is not (HapticMode.Down or HapticMode.Both) ||
+                ControllerManager.GetTarget() is not IController controller ||
+                controller is SteamController { IsLizardModeEnabled: true })
             {
-                clickController = null;
-                leftClickPressed = false;
-                rightClickPressed = false;
-                genericClickPressed = false;
-                leftClickProfile = default;
-                rightClickProfile = default;
-                genericClickProfile = default;
+                movementHaptics.Reset(touched, position);
                 return;
             }
 
-            if (!ReferenceEquals(clickController, controller))
+            if (!movementHaptics.WasTouched)
             {
-                clickController = controller;
-                leftClickPressed = leftPressed;
-                rightClickPressed = rightPressed;
-                genericClickPressed = leftPressed || rightPressed;
-                genericClickButton = GetPressedClickButton(leftPressed, rightPressed);
-                leftClickProfile = default;
-                rightClickProfile = default;
-                genericClickProfile = default;
+                movementHaptics.Reset(touched: true, position);
                 return;
             }
 
-            bool disabledByFirmware = controller is SteamController steamController && steamController.IsLizardModeEnabled;
-            if (disabledByFirmware)
-            {
-                leftClickPressed = leftPressed;
-                rightClickPressed = rightPressed;
-                genericClickPressed = leftPressed || rightPressed;
-                leftClickProfile = default;
-                rightClickProfile = default;
-                genericClickProfile = default;
-                return;
-            }
+            Vector2 delta = position - movementHaptics.PreviousPosition;
+            movementHaptics.PreviousPosition = position;
+            movementHaptics.Jitter += delta;
 
-            if (controller is SteamController)
-            {
-                UpdateClickHaptic(controller, ButtonFlags.LeftPadClick,
-                    leftPressed, ref leftClickPressed, ref leftClickProfile,
-                    state, shiftSlot, buttonPlan, LeftClickSources);
-                UpdateClickHaptic(controller, ButtonFlags.RightPadClick,
-                    rightPressed, ref rightClickPressed, ref rightClickProfile,
-                    state, shiftSlot, buttonPlan, RightClickSources);
-                return;
-            }
-
-            bool pressed = leftPressed || rightPressed;
-            if (pressed && !genericClickPressed)
-                genericClickButton = GetPressedClickButton(leftPressed, rightPressed);
-
-            UpdateClickHaptic(controller, genericClickButton, pressed, ref genericClickPressed,
-                ref genericClickProfile, state, shiftSlot,
-                buttonPlan, AllClickSources);
-        }
-
-        private static ButtonFlags GetPressedClickButton(bool leftPressed, bool rightPressed) =>
-            leftPressed
-                ? ButtonFlags.LeftPadClick
-                : rightPressed
-                    ? ButtonFlags.RightPadClick
-                    : ButtonFlags.None;
-
-        private static void UpdateClickHaptic(IController controller, ButtonFlags button, bool pressed,
-            ref bool wasPressed, ref ClickHapticProfile profile, ControllerState state, ShiftSlot shiftSlot,
-            IReadOnlyDictionary<ButtonFlags, IActions[]> buttonPlan, ButtonFlags[] sources)
-        {
-            if (pressed == wasPressed)
-                return;
-
-            wasPressed = pressed;
-            if (pressed)
-                profile = ResolveClickHapticProfile(state, shiftSlot, buttonPlan, sources);
-
-            bool released = !pressed;
-            if (profile.Mode == HapticMode.Off ||
-                profile.Mode == HapticMode.Down && released ||
-                profile.Mode == HapticMode.Up && !released)
-                return;
-
-            controller.SetTrackpadClickHaptic(profile.Strength, button, released: !pressed);
-        }
-
-        private static ClickHapticProfile ResolveClickHapticProfile(ControllerState state,
-            ShiftSlot shiftSlot, IReadOnlyDictionary<ButtonFlags, IActions[]> buttonPlan,
-            ButtonFlags[] sources)
-        {
-            bool hasOverride = false;
-            int combinedMode = (int)HapticMode.Off;
-            HapticStrength strength = HapticStrength.Low;
-
-            foreach (ButtonFlags source in sources)
-            {
-                if (!state.ButtonState[source] || !buttonPlan.TryGetValue(source, out IActions[]? actions))
-                    continue;
-
-                foreach (IActions action in actions)
-                {
-                    if (!HasCustomHapticSettings(action) ||
-                        !IsShiftAllowed(shiftSlot, action.ShiftSlot, action.ShiftMatchAny))
-                        continue;
-
-                    hasOverride = true;
-                    combinedMode |= (int)action.HapticMode;
-                    if (action.HapticMode != HapticMode.Off &&
-                        (int)action.HapticStrength > (int)strength)
-                        strength = action.HapticStrength;
-                }
-            }
-
-            if (hasOverride)
-                return new ClickHapticProfile((HapticMode)combinedMode, strength);
-
-            int globalStrength = ManagerFactory.settingsManager.GetInt("TrackpadClickHaptics");
-            return globalStrength <= 0
-                ? default
-                : new ClickHapticProfile(HapticMode.Both,
-                    (HapticStrength)Math.Clamp(globalStrength - 1, 0, 2));
-        }
-
-        internal static void UpdateMovementHaptics(AxisLayoutFlags axis, Vector2 position, bool touched,
-            ShiftSlot shiftSlot, IActions[] actions)
-        {
-            MovementHapticState state = axis == AxisLayoutFlags.LeftPad ? leftHaptics : rightHaptics;
-            IActions? hapticAction = null;
-            for (int i = 0; i < actions.Length; i++)
-            {
-                IActions action = actions[i];
-                if (action.HapticMode is HapticMode.Down or HapticMode.Both &&
-                    IsShiftAllowed(shiftSlot, action.ShiftSlot, action.ShiftMatchAny) &&
-                    (action is MouseActions { MouseType: MouseActionsType.Move or MouseActionsType.Scroll } ||
-                     action is TouchpadActions { TargetType: TouchpadTargetType.Axis }))
-                {
-                    hapticAction = action;
-                    break;
-                }
-            }
-
-            IController? controller = ControllerManager.GetTarget();
-            if (!ReferenceEquals(movementController, controller))
-            {
-                movementController = controller;
-                leftHaptics.Reset(touched: false, Vector2.Zero);
-                rightHaptics.Reset(touched: false, Vector2.Zero);
-            }
-
-            if (!touched || hapticAction is null || controller is null ||
-                controller is SteamController steamController && steamController.IsLizardModeEnabled)
-            {
-                state.Reset(touched, position);
-                return;
-            }
-
-            if (!state.WasTouched)
-            {
-                state.Reset(touched: true, position);
-                return;
-            }
-
-            Vector2 delta = position - state.PreviousPosition;
-            state.PreviousPosition = position;
-            state.Jitter += delta;
-
-            float distance = state.Jitter.Length();
+            float distance = movementHaptics.Jitter.Length();
             if (distance < HapticJitterThreshold)
                 return;
 
-            state.Jitter = Vector2.Zero;
-            state.Distance += distance;
-            if (state.Distance < HapticStep)
+            movementHaptics.Jitter = Vector2.Zero;
+            movementHaptics.Distance += distance;
+            if (movementHaptics.Distance < HapticStep)
                 return;
 
-            state.Distance %= HapticStep;
-            ButtonFlags button = axis == AxisLayoutFlags.LeftPad
-                ? ButtonFlags.LeftPadTouch
-                : ButtonFlags.RightPadTouch;
-            hapticAction.SetHaptic(button, released: false);
+            movementHaptics.Distance %= HapticStep;
+            ButtonFlags button = Axis == AxisLayoutFlags.LeftPad ? ButtonFlags.LeftPadTouch : ButtonFlags.RightPadTouch;
+
+            controller.SetHaptic(HapticStrength, button, released: false);
         }
 
         [Serializable]
@@ -570,13 +404,5 @@ namespace HandheldCompanion.Actions
     }
 
     internal readonly record struct TouchpadSample(ButtonFlags Target, byte Finger, int X, int Y)
-    {
-        public int Priority => Target switch
-        {
-            ButtonFlags.TouchpadClick => 3,
-            ButtonFlags.TouchpadSwipe => 2,
-            ButtonFlags.TouchpadTouch => 1,
-            _ => 0,
-        };
-    }
+    { }
 }

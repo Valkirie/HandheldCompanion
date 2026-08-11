@@ -579,18 +579,16 @@ public class LayoutManager : IManager
             outputState.ButtonState.Clear();
             outputState.AxisState.Clear();
             outputState.GyroState.CopyFrom(controllerState.GyroState);
-            TouchpadActions.BeginOutputFrame();
+            DS4Touch.ClearOutputTouches();
 
-            // delta arrives in seconds; all timer logic expects milliseconds
+            // delta arrives in seconds; all timer logic expoodects milliseconds
             float deltaMs = delta * 1000f;
 
             ShiftSlot shiftSlot = ComputeShiftSlot(controllerState, deltaMs);
-            TouchpadActions.UpdateClickHaptics(controllerState, shiftSlot, _buttonPlan);
 
             ProcessButtonActions(controllerState, shiftSlot, deltaMs);
             ProcessAxisActions(controllerState, shiftSlot, deltaMs);
             ProcessGyroActions(controllerState, shiftSlot, deltaMs);
-            TouchpadActions.CommitOutputFrame();
         }
 
         return outputState;
@@ -673,8 +671,7 @@ public class LayoutManager : IManager
                         {
                             var tA = (TouchpadActions)action;
                             tA.Execute(button, pressed, shiftSlot, deltaMs);
-                            var xyOut = tA.TargetType == TouchpadTargetType.Axis ? _axisXY[tA.Axis] : default;
-                            tA.ApplyOutput(outputState, xyOut.X, xyOut.Y);
+                            tA.ApplyOutput(outputState);
                             break;
                         }
                     case ActionType.Keyboard:
@@ -728,9 +725,6 @@ public class LayoutManager : IManager
             if (ControllerState.AxisTouchButtons.TryGetValue(layout.flags, out var touchButton))
                 touched = state.ButtonState[touchButton];
 
-            if (TouchpadActions.IsTouchpadAxis(flag))
-                TouchpadActions.UpdateMovementHaptics(flag, layout.vector, touched, shiftSlot, actions);
-
             for (int i = 0; i < actions.Length; i++)
             {
                 var action = actions[i];
@@ -748,15 +742,7 @@ public class LayoutManager : IManager
                         {
                             var tA = (TouchpadActions)action;
                             tA.Execute(layout, touched, shiftSlot, deltaMs);
-                            if (tA.TargetType == TouchpadTargetType.Axis)
-                            {
-                                var xyOut = _axisXY[tA.Axis];
-                                tA.ApplyOutput(outputState, xyOut.X, xyOut.Y);
-                            }
-                            else
-                            {
-                                tA.ApplyOutput(outputState);
-                            }
+                            tA.ApplyOutput(outputState);
                             break;
                         }
                     case ActionType.Keyboard:
@@ -841,19 +827,7 @@ public class LayoutManager : IManager
                     if (action is TouchpadActions { TargetType: TouchpadTargetType.Axis } touchpadAction)
                     {
                         touchpadAction.Execute(layout, touched: false, shiftSlot, deltaMs);
-
-                        var xyOut = _axisXY[touchpadAction.Axis];
-                        var current = new Vector2(outputState.AxisState[xyOut.X], outputState.AxisState[xyOut.Y]);
-
-                        float padNorm = Math.Clamp(current.Length() / short.MaxValue, 0f, 1f);
-                        float weightFactor = touchpadAction.gyroWeight - padNorm;
-                        var blended = current + touchpadAction.GetAxisValue() * weightFactor;
-
-                        outputState.AxisState[xyOut.X] = ClampShort(blended.X);
-                        outputState.AxisState[xyOut.Y] = ClampShort(blended.Y);
-
-                        if (ControllerState.AxisTouchButtons.TryGetValue(touchpadAction.Axis, out ButtonFlags touchButton))
-                            outputState.ButtonState[touchButton] |= touchpadAction.GetTouchValue();
+                        touchpadAction.ApplyGyroOutput(outputState);
                     }
                     break;
             }
