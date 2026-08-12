@@ -9,8 +9,6 @@ namespace HandheldCompanion.Devices;
 
 public class OneXPlayerX1Mini : OneXPlayerX1
 {
-    protected const int PID_LED = 0xFE00;
-
     public OneXPlayerX1Mini()
     {
         // https://www.amd.com/fr/products/processors/laptop/ryzen/8000-series/amd-ryzen-7-8840u.html
@@ -33,13 +31,7 @@ public class OneXPlayerX1Mini : OneXPlayerX1
         DynamicLightingCapabilities |= LEDLevel.LEDPreset;
         DynamicLightingCapabilities |= LEDLevel.Rainbow;
 
-        // LED HID device (HID v1, vendor device on 0x1A86 / 0xFE00 / FF00:0001)
-        vendorId = 0x1A86;
-        productIds = [PID_LED];
-        hidFilters = new()
-        {
-            { PID_LED, new HidFilter(unchecked((short)0xFF00), unchecked(0x0001)) },
-        };
+        // vendor button/LED interface (0x1A86 / 0xFE00, usage FF00:0001) is inherited from OneXPlayerX1
     }
 
     protected override async void Device_Inserted(bool reScan = false)
@@ -50,33 +42,6 @@ public class OneXPlayerX1Mini : OneXPlayerX1
         base.Device_Inserted();
         Thread.Sleep(50);
         WriteVendorHidCommand(VibrationCommandId, [0x01, 0x05, 0x05]);
-    }
-
-    public override bool IsReady()
-    {
-        // Early return if device is already bound and connected
-        if (hidDevices.TryGetValue(VendorHidId, out HidDevice? boundDevice) && boundDevice.IsConnected)
-            return true;
-
-        // Reuse the same pattern as OneXPlayerOneXFly to grab the LED HID device
-        IEnumerable<HidDevice> devices = GetHidDevices(vendorId, productIds, 0);
-        foreach (HidDevice device in devices)
-        {
-            if (!device.IsConnected)
-                continue;
-
-            if (!hidFilters.TryGetValue(device.Attributes.ProductId, out HidFilter hidFilter))
-                continue;
-
-            if (device.Capabilities.UsagePage != hidFilter.UsagePage ||
-                device.Capabilities.Usage != hidFilter.Usage)
-                continue;
-
-            hidDevices[VendorHidId] = device;
-            return true;
-        }
-
-        return false;
     }
 
     protected override void HandleStatusReport(byte[] report)
