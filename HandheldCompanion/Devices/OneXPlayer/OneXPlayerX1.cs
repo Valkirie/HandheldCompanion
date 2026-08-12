@@ -26,9 +26,9 @@ public class OneXPlayerX1 : OneXAOKZOE
 {
     protected const int VendorHidId = 0;
 
-    // Vendor-defined HID usage page (0xFF00) of the collection that carries the
-    // button/remap reports. HidLibrary exposes UsagePage as a signed short.
-    protected const short VendorUsagePage = unchecked((short)0xFF00);
+    // OneXPlayer classic vendor chip (0x1A86 / 0xFE00). The button/remap traffic
+    // lives on the vendor-defined collection MI_02 (usage page 0xFF00, usage 0x0001).
+    protected const int PID_VENDOR = 0xFE00;
 
     private SerialPort? _serialPort; // COM3 SerialPort for Device control of OneXPlayer
 
@@ -65,7 +65,11 @@ public class OneXPlayerX1 : OneXAOKZOE
     public OneXPlayerX1()
     {
         vendorId = 0x1A86;
-        productIds = [0xFE00];
+        productIds = [PID_VENDOR];
+        hidFilters = new()
+        {
+            { PID_VENDOR, new HidFilter(unchecked((short)0xFF00), unchecked(0x0001)) },
+        };
 
         // device specific settings
         ProductIllustration = "device_onexplayer_x1";
@@ -520,42 +524,27 @@ public class OneXPlayerX1 : OneXAOKZOE
 
     public override bool IsReady()
     {
+        // Early return if device is already bound and connected
         if (hidDevices.TryGetValue(VendorHidId, out HidDevice? boundDevice) && boundDevice.IsConnected)
             return true;
 
         // A single VID/PID exposes many HID collections (keyboard, consumer,
-        // mouse, vendor). The vendor button/remap traffic and the button read
-        // loop share one bound interface, so we must pick the vendor-defined
-        // collection (usage page 0xFF00) that carries full-size output reports.
-        // Picking any writable collection is not enough: on the X2 the keyboard
-        // collection is writable but only 2 bytes wide, which overflows the
-        // remap payloads. Match the vendor usage page first, then fall back to
-        // whichever connected interface has the widest output report.
-        HidDevice? fallback = null;
-        int fallbackOut = 0;
+        // mouse, vendor). Use hidFilters to pick the vendor-defined collection
+        // that carries the button/remap traffic: matching on usage page + usage
+        // avoids grabbing e.g. the writable-but-tiny keyboard collection.
         foreach (HidDevice device in GetHidDevices(vendorId, productIds, 0))
         {
             if (!device.IsConnected)
                 continue;
 
-            int outLen = device.Capabilities.OutputReportByteLength;
+            if (!hidFilters.TryGetValue(device.Attributes.ProductId, out HidFilter hidFilter))
+                continue;
 
-            if (device.Capabilities.UsagePage == VendorUsagePage && outLen > 0)
-            {
-                hidDevices[VendorHidId] = device;
-                return true;
-            }
+            if (device.Capabilities.UsagePage != hidFilter.UsagePage ||
+                device.Capabilities.Usage != hidFilter.Usage)
+                continue;
 
-            if (outLen > fallbackOut)
-            {
-                fallback = device;
-                fallbackOut = outLen;
-            }
-        }
-
-        if (fallback is not null)
-        {
-            hidDevices[VendorHidId] = fallback;
+            hidDevices[VendorHidId] = device;
             return true;
         }
 
