@@ -26,6 +26,10 @@ public class OneXPlayerX1 : OneXAOKZOE
 {
     protected const int VendorHidId = 0;
 
+    // Vendor-defined HID usage page (0xFF00) of the collection that carries the
+    // button/remap reports. HidLibrary exposes UsagePage as a signed short.
+    protected const short VendorUsagePage = unchecked((short)0xFF00);
+
     private SerialPort? _serialPort; // COM3 SerialPort for Device control of OneXPlayer
 
     private const byte FrameMarker = 0x3F;
@@ -519,12 +523,39 @@ public class OneXPlayerX1 : OneXAOKZOE
         if (hidDevices.TryGetValue(VendorHidId, out HidDevice? boundDevice) && boundDevice.IsConnected)
             return true;
 
+        // A single VID/PID exposes many HID collections (keyboard, consumer,
+        // mouse, vendor). The vendor button/remap traffic and the button read
+        // loop share one bound interface, so we must pick the vendor-defined
+        // collection (usage page 0xFF00) that carries full-size output reports.
+        // Picking any writable collection is not enough: on the X2 the keyboard
+        // collection is writable but only 2 bytes wide, which overflows the
+        // remap payloads. Match the vendor usage page first, then fall back to
+        // whichever connected interface has the widest output report.
+        HidDevice? fallback = null;
+        int fallbackOut = 0;
         foreach (HidDevice device in GetHidDevices(vendorId, productIds, 0))
         {
             if (!device.IsConnected)
                 continue;
 
-            hidDevices[VendorHidId] = device;
+            int outLen = device.Capabilities.OutputReportByteLength;
+
+            if (device.Capabilities.UsagePage == VendorUsagePage && outLen > 0)
+            {
+                hidDevices[VendorHidId] = device;
+                return true;
+            }
+
+            if (outLen > fallbackOut)
+            {
+                fallback = device;
+                fallbackOut = outLen;
+            }
+        }
+
+        if (fallback is not null)
+        {
+            hidDevices[VendorHidId] = fallback;
             return true;
         }
 
@@ -591,16 +622,29 @@ public class OneXPlayerX1 : OneXAOKZOE
         if (!hidDevices.TryGetValue(VendorHidId, out HidDevice? device))
             return;
 
-        HidReport report = device.CreateReport();
-        report.ReportId = 0;
-        int count = Math.Min(payload.Length, report.Data.Length - 5);
-        report.Data[0] = commandId;
-        report.Data[1] = FrameMarker;
-        report.Data[2] = 0x01;
-        Array.Copy(payload, 0, report.Data, 3, count);
-        report.Data[^2] = FrameMarker;
-        report.Data[^1] = commandId;
-        device.WriteReport(report);
+        // guard against an interface whose output report is missing or too small
+        // to hold the framed command.
+        int length = device.Capabilities.OutputReportByteLength;
+        if (length < 6)
+            return;
+
+        // Emit the exact frame the firmware expects: the command id occupies
+        // byte 0 (the report-id slot), followed by the frame marker and index,
+        // the payload, then the trailing marker/command-id in the final two
+        // bytes. This mirrors the raw write used before the HidLibrary migration.
+        // Do NOT use CreateReport()/WriteReport() here: that prepends a 0x00
+        // report-id byte and shifts the whole frame, which the OneXPlayer
+        // firmware misinterprets (it can flip the pad's reporting mode and kill
+        // the XInput gamepad while leaving vendor buttons working).
+        byte[] buffer = new byte[length];
+        buffer[0] = commandId;
+        buffer[1] = FrameMarker;
+        buffer[2] = 0x01;
+        int count = Math.Min(payload.Length, length - 5);
+        Array.Copy(payload, 0, buffer, 3, count);
+        buffer[length - 2] = FrameMarker;
+        buffer[length - 1] = commandId;
+        device.Write(buffer);
     }
 
     protected static byte[] BuildRemapPage1(byte preset) =>
