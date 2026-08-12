@@ -1833,8 +1833,14 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="Enum_MotionOutput_LeftStick" xml:space="preserve">
     <value>Left Stick</value>
   </data>
+  <data name="Enum_MotionOutput_LeftPad" xml:space="preserve">
+    <value>Left Pad</value>
+  </data>
   <data name="Enum_MotionOutput_RightStick" xml:space="preserve">
     <value>Right Stick</value>
+  </data>
+  <data name="Enum_MotionOutput_RightPad" xml:space="preserve">
+    <value>Right Pad</value>
   </data>
   <data name="Enum_XInputController_AxisLayoutFlags_L2" xml:space="preserve">
     <value>L2</value>
@@ -3654,6 +3660,30 @@ Thank you for using HC and helping us make it better.</value>
   <data name="LayoutPage_ActionType_Inherit" xml:space="preserve">
     <value>Inherit</value>
   </data>
+  <data name="LayoutPage_ActionType_Touchpad" xml:space="preserve">
+    <value>Touchpad</value>
+  </data>
+  <data name="LayoutPage_TouchpadSettings" xml:space="preserve">
+    <value>Touchpad</value>
+  </data>
+  <data name="LayoutPage_TouchpadStartPosition" xml:space="preserve">
+    <value>Start position</value>
+  </data>
+  <data name="LayoutPage_TouchpadEndPosition" xml:space="preserve">
+    <value>End position</value>
+  </data>
+  <data name="LayoutPage_TouchpadSwipeDuration" xml:space="preserve">
+    <value>Swipe duration</value>
+  </data>
+  <data name="LayoutPage_TouchpadCoordinateRange" xml:space="preserve">
+    <value>Touchpad coordinates: X 0-{0}, Y 0-{1}</value>
+  </data>
+  <data name="ControllerPage_TrackpadClickHapticsOverride" xml:space="preserve">
+    <value>Trackpad click haptics overridden</value>
+  </data>
+  <data name="ControllerPage_TrackpadClickHapticsOverrideDesc" xml:space="preserve">
+     <value>The active layout has custom trackpad click haptic settings.</value>
+  </data>
   <data name="LayoutPage_HoldToRepeat" xml:space="preserve">
     <value>Hold to repeat</value>
   </data>
@@ -3724,10 +3754,10 @@ Thank you for using HC and helping us make it better.</value>
     <value>Options</value>
   </data>
   <data name="Enum_DualShock4Controller_AxisLayoutFlags_LeftPad" xml:space="preserve">
-    <value>Left-finger swipe</value>
+    <value>Left-finger touch</value>
   </data>
   <data name="Enum_DualShock4Controller_AxisLayoutFlags_RightPad" xml:space="preserve">
-    <value>Right-finger swipe</value>
+    <value>Right-finger touch</value>
   </data>
   <data name="Enum_DualShock4Controller_ButtonFlags_LeftPadClick" xml:space="preserve">
     <value>Left-finger click</value>

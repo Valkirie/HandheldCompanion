@@ -1239,6 +1239,7 @@
                     <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Trigger}" IsEnabled="False" />
                     <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Shift}" IsEnabled="False" />
                     <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Inherit}" IsEnabled="False" />
+                    <ComboBoxItem Content="{x:Static resx:Resources.LayoutPage_ActionType_Touchpad}" IsEnabled="True" Visibility="{Binding TouchpadAxisActionTypeVisibility, Mode=OneWay}" />
                 </ComboBox>
             </ui:SettingsCard>
 
@@ -1434,9 +1435,9 @@
             <!--  Joystick  -->
             <!--  Gyrometer weight  -->
             <ui:SettingsCard
-                Description="Modify the gyrometer weight when applied against joystick movements"
+                Description="Modify the gyrometer weight when combined with target axis movements"
                 Header="Gyrometer weight"
-                Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+                Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2|8}">
                 <DockPanel>
                     <TextBox Text="{Binding GyroWeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}" TextAlignment="Center" />
                     <Slider

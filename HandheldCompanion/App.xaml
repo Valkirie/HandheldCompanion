@@ -71,6 +71,7 @@
             <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
             <converters:IndexToVisibilityConverter x:Key="IndexToVisibilityConverter" />
             <converters:IsEnabledConverter x:Key="IsEnabledConverter" />
+            <converters:ActionTypeSupportedConverter x:Key="ActionTypeSupportedConverter" />
             <converters:PercentageConverter x:Key="PercentageConverter" />
             <converters:InvertBooleanConverter x:Key="InvertBooleanConverter" />
             <converters:InvertPercentageConverter x:Key="InvertPercentageConverter" />

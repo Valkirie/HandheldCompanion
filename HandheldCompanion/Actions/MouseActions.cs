@@ -189,13 +189,29 @@ namespace HandheldCompanion.Actions
         {
             bool firstTouch = ConsumeNewTouch(touched);
 
-            outVector = layout.vector;
+            Vector2 rawVector = layout.vector;
+            outVector = rawVector;
             base.Execute(layout, shiftSlot, delta);
 
-            if (outVector == Vector2.Zero) return;
+            bool isTrackpad = layout.flags is AxisLayoutFlags.LeftPad or AxisLayoutFlags.RightPad;
+            if (axisSlotDisabled && isTrackpad)
+            {
+                rawVector.Y *= -1;
+                prevVector = rawVector;
+                return;
+            }
 
             // Invert Y so that "up" on a stick or pad moves the cursor up
             outVector.Y *= -1;
+
+            if (firstTouch && isTrackpad)
+            {
+                prevVector = outVector;
+                return;
+            }
+
+            // Zero is the center of an absolute trackpad, not an absence of input.
+            if (outVector == Vector2.Zero && (!isTrackpad || !touched)) return;
 
             Vector2 deltaVector;
             float sensitivityScale;
@@ -212,13 +228,10 @@ namespace HandheldCompanion.Actions
 
                 case AxisLayoutFlags.LeftPad:
                 case AxisLayoutFlags.RightPad:
-                    if (firstTouch)
-                    {
-                        prevVector = outVector;
-                        return;
-                    }
-                    deltaVector = (outVector - prevVector) / short.MaxValue;
+                    Vector2 trackpadDelta = outVector - prevVector;
                     prevVector = outVector;
+
+                    deltaVector = trackpadDelta / short.MaxValue;
                     sensitivityScale = MouseType == MouseActionsType.Move ? 9.0f : 3.0f;
                     break;
             }
