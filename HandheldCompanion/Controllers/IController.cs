@@ -872,6 +872,12 @@ namespace HandheldCompanion.Controllers
             return SourceButtons.Any(buttons.Contains);
         }
 
+        // Persistent inputs that should remain available alone but not become modifiers in mixed hotkey chords.
+        public virtual IEnumerable<ButtonFlags> GetMixedHotkeyExcludedButtons()
+        {
+            return [];
+        }
+
         public bool HasSourceAxis(AxisLayoutFlags axis)
         {
             return SourceAxis.Contains(axis);

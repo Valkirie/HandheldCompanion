@@ -569,7 +569,7 @@ public static class ControllerManager
 
                                                     case 0x1302: // Steam Controller 2026 (Wired)
                                                     case 0x1304: // Steam Controller 2026 (Wireless)
-                                                        controller = new Xbox360Controller(gamepad, deviceIndex, details);
+                                                        controller = new SteamController2026(gamepad, deviceIndex, details);
                                                         break;
                                                 }
                                                 break;

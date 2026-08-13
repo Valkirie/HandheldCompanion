@@ -707,6 +707,9 @@ public static class InputsManager
         RemoveHalfPressIfFullPress(ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch);
         RemoveHalfPressIfFullPress(ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch);
 
+        // remove mixed hotkey excluded buttons
+        RemoveMixedHotkeyExcludedButtons(bufferChord.ButtonState);
+
         // reset hold timer
         InputsChordHoldTimer.Stop();
         InputsChordHoldTimer.Start();
@@ -777,6 +780,16 @@ public static class InputsManager
             bufferChord.ButtonState[halfPress] = false;
             buttonState[halfPress] = false;
         }
+    }
+
+    private static void RemoveMixedHotkeyExcludedButtons(ButtonState state)
+    {
+        IEnumerable<ButtonFlags> excludedButtons = ControllerManager.GetTarget()?.GetMixedHotkeyExcludedButtons() ?? [];
+        if (!excludedButtons.Any() || !state.Buttons.Any(button => !excludedButtons.Contains(button)))
+            return;
+
+        foreach (ButtonFlags button in excludedButtons)
+            state[button] = false;
     }
 
     private static bool IsModifierKey(Keys key)
