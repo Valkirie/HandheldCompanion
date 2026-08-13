@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 
@@ -920,12 +921,20 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 // Update list and selected target
-                lock (_collectionLock)
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
                 {
                     Targets.Clear();
                     foreach (var t in targets)
                         Targets.Add(t);
                 }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
+                }
+
                 SelectedTarget = matchingTargetVm ?? Targets.First();
             }
             else if (actionType == ActionType.Inherit)

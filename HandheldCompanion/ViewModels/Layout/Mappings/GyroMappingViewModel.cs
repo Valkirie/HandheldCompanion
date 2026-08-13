@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Windows.Data;
 
 namespace HandheldCompanion.ViewModels
@@ -226,8 +227,18 @@ namespace HandheldCompanion.ViewModels
             InputsManager.StoppedListening += InputsManager_StoppedListening;
 
             // store hotkey to manager
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
+            {
                 HotkeysList.Add(new HotkeyViewModel(GyroHotkey));
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
+            }
+
             ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
         }
 
@@ -246,13 +257,20 @@ namespace HandheldCompanion.ViewModels
             GyroHotkey = hotkey;
 
             // update hotkey UI
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
                 if (foundHotkey is null)
                     HotkeysList.Add(new HotkeyViewModel(hotkey));
                 else
                     foundHotkey.Hotkey = hotkey;
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
 
             Update();
@@ -403,12 +421,20 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 // Update list and selected target
-                lock (_collectionLock)
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
                 {
                     Targets.Clear();
                     foreach (var t in targets)
                         Targets.Add(t);
                 }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
+                }
+
                 SelectedTarget = matchingTargetVm ?? Targets.First();
             }
             else if (actionType == ActionType.Inherit)

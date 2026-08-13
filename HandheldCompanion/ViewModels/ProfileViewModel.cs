@@ -31,6 +31,7 @@ namespace HandheldCompanion.ViewModels
         public ICommand Navigate { get; private set; }
         public ICommand? OpenLayout { get; private set; }
         public ICommand? OpenExecutableLocation { get; private set; }
+        public ICommand? DownloadMetadataAndArtworks { get; private set; }
 
         public readonly bool IsQuickTools;
         public bool IsMainPage => !IsQuickTools;
@@ -765,6 +766,11 @@ namespace HandheldCompanion.ViewModels
                     UseShellExecute = true,
                 });
             });
+
+            DownloadMetadataAndArtworks = new DelegateCommand(() =>
+            {
+                ManagerFactory.libraryManager.RefreshProfileArts(Profile, UpdateSource.LibraryUpdate, includeFullResAssets: true);
+            });
         }
 
         private void ProcessManager_ProcessStarted(ProcessEx processEx, bool OnStartup)
@@ -789,6 +795,7 @@ namespace HandheldCompanion.ViewModels
             StartProcessCommand = null;
             OpenLayout = null;
             OpenExecutableLocation = null;
+            DownloadMetadataAndArtworks = null;
 
             base.Dispose();
         }

@@ -69,9 +69,10 @@ namespace HandheldCompanion.Controllers
             ButtonFlags.RightStickUp, ButtonFlags.RightStickDown, ButtonFlags.RightStickLeft, ButtonFlags.RightStickRight */
         ];
 
+        public static readonly byte TriggerThreshold = 30;
+
         protected static readonly FontFamily GlyphFontFamily = new("PromptFont");
         protected static readonly string defaultGlyph = "\u2753";
-        public const byte TriggerThreshold = 30;
 
         public ControllerCapabilities Capabilities = ControllerCapabilities.None;
         protected SortedDictionary<AxisLayoutFlags, Color> ColoredAxis = [];
@@ -140,7 +141,7 @@ namespace HandheldCompanion.Controllers
 
         public IController()
         {
-            gamepadMotions[gamepadIndex] = new(string.Empty, CalibrationMode.Manual);
+            gamepadMotions[gamepadIndex] = new(string.Empty, SensorsManager.ActiveCalibrationMode);
             InitializeInputOutput();
 
             // raise events
@@ -182,7 +183,7 @@ namespace HandheldCompanion.Controllers
             this.Details.isHooked = true;
 
             // manage gamepad motion
-            gamepadMotions[gamepadIndex] = new(details.baseContainerDeviceInstanceId);
+            gamepadMotions[gamepadIndex] = new(details.baseContainerDeviceInstanceId, SensorsManager.ActiveCalibrationMode);
             InitializeInputOutput();
         }
 
@@ -452,8 +453,7 @@ namespace HandheldCompanion.Controllers
                 rumbleCts?.Cancel();
                 rumbleCts = new CancellationTokenSource();
 
-                CancellationTokenSource currentCts = rumbleCts;
-                var token = currentCts.Token;
+                var token = rumbleCts.Token;
                 rumbleTask = Task.Run(async () =>
                 {
                     try
@@ -464,19 +464,10 @@ namespace HandheldCompanion.Controllers
                     catch (OperationCanceledException) { }
                     finally
                     {
-                        lock (rumbleLock)
-                        {
-                            if (ReferenceEquals(rumbleCts, currentCts))
-                            {
-                                try { SetVibration(0, 0); }
-                                catch { }
-                                rumbleCts = null;
-                            }
-
-                            currentCts.Dispose();
-                        }
+                        try { SetVibration(0, 0); }
+                        catch { }
                     }
-                });
+                }, token);
             }
         }
 
@@ -963,8 +954,6 @@ namespace HandheldCompanion.Controllers
             {
                 if (!disposing)
                     return;
-
-                StopRumble();
 
                 // manage events
                 ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;

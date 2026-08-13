@@ -141,7 +141,7 @@ public partial class LayoutPage : Page
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // raise events
-        SettingsManager_SettingValueChanged("LayoutFilterOnDevice", ManagerFactory.settingsManager.GetString("LayoutFilterOnDevice"), false, false);
+        SettingsManager_SettingValueChanged("LayoutFilterOnDevice", ManagerFactory.settingsManager.GetString("LayoutFilterOnDevice"), false, true);
     }
 
     private void SettingsManager_Initialized()
@@ -183,7 +183,7 @@ public partial class LayoutPage : Page
         }
 
         // UI thread
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             if (sender is ILayoutPage layoutPage)
             {
@@ -202,7 +202,7 @@ public partial class LayoutPage : Page
         if (!MainWindow.CurrentPageName.Equals("LayoutPage"))
             return;
 
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             switch (source)
             {
@@ -220,7 +220,7 @@ public partial class LayoutPage : Page
     private void SettingsManager_SettingValueChanged(string? name, object? value, bool temporary, bool initializing)
     {
         // UI thread
-        UIHelper.TryInvoke(() =>
+        UIHelper.TryBeginInvoke(() =>
         {
             switch (name)
             {
@@ -231,11 +231,7 @@ public partial class LayoutPage : Page
         });
     }
 
-    private void Page_Loaded(object sender, RoutedEventArgs e)
-    {
-    }
-
-    public void Page_Closed()
+    public void Dispose()
     {
         ((LayoutPageViewModel)DataContext).Dispose();
 
@@ -246,8 +242,6 @@ public partial class LayoutPage : Page
         ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
         ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
     }
-
-    public void Dispose() => Page_Closed();
 
     public void UpdateLayout(Layout layout)
     {

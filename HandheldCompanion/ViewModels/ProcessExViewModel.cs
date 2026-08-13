@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Extensions;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.ViewModels.Misc;
@@ -9,6 +10,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -226,31 +228,47 @@ namespace HandheldCompanion.ViewModels
 
         private void Process_WindowAttached(ProcessWindow processWindow)
         {
-            HandheldCompanion.Helpers.UIHelper.TryInvoke(() =>
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
-                lock (_collectionLock)
+                UIHelper.TryInvoke(() =>
                 {
                     WindowListItemViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow?.Hwnd == processWindow.Hwnd);
                     if (foundWindow is null)
                         ProcessWindows.Add(new WindowListItemViewModel(processWindow));
                     else
                         foundWindow.ProcessWindow = processWindow;
-                }
-            });
+                });
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
+            }
         }
 
         private void Process_WindowDetached(ProcessWindow processWindow)
         {
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
             WindowListItemViewModel? detachedWindow = null;
-            bool invoked = HandheldCompanion.Helpers.UIHelper.TryInvoke(() =>
+            bool invoked = false;
+
+            try
             {
-                lock (_collectionLock)
+                invoked = UIHelper.TryInvoke(() =>
                 {
                     detachedWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow?.Hwnd == processWindow.Hwnd);
                     if (detachedWindow is not null)
                         ProcessWindows.Remove(detachedWindow);
-                }
-            });
+                });
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
+            }
 
             if (invoked)
                 detachedWindow?.Dispose();

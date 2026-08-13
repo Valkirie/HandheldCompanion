@@ -32,7 +32,6 @@ namespace HandheldCompanion.ViewModels
         public long Id => LibEntry.Id;
         public string Name => LibEntry.Name;
         public string Description => LibEntry.Description;
-        public bool IsManualEntry => LibEntry is ManualEntry;
         public int ReleaseDateYear => LibEntry.ReleaseDate.Year;
         public LibraryFamily Family => LibEntry.Family;
 

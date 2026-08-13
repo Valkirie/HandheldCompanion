@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Data;
@@ -114,6 +115,8 @@ namespace HandheldCompanion.ViewModels
 
         #region Profile
         private Profile _selectedProfile = null!;
+        private Profile? _libraryTargetProfile;
+
         /// <summary>
         /// CRITICAL: Setting this property triggers OnProfileChanged() which:
         /// - Calls UpdateCurrentProcessViewModel()
@@ -661,7 +664,6 @@ namespace HandheldCompanion.ViewModels
                     if (gyroActions is not null)
                         SelectedProfile.Layout.UpdateLayout(AxisLayoutFlags.Gyroscope, gyroActions);
 
-                    RefreshMotionOutputModes();
                     SubmitProfile();
                 }
             }
@@ -990,7 +992,6 @@ namespace HandheldCompanion.ViewModels
                 {
                     SelectedProfile.HID = mode;
                     OnPropertyChanged(nameof(HIDModeIndex));
-                    RefreshMotionOutputModes();
 
                     if (!isLoadingProfile)
                         UpdateProfile();
@@ -1427,6 +1428,8 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public int LibraryCoversPageCount => LibraryCovers.Count;
+
         private int _LibraryArtworksIndex;
         public int LibraryArtworksIndex
         {
@@ -1458,6 +1461,8 @@ namespace HandheldCompanion.ViewModels
                 return new();
             }
         }
+
+        public int LibraryArtworksPageCount => LibraryArtworks.Count;
 
         private int _LibraryLogosIndex;
         public int LibraryLogosIndex
@@ -1491,16 +1496,12 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public int LibraryLogosPageCount => LibraryLogos.Count;
+
         public bool QuerySteamGrid { get; set; } = true;
         public bool QueryIGDB { get; set; } = true;
 
-        // True when the currently selected library entry is a manual (file-browse) entry
-        public bool IsManualEntry => _SelectedLibraryIndex >= 0
-            && _SelectedLibraryIndex < LibraryPickers.Count
-            && LibraryPickers[_SelectedLibraryIndex].IsManualEntry;
-
-        // True if the dialog should be interactive: either we're online (for IGDB/SteamGrid) or a manual entry is selected
-        public bool IsLibraryOrManualEnabled => IsLibraryConnected || IsManualEntry;
+        public bool IsLibraryOrManualEnabled => IsLibraryConnected || SelectedLibraryEntry is not null;
 
         public BitmapImage? Cover
         {
@@ -1803,6 +1804,9 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(IsControllerPassthroughEnabled));
             OnPropertyChanged(nameof(SelectedSubProfileViewModel));
             OnPropertyChanged(nameof(CanEditHIDMode));
+            OnPropertyChanged(nameof(Cover));
+            OnPropertyChanged(nameof(Artwork));
+            OnPropertyChanged(nameof(Logo));
 
             if (updateProfileContext)
                 OnProfileChanged();
@@ -1892,7 +1896,11 @@ namespace HandheldCompanion.ViewModels
             SubProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.SortOrder), ListSortDirection.Ascending));
             SubProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.Name), ListSortDirection.Ascending));
 
-            RefreshMotionOutputModes();
+            // Initialize MotionOutput modes
+            foreach (var mode in Enum.GetValues<MotionOutput>())
+            {
+                MotionOutputModes.Add(new MotionOutputViewModel(mode));
+            }
 
             // Initialize MotionInput modes
             foreach (var mode in (MotionInput[])Enum.GetValues(typeof(MotionInput)))
@@ -2051,6 +2059,10 @@ namespace HandheldCompanion.ViewModels
 
             DisplayLibrary = new DelegateCommand(async () =>
             {
+                _libraryTargetProfile = SelectedProfile;
+                if (_libraryTargetProfile is null)
+                    return;
+
                 RequestShowLibraryDialog?.Invoke(this, EventArgs.Empty);
                 RefreshLibrary.Execute(null);
             });
@@ -2059,42 +2071,63 @@ namespace HandheldCompanion.ViewModels
             {
                 ClearLibrary();
 
-                // Always add a "Manual" entry at the top so the user can browse images without an online search
-                ManualEntry manualEntry;
-                if (SelectedProfile?.LibraryEntry is ManualEntry existingManual)
-                    manualEntry = existingManual;
-                else
-                    manualEntry = new ManualEntry(SelectedProfile?.Guid.GetHashCode() ?? 0L, SelectedProfile?.Name ?? string.Empty);
+                Profile? targetProfile = _libraryTargetProfile ?? SelectedProfile;
+                LibraryEntry? savedEntry = targetProfile?.LibraryEntry;
 
-                lock (_collectionLock2)
-                    LibraryPickers.Add(new(manualEntry));
-
-                IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(
+                List<LibraryEntry> entries = (await ManagerFactory.libraryManager.GetGames(
                     (QuerySteamGrid ? LibraryFamily.SteamGrid : LibraryFamily.None) | (QueryIGDB ? LibraryFamily.IGDB : LibraryFamily.None),
-                    LibrarySearchField);
+                    LibrarySearchField)).OrderBy(entry => entry.Name).ToList();
 
-                if (entries.Count() != 0)
+                if (entries.Count != 0)
                 {
-                    entries = entries.OrderByDescending(entry => entry.Family);
-                    entries = entries.OrderBy(entry => entry.Name);
+                    entries = entries.OrderByDescending(entry => entry.Family).ThenBy(entry => entry.Name).ToList();
 
-                    lock (_collectionLock2)
+                    if (!Monitor.TryEnter(_collectionLock2, TimeSpan.FromSeconds(2)))
+                        return;
+
+                    try
                     {
                         foreach (LibraryEntry entry in entries)
+                        {
+                            if (savedEntry is not null && entry.Id == savedEntry.Id && entry.Family == savedEntry.Family)
+                            {
+                                entry.ManualCoverPath = savedEntry.ManualCoverPath;
+                                entry.ManualArtworkPath = savedEntry.ManualArtworkPath;
+                                entry.ManualLogoPath = savedEntry.ManualLogoPath;
+
+                                if (entry is SteamGridEntry steamEntry && savedEntry is SteamGridEntry savedSteamEntry)
+                                {
+                                    steamEntry.Grid = savedSteamEntry.Grid;
+                                    steamEntry.Hero = savedSteamEntry.Hero;
+                                    steamEntry.Logo = savedSteamEntry.Logo;
+                                }
+                                else if (entry is IGDBEntry igdbEntry && savedEntry is IGDBEntry savedIGDBEntry)
+                                {
+                                    igdbEntry.Cover = savedIGDBEntry.Cover;
+                                    igdbEntry.Artwork = savedIGDBEntry.Artwork;
+                                }
+                            }
+
                             LibraryPickers.Add(new(entry));
+                        }
+                    }
+                    finally
+                    {
+                        Monitor.Exit(_collectionLock2);
                     }
 
-                    if (SelectedProfile?.LibraryEntry is ManualEntry)
-                        SelectedLibraryEntry = manualEntry;
-                    else if (SelectedProfile?.LibraryEntry is not null && entries.Contains(SelectedProfile.LibraryEntry))
-                        SelectedLibraryEntry = SelectedProfile.LibraryEntry;
+                    LibraryEntry? restoredEntry = savedEntry is null
+                        ? null
+                        : entries.FirstOrDefault(entry => entry.Id == savedEntry.Id && entry.Family == savedEntry.Family);
+                    if (restoredEntry is not null)
+                        SelectedLibraryEntry = restoredEntry;
                     else
                         SelectedLibraryEntry = ManagerFactory.libraryManager.GetGame(entries, LibrarySearchField);
                 }
                 else
                 {
-                    // No online results - select manual
-                    SelectedLibraryEntry = manualEntry;
+                    // No online results  select manual
+                    SelectedLibraryEntry = null;
                 }
 
                 // Notify that library entries are now available
@@ -2104,6 +2137,10 @@ namespace HandheldCompanion.ViewModels
 
             DownloadLibrary = new DelegateCommand(async () =>
             {
+                Profile? targetProfile = _libraryTargetProfile ?? SelectedProfile;
+                if (targetProfile is null)
+                    return;
+
                 int coverId = (int)(LibraryCoversIndex != -1 && LibraryCoversIndex < LibraryCovers.Count ? LibraryCovers[LibraryCoversIndex].Id : 0);
                 int artworkId = (int)(LibraryArtworksIndex != -1 && LibraryArtworksIndex < LibraryArtworks.Count ? LibraryArtworks[LibraryArtworksIndex].Id : 0);
                 int logoId = (int)(LibraryLogosIndex != -1 && LibraryLogosIndex < LibraryLogos.Count ? LibraryLogos[LibraryLogosIndex].Id : 0);
@@ -2111,8 +2148,8 @@ namespace HandheldCompanion.ViewModels
                 if (SelectedLibraryEntry is null)
                     return;
 
-                await ManagerFactory.libraryManager.UpdateProfileArts(SelectedProfile, SelectedLibraryEntry, coverId, artworkId, logoId);
-                ManagerFactory.profileManager.UpdateOrCreateProfile(SelectedProfile, UpdateSource.LibraryUpdate);
+                await ManagerFactory.libraryManager.UpdateProfileArts(targetProfile, SelectedLibraryEntry, coverId, artworkId, logoId);
+                ManagerFactory.profileManager.UpdateOrCreateProfile(targetProfile, UpdateSource.LibraryUpdate);
 
                 // Refresh the Cover and Artwork properties to display the newly downloaded images
                 OnPropertyChanged(nameof(Cover));
@@ -2303,13 +2340,12 @@ namespace HandheldCompanion.ViewModels
             if (_SelectedLibraryIndex < 0 || _SelectedLibraryIndex >= LibraryPickers.Count)
                 return;
             LibraryEntryViewModel pickerVM = LibraryPickers[_SelectedLibraryIndex];
-            if (pickerVM.LibEntry is not ManualEntry manualEntry)
-                return;
+            LibraryEntry libraryEntry = pickerVM.LibEntry;
 
             Microsoft.WindowsAPICodePack.Dialogs.CommonOpenFileDialog dlg = new();
             if (libraryType.HasFlag(LibraryType.logo))
             {
-                // Logo requires transparency - PNG only
+                // Logo requires transparency  PNG only
                 dlg.Filters.Add(new Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogFilter("PNG Image", "*.png"));
             }
             else
@@ -2337,7 +2373,7 @@ namespace HandheldCompanion.ViewModels
             else
                 imageId = ManualEntry.ManualLogoId;
 
-            string? cachedPath = ManagerFactory.libraryManager.CopyManualArt(manualEntry.Id, libraryType, imageId, sourcePath);
+            string? cachedPath = ManagerFactory.libraryManager.CopyManualArt(libraryEntry.Id, libraryType, imageId, sourcePath);
             if (cachedPath is null)
                 return;
 
@@ -2345,11 +2381,11 @@ namespace HandheldCompanion.ViewModels
 
             // Update the entry so the serialised JSON contains the cache path
             if (libraryType.HasFlag(LibraryType.cover))
-                manualEntry.ManualCoverPath = cachedPath;
+                libraryEntry.ManualCoverPath = cachedPath;
             else if (libraryType.HasFlag(LibraryType.artwork))
-                manualEntry.ManualArtworkPath = cachedPath;
+                libraryEntry.ManualArtworkPath = cachedPath;
             else
-                manualEntry.ManualLogoPath = cachedPath;
+                libraryEntry.ManualLogoPath = cachedPath;
 
             // Rebuild the single visual slot. Full-res keeps the source extension; thumbnail is
             // always PNG (WriteResizedThumbnail encodes PNG regardless of source format).
@@ -2361,6 +2397,8 @@ namespace HandheldCompanion.ViewModels
                 RefreshArtwork(0);
             else
                 RefreshLogo(0);
+
+            OnPropertyChanged(nameof(SelectedLibraryEntry));
         }
 
         private void SetupManagerEvents()
@@ -2494,7 +2532,10 @@ namespace HandheldCompanion.ViewModels
 
         private void PowerProfileManager_Deleted(PowerProfile profile)
         {
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 ProfilesPickerViewModel? foundPreset = ProfilePicker.FirstOrDefault(p => p.LinkedPresetId == profile.Guid);
                 if (foundPreset is not null)
@@ -2507,11 +2548,18 @@ namespace HandheldCompanion.ViewModels
                         SelectedPickerDC = ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == Guid.Empty);
                 }
             }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
+            }
         }
 
         private void PowerProfileManager_Updated(PowerProfile profile, UpdateSource source)
         {
-            lock (_collectionLock)
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
                 int index;
                 ProfilesPickerViewModel? foundPreset = ProfilePicker.FirstOrDefault(p => p.LinkedPresetId == profile.Guid);
@@ -2525,6 +2573,10 @@ namespace HandheldCompanion.ViewModels
                     index = 0;
                     ProfilePicker.Insert(index, new() { LinkedPresetId = profile.Guid, Text = profile.Name, IsInternal = profile.IsDefault() || profile.IsDeviceDefault() });
                 }
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
             }
         }
 
@@ -3086,8 +3138,6 @@ namespace HandheldCompanion.ViewModels
 
             using (new LoadingScope(this))
             {
-                RefreshMotionOutputModes();
-
                 GPUScalingEnabled = SelectedProfile.GPUScaling;
                 RSREnabled = SelectedProfile.RSREnabled;
                 RSRValue = SelectedProfile.RSRSharpness;
@@ -3151,56 +3201,6 @@ namespace HandheldCompanion.ViewModels
                 UpdateControlsEnabledState();
                 NotifyWrapperProperties();
             }
-        }
-
-        private void RefreshMotionOutputModes()
-        {
-            HashSet<MotionOutput> availableModes =
-            [
-                MotionOutput.Disabled,
-                MotionOutput.LeftStick,
-                MotionOutput.RightStick,
-                MotionOutput.MoveCursor,
-                MotionOutput.ScrollWheel,
-            ];
-
-            if (SelectedProfile is not null)
-            {
-                IController controller = ControllerManager.GetDefault(!IsQuickTools);
-                foreach (AxisLayoutFlags axis in TouchpadActions.GetAxisTargets(controller))
-                {
-                    if (axis == AxisLayoutFlags.LeftPad)
-                        availableModes.Add(MotionOutput.LeftPad);
-                    else if (axis == AxisLayoutFlags.RightPad)
-                        availableModes.Add(MotionOutput.RightPad);
-                }
-
-                if (SelectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions? action) &&
-                    action is TouchpadActions { TargetType: TouchpadTargetType.Axis } touchpadAction)
-                {
-                    if (touchpadAction.Axis == AxisLayoutFlags.LeftPad)
-                        availableModes.Add(MotionOutput.LeftPad);
-                    else if (touchpadAction.Axis == AxisLayoutFlags.RightPad)
-                        availableModes.Add(MotionOutput.RightPad);
-                }
-            }
-
-            MotionOutput[] desiredModes = Enum.GetValues<MotionOutput>()
-                .Where(availableModes.Contains)
-                .ToArray();
-
-            for (int index = 0; index < desiredModes.Length; index++)
-            {
-                MotionOutput mode = desiredModes[index];
-                MotionOutputViewModel? existing = MotionOutputModes.FirstOrDefault(item => item.Value == mode);
-                if (existing is null)
-                    MotionOutputModes.Insert(index, new MotionOutputViewModel(mode));
-                else if (MotionOutputModes.IndexOf(existing) != index)
-                    MotionOutputModes.Move(MotionOutputModes.IndexOf(existing), index);
-            }
-
-            while (MotionOutputModes.Count > desiredModes.Length)
-                MotionOutputModes.RemoveAt(MotionOutputModes.Count - 1);
         }
 
         /// <summary>
@@ -3381,14 +3381,25 @@ namespace HandheldCompanion.ViewModels
 
         private void SelectedLibraryChanged()
         {
-            LibraryArtworksIndex = -1;
-            LibraryArtworksIndex = 0;
-            LibraryCoversIndex = -1;
-            LibraryCoversIndex = 0;
-            LibraryLogosIndex = -1;
-            LibraryLogosIndex = 0;
-            OnPropertyChanged(nameof(IsManualEntry));
+            LibraryArtworksIndex = GetLibraryVisualIndex(LibraryArtworks, SelectedLibraryEntry?.GetArtworkId() ?? 0);
+            LibraryCoversIndex = GetLibraryVisualIndex(LibraryCovers, SelectedLibraryEntry?.GetCoverId() ?? 0);
+            LibraryLogosIndex = GetLibraryVisualIndex(LibraryLogos, SelectedLibraryEntry?.GetLogoId() ?? 0);
+            OnPropertyChanged(nameof(LibraryCoversPageCount));
+            OnPropertyChanged(nameof(LibraryArtworksPageCount));
+            OnPropertyChanged(nameof(LibraryLogosPageCount));
             OnPropertyChanged(nameof(IsLibraryOrManualEnabled));
+        }
+
+        private static int GetLibraryVisualIndex(ObservableCollection<LibraryVisualViewModel> visuals, long selectedId)
+        {
+            if (visuals.Count == 0)
+                return -1;
+
+            int selectedIndex = visuals
+                .Select((visual, index) => new { visual.Id, index })
+                .FirstOrDefault(item => item.Id == selectedId)?.index ?? -1;
+
+            return selectedIndex >= 0 ? selectedIndex : 0;
         }
 
         private async Task TriggerGameArtDownloadAsync(int value, LibraryType libraryType)
@@ -3409,6 +3420,7 @@ namespace HandheldCompanion.ViewModels
             try
             {
                 OnPropertyChanged(nameof(LibraryCovers));
+                OnPropertyChanged(nameof(LibraryCoversPageCount));
                 SetLibraryCoversIndex(index);
             }
             catch { }
@@ -3419,6 +3431,7 @@ namespace HandheldCompanion.ViewModels
             try
             {
                 OnPropertyChanged(nameof(LibraryArtworks));
+                OnPropertyChanged(nameof(LibraryArtworksPageCount));
                 SetLibraryArtworksIndex(index);
             }
             catch { }
@@ -3429,6 +3442,7 @@ namespace HandheldCompanion.ViewModels
             try
             {
                 OnPropertyChanged(nameof(LibraryLogos));
+                OnPropertyChanged(nameof(LibraryLogosPageCount));
                 SetLibraryLogosIndex(index);
             }
             catch { }
@@ -3602,14 +3616,21 @@ namespace HandheldCompanion.ViewModels
 
         public void PowerProfileChanged(PowerProfile powerProfileAC, PowerProfile powerProfileDC)
         {
-            UIHelper.TryBeginInvoke(() =>
+            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
             {
-                lock (_collectionLock)
-                {
+                UIHelper.TryBeginInvoke(() =>
+                {                
                     SelectedPickerAC = ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == powerProfileAC.Guid);
                     SelectedPickerDC = ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == powerProfileDC.Guid);
-                }
-            });
+                });
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock);
+            }
         }
 
         public void Close()
