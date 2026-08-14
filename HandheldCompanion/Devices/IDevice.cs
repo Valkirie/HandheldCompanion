@@ -156,7 +156,6 @@ public abstract class IDevice
     protected int[] productIds = [];
     protected Dictionary<int, HidDevice> hidDevices = [];
     protected Dictionary<int, HidFilter> hidFilters = [];
-    private readonly HashSet<(ushort VendorID, ushort ProductID)> insertedDevices = [];
 
     public IMUMatrix AcceleroMatrix;
     public IMUMatrix GyroMatrix;
@@ -478,10 +477,7 @@ public abstract class IDevice
         lock (updateLock)
         {
             if (device.VendorID == vendorId && productIds.Contains(device.ProductID))
-            {
                 Device_Removed();
-                insertedDevices.Remove((device.VendorID, device.ProductID));
-            }
         }
     }
 
@@ -490,10 +486,7 @@ public abstract class IDevice
         lock (updateLock)
         {
             if (device.VendorID == vendorId && productIds.Contains(device.ProductID))
-            {
-                if (insertedDevices.Add((device.VendorID, device.ProductID)))
-                    Device_Inserted(true);
-            }
+                Device_Inserted(true);
         }
     }
 
