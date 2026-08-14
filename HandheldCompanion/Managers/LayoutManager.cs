@@ -894,6 +894,20 @@ public class LayoutManager : IManager
     public Layout? GetCurrent() => currentLayout;
     public Layout? GetDesktop() => desktopLayout;
 
+    public LayoutModes GetCurrentMode()
+    {
+        LayoutModes layoutMode = (LayoutModes)ManagerFactory.settingsManager.GetInt("LayoutMode");
+        if (layoutMode != LayoutModes.Auto)
+            return layoutMode;
+
+        lock (updateLock)
+        {
+            return activeLayoutSource is null
+                ? LayoutModes.Auto
+                : ReferenceEquals(activeLayoutSource, desktopLayout) ? LayoutModes.Desktop : LayoutModes.Gamepad;
+        }
+    }
+
     //  Events
     public event LayoutChangedEventHandler? LayoutChanged;
     public delegate void LayoutChangedEventHandler(Layout layout);

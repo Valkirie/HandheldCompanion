@@ -467,6 +467,7 @@ public static class ControllerManager
         {
             Title = "Controller connected",
             Content = $"{controller.ToString()} #{controller.GetUserIndex() + 1}",
+            ActivationCommand = "OpenControllerPage",
             Actions = showActions ? actions : new(),
         });
     }
@@ -1837,6 +1838,7 @@ public static class ControllerManager
             Content = string.IsNullOrWhiteSpace(reason)
                 ? "A controller slot issue was detected. Click Fix to attempt a reset."
                 : $"A controller slot issue was detected: {reason} Click Fix to attempt a reset.",
+            ActivationCommand = "OpenControllerPage",
             Actions =
         {
             new ToastAction
@@ -2209,7 +2211,8 @@ public static class ControllerManager
         ToastManager.SendToast(new ToastRequest
         {
             Title = "Controller management",
-            Content = content
+            Content = content,
+            ActivationCommand = "OpenControllerPage"
         });
 
         managerStatus = status;

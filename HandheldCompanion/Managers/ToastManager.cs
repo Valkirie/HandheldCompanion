@@ -119,6 +119,8 @@ namespace HandheldCompanion.Managers
         public string Title { get; set; } = "";
         public string Content { get; set; } = "";
         public string Content2 { get; set; } = "";
+        public string? ActivationCommand { get; set; }
+        public Dictionary<string, string>? ActivationParameters { get; set; }
         public string Img { get; set; } = "icon";
         public bool IsHero { get; set; }
         public List<ToastAction> Actions { get; set; } = new();
@@ -333,6 +335,15 @@ namespace HandheldCompanion.Managers
                 .AddText(request.Content)
                 .AddText(request.Content2);
             //.SetToastScenario(request.Important ? ToastScenario.Reminder : ToastScenario.Default);
+
+            if (!string.IsNullOrWhiteSpace(request.ActivationCommand))
+                builder.AddArgument("cmd", request.ActivationCommand);
+
+            if (request.ActivationParameters is not null)
+            {
+                foreach (var kv in request.ActivationParameters)
+                    builder.AddArgument(kv.Key, kv.Value ?? "");
+            }
 
             if (imageUri != null)
             {

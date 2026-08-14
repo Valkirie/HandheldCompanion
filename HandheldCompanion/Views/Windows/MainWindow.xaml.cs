@@ -226,6 +226,7 @@ public partial class MainWindow : GamepadWindow
         // manage events
         SystemManager.Initialized += SystemManager_Initialized;
         ControllerManager.Initialized += ControllerManager_Initialized;
+        ToastManager.CommandReceived += ToastManager_CommandReceived;
 
         // raise events
         if (SystemManager.IsInitialized)
@@ -1080,6 +1081,72 @@ public partial class MainWindow : GamepadWindow
         TryGoBack();
     }
 
+    private void ToastManager_CommandReceived(string command, IReadOnlyDictionary<string, string> args)
+    {
+        string? page = command switch
+        {
+            "OpenControllerPage" => "ControllerPage",
+            "OpenLayoutPage" => "LayoutPage",
+            "OpenPerformancePage" => "PerformancePage",
+            "OpenProfilesPage" => "ProfilesPage",
+            "OpenUpdateSettings" => "SettingsPage",
+            _ => null
+        };
+
+        if (page is null)
+            return;
+
+        UIHelper.TryInvoke(() =>
+        {
+            switch (page)
+            {
+                case "LayoutPage":
+                    {
+                        if (args.TryGetValue("layoutMode", out string? layoutModeValue) && int.TryParse(layoutModeValue, out int layoutMode) && (LayoutModes)layoutMode == LayoutModes.Desktop)
+                        {
+                            Layout? desktopLayout = ManagerFactory.layoutManager.GetDesktop();
+                            if (desktopLayout is not null)
+                            {
+                                LayoutTemplate desktopTemplate = new(desktopLayout)
+                                {
+                                    Name = LayoutTemplate.DesktopLayout.Name,
+                                    Description = LayoutTemplate.DesktopLayout.Description,
+                                    Author = Environment.UserName,
+                                    Executable = string.Empty,
+                                    Product = string.Empty
+                                };
+                                layoutPage.UpdateLayoutTemplate(desktopTemplate);
+                            }
+                        }
+                        else if (args.TryGetValue("profileId", out string? layoutProfileId) && Guid.TryParse(layoutProfileId, out Guid layoutProfileGuid) && ManagerFactory.profileManager.profiles.TryGetValue(layoutProfileGuid, out Profile? layoutProfile))
+                        {
+                            LayoutTemplate layoutTemplate = new(layoutProfile.Layout)
+                            {
+                                Name = layoutProfile.LayoutTitle,
+                                Description = layoutProfile.LayoutDescription,
+                                Author = layoutProfile.LayoutAuthor,
+                                Product = layoutProfile.Name
+                            };
+                            layoutPage.UpdateLayoutTemplate(layoutTemplate);
+                        }
+                    }
+                    break;
+
+                case "ProfilesPage":
+                    {
+                        if (args.TryGetValue("profileId", out string? profileId) && Guid.TryParse(profileId, out Guid profileGuid) && ManagerFactory.profileManager.profiles.TryGetValue(profileGuid, out Profile? profile))
+                        {
+                            profilesPage.viewModel.SelectProfileFromToast(profile);
+                        }
+                    }
+                    break;
+            }
+            
+            NavView_Navigate(page, false);
+            SetState(WindowState.Normal);
+        });
+    }
+
 
     private async void Window_Closed(object sender, EventArgs e)
     {
@@ -1110,6 +1177,7 @@ public partial class MainWindow : GamepadWindow
         SystemManager.Initialized -= SystemManager_Initialized;
         SystemManager.SystemStatusChanged -= SystemManager_SystemStatusChanged;
         SystemManager.SessionLockChanged -= SystemManager_SessionLockChanged;
+        ToastManager.CommandReceived -= ToastManager_CommandReceived;
 
         ManagerFactory.notificationManager.Initialized -= NotificationManager_Initialized;
         ManagerFactory.notificationManager.Added -= NotificationManagerUpdated;

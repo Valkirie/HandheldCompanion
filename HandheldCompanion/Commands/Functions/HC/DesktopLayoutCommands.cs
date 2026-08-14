@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Managers;
 using System;
+using System.Collections.Generic;
 using System.Timers;
 
 namespace HandheldCompanion.Commands.Functions.HC
@@ -40,8 +41,21 @@ namespace HandheldCompanion.Commands.Functions.HC
                 case SettingsName:
                     Update();
 
-                    LayoutModes LayoutMode = (LayoutModes)ManagerFactory.settingsManager.GetInt(SettingsName);
-                    ToastManager.SendToast($"Controller mode set to {LayoutMode}");
+                    LayoutModes LayoutMode = ManagerFactory.layoutManager.GetCurrentMode();
+                    Dictionary<string, string> activationParameters = new()
+                    {
+                        { "layoutMode", ((int)LayoutMode).ToString() }
+                    };
+
+                    if (LayoutMode == LayoutModes.Gamepad)
+                        activationParameters.Add("profileId", ManagerFactory.profileManager.GetCurrent().Guid.ToString());
+
+                    ToastManager.SendToast(new ToastRequest
+                    {
+                        Title = $"Controller mode set to {LayoutMode}",
+                        ActivationCommand = "OpenLayoutPage",
+                        ActivationParameters = activationParameters
+                    });
                     break;
             }
         }

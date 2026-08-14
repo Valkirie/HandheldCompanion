@@ -15,6 +15,8 @@ namespace HandheldCompanion.Managers
 {
     public static class UpdateManager
     {
+        private const string OpenUpdateSettingsCommand = "OpenUpdateSettings";
+
         public static event UpdatedEventHandler? Updated;
         public delegate void UpdatedEventHandler(UpdateStatus status, UpdateFile? update, object? value);
 
@@ -206,7 +208,12 @@ namespace HandheldCompanion.Managers
 
                 ControllerDbAvailable.Message = "A newer SDL Game Controller database is available";
                 ManagerFactory.notificationManager.Add(ControllerDbAvailable);
-                ToastManager.SendToast(ControllerDbAvailable.Action, ControllerDbAvailable.Message);
+                ToastManager.SendToast(new ToastRequest
+                {
+                    Title = ControllerDbAvailable.Action,
+                    Content = ControllerDbAvailable.Message,
+                    ActivationCommand = OpenUpdateSettingsCommand
+                });
 
                 // File is already in the cache — surface it as Downloaded so the UI shows "Install Now"
                 Updated?.Invoke(UpdateStatus.ControllerDbReady, controllerDbFile, null);
@@ -318,7 +325,12 @@ namespace HandheldCompanion.Managers
                 UpdateAvailable.Message = $"Version {latestBuild.ToString()} is ready for download";
 
                 ManagerFactory.notificationManager.Add(UpdateAvailable);
-                ToastManager.SendToast(UpdateAvailable.Action, UpdateAvailable.Message);
+                ToastManager.SendToast(new ToastRequest
+                {
+                    Title = UpdateAvailable.Action,
+                    Content = UpdateAvailable.Message,
+                    ActivationCommand = OpenUpdateSettingsCommand
+                });
 
                 // send changelog
                 updateStatus = UpdateStatus.Changelog;

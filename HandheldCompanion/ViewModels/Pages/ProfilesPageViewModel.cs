@@ -2887,6 +2887,11 @@ namespace HandheldCompanion.ViewModels
             });
         }
 
+        public void SelectProfileFromToast(Profile profile)
+        {
+            HandleProfileApplied(profile, UpdateSource.Background);
+        }
+
         /// <summary>
         /// Handles external profile updates from ProfileManager.
         /// 

@@ -83,7 +83,6 @@ namespace HandheldCompanion.Managers
 
         private readonly ButtonState prevButtonState = new();
         private volatile bool _suppressNextInput;
-        private volatile bool _layoutModeIsDesktop;
         private Control? _lastWindowNavigationItem;
         private readonly Dictionary<Page, PageFocusState> _pageFocusStates = [];
 
@@ -92,6 +91,7 @@ namespace HandheldCompanion.Managers
 
         private bool IsQuicktools => this.windowName.Equals("QuickTools");
         private bool IsMainWindow => !IsQuicktools;
+        private bool IsDesktopLayout => ManagerFactory.layoutManager.GetCurrentMode() == LayoutModes.Desktop;
 
         // Store profile Guid when toggling like, to restore focus after ProfileManager updates
         private Guid? pendingFocusRestoreProfileGuid = null;
@@ -194,10 +194,32 @@ namespace HandheldCompanion.Managers
             tooltipTimer = new Timer(2000) { AutoReset = false };
             tooltipTimer.Elapsed += TooltipTimer_Elapsed;
 
+            // raise events
+            switch (ManagerFactory.profileManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.profileManager.Initialized += ProfileManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryProfile();
+                    break;
+            }
+
             ControllerManager.InputsUpdated += InputsUpdated;
+        }
+
+        private void QueryProfile()
+        {
+            // manage events
             ManagerFactory.profileManager.Updated += ProfileManager_Updated;
-            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-            _layoutModeIsDesktop = (LayoutModes)ManagerFactory.settingsManager.GetInt("LayoutMode") == LayoutModes.Desktop;
+
+            ProfileManager_Updated(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background, true);
+        }
+
+        private void ProfileManager_Initialized()
+        {
+            QueryProfile();
         }
 
         private void GamepadWindow_GotFocus(object sender, RoutedEventArgs e)
@@ -2069,12 +2091,6 @@ namespace HandheldCompanion.Managers
         // declare a DateTime variable to store the last time the button state changed
         private DateTime lastChangeTime;
 
-        private void SettingsManager_SettingValueChanged(string? name, object? value, bool temporary, bool initializing)
-        {
-            if (name == "LayoutMode")
-                _layoutModeIsDesktop = (LayoutModes)ManagerFactory.settingsManager.GetInt("LayoutMode") == LayoutModes.Desktop;
-        }
-
         private void InputsUpdated(ControllerState controllerState, bool IsMapped)
         {
             // skip if page hasn't yet rendered
@@ -2087,7 +2103,7 @@ namespace HandheldCompanion.Managers
 
             // Fast-path: the built-in Desktop layout maps every navigational button to a
             // keyboard/mouse action — bail out entirely rather than checking each input.
-            if (_layoutModeIsDesktop)
+            if (IsDesktopLayout)
                 return;
 
             // skip if page doesn't have focus

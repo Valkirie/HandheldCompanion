@@ -686,12 +686,22 @@ namespace HandheldCompanion.Managers
 
         private static void OnTargetConnected(VTarget target)
         {
-            ToastManager.SendToast($"{target}", "is now connected"); //, $"controller_{(uint)target.HID}_1", true);
+            ToastManager.SendToast(new ToastRequest
+            {
+                Title = $"{target}",
+                Content = "is now connected",
+                ActivationCommand = "OpenControllerPage"
+            }); //, $"controller_{(uint)target.HID}_1", true);
         }
 
         private static void OnTargetDisconnected(VTarget target)
         {
-            ToastManager.SendToast($"{target}", "is now disconnected"); //, $"controller_{(uint)target.HID}_0", true);
+            ToastManager.SendToast(new ToastRequest
+            {
+                Title = $"{target}",
+                Content = "is now disconnected",
+                ActivationCommand = "OpenControllerPage"
+            }); //, $"controller_{(uint)target.HID}_0", true);
         }
 
         private static void OnTargetVibrated(byte LargeMotor, byte SmallMotor)

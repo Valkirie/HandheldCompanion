@@ -440,6 +440,8 @@ public class ProfileManager : IManager
             Manager = "ProfileManager",
             Title = title,
             Content = content ?? string.Empty,
+            ActivationCommand = "OpenProfilesPage",
+            ActivationParameters = new() { { "profileId", profile.Guid.ToString() } },
             Content2 = hasSlotIssue ? Resources.ControllerPage_VirtualControllerNotOnSlot1Desc : string.Empty,
             Img = imageToUse,
             IsHero = useAsHero,
@@ -1014,7 +1016,8 @@ public class ProfileManager : IManager
             {
                 Manager = "ProfileManager",
                 Title = (profile.IsSubProfile ? "Subprofile" : "Profile") + " deleted",
-                Content = profile.Name
+                Content = profile.Name,
+                ActivationCommand = "OpenProfilesPage"
             });
 
             LogManager.LogInformation("Deleted {0}: {1}", (profile.IsSubProfile ? "subprofile" : "profile"), profilePath);
