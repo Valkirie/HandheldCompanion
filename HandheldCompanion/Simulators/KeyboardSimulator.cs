@@ -116,7 +116,7 @@ public static class KeyboardSimulator
         }
 
         // Send a key down event for the key
-        keybd_event(vk, scan, 0, UIntPtr.Zero);
+        keybd_event(vk, scan, (e.Flags & KEYEVENTF_EXTENDEDKEY) != 0 ? KEYEVENTF_EXTENDEDKEY : 0U, UIntPtr.Zero);
     }
 
     // A function that sends a key up event for a KeyEventArgs object using the keybd_event function
@@ -132,7 +132,7 @@ public static class KeyboardSimulator
                           ((e.Modifiers & System.Windows.Forms.Keys.Shift) != 0);
 
         // Send a key up event for the key
-        keybd_event(vk, scan, KEYEVENTF_KEYUP, UIntPtr.Zero);
+        keybd_event(vk, scan, KEYEVENTF_KEYUP | ((e.Flags & KEYEVENTF_EXTENDEDKEY) != 0 ? KEYEVENTF_EXTENDEDKEY : 0U), UIntPtr.Zero);
 
         // If the key is a modifier key, send a key up event for it
         if (isModifier)
