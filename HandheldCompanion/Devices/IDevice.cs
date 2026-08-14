@@ -1019,6 +1019,9 @@ public abstract class IDevice
                 {
                     switch (ProductName)
                     {
+                        case "Fremont":
+                            device = new SteamMachine();
+                            break;
                         case "Jupiter":
                         case "Galileo":
                             device = new SteamDeck();
@@ -1091,7 +1094,7 @@ public abstract class IDevice
             scope.Contexts.Device.Manufacturer = ManufacturerName;
             scope.Contexts.Device.Name = ProductName;
             scope.Contexts.Device.CpuDescription = Processor;
-            scope.Contexts.Device.DeviceType = device is not null ? device.DeviceType : "Desktop";
+            scope.Contexts.Device.DeviceType = device is not null ? device.DeviceType : "Unknown";
         });
 
         LogManager.LogInformation("{0} from {1}", ProductName, ManufacturerName);
