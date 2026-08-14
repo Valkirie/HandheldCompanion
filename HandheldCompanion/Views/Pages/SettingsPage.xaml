@@ -14,6 +14,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Settings"
     Title="{l:Static resx:Resources.SettingsPage_Settings}"
+    Margin="0,20,0,0"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:SettingsPageViewModel}"
     d:DesignHeight="2400"

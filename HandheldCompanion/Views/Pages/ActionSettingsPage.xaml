@@ -12,6 +12,7 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Title="Action Settings"
+    Margin="0,20,0,0"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:ButtonMappingViewModel}"
     d:DesignHeight="4300"
@@ -141,20 +142,20 @@
                     Header="{x:Static resx:Resources.LayoutPage_HapticFeedback}"
                     Visibility="{Binding ActionTypeIndex, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4|5|6|8}">
                     <DockPanel>
-                            <ComboBox Width="105" SelectedIndex="{Binding HapticModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ComboBoxItem Content="Off" />
-                                <ComboBoxItem Content="Down" />
-                                <ComboBoxItem Content="Up" />
-                                <ComboBoxItem Content="Both" />
-                            </ComboBox>
-                            <ComboBox
-                                Width="105"
-                                Margin="3,0,0,0"
-                                SelectedIndex="{Binding HapticStrengthIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ComboBoxItem Content="Low" />
-                                <ComboBoxItem Content="Medium" />
-                                <ComboBoxItem Content="High" />
-                            </ComboBox>
+                        <ComboBox Width="105" SelectedIndex="{Binding HapticModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="Off" />
+                            <ComboBoxItem Content="Down" />
+                            <ComboBoxItem Content="Up" />
+                            <ComboBoxItem Content="Both" />
+                        </ComboBox>
+                        <ComboBox
+                            Width="105"
+                            Margin="3,0,0,0"
+                            SelectedIndex="{Binding HapticStrengthIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="Low" />
+                            <ComboBoxItem Content="Medium" />
+                            <ComboBoxItem Content="High" />
+                        </ComboBox>
                     </DockPanel>
                 </ui:SettingsCard>
             </ikw:SimpleStackPanel>
@@ -209,9 +210,7 @@
                         </Canvas>
                     </Border>
                 </ui:SettingsCard>
-                <ui:SettingsCard
-                    Header="Use touchpad coordinates"
-                    Visibility="{Binding TouchpadCoordinateSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                <ui:SettingsCard Header="Use touchpad coordinates" Visibility="{Binding TouchpadCoordinateSettingsVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                     <ui:ToggleSwitch IsOn="{Binding TouchpadUseCoordinates, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard>
                 <ui:SettingsCard

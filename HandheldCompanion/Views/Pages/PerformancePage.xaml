@@ -13,6 +13,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Performance"
     Title="{l:Static resx:Resources.PerformancePage_Device}"
+    Margin="0,20,0,0"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:PerformancePageViewModel}"
     d:DesignHeight="2000"
@@ -58,6 +59,12 @@
         </StackPanel>
 
         <StackPanel>
+            <TextBlock
+                Margin="0,0,0,8"
+                behaviors:TextBlockUpperCase.IsUpperCase="True"
+                Style="{StaticResource CapitalAccentTextBlockStyle}"
+                Text="{Binding Name, RelativeSource={RelativeSource AncestorType=Page}}" />
+
             <ikw:SimpleStackPanel Spacing="28">
                 <!--  Power profile picker  -->
                 <ikw:SimpleStackPanel Spacing="3">

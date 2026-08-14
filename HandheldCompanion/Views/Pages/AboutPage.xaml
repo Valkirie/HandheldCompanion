@@ -2,6 +2,7 @@
     x:Class="HandheldCompanion.Views.Pages.AboutPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="clr-namespace:HandheldCompanion.Behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
@@ -11,6 +12,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="About"
     Title="{l:Static resx:Resources.AboutPage_About}"
+    Margin="0,20,0,0"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:AboutPageViewModel}"
     d:DesignHeight="1000"
@@ -18,204 +20,213 @@
     KeepAlive="True"
     mc:Ignorable="d">
 
-    <ikw:SimpleStackPanel Spacing="3">
-        <!--  Device details  -->
-        <ui:SettingsCard Description="{Binding Manufacturer, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Header="{Binding ProductName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-            <ui:SettingsCard.HeaderIcon>
-                <Image Source="{Binding DeviceImage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-            </ui:SettingsCard.HeaderIcon>
-        </ui:SettingsCard>
+    <StackPanel>
+        <!--
+        <TextBlock
+            Margin="0,0,0,8"
+            behaviors:TextBlockUpperCase.IsUpperCase="True"
+            Style="{StaticResource CapitalAccentTextBlockStyle}"
+            Text="{Binding Name, RelativeSource={RelativeSource AncestorType=Page}}" />
+        -->
 
-        <!--  Sensor specifications  -->
-        <Expander HorizontalAlignment="Stretch" IsExpanded="True">
-            <Expander.Header>
-                <DockPanel Margin="0,12,12,12">
-                    <ui:FontIcon
-                        Height="40"
-                        HorizontalAlignment="Center"
-                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                        Glyph="&#xE950;" />
+        <ikw:SimpleStackPanel Spacing="3">
+            <!--  Device details  -->
+            <ui:SettingsCard Description="{Binding Manufacturer, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Header="{Binding ProductName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                <ui:SettingsCard.HeaderIcon>
+                    <Image Source="{Binding DeviceImage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                </ui:SettingsCard.HeaderIcon>
+            </ui:SettingsCard>
 
-                    <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.AboutPage_SensorSpecification}" />
-                    </ikw:SimpleStackPanel>
-                </DockPanel>
-            </Expander.Header>
+            <!--  Sensor specifications  -->
+            <Expander HorizontalAlignment="Stretch" IsExpanded="True">
+                <Expander.Header>
+                    <DockPanel Margin="0,12,12,12">
+                        <ui:FontIcon
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            Glyph="&#xE950;" />
 
-            <Expander.Content>
-                <Grid FlowDirection="LeftToRight">
-                    <ikw:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="120" />
-                                <ColumnDefinition Width="5*" MinWidth="200" />
-                            </Grid.ColumnDefinitions>
-
-                            <ikw:SimpleStackPanel Spacing="12">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.AboutPage_SensorInternal}" />
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.AboutPage_SensorExternal}" />
-                            </ikw:SimpleStackPanel>
-
-                            <ikw:SimpleStackPanel Grid.Column="1" Spacing="12">
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{Binding InternalSensor, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{Binding ExternalSensor, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                            </ikw:SimpleStackPanel>
-                        </Grid>
-                    </ikw:SimpleStackPanel>
-                </Grid>
-            </Expander.Content>
-        </Expander>
-
-        <!--  Service  -->
-        <Expander HorizontalAlignment="Stretch" IsExpanded="True">
-            <Expander.Header>
-                <DockPanel Margin="0,12,12,12">
-                    <ui:FontIcon
-                        Height="40"
-                        HorizontalAlignment="Center"
-                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                        Glyph="&#xE74C;" />
-
-                    <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.AboutPage_Service}" />
-                    </ikw:SimpleStackPanel>
-                </DockPanel>
-            </Expander.Header>
-
-            <Expander.Content>
-                <Grid FlowDirection="LeftToRight">
-                    <ikw:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
-
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="120" />
-                                <ColumnDefinition Width="5*" MinWidth="200" />
-                            </Grid.ColumnDefinitions>
-
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-
-                            <!--  About  -->
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                Margin="0,0,0,5"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="{l:Static resx:Resources.AboutPage_Version}" />
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Margin="0,0,0,5"
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="{Binding Version}" />
-
-                            <!--  Author  -->
-                            <TextBlock
-                                Grid.Row="1"
-                                Grid.Column="0"
-                                Margin="0,0,0,5"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="{l:Static resx:Resources.AboutPage_Author}" />
-                            <TextBlock
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                Margin="0,0,0,5"
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="BenjaminLSR" />
-
-                            <!--  Contributors  -->
-                            <TextBlock
-                                Grid.Row="2"
-                                Grid.Column="0"
-                                Margin="0,0,0,5"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="{l:Static resx:Resources.AboutPage_Contributors}" />
-                            <TextBlock
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                Margin="0,0,0,5"
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="Nefarius, CasperH2O, B-Core, Frank东, Toomy, Havner, CoryManson, MSeys, ShadowFlare, trippyone, MiguelLedesmaC, Cheng77777, thororen1234, fighterguard, micdah, Geckon01, Bagboii, MeikoMenmaHonma, cerahmed, indiesaudi, Radther, Staubgeborener, twjmy, m33ts4k0z, howanghk, Creaous, xerootg, quangmach, MrCivsteR, 0SkillAllLuck, DevL0rd, romracer, JT, Moyogii, Sanheiii, Hijae" />
-
-                            <!--  Description  -->
-                            <TextBlock
-                                Grid.Row="3"
-                                Grid.Column="0"
-                                Margin="0,0,0,5"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="{l:Static resx:Resources.AboutPage_Description}" />
-                            <TextBlock
-                                Grid.Row="3"
-                                Grid.Column="1"
-                                Margin="0,0,0,5"
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="{l:Static resx:Resources.AboutPage_AboutDescription}" />
-
-                            <!--  Partner  -->
-                            <TextBlock
-                                Grid.Row="4"
-                                Grid.Column="0"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="{l:Static resx:Resources.AboutPage_Partner}" />
-                            <TextBlock
-                                Grid.Row="4"
-                                Grid.Column="1"
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource BodyTextBlockStyle}">
-                                <Hyperlink NavigateUri="https://droix.net/?ref=dxhc" RequestNavigate="Hyperlink_RequestNavigate">
-                                    DroiX
-                                </Hyperlink></TextBlock>
-                        </Grid>
-
-                        <!--  Separator  -->
-                        <Separator
-                            Margin="-46,0,-16,0"
-                            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                            BorderThickness="0,1,0,0" />
-
-                        <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="12">
-                            <TextBlock Text="{l:Static resx:Resources.AboutPage_RelatedLinks}" />
-                            <TextBlock>
-                                <Hyperlink NavigateUri="https://github.com/Valkirie/HandheldCompanion" RequestNavigate="Hyperlink_RequestNavigate">
-                                    SourceCode
-                                </Hyperlink>
-                            </TextBlock>
-                            <TextBlock>
-                                <Hyperlink NavigateUri="https://github.com/Valkirie/HandheldCompanion/wiki" RequestNavigate="Hyperlink_RequestNavigate">
-                                    Wiki
-                                </Hyperlink>
-                            </TextBlock>
-                            <TextBlock>
-                                <Hyperlink NavigateUri="https://www.paypal.com/paypalme/BenjaminLSR" RequestNavigate="Hyperlink_RequestNavigate">
-                                    Donate
-                                </Hyperlink>
-                            </TextBlock>
-                            <TextBlock>
-                                <Hyperlink NavigateUri="https://www.patreon.com/handheldcompanion" RequestNavigate="Hyperlink_RequestNavigate">
-                                    Patreon
-                                </Hyperlink>
-                            </TextBlock>
+                        <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.AboutPage_SensorSpecification}" />
                         </ikw:SimpleStackPanel>
+                    </DockPanel>
+                </Expander.Header>
 
-                    </ikw:SimpleStackPanel>
-                </Grid>
-            </Expander.Content>
-        </Expander>
+                <Expander.Content>
+                    <Grid FlowDirection="LeftToRight">
+                        <ikw:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
 
-    </ikw:SimpleStackPanel>
+                                <ikw:SimpleStackPanel Spacing="12">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.AboutPage_SensorInternal}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.AboutPage_SensorExternal}" />
+                                </ikw:SimpleStackPanel>
+
+                                <ikw:SimpleStackPanel Grid.Column="1" Spacing="12">
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="{Binding InternalSensor, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="{Binding ExternalSensor, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </ikw:SimpleStackPanel>
+                            </Grid>
+                        </ikw:SimpleStackPanel>
+                    </Grid>
+                </Expander.Content>
+            </Expander>
+
+            <!--  Service  -->
+            <Expander HorizontalAlignment="Stretch" IsExpanded="True">
+                <Expander.Header>
+                    <DockPanel Margin="0,12,12,12">
+                        <ui:FontIcon
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            Glyph="&#xE74C;" />
+
+                        <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{l:Static resx:Resources.AboutPage_Service}" />
+                        </ikw:SimpleStackPanel>
+                    </DockPanel>
+                </Expander.Header>
+
+                <Expander.Content>
+                    <Grid FlowDirection="LeftToRight">
+                        <ikw:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+
+                                <!--  About  -->
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Margin="0,0,0,5"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{l:Static resx:Resources.AboutPage_Version}" />
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Margin="0,0,0,5"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{Binding Version}" />
+
+                                <!--  Author  -->
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Margin="0,0,0,5"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{l:Static resx:Resources.AboutPage_Author}" />
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Margin="0,0,0,5"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="BenjaminLSR" />
+
+                                <!--  Contributors  -->
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Margin="0,0,0,5"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{l:Static resx:Resources.AboutPage_Contributors}" />
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Margin="0,0,0,5"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Nefarius, CasperH2O, B-Core, Frank东, Toomy, Havner, CoryManson, MSeys, ShadowFlare, trippyone, MiguelLedesmaC, Cheng77777, thororen1234, fighterguard, micdah, Geckon01, Bagboii, MeikoMenmaHonma, cerahmed, indiesaudi, Radther, Staubgeborener, twjmy, m33ts4k0z, howanghk, Creaous, xerootg, quangmach, MrCivsteR, 0SkillAllLuck, DevL0rd, romracer, JT, Moyogii, Sanheiii, Hijae" />
+
+                                <!--  Description  -->
+                                <TextBlock
+                                    Grid.Row="3"
+                                    Grid.Column="0"
+                                    Margin="0,0,0,5"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{l:Static resx:Resources.AboutPage_Description}" />
+                                <TextBlock
+                                    Grid.Row="3"
+                                    Grid.Column="1"
+                                    Margin="0,0,0,5"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{l:Static resx:Resources.AboutPage_AboutDescription}" />
+
+                                <!--  Partner  -->
+                                <TextBlock
+                                    Grid.Row="4"
+                                    Grid.Column="0"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{l:Static resx:Resources.AboutPage_Partner}" />
+                                <TextBlock
+                                    Grid.Row="4"
+                                    Grid.Column="1"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource BodyTextBlockStyle}">
+                                    <Hyperlink NavigateUri="https://droix.net/?ref=dxhc" RequestNavigate="Hyperlink_RequestNavigate">
+                                        DroiX
+                                    </Hyperlink></TextBlock>
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                Margin="-46,0,-16,0"
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0" />
+
+                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock Text="{l:Static resx:Resources.AboutPage_RelatedLinks}" />
+                                <TextBlock>
+                                    <Hyperlink NavigateUri="https://github.com/Valkirie/HandheldCompanion" RequestNavigate="Hyperlink_RequestNavigate">
+                                        SourceCode
+                                    </Hyperlink>
+                                </TextBlock>
+                                <TextBlock>
+                                    <Hyperlink NavigateUri="https://github.com/Valkirie/HandheldCompanion/wiki" RequestNavigate="Hyperlink_RequestNavigate">
+                                        Wiki
+                                    </Hyperlink>
+                                </TextBlock>
+                                <TextBlock>
+                                    <Hyperlink NavigateUri="https://www.paypal.com/paypalme/BenjaminLSR" RequestNavigate="Hyperlink_RequestNavigate">
+                                        Donate
+                                    </Hyperlink>
+                                </TextBlock>
+                                <TextBlock>
+                                    <Hyperlink NavigateUri="https://www.patreon.com/handheldcompanion" RequestNavigate="Hyperlink_RequestNavigate">
+                                        Patreon
+                                    </Hyperlink>
+                                </TextBlock>
+                            </ikw:SimpleStackPanel>
+
+                        </ikw:SimpleStackPanel>
+                    </Grid>
+                </Expander.Content>
+            </Expander>
+        </ikw:SimpleStackPanel>
+    </StackPanel>
 </Page>

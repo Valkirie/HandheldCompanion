@@ -219,15 +219,7 @@
             </controls:AdaptiveNavigationView.MenuItemContainerStyle>
 
             <ui:NavigationView.HeaderTemplate>
-                <DataTemplate>
-                    <Grid MaxWidth="1900">
-                        <TextBlock
-                            Margin="-2,-20,0,0"
-                            behaviors:TextBlockUpperCase.IsUpperCase="True"
-                            Style="{StaticResource CapitalAccentTextBlockStyle}"
-                            Text="{Binding Text}" />
-                    </Grid>
-                </DataTemplate>
+                <DataTemplate />
             </ui:NavigationView.HeaderTemplate>
 
             <ui:NavigationView.MenuItems>
@@ -360,7 +352,7 @@
             <ui:NavigationView.Content>
                 <ui:ScrollViewerEx
                     x:Name="scrollViewer"
-                    Margin="0,-32,0,0"
+                    Margin="0,-80,0,0"
                     PanningMode="VerticalFirst">
                     <ui:Frame
                         Name="ContentFrame"

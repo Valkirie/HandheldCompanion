@@ -14,6 +14,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Library"
     Title="{l:Static resx:Resources.MainWindow_navLibrary}"
+    Margin="0,20,0,0"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:LibraryPageViewModel}"
     d:DesignHeight="1080"
@@ -22,6 +23,12 @@
     mc:Ignorable="d">
 
     <StackPanel>
+        <TextBlock
+            Margin="0,0,0,8"
+            behaviors:TextBlockUpperCase.IsUpperCase="True"
+            Style="{StaticResource CapitalAccentTextBlockStyle}"
+            Text="{Binding Name, RelativeSource={RelativeSource AncestorType=Page}}" />
+
         <ikw:SimpleStackPanel Spacing="28">
             <Grid>
                 <Grid.ColumnDefinitions>

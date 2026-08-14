@@ -11,6 +11,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="About"
     Title="{l:Static resx:Resources.MainWindow_navNotifications}"
+    Margin="0,20,0,0"
     d:Background="White"
     d:DesignHeight="1000"
     d:DesignWidth="1000"

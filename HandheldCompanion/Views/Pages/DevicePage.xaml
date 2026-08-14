@@ -16,6 +16,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Device"
     Title="{l:Static resx:Resources.DevicePage_Device}"
+    Margin="0,20,0,0"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:DevicePageViewModel}"
     d:DesignHeight="4300"
@@ -24,6 +25,12 @@
     mc:Ignorable="d">
 
     <StackPanel>
+        <TextBlock
+            Margin="0,0,0,8"
+            behaviors:TextBlockUpperCase.IsUpperCase="True"
+            Style="{StaticResource CapitalAccentTextBlockStyle}"
+            Text="{Binding Name, RelativeSource={RelativeSource AncestorType=Page}}" />
+
         <ikw:SimpleStackPanel Spacing="28">
             <!--  Power options  -->
             <ikw:SimpleStackPanel Name="PowerOptionsStack" Spacing="8">

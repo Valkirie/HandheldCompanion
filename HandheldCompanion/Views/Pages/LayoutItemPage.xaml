@@ -12,6 +12,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="LayoutItem"
     Title="Layout"
+    Margin="0,20,0,0"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:LayoutItemPageViewModel}"
     d:DesignHeight="1000"

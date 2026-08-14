@@ -13,6 +13,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Overlay"
     Title="{l:Static resx:Resources.OverlayPage_Overlay}"
+    Margin="0,20,0,0"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:OverlayPageViewModel}"
     d:DesignHeight="2200"
@@ -21,6 +22,12 @@
     mc:Ignorable="d">
 
     <StackPanel>
+        <TextBlock
+            Margin="0,0,0,8"
+            behaviors:TextBlockUpperCase.IsUpperCase="True"
+            Style="{StaticResource CapitalAccentTextBlockStyle}"
+            Text="{Binding Name, RelativeSource={RelativeSource AncestorType=Page}}" />
+
         <ikw:SimpleStackPanel Spacing="28">
             <!--  OSD options  -->
             <ikw:SimpleStackPanel Spacing="8">

@@ -11,6 +11,7 @@
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Title="{l:Static resx:Resources.SettingsMode1_AdditionalSettings}"
+    Margin="0,20,0,0"
     d:DesignHeight="1000"
     d:DesignWidth="1000"
     mc:Ignorable="d">

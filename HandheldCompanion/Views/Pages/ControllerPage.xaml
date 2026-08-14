@@ -13,7 +13,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Controller"
     Title="{l:Static resx:Resources.ControllerPage_Controller}"
-    Margin="20"
+    Margin="0,20,0,0"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:ControllerPageViewModel}"
     d:DesignHeight="2200"
