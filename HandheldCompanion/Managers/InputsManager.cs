@@ -74,7 +74,6 @@ public static class InputsManager
     private static readonly Dictionary<bool, bool> KeyUsed = new() { { true, false }, { false, false } };
     private static readonly HashSet<Keys> PhysicalModifiersDown = new();
     private static readonly FirmwareWorkarounds.MSI MsiFirmwareWorkaround = new();
-    private static bool IsHandlingAltGrRelease;
 
     public static bool IsInitialized;
 
@@ -522,31 +521,9 @@ public static class InputsManager
             BufferKeys[false].Add(args);
         }
 
-        // Handle AltGr release, prevent endless loops
-        if (args.IsKeyUp && !IsHandlingAltGrRelease)
-        {
-            switch (args.KeyValue)
-            {
-                case (int)Keys.RMenu:
-                    IsHandlingAltGrRelease = true;
-                    try
-                    {
-                        // KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.RMenu);
-                        KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LMenu);
-                        // KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LControl);
-                        // KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.RControl);
-                        KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.Alt);
-                        KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LAlt);
-                        // KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.RAlt);
-                    }
-                    finally
-                    {
-                        IsHandlingAltGrRelease = false;
-                    }
-
-                    break;
-            }
-        }
+        if (fromPhysicalKeyboard && args.IsKeyUp && args.KeyCode == Keys.RMenu &&
+            !IsModifierPhysicallyDown((int)Keys.LControlKey))
+            KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LControl);
 
     Done:
         if (BufferKeys[true].Count > 0 || BufferKeys[false].Count > 0)
