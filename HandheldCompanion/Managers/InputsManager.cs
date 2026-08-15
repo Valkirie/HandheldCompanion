@@ -72,7 +72,6 @@ public static class InputsManager
     private static readonly Dictionary<bool, short> KeyIndexOEM = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, short> KeyIndexHotkey = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, bool> KeyUsed = new() { { true, false }, { false, false } };
-    private static readonly HashSet<Keys> PhysicalModifiersDown = new();
     private static readonly FirmwareWorkarounds.MSI MsiFirmwareWorkaround = new();
 
     public static bool IsInitialized;
@@ -251,16 +250,6 @@ public static class InputsManager
 
         bool Injected = (args.Flags & LLKHF_INJECTED) > 0;
         bool InjectedLL = (args.Flags & LLKHF_LOWER_IL_INJECTED) > 0;
-        bool fromPhysicalKeyboard = !(Injected || InjectedLL);
-
-        // Track physical modifier state (only real hardware events)
-        if (fromPhysicalKeyboard && IsModifierKey(args))
-        {
-            if (args.IsKeyDown)
-                PhysicalModifiersDown.Add(args.KeyCode);
-            else if (args.IsKeyUp)
-                PhysicalModifiersDown.Remove(args.KeyCode);
-        }
 
         if (MsiFirmwareWorkaround.ProcessKeyboardEvent(args, Injected || InjectedLL))
             return;
@@ -521,10 +510,6 @@ public static class InputsManager
             BufferKeys[false].Add(args);
         }
 
-        if (fromPhysicalKeyboard && args.IsKeyUp && args.KeyCode == Keys.RMenu &&
-            !IsModifierPhysicallyDown((int)Keys.LControlKey))
-            KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LControl);
-
     Done:
         if (BufferKeys[true].Count > 0 || BufferKeys[false].Count > 0)
             BufferFlushTimer.Start();
@@ -763,36 +748,6 @@ public static class InputsManager
             bufferChord.ButtonState[halfPress] = false;
             buttonState[halfPress] = false;
         }
-    }
-
-    private static bool IsModifierKey(Keys key)
-    {
-        switch (key)
-        {
-            case Keys.LControlKey:
-            case Keys.RControlKey:
-            case Keys.ControlKey:
-            case Keys.LMenu:      // Left Alt
-            case Keys.RMenu:      // Right Alt / AltGr
-            case Keys.Menu:       // Generic Alt
-            case Keys.LShiftKey:
-            case Keys.RShiftKey:
-            case Keys.ShiftKey:
-                return true;
-
-            default:
-                return false;
-        }
-    }
-
-    private static bool IsModifierKey(KeyEventArgsExt args)
-    {
-        return IsModifierKey(args.KeyCode);
-    }
-
-    private static bool IsModifierPhysicallyDown(int keyValue)
-    {
-        return PhysicalModifiersDown.Contains((Keys)keyValue);
     }
 
     private static ButtonFlags currentButtonFlags = ButtonFlags.None;
