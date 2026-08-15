@@ -78,7 +78,7 @@ jobs:
             }
 
             if ($attempt -eq $maxAttempts) {
-              throw "Failed to install Innosetup after $maxAttempts attempts."
+              throw "Failed to install Inno Setup after $maxAttempts attempts."
             }
 
             Write-Host "Retrying Innosetup install in 15 seconds (attempt $attempt of $maxAttempts)..."
