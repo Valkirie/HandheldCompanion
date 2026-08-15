@@ -70,7 +70,20 @@ jobs:
 
       - name: Install Innosetup
         run: |
-          choco install innosetup --version=${{ env.INNO_VERSION }} --force
+          $maxAttempts = 3
+          for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+            choco install innosetup --version=${{ env.INNO_VERSION }} --force
+            if ($LASTEXITCODE -eq 0) {
+              break
+            }
+
+            if ($attempt -eq $maxAttempts) {
+              throw "Failed to install Innosetup after $maxAttempts attempts."
+            }
+
+            Write-Host "Retrying Innosetup install in 15 seconds (attempt $attempt of $maxAttempts)..."
+            Start-Sleep -Seconds 15
+          }
           
       - name: Setup dotnet 10 SDK
         uses: actions/setup-dotnet@v3
