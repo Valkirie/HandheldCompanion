@@ -424,20 +424,21 @@ namespace HandheldCompanion.Actions
             if (released)
                 profile = default;
 
-            if (activeProfile.Mode == HapticMode.Off ||
-                (activeProfile.Mode == HapticMode.Down && released) ||
-                (activeProfile.Mode == HapticMode.Up && !released))
+            HapticStrength? strength = released
+                ? activeProfile.ReleaseStrength
+                : activeProfile.PressStrength;
+            if (!strength.HasValue)
                 return;
 
-            controller.SetHaptic(activeProfile.Strength, button, released);
+            controller.SetHaptic(strength.Value, button, released);
         }
 
         private static ClickHapticProfile ResolveClickHapticProfile(ControllerState state,
             ShiftSlot shiftSlot, IReadOnlyDictionary<ButtonFlags, IActions[]> buttonPlan,
             ButtonFlags[] sources)
         {
-            int combinedMode = (int)HapticMode.Off;
-            HapticStrength strength = HapticStrength.Low;
+            HapticStrength? pressStrength = null;
+            HapticStrength? releaseStrength = null;
 
             foreach (ButtonFlags source in sources)
             {
@@ -449,14 +450,23 @@ namespace HandheldCompanion.Actions
                     if (!IsShiftAllowed(shiftSlot, action.ShiftSlot, action.ShiftMatchAny))
                         continue;
 
-                    combinedMode |= (int)action.HapticMode;
-                    if (action.HapticMode != HapticMode.Off &&
-                        (int)action.HapticStrength > (int)strength)
-                        strength = action.HapticStrength;
+                    if (action.HapticMode is HapticMode.Down or HapticMode.Both)
+                        pressStrength = GetStrongerStrength(pressStrength, action.HapticStrength);
+
+                    if (action.HapticMode is HapticMode.Up or HapticMode.Both)
+                        releaseStrength = GetStrongerStrength(releaseStrength, action.HapticStrength);
                 }
             }
 
-            return new ClickHapticProfile((HapticMode)combinedMode, strength);
+            return new ClickHapticProfile(pressStrength, releaseStrength);
+        }
+
+        private static HapticStrength? GetStrongerStrength(HapticStrength? current, HapticStrength candidate)
+        {
+            if (!current.HasValue || (int)candidate > (int)current.Value)
+                return candidate;
+
+            return current;
         }
 
         internal void UpdateMovementHaptics(AxisLayoutFlags axis, Vector2 position, bool touched,
@@ -538,7 +548,9 @@ namespace HandheldCompanion.Actions
             }
         }
 
-        private readonly record struct ClickHapticProfile(HapticMode Mode, HapticStrength Strength);
+        private readonly record struct ClickHapticProfile(
+            HapticStrength? PressStrength,
+            HapticStrength? ReleaseStrength);
 
         private static short ClampShort(float value) => (short)Math.Clamp(value, short.MinValue, short.MaxValue);
     }
