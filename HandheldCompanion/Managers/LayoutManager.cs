@@ -40,6 +40,7 @@ public class LayoutManager : IManager
     private Layout? desktopLayout = null;
 
     private readonly ControllerState outputState = new();
+    private readonly TouchpadActions touchpadHaptics = new();
     private const string desktopLayoutFile = "desktop";
 
     public string TemplatesPath;
@@ -561,6 +562,7 @@ public class LayoutManager : IManager
             float deltaMs = delta * 1000f;
 
             ShiftSlot shiftSlot = ComputeShiftSlot(controllerState, deltaMs);
+            touchpadHaptics.UpdateClickHaptics(controllerState, shiftSlot, _buttonPlan);
 
             ProcessButtonActions(controllerState, shiftSlot, deltaMs);
             ProcessAxisActions(controllerState, shiftSlot, deltaMs);
@@ -700,6 +702,8 @@ public class LayoutManager : IManager
             bool touched = false;
             if (ControllerState.AxisTouchButtons.TryGetValue(layout.flags, out var touchButton))
                 touched = state.ButtonState[touchButton];
+            if (TouchpadActions.IsTouchpadAxis(flag))
+                touchpadHaptics.UpdateMovementHaptics(flag, layout.vector, touched, shiftSlot, actions);
 
             for (int i = 0; i < actions.Length; i++)
             {
