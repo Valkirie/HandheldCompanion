@@ -462,15 +462,18 @@ public class NeptuneController : SteamController
     {
         if (button is ButtonFlags.LeftPadTouch or ButtonFlags.RightPadTouch)
         {
-            ushort amplitude = strength switch
+            SCHapticMotor movementMotor = GetMotorForButton(button);
+            movementMotor = movementMotor == SCHapticMotor.Left ? SCHapticMotor.Right : SCHapticMotor.Left;
+
+            sbyte movementIntensity = strength switch
             {
-                HapticStrength.Low => 512,
-                HapticStrength.Medium => 1024,
-                HapticStrength.High => 2048,
-                _ => 0,
+                HapticStrength.Low => -7,
+                HapticStrength.Medium => -1,
+                HapticStrength.High => 5,
+                _ => -1,
             };
 
-            Controller?.SetHaptic((byte)GetMotorForButton(button), amplitude, 0, 1);
+            Controller?.SetHaptic2(movementMotor, NCHapticStyle.Weak, movementIntensity);
             return;
         }
 

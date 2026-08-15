@@ -611,6 +611,25 @@ namespace HandheldCompanion.ViewModels
         #region Haptic properties
 
         // Haptic properties - default to 0
+        public bool UsesMovementHaptics =>
+            IsAxisMapping &&
+            (Action is MouseActions { MouseType: MouseActionsType.Move or MouseActionsType.Scroll } ||
+             Action is TouchpadActions { TargetType: TouchpadTargetType.Axis });
+
+        public bool MovementHapticsEnabled
+        {
+            get => Action is not null && Action.HapticMode != HapticMode.Off;
+            set
+            {
+                if (Action is null || value == MovementHapticsEnabled)
+                    return;
+
+                Action.HapticMode = value ? HapticMode.Down : HapticMode.Off;
+                OnPropertyChanged(nameof(MovementHapticsEnabled));
+                OnPropertyChanged(nameof(HapticModeIndex));
+            }
+        }
+
         public virtual int HapticModeIndex
         {
             get => Action is not null ? (int)Action.HapticMode : 0;
@@ -620,6 +639,7 @@ namespace HandheldCompanion.ViewModels
                 {
                     Action.HapticMode = (HapticMode)value;
                     OnPropertyChanged(nameof(HapticModeIndex));
+                    OnPropertyChanged(nameof(MovementHapticsEnabled));
                 }
             }
         }
@@ -811,6 +831,8 @@ namespace HandheldCompanion.ViewModels
             nameof(TouchpadActionTypeVisibility),
             nameof(TouchpadAxisActionTypeVisibility),
             nameof(TouchpadCoordinateSettingsVisibility),
+            nameof(UsesMovementHaptics),
+            nameof(MovementHapticsEnabled),
         ];
 
         public override void OnPropertyChanged(string? propertyName)
@@ -834,6 +856,7 @@ namespace HandheldCompanion.ViewModels
                     base.OnPropertyChanged(nameof(InputShiftDisplayName));
                     base.OnPropertyChanged(nameof(TouchpadActionTypeVisibility));
                     base.OnPropertyChanged(nameof(TouchpadAxisActionTypeVisibility));
+                    base.OnPropertyChanged(nameof(UsesMovementHaptics));
                     base.OnPropertyChanged(nameof(Axis2ButtonVisibility));
                     base.OnPropertyChanged(nameof(Trigger2ButtonVisibility));
                     break;

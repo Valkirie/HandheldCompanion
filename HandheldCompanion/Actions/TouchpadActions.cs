@@ -480,14 +480,13 @@ namespace HandheldCompanion.Actions
             for (int i = 0; i < actions.Length; i++)
             {
                 IActions action = actions[i];
-                if (action.HapticMode is HapticMode.Down or HapticMode.Both &&
+                if (action.HapticMode != HapticMode.Off &&
                     IsShiftAllowed(shiftSlot, action.ShiftSlot, action.ShiftMatchAny) &&
                     (action is MouseActions { MouseType: MouseActionsType.Move or MouseActionsType.Scroll } ||
-                     action is TouchpadActions { TargetType: TouchpadTargetType.Axis }))
-                {
+                     action is TouchpadActions { TargetType: TouchpadTargetType.Axis }) &&
+                    (hapticAction is null ||
+                     (int)action.HapticStrength > (int)hapticAction.HapticStrength))
                     hapticAction = action;
-                    break;
-                }
             }
 
             IController? controller = ControllerManager.GetTarget();
