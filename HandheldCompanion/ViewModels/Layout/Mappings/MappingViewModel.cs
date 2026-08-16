@@ -613,8 +613,10 @@ namespace HandheldCompanion.ViewModels
         // Haptic properties - default to 0
         public bool UsesMovementHaptics =>
             IsAxisMapping &&
-            (Action is MouseActions { MouseType: MouseActionsType.Move or MouseActionsType.Scroll } ||
-             Action is TouchpadActions { TargetType: TouchpadTargetType.Axis });
+            (Action is TouchpadActions { TargetType: TouchpadTargetType.Axis } ||
+             (Value is AxisLayoutFlags sourceAxis &&
+              TouchpadActions.IsTouchpadAxis(sourceAxis) &&
+              Action is MouseActions { MouseType: MouseActionsType.Move or MouseActionsType.Scroll }));
 
         public bool MovementHapticsEnabled
         {
