@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
+using System.Threading;
 using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices.OneXPlayer
@@ -13,8 +17,6 @@ namespace HandheldCompanion.Devices.OneXPlayer
         {
             ProductIllustration = "device_onexplayer_apex";
             ProductModel = "ONEXPLAYERAPEX";
-            VendorHidInitProfile = OxpHidInitProfile.Apex;
-
             GyroMatrix = new()
             {
                 Axis = new Vector3(1.0f, -1.0f, 1.0f),
@@ -84,6 +86,18 @@ namespace HandheldCompanion.Devices.OneXPlayer
             DeviceHotkeys[typeof(MainWindowCommands)].InputsChordType = InputsChordType.Click;
             DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
             DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
+        }
+
+        protected override async void Device_Inserted(bool reScan = false)
+        {
+            if (reScan)
+                await WaitUntilReady();
+
+            base.Device_Inserted();
+            Thread.Sleep(100);
+            WriteVendorHidCommand(0xB2, [0x01, 0x1F, 0x40, 0x03, 0x02, 0x03, 0x00, 0x00, 0x00, 0x01]);
+            Thread.Sleep(200);
+            WriteVendorHidCommand(0xB2, [0x00, 0x01, 0x02]);
         }
 
         protected override ButtonFlags MapVendorButton(byte buttonId)

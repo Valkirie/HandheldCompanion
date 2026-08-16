@@ -1749,6 +1749,12 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="Enum_XInputController_ButtonFlags_B1" xml:space="preserve">
     <value>A</value>
   </data>
+  <data name="Enum_OneXPlayerX2Controller_ButtonFlags_L4" xml:space="preserve">
+    <value>M1</value>
+  </data>
+  <data name="Enum_OneXPlayerX2Controller_ButtonFlags_R4" xml:space="preserve">
+    <value>M2</value>
+  </data>
   <data name="Enum_XInputController_ButtonFlags_B2" xml:space="preserve">
     <value>B</value>
   </data>
