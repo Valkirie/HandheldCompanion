@@ -618,7 +618,7 @@ namespace HandheldCompanion.ViewModels
 
         public bool MovementHapticsEnabled
         {
-            get => Action is not null && Action.HapticMode != HapticMode.Off;
+            get => Action?.HapticMode is HapticMode.Down or HapticMode.Both;
             set
             {
                 if (Action is null || value == MovementHapticsEnabled)

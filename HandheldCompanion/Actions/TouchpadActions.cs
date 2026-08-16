@@ -219,6 +219,15 @@ namespace HandheldCompanion.Actions
                 isTouched = !axisSlotDisabled &&
                     outVector != Vector2.Zero &&
                     (!sourceReportsTouch || touched);
+
+                if (!IsTouchpadAxis(layout.flags))
+                {
+                    IActions? hapticAction = HapticMode is HapticMode.Down or HapticMode.Both
+                        ? this
+                        : null;
+                    UpdateMovementHaptics(Axis, outVector, isTouched, hapticAction);
+                }
+
                 return;
             }
 
@@ -472,15 +481,12 @@ namespace HandheldCompanion.Actions
         internal void UpdateMovementHaptics(AxisLayoutFlags axis, Vector2 position, bool touched,
             ShiftSlot shiftSlot, IActions[] actions)
         {
-            MovementHapticState state = axis == AxisLayoutFlags.LeftPad
-                ? leftMovementHaptics
-                : rightMovementHaptics;
             IActions? hapticAction = null;
 
             for (int i = 0; i < actions.Length; i++)
             {
                 IActions action = actions[i];
-                if (action.HapticMode != HapticMode.Off &&
+                if (action.HapticMode is HapticMode.Down or HapticMode.Both &&
                     IsShiftAllowed(shiftSlot, action.ShiftSlot, action.ShiftMatchAny) &&
                     (action is MouseActions { MouseType: MouseActionsType.Move or MouseActionsType.Scroll } ||
                      action is TouchpadActions { TargetType: TouchpadTargetType.Axis }) &&
@@ -489,6 +495,15 @@ namespace HandheldCompanion.Actions
                     hapticAction = action;
             }
 
+            UpdateMovementHaptics(axis, position, touched, hapticAction);
+        }
+
+        private void UpdateMovementHaptics(AxisLayoutFlags axis, Vector2 position, bool touched,
+            IActions? hapticAction)
+        {
+            MovementHapticState state = axis == AxisLayoutFlags.LeftPad
+                ? leftMovementHaptics
+                : rightMovementHaptics;
             IController? controller = ControllerManager.GetTarget();
             if (!ReferenceEquals(movementController, controller))
             {
