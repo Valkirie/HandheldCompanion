@@ -103,13 +103,17 @@ public class OneXPlayerX2 : OneXPlayerX1
         DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = false;
     }
 
-    protected override async void Device_Inserted(bool reScan = false)
+    protected override void InitializeVendorHidCommands()
     {
-        if (reScan)
-            await WaitUntilReady();
-
-        base.Device_Inserted();
-        await Task.Delay(4000);
+        // X2 uses the same hid_v1 framing as HHD's hid_v2_x2 path, but keeps
+        // its own initialization here so Device_Inserted is not cascaded.
+        Thread.Sleep(4000);
+        // Equivalent to the two remapping pages used by the non-Mini X2 path.
+        WriteVendorHidCommand(0xB4, BuildRemapPage1(0x01));
+        Thread.Sleep(50);
+        WriteVendorHidCommand(0xB4, BuildRemapPage2(0x01, 0x67, 0x66));
+        Thread.Sleep(50);
+        // X2-specific B2 setup; this is not HHD gen_intercept(False).
         WriteVendorHidCommand(0xB2, [0x01, 0x1F, 0x40, 0x03, 0x02, 0x03, 0x00, 0x00, 0x00, 0x01]);
     }
 

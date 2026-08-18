@@ -516,10 +516,18 @@ public class OneXPlayerX1 : OneXAOKZOE
             return;
 
         IsReading = true;
+        // HHD's controller opens the hid_v1/hid_v2_x2 OxpHidraw instance here,
+        // then lets the device-specific protocol choose its initialization pages.
+        InitializeVendorHidCommands();
+        _ = ReadLoopAsync(device);
+    }
+
+    protected virtual void InitializeVendorHidCommands()
+    {
+        // Equivalent to hid_v1.INITIALIZE for standard X1 devices.
         WriteVendorHidCommand(0xB4, BuildRemapPage1(0x01));
         Thread.Sleep(50);
         WriteVendorHidCommand(0xB4, BuildRemapPage2(0x01, 0x67, 0x66));
-        _ = ReadLoopAsync(device);
     }
 
     public override bool IsReady()
@@ -635,6 +643,9 @@ public class OneXPlayerX1 : OneXAOKZOE
         buffer[length - 1] = commandId;
         device.Write(buffer);
     }
+
+    protected HidDevice? GetVendorHidDeviceForLighting() =>
+        hidDevices.GetValueOrDefault(VendorHidId);
 
     protected static byte[] BuildRemapPage1(byte preset) =>
     [

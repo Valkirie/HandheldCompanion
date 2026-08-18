@@ -111,7 +111,7 @@ namespace HandheldCompanion.Devices
         #region HID v1 helpers (X1 mini / G1 / AOKZOE A1X, etc.)
 
         /// <summary>
-        /// Common helper for HID v1 brightness command (gen_brightness).
+        /// Common helper for HHD hid_v1.gen_brightness.
         /// Maps 0–100 % to enabled + low/medium/high.
         /// </summary>
         protected bool SendV1Brightness(HidDevice? device, int brightness, byte side = 0x00)
@@ -144,16 +144,16 @@ namespace HandheldCompanion.Devices
         }
 
         /// <summary>
-        /// HID v1 solid colour helper (gen_rgb_solid).
+        /// HID v1 equivalent of HHD hid_v1.gen_rgb_solid; 0xF0 is its breathing variant.
         /// </summary>
-        protected bool SendV1SolidColor(HidDevice? device, Color color, byte side = 0x00)
+        protected bool SendV1SolidColor(HidDevice? device, Color color, byte side = 0x00, bool breathing = false)
         {
             if (device is null || !device.IsConnected)
                 return false;
 
             List<byte> cmd = new()
             {
-                0xFE,           // solid-color mode
+                breathing ? (byte)0xF0 : (byte)0xFE, // solid-color or breathing mode
                 side,           // side (0 = both sticks / light zones)
                 0x02            // constant
             };
