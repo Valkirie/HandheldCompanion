@@ -1,4 +1,5 @@
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Shared;
 using System.Threading;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -26,9 +27,23 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         // This is HHD's hid_v2_x2 configuration, implemented by OxpHidraw
         // with x2=True. The Mini Pro requires all three pages; the first two
         // alone are ignored by the firmware.
+        HidLibrary.HidDevice? device = GetVendorHidDeviceForLighting();
+        if (device is null)
+        {
+            LogManager.LogWarning("X2 Mini Pro vendor HID device is not bound; initialization skipped");
+            return;
+        }
+
+        LogManager.LogInformation(
+            "X2 Mini Pro vendor HID bound: PID 0x{0:X4}, usage page 0x{1:X4}, usage 0x{2:X4}, output report length {3}",
+            device.Attributes.ProductId,
+            device.Capabilities.UsagePage,
+            device.Capabilities.Usage,
+            device.Capabilities.OutputReportByteLength);
+
         System.Threading.Thread.Sleep(4000);
         // Equivalent to hid_v1.INITIALIZE_X2[0].
-        WriteVendorHidCommand(0xB4,
+        WriteMiniProHidCommand(0xB4,
         [
             0x02, 0x38, 0x02, 0x01, 0x01,
             0x01, 0x01, 0x01, 0x00, 0x00, 0x00,
@@ -43,7 +58,7 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         ]);
         System.Threading.Thread.Sleep(50);
         // Equivalent to hid_v1.INITIALIZE_X2[1], including M1/M2 -> F15/F16.
-        WriteVendorHidCommand(0xB4,
+        WriteMiniProHidCommand(0xB4,
         [
             0x02, 0x38, 0x02, 0x02, 0x01,
             0x0A, 0x01, 0x0A, 0x00, 0x00, 0x00,
@@ -58,11 +73,30 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         ]);
         System.Threading.Thread.Sleep(50);
         // Equivalent to hid_v1.INITIALIZE_X2[2], the required third partial page.
-        WriteVendorHidCommand(0xB4,
+        WriteMiniProHidCommand(0xB4,
         [0x02, 0x38, 0x02, 0x03, 0x01, 0x24, 0x02, 0x02, 0x05, 0x00, 0x00, 0x25, 0x01, 0x21, 0x00, 0x00, 0x00]);
         System.Threading.Thread.Sleep(50);
         // Equivalent to hid_v1.gen_intercept(False), releasing vendor interception.
-        WriteVendorHidCommand(0xB2, [0x00, 0x01, 0x02]);
+        WriteMiniProHidCommand(0xB2, [0x00, 0x01, 0x02]);
+        LogManager.LogInformation("X2 Mini Pro vendor HID initialization sequence completed");
+    }
+
+    private bool WriteMiniProHidCommand(byte commandId, byte[] payload)
+    {
+        bool result = WriteVendorHidCommand(commandId, payload);
+        if (!result)
+            LogManager.LogWarning("X2 Mini Pro HID write failed: command 0x{0:X2}, payload length {1}", commandId, payload.Length);
+        else
+            LogManager.LogDebug("X2 Mini Pro HID write succeeded: command 0x{0:X2}, payload length {1}", commandId, payload.Length);
+        return result;
+    }
+
+    protected override void HandleEvent(byte buttonId, bool pressed)
+    {
+        if (buttonId is 0x22 or 0x23)
+            LogManager.LogInformation("X2 Mini Pro vendor paddle report: button 0x{0:X2}, pressed {1}", buttonId, pressed);
+
+        base.HandleEvent(buttonId, pressed);
     }
 
     public override bool SetLedBrightness(int brightness)

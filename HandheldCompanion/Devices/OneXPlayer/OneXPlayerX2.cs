@@ -76,6 +76,10 @@ public class OneXPlayerX2 : OneXPlayerX1
 
         vendorId = 0x1A86;
         productIds = [0xFE00, 0x1305];
+        // X2 variants can expose the same vendor collection under either PID.
+        // Keep both entries aligned with the HHD X1-mini vendor HID selector:
+        // usage page 0xFF00, usage 0x0001.
+        hidFilters[0x1305] = new HidFilter(unchecked((short)0xFF00), unchecked(0x0001));
 
         // Suppress both firmware chord variants; OEM1 is delivered over vendor HID.
         OEMChords.RemoveAll(c => c.state.Buttons.Contains(ButtonFlags.OEM1));

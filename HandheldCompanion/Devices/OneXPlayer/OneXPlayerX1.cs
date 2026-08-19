@@ -614,16 +614,16 @@ public class OneXPlayerX1 : OneXAOKZOE
             KeyRelease(button);
     }
 
-    protected void WriteVendorHidCommand(byte commandId, byte[] payload)
+    protected bool WriteVendorHidCommand(byte commandId, byte[] payload)
     {
         if (!hidDevices.TryGetValue(VendorHidId, out HidDevice? device))
-            return;
+            return false;
 
         // guard against an interface whose output report is missing or too small
         // to hold the framed command.
         int length = device.Capabilities.OutputReportByteLength;
-        if (length < 6)
-            return;
+        if (length < 6 || payload.Length > length - 5)
+            return false;
 
         // Emit the exact frame the firmware expects: the command id occupies
         // byte 0 (the report-id slot), followed by the frame marker and index,
@@ -637,11 +637,10 @@ public class OneXPlayerX1 : OneXAOKZOE
         buffer[0] = commandId;
         buffer[1] = FrameMarker;
         buffer[2] = 0x01;
-        int count = Math.Min(payload.Length, length - 5);
-        Array.Copy(payload, 0, buffer, 3, count);
-        buffer[length - 2] = FrameMarker;
-        buffer[length - 1] = commandId;
-        device.Write(buffer);
+        Array.Copy(payload, 0, buffer, 3, payload.Length);
+        buffer[^2] = FrameMarker;
+        buffer[^1] = commandId;
+        return device.Write(buffer);
     }
 
     protected HidDevice? GetVendorHidDeviceForLighting() =>
