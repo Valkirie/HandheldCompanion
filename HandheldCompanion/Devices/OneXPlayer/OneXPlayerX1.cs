@@ -619,28 +619,25 @@ public class OneXPlayerX1 : OneXAOKZOE
         if (!hidDevices.TryGetValue(VendorHidId, out HidDevice? device))
             return false;
 
-        // guard against an interface whose output report is missing or too small
-        // to hold the framed command.
-        int length = device.Capabilities.OutputReportByteLength;
-        if (length < 6 || payload.Length > length - 5)
+        // CreateReport() exposes the protocol data area without the transport
+        // report ID. WriteReport() adds that report ID and preserves the HID
+        // report descriptor's device-specific output length.
+        HidReport report = device.CreateReport();
+        report.ReportId = 0x00;
+
+        int frameLength = report.Data.Length;
+        if (frameLength < 6 || payload.Length > frameLength - 5)
             return false;
 
-        // Emit the exact frame the firmware expects: the command id occupies
-        // byte 0 (the report-id slot), followed by the frame marker and index,
-        // the payload, then the trailing marker/command-id in the final two
-        // bytes. This mirrors the raw write used before the HidLibrary migration.
-        // Do NOT use CreateReport()/WriteReport() here: that prepends a 0x00
-        // report-id byte and shifts the whole frame, which the OneXPlayer
-        // firmware misinterprets (it can flip the pad's reporting mode and kill
-        // the XInput gamepad while leaving vendor buttons working).
-        byte[] buffer = new byte[length];
-        buffer[0] = commandId;
-        buffer[1] = FrameMarker;
-        buffer[2] = 0x01;
-        Array.Copy(payload, 0, buffer, 3, payload.Length);
-        buffer[^2] = FrameMarker;
-        buffer[^1] = commandId;
-        return device.Write(buffer);
+        // HHD gen_cmd() produces this protocol frame without a report ID.
+        report.Data[0] = commandId;
+        report.Data[1] = FrameMarker;
+        report.Data[2] = 0x01;
+        Array.Copy(payload, 0, report.Data, 3, payload.Length);
+        report.Data[^2] = FrameMarker;
+        report.Data[^1] = commandId;
+
+        return device.WriteReport(report);
     }
 
     protected HidDevice? GetVendorHidDeviceForLighting() =>
