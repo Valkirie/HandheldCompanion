@@ -395,18 +395,26 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         {
             string query = "SELECT Name FROM Win32_VideoController";
 
-            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query))
+            try
             {
-                foreach (ManagementObject obj in searcher.Get())
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query))
                 {
-                    string? name = obj["Name"]?.ToString()?.ToLower();
-
-                    if (!string.IsNullOrEmpty(name) && name.Contains(vendorKeyword.ToLower()))
+                    foreach (ManagementObject obj in searcher.Get())
                     {
-                        return true;
+                        string? name = obj["Name"]?.ToString()?.ToLower();
+
+                        if (!string.IsNullOrEmpty(name) && name.Contains(vendorKeyword.ToLower()))
+                        {
+                            return true;
+                        }
                     }
                 }
             }
+            catch (ManagementException ex)
+            {
+                LogManager.LogWarning("Failed to query GPU information: {0}", ex.Message);
+            }
+
             return false;
         }
 
