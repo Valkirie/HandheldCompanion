@@ -44,7 +44,6 @@ public static class InputsManager
 
     private const uint LLKHF_INJECTED = 0x00000010;
     private const uint LLKHF_LOWER_IL_INJECTED = 0x00000002;
-
     private const string BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING = "BlockMsiClawWinGHotkey";
 
     // Gamepad variables
@@ -72,8 +71,12 @@ public static class InputsManager
     private static readonly Dictionary<bool, short> KeyIndexOEM = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, short> KeyIndexHotkey = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, bool> KeyUsed = new() { { true, false }, { false, false } };
-    private static readonly HashSet<Keys> PhysicalModifiersDown = new();
+    private static readonly HashSet<Keys> ReplayedModifiersDown = [];
+    private static readonly object ReplayedModifiersLock = new();
     private static readonly FirmwareWorkarounds.MSI MsiFirmwareWorkaround = new();
+    private static int? PendingAltGrControlTimestamp;
+    private static Keys? PendingAltGrControlKey;
+    private static Keys? AltGrControlKey;
 
     public static bool IsInitialized;
 
@@ -253,13 +256,40 @@ public static class InputsManager
         bool InjectedLL = (args.Flags & LLKHF_LOWER_IL_INJECTED) > 0;
         bool fromPhysicalKeyboard = !(Injected || InjectedLL);
 
-        // Track physical modifier state (only real hardware events)
-        if (fromPhysicalKeyboard && IsModifierKey(args))
+        if (fromPhysicalKeyboard)
         {
             if (args.IsKeyDown)
-                PhysicalModifiersDown.Add(args.KeyCode);
-            else if (args.IsKeyUp)
-                PhysicalModifiersDown.Remove(args.KeyCode);
+            {
+                if (args.KeyCode is Keys.LControlKey or Keys.ControlKey)
+                {
+                    PendingAltGrControlTimestamp = args.Timestamp;
+                    PendingAltGrControlKey = args.KeyCode;
+                }
+                else
+                {
+                    if (args.KeyCode == Keys.RMenu && PendingAltGrControlTimestamp == args.Timestamp && PendingAltGrControlKey is Keys controlKey)
+                        AltGrControlKey = controlKey;
+
+                    PendingAltGrControlTimestamp = null;
+                    PendingAltGrControlKey = null;
+                }
+            }
+            else if (args.IsKeyUp && IsModifierKey(args))
+            {
+                if (args.KeyCode == PendingAltGrControlKey)
+                {
+                    PendingAltGrControlTimestamp = null;
+                    PendingAltGrControlKey = null;
+                }
+
+                ReleaseReplayedModifier(args.KeyCode);
+
+                if (args.KeyCode == Keys.RMenu && AltGrControlKey is Keys controlKey)
+                {
+                    AltGrControlKey = null;
+                    ReleaseReplayedModifier(controlKey);
+                }
+            }
         }
 
         if (MsiFirmwareWorkaround.ProcessKeyboardEvent(args, Injected || InjectedLL))
@@ -521,23 +551,36 @@ public static class InputsManager
             BufferKeys[false].Add(args);
         }
 
-        if (fromPhysicalKeyboard && args.IsKeyUp && args.KeyCode == Keys.RMenu &&
-            !IsModifierPhysicallyDown((int)Keys.LControlKey))
-            KeyboardSimulator.KeyUp((VirtualKeyCode)KeyCode.LControl);
-
     Done:
         if (BufferKeys[true].Count > 0 || BufferKeys[false].Count > 0)
             BufferFlushTimer.Start();
     }
 
+    private static void ReleaseReplayedModifier(Keys key)
+    {
+        bool wasReplayed;
+        lock (ReplayedModifiersLock)
+            wasReplayed = ReplayedModifiersDown.Remove(key);
+
+        if (wasReplayed)
+            KeyboardSimulator.KeyUp((VirtualKeyCode)key);
+    }
+
+    private static void ReleaseReplayedModifiers()
+    {
+        Keys[] modifiers;
+        lock (ReplayedModifiersLock)
+        {
+            modifiers = ReplayedModifiersDown.ToArray();
+            ReplayedModifiersDown.Clear();
+        }
+
+        foreach (Keys modifier in modifiers)
+            KeyboardSimulator.KeyUp((VirtualKeyCode)modifier);
+    }
+
     private static void ReleaseKeyboardBuffer()
     {
-        // Before replaying buffered keys, fix potential *stuck modifiers*:
-        // If we buffered a modifier KeyDown, never saw a matching KeyUp in the buffer,
-        // and that modifier is no longer physically held, synthesize a KeyUp for it.
-        List<KeyEventArgsExt> pressedKeys = BufferKeys[true];
-        List<KeyEventArgsExt> releasedKeys = BufferKeys[false];
-
         // Send all key inputs (first downs, then ups)
         foreach (bool IsKeyDown in new[] { true, false })
         {
@@ -558,10 +601,22 @@ public static class InputsManager
                 switch (IsKeyDown)
                 {
                     case true:
+                        if (IsModifierKey(args))
+                        {
+                            lock (ReplayedModifiersLock)
+                                ReplayedModifiersDown.Add(args.KeyCode);
+                        }
+
                         KeyboardSimulator.KeyDown(args);
                         break;
 
                     case false:
+                        if (IsModifierKey(args))
+                        {
+                            lock (ReplayedModifiersLock)
+                                ReplayedModifiersDown.Remove(args.KeyCode);
+                        }
+
                         KeyboardSimulator.KeyUp(args);
                         break;
                 }
@@ -570,7 +625,7 @@ public static class InputsManager
             // clear buffer for this direction
             BufferKeys[IsKeyDown].Clear();
         }
-    }
+     }
 
     private static List<KeyCode> GetChord(List<KeyEventArgsExt> args)
     {
@@ -591,7 +646,6 @@ public static class InputsManager
         m_GlobalHook?.KeyDown += M_GlobalHook_KeyEvent;
         m_GlobalHook?.KeyUp += M_GlobalHook_KeyEvent;
 
-        // raise events
         switch (ManagerFactory.settingsManager.Status)
         {
             default:
@@ -620,6 +674,11 @@ public static class InputsManager
         m_GlobalHook?.KeyDown -= M_GlobalHook_KeyEvent;
         m_GlobalHook?.KeyUp -= M_GlobalHook_KeyEvent;
 
+        ReleaseReplayedModifiers();
+        PendingAltGrControlTimestamp = null;
+        PendingAltGrControlKey = null;
+        AltGrControlKey = null;
+
         MsiFirmwareWorkaround.Enabled = false;
 
         if (OS)
@@ -630,18 +689,22 @@ public static class InputsManager
         LogManager.LogInformation("{0} has stopped", "InputsManager");
     }
 
-    private static void SettingsManager_Initialized()
-    {
-        QuerySettings();
-    }
+    private static void SettingsManager_Initialized() => QuerySettings();
 
     private static void QuerySettings()
     {
-        // manage events
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        SettingsManager_SettingValueChanged(
+            BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING,
+            ManagerFactory.settingsManager.GetBoolean(BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING),
+            false,
+            false);
+    }
 
-        // raise events
-        SettingsManager_SettingValueChanged(BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING, ManagerFactory.settingsManager.GetBoolean(BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING), false, false);
+    private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
+    {
+        if (name == BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING)
+            MsiFirmwareWorkaround.Enabled = Convert.ToBoolean(value) && IDevice.GetCurrent() is ClawA1M;
     }
 
     private static void InitGlobalHook()
@@ -659,17 +722,6 @@ public static class InputsManager
 
         m_GlobalHook.Dispose();
         m_GlobalHook = null;
-    }
-
-    private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
-    {
-        switch (name)
-        {
-            case BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING:
-                bool enabled = Convert.ToBoolean(value);
-                MsiFirmwareWorkaround.Enabled = enabled && IDevice.GetCurrent() is ClawA1M;
-                break;
-        }
     }
 
     private static void UpdateInputs(ControllerState controllerState, bool IsMapped)
@@ -790,11 +842,6 @@ public static class InputsManager
         return IsModifierKey(args.KeyCode);
     }
 
-    private static bool IsModifierPhysicallyDown(int keyValue)
-    {
-        return PhysicalModifiersDown.Contains((Keys)keyValue);
-    }
-
     private static ButtonFlags currentButtonFlags = ButtonFlags.None;
     public static void StartListening(ButtonFlags buttonFlags, InputsChordTarget chordTarget)
     {
@@ -881,5 +928,4 @@ public static class InputsManager
     {
         StopListening();
     }
-
 }
