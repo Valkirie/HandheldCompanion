@@ -4,6 +4,7 @@ using HidLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows.Media;
 
 namespace HandheldCompanion.Devices
@@ -36,7 +37,14 @@ namespace HandheldCompanion.Devices
 
             // allow OneX turbo button to pass key inputs
             EcWriteByte(0xF1, 0x40);
+
+            // wait a bit for the EC to process the change
+            Thread.Sleep(50);
+
             EcWriteByte(0xF2, 0x02);
+
+            // wait a bit for the EC to process the change
+            Thread.Sleep(50);
 
             if (EcReadByte(0xF1) == 0x40 && EcReadByte(0xF2) == 0x02)
                 LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
@@ -47,7 +55,14 @@ namespace HandheldCompanion.Devices
         public override void Close()
         {
             EcWriteByte(0xF1, 0x00);
+
+            // wait a bit for the EC to process the change
+            Thread.Sleep(50);
+
             EcWriteByte(0xF2, 0x00);
+
+            // wait a bit for the EC to process the change
+            Thread.Sleep(50);
 
             if (EcReadByte(0xF1) == 0x00 && EcReadByte(0xF2) == 0x00)
                 LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);

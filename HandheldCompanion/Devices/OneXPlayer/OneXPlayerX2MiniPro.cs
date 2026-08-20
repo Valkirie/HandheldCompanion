@@ -16,6 +16,9 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
 
         nTDP = new double[] { 15, 35, 54 };
         cTDP = new double[] { 15, 54 };
+
+        EnableSerialPort = false;
+
         DynamicLightingCapabilities |= LEDLevel.Breathing;
 
         OEMChords.Add(new KeyboardChord("M1", [KeyCode.F15], [KeyCode.F15], false, ButtonFlags.L4));
@@ -31,26 +34,18 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         if (device is null)
             return;
 
-        LogManager.LogTrace(
-            "X2 Mini Pro vendor HID bound: PID 0x{0:X4}, usage page 0x{1:X4}, usage 0x{2:X4}, output report length {3}",
-            device.Attributes.ProductId,
-            device.Capabilities.UsagePage,
-            device.Capabilities.Usage,
-            device.Capabilities.OutputReportByteLength);
-
         Thread.Sleep(4000);
         // Equivalent to hid_v1.INITIALIZE_X2[0].
-        WriteMiniProHidCommand(0xB4, BuildRemapPage1(0x01));
+        WriteVendorHidCommand(0xB4, BuildRemapPage1(0x01));
         Thread.Sleep(50);
         // Equivalent to hid_v1.INITIALIZE_X2[1], including M1/M2 -> F15/F16.
-        WriteMiniProHidCommand(0xB4, BuildRemapPage2(0x01, 0x68, 0x69));
+        WriteVendorHidCommand(0xB4, BuildRemapPage2(0x01, 0x68, 0x69));
         Thread.Sleep(50);
         // Equivalent to hid_v1.INITIALIZE_X2[2], the required third partial page.
-        WriteMiniProHidCommand(0xB4, BuildRemapPage3());
+        WriteVendorHidCommand(0xB4, BuildRemapPage3());
         Thread.Sleep(50);
         // Equivalent to hid_v1.gen_intercept(False), releasing vendor interception.
-        WriteMiniProHidCommand(0xB2, BuildIntercept(false));
-        LogManager.LogTrace("X2 Mini Pro vendor HID initialization sequence completed");
+        WriteVendorHidCommand(0xB2, BuildIntercept(false));
     }
 
     protected override byte[] BuildRemapPage1(byte preset) =>
@@ -88,16 +83,6 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         0x25, 0x01, 0x21, 0x00, 0x00, 0x00,
     ];
 
-    private bool WriteMiniProHidCommand(byte commandId, byte[] payload)
-    {
-        bool result = WriteVendorHidCommand(commandId, payload);
-        if (!result)
-            LogManager.LogTrace("X2 Mini Pro HID write failed: command 0x{0:X2}, payload length {1}", commandId, payload.Length);
-        else
-            LogManager.LogTrace("X2 Mini Pro HID write succeeded: command 0x{0:X2}, payload length {1}", commandId, payload.Length);
-        return result;
-    }
-
     protected override void SetTurboButtonTakeover(bool enabled)
     {
         // do nothing; the X2 Mini Pro does not support ACPI/WMI interception of the Turbo button
@@ -123,7 +108,7 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         foreach (byte side in new byte[] { 0x01, 0x02, 0x07, 0x05, 0x06 })
         {
             result &= SendV1Brightness(device, brightness, side);
-            Thread.Sleep(50);
+            Thread.Sleep(100);
         }
         return result;
     }
@@ -143,13 +128,13 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         foreach (byte side in new byte[] { 0x01, 0x02, 0x07 })
         {
             result &= SendV1SolidColor(device, mainColor, side, breathing);
-            Thread.Sleep(50);
+            Thread.Sleep(100);
         }
         // There is intentionally no side 0 aggregate zone on the X2 Mini Pro.
         foreach (byte side in new byte[] { 0x05, 0x06 })
         {
             result &= SendV1SolidColor(device, secondaryColor, side, breathing);
-            Thread.Sleep(50);
+            Thread.Sleep(100);
         }
         return result;
     }
