@@ -24,8 +24,7 @@ public class OneXPlayerX2 : OneXPlayerX1
     public OneXPlayerX2()
     {
         // device specific settings
-        // NOTE: reuses the X1 illustration until a dedicated device_onexplayer_x2 asset is added.
-        ProductIllustration = "device_onexplayer_x1";
+        ProductIllustration = "device_onexplayer_x2";
         ProductModel = "ONEXPLAYERX2";
 
         nTDP = new double[] { 25, 25, 35 };
