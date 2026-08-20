@@ -88,17 +88,19 @@ namespace HandheldCompanion.Devices.OneXPlayer
             DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
         }
 
-        protected override async void Device_Inserted(bool reScan = false)
+        protected override void InitializeVendorHidCommands()
         {
-            if (reScan)
-                await WaitUntilReady();
-
-            base.Device_Inserted();
+            base.InitializeVendorHidCommands();
             Thread.Sleep(100);
-            WriteVendorHidCommand(0xB2, [0x01, 0x1F, 0x40, 0x03, 0x02, 0x03, 0x00, 0x00, 0x00, 0x01]);
+            WriteVendorHidCommand(0xB2, BuildRemapPage3());
             Thread.Sleep(200);
-            WriteVendorHidCommand(0xB2, [0x00, 0x01, 0x02]);
+            WriteVendorHidCommand(0xB2, BuildIntercept(false));
         }
+
+        protected byte[] BuildRemapPage3(byte preset = 0x01) =>
+        [
+            0x01, 0x1F, 0x40, 0x03, 0x02, 0x03, 0x00, 0x00, 0x00, 0x01,
+        ];
 
         protected override ButtonFlags MapVendorButton(byte buttonId)
         {

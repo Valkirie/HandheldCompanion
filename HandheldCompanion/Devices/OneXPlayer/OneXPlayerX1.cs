@@ -16,6 +16,7 @@ using System.Numerics;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -619,31 +620,38 @@ public class OneXPlayerX1 : OneXAOKZOE
         if (!hidDevices.TryGetValue(VendorHidId, out HidDevice? device))
             return false;
 
-        // CreateReport() exposes the protocol data area without the transport
-        // report ID. WriteReport() adds that report ID and preserves the HID
-        // report descriptor's device-specific output length.
-        HidReport report = device.CreateReport();
-        report.ReportId = 0x00;
-
-        int frameLength = report.Data.Length;
+        int reportLength = device.Capabilities.OutputReportByteLength;
+        int frameLength = reportLength == 64 ? reportLength : reportLength - 1;
         if (frameLength < 6 || payload.Length > frameLength - 5)
             return false;
 
-        // HHD gen_cmd() produces this protocol frame without a report ID.
-        report.Data[0] = commandId;
-        report.Data[1] = FrameMarker;
-        report.Data[2] = 0x01;
-        Array.Copy(payload, 0, report.Data, 3, payload.Length);
-        report.Data[^2] = FrameMarker;
-        report.Data[^1] = commandId;
+        byte[] frame = new byte[frameLength];
+        frame[0] = commandId;
+        frame[1] = FrameMarker;
+        frame[2] = 0x01;
+        Array.Copy(payload, 0, frame, 3, payload.Length);
+        frame[^2] = FrameMarker;
+        frame[^1] = commandId;
 
-        return device.WriteReport(report);
+        if (reportLength == 64)
+        {
+            // Older X2 interfaces expose the protocol frame as the complete
+            // output report, without a separate report-ID byte.
+            return device.Write(frame);
+        }
+
+        // Newer interfaces, including X2 Mini Pro, expose a 65-byte HID
+        // report: report ID 0x00 followed by the 64-byte protocol frame.
+        // Use the same raw-write path as the other 65-byte devices in this
+        // codebase; HidLibrary adds no framing beyond the byte array here.
+        byte[] report = WithReportID(frame, 0x00, frame.Length);
+        return device.Write(report);
     }
 
     protected HidDevice? GetVendorHidDeviceForLighting() =>
         hidDevices.GetValueOrDefault(VendorHidId);
 
-    protected static byte[] BuildRemapPage1(byte preset) =>
+    protected virtual byte[] BuildRemapPage1(byte preset) =>
     [
         0x02, 0x38, 0x20, 0x01, preset,
         0x01, 0x01, 0x01, 0x00, 0x00, 0x00,
@@ -657,7 +665,7 @@ public class OneXPlayerX1 : OneXAOKZOE
         0x09, 0x01, 0x09, 0x00, 0x00, 0x00,
     ];
 
-    protected static byte[] BuildRemapPage2(byte preset, byte m1KeyCode, byte m2KeyCode) =>
+    protected virtual byte[] BuildRemapPage2(byte preset, byte m1KeyCode, byte m2KeyCode) =>
     [
         0x02, 0x38, 0x20, 0x02, preset,
         0x0A, 0x01, 0x0A, 0x00, 0x00, 0x00,
@@ -670,6 +678,8 @@ public class OneXPlayerX1 : OneXAOKZOE
         0x22, 0x02, 0x01, m1KeyCode, 0x00, 0x00,
         0x23, 0x02, 0x01, m2KeyCode, 0x00, 0x00,
     ];
+
+    protected byte[] BuildIntercept(bool enabled) => enabled ? [0x03] : [0x00, 0x01, 0x02];
 
     protected virtual ButtonFlags MapVendorButton(byte buttonId)
     {

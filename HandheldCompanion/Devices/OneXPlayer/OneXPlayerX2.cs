@@ -33,6 +33,18 @@ public class OneXPlayerX2 : OneXPlayerX1
         GfxClock = new double[] { 100, 2300 };
         CpuClock = 4700;
 
+        ECDetails = new ECDetails
+        {
+            AddressFanControl = 0x44A,
+            AddressFanDuty = 0x44B,
+            AddressStatusCommandPort = 0x4E,
+            AddressDataPort = 0x4F,
+            FanValueMin = 0,
+            FanValueMax = 255
+        };
+
+        Capabilities |= DeviceCapabilities.FanControl;
+
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBattery, Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBatteryDesc)
         {
             Default = true,
