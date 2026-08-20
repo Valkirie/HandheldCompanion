@@ -27,7 +27,7 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         // This is HHD's hid_v2_x2 configuration, implemented by OxpHidraw
         // with x2=True. The Mini Pro requires all three pages; the first two
         // alone are ignored by the firmware.
-        HidLibrary.HidDevice? device = GetVendorHidDeviceForLighting();
+        hidDevices.TryGetValue(VendorHidId, out HidLibrary.HidDevice? device);
         if (device is null)
             return;
 
@@ -98,6 +98,12 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         return result;
     }
 
+    protected override void SetTurboButtonTakeover(bool enabled)
+    {
+        // do nothing; the X2 Mini Pro does not support ACPI/WMI interception of the Turbo button
+        // it's instead handled by OneXAOKZOE Open()
+    }
+
     protected override void HandleEvent(byte buttonId, bool pressed)
     {
         if (buttonId is 0x22 or 0x23)
@@ -109,9 +115,16 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
     public override bool SetLedBrightness(int brightness)
     {
         // HHD's x2 rgb_sides = (0x01, 0x02, 0x07) and secondary_sides = (0x05, 0x06).
+        hidDevices.TryGetValue(VendorHidId, out HidLibrary.HidDevice? device);
+        if (device is null)
+            return false;
+
         bool result = true;
         foreach (byte side in new byte[] { 0x01, 0x02, 0x07, 0x05, 0x06 })
-            result &= SendV1Brightness(GetVendorHidDeviceForLighting(), brightness, side);
+        {
+            result &= SendV1Brightness(device, brightness, side);
+            Thread.Sleep(50);
+        }
         return result;
     }
 
@@ -120,14 +133,24 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         if (level is not (LEDLevel.SolidColor or LEDLevel.Breathing))
             return false;
 
+        hidDevices.TryGetValue(VendorHidId, out HidLibrary.HidDevice? device);
+        if (device is null)
+            return false;
+
         bool breathing = level == LEDLevel.Breathing;
         bool result = true;
         // HHD sends the primary color to the two joystick zones and center zone.
         foreach (byte side in new byte[] { 0x01, 0x02, 0x07 })
-            result &= SendV1SolidColor(GetVendorHidDeviceForLighting(), mainColor, side, breathing);
+        {
+            result &= SendV1SolidColor(device, mainColor, side, breathing);
+            Thread.Sleep(50);
+        }
         // There is intentionally no side 0 aggregate zone on the X2 Mini Pro.
         foreach (byte side in new byte[] { 0x05, 0x06 })
-            result &= SendV1SolidColor(GetVendorHidDeviceForLighting(), secondaryColor, side, breathing);
+        {
+            result &= SendV1SolidColor(device, secondaryColor, side, breathing);
+            Thread.Sleep(50);
+        }
         return result;
     }
 }

@@ -648,9 +648,6 @@ public class OneXPlayerX1 : OneXAOKZOE
         return device.Write(report);
     }
 
-    protected HidDevice? GetVendorHidDeviceForLighting() =>
-        hidDevices.GetValueOrDefault(VendorHidId);
-
     protected virtual byte[] BuildRemapPage1(byte preset) =>
     [
         0x02, 0x38, 0x20, 0x01, preset,

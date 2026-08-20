@@ -119,6 +119,32 @@ public class OneXPlayerX2 : OneXPlayerX1
         DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = false;
     }
 
+    public override void SetFanControl(bool enable, int mode = 0)
+    {
+        if (!UseOpenLib || !IsOpen)
+            return;
+
+        EcWriteByte(ACPI_FanMode_Address, enable ? (byte)FanControlMode.Manual : (byte)FanControlMode.Automatic);
+    }
+
+    public override void SetFanDuty(double percent)
+    {
+        if (!UseOpenLib || !IsOpen)
+            return;
+
+        double clampedPercent = Math.Clamp(percent, 0.0d, 100.0d);
+        byte duty = (byte)Math.Round(clampedPercent * 255.0d / 100.0d);
+        EcWriteByte(ACPI_FanPWMDutyCycle_Address, duty);
+    }
+
+    public override float ReadFanDuty()
+    {
+        if (!UseOpenLib || !IsOpen)
+            return 0;
+
+        return EcReadByte(ACPI_FanPWMDutyCycle_Address);
+    }
+
     protected override void InitializeVendorHidCommands()
     {
         // X2 uses the same hid_v1 framing as HHD's hid_v2_x2 path, but keeps
