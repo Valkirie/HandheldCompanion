@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices.AYANEO;
 using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Devices.MSI;
@@ -269,6 +270,11 @@ public abstract class IDevice
         // prepare hotkeys
         DeviceHotkeys[typeof(DesktopLayoutCommands)].inputsChord.ButtonState[ButtonFlags.LeftStickClick] = true;
         DeviceHotkeys[typeof(DesktopLayoutCommands)].inputsChord.ButtonState[ButtonFlags.RightStickClick] = true;
+    }
+
+    public virtual XInputController? CreateController(PnPDetails details)
+    {
+        return null;
     }
 
     public virtual bool Open()
@@ -917,6 +923,12 @@ public abstract class IDevice
                         case "ONEXPLAYER APEX":
                         case "ONEXPLAYERAPEX":
                             device = new OneXPlayerApex();
+                            break;
+                        case "ONEXPLAYER X2":
+                            device = new OneXPlayerX2();
+                            break;
+                        case "ONEXPLAYER X2Mini PRO":
+                            device = new OneXPlayerX2MiniPro();
                             break;
                         case "ONEXPLAYER G1 i":
                             device = new OneXPlayerG1Intel();

@@ -1,0 +1,239 @@
+using HandheldCompanion.Commands.Functions.Windows;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
+using HandheldCompanion.Shared;
+using System;
+using System.Linq;
+using System.Numerics;
+using System.Threading;
+using System.Threading.Tasks;
+using WindowsInput.Events;
+using YamlDotNet.Core.Tokens;
+using static HandheldCompanion.IGCL.IGCLBackend;
+namespace HandheldCompanion.Devices;
+
+public class OneXPlayerX2 : OneXPlayerX1
+{
+    // X2 uses the banked WMI EC address. OneXConsole initializes its application
+    // function/turbo register as decimal 1259 (0x04EB), not legacy port address 0xEB.
+    private const ushort TurboTakeoverRegister = 0x04EB;
+    private const byte TurboTakeoverMask = 0x40;
+
+    public OneXPlayerX2()
+    {
+        // device specific settings
+        ProductIllustration = "device_onexplayer_x2";
+        ProductModel = "ONEXPLAYERX2";
+
+        nTDP = new double[] { 25, 25, 35 };
+        cTDP = new double[] { 3, 35 };
+        GfxClock = new double[] { 100, 2300 };
+        CpuClock = 4700;
+
+        // IMU matrices are now loaded from OneXPlayerX2.json via IDevice.ApplyDeviceConfiguration()
+
+        ECDetails = new ECDetails
+        {
+            AddressFanControl = 0x44A,
+            AddressFanDuty = 0x44B,
+            AddressStatusCommandPort = 0x4E,
+            AddressDataPort = 0x4F,
+            FanValueMin = 0,
+            FanValueMax = 255
+        };
+
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBattery, Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBatteryDesc)
+        {
+            Default = true,
+            DeviceDefault = true,
+            OSPowerMode = OSPowerMode.BetterBattery,
+            CPUBoostLevel = CPUBoostLevel.Disabled,
+            Guid = BetterBatteryGuid,
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d },
+        });
+
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBetterPerformance, Properties.Resources.PowerProfileOneXPlayerX1IntelBetterPerformanceDesc)
+        {
+            Default = true,
+            DeviceDefault = true,
+            OSPowerMode = OSPowerMode.BetterPerformance,
+            CPUBoostLevel = CPUBoostLevel.Enabled,
+            Guid = BetterPerformanceGuid,
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 25.0d, 25.0d, 25.0d },
+        });
+
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBestPerformance, Properties.Resources.PowerProfileOneXPlayerX1IntelBestPerformanceDesc)
+        {
+            Default = true,
+            DeviceDefault = true,
+            OSPowerMode = OSPowerMode.BestPerformance,
+            CPUBoostLevel = CPUBoostLevel.Enabled,
+            Guid = BestPerformanceGuid,
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 35.0d, 35.0d, 35.0d },
+        });
+
+        vendorId = 0x1A86;
+        productIds = [0xFE00, 0x1305];
+        // X2 variants can expose the same vendor collection under either PID.
+        // Keep both entries aligned with the HHD X1-mini vendor HID selector:
+        // usage page 0xFF00, usage 0x0001.
+        hidFilters[0x1305] = new HidFilter(unchecked((short)0xFF00), unchecked(0x0001));
+
+        // Suppress both firmware chord variants; OEM1 is delivered over vendor HID.
+        OEMChords.RemoveAll(c => c.state.Buttons.Contains(ButtonFlags.OEM1));
+        OEMChords.Add(new KeyboardChord("Turbo",
+            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.LMenu],
+            [KeyCode.LMenu, KeyCode.LWin, KeyCode.RControlKey],
+            false, ButtonFlags.OEM1, flushInterval: 100/*, orderIndependent: true*/));
+        OEMChords.Add(new KeyboardChord("Turbo",
+            [KeyCode.LControlKey, KeyCode.LWin, KeyCode.LMenu],
+            [KeyCode.LMenu, KeyCode.LWin, KeyCode.LControlKey],
+            false, ButtonFlags.OEM1, flushInterval: 100/*, orderIndependent: true*/));
+
+        // Vendor-only buttons use empty chords so they remain visible in the mapping UI.
+        OEMChords.Add(new KeyboardChord("Home", null, null, false, ButtonFlags.OEM3));
+
+        // Suppress the X2 keyboard shortcut; OEM2 is delivered over vendor HID.
+        OEMChords.RemoveAll(c => c.state.Buttons.Contains(ButtonFlags.OEM2));
+        OEMChords.Add(new KeyboardChord("Keyboard",
+            [KeyCode.LControlKey, KeyCode.LWin, KeyCode.RControlKey, KeyCode.O],
+            [KeyCode.LControlKey, KeyCode.LWin, KeyCode.RControlKey, KeyCode.O],
+            true, ButtonFlags.OEM2, flushInterval: 300));
+        OEMChords.Add(new KeyboardChord("Keyboard", null, null, false, ButtonFlags.OEM2));
+
+        // X2 OEM2 is remappable and has no default keyboard action.
+        DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = false;
+    }
+
+    public override void SetFanControl(bool enable, int mode = 0)
+    {
+        if (!UseOpenLib || !IsOpen)
+            return;
+
+        EcWriteByte(ACPI_FanMode_Address, enable ? (byte)FanControlMode.Manual : (byte)FanControlMode.Automatic);
+    }
+
+    public override void SetFanDuty(double percent)
+    {
+        if (!UseOpenLib || !IsOpen)
+            return;
+
+        double clampedPercent = Math.Clamp(percent, 0.0d, 100.0d);
+        byte duty = (byte)Math.Round(clampedPercent * 255.0d / 100.0d);
+        EcWriteByte(ACPI_FanPWMDutyCycle_Address, duty);
+    }
+
+    public override float ReadFanDuty()
+    {
+        if (!UseOpenLib || !IsOpen)
+            return 0;
+
+        return EcReadByte(ACPI_FanPWMDutyCycle_Address);
+    }
+
+    protected override void InitializeVendorHidCommands()
+    {
+        Thread.Sleep(4000);
+
+        WriteVendorHidCommand(0xB4, BuildRemapPage1(0x01));
+        Thread.Sleep(50);
+
+        WriteVendorHidCommand(0xB4, BuildRemapPage2(0x01, 0x67, 0x66));
+        Thread.Sleep(50);
+
+        // X2-specific B2 setup; this is not HHD gen_intercept(False).
+        WriteVendorHidCommand(0xB2, [0x01, 0x1F, 0x40, 0x03, 0x02, 0x03, 0x00, 0x00, 0x00, 0x01]);
+    }
+
+    public override XInputController? CreateController(PnPDetails details)
+    {
+        return new OneXPlayerX2Controller(details);
+    }
+
+    protected override ButtonFlags MapVendorButton(byte buttonId)
+    {
+        return buttonId switch
+        {
+            0x20 => ButtonFlags.OEM1,
+            0x21 => ButtonFlags.OEM3,
+            0x22 => ButtonFlags.L4,   // M1 (left back paddle)
+            0x23 => ButtonFlags.R4,   // M2 (right back paddle)
+            0x24 => ButtonFlags.OEM2,
+            _ => base.MapVendorButton(buttonId),
+        };
+    }
+
+    protected override void SetTurboButtonTakeover(bool enabled)
+    {
+        // The X2 firmware exposes its EC through the SuRwECRegInterface ACPI/WMI
+        // provider. WinRing0 port I/O (used by older OXP models) cannot access this
+        // register on the X2, which is why takeover previously worked only after
+        // OneXConsole had initialized it.
+        try
+        {
+            using (OneXPlayerWmiEc ec = new())
+            {
+                byte currentValue = ec.ReadByte(TurboTakeoverRegister);
+                byte value = enabled ? (byte)(currentValue | TurboTakeoverMask) : (byte)(currentValue & ~TurboTakeoverMask);
+
+                ec.WriteByte(TurboTakeoverRegister, value);
+
+                // wait a bit for the EC to process the change
+                Thread.Sleep(50);
+
+                byte actualValue = ec.ReadByte(TurboTakeoverRegister);
+                if (actualValue == value)
+                    LogManager.LogInformation("{0} {1} OEM button through X2 WMI EC interface", enabled ? "Unlocked" : "Locked", ButtonFlags.OEM1);
+                else
+                    LogManager.LogWarning("Failed to {0} OEM button through X2 WMI EC interface (expected 0x{1:X2}, actual 0x{2:X2})", enabled ? "unlock" : "lock", value, actualValue);
+            }
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogWarning("Failed to {0} {1} OEM button through X2 WMI EC interface: {2}", enabled ? "unlock" : "lock", ButtonFlags.OEM1, ex.Message);
+        }
+    }
+
+    protected override void HandleEvent(byte buttonId, bool pressed)
+    {
+        ButtonFlags button = MapVendorButton(buttonId);
+
+        switch (button)
+        {
+            case ButtonFlags.OEM1:
+            case ButtonFlags.OEM2:
+            case ButtonFlags.OEM3:
+                if (pressed)
+                    KeyPressAndRelease(button, 100);
+                return;
+        }
+
+        base.HandleEvent(buttonId, pressed);
+    }
+
+    public override string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM3:
+                return "\u2219";
+            case ButtonFlags.OEM1:
+                return "\u2211";
+            case ButtonFlags.OEM2:
+                return "\u2210";
+        }
+
+        return base.GetGlyph(button);
+    }
+
+    // X1 battery-protection registers are not verified on X2 hardware.
+    public override bool IsBatteryProtectionSupported(int majorVersion, int minorVersion)
+    {
+        return false;
+    }
+}
