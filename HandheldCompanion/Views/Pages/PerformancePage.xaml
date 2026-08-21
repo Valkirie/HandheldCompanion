@@ -199,9 +199,17 @@
 
                     <ui:InfoBar
                         IsClosable="False"
-                        IsOpen="True"
+                        IsOpen="{Binding HasWarning}"
                         Message="{Binding Warning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Severity="Warning"
                         Visibility="{Binding HasWarning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                    <ui:InfoBar
+                        IsClosable="False"
+                        IsOpen="{Binding IsSelectedPresetUsed}"
+                        Message="This power profile is currently used."
+                        Severity="Informational"
+                        Visibility="{Binding IsSelectedPresetUsed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </ikw:SimpleStackPanel>
 
                 <!--  Power settings  -->
