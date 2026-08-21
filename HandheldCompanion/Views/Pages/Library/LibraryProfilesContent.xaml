@@ -49,6 +49,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <ContentControl
+                        Focusable="False"
                         Margin="0"
                         HorizontalAlignment="Stretch"
                         Content="{Binding}">
