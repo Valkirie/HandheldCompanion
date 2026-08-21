@@ -49,10 +49,10 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <ContentControl
-                        Focusable="False"
                         Margin="0"
                         HorizontalAlignment="Stretch"
-                        Content="{Binding}">
+                        Content="{Binding}"
+                        Focusable="False">
                         <ContentControl.Style>
                             <Style TargetType="ContentControl">
                                 <Style.Triggers>

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
@@ -10,6 +12,13 @@ namespace HandheldCompanion.Utils;
 
 public static class CommonUtils
 {
+    public static string GetTime(DateTime dateTime)
+    {
+        return dateTime == default
+            ? string.Empty
+            : dateTime.ToString("g", CultureInfo.CurrentCulture);
+    }
+
     public static string? Between(string source, string left, string? right = null, bool keepLeftRight = false)
     {
         if (string.IsNullOrEmpty(source))

@@ -30,6 +30,18 @@
             Text="{Binding Name, RelativeSource={RelativeSource AncestorType=Page}}" />
 
         <ikw:SimpleStackPanel Spacing="28">
+            <DockPanel>
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="{Binding GameCount, StringFormat={}{0} games}" />
+                <TextBlock
+                    Margin="4,0,0,0"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                    Text="{Binding LastLibraryCheckText}" />
+            </DockPanel>
+
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="7*" />

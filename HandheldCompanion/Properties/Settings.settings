@@ -347,6 +347,9 @@
     <Setting Name="LibrarySortAscending" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="LibraryLastChecked" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
     <Setting Name="QuickKeyboardVisibility" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>

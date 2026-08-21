@@ -1,5 +1,6 @@
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels.Misc;
 using HandheldCompanion.Views;
 using System;
@@ -143,7 +144,7 @@ namespace HandheldCompanion.ViewModels
             UpdateManager.Updated += UpdateManager_Updated;
 
             // replay last known status
-            UpdateDateText = Properties.Resources.SettingsPage_LastChecked + UpdateManager.GetTime();
+            UpdateDateText = Properties.Resources.SettingsPage_LastChecked + CommonUtils.GetTime(UpdateManager.GetTime());
 
             // DSU server events
             DSUServer.Started += DSUServer_Started;
@@ -178,7 +179,7 @@ namespace HandheldCompanion.ViewModels
                 case UpdateStatus.Initialized:
                 case UpdateStatus.Updated:
                     UpdateStatusText = Properties.Resources.SettingsPage_UpToDate;
-                    UpdateDateText = Properties.Resources.SettingsPage_LastChecked + UpdateManager.GetTime();
+                    UpdateDateText = Properties.Resources.SettingsPage_LastChecked + CommonUtils.GetTime(UpdateManager.GetTime());
                     UpdateDateVisibility = Visibility.Visible;
                     UpdateSymbolVisibility = Visibility.Visible;
                     ProgressBarVisibility = Visibility.Collapsed;

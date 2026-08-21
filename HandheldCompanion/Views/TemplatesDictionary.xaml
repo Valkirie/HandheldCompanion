@@ -280,13 +280,13 @@
     <DataTemplate x:Key="LibraryTemplateWide" DataType="{x:Type viewmodels:ProfileViewModel}">
         <Button
             x:Name="ImageContainer"
-            Focusable="True"
             Padding="0"
             behaviors:LibraryItemVisibilityBehavior.TrackVisibility="True"
             behaviors:RoundedClipBehavior.CornerRadius="{DynamicResource ControlCornerRadius}"
             BorderThickness="0"
             Command="{Binding Navigate}"
             ContextMenu="{StaticResource LibraryActionContextMenu}"
+            Focusable="True"
             IsEnabled="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
             Tag="{Binding}">
 
@@ -436,13 +436,13 @@
     <DataTemplate x:Key="LibraryTemplate" DataType="{x:Type viewmodels:ProfileViewModel}">
         <Button
             x:Name="ImageContainer"
-            Focusable="True"
             Padding="0"
             behaviors:LibraryItemVisibilityBehavior.TrackVisibility="True"
             behaviors:RoundedClipBehavior.CornerRadius="{DynamicResource ControlCornerRadius}"
             BorderThickness="0"
             Command="{Binding Navigate}"
             ContextMenu="{StaticResource LibraryActionContextMenu}"
+            Focusable="True"
             IsEnabled="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
             Tag="{Binding}">
 
