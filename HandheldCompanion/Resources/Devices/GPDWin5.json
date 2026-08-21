@@ -7,9 +7,9 @@
       "Z": -1.0
     },
     "AxisSwap": {
-      "X": "X",
+      "X": "Y",
       "Y": "Z",
-      "Z": "Y"
+      "Z": "X"
     }
   },
   "AcceleroMatrix": {

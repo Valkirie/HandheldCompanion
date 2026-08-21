@@ -1,5 +1,5 @@
 {
-  "DeviceClass": "GPDWinMax2Intel",
+  "DeviceClass": "GPDWinMax2",
   "GyroMatrix": {
     "Axis": {
       "X": 1.0,
