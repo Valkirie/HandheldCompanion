@@ -120,8 +120,7 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
 
     protected override void SetTurboButtonTakeover(bool enabled)
     {
-        // do nothing; the X2 Mini Pro does not support ACPI/WMI interception of the Turbo button
-        // it's instead handled by OneXAOKZOE Open()
+        SetDefaultTurboButtonTakeover(enabled);
     }
 
     protected override void HandleEvent(byte buttonId, bool pressed)

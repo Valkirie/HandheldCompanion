@@ -35,39 +35,38 @@ namespace HandheldCompanion.Devices.OneXPlayer
             if (!success)
                 return false;
 
-            // allow OneX turbo button to pass key inputs
-            EcWriteByte(0xF1, 0x40);
-
-            // wait a bit for the EC to process the change
-            Thread.Sleep(50);
-
-            EcWriteByte(0xF2, 0x02);
-
-            // wait a bit for the EC to process the change
-            Thread.Sleep(50);
-
-            if (EcReadByte(0xF1) == 0x40 && EcReadByte(0xF2) == 0x02)
-                LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
+            SetTurboButtonTakeover(true);
 
             return success;
         }
 
         public override void Close()
         {
-            EcWriteByte(0xF1, 0x00);
-
-            // wait a bit for the EC to process the change
-            Thread.Sleep(50);
-
-            EcWriteByte(0xF2, 0x00);
-
-            // wait a bit for the EC to process the change
-            Thread.Sleep(50);
-
-            if (EcReadByte(0xF1) == 0x00 && EcReadByte(0xF2) == 0x00)
-                LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
+            SetTurboButtonTakeover(false);
 
             base.Close();
+        }
+
+        protected virtual void SetTurboButtonTakeover(bool enabled)
+        {
+            SetDefaultTurboButtonTakeover(enabled);
+        }
+
+        protected void SetDefaultTurboButtonTakeover(bool enabled)
+        {
+            byte f1Value = enabled ? (byte)0x40 : (byte)0x00;
+            byte f2Value = enabled ? (byte)0x02 : (byte)0x00;
+
+            EcWriteByte(0xF1, f1Value);
+            Thread.Sleep(50);
+
+            EcWriteByte(0xF2, f2Value);
+            Thread.Sleep(50);
+
+            if (EcReadByte(0xF1) == f1Value && EcReadByte(0xF2) == f2Value)
+                LogManager.LogInformation("{0} {1} OEM button", enabled ? "Unlocked" : "Locked", ButtonFlags.OEM1);
+            else
+                LogManager.LogWarning("Failed to {0} {1} OEM button", enabled ? "unlock" : "lock", ButtonFlags.OEM1);
         }
 
         public override void SetFanDuty(double percent)

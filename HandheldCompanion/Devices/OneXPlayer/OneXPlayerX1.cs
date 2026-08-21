@@ -201,8 +201,6 @@ public class OneXPlayerX1 : OneXAOKZOE
             }
         }
 
-        SetTurboButtonTakeover(true);
-
         return success;
     }
 
@@ -229,38 +227,24 @@ public class OneXPlayerX1 : OneXAOKZOE
     {
         Device_Removed();
 
-        if (_serialPort is not null)
+        if (EnableSerialPort)
         {
-            try
+            if (_serialPort is not null)
             {
-                if (_serialPort.IsOpen)
-                    _serialPort.Close();
-            }
-            finally
-            {
-                _serialPort.Dispose();
-                _serialPort = null;
+                try
+                {
+                    if (_serialPort.IsOpen)
+                        _serialPort.Close();
+                }
+                finally
+                {
+                    _serialPort.Dispose();
+                    _serialPort = null;
+                }
             }
         }
 
-        SetTurboButtonTakeover(false);
-
         base.Close();
-    }
-
-    protected virtual void SetTurboButtonTakeover(bool enabled)
-    {
-        byte value = enabled ? (byte)0x40 : (byte)0x00;
-
-        EcWriteByte(0xEB, value);
-        
-        // wait a bit for the EC to process the change
-        Thread.Sleep(50);
-
-        if (EcReadByte(0xEB) == value)
-            LogManager.LogInformation("{0} {1} OEM button", enabled ? "Unlocked" : "Locked", ButtonFlags.OEM1);
-        else
-            LogManager.LogWarning("Failed to {0} OEM button", enabled ? "unlock" : "lock");
     }
 
     protected override void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
