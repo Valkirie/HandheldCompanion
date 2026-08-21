@@ -525,9 +525,12 @@ public class OneXPlayerX1 : OneXAOKZOE
 
     protected virtual void InitializeVendorHidCommands()
     {
+        Thread.Sleep(4000);
+
         // Equivalent to hid_v1.INITIALIZE for standard X1 devices.
         WriteVendorHidCommand(0xB4, BuildRemapPage1(0x01));
         Thread.Sleep(50);
+
         WriteVendorHidCommand(0xB4, BuildRemapPage2(0x01, 0x67, 0x66));
     }
 

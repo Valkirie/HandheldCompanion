@@ -27,23 +27,20 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
 
     protected override void InitializeVendorHidCommands()
     {
-        // This is HHD's hid_v2_x2 configuration, implemented by OxpHidraw
-        // with x2=True. The Mini Pro requires all three pages; the first two
-        // alone are ignored by the firmware.
-        hidDevices.TryGetValue(VendorHidId, out HidLibrary.HidDevice? device);
-        if (device is null)
-            return;
-
         Thread.Sleep(4000);
+
         // Equivalent to hid_v1.INITIALIZE_X2[0].
         WriteVendorHidCommand(0xB4, BuildRemapPage1(0x01));
         Thread.Sleep(50);
+
         // Equivalent to hid_v1.INITIALIZE_X2[1], including M1/M2 -> F15/F16.
         WriteVendorHidCommand(0xB4, BuildRemapPage2(0x01, 0x68, 0x69));
         Thread.Sleep(50);
+
         // Equivalent to hid_v1.INITIALIZE_X2[2], the required third partial page.
         WriteVendorHidCommand(0xB4, BuildRemapPage3());
         Thread.Sleep(50);
+
         // Equivalent to hid_v1.gen_intercept(False), releasing vendor interception.
         WriteVendorHidCommand(0xB2, BuildIntercept(false));
     }
