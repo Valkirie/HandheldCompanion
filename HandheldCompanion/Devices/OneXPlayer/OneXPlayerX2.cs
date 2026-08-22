@@ -147,7 +147,7 @@ public class OneXPlayerX2 : OneXPlayerX1
         Thread.Sleep(50);
 
         // X2-specific B2 setup; this is not HHD gen_intercept(False).
-        WriteVendorHidCommand(0xB2, [0x01, 0x1F, 0x40, 0x03, 0x02, 0x03, 0x00, 0x00, 0x00, 0x01]);
+        // WriteVendorHidCommand(0xB2, [0x01, 0x1F, 0x40, 0x03, 0x02, 0x03, 0x00, 0x00, 0x00, 0x01]);
     }
 
     public override XInputController? CreateController(PnPDetails details)
