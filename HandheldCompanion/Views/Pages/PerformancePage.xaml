@@ -207,8 +207,8 @@
                     <ui:InfoBar
                         IsClosable="False"
                         IsOpen="{Binding IsSelectedPresetUsed}"
-                        Message="This power profile is currently used."
-                        Severity="Informational"
+                        Message="This preset is currently applied."
+                        Severity="Success"
                         Visibility="{Binding IsSelectedPresetUsed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </ikw:SimpleStackPanel>
 
