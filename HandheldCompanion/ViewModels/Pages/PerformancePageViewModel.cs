@@ -592,6 +592,8 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public bool SupportsHeterogeneousCoreScheduling => MotherboardInfo.HasHeterogeneousCpuCores;
+
         public int CPUBoostLevel
         {
             get => (int)SelectedPreset.CPUBoostLevel;

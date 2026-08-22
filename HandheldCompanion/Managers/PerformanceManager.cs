@@ -1107,6 +1107,9 @@ public static class PerformanceManager
 
     private static void RequestCoreParkingMode(CoreParkingMode coreParkingMode)
     {
+        if (!MotherboardInfo.HasHeterogeneousCpuCores)
+            coreParkingMode = CoreParkingMode.AllCoresAuto;
+
         /*
          * HETEROGENEOUS_POLICY values:
          * 0: Default (no explicit preference)

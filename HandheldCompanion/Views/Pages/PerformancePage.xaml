@@ -598,7 +598,10 @@
                         </ui:SettingsCard>
 
                         <!--  CPU Parking Mode  -->
-                        <ui:SettingsCard Description="{l:Static resx:Resources.PerformancePage_CPUParkingModeDesc}" Header="{l:Static resx:Resources.PerformancePage_CPUParkingMode}">
+                        <ui:SettingsCard
+                            Description="{l:Static resx:Resources.PerformancePage_CPUParkingModeDesc}"
+                            Header="{l:Static resx:Resources.PerformancePage_CPUParkingMode}"
+                            IsEnabled="{Binding SupportsHeterogeneousCoreScheduling}">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe964;" />
                             </ui:SettingsCard.HeaderIcon>
