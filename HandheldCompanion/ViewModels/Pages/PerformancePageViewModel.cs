@@ -400,6 +400,20 @@ namespace HandheldCompanion.ViewModels
 
         public int FrameLimitMinimum => 10;
 
+        public bool FramerateLimitEnabled
+        {
+            get => SelectedPreset.FramerateLimitEnabled ?? SelectedPreset.FramerateValue != 0;
+            set
+            {
+                if (value == FramerateLimitEnabled)
+                    return;
+
+                SelectedPreset.FramerateLimitEnabled = value;
+                OnPropertyChanged(nameof(FramerateLimitEnabled));
+                SubmitSelectedPreset();
+            }
+        }
+
         private bool _isCustomFrameLimitSelected;
         public bool IsCustomFrameLimitSelected
         {
@@ -896,6 +910,7 @@ namespace HandheldCompanion.ViewModels
 
             // Framerate limiter UI state
             nameof(FramerateLimits),
+            nameof(FramerateLimitEnabled),
             nameof(SelectedFrameLimit),
             nameof(IsCustomFrameLimitSelected),
             nameof(CustomFrameLimitValue),
