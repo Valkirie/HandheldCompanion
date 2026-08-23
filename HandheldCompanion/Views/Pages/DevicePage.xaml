@@ -1142,17 +1142,6 @@
                         </ComboBox>
                     </ui:SettingsCard>
 
-                    <ui:SettingsCard
-                        Description="Maximize the combined performance of the processor and GPU"
-                        Header="MSI OverBoost"
-                        IsEnabled="{Binding HasOverBoost, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                        <ui:SettingsCard.HeaderIcon>
-                            <ui:FontIcon Glyph="&#xEC7A;" />
-                        </ui:SettingsCard.HeaderIcon>
-
-                        <ui:ToggleSwitch IsOn="{Binding ClawOverBoost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    </ui:SettingsCard>
-
                     <ui:SettingsCard Description="{l:Static resx:Resources.DevicePage_BlockMsiClawWinGHotkeyDesc}" Header="{l:Static resx:Resources.DevicePage_BlockMsiClawWinGHotkey}">
                         <ui:SettingsCard.HeaderIcon>
                             <ui:FontIcon Glyph="&#xe765;" />

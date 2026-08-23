@@ -460,24 +460,6 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool HasOverBoost => CurrentDevice is ClawA1M clawA1M && clawA1M.HasOverBoost();
-
-        public bool ClawOverBoost
-        {
-            get
-            {
-                return CurrentDevice is ClawA1M clawA1M && clawA1M.GetOverBoost();
-            }
-            set
-            {
-                if (value != ClawOverBoost)
-                {
-                    ManagerFactory.settingsManager.SetProperty("MSIClawOverBoost", value);
-                    OnPropertyChanged(nameof(ClawOverBoost));
-                }
-            }
-        }
-
         public bool BlockMsiClawWinGHotkey
         {
             get
@@ -1023,7 +1005,6 @@ namespace HandheldCompanion.ViewModels
             SettingsManager_SettingValueChanged("LegionControllerGyroIndex", ManagerFactory.settingsManager.GetInt("LegionControllerGyroIndex"), false, true);
             SettingsManager_SettingValueChanged("LegionControllerMode", ManagerFactory.settingsManager.GetInt("LegionControllerMode"), false, true);
             SettingsManager_SettingValueChanged("ZotacGamingZoneVRAM", ManagerFactory.settingsManager.GetInt("ZotacGamingZoneVRAM"), false, true);
-            SettingsManager_SettingValueChanged("MSIClawOverBoost", ManagerFactory.settingsManager.GetBoolean("MSIClawOverBoost"), false, true);
             SettingsManager_SettingValueChanged("BlockMsiClawWinGHotkey", ManagerFactory.settingsManager.GetBoolean("BlockMsiClawWinGHotkey"), false, true);
         }
 
@@ -1100,9 +1081,6 @@ namespace HandheldCompanion.ViewModels
                     break;
                 case "ZotacGamingZoneVRAM":
                     OnPropertyChanged(nameof(GamingZoneVRAM));
-                    break;
-                case "MSIClawOverBoost":
-                    OnPropertyChanged(nameof(ClawOverBoost));
                     break;
                 case "BlockMsiClawWinGHotkey":
                     OnPropertyChanged(nameof(BlockMsiClawWinGHotkey));

@@ -1346,18 +1346,6 @@ namespace HandheldCompanion.Properties
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool MSIClawOverBoost {
-            get {
-                return ((bool)(this["MSIClawOverBoost"]));
-            }
-            set {
-                this["MSIClawOverBoost"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool DisableMsiClawPS2Service {
             get {
                 return ((bool)(this["DisableMsiClawPS2Service"]));

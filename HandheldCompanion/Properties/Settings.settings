@@ -329,9 +329,6 @@
     <Setting Name="MSIClawControllerIndex" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">2</Value>
     </Setting>
-    <Setting Name="MSIClawOverBoost" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="DisableMsiClawPS2Service" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>

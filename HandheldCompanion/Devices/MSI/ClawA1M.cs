@@ -112,14 +112,6 @@ public class ClawA1M : IDevice
         ChangeToCurrentShiftType,
     }
 
-    #region imports
-    [DllImport("UEFIVaribleDll.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int GetUEFIVariableEx(string name, string guid, byte[] box);
-
-    [DllImport("UEFIVaribleDll.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern bool SetUEFIVariableEx(string name, string guid, byte[] box, int len);
-    #endregion
-
     private ManagementEventWatcher? specialKeyWatcher;
 
     // todo: find the right value, this is placeholder
@@ -133,7 +125,6 @@ public class ClawA1M : IDevice
     protected const int PID_DINPUT = 0x1902;
     protected const int PID_TESTING = 0x1903;
 
-    protected string MsIDCVarData = "DD96BAAF-145E-4F56-B1CF-193256298E99";
     private const string WmiAcpiRegKey = @"SYSTEM\CurrentControlSet\Services\WmiAcpi";
     private const string WmiAcpiRegValue = "MofImagePath";
 
@@ -282,32 +273,6 @@ public class ClawA1M : IDevice
 
         SetShiftMode(ShiftModeCalcType.Deactive);
 
-        // OverBoost
-        int uefiVariableEx = 0;
-        byte[] box = GetMsiDCVarData(ref uefiVariableEx);
-        if (uefiVariableEx != 0)
-        {
-            if (box[1] == 0)
-            {
-                InitOverBoost(true);
-                Thread.Sleep(600);
-            }
-
-            /*
-            // Check if OverBoostSup is enabled
-            bool OverBoostSup = GetOverBoostSup();
-            if (OverBoostSup)
-            {
-                // Check if OverBoost is enabled
-                bool OverBoost = GetOverBoost();
-                if (OverBoost)
-                {
-                    // disable OverBoost ?
-                }
-            }
-            */
-        }
-
         // make sure M1/M2 are recognized as buttons
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
         {
@@ -401,7 +366,6 @@ public class ClawA1M : IDevice
     {
         // raise events
         SettingsManager_SettingValueChanged("MSIClawControllerIndex", ManagerFactory.settingsManager.GetInt("MSIClawControllerIndex"), false, true);
-        SettingsManager_SettingValueChanged("MSIClawOverBoost", ManagerFactory.settingsManager.GetBoolean("MSIClawOverBoost"), false, true);
         SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetInt("BatteryChargeLimit"), false, true);
         SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPercent"), false, true);
 
@@ -427,12 +391,6 @@ public class ClawA1M : IDevice
                     gamepadMode = (GamepadMode)Convert.ToInt32(value);
                     ApplyM12Configuration();
                     SwitchMode(gamepadMode);
-                }
-                break;
-            case "MSIClawOverBoost":
-                {
-                    bool enabled = Convert.ToBoolean(value);
-                    SetOverBoost(enabled);
                 }
                 break;
         }
@@ -473,84 +431,6 @@ public class ClawA1M : IDevice
         Thread.Sleep(500);
         SyncToROM();
         Thread.Sleep(500);
-    }
-
-    protected byte[] GetMsiDCVarData(ref int uefiVariableEx)
-    {
-        byte[] box = new byte[4096];
-        uefiVariableEx = GetUEFIVariableEx("MsiDCVarData", MsIDCVarData, box);
-        return box;
-    }
-
-    protected void InitOverBoost(bool enabled)
-    {
-        int uefiVariableEx = 0;
-        byte[] box = GetMsiDCVarData(ref uefiVariableEx);
-        Thread.Sleep(600);
-
-        // set value
-        box[1] = (byte)(enabled ? 1 : 0);
-        SetUEFIVariableEx("MsiDCVarData", MsIDCVarData, box, uefiVariableEx);
-        Thread.Sleep(600);
-    }
-
-    public async void SetOverBoost(bool enabled)
-    {
-        int uefiVariableEx = 0;
-        byte[] box = GetMsiDCVarData(ref uefiVariableEx);
-        Thread.Sleep(600);
-
-        // set value
-        box[6] = (byte)(enabled ? 1 : 0);
-        SetUEFIVariableEx("MsiDCVarData", MsIDCVarData, box, uefiVariableEx);
-        Thread.Sleep(600);
-
-        Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
-        {
-            Title = Properties.Resources.Dialog_ForceRestartTitle,
-            Content = Properties.Resources.Dialog_ForceRestartDesc,
-            DefaultButton = ContentDialogButton.Close,
-            CloseButtonText = Properties.Resources.Dialog_No,
-            PrimaryButtonText = Properties.Resources.Dialog_Yes
-        }.ShowAsync();
-
-        await dialogTask; // sync call
-
-        switch (dialogTask.Result)
-        {
-            case ContentDialogResult.Primary:
-                DeviceUtils.RestartComputer();
-                break;
-            case ContentDialogResult.Secondary:
-                break;
-        }
-    }
-
-    public bool HasOverBoost()
-    {
-        int uefiVariableEx = 0;
-        byte[] box = GetMsiDCVarData(ref uefiVariableEx);
-        if (uefiVariableEx != 0)
-            return box[1] != 0;
-        return false;
-    }
-
-    public bool GetOverBoost()
-    {
-        int uefiVariableEx = 0;
-        byte[] box = GetMsiDCVarData(ref uefiVariableEx);
-        if (uefiVariableEx != 0)
-            return box[6] != 0;
-        return false;
-    }
-
-    public bool GetOverBoostSup()
-    {
-        int uefiVariableEx = 0;
-        byte[] box = GetMsiDCVarData(ref uefiVariableEx);
-        if (uefiVariableEx != 0)
-            return box[7] != 0;
-        return false;
     }
 
     protected void GetWMI()

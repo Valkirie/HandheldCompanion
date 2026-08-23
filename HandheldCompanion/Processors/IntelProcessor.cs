@@ -87,10 +87,7 @@ namespace HandheldCompanion.Processors
 
                 IDevice device = IDevice.GetCurrent();
 
-                // MSI Claw quirk
-                bool forceOEM = device is ClawA1M claw && claw.GetOverBoost();
-
-                if (HasOEMCPU && (UseOEM || forceOEM))
+                if (HasOEMCPU && UseOEM)
                 {
                     switch (type)
                     {
