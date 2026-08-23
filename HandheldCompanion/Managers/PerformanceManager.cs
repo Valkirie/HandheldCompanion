@@ -440,11 +440,10 @@ public static class PerformanceManager
         {
             RequestCPUClock(Convert.ToUInt32(profile.CPUOverrideValue));
         }
-        else
+        else if (currentProfile?.CPUOverrideEnabled == true)
         {
-            // restore default GPU clock
-            if (currentProfile?.CPUOverrideEnabled == true)
-                RestoreCPUClock();
+            // restore default CPU clock
+            RestoreCPUClock();
         }
 
         // apply profile defined GPU
@@ -471,11 +470,10 @@ public static class PerformanceManager
         {
             RequestCPUCoreCount(profile.CPUCoreCount);
         }
-        else
+        else if (currentProfile?.CPUCoreEnabled == true)
         {
             // restore default CPU Core Count
-            if (currentProfile?.CPUCoreEnabled == true)
-                RequestCPUCoreCount(MotherboardInfo.NumberOfCores);
+            RequestCPUCoreCount(MotherboardInfo.NumberOfCores);
         }
 
         // apply profile define CPU Boost
@@ -483,6 +481,12 @@ public static class PerformanceManager
 
         // apply profile Power mode
         RequestPowerMode(profile.OSPowerMode);
+
+        // apply profile defined EPP after the power overlay has been selected
+        if (profile.EPPOverrideEnabled)
+            RequestEPP(profile.EPPOverrideValue);
+        else if (currentProfile?.EPPOverrideEnabled == true)
+            RequestEPP(0x00000032);
 
         // update current profile reference
         currentProfile = profile;
@@ -537,6 +541,10 @@ public static class PerformanceManager
 
         // restore OSPowerMode.BetterPerformance 
         RequestPowerMode(OSPowerMode.BetterPerformance);
+
+        // restore default EPP after the power overlay has been selected
+        if (profile.EPPOverrideEnabled)
+            RequestEPP(0x00000032);
     }
 
     private static void RestoreTDP(bool immediate)
@@ -783,6 +791,10 @@ public static class PerformanceManager
 
                     // Check if active power shceme has changed and apply if needed
                     RequestPowerMode(currentProfile.OSPowerMode);
+
+                    // Windows may overwrite EPP when the active power overlay changes
+                    if (currentProfile.EPPOverrideEnabled)
+                        RequestEPP(currentProfile.EPPOverrideValue);
 
                     // Check if PerfBoostMode value has changed and apply if needed
                     RequestPerfBoostMode((uint)currentProfile.CPUBoostLevel);
@@ -1157,7 +1169,6 @@ public static class PerformanceManager
         LogManager.LogDebug("User requested Core Parking Mode: {0}", coreParkingMode);
     }
 
-    [Obsolete("This function is deprecated and will be removed in future versions.")]
     private static void RequestEPP(uint EPPOverrideValue)
     {
         var requestedEPP = new uint[2]

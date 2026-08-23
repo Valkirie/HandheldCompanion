@@ -222,11 +222,7 @@
             </ui:SettingsExpander>
 
             <!--  Processor energy performance preference policy  -->
-            <ui:SettingsExpander
-                Description="{l:Static resx:Resources.ProfilesPage_EPPDesc}"
-                Header="{l:Static resx:Resources.ProfilesPage_EPP}"
-                IsEnabled="False"
-                Visibility="Collapsed">
+            <ui:SettingsExpander Description="{l:Static resx:Resources.ProfilesPage_EPPDesc}" Header="{l:Static resx:Resources.ProfilesPage_EPP}">
                 <ui:SettingsExpander.HeaderIcon>
                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe9e9;" />
                 </ui:SettingsExpander.HeaderIcon>
