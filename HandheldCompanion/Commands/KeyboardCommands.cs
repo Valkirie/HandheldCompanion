@@ -1,15 +1,27 @@
 ﻿using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Simulators;
+using HandheldCompanion.Views;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace HandheldCompanion.Commands
 {
     [Serializable]
     public class KeyboardCommands : ICommands
     {
+        public const int MinimumKeyPressDelay = 0;
+        public const int MaximumKeyPressDelay = 5000;
+
         public InputsChord outputChord { get; set; } = new();
+        private int _keyPressDelay;
+        public int KeyPressDelay
+        {
+            get => _keyPressDelay;
+            set => _keyPressDelay = Math.Clamp(value, MinimumKeyPressDelay, MaximumKeyPressDelay);
+        }
 
         public KeyboardCommands()
         {
@@ -50,13 +62,16 @@ namespace HandheldCompanion.Commands
             }
             else
             {
-                foreach (InputsKey key in outputChord.KeyState.OrderBy(key => key.Timestamp))
+                Task.Run(async () =>
                 {
-                    if (key.IsKeyDown)
+                    foreach (InputsKey key in outputChord.KeyState.Where(key => key.IsKeyDown).OrderBy(key => key.Timestamp))
                         KeyboardSimulator.KeyDown((VirtualKeyCode)key.KeyValue);
-                    else
+
+                    await Task.Delay(KeyPressDelay).ConfigureAwait(false);
+
+                    foreach (InputsKey key in outputChord.KeyState.Where(key => key.IsKeyUp).OrderBy(key => key.Timestamp))
                         KeyboardSimulator.KeyUp((VirtualKeyCode)key.KeyValue);
-                }
+                });
             }
 
             base.Execute(IsKeyDown, IsKeyUp, false);
@@ -72,6 +87,7 @@ namespace HandheldCompanion.Commands
                 Glyph = this.Glyph,
                 OnKeyUp = this.OnKeyUp,
                 OnKeyDown = this.OnKeyDown,
+                KeyPressDelay = this.KeyPressDelay,
 
                 // specific
                 outputChord = this.outputChord.Clone() as InputsChord ?? new InputsChord()

@@ -591,6 +591,25 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        public int KeyboardCommandsDelay
+        {
+            get
+            {
+                if (Hotkey.command is KeyboardCommands keyboardCommands)
+                    return keyboardCommands.KeyPressDelay;
+                return 0;
+            }
+            set
+            {
+                if (Hotkey.command is KeyboardCommands keyboardCommands && keyboardCommands.KeyPressDelay != value)
+                {
+                    keyboardCommands.KeyPressDelay = Math.Clamp(value, KeyboardCommands.MinimumKeyPressDelay, KeyboardCommands.MaximumKeyPressDelay);
+                    ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(Hotkey);
+                    OnPropertyChanged(nameof(KeyboardCommandsDelay));
+                }
+            }
+        }
+
         public bool IsToggled => Hotkey.command.IsToggled;
         public bool IsEnabled => Hotkey.command.IsEnabled;
         public bool CanCustom => Hotkey.command.CanCustom;
