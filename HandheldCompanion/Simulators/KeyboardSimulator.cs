@@ -89,63 +89,41 @@ public static class KeyboardSimulator
     public const uint KEYEVENTF_KEYUP = 0x0002;
     public const uint KEYEVENTF_SCANCODE = 0x0008;
     public const uint KEYEVENTF_UNICODE = 0x0004;
+    private const uint MAPVK_VK_TO_VSC_EX = 4;
+
+    private static bool IsExtendedKey(VirtualKeyCode key)
+    {
+        return (MapVirtualKey((int)key, MAPVK_VK_TO_VSC_EX) & 0xFF00) == 0xE000;
+    }
 
     // A function that sends a key down event for a KeyEventArgs object using the keybd_event function
     public static void KeyDown(KeyEventArgsExt e)
     {
-        // Get the virtual-key code and the scan code of the key
+        KeyDown(e, UIntPtr.Zero);
+    }
+
+    public static void KeyDown(KeyEventArgsExt e, UIntPtr extraInfo)
+    {
         byte vk = (byte)e.KeyValue;
         byte scan = (byte)e.ScanCode;
+        uint flags = IsExtendedKey((VirtualKeyCode)e.KeyValue) ? KEYEVENTF_EXTENDEDKEY : 0;
 
-        // Check if the key is a modifier key (Ctrl, Alt, Shift)
-        bool isModifier = ((e.Modifiers & System.Windows.Forms.Keys.Control) != 0) ||
-                          ((e.Modifiers & System.Windows.Forms.Keys.Alt) != 0) ||
-                          ((e.Modifiers & System.Windows.Forms.Keys.Shift) != 0);
-
-        // If the key is a modifier key, send a key down event for it
-        if (isModifier)
-        {
-            // Get the virtual-key code of the modifier key
-            byte modifierVk = (byte)e.Modifiers;
-
-            // Get the scan code of the modifier key
-            byte modifierScan = (byte)MapVirtualKey(modifierVk, 0);
-
-            // Send a key down event for the modifier key
-            keybd_event(modifierVk, modifierScan, 0, UIntPtr.Zero);
-        }
-
-        // Send a key down event for the key
-        keybd_event(vk, scan, 0, UIntPtr.Zero);
+        keybd_event(vk, scan, flags, extraInfo);
     }
 
     // A function that sends a key up event for a KeyEventArgs object using the keybd_event function
     public static void KeyUp(KeyEventArgsExt e)
     {
-        // Get the virtual-key code and the scan code of the key
+        KeyUp(e, UIntPtr.Zero);
+    }
+
+    public static void KeyUp(KeyEventArgsExt e, UIntPtr extraInfo)
+    {
         byte vk = (byte)e.KeyValue;
         byte scan = (byte)e.ScanCode;
+        uint flags = (IsExtendedKey((VirtualKeyCode)e.KeyValue) ? KEYEVENTF_EXTENDEDKEY : 0) | KEYEVENTF_KEYUP;
 
-        // Check if the key is a modifier key (Ctrl, Alt, Shift)
-        bool isModifier = ((e.Modifiers & System.Windows.Forms.Keys.Control) != 0) ||
-                          ((e.Modifiers & System.Windows.Forms.Keys.Alt) != 0) ||
-                          ((e.Modifiers & System.Windows.Forms.Keys.Shift) != 0);
-
-        // Send a key up event for the key
-        keybd_event(vk, scan, KEYEVENTF_KEYUP, UIntPtr.Zero);
-
-        // If the key is a modifier key, send a key up event for it
-        if (isModifier)
-        {
-            // Get the virtual-key code of the modifier key
-            byte modifierVk = (byte)e.Modifiers;
-
-            // Get the scan code of the modifier key
-            byte modifierScan = (byte)MapVirtualKey(modifierVk, 0);
-
-            // Send a key up event for the modifier key
-            keybd_event(modifierVk, modifierScan, KEYEVENTF_KEYUP, UIntPtr.Zero);
-        }
+        keybd_event(vk, scan, flags, extraInfo);
     }
 
     public static void KeyDown(VirtualKeyCode key)
@@ -158,6 +136,15 @@ public static class KeyboardSimulator
         {
             // Some simulated input commands were not sent successfully.
         }
+    }
+
+    public static void KeyUp(VirtualKeyCode key, UIntPtr extraInfo)
+    {
+        byte vk = (byte)key;
+        byte scan = (byte)MapVirtualKey((int)key, MAPVK_VK_TO_VSC_EX);
+        uint flags = (IsExtendedKey(key) ? KEYEVENTF_EXTENDEDKEY : 0) | KEYEVENTF_KEYUP;
+
+        keybd_event(vk, scan, flags, extraInfo);
     }
 
     public static void KeyDown(KeyCode[] keys)

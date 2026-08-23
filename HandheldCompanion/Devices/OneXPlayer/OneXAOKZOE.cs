@@ -4,9 +4,10 @@ using HidLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows.Media;
 
-namespace HandheldCompanion.Devices
+namespace HandheldCompanion.Devices.OneXPlayer
 {
     public class OneXAOKZOE : IDevice
     {
@@ -34,25 +35,38 @@ namespace HandheldCompanion.Devices
             if (!success)
                 return false;
 
-            // allow OneX turbo button to pass key inputs
-            EcWriteByte(0xF1, 0x40);
-            EcWriteByte(0xF2, 0x02);
-
-            if (EcReadByte(0xF1) == 0x40 && EcReadByte(0xF2) == 0x02)
-                LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
+            SetTurboButtonTakeover(true);
 
             return success;
         }
 
         public override void Close()
         {
-            EcWriteByte(0xF1, 0x00);
-            EcWriteByte(0xF2, 0x00);
-
-            if (EcReadByte(0xF1) == 0x00 && EcReadByte(0xF2) == 0x00)
-                LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
+            SetTurboButtonTakeover(false);
 
             base.Close();
+        }
+
+        protected virtual void SetTurboButtonTakeover(bool enabled)
+        {
+            SetDefaultTurboButtonTakeover(enabled);
+        }
+
+        protected void SetDefaultTurboButtonTakeover(bool enabled)
+        {
+            byte f1Value = enabled ? (byte)0x40 : (byte)0x00;
+            byte f2Value = enabled ? (byte)0x02 : (byte)0x00;
+
+            EcWriteByte(0xF1, f1Value);
+            Thread.Sleep(50);
+
+            EcWriteByte(0xF2, f2Value);
+            Thread.Sleep(50);
+
+            if (EcReadByte(0xF1) == f1Value && EcReadByte(0xF2) == f2Value)
+                LogManager.LogInformation("{0} {1} OEM button", enabled ? "Unlocked" : "Locked", ButtonFlags.OEM1);
+            else
+                LogManager.LogWarning("Failed to {0} {1} OEM button", enabled ? "unlock" : "lock", ButtonFlags.OEM1);
         }
 
         public override void SetFanDuty(double percent)
@@ -111,7 +125,7 @@ namespace HandheldCompanion.Devices
         #region HID v1 helpers (X1 mini / G1 / AOKZOE A1X, etc.)
 
         /// <summary>
-        /// Common helper for HID v1 brightness command (gen_brightness).
+        /// Common helper for HHD hid_v1.gen_brightness.
         /// Maps 0–100 % to enabled + low/medium/high.
         /// </summary>
         protected bool SendV1Brightness(HidDevice? device, int brightness, byte side = 0x00)
@@ -144,16 +158,16 @@ namespace HandheldCompanion.Devices
         }
 
         /// <summary>
-        /// HID v1 solid colour helper (gen_rgb_solid).
+        /// HID v1 equivalent of HHD hid_v1.gen_rgb_solid; 0xF0 is its breathing variant.
         /// </summary>
-        protected bool SendV1SolidColor(HidDevice? device, Color color, byte side = 0x00)
+        protected bool SendV1SolidColor(HidDevice? device, Color color, byte side = 0x00, bool breathing = false)
         {
             if (device is null || !device.IsConnected)
                 return false;
 
             List<byte> cmd = new()
             {
-                0xFE,           // solid-color mode
+                breathing ? (byte)0xF0 : (byte)0xFE, // solid-color or breathing mode
                 side,           // side (0 = both sticks / light zones)
                 0x02            // constant
             };

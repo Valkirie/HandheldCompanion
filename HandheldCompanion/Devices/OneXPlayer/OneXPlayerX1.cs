@@ -1,18 +1,23 @@
 ﻿using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
+using HandheldCompanion.Devices.OneXPlayer;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc.Threading.Tasks;
 using HandheldCompanion.Models;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Shared;
+using HidLibrary;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
 using System.Management;
+using System.Numerics;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -21,9 +26,18 @@ namespace HandheldCompanion.Devices;
 
 public class OneXPlayerX1 : OneXAOKZOE
 {
+    protected const int VendorHidId = 0;
+
+    // OneXPlayer classic vendor chip (0x1A86 / 0xFE00). The button/remap traffic
+    // lives on the vendor-defined collection MI_02 (usage page 0xFF00, usage 0x0001).
+    protected const int PID_VENDOR = 0xFE00;
+
     private SerialPort? _serialPort; // COM3 SerialPort for Device control of OneXPlayer
-    private OneXPlayerOxpHidMonitor? _vendorHidMonitor;
-    protected OxpHidInitProfile VendorHidInitProfile = OxpHidInitProfile.X1;
+
+    private const byte FrameMarker = 0x3F;
+    private const byte ButtonCommandId = 0xB2;
+    private const byte StatusCommandId = 0xB8;
+    protected const byte VibrationCommandId = 0xB3;
 
     // Enable COM Port for LED Control
     public bool EnableSerialPort = true;
@@ -51,6 +65,13 @@ public class OneXPlayerX1 : OneXAOKZOE
 
     public OneXPlayerX1()
     {
+        vendorId = 0x1A86;
+        productIds = [PID_VENDOR];
+        hidFilters = new()
+        {
+            { PID_VENDOR, new HidFilter(unchecked((short)0xFF00), unchecked(0x0001)) },
+        };
+
         // device specific settings
         ProductIllustration = "device_onexplayer_x1";
         ProductModel = "ONEXPLAYERX1";
@@ -58,7 +79,8 @@ public class OneXPlayerX1 : OneXAOKZOE
         // IMU matrices loaded from OneXPlayerX1.json
 
         // device specific capacities
-        Capabilities = DeviceCapabilities.DynamicLighting;
+        Capabilities = DeviceCapabilities.FanControl;
+        Capabilities |= DeviceCapabilities.DynamicLighting;
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
         Capabilities |= DeviceCapabilities.DynamicLightingSecondLEDColor;
 
@@ -178,11 +200,6 @@ public class OneXPlayerX1 : OneXAOKZOE
             }
         }
 
-        // allow OneX button to pass key inputs
-        EcWriteByte(0xEB, 0x40);
-        if (EcReadByte(0xEB) == 0x40)
-            LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
-
         return success;
     }
 
@@ -193,38 +210,46 @@ public class OneXPlayerX1 : OneXAOKZOE
         {
             SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetString("BatteryChargeLimitPercent"), false, true);
             SettingsManager_SettingValueChanged("BatteryBypassChargingMode", ManagerFactory.settingsManager.GetString("BatteryBypassChargingMode"), false, true);
-            SettingsManager_SettingValueChanged("LEDSettingsEnabled", ManagerFactory.settingsManager.GetString("LEDSettingsEnabled"), false, true);
-            SettingsManager_SettingValueChanged("LEDBrightness", ManagerFactory.settingsManager.GetString("LEDBrightness"), false, true);
-            SettingsManager_SettingValueChanged("LEDSettingsLevel", ManagerFactory.settingsManager.GetString("LEDSettingsLevel"), false, true);
-            SettingsManager_SettingValueChanged("LEDMainColor", ManagerFactory.settingsManager.GetString("LEDMainColor"), false, true);
-            SettingsManager_SettingValueChanged("LEDSecondColor", ManagerFactory.settingsManager.GetString("LEDSecondColor"), false, true);
-            SettingsManager_SettingValueChanged("LEDPresetIndex", ManagerFactory.settingsManager.GetString("LEDPresetIndex"), false, true);
         }
+
+        SettingsManager_SettingValueChanged("LEDSettingsEnabled", ManagerFactory.settingsManager.GetString("LEDSettingsEnabled"), false, true);
+        SettingsManager_SettingValueChanged("LEDBrightness", ManagerFactory.settingsManager.GetString("LEDBrightness"), false, true);
+        SettingsManager_SettingValueChanged("LEDSettingsLevel", ManagerFactory.settingsManager.GetString("LEDSettingsLevel"), false, true);
+        SettingsManager_SettingValueChanged("LEDMainColor", ManagerFactory.settingsManager.GetString("LEDMainColor"), false, true);
+        SettingsManager_SettingValueChanged("LEDSecondColor", ManagerFactory.settingsManager.GetString("LEDSecondColor"), false, true);
+        SettingsManager_SettingValueChanged("LEDPresetIndex", ManagerFactory.settingsManager.GetString("LEDPresetIndex"), false, true);
 
         base.QuerySettings();
     }
 
     public override void Close()
     {
-        StopVendorHidListener();
+        // stop further reads
+        IsReading = false;
 
-        if (_serialPort is not null)
+        // Release custom buttons so none remain logically pressed after disconnect.
+        KeyRelease(ButtonFlags.OEM1); // Turbo
+        KeyRelease(ButtonFlags.OEM2); // Keyboard
+
+        // close devices
+        try { DisposeHidDevices(); } catch { }
+
+        if (EnableSerialPort)
         {
-            try
+            if (_serialPort is not null)
             {
-                if (_serialPort.IsOpen)
-                    _serialPort.Close();
-            }
-            finally
-            {
-                _serialPort.Dispose();
-                _serialPort = null;
+                try
+                {
+                    if (_serialPort.IsOpen)
+                        _serialPort.Close();
+                }
+                finally
+                {
+                    _serialPort.Dispose();
+                    _serialPort = null;
+                }
             }
         }
-
-        EcWriteByte(0xEB, 0x00);
-        if (EcReadByte(0xEB) == 0x00)
-            LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
 
         base.Close();
     }
@@ -437,7 +462,15 @@ public class OneXPlayerX1 : OneXAOKZOE
 
     protected override void Device_Removed()
     {
-        StopVendorHidListener();
+        // stop further reads
+        IsReading = false;
+
+        // Release custom buttons so none remain logically pressed after disconnect.
+        KeyRelease(ButtonFlags.OEM1); // Turbo
+        KeyRelease(ButtonFlags.OEM2); // Keyboard
+
+        // close devices
+        try { DisposeHidDevices(); } catch { }
     }
 
     protected override async void Device_Inserted(bool reScan = false)
@@ -445,39 +478,96 @@ public class OneXPlayerX1 : OneXAOKZOE
         if (reScan)
             await WaitUntilReady();
 
-        StopVendorHidListener();
-        StartVendorHidListener();
+        if (!hidDevices.TryGetValue(VendorHidId, out HidDevice? device))
+            return;
+
+        device.OpenDevice();
+        if (!device.IsOpen)
+            return;
+
+        IsReading = true;
+
+        // HHD's controller opens the hid_v1/hid_v2_x2 OxpHidraw instance here,
+        // then lets the device-specific protocol choose its initialization pages.
+        InitializeVendorHidCommands();
+        _ = ReadLoopAsync(device);
     }
 
-    protected virtual void StartVendorHidListener()
+    protected virtual void InitializeVendorHidCommands()
     {
-        if (_vendorHidMonitor is not null)
-            return;
+        Thread.Sleep(4000);
 
-        _vendorHidMonitor = new OneXPlayerOxpHidMonitor();
-        _vendorHidMonitor.ButtonChanged += VendorHidMonitor_ButtonChanged;
-        if (!_vendorHidMonitor.Open(VendorHidInitProfile))
+        // Equivalent to hid_v1.INITIALIZE for standard X1 devices.
+        WriteVendorHidCommand(0xB4, BuildRemapPage1(0x01));
+        Thread.Sleep(50);
+
+        WriteVendorHidCommand(0xB4, BuildRemapPage2(0x01, 0x67, 0x66));
+    }
+
+    public override bool IsReady()
+    {
+        // Early return if device is already bound and connected
+        if (hidDevices.TryGetValue(VendorHidId, out HidDevice? boundDevice) && boundDevice.IsConnected)
+            return true;
+
+        // A single VID/PID exposes many HID collections (keyboard, consumer,
+        // mouse, vendor). Use hidFilters to pick the vendor-defined collection
+        // that carries the button/remap traffic: matching on usage page + usage
+        // avoids grabbing e.g. the writable-but-tiny keyboard collection.
+        foreach (HidDevice device in GetHidDevices(vendorId, productIds, 0))
         {
-            _vendorHidMonitor.ButtonChanged -= VendorHidMonitor_ButtonChanged;
-            _vendorHidMonitor.Dispose();
-            _vendorHidMonitor = null;
-            return;
+            if (!device.IsConnected)
+                continue;
+
+            if (!hidFilters.TryGetValue(device.Attributes.ProductId, out HidFilter hidFilter))
+                continue;
+
+            if (device.Capabilities.UsagePage != hidFilter.UsagePage ||
+                device.Capabilities.Usage != hidFilter.Usage)
+                continue;
+
+            hidDevices[VendorHidId] = device;
+            return true;
         }
 
-        LogManager.LogInformation("Started OneXPlayer vendor HID listener");
+        return false;
     }
 
-    protected virtual void StopVendorHidListener()
+    private async Task ReadLoopAsync(HidDevice device)
     {
-        if (_vendorHidMonitor is null)
-            return;
+        try
+        {
+            while (IsReading)
+            {
+                HidReport report = await device.ReadReportAsync().ConfigureAwait(false);
+                if (report?.Data is null || report.Data.Length < 14)
+                    continue;
 
-        _vendorHidMonitor.ButtonChanged -= VendorHidMonitor_ButtonChanged;
-        _vendorHidMonitor.Dispose();
-        _vendorHidMonitor = null;
+                byte[] data = report.Data;
+                if (data[1] != FrameMarker || data[^2] != FrameMarker)
+                    continue;
+
+                if (data[0] == StatusCommandId)
+                {
+                    HandleStatusReport(data);
+                    continue;
+                }
+
+                if (data[0] != ButtonCommandId)
+                    continue;
+
+                byte buttonId = data[6];
+                bool pressed = data[12] == 0x01;
+                HandleEvent(buttonId, pressed);
+            }
+        }
+        catch { }
     }
 
-    private void VendorHidMonitor_ButtonChanged(byte buttonId, bool pressed)
+    protected virtual void HandleStatusReport(byte[] report)
+    { }
+
+    protected virtual void HandleEvent(byte buttonId, bool pressed)
     {
         ButtonFlags button = MapVendorButton(buttonId);
         if (button == ButtonFlags.None)
@@ -488,6 +578,69 @@ public class OneXPlayerX1 : OneXAOKZOE
         else
             KeyRelease(button);
     }
+
+    protected bool WriteVendorHidCommand(byte commandId, byte[] payload)
+    {
+        if (!hidDevices.TryGetValue(VendorHidId, out HidDevice? device))
+            return false;
+
+        int reportLength = device.Capabilities.OutputReportByteLength;
+        int frameLength = reportLength == 64 ? reportLength : reportLength - 1;
+        if (frameLength < 6 || payload.Length > frameLength - 5)
+            return false;
+
+        byte[] frame = new byte[frameLength];
+        frame[0] = commandId;
+        frame[1] = FrameMarker;
+        frame[2] = 0x01;
+        Array.Copy(payload, 0, frame, 3, payload.Length);
+        frame[^2] = FrameMarker;
+        frame[^1] = commandId;
+
+        if (reportLength == 64)
+        {
+            // Older X2 interfaces expose the protocol frame as the complete
+            // output report, without a separate report-ID byte.
+            return device.Write(frame);
+        }
+
+        // Newer interfaces, including X2 Mini Pro, expose a 65-byte HID
+        // report: report ID 0x00 followed by the 64-byte protocol frame.
+        // Use the same raw-write path as the other 65-byte devices in this
+        // codebase; HidLibrary adds no framing beyond the byte array here.
+        byte[] report = WithReportID(frame, 0x00, frame.Length);
+        return device.Write(report);
+    }
+
+    protected virtual byte[] BuildRemapPage1(byte preset) =>
+    [
+        0x02, 0x38, 0x20, 0x01, preset,
+        0x01, 0x01, 0x01, 0x00, 0x00, 0x00,
+        0x02, 0x01, 0x02, 0x00, 0x00, 0x00,
+        0x03, 0x01, 0x03, 0x00, 0x00, 0x00,
+        0x04, 0x01, 0x04, 0x00, 0x00, 0x00,
+        0x05, 0x01, 0x05, 0x00, 0x00, 0x00,
+        0x06, 0x01, 0x06, 0x00, 0x00, 0x00,
+        0x07, 0x01, 0x07, 0x00, 0x00, 0x00,
+        0x08, 0x01, 0x08, 0x00, 0x00, 0x00,
+        0x09, 0x01, 0x09, 0x00, 0x00, 0x00,
+    ];
+
+    protected virtual byte[] BuildRemapPage2(byte preset, byte m1KeyCode, byte m2KeyCode) =>
+    [
+        0x02, 0x38, 0x20, 0x02, preset,
+        0x0A, 0x01, 0x0A, 0x00, 0x00, 0x00,
+        0x0B, 0x01, 0x0B, 0x00, 0x00, 0x00,
+        0x0C, 0x01, 0x0C, 0x00, 0x00, 0x00,
+        0x0D, 0x01, 0x0D, 0x00, 0x00, 0x00,
+        0x0E, 0x01, 0x0E, 0x00, 0x00, 0x00,
+        0x0F, 0x01, 0x0F, 0x00, 0x00, 0x00,
+        0x10, 0x01, 0x10, 0x00, 0x00, 0x00,
+        0x22, 0x02, 0x01, m1KeyCode, 0x00, 0x00,
+        0x23, 0x02, 0x01, m2KeyCode, 0x00, 0x00,
+    ];
+
+    protected byte[] BuildIntercept(bool enabled) => enabled ? [0x03] : [0x00, 0x01, 0x02];
 
     protected virtual ButtonFlags MapVendorButton(byte buttonId)
     {

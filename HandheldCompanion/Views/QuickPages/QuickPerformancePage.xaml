@@ -186,13 +186,15 @@
                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe8b2;" />
                 </ui:SettingsExpander.HeaderIcon>
 
-                <ComboBox
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    ItemsSource="{Binding FramerateLimits, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                    SelectedItem="{Binding SelectedFrameLimit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <ui:ToggleSwitch IsOn="{Binding FramerateLimitEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <ui:SettingsExpander.Items>
+                    <ui:SettingsCard Header="Framerate limit" IsEnabled="{Binding FramerateLimitEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBox
+                            HorizontalAlignment="Stretch"
+                            ItemsSource="{Binding FramerateLimits, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedItem="{Binding SelectedFrameLimit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </ui:SettingsCard>
                     <ui:SettingsCard IsEnabled="{Binding IsCustomFrameLimitSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                         <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
                             <Label
@@ -220,11 +222,7 @@
             </ui:SettingsExpander>
 
             <!--  Processor energy performance preference policy  -->
-            <ui:SettingsExpander
-                Description="{l:Static resx:Resources.ProfilesPage_EPPDesc}"
-                Header="{l:Static resx:Resources.ProfilesPage_EPP}"
-                IsEnabled="False"
-                Visibility="Collapsed">
+            <ui:SettingsExpander Description="{l:Static resx:Resources.ProfilesPage_EPPDesc}" Header="{l:Static resx:Resources.ProfilesPage_EPP}">
                 <ui:SettingsExpander.HeaderIcon>
                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe9e9;" />
                 </ui:SettingsExpander.HeaderIcon>
@@ -384,7 +382,10 @@
             </ui:SettingsCard>
 
             <!--  CPU Parking Mode  -->
-            <ui:SettingsCard Description="{l:Static resx:Resources.PerformancePage_CPUParkingModeDesc}" Header="{l:Static resx:Resources.PerformancePage_CPUParkingMode}">
+            <ui:SettingsCard
+                Description="{l:Static resx:Resources.PerformancePage_CPUParkingModeDesc}"
+                Header="{l:Static resx:Resources.PerformancePage_CPUParkingMode}"
+                IsEnabled="{Binding SupportsHeterogeneousCoreScheduling}">
                 <ui:SettingsCard.HeaderIcon>
                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe964;" />
                 </ui:SettingsCard.HeaderIcon>

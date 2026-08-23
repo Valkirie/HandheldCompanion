@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management;
+using System.Runtime.InteropServices;
 
 namespace HandheldCompanion;
 
@@ -20,6 +21,8 @@ public static class MotherboardInfo
 
     private static readonly object cacheLock = new();
     private static Dictionary<string, object> cache = [];
+
+    private static bool? _hasHeterogeneousCpuCores;
 
     private static readonly string cacheDirectory;
     private const string fileName = "motherboard.json";
@@ -46,6 +49,62 @@ public static class MotherboardInfo
     public static string ProcessorID => (Convert.ToString(queryCacheValue("processor", "processorID")) ?? string.Empty).TrimEnd();
     public static string ProcessorName => (Convert.ToString(queryCacheValue("processor", "Name")) ?? string.Empty).TrimEnd();
     public static string ProcessorManufacturer => (Convert.ToString(queryCacheValue("processor", "Manufacturer")) ?? string.Empty).TrimEnd();
+
+    public static bool HasHeterogeneousCpuCores
+    {
+        get
+        {
+            if (_hasHeterogeneousCpuCores.HasValue)
+                return _hasHeterogeneousCpuCores.Value;
+
+            try
+            {
+                GetSystemCpuSetInformation(IntPtr.Zero, 0, out uint requiredLength, IntPtr.Zero, 0);
+                if (requiredLength == 0)
+                    return (_hasHeterogeneousCpuCores = false).Value;
+
+                IntPtr buffer = Marshal.AllocHGlobal((int)requiredLength);
+                try
+                {
+                    if (GetSystemCpuSetInformation(buffer, requiredLength, out uint returnedLength, IntPtr.Zero, 0) == 0)
+                        return (_hasHeterogeneousCpuCores = false).Value;
+
+                    var efficiencyClasses = new HashSet<byte>();
+                    int offset = 0;
+                    while (offset + sizeof(uint) <= returnedLength)
+                    {
+                        uint size = (uint)Marshal.ReadInt32(buffer, offset);
+                        if (size < 20 || offset + size > returnedLength)
+                            break;
+
+                        uint type = (uint)Marshal.ReadInt32(buffer, offset + sizeof(uint));
+                        if (type == 0)
+                            efficiencyClasses.Add(Marshal.ReadByte(buffer, offset + 18));
+
+                        offset += (int)size;
+                    }
+
+                    return (_hasHeterogeneousCpuCores = efficiencyClasses.Count > 1).Value;
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(buffer);
+                }
+            }
+            catch
+            {
+                return (_hasHeterogeneousCpuCores = false).Value;
+            }
+        }
+    }
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern uint GetSystemCpuSetInformation(
+        IntPtr information,
+        uint bufferLength,
+        out uint returnedLength,
+        IntPtr process,
+        uint flags);
 
     private static uint _ProcessorMaxTurboSpeed = 0;
     public static uint ProcessorMaxTurboSpeed

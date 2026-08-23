@@ -408,10 +408,12 @@ public class ClawA1M : IDevice
         // configure controller to XInput
         SwitchMode(GamepadMode.XInput);
 
+        // Release custom buttons so none remain logically pressed after disconnect.
+        KeyRelease(ButtonFlags.OEM1); // M1
+        KeyRelease(ButtonFlags.OEM2); // M2
+
         // close devices
-        foreach (HidDevice hidDevice in hidDevices.Values)
-            hidDevice.Dispose();
-        hidDevices.Clear();
+        try { DisposeHidDevices(); } catch { }
 
         // set flag
         ClawOpen = false;
@@ -783,11 +785,11 @@ public class ClawA1M : IDevice
 
     protected override void Device_Removed()
     {
-        // close device
-        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
-        {
-            try { device.Dispose(); } catch { }
-        }
+        // Release custom buttons so none remain logically pressed after disconnect.
+        KeyRelease(ButtonFlags.OEM1); // M1
+        KeyRelease(ButtonFlags.OEM2); // M2
+
+        try { DisposeHidDevices(); } catch { }
     }
 
     protected override async void Device_Inserted(bool reScan = false)

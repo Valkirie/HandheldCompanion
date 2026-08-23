@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
@@ -10,6 +12,51 @@ namespace HandheldCompanion.Utils;
 
 public static class CommonUtils
 {
+    public static string GetTime(DateTime dateTime)
+    {
+        if (dateTime == default)
+            return string.Empty;
+
+        TimeSpan elapsed = DateTime.Now - dateTime;
+        if (elapsed < TimeSpan.Zero)
+            elapsed = TimeSpan.Zero;
+
+        double value;
+        string format;
+        if (elapsed.TotalMinutes < 1)
+        {
+            value = Math.Max(0, elapsed.Seconds);
+            format = Properties.Resources.RelativeTime_SecondsAgo;
+        }
+        else if (elapsed.TotalHours < 1)
+        {
+            value = (int)elapsed.TotalMinutes;
+            format = Properties.Resources.RelativeTime_MinutesAgo;
+        }
+        else if (elapsed.TotalDays < 1)
+        {
+            value = (int)elapsed.TotalHours;
+            format = Properties.Resources.RelativeTime_HoursAgo;
+        }
+        else if (elapsed.TotalDays < 7)
+        {
+            value = (int)elapsed.TotalDays;
+            format = Properties.Resources.RelativeTime_DaysAgo;
+        }
+        else if (elapsed.TotalDays < 365)
+        {
+            value = (int)(elapsed.TotalDays / 7);
+            format = Properties.Resources.RelativeTime_WeeksAgo;
+        }
+        else
+        {
+            value = (int)(elapsed.TotalDays / 365);
+            format = Properties.Resources.RelativeTime_YearsAgo;
+        }
+
+        return string.Format(CultureInfo.CurrentCulture, format, value);
+    }
+
     public static string? Between(string source, string left, string? right = null, bool keepLeftRight = false)
     {
         if (string.IsNullOrEmpty(source))

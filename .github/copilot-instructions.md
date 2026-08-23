@@ -21,6 +21,7 @@
 
 ## Project-Specific Rules
 - For freeze investigations in HandheldCompanion, perform a repo-wide audit of UI-thread lock acquisition and synchronous waits before narrowing to individual classes.
+- When translating gyroscope or accelerometer axis/sign mappings from HHD to HandheldCompanion, first inspect the exact HHD mapping selected for the device. In particular, expand `gen_gyro_state(x, inv_x, y, inv_y, z, inv_z)` as `output X = (-1 if inv_x else +1) * input x`, `output Y = (-1 if inv_y else +1) * input y`, and `output Z = (-1 if inv_z else +1) * input z`; never substitute `DEFAULT_MAPPINGS` without checking for a device-specific mapping such as `X1_MINI_MAPPING`. HHD is `outputAxis <- HHD.sign * inputAxis`; HC's `AxisSwap` is `inputAxis -> outputAxis` and `Axis` is signed by output axis. For each HHD output axis, set `HC.AxisSwap[inputAxis] = outputAxis` and `HC.Axis[outputAxis] = -HHD.sign` (equivalently `HC = -Transpose(HHD)`). Apply the conversion independently to gyro and accelerometer mappings; do not assume their mappings are identical.
 
 ## Error Handling and Validation
 - Not lazy about: input validation at trust boundaries, error handling that prevents data loss, security, accessibility, the calibration real hardware needs (the platform is never the spec ideal, a clock drifts, a sensor reads off), anything explicitly requested. 

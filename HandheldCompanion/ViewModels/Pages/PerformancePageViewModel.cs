@@ -400,6 +400,20 @@ namespace HandheldCompanion.ViewModels
 
         public int FrameLimitMinimum => 10;
 
+        public bool FramerateLimitEnabled
+        {
+            get => SelectedPreset.FramerateLimitEnabled ?? SelectedPreset.FramerateValue != 0;
+            set
+            {
+                if (value == FramerateLimitEnabled)
+                    return;
+
+                SelectedPreset.FramerateLimitEnabled = value;
+                OnPropertyChanged(nameof(FramerateLimitEnabled));
+                SubmitSelectedPreset();
+            }
+        }
+
         private bool _isCustomFrameLimitSelected;
         public bool IsCustomFrameLimitSelected
         {
@@ -577,6 +591,8 @@ namespace HandheldCompanion.ViewModels
                 }
             }
         }
+
+        public bool SupportsHeterogeneousCoreScheduling => MotherboardInfo.HasHeterogeneousCpuCores;
 
         public int CPUBoostLevel
         {
@@ -819,6 +835,7 @@ namespace HandheldCompanion.ViewModels
 
         private ObservableCollection<ProfilesPickerViewModel> _profilePickerItems = [];
         public ObservableCollection<ProfilesPickerViewModel> ProfilePickerItems => _profilePickerItems;
+        public bool IsSelectedPresetUsed => SelectedPreset is not null && ManagerFactory.profileManager.GetCurrent().PowerProfiles.Values.Contains(SelectedPreset.Guid);
         public ICommand OpenModifyDialogCommand { get; private set; } = new DelegateCommand(() => { });
         public ICommand ConfirmModifyCommand { get; private set; } = new DelegateCommand(() => { });
         public ICommand CreatePresetCommand { get; private set; } = new DelegateCommand(() => { });
@@ -882,6 +899,7 @@ namespace HandheldCompanion.ViewModels
             // UI state (display-only or indirect updates)
             nameof(SelectedPresetPicker),
             nameof(ProfilePickerItems),
+            nameof(IsSelectedPresetUsed),
             nameof(HasWarning),
 
             // Device capabilities (read-only)
@@ -894,6 +912,7 @@ namespace HandheldCompanion.ViewModels
 
             // Framerate limiter UI state
             nameof(FramerateLimits),
+            nameof(FramerateLimitEnabled),
             nameof(SelectedFrameLimit),
             nameof(IsCustomFrameLimitSelected),
             nameof(CustomFrameLimitValue),
@@ -938,6 +957,17 @@ namespace HandheldCompanion.ViewModels
                     break;
                 case ManagerStatus.Initialized:
                     QueryPowerProfile();
+                    break;
+            }
+
+            switch (ManagerFactory.profileManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.profileManager.Initialized += ProfileManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryProfiles();
                     break;
             }
 
@@ -1302,9 +1332,21 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private void QueryProfiles()
+        {
+            ManagerFactory.profileManager.Updated += ProfileManager_Updated;
+            ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
+            ManagerFactory.profileManager.Applied += ProfileManager_Applied;
+        }
+
         private void PowerProfileManager_Initialized()
         {
             QueryPowerProfile();
+        }
+
+        private void ProfileManager_Initialized()
+        {
+            QueryProfiles();
         }
 
         private void QueryMedia()
@@ -1338,6 +1380,10 @@ namespace HandheldCompanion.ViewModels
                 ManagerFactory.powerProfileManager.Updated -= PowerProfileManager_Updated;
                 ManagerFactory.powerProfileManager.Deleted -= PowerProfileManager_Deleted;
                 ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
+                ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
+                ManagerFactory.profileManager.Deleted -= ProfileManager_Deleted;
+                ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
+                ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
                 ManagerFactory.gpuManager.Hooked -= GPUManager_Hooked;
                 ManagerFactory.gpuManager.Unhooked -= GpuManager_Unhooked;
                 ManagerFactory.gpuManager.Initialized -= GpuManager_Initialized;
@@ -1364,6 +1410,21 @@ namespace HandheldCompanion.ViewModels
         }
 
         #region Events
+
+        private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
+        {
+            OnPropertyChanged(nameof(IsSelectedPresetUsed));
+        }
+
+        private void ProfileManager_Deleted(Profile profile)
+        {
+            OnPropertyChanged(nameof(IsSelectedPresetUsed));
+        }
+
+        private void ProfileManager_Applied(Profile profile, UpdateSource source)
+        {
+            OnPropertyChanged(nameof(IsSelectedPresetUsed));
+        }
 
         private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
         {

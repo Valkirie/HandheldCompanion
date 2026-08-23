@@ -904,6 +904,12 @@
   <data name="SettingsPage_LastChecked" xml:space="preserve">
     <value>Последняя проверка: </value>
   </data>
+  <data name="RelativeTime_DaysAgo" xml:space="preserve"><value>{0} дней назад</value></data>
+  <data name="RelativeTime_HoursAgo" xml:space="preserve"><value>{0} часов назад</value></data>
+  <data name="RelativeTime_MinutesAgo" xml:space="preserve"><value>{0} минут назад</value></data>
+  <data name="RelativeTime_SecondsAgo" xml:space="preserve"><value>{0} секунд назад</value></data>
+  <data name="RelativeTime_WeeksAgo" xml:space="preserve"><value>{0} недель назад</value></data>
+  <data name="RelativeTime_YearsAgo" xml:space="preserve"><value>{0} лет назад</value></data>
   <data name="SettingsPage_NotificationOptions" xml:space="preserve">
     <value>Настройки уведомлений</value>
   </data>

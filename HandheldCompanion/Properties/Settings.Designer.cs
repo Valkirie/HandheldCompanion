@@ -21,7 +21,6 @@ namespace HandheldCompanion.Properties
             get {
                 return defaultInstance;
             }
-
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
@@ -45,18 +44,6 @@ namespace HandheldCompanion.Properties
             }
             set {
                 this["RunAtStartup"] = value;
-            }
-        }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool BlockMsiClawWinGHotkey {
-            get {
-                return ((bool)(this["BlockMsiClawWinGHotkey"]));
-            }
-            set {
-                this["BlockMsiClawWinGHotkey"] = value;
             }
         }
         
@@ -527,7 +514,7 @@ namespace HandheldCompanion.Properties
                 this["SteamControllerMode"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
@@ -1357,6 +1344,18 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool BlockMsiClawWinGHotkey {
+            get {
+                return ((bool)(this["BlockMsiClawWinGHotkey"]));
+            }
+            set {
+                this["BlockMsiClawWinGHotkey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int ConfigurableTDPMethod {
             get {
@@ -1388,6 +1387,18 @@ namespace HandheldCompanion.Properties
             }
             set {
                 this["LibrarySortAscending"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("12/20/1989")]
+        public string LibraryLastChecked {
+            get {
+                return ((string)(this["LibraryLastChecked"]));
+            }
+            set {
+                this["LibraryLastChecked"] = value;
             }
         }
         

@@ -28,12 +28,10 @@ namespace HandheldCompanion.Misc
 
         public bool AutoTDPEnabled { get; set; }
         public float AutoTDPRequestedFPS { get; set; } = 30.0f;
+        public bool? FramerateLimitEnabled { get; set; }
         public int FramerateValue { get; set; } = 0; // default RTSS value
 
-        [Obsolete("This property is deprecated and will be removed in future versions.")]
         public bool EPPOverrideEnabled { get; set; }
-
-        [Obsolete("This property is deprecated and will be removed in future versions.")]
         public uint EPPOverrideValue { get; set; } = 50;
 
         public bool CPUCoreEnabled { get; set; }

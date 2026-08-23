@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFrameworks>net10.0-windows10.0.19041.0</TargetFrameworks>
@@ -11,7 +11,7 @@
 		<StartupObject>HandheldCompanion.App</StartupObject>
 		<OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
 		<ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-		<Version>1.0.2.0</Version>
+		<Version>1.1.1.0</Version>
 		<Platforms>x64</Platforms>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
@@ -74,6 +74,8 @@
 		<None Remove="Resources\DeviceImages\device_msi_claw8ex.png" />
 		<None Remove="Resources\DeviceImages\device_onexplayer_apex.png" />
 		<None Remove="Resources\DeviceImages\device_onexplayer_g1.png" />
+		<None Remove="Resources\DeviceImages\device_onexplayer_x2.png" />
+		<None Remove="Resources\DeviceImages\device_onexplayer_x2minipro.png" />
 		<None Remove="Resources\DeviceImages\device_suiplay_0x1.png" />
 		<None Remove="Resources\DeviceImages\device_valve_fremont.png" />
 		<None Remove="Resources\DeviceImages\device_xbox_rog_ally.png" />
@@ -190,6 +192,8 @@
 		<Resource Include="Resources\DeviceImages\device_onexplayer_mini.png" />
 		<Resource Include="Resources\DeviceImages\device_onexplayer_onexfly.png" />
 		<Resource Include="Resources\DeviceImages\device_onexplayer_x1.png" />
+		<Resource Include="Resources\DeviceImages\device_onexplayer_x2.png" />
+		<Resource Include="Resources\DeviceImages\device_onexplayer_x2minipro.png" />
 		<Resource Include="Resources\DeviceImages\device_rog_ally.png" />
 		<Resource Include="Resources\DeviceImages\device_rog_ally_x.png" />
 		<Resource Include="Resources\DeviceImages\device_suiplay_0x1.png" />
@@ -232,7 +236,7 @@
 		<PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
 		<PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" />
-		<PackageReference Include="NAudio" Version="2.3.0" />
+		<PackageReference Include="NAudio" Version="3.0.1" />
 		<PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
 		<PackageReference Include="Nefarius.Drivers.HidHide" Version="3.4.0" />
 		<PackageReference Include="Nefarius.Utilities.Bluetooth" Version="1.9.1" />
@@ -242,19 +246,19 @@
 		<PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
 		<PackageReference Include="PixiEditor.ColorPicker" Version="3.4.2.3" />
 		<PackageReference Include="PrecisionTimer.NET" Version="3.0.0.7" />
-		<PackageReference Include="protobuf-net" Version="3.2.56" />
-		<PackageReference Include="protobuf-net.Core" Version="3.3.0-g6785ecbb35" />
+		<PackageReference Include="protobuf-net" Version="3.4.14" />
+		<PackageReference Include="protobuf-net.Core" Version="3.4.14" />
 		<PackageReference Include="RAMSPDToolkit-NDD" Version="1.6.0" />
-		<PackageReference Include="SDL3-CS" Version="3.4.14" />
-		<PackageReference Include="Sentry" Version="6.8.0" />
+		<PackageReference Include="SDL3-CS" Version="3.4.14.1" />
+		<PackageReference Include="Sentry" Version="6.9.0" />
 		<PackageReference Include="SharpDX" Version="4.2.0" />
 		<PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
 		<PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
 		<PackageReference Include="SharpDX.XInput" Version="4.2.0" />
-		<PackageReference Include="System.Drawing.Common" Version="10.0.10" />
-		<PackageReference Include="System.IO.Ports" Version="10.0.10" />
-		<PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.10" />
-		<PackageReference Include="System.Text.Json" Version="10.0.10" />
+		<PackageReference Include="System.Drawing.Common" Version="10.0.11" />
+		<PackageReference Include="System.IO.Ports" Version="10.0.11" />
+		<PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.11" />
+		<PackageReference Include="System.Text.Json" Version="10.0.11" />
 		<PackageReference Include="WindowsAPICodePack" Version="8.0.15.2" />
 		<PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
 		<PackageReference Include="WindowsInput" Version="6.4.1" />
@@ -2436,6 +2440,15 @@
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Resources\Devices\OneXPlayerX1.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\OneXPlayerX1AMD.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\OneXPlayerX2.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Devices\OneXPlayerX2MiniPro.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Resources\Devices\OneXPlayerX1Mini.json">

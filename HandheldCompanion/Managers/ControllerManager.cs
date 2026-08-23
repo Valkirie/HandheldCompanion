@@ -1030,7 +1030,7 @@ public static class ControllerManager
                     {
                         try
                         {
-                            controller = new XInputController(details);
+                            controller = IDevice.GetCurrent().CreateController(details) ?? new XInputController(details);
                         }
                         catch
                         {

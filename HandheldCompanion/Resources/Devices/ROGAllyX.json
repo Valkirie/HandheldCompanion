@@ -2,8 +2,8 @@
   "DeviceClass": "ROGAllyX",
   "GyroMatrix": {
     "Axis": {
-      "X": 1.0,
-      "Y": 1.0,
+      "X": -1.0,
+      "Y": -1.0,
       "Z": 1.0
     },
     "AxisSwap": {
@@ -14,8 +14,8 @@
   },
   "AcceleroMatrix": {
     "Axis": {
-      "X": 1.0,
-      "Y": 1.0,
+      "X": -1.0,
+      "Y": -1.0,
       "Z": 1.0
     },
     "AxisSwap": {

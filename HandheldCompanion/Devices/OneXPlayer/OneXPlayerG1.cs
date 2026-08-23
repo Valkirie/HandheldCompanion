@@ -1,4 +1,5 @@
-﻿using HidLibrary;
+﻿using HandheldCompanion.Devices.OneXPlayer;
+using HidLibrary;
 using System;
 using System.Collections.Generic;
 using System.Windows.Media;

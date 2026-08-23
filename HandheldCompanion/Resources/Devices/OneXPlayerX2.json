@@ -1,9 +1,9 @@
 {
-  "DeviceClass": "GPDWinMax2",
+  "DeviceClass": "OneXPlayerX2",
   "GyroMatrix": {
     "Axis": {
       "X": 1.0,
-      "Y": -1.0,
+      "Y": 1.0,
       "Z": -1.0
     },
     "AxisSwap": {
@@ -14,14 +14,14 @@
   },
   "AcceleroMatrix": {
     "Axis": {
-      "X": -1.0,
+      "X": 1.0,
       "Y": 1.0,
-      "Z": 1.0
+      "Z": -1.0
     },
     "AxisSwap": {
-      "X": "X",
+      "X": "Y",
       "Y": "Z",
-      "Z": "Y"
+      "Z": "X"
     }
   }
 }

@@ -11721,6 +11721,60 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("SettingsPage_LastChecked", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} days ago.
+        /// </summary>
+        public static string RelativeTime_DaysAgo {
+            get {
+                return ResourceManager.GetString("RelativeTime_DaysAgo", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} hours ago.
+        /// </summary>
+        public static string RelativeTime_HoursAgo {
+            get {
+                return ResourceManager.GetString("RelativeTime_HoursAgo", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} minutes ago.
+        /// </summary>
+        public static string RelativeTime_MinutesAgo {
+            get {
+                return ResourceManager.GetString("RelativeTime_MinutesAgo", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} seconds ago.
+        /// </summary>
+        public static string RelativeTime_SecondsAgo {
+            get {
+                return ResourceManager.GetString("RelativeTime_SecondsAgo", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} weeks ago.
+        /// </summary>
+        public static string RelativeTime_WeeksAgo {
+            get {
+                return ResourceManager.GetString("RelativeTime_WeeksAgo", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} years ago.
+        /// </summary>
+        public static string RelativeTime_YearsAgo {
+            get {
+                return ResourceManager.GetString("RelativeTime_YearsAgo", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to CPU voltage offset.

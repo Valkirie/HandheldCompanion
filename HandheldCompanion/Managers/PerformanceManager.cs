@@ -440,11 +440,10 @@ public static class PerformanceManager
         {
             RequestCPUClock(Convert.ToUInt32(profile.CPUOverrideValue));
         }
-        else
+        else if (currentProfile?.CPUOverrideEnabled == true)
         {
-            // restore default GPU clock
-            if (currentProfile?.CPUOverrideEnabled == true)
-                RestoreCPUClock();
+            // restore default CPU clock
+            RestoreCPUClock();
         }
 
         // apply profile defined GPU
@@ -471,11 +470,10 @@ public static class PerformanceManager
         {
             RequestCPUCoreCount(profile.CPUCoreCount);
         }
-        else
+        else if (currentProfile?.CPUCoreEnabled == true)
         {
             // restore default CPU Core Count
-            if (currentProfile?.CPUCoreEnabled == true)
-                RequestCPUCoreCount(MotherboardInfo.NumberOfCores);
+            RequestCPUCoreCount(MotherboardInfo.NumberOfCores);
         }
 
         // apply profile define CPU Boost
@@ -483,6 +481,12 @@ public static class PerformanceManager
 
         // apply profile Power mode
         RequestPowerMode(profile.OSPowerMode);
+
+        // apply profile defined EPP after the power overlay has been selected
+        if (profile.EPPOverrideEnabled)
+            RequestEPP(profile.EPPOverrideValue);
+        else if (currentProfile?.EPPOverrideEnabled == true)
+            RequestEPP(0x00000032);
 
         // update current profile reference
         currentProfile = profile;
@@ -537,6 +541,10 @@ public static class PerformanceManager
 
         // restore OSPowerMode.BetterPerformance 
         RequestPowerMode(OSPowerMode.BetterPerformance);
+
+        // restore default EPP after the power overlay has been selected
+        if (profile.EPPOverrideEnabled)
+            RequestEPP(0x00000032);
     }
 
     private static void RestoreTDP(bool immediate)
@@ -783,6 +791,10 @@ public static class PerformanceManager
 
                     // Check if active power shceme has changed and apply if needed
                     RequestPowerMode(currentProfile.OSPowerMode);
+
+                    // Windows may overwrite EPP when the active power overlay changes
+                    if (currentProfile.EPPOverrideEnabled)
+                        RequestEPP(currentProfile.EPPOverrideValue);
 
                     // Check if PerfBoostMode value has changed and apply if needed
                     RequestPerfBoostMode((uint)currentProfile.CPUBoostLevel);
@@ -1107,19 +1119,17 @@ public static class PerformanceManager
 
     private static void RequestCoreParkingMode(CoreParkingMode coreParkingMode)
     {
-        /*
-         * HETEROGENEOUS_POLICY values:
-         * 0: Default (no explicit preference)
-         * 1: Prefer heterogeneous scheduling (allows mixed cores based on scheduling hints)
-         * 2: Prefer E-cores exclusively (favor efficiency and battery life)
-         * 3: Prefer P-cores exclusively (favor performance at all costs)
+        if (!MotherboardInfo.HasHeterogeneousCpuCores)
+            coreParkingMode = CoreParkingMode.AllCoresAuto;
 
-         * HETEROGENEOUS_THREAD_SCHEDULING_POLICY and HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY values: These settings instruct Windows Scheduler about how aggressively it should favor either core type for regular or short-lived threads:
-         * 1: Strongly Prefer P-Cores (high-performance cores only)
-         * 2: Prefer P-Cores (favor P-Cores but allow E-Cores occasionally)
-         * 3: Strongly Prefer E-Cores (efficiency cores only)
-         * 4: Prefer E-Cores (favor E-Cores but allow P-Cores occasionally)
-         * 5: No specific preference (Windows decides automatically)
+        /*
+         * HETEROGENEOUS_POLICY values are exposed by Windows as opaque policy indices.
+         * HETEROGENEOUS_THREAD_SCHEDULING_POLICY and HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY values:
+         * 0: All processors
+         * 1: Performant processors
+         * 2: Prefer performant processors
+         * 3: Efficient processors
+         * 4: Prefer efficient processors
          */
 
         uint policyAC, policyDC, threadAC, threadDC, shortAC, shortDC;
@@ -1138,7 +1148,7 @@ public static class PerformanceManager
                 policyAC = policyDC = 2U; threadAC = threadDC = 3U; shortAC = shortDC = 3U;
                 break;
             default:
-                policyAC = policyDC = 0U; threadAC = threadDC = 5U; shortAC = shortDC = 5U;
+                policyAC = policyDC = 0U; threadAC = threadDC = 0U; shortAC = shortDC = 0U;
                 break;
         }
 
@@ -1159,7 +1169,6 @@ public static class PerformanceManager
         LogManager.LogDebug("User requested Core Parking Mode: {0}", coreParkingMode);
     }
 
-    [Obsolete("This function is deprecated and will be removed in future versions.")]
     private static void RequestEPP(uint EPPOverrideValue)
     {
         var requestedEPP = new uint[2]

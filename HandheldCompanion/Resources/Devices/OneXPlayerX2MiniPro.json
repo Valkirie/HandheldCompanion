@@ -1,10 +1,10 @@
 {
-  "DeviceClass": "GPDWinMax2",
+  "DeviceClass": "OneXPlayerX2MiniPro",
   "GyroMatrix": {
     "Axis": {
-      "X": 1.0,
-      "Y": -1.0,
-      "Z": -1.0
+      "X": -1.0,
+      "Y": 1.0,
+      "Z": 1.0
     },
     "AxisSwap": {
       "X": "Y",
@@ -19,9 +19,9 @@
       "Z": 1.0
     },
     "AxisSwap": {
-      "X": "X",
+      "X": "Y",
       "Y": "Z",
-      "Z": "Y"
+      "Z": "X"
     }
   }
 }

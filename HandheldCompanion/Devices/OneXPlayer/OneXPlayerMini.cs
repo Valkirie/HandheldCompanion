@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
+using HandheldCompanion.Devices.OneXPlayer;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
 using System;

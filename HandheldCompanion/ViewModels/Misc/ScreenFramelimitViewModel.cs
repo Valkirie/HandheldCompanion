@@ -23,6 +23,9 @@ namespace HandheldCompanion.ViewModels.Misc
 
         public override string ToString()
         {
+            if (!IsCustom && FrameLimit.limit == 0)
+                return "Disable";
+
             return _displayName ?? FrameLimit.ToString();
         }
     }

@@ -27,6 +27,20 @@ namespace HandheldCompanion.ViewModels
         public GamePlatform Platform { get; }
         public Guid? CollectionId { get; }
         public string? IconGlyph { get; }
+
+        private int _gameCount;
+        public int GameCount
+        {
+            get => _gameCount;
+            set
+            {
+                if (SetProperty(ref _gameCount, value))
+                    InfoBadge?.Value = value;
+            }
+        }
+
+        public InfoBadge? InfoBadge { get; }
+
         private object? _icon;
         public object? Icon
         {
@@ -59,6 +73,16 @@ namespace HandheldCompanion.ViewModels
             Key = key;
             Title = title;
             Kind = kind;
+            InfoBadge = kind is not LibraryNavigationItemKind.CollectionsRoot and not LibraryNavigationItemKind.TriggerGlyph
+                ? new InfoBadge
+                {
+                    Background = Brushes.Transparent,
+                    BorderBrush = Brushes.Transparent,
+                    BorderThickness = new Thickness(0),
+                    Margin = new Thickness(6, 0, 0, 0),
+                    Foreground = (Brush)Application.Current.FindResource("SystemControlForegroundBaseMediumBrush")
+                }
+                : null;
             IconGlyph = kind switch
             {
                 LibraryNavigationItemKind.AllGames => "\uE80F",

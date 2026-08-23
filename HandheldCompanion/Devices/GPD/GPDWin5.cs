@@ -22,7 +22,6 @@ public class GPDWin5 : IDevice
     private const ushort EC_FAN_DUTY_1 = 0x047A; // write (0=auto)
     private const ushort EC_FAN_DUTY_2 = 0x047B; // write (0=auto)
 
-    private bool isReading;
     private Version FirmwareVersion = new(0, 0);
     private bool IsHidSupported => FirmwareVersion >= new Version(0x01, 0x11);
 
@@ -149,20 +148,16 @@ public class GPDWin5 : IDevice
 
     public override void Close()
     {
-        // Release all back buttons so none remain logically pressed after disconnect.
-        lock (updateLock)
-        {
-            KeyRelease(ButtonFlags.OEM2); // R4
-            KeyRelease(ButtonFlags.OEM3); // L4
-            KeyRelease(ButtonFlags.OEM4); // Switch
-        }
+        // stop further reads
+        IsReading = false;
 
-        lock (updateLock)
-        {
-            foreach (HidDevice hidDevice in hidDevices.Values)
-                hidDevice.Dispose();
-            hidDevices.Clear();
-        }
+        // Release all back buttons so none remain logically pressed after disconnect.
+        KeyRelease(ButtonFlags.OEM2); // R4
+        KeyRelease(ButtonFlags.OEM3); // L4
+        KeyRelease(ButtonFlags.OEM4); // Switch
+
+        // close devices
+        try { DisposeHidDevices(); } catch { }
 
         base.Close();
     }
@@ -255,20 +250,14 @@ public class GPDWin5 : IDevice
 
     protected override void Device_Removed()
     {
-        isReading = false;
+        IsReading = false;
 
         // Release all back buttons so none remain logically pressed after disconnect.
-        lock (updateLock)
-        {
-            KeyRelease(ButtonFlags.OEM2); // R4
-            KeyRelease(ButtonFlags.OEM3); // L4
-            KeyRelease(ButtonFlags.OEM4); // Switch
-        }
+        KeyRelease(ButtonFlags.OEM2); // R4
+        KeyRelease(ButtonFlags.OEM3); // L4
+        KeyRelease(ButtonFlags.OEM4); // Switch
 
-        if (hidDevices.TryGetValue(BackButtonsHidId, out HidDevice? device))
-        {
-            try { device.Dispose(); } catch { }
-        }
+        try { DisposeHidDevices(); } catch { }
     }
 
     protected override async void Device_Inserted(bool reScan = false)
@@ -292,7 +281,7 @@ public class GPDWin5 : IDevice
                 }
             }
 
-            isReading = true;
+            IsReading = true;
             _ = ReadLoopAsync(device);
         }
     }
@@ -301,7 +290,7 @@ public class GPDWin5 : IDevice
     {
         try
         {
-            while (isReading)
+            while (IsReading)
             {
                 HidReport report = await device.ReadReportAsync().ConfigureAwait(false);
                 HandleReport(report);

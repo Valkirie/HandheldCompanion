@@ -15,12 +15,14 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Platforms.Games;
+using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -59,6 +61,10 @@ namespace HandheldCompanion.ViewModels
         public ObservableCollection<ProfileViewModel> Profiles { get; set; } = [];
         public ListCollectionView ProfilesView { get; }
         public ItemsPanelTemplate ProfilesCardsItemsPanel { get; } = CreateProfilesCardsItemsPanel();
+
+        public int GameCount => Profiles.Count;
+
+        public string LastLibraryCheckText => GetLastLibraryCheckText();
 
         private object? _profilesCardsItemsSource;
         public object? ProfilesCardsItemsSource
@@ -535,6 +541,8 @@ namespace HandheldCompanion.ViewModels
 
                                 ManagerFactory.profileManager.UpdateOrCreateProfile(profile, isCreation ? UpdateSource.Creation : UpdateSource.LibraryUpdate);
                             }
+
+                            MarkLibraryChecked();
                         }
                         break;
                     default:
@@ -718,18 +726,33 @@ namespace HandheldCompanion.ViewModels
                 NavigationItems.Add(_navR2);
             }
 
-            foreach (var item in NavigationItems)
-            {
-                if (item.Key == FavoritesNavigationKey)
-                    item.IsVisible = HasLiked;
-                else if (item.Kind == LibraryNavigationItemKind.Platform)
-                    item.IsVisible = availablePlatforms.Contains(item.Platform);
-            }
-
             var activeCollections = ManagerFactory.collectionManager
                 .GetCollections()
                 .OrderBy(collection => collection.Name, StringComparer.OrdinalIgnoreCase)
                 .ToList();
+            HashSet<Guid> activeCollectionIds = activeCollections.Select(collection => collection.Id).ToHashSet();
+
+            foreach (var item in NavigationItems)
+            {
+                if (item.Key == FavoritesNavigationKey)
+                {
+                    item.IsVisible = HasLiked;
+                    item.GameCount = Profiles.Count(profile => profile.IsLiked);
+                }
+                else if (item.Kind == LibraryNavigationItemKind.Platform)
+                {
+                    item.IsVisible = availablePlatforms.Contains(item.Platform);
+                    item.GameCount = Profiles.Count(profile => profile.PlatformType == item.Platform);
+                }
+                else if (item.Kind == LibraryNavigationItemKind.AllGames)
+                {
+                    item.GameCount = Profiles.Count;
+                }
+                else if (item.Kind == LibraryNavigationItemKind.CollectionsRoot)
+                {
+                    item.GameCount = Profiles.Count(profile => profile.Profile.Collections.Any(activeCollectionIds.Contains));
+                }
+            }
 
             collectionNavigationItems.Clear();
 
@@ -983,6 +1006,7 @@ namespace HandheldCompanion.ViewModels
                 {
                     Profiles.Remove(foundProfile);
                     foundProfile.Dispose();
+                    OnPropertyChanged(nameof(GameCount));
                 }
             }
             finally
@@ -1016,7 +1040,9 @@ namespace HandheldCompanion.ViewModels
                     {
                         // Not yet in list, add
                         Profiles.Add(new ProfileViewModel(profile, false, true));
+                        OnPropertyChanged(nameof(GameCount));
                     }
+
                     else
                     {
                         // Already in list, only update
@@ -1030,6 +1056,7 @@ namespace HandheldCompanion.ViewModels
                         // Remove from list and dispose
                         Profiles.Remove(existingVm);
                         existingVm.Dispose();
+                        OnPropertyChanged(nameof(GameCount));
                     }
                 }
             }
@@ -1043,6 +1070,24 @@ namespace HandheldCompanion.ViewModels
                 RebuildNavigationItems();
                 ScheduleRebuildCollectionGroups();
             }
+        }
+
+        public void MarkLibraryChecked()
+        {
+            ManagerFactory.settingsManager.SetProperty(
+                "LibraryLastChecked",
+                DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture));
+            OnPropertyChanged(nameof(LastLibraryCheckText));
+        }
+
+        private static string GetLastLibraryCheckText()
+        {
+            string value = ManagerFactory.settingsManager.GetString("LibraryLastChecked");
+            if (!long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out long timestamp))
+                return Properties.Resources.SettingsPage_LastChecked;
+
+            return Properties.Resources.SettingsPage_LastChecked +
+                   CommonUtils.GetTime(DateTimeOffset.FromUnixTimeSeconds(timestamp).LocalDateTime);
         }
 
         public override void Dispose()

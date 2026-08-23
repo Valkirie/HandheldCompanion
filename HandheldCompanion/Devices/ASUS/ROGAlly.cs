@@ -239,17 +239,19 @@ public class ROGAlly : AsusDevice
         }
     }
 
-    private bool IsReading = false;
-
     protected override void Device_Removed()
     {
-        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
-        {
-            try { device.Dispose(); } catch { }
-        }
-
         // stop further reads
         IsReading = false;
+
+        // Release custom buttons so none remain logically pressed after disconnect.
+        KeyRelease(ButtonFlags.OEM1); // Command center
+        KeyRelease(ButtonFlags.OEM2); // Armory Crate
+        KeyRelease(ButtonFlags.OEM3); // M1
+        KeyRelease(ButtonFlags.OEM4); // M2
+        KeyRelease(ButtonFlags.OEM5); // Library
+
+        try { DisposeHidDevices(); } catch { }
     }
 
     protected override async void Device_Inserted(bool reScan = false)
@@ -310,13 +312,18 @@ public class ROGAlly : AsusDevice
         // restore default M1/M2 behavior
         ConfigureController(false);
 
+        // stop further reads
+        IsReading = false;
+
+        // Release custom buttons so none remain logically pressed after disconnect.
+        KeyRelease(ButtonFlags.OEM1); // Command center
+        KeyRelease(ButtonFlags.OEM2); // Armory Crate
+        KeyRelease(ButtonFlags.OEM3); // M1
+        KeyRelease(ButtonFlags.OEM4); // M2
+        KeyRelease(ButtonFlags.OEM5); // Library
+
         // close devices
-        lock (this.updateLock)
-        {
-            foreach (HidDevice hidDevice in hidDevices.Values)
-                hidDevice.Dispose();
-            hidDevices.Clear();
-        }
+        try { DisposeHidDevices(); } catch { }
 
         base.Close();
     }
