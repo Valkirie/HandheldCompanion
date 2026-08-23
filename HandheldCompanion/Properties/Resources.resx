@@ -945,6 +945,12 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="SettingsPage_LastChecked" xml:space="preserve">
     <value>Last checked: </value>
   </data>
+  <data name="RelativeTime_DaysAgo" xml:space="preserve"><value>{0} days ago</value></data>
+  <data name="RelativeTime_HoursAgo" xml:space="preserve"><value>{0} hours ago</value></data>
+  <data name="RelativeTime_MinutesAgo" xml:space="preserve"><value>{0} minutes ago</value></data>
+  <data name="RelativeTime_SecondsAgo" xml:space="preserve"><value>{0} seconds ago</value></data>
+  <data name="RelativeTime_WeeksAgo" xml:space="preserve"><value>{0} weeks ago</value></data>
+  <data name="RelativeTime_YearsAgo" xml:space="preserve"><value>{0} years ago</value></data>
   <data name="SettingsPage_NotificationOptions" xml:space="preserve">
     <value>Notification options</value>
   </data>

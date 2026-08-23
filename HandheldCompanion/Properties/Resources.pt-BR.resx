@@ -924,6 +924,12 @@ Entrada de movimento alternada: Pressione o(s) botão(ões) selecionado(s) para 
   <data name="SettingsPage_LastChecked" xml:space="preserve">
     <value>Última verificação: </value>
   </data>
+  <data name="RelativeTime_DaysAgo" xml:space="preserve"><value>há {0} dias</value></data>
+  <data name="RelativeTime_HoursAgo" xml:space="preserve"><value>há {0} horas</value></data>
+  <data name="RelativeTime_MinutesAgo" xml:space="preserve"><value>há {0} minutos</value></data>
+  <data name="RelativeTime_SecondsAgo" xml:space="preserve"><value>há {0} segundos</value></data>
+  <data name="RelativeTime_WeeksAgo" xml:space="preserve"><value>há {0} semanas</value></data>
+  <data name="RelativeTime_YearsAgo" xml:space="preserve"><value>há {0} anos</value></data>
   <data name="SettingsPage_NotificationOptions" xml:space="preserve">
     <value>Opções de notificação</value>
   </data>
