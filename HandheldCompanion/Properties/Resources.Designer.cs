@@ -31,24 +31,6 @@ namespace HandheldCompanion.Properties {
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Resources() {
         }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Block Win+G hotkey.
-        /// </summary>
-        public static string DevicePage_BlockMsiClawWinGHotkey {
-            get {
-                return ResourceManager.GetString("DevicePage_BlockMsiClawWinGHotkey", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Prevent the MSI quick settings button from opening Windows Game Bar.
-        /// </summary>
-        public static string DevicePage_BlockMsiClawWinGHotkeyDesc {
-            get {
-                return ResourceManager.GetString("DevicePage_BlockMsiClawWinGHotkeyDesc", resourceCulture);
-            }
-        }
         
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
@@ -374,15 +356,6 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("Controller_Calibrate", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Ping.
-        /// </summary>
-        public static string Controller_Ping {
-            get {
-                return ResourceManager.GetString("Controller_Ping", resourceCulture);
-            }
-        }
         
         /// <summary>
         ///   Looks up a localized string similar to Connect.
@@ -408,6 +381,15 @@ namespace HandheldCompanion.Properties {
         public static string Controller_Hide {
             get {
                 return ResourceManager.GetString("Controller_Hide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ping.
+        /// </summary>
+        public static string Controller_Ping {
+            get {
+                return ResourceManager.GetString("Controller_Ping", resourceCulture);
             }
         }
         
@@ -941,7 +923,7 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("ControllerPage_TestControllerInputs", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Trackpad click haptics overridden.
         /// </summary>
@@ -950,25 +932,16 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("ControllerPage_TrackpadClickHapticsOverride", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Looks up a localized string similar to The active layout has custom trackpad click haptic settings.
+        ///   Looks up a localized string similar to The active layout has custom trackpad click haptic settings..
         /// </summary>
         public static string ControllerPage_TrackpadClickHapticsOverrideDesc {
             get {
                 return ResourceManager.GetString("ControllerPage_TrackpadClickHapticsOverrideDesc", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Trackpad settings.
-        /// </summary>
-        public static string ControllerPage_TrackpadSettings {
-            get {
-                return ResourceManager.GetString("ControllerPage_TrackpadSettings", resourceCulture);
-            }
-        }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Troobleshooting bluetooth controllers connection issues.
         /// </summary>
@@ -1236,6 +1209,24 @@ namespace HandheldCompanion.Properties {
         public static string DevicePage_BatteryOptions {
             get {
                 return ResourceManager.GetString("DevicePage_BatteryOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Block Win+G hotkey.
+        /// </summary>
+        public static string DevicePage_BlockMsiClawWinGHotkey {
+            get {
+                return ResourceManager.GetString("DevicePage_BlockMsiClawWinGHotkey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prevent the MSI quick settings button from opening Windows Game Bar.
+        /// </summary>
+        public static string DevicePage_BlockMsiClawWinGHotkeyDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_BlockMsiClawWinGHotkeyDesc", resourceCulture);
             }
         }
         
@@ -1623,6 +1614,15 @@ namespace HandheldCompanion.Properties {
         public static string DevicePage_GoBackToSleepOnPowerButtonDesc {
             get {
                 return ResourceManager.GetString("DevicePage_GoBackToSleepOnPowerButtonDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GPU options.
+        /// </summary>
+        public static string DevicePage_GPUOptions {
+            get {
+                return ResourceManager.GetString("DevicePage_GPUOptions", resourceCulture);
             }
         }
         
@@ -3346,20 +3346,20 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Left Stick.
-        /// </summary>
-        public static string Enum_MotionOutput_LeftStick {
-            get {
-                return ResourceManager.GetString("Enum_MotionOutput_LeftStick", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to Left Pad.
         /// </summary>
         public static string Enum_MotionOutput_LeftPad {
             get {
                 return ResourceManager.GetString("Enum_MotionOutput_LeftPad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Stick.
+        /// </summary>
+        public static string Enum_MotionOutput_LeftStick {
+            get {
+                return ResourceManager.GetString("Enum_MotionOutput_LeftStick", resourceCulture);
             }
         }
         
@@ -3373,20 +3373,20 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Right Stick.
-        /// </summary>
-        public static string Enum_MotionOutput_RightStick {
-            get {
-                return ResourceManager.GetString("Enum_MotionOutput_RightStick", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to Right Pad.
         /// </summary>
         public static string Enum_MotionOutput_RightPad {
             get {
                 return ResourceManager.GetString("Enum_MotionOutput_RightPad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right Stick.
+        /// </summary>
+        public static string Enum_MotionOutput_RightStick {
+            get {
+                return ResourceManager.GetString("Enum_MotionOutput_RightStick", resourceCulture);
             }
         }
         
@@ -6143,7 +6143,7 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("HotkeysPage_RumbleOnExecutionDesc", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Rumble strength.
         /// </summary>
@@ -6152,7 +6152,7 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("HotkeysPage_RumbleStrength", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Sets the controller vibration strength when a hotkey is executed.
         /// </summary>
@@ -6281,15 +6281,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Trigger.
-        /// </summary>
-        public static string LayoutPage_ActionType_Trigger {
-            get {
-                return ResourceManager.GetString("LayoutPage_ActionType_Trigger", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to Touchpad.
         /// </summary>
         public static string LayoutPage_ActionType_Touchpad {
@@ -6297,52 +6288,16 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("LayoutPage_ActionType_Touchpad", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Looks up a localized string similar to Touchpad coordinates: X 0-{0}, Y 0-{1}.
+        ///   Looks up a localized string similar to Trigger.
         /// </summary>
-        public static string LayoutPage_TouchpadCoordinateRange {
+        public static string LayoutPage_ActionType_Trigger {
             get {
-                return ResourceManager.GetString("LayoutPage_TouchpadCoordinateRange", resourceCulture);
+                return ResourceManager.GetString("LayoutPage_ActionType_Trigger", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized string similar to End position.
-        /// </summary>
-        public static string LayoutPage_TouchpadEndPosition {
-            get {
-                return ResourceManager.GetString("LayoutPage_TouchpadEndPosition", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Touchpad.
-        /// </summary>
-        public static string LayoutPage_TouchpadSettings {
-            get {
-                return ResourceManager.GetString("LayoutPage_TouchpadSettings", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Start position.
-        /// </summary>
-        public static string LayoutPage_TouchpadStartPosition {
-            get {
-                return ResourceManager.GetString("LayoutPage_TouchpadStartPosition", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Swipe duration.
-        /// </summary>
-        public static string LayoutPage_TouchpadSwipeDuration {
-            get {
-                return ResourceManager.GetString("LayoutPage_TouchpadSwipeDuration", resourceCulture);
-            }
-        }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Apply template.
         /// </summary>
@@ -6450,7 +6405,7 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("LayoutPage_HapticFeedback", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Hold to repeat.
         /// </summary>
@@ -6637,6 +6592,51 @@ namespace HandheldCompanion.Properties {
         public static string LayoutPage_Templates {
             get {
                 return ResourceManager.GetString("LayoutPage_Templates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Touchpad coordinates: X 0-{0}, Y 0-{1}.
+        /// </summary>
+        public static string LayoutPage_TouchpadCoordinateRange {
+            get {
+                return ResourceManager.GetString("LayoutPage_TouchpadCoordinateRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End position.
+        /// </summary>
+        public static string LayoutPage_TouchpadEndPosition {
+            get {
+                return ResourceManager.GetString("LayoutPage_TouchpadEndPosition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Touchpad.
+        /// </summary>
+        public static string LayoutPage_TouchpadSettings {
+            get {
+                return ResourceManager.GetString("LayoutPage_TouchpadSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start position.
+        /// </summary>
+        public static string LayoutPage_TouchpadStartPosition {
+            get {
+                return ResourceManager.GetString("LayoutPage_TouchpadStartPosition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Swipe duration.
+        /// </summary>
+        public static string LayoutPage_TouchpadSwipeDuration {
+            get {
+                return ResourceManager.GetString("LayoutPage_TouchpadSwipeDuration", resourceCulture);
             }
         }
         
@@ -7338,6 +7338,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Overlay orientation.
+        /// </summary>
+        public static string OverlayPage_CustomOrientation {
+            get {
+                return ResourceManager.GetString("OverlayPage_CustomOrientation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose how overlay elements are aligned.
+        /// </summary>
+        public static string OverlayPage_CustomOrientationDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_CustomOrientationDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Horizontal.
+        /// </summary>
+        public static string OverlayPage_CustomOrientationHorizontal {
+            get {
+                return ResourceManager.GetString("OverlayPage_CustomOrientationHorizontal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vertical.
+        /// </summary>
+        public static string OverlayPage_CustomOrientationVertical {
+            get {
+                return ResourceManager.GetString("OverlayPage_CustomOrientationVertical", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Custom Settings.
         /// </summary>
         public static string OverlayPage_CustomSettings {
@@ -7550,42 +7586,6 @@ namespace HandheldCompanion.Properties {
         public static string OverlayPage_Overlay {
             get {
                 return ResourceManager.GetString("OverlayPage_Overlay", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Overlay orientation.
-        /// </summary>
-        public static string OverlayPage_CustomOrientation {
-            get {
-                return ResourceManager.GetString("OverlayPage_CustomOrientation", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Choose how overlay elements are aligned.
-        /// </summary>
-        public static string OverlayPage_CustomOrientationDesc {
-            get {
-                return ResourceManager.GetString("OverlayPage_CustomOrientationDesc", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Horizontal.
-        /// </summary>
-        public static string OverlayPage_CustomOrientationHorizontal {
-            get {
-                return ResourceManager.GetString("OverlayPage_CustomOrientationHorizontal", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Vertical.
-        /// </summary>
-        public static string OverlayPage_CustomOrientationVertical {
-            get {
-                return ResourceManager.GetString("OverlayPage_CustomOrientationVertical", resourceCulture);
             }
         }
         
@@ -11084,6 +11084,60 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} days ago.
+        /// </summary>
+        public static string RelativeTime_DaysAgo {
+            get {
+                return ResourceManager.GetString("RelativeTime_DaysAgo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} hours ago.
+        /// </summary>
+        public static string RelativeTime_HoursAgo {
+            get {
+                return ResourceManager.GetString("RelativeTime_HoursAgo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} minutes ago.
+        /// </summary>
+        public static string RelativeTime_MinutesAgo {
+            get {
+                return ResourceManager.GetString("RelativeTime_MinutesAgo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} seconds ago.
+        /// </summary>
+        public static string RelativeTime_SecondsAgo {
+            get {
+                return ResourceManager.GetString("RelativeTime_SecondsAgo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} weeks ago.
+        /// </summary>
+        public static string RelativeTime_WeeksAgo {
+            get {
+                return ResourceManager.GetString("RelativeTime_WeeksAgo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} years ago.
+        /// </summary>
+        public static string RelativeTime_YearsAgo {
+            get {
+                return ResourceManager.GetString("RelativeTime_YearsAgo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Provides gyroscope and accelerometer support to Windows handheld gaming computers through a virtual controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and the virtual controller disabled..
         /// </summary>
         public static string ServiceDescription {
@@ -11719,60 +11773,6 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_LastChecked {
             get {
                 return ResourceManager.GetString("SettingsPage_LastChecked", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to {0} days ago.
-        /// </summary>
-        public static string RelativeTime_DaysAgo {
-            get {
-                return ResourceManager.GetString("RelativeTime_DaysAgo", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to {0} hours ago.
-        /// </summary>
-        public static string RelativeTime_HoursAgo {
-            get {
-                return ResourceManager.GetString("RelativeTime_HoursAgo", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to {0} minutes ago.
-        /// </summary>
-        public static string RelativeTime_MinutesAgo {
-            get {
-                return ResourceManager.GetString("RelativeTime_MinutesAgo", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to {0} seconds ago.
-        /// </summary>
-        public static string RelativeTime_SecondsAgo {
-            get {
-                return ResourceManager.GetString("RelativeTime_SecondsAgo", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to {0} weeks ago.
-        /// </summary>
-        public static string RelativeTime_WeeksAgo {
-            get {
-                return ResourceManager.GetString("RelativeTime_WeeksAgo", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to {0} years ago.
-        /// </summary>
-        public static string RelativeTime_YearsAgo {
-            get {
-                return ResourceManager.GetString("RelativeTime_YearsAgo", resourceCulture);
             }
         }
         

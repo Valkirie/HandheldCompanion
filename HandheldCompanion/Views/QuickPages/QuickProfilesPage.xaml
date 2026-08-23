@@ -590,6 +590,15 @@
                             <ui:ToggleSwitch IsOn="{Binding GPUScalingEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </ui:SettingsCard>
 
+                        <!--  Pre-built shader download  -->
+                        <ui:SettingsCard
+                            Description="Download pre-built shaders for this application."
+                            Header="Pre-built Shader Download"
+                            IsEnabled="{Binding HasPrebuiltShaderDownload, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+
+                            <ui:ToggleSwitch IsOn="{Binding PrebuiltShaderDownloadEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </ui:SettingsCard>
+
                         <!--  GPU Scaling Mode  -->
                         <ui:SettingsCard
                             Description="{l:Static resx:Resources.ProfilesPage_GPUScalingDesc}"

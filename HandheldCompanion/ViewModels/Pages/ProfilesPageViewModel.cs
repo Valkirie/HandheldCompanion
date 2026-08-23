@@ -231,6 +231,34 @@ namespace HandheldCompanion.ViewModels
 
         public bool GPUManagementEnabled => ManagerFactory.settingsManager.GetBoolean("GPUManagementEnabled");
         public bool PerformanceManagerEnabled => ManagerFactory.settingsManager.GetBoolean("PerformanceManagerEnabled");
+        public bool HasPrebuiltShaderDownload => SelectedProfile is not null && !string.IsNullOrEmpty(SelectedProfile.Executable) && GPUManager.GetCurrent() is GPU gpu && gpu.HasPrebuiltShaderDownload(out bool perAppSupported) && perAppSupported;
+
+        public bool PrebuiltShaderDownloadEnabled
+        {
+            get
+            {
+                if (SelectedProfile is null || string.IsNullOrEmpty(SelectedProfile.Executable) || GPUManager.GetCurrent() is not GPU gpu)
+                    return false;
+
+                return gpu.GetPrebuiltShaderDownload(SelectedProfile.Executable, out bool enabled) ? enabled : SelectedProfile.PrebuiltShaderDownloadEnabled;
+            }
+            set
+            {
+                if (SelectedProfile is null || string.IsNullOrEmpty(SelectedProfile.Executable) || GPUManager.GetCurrent() is not GPU gpu)
+                    return;
+
+                if (gpu.SetPrebuiltShaderDownload(SelectedProfile.Executable, value))
+                {
+                    if (SelectedProfile.PrebuiltShaderDownloadEnabled != value)
+                    {
+                        SelectedProfile.PrebuiltShaderDownloadEnabled = value;
+                        UpdateProfile();
+                    }
+
+                    OnPropertyChanged(nameof(PrebuiltShaderDownloadEnabled));
+                }
+            }
+        }
 
         private bool _GPUScalingEnabled;
         public bool GPUScalingEnabled
@@ -1804,6 +1832,8 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(IsControllerPassthroughEnabled));
             OnPropertyChanged(nameof(SelectedSubProfileViewModel));
             OnPropertyChanged(nameof(CanEditHIDMode));
+            OnPropertyChanged(nameof(HasPrebuiltShaderDownload));
+            OnPropertyChanged(nameof(PrebuiltShaderDownloadEnabled));
             OnPropertyChanged(nameof(Cover));
             OnPropertyChanged(nameof(Artwork));
             OnPropertyChanged(nameof(Logo));
@@ -2691,6 +2721,8 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(HasGPUScalingSupport));
             OnPropertyChanged(nameof(HasIntegerScalingSupport));
             OnPropertyChanged(nameof(HasScalingModeSupport));
+            OnPropertyChanged(nameof(HasPrebuiltShaderDownload));
+            OnPropertyChanged(nameof(PrebuiltShaderDownloadEnabled));
         }
 
         private void OnRSRStateChanged(bool Supported, bool Enabled, int Sharpness)

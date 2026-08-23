@@ -124,6 +124,7 @@ public partial class Profile : ICloneable, IComparable, INotifyPropertyChanged
     }
     public string Path { get; set; } = string.Empty;
     public string Arguments { get; set; } = string.Empty;
+    public bool PrebuiltShaderDownloadEnabled { get; set; }
     [JsonIgnore]
     public string FileName { get; set; } = string.Empty;
 

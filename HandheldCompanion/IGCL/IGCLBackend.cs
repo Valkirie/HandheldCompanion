@@ -401,6 +401,9 @@ namespace HandheldCompanion.IGCL
         private delegate ctl_result_t GetEnduranceGamingCapsDelegate(ctl_device_adapter_handle_t hDevice, ref ctl_endurance_gaming_caps_t caps);
         private delegate ctl_result_t GetEnduranceGamingSettingsDelegate(ctl_device_adapter_handle_t hDevice, ref ctl_endurance_gaming_t settings);
         private delegate ctl_result_t SetEnduranceGamingSettingsDelegate(ctl_device_adapter_handle_t hDevice, ctl_endurance_gaming_t settings);
+        private delegate ctl_result_t GetPrebuiltShaderDownloadCapsDelegate(ctl_device_adapter_handle_t hDevice, [MarshalAs(UnmanagedType.I1)] out bool supported, [MarshalAs(UnmanagedType.I1)] out bool perAppSupported);
+        private delegate ctl_result_t GetPrebuiltShaderDownloadDelegate(ctl_device_adapter_handle_t hDevice, [MarshalAs(UnmanagedType.LPStr)] string? applicationName, [MarshalAs(UnmanagedType.I1)] out bool enabled);
+        private delegate ctl_result_t SetPrebuiltShaderDownloadDelegate(ctl_device_adapter_handle_t hDevice, [MarshalAs(UnmanagedType.LPStr)] string? applicationName, [MarshalAs(UnmanagedType.I1)] bool enabled);
 
         // Define the function pointers
         private static InitializeIgclDelegate? InitializeIgcl;
@@ -420,6 +423,9 @@ namespace HandheldCompanion.IGCL
         private static GetEnduranceGamingCapsDelegate? GetEnduranceGamingCaps;
         private static GetEnduranceGamingSettingsDelegate? GetEnduranceGamingSettings;
         private static SetEnduranceGamingSettingsDelegate? SetEnduranceGamingSettings;
+        private static GetPrebuiltShaderDownloadCapsDelegate? GetPrebuiltShaderDownloadCaps;
+        private static GetPrebuiltShaderDownloadDelegate? GetPrebuiltShaderDownload;
+        private static SetPrebuiltShaderDownloadDelegate? SetPrebuiltShaderDownload;
 
         public static IntPtr[] devices = new IntPtr[1] { IntPtr.Zero };
         private static IntPtr pDll = IntPtr.Zero;
@@ -469,6 +475,9 @@ namespace HandheldCompanion.IGCL
                         GetEnduranceGamingCaps = (GetEnduranceGamingCapsDelegate)GetDelegate("GetEnduranceGamingCaps", typeof(GetEnduranceGamingCapsDelegate));
                         GetEnduranceGamingSettings = (GetEnduranceGamingSettingsDelegate)GetDelegate("GetEnduranceGamingSettings", typeof(GetEnduranceGamingSettingsDelegate));
                         SetEnduranceGamingSettings = (SetEnduranceGamingSettingsDelegate)GetDelegate("SetEnduranceGamingSettings", typeof(SetEnduranceGamingSettingsDelegate));
+                        GetPrebuiltShaderDownloadCaps = (GetPrebuiltShaderDownloadCapsDelegate)GetDelegate("GetPrebuiltShaderDownloadCaps", typeof(GetPrebuiltShaderDownloadCapsDelegate));
+                        GetPrebuiltShaderDownload = (GetPrebuiltShaderDownloadDelegate)GetDelegate("GetPrebuiltShaderDownload", typeof(GetPrebuiltShaderDownloadDelegate));
+                        SetPrebuiltShaderDownload = (SetPrebuiltShaderDownloadDelegate?)GetOptionalDelegate("SetPrebuiltShaderDownload", typeof(SetPrebuiltShaderDownloadDelegate));
 
                         status = IGCLStatus.DLL_INITIALIZE_SUCCESS;
                     }
@@ -493,6 +502,9 @@ namespace HandheldCompanion.IGCL
                         GetEnduranceGamingCaps = null;
                         GetEnduranceGamingSettings = null;
                         SetEnduranceGamingSettings = null;
+                        GetPrebuiltShaderDownloadCaps = null;
+                        GetPrebuiltShaderDownload = null;
+                        SetPrebuiltShaderDownload = null;
                     }
                 }
             }
@@ -509,6 +521,12 @@ namespace HandheldCompanion.IGCL
 
             var result = Marshal.GetHRForLastWin32Error();
             throw Marshal.GetExceptionForHR(result);
+        }
+
+        private static Delegate? GetOptionalDelegate(string procName, Type delegateType)
+        {
+            IntPtr ptr = GetProcAddress(pDll, procName);
+            return ptr == IntPtr.Zero ? null : Marshal.GetDelegateForFunctionPointer(ptr, delegateType);
         }
 
         public static bool Initialize()
@@ -759,6 +777,39 @@ namespace HandheldCompanion.IGCL
             ctl_device_adapter_handle_t hDev = new ctl_device_adapter_handle_t { handle = devices[deviceIdx] };
             ctl_result_t res = setEnduranceGamingSettings(hDev, settings);
             return res == ctl_result_t.CTL_RESULT_SUCCESS;
+        }
+
+        internal static bool HasPrebuiltShaderDownload(int deviceIdx, out bool perAppSupported)
+        {
+            perAppSupported = false;
+            var getPrebuiltShaderDownloadCaps = GetPrebuiltShaderDownloadCaps;
+            if (getPrebuiltShaderDownloadCaps is null || deviceIdx < 0 || deviceIdx >= devices.Length || devices[deviceIdx] == IntPtr.Zero)
+                return false;
+
+            ctl_device_adapter_handle_t hDev = new() { handle = devices[deviceIdx] };
+            ctl_result_t result = getPrebuiltShaderDownloadCaps(hDev, out bool supported, out perAppSupported);
+            return result == ctl_result_t.CTL_RESULT_SUCCESS && supported;
+        }
+
+        internal static bool GetPrebuiltShaderDownloadState(int deviceIdx, string? applicationName, out bool enabled)
+        {
+            enabled = false;
+            var getPrebuiltShaderDownload = GetPrebuiltShaderDownload;
+            if (getPrebuiltShaderDownload is null || deviceIdx < 0 || deviceIdx >= devices.Length || devices[deviceIdx] == IntPtr.Zero)
+                return false;
+
+            ctl_device_adapter_handle_t hDev = new() { handle = devices[deviceIdx] };
+            return getPrebuiltShaderDownload(hDev, applicationName, out enabled) == ctl_result_t.CTL_RESULT_SUCCESS;
+        }
+
+        internal static bool SetPrebuiltShaderDownloadState(int deviceIdx, string? applicationName, bool enabled)
+        {
+            var setPrebuiltShaderDownload = SetPrebuiltShaderDownload;
+            if (setPrebuiltShaderDownload is null || deviceIdx < 0 || deviceIdx >= devices.Length || devices[deviceIdx] == IntPtr.Zero)
+                return false;
+
+            ctl_device_adapter_handle_t hDev = new() { handle = devices[deviceIdx] };
+            return setPrebuiltShaderDownload(hDev, applicationName, enabled) == ctl_result_t.CTL_RESULT_SUCCESS;
         }
 
         internal static bool SetScalingMode(nint deviceIdx, uint displayIdx, int mode)

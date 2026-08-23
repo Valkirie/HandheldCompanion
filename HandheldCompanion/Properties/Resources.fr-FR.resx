@@ -906,12 +906,24 @@ Interrupteur d'entrée de mouvement : appuyez sur le(s) bouton(s) sélectionné(
   <data name="SettingsPage_LastChecked" xml:space="preserve">
     <value>Dernière vérification: </value>
   </data>
-  <data name="RelativeTime_DaysAgo" xml:space="preserve"><value>il y a {0} jours</value></data>
-  <data name="RelativeTime_HoursAgo" xml:space="preserve"><value>il y a {0} heures</value></data>
-  <data name="RelativeTime_MinutesAgo" xml:space="preserve"><value>il y a {0} minutes</value></data>
-  <data name="RelativeTime_SecondsAgo" xml:space="preserve"><value>il y a {0} secondes</value></data>
-  <data name="RelativeTime_WeeksAgo" xml:space="preserve"><value>il y a {0} semaines</value></data>
-  <data name="RelativeTime_YearsAgo" xml:space="preserve"><value>il y a {0} ans</value></data>
+  <data name="RelativeTime_DaysAgo" xml:space="preserve">
+    <value>il y a {0} jours</value>
+  </data>
+  <data name="RelativeTime_HoursAgo" xml:space="preserve">
+    <value>il y a {0} heures</value>
+  </data>
+  <data name="RelativeTime_MinutesAgo" xml:space="preserve">
+    <value>il y a {0} minutes</value>
+  </data>
+  <data name="RelativeTime_SecondsAgo" xml:space="preserve">
+    <value>il y a {0} secondes</value>
+  </data>
+  <data name="RelativeTime_WeeksAgo" xml:space="preserve">
+    <value>il y a {0} semaines</value>
+  </data>
+  <data name="RelativeTime_YearsAgo" xml:space="preserve">
+    <value>il y a {0} ans</value>
+  </data>
   <data name="SettingsPage_NotificationOptions" xml:space="preserve">
     <value>Options de notification</value>
   </data>

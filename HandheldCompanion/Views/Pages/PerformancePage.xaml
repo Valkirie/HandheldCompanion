@@ -428,9 +428,7 @@
                         </ui:SettingsExpander>
 
                         <!--  Processor energy performance preference (EPP)  -->
-                        <ui:SettingsExpander
-                            Description="{l:Static resx:Resources.ProfilesPage_EPPDesc}"
-                            Header="{l:Static resx:Resources.ProfilesPage_EPP}">
+                        <ui:SettingsExpander Description="{l:Static resx:Resources.ProfilesPage_EPPDesc}" Header="{l:Static resx:Resources.ProfilesPage_EPP}">
                             <ui:SettingsExpander.HeaderIcon>
                                 <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe9e9;" />
                             </ui:SettingsExpander.HeaderIcon>
@@ -637,7 +635,8 @@
                         <ui:SettingsExpander
                             Description="{l:Static resx:Resources.PerformancePage_EnduranceGaming_Desc}"
                             Header="{l:Static resx:Resources.PerformancePage_EnduranceGaming_Title}"
-                            IsEnabled="{Binding SupportsIntelEnduranceGaming, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                            IsEnabled="{Binding SupportsIntelEnduranceGaming, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            Visibility="{Binding IsIntelCPU, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <ui:SettingsExpander.HeaderIcon>
                                 <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe964;" />
                             </ui:SettingsExpander.HeaderIcon>

@@ -973,6 +973,18 @@
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>
 
+                        <!--  Pre-built shader download  -->
+                        <ui:SettingsCard
+                            Description="Download pre-built shaders for this application"
+                            Header="Pre-built shader Download"
+                            IsEnabled="{Binding HasPrebuiltShaderDownload, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ui:SettingsCard.HeaderIcon>
+                                <ui:FontIcon Glyph="&#xe91b;" />
+                            </ui:SettingsCard.HeaderIcon>
+
+                            <ui:ToggleSwitch IsOn="{Binding PrebuiltShaderDownloadEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </ui:SettingsCard>
+
                         <!--  (AMD: AFMF)  -->
                         <ui:SettingsExpander
                             Name="StackProfileAFMF"

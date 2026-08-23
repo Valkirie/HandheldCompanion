@@ -270,6 +270,24 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return false;
         }
 
+        public virtual bool HasPrebuiltShaderDownload(out bool perAppSupported)
+        {
+            perAppSupported = false;
+            return false;
+        }
+
+        public virtual bool GetPrebuiltShaderDownload(string? applicationName, out bool enabled)
+        {
+            // Base fallback output value.
+            enabled = false;
+            return false;
+        }
+
+        public virtual bool SetPrebuiltShaderDownload(string? applicationName, bool enabled)
+        {
+            return false;
+        }
+
         public virtual bool SetGPUScaling(bool enabled)
         {
             return false;

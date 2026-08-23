@@ -945,12 +945,24 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="SettingsPage_LastChecked" xml:space="preserve">
     <value>Last checked: </value>
   </data>
-  <data name="RelativeTime_DaysAgo" xml:space="preserve"><value>{0} days ago</value></data>
-  <data name="RelativeTime_HoursAgo" xml:space="preserve"><value>{0} hours ago</value></data>
-  <data name="RelativeTime_MinutesAgo" xml:space="preserve"><value>{0} minutes ago</value></data>
-  <data name="RelativeTime_SecondsAgo" xml:space="preserve"><value>{0} seconds ago</value></data>
-  <data name="RelativeTime_WeeksAgo" xml:space="preserve"><value>{0} weeks ago</value></data>
-  <data name="RelativeTime_YearsAgo" xml:space="preserve"><value>{0} years ago</value></data>
+  <data name="RelativeTime_DaysAgo" xml:space="preserve">
+    <value>{0} days ago</value>
+  </data>
+  <data name="RelativeTime_HoursAgo" xml:space="preserve">
+    <value>{0} hours ago</value>
+  </data>
+  <data name="RelativeTime_MinutesAgo" xml:space="preserve">
+    <value>{0} minutes ago</value>
+  </data>
+  <data name="RelativeTime_SecondsAgo" xml:space="preserve">
+    <value>{0} seconds ago</value>
+  </data>
+  <data name="RelativeTime_WeeksAgo" xml:space="preserve">
+    <value>{0} weeks ago</value>
+  </data>
+  <data name="RelativeTime_YearsAgo" xml:space="preserve">
+    <value>{0} years ago</value>
+  </data>
   <data name="SettingsPage_NotificationOptions" xml:space="preserve">
     <value>Notification options</value>
   </data>
@@ -3706,7 +3718,7 @@ Thank you for using HC and helping us make it better.</value>
     <value>Trackpad click haptics overridden</value>
   </data>
   <data name="ControllerPage_TrackpadClickHapticsOverrideDesc" xml:space="preserve">
-     <value>The active layout has custom trackpad click haptic settings.</value>
+    <value>The active layout has custom trackpad click haptic settings.</value>
   </data>
   <data name="LayoutPage_HoldToRepeat" xml:space="preserve">
     <value>Hold to repeat</value>
@@ -4328,5 +4340,8 @@ Thank you for using HC and helping us make it better.</value>
   </data>
   <data name="DevicePage_BlockMsiClawWinGHotkeyDesc" xml:space="preserve">
     <value>Prevent the MSI quick settings button from opening Windows Game Bar</value>
+  </data>
+  <data name="DevicePage_GPUOptions" xml:space="preserve">
+    <value>GPU options</value>
   </data>
 </root>

@@ -120,6 +120,8 @@ namespace HandheldCompanion.ViewModels
         }
 
         public bool SupportsIntelEnduranceGaming => GPUManager.GetCurrent() is IntelGPU intelGPU && intelGPU.HasEnduranceGaming(out _, out _, out _);
+        public bool IsIntelCPU => PerformanceManager.GetProcessor() is IntelProcessor;
+        public bool IsAMDCPU => PerformanceManager.GetProcessor() is AMDProcessor;
 
         // Platform Manager
         public bool IsRunningRTSS => ManagerFactory.platformManager.IsReady && PlatformManager.RTSS.IsInstalled;
@@ -1484,6 +1486,7 @@ namespace HandheldCompanion.ViewModels
 
             OnPropertyChanged(nameof(SupportsTDP));
             OnPropertyChanged(nameof(SupportsGPUFreq));
+            OnPropertyChanged(nameof(IsIntelCPU));
         }
 
         private void PerformanceManager_EPPChanged(uint epp)

@@ -121,6 +121,42 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return Execute(() => IGCLBackend.SetIntegerScaling(deviceIdx, enabled, type), false);
         }
 
+        public override bool HasPrebuiltShaderDownload(out bool perAppSupported)
+        {
+            perAppSupported = false;
+            if (!IsInitialized)
+                return false;
+
+            (bool supported, bool perApp) result = Execute(() =>
+            {
+                bool perAppResult;
+                bool supportedResult = IGCLBackend.HasPrebuiltShaderDownload(deviceIdx, out perAppResult);
+                return (supportedResult, perAppResult);
+            }, (false, false));
+            perAppSupported = result.perApp;
+            return result.supported;
+        }
+
+        public override bool GetPrebuiltShaderDownload(string? applicationName, out bool enabled)
+        {
+            enabled = false;
+            if (!IsInitialized || !HasPrebuiltShaderDownload(out bool perAppSupported) || (!string.IsNullOrEmpty(applicationName) && !perAppSupported))
+                return false;
+
+            bool result = false;
+            bool success = Execute(() => IGCLBackend.GetPrebuiltShaderDownloadState(deviceIdx, applicationName, out result), false);
+            enabled = result;
+            return success;
+        }
+
+        public override bool SetPrebuiltShaderDownload(string? applicationName, bool enabled)
+        {
+            if (!IsInitialized || !HasPrebuiltShaderDownload(out bool perAppSupported) || (!string.IsNullOrEmpty(applicationName) && !perAppSupported))
+                return false;
+
+            return Execute(() => IGCLBackend.SetPrebuiltShaderDownloadState(deviceIdx, applicationName, enabled), false);
+        }
+
         // helper to test whether enumValue is supported:
         bool IsSupported<T>(uint mask, T enumValue) where T : Enum
         {

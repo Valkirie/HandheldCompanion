@@ -609,6 +609,9 @@ namespace HandheldCompanion.Managers
 
             try
             {
+                if (!string.IsNullOrEmpty(profile.Executable) && currentGPU.HasPrebuiltShaderDownload(out bool perAppSupported) && perAppSupported)
+                    currentGPU.SetPrebuiltShaderDownload(profile.Executable, profile.PrebuiltShaderDownloadEnabled);
+
                 // apply profile GPU Scaling
                 // apply profile scaling mode
                 if (profile.GPUScaling)

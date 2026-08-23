@@ -354,6 +354,35 @@
                 </ikw:SimpleStackPanel>
             </ikw:SimpleStackPanel>
 
+            <!--  GPU options  -->
+            <ikw:SimpleStackPanel Name="GPUOptionsStack" Spacing="8">
+                <DockPanel>
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Style="{StaticResource BaseTextBlockStyle}"
+                        Text="{l:Static resx:Resources.DevicePage_GPUOptions}" />
+                    <TextBlock
+                        Margin="4,0,0,0"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                        Text="Configurable GPU drivers and settings" />
+                </DockPanel>
+
+                <ikw:SimpleStackPanel Spacing="3">
+                    <!--  Pre-built shader download  -->
+                    <ui:SettingsCard
+                        Description="Download pre-built shaders system-wide"
+                        Header="Pre-built shader download"
+                        IsEnabled="{Binding HasPrebuiltShaderDownload, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon Glyph="&#xe91b;" />
+                        </ui:SettingsCard.HeaderIcon>
+
+                        <ui:ToggleSwitch IsOn="{Binding PrebuiltShaderDownloadEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </ui:SettingsCard>
+                </ikw:SimpleStackPanel>
+            </ikw:SimpleStackPanel>
+
             <!--  Security options  -->
             <ikw:SimpleStackPanel Name="SecurityOptionsStack" Spacing="8">
                 <DockPanel>

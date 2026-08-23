@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Devices.Lenovo;
+using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
@@ -32,6 +33,7 @@ namespace HandheldCompanion.ViewModels
         private bool _isCalibrationEnabled, _isExternalSensorExpanderEnabled, _isInternalSensorExpanderEnabled;
         private bool _isSolidColorSupported, _isBreathingSupported, _isRainbowSupported, _isWaveSupported;
         private bool _isWheelSupported, _isGradientSupported, _isAmbilightSupported, _isPresetSupported;
+        private bool _hasPrebuiltShaderDownload;
         private bool _legionSettingsInitialized;
         private double _leftJoystickDeadzone, _leftAutoSleepTime;
         private double _rightJoystickDeadzone, _rightAutoSleepTime;
@@ -410,6 +412,18 @@ namespace HandheldCompanion.ViewModels
 
         #region Power options
         public bool HasWMIMethod => CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.OEMCPU);
+
+        public bool HasPrebuiltShaderDownload => _hasPrebuiltShaderDownload;
+
+        public bool PrebuiltShaderDownloadEnabled
+        {
+            get => GPUManager.GetCurrent() is GPU gpu && gpu.GetPrebuiltShaderDownload(null, out bool enabled) && enabled;
+            set
+            {
+                if (GPUManager.GetCurrent() is GPU gpu && gpu.SetPrebuiltShaderDownload(null, value))
+                    OnPropertyChanged(nameof(PrebuiltShaderDownloadEnabled));
+            }
+        }
 
         public bool GoBackToSleep
         {
@@ -933,6 +947,18 @@ namespace HandheldCompanion.ViewModels
                     break;
             }
 
+            // raise events
+            switch (ManagerFactory.gpuManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.gpuManager.Initialized += GpuManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryGPU();
+                    break;
+            }
+
             // manage events
             CurrentDevice.Opened += Device_Opened;
             CurrentDevice.Closed += Device_Closed;
@@ -968,6 +994,34 @@ namespace HandheldCompanion.ViewModels
         private void PerformanceManager_Initialized(bool canChangeTDP, bool canChangeGPU)
         {
             QueryProcessor();
+        }
+
+        private void GpuManager_Initialized()
+        {
+            QueryGPU();
+        }
+
+        private void QueryGPU()
+        {
+            ManagerFactory.gpuManager.Hooked += GPUManager_Hooked;
+            ManagerFactory.gpuManager.Unhooked += GPUManager_Unhooked;
+
+            if (GPUManager.GetCurrent() is GPU gpu)
+                GPUManager_Hooked(gpu);
+        }
+
+        private void GPUManager_Hooked(GPU gpu)
+        {
+            _hasPrebuiltShaderDownload = gpu.HasPrebuiltShaderDownload(out _);
+            OnPropertyChanged(nameof(HasPrebuiltShaderDownload));
+            OnPropertyChanged(nameof(PrebuiltShaderDownloadEnabled));
+        }
+
+        private void GPUManager_Unhooked(GPU gpu)
+        {
+            _hasPrebuiltShaderDownload = false;
+            OnPropertyChanged(nameof(HasPrebuiltShaderDownload));
+            OnPropertyChanged(nameof(PrebuiltShaderDownloadEnabled));
         }
 
         private void QueryProcessor()
@@ -1120,6 +1174,9 @@ namespace HandheldCompanion.ViewModels
                 // manage events
                 ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
                 ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+                ManagerFactory.gpuManager.Initialized -= GpuManager_Initialized;
+                ManagerFactory.gpuManager.Hooked -= GPUManager_Hooked;
+                ManagerFactory.gpuManager.Unhooked -= GPUManager_Unhooked;
             }
 
             base.Dispose(disposing);

@@ -917,12 +917,24 @@
   <data name="SettingsPage_LastChecked" xml:space="preserve">
     <value>最終チェック日: </value>
   </data>
-  <data name="RelativeTime_DaysAgo" xml:space="preserve"><value>{0}日前</value></data>
-  <data name="RelativeTime_HoursAgo" xml:space="preserve"><value>{0}時間前</value></data>
-  <data name="RelativeTime_MinutesAgo" xml:space="preserve"><value>{0}分前</value></data>
-  <data name="RelativeTime_SecondsAgo" xml:space="preserve"><value>{0}秒前</value></data>
-  <data name="RelativeTime_WeeksAgo" xml:space="preserve"><value>{0}週間前</value></data>
-  <data name="RelativeTime_YearsAgo" xml:space="preserve"><value>{0}年前</value></data>
+  <data name="RelativeTime_DaysAgo" xml:space="preserve">
+    <value>{0}日前</value>
+  </data>
+  <data name="RelativeTime_HoursAgo" xml:space="preserve">
+    <value>{0}時間前</value>
+  </data>
+  <data name="RelativeTime_MinutesAgo" xml:space="preserve">
+    <value>{0}分前</value>
+  </data>
+  <data name="RelativeTime_SecondsAgo" xml:space="preserve">
+    <value>{0}秒前</value>
+  </data>
+  <data name="RelativeTime_WeeksAgo" xml:space="preserve">
+    <value>{0}週間前</value>
+  </data>
+  <data name="RelativeTime_YearsAgo" xml:space="preserve">
+    <value>{0}年前</value>
+  </data>
   <data name="SettingsPage_NotificationOptions" xml:space="preserve">
     <value>通知オプション</value>
   </data>
