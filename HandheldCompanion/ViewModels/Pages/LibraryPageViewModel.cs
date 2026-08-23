@@ -726,18 +726,33 @@ namespace HandheldCompanion.ViewModels
                 NavigationItems.Add(_navR2);
             }
 
-            foreach (var item in NavigationItems)
-            {
-                if (item.Key == FavoritesNavigationKey)
-                    item.IsVisible = HasLiked;
-                else if (item.Kind == LibraryNavigationItemKind.Platform)
-                    item.IsVisible = availablePlatforms.Contains(item.Platform);
-            }
-
             var activeCollections = ManagerFactory.collectionManager
                 .GetCollections()
                 .OrderBy(collection => collection.Name, StringComparer.OrdinalIgnoreCase)
                 .ToList();
+            HashSet<Guid> activeCollectionIds = activeCollections.Select(collection => collection.Id).ToHashSet();
+
+            foreach (var item in NavigationItems)
+            {
+                if (item.Key == FavoritesNavigationKey)
+                {
+                    item.IsVisible = HasLiked;
+                    item.GameCount = Profiles.Count(profile => profile.IsLiked);
+                }
+                else if (item.Kind == LibraryNavigationItemKind.Platform)
+                {
+                    item.IsVisible = availablePlatforms.Contains(item.Platform);
+                    item.GameCount = Profiles.Count(profile => profile.PlatformType == item.Platform);
+                }
+                else if (item.Kind == LibraryNavigationItemKind.AllGames)
+                {
+                    item.GameCount = Profiles.Count;
+                }
+                else if (item.Kind == LibraryNavigationItemKind.CollectionsRoot)
+                {
+                    item.GameCount = Profiles.Count(profile => profile.Profile.Collections.Any(activeCollectionIds.Contains));
+                }
+            }
 
             collectionNavigationItems.Clear();
 

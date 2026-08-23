@@ -245,6 +245,7 @@
                         <Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
                         <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <Setter Property="Icon" Value="{Binding Icon}" />
+                        <Setter Property="InfoBadge" Value="{Binding InfoBadge}" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding HasIcon}" Value="False">
                                 <Setter Property="Icon" Value="{x:Null}" />
