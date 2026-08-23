@@ -73,6 +73,7 @@ public static class InputsManager
     private static readonly Dictionary<bool, bool> KeyUsed = new() { { true, false }, { false, false } };
     private static readonly HashSet<Keys> ReplayedModifiersDown = [];
     private static readonly object ReplayedModifiersLock = new();
+    private static readonly object KeyboardBufferLock = new();
     private static readonly FirmwareWorkarounds.MSI MsiFirmwareWorkaround = new();
     private static int? PendingAltGrControlTimestamp;
     private static Keys? PendingAltGrControlKey;
@@ -581,51 +582,54 @@ public static class InputsManager
 
     private static void ReleaseKeyboardBuffer()
     {
-        // Send all key inputs (first downs, then ups)
-        foreach (bool IsKeyDown in new[] { true, false })
+        lock (KeyboardBufferLock)
         {
-            if (BufferKeys[IsKeyDown].Count == 0)
-                continue;
-
-            // reset indexes used for chord matching
-            KeyIndexOEM[IsKeyDown] = 0;
-            KeyIndexHotkey[IsKeyDown] = 0;
-
-            List<KeyEventArgsExt> keys = BufferKeys[IsKeyDown]
-                .OrderBy(a => a.Timestamp)
-                .ToList();
-
-            for (int i = 0; i < keys.Count; i++)
+            // Send all key inputs (first downs, then ups)
+            foreach (bool IsKeyDown in new[] { true, false })
             {
-                KeyEventArgsExt args = keys[i];
-                switch (IsKeyDown)
+                if (BufferKeys[IsKeyDown].Count == 0)
+                    continue;
+
+                // reset indexes used for chord matching
+                KeyIndexOEM[IsKeyDown] = 0;
+                KeyIndexHotkey[IsKeyDown] = 0;
+
+                List<KeyEventArgsExt> keys = BufferKeys[IsKeyDown]
+                    .OrderBy(a => a.Timestamp)
+                    .ToList();
+
+                for (int i = 0; i < keys.Count; i++)
                 {
-                    case true:
-                        if (IsModifierKey(args))
-                        {
-                            lock (ReplayedModifiersLock)
-                                ReplayedModifiersDown.Add(args.KeyCode);
-                        }
+                    KeyEventArgsExt args = keys[i];
+                    switch (IsKeyDown)
+                    {
+                        case true:
+                            if (IsModifierKey(args))
+                            {
+                                lock (ReplayedModifiersLock)
+                                    ReplayedModifiersDown.Add(args.KeyCode);
+                            }
 
-                        KeyboardSimulator.KeyDown(args);
-                        break;
+                            KeyboardSimulator.KeyDown(args);
+                            break;
 
-                    case false:
-                        if (IsModifierKey(args))
-                        {
-                            lock (ReplayedModifiersLock)
-                                ReplayedModifiersDown.Remove(args.KeyCode);
-                        }
+                        case false:
+                            if (IsModifierKey(args))
+                            {
+                                lock (ReplayedModifiersLock)
+                                    ReplayedModifiersDown.Remove(args.KeyCode);
+                            }
 
-                        KeyboardSimulator.KeyUp(args);
-                        break;
+                            KeyboardSimulator.KeyUp(args);
+                            break;
+                    }
                 }
-            }
 
-            // clear buffer for this direction
-            BufferKeys[IsKeyDown].Clear();
+                // clear buffer for this direction
+                BufferKeys[IsKeyDown].Clear();
+            }
         }
-     }
+    }
 
     private static List<KeyCode> GetChord(List<KeyEventArgsExt> args)
     {
@@ -674,7 +678,13 @@ public static class InputsManager
         m_GlobalHook?.KeyDown -= M_GlobalHook_KeyEvent;
         m_GlobalHook?.KeyUp -= M_GlobalHook_KeyEvent;
 
-        ReleaseReplayedModifiers();
+        lock (KeyboardBufferLock)
+        {
+            BufferFlushTimer.Stop();
+            BufferKeys[true].Clear();
+            BufferKeys[false].Clear();
+            ReleaseReplayedModifiers();
+        }
         PendingAltGrControlTimestamp = null;
         PendingAltGrControlKey = null;
         AltGrControlKey = null;
