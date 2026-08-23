@@ -1111,18 +1111,13 @@ public static class PerformanceManager
             coreParkingMode = CoreParkingMode.AllCoresAuto;
 
         /*
-         * HETEROGENEOUS_POLICY values:
-         * 0: Default (no explicit preference)
-         * 1: Prefer heterogeneous scheduling (allows mixed cores based on scheduling hints)
-         * 2: Prefer E-cores exclusively (favor efficiency and battery life)
-         * 3: Prefer P-cores exclusively (favor performance at all costs)
-
-         * HETEROGENEOUS_THREAD_SCHEDULING_POLICY and HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY values: These settings instruct Windows Scheduler about how aggressively it should favor either core type for regular or short-lived threads:
-         * 1: Strongly Prefer P-Cores (high-performance cores only)
-         * 2: Prefer P-Cores (favor P-Cores but allow E-Cores occasionally)
-         * 3: Strongly Prefer E-Cores (efficiency cores only)
-         * 4: Prefer E-Cores (favor E-Cores but allow P-Cores occasionally)
-         * 5: No specific preference (Windows decides automatically)
+         * HETEROGENEOUS_POLICY values are exposed by Windows as opaque policy indices.
+         * HETEROGENEOUS_THREAD_SCHEDULING_POLICY and HETEROGENEOUS_SHORT_THREAD_SCHEDULING_POLICY values:
+         * 0: All processors
+         * 1: Performant processors
+         * 2: Prefer performant processors
+         * 3: Efficient processors
+         * 4: Prefer efficient processors
          */
 
         uint policyAC, policyDC, threadAC, threadDC, shortAC, shortDC;
@@ -1141,7 +1136,7 @@ public static class PerformanceManager
                 policyAC = policyDC = 2U; threadAC = threadDC = 3U; shortAC = shortDC = 3U;
                 break;
             default:
-                policyAC = policyDC = 0U; threadAC = threadDC = 5U; shortAC = shortDC = 5U;
+                policyAC = policyDC = 0U; threadAC = threadDC = 0U; shortAC = shortDC = 0U;
                 break;
         }
 
