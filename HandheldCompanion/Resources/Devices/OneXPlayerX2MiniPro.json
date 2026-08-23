@@ -2,26 +2,26 @@
   "DeviceClass": "OneXPlayerX2MiniPro",
   "GyroMatrix": {
     "Axis": {
-      "X": -1.0,
-      "Y": 1.0,
-      "Z": 1.0
+      "X": 1.0,
+      "Y": -1.0,
+      "Z": -1.0
     },
     "AxisSwap": {
-      "X": "Y",
-      "Y": "Z",
-      "Z": "X"
+      "X": "Z",
+      "Y": "X",
+      "Z": "Y"
     }
   },
   "AcceleroMatrix": {
     "Axis": {
       "X": -1.0,
-      "Y": 1.0,
+      "Y": -1.0,
       "Z": 1.0
     },
     "AxisSwap": {
-      "X": "Y",
+      "X": "X",
       "Y": "Z",
-      "Z": "X"
+      "Z": "Y"
     }
   }
 }
