@@ -45,6 +45,7 @@ public static class InputsManager
     private const uint LLKHF_INJECTED = 0x00000010;
     private const uint LLKHF_LOWER_IL_INJECTED = 0x00000002;
     private const string BLOCK_MSI_CLAW_WIN_G_HOTKEY_SETTING = "BlockMsiClawWinGHotkey";
+    private static readonly UIntPtr KeyboardReplayMarker = new(0x48435250u);
 
     // Gamepad variables
     private static readonly PrecisionTimer BufferFlushTimer;
@@ -66,13 +67,12 @@ public static class InputsManager
     // Keyboard vars
     private static IKeyboardMouseEvents? m_GlobalHook = null!;
 
-    private static readonly Dictionary<bool, List<KeyEventArgsExt>> BufferKeys = new() { { true, new() }, { false, new() } };
+    private static readonly Dictionary<bool, List<KeyEventArgsExt>> BufferKeys = new() { { true, new() }, { false, new() } };               
     private static readonly List<KeyboardChord> successkeyChords = [];
     private static readonly Dictionary<bool, short> KeyIndexOEM = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, short> KeyIndexHotkey = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, bool> KeyUsed = new() { { true, false }, { false, false } };
     private static readonly HashSet<Keys> ReplayedModifiersDown = [];
-    private static readonly object ReplayedModifiersLock = new();
     private static readonly object KeyboardBufferLock = new();
     private static readonly FirmwareWorkarounds.MSI MsiFirmwareWorkaround = new();
     private static int? PendingAltGrControlTimestamp;
@@ -155,7 +155,8 @@ public static class InputsManager
             InputsChordHoldTimer.Stop();
 
             // clear buffer(s)
-            BufferKeys[true].Clear();
+            lock (KeyboardBufferLock)
+                BufferKeys[true].Clear();
         }
 
         if (!IsListening)
@@ -244,6 +245,21 @@ public static class InputsManager
 
     private static void M_GlobalHook_KeyEvent(object? sender, KeyEventArgs e)
     {
+        KeyEventArgsExt args = (KeyEventArgsExt)e;
+        if (args.ExtraInfo == KeyboardReplayMarker)
+            return;
+
+        lock (KeyboardBufferLock)
+            M_GlobalHook_KeyEventLocked(sender, e);
+    }
+
+    private static void M_GlobalHook_KeyEventLocked(object? sender, KeyEventArgs e)
+    {
+        KeyEventArgsExt args = (KeyEventArgsExt)e;
+
+        bool Injected = (args.Flags & LLKHF_INJECTED) > 0;
+        bool InjectedLL = (args.Flags & LLKHF_LOWER_IL_INJECTED) > 0;
+
         // don't catch keyboard inputs until user is logged-in
         if (SystemManager.IsSessionLocked)
         {
@@ -251,10 +267,6 @@ public static class InputsManager
             return;
         }
 
-        KeyEventArgsExt args = (KeyEventArgsExt)e;
-
-        bool Injected = (args.Flags & LLKHF_INJECTED) > 0;
-        bool InjectedLL = (args.Flags & LLKHF_LOWER_IL_INJECTED) > 0;
         bool fromPhysicalKeyboard = !(Injected || InjectedLL);
 
         if (fromPhysicalKeyboard)
@@ -559,25 +571,23 @@ public static class InputsManager
 
     private static void ReleaseReplayedModifier(Keys key)
     {
-        bool wasReplayed;
-        lock (ReplayedModifiersLock)
-            wasReplayed = ReplayedModifiersDown.Remove(key);
-
-        if (wasReplayed)
-            KeyboardSimulator.KeyUp((VirtualKeyCode)key);
+        lock (KeyboardBufferLock)
+        {
+            if (ReplayedModifiersDown.Remove(key))
+                ReplayKeyUp(key);
+        }
     }
 
     private static void ReleaseReplayedModifiers()
     {
-        Keys[] modifiers;
-        lock (ReplayedModifiersLock)
+        lock (KeyboardBufferLock)
         {
-            modifiers = ReplayedModifiersDown.ToArray();
+            Keys[] modifiers = ReplayedModifiersDown.ToArray();
             ReplayedModifiersDown.Clear();
-        }
 
-        foreach (Keys modifier in modifiers)
-            KeyboardSimulator.KeyUp((VirtualKeyCode)modifier);
+            foreach (Keys modifier in modifiers)
+                ReplayKeyUp(modifier);
+        }
     }
 
     private static void ReleaseKeyboardBuffer()
@@ -605,22 +615,16 @@ public static class InputsManager
                     {
                         case true:
                             if (IsModifierKey(args))
-                            {
-                                lock (ReplayedModifiersLock)
-                                    ReplayedModifiersDown.Add(args.KeyCode);
-                            }
+                                ReplayedModifiersDown.Add(args.KeyCode);
 
-                            KeyboardSimulator.KeyDown(args);
+                            KeyboardSimulator.KeyDown(args, KeyboardReplayMarker);
                             break;
 
                         case false:
                             if (IsModifierKey(args))
-                            {
-                                lock (ReplayedModifiersLock)
-                                    ReplayedModifiersDown.Remove(args.KeyCode);
-                            }
+                                ReplayedModifiersDown.Remove(args.KeyCode);
 
-                            KeyboardSimulator.KeyUp(args);
+                            KeyboardSimulator.KeyUp(args, KeyboardReplayMarker);
                             break;
                     }
                 }
@@ -629,6 +633,11 @@ public static class InputsManager
                 BufferKeys[IsKeyDown].Clear();
             }
         }
+    }
+
+    private static void ReplayKeyUp(Keys key)
+    {
+        KeyboardSimulator.KeyUp((VirtualKeyCode)key, KeyboardReplayMarker);
     }
 
     private static List<KeyCode> GetChord(List<KeyEventArgsExt> args)
@@ -684,10 +693,10 @@ public static class InputsManager
             BufferKeys[true].Clear();
             BufferKeys[false].Clear();
             ReleaseReplayedModifiers();
+            PendingAltGrControlTimestamp = null;
+            PendingAltGrControlKey = null;
+            AltGrControlKey = null;
         }
-        PendingAltGrControlTimestamp = null;
-        PendingAltGrControlKey = null;
-        AltGrControlKey = null;
 
         MsiFirmwareWorkaround.Enabled = false;
 
