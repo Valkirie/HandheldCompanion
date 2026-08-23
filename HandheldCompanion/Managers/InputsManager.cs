@@ -332,7 +332,8 @@ public static class InputsManager
                         }
                     }
 
-                    if (!silenced)
+                    // Modifier releases must not end the listening sequence.
+                    if (!silenced && !IsModifierKey(args))
                         CheckForSequence(args.IsKeyDown, args.IsKeyUp);
                 }
             }
