@@ -189,7 +189,7 @@
                 <ui:ToggleSwitch IsOn="{Binding FramerateLimitEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <ui:SettingsExpander.Items>
-                    <ui:SettingsCard IsEnabled="{Binding FramerateLimitEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ui:SettingsCard Header="Framerate limit" IsEnabled="{Binding FramerateLimitEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                         <ComboBox
                             HorizontalAlignment="Stretch"
                             ItemsSource="{Binding FramerateLimits, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"

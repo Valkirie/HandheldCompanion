@@ -2,7 +2,6 @@
 using HandheldCompanion.Shared;
 using Microsoft.Win32;
 using NAudio.CoreAudioApi;
-using NAudio.CoreAudioApi.Interfaces;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -49,9 +48,9 @@ public class MultimediaManager : IManager
     public MultimediaManager()
     {
         // Setup audio endpoint
-        _notificationClient = new MMDeviceNotificationClient(this);
         _deviceEnumerator = new MMDeviceEnumerator();
-        _deviceEnumerator.RegisterEndpointNotificationCallback(_notificationClient);
+        _notificationClient = _deviceEnumerator.CreateNotificationClient();
+        _notificationClient.DefaultDeviceChanged += NotificationClient_DefaultDeviceChanged;
         SetDefaultAudioEndPoint();
 
         // Setup brightness monitoring
@@ -96,7 +95,7 @@ public class MultimediaManager : IManager
         base.PrepareStop();
 
         // Unregister audio callbacks
-        _deviceEnumerator.UnregisterEndpointNotificationCallback(_notificationClient);
+        _notificationClient.Dispose();
 
         // Stop brightness monitoring
         _brightnessWatcher.EventArrived -= OnWMIEvent;
@@ -115,6 +114,11 @@ public class MultimediaManager : IManager
     private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
     {
         VolumeNotification?.Invoke(data.MasterVolume * 100.0f);
+    }
+
+    private void NotificationClient_DefaultDeviceChanged(object? sender, DefaultDeviceChangedEventArgs e)
+    {
+        SetDefaultAudioEndPoint();
     }
 
     private void SetDefaultAudioEndPoint()
@@ -854,33 +858,6 @@ public class MultimediaManager : IManager
         catch { }
 
         return -1;
-    }
-
-    #endregion
-
-    #region Nested Classes
-
-    private class MMDeviceNotificationClient : IMMNotificationClient
-    {
-        private readonly MultimediaManager _multimediaManager;
-
-        public MMDeviceNotificationClient(MultimediaManager multimediaManager)
-        {
-            _multimediaManager = multimediaManager;
-        }
-
-        public void OnDefaultDeviceChanged(DataFlow flow, Role role, string defaultDeviceId)
-        {
-            _multimediaManager?.SetDefaultAudioEndPoint();
-        }
-
-        public void OnDeviceAdded(string deviceId) { }
-
-        public void OnDeviceRemoved(string deviceId) { }
-
-        public void OnDeviceStateChanged(string deviceId, DeviceState newState) { }
-
-        public void OnPropertyValueChanged(string deviceId, PropertyKey key) { }
     }
 
     #endregion
