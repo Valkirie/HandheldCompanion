@@ -38,7 +38,6 @@ public class OneXPlayerX1 : OneXAOKZOE
     private const byte ButtonCommandId = 0xB2;
     private const byte StatusCommandId = 0xB8;
     protected const byte VibrationCommandId = 0xB3;
-    private readonly bool[] _buttonStates = new bool[0x25];
 
     // Enable COM Port for LED Control
     public bool EnableSerialPort = true;
@@ -225,7 +224,15 @@ public class OneXPlayerX1 : OneXAOKZOE
 
     public override void Close()
     {
-        Device_Removed();
+        // stop further reads
+        IsReading = false;
+
+        // Release custom buttons so none remain logically pressed after disconnect.
+        KeyRelease(ButtonFlags.OEM1); // Turbo
+        KeyRelease(ButtonFlags.OEM2); // Keyboard
+
+        // close devices
+        try { DisposeHidDevices(); } catch { }
 
         if (EnableSerialPort)
         {
@@ -455,19 +462,15 @@ public class OneXPlayerX1 : OneXAOKZOE
 
     protected override void Device_Removed()
     {
+        // stop further reads
         IsReading = false;
 
-        // release pressed vendor buttons before clearing their state
-        for (byte buttonId = 0; buttonId < _buttonStates.Length; buttonId++)
-            if (_buttonStates[buttonId])
-                HandleEvent(buttonId, false);
+        // Release custom buttons so none remain logically pressed after disconnect.
+        KeyRelease(ButtonFlags.OEM1); // Turbo
+        KeyRelease(ButtonFlags.OEM2); // Keyboard
 
-        Array.Clear(_buttonStates);
-
-        if (hidDevices.Remove(VendorHidId, out HidDevice? device))
-        {
-            try { device.Dispose(); } catch { }
-        }
+        // close devices
+        try { DisposeHidDevices(); } catch { }
     }
 
     protected override async void Device_Inserted(bool reScan = false)
@@ -483,6 +486,7 @@ public class OneXPlayerX1 : OneXAOKZOE
             return;
 
         IsReading = true;
+
         // HHD's controller opens the hid_v1/hid_v2_x2 OxpHidraw instance here,
         // then lets the device-specific protocol choose its initialization pages.
         InitializeVendorHidCommands();
@@ -529,8 +533,6 @@ public class OneXPlayerX1 : OneXAOKZOE
         return false;
     }
 
-    private bool IsReading;
-
     private async Task ReadLoopAsync(HidDevice device)
     {
         try
@@ -555,14 +557,7 @@ public class OneXPlayerX1 : OneXAOKZOE
                     continue;
 
                 byte buttonId = data[6];
-                if (buttonId >= _buttonStates.Length)
-                    continue;
-
                 bool pressed = data[12] == 0x01;
-                if (_buttonStates[buttonId] == pressed)
-                    continue;
-
-                _buttonStates[buttonId] = pressed;
                 HandleEvent(buttonId, pressed);
             }
         }

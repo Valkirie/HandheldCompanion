@@ -155,8 +155,10 @@ public abstract class IDevice
 
     protected int vendorId;
     protected int[] productIds = [];
+
     protected Dictionary<int, HidDevice> hidDevices = [];
     protected Dictionary<int, HidFilter> hidFilters = [];
+    protected bool IsReading = false;
 
     public IMUMatrix AcceleroMatrix;
     public IMUMatrix GyroMatrix;
@@ -597,6 +599,20 @@ public abstract class IDevice
         }
 
         return true;
+    }
+
+    protected void DisposeHidDevices()
+    {
+        HidDevice[] devices;
+
+        lock (updateLock)
+        {
+            devices = hidDevices.Values.Distinct().ToArray();
+            hidDevices.Clear();
+        }
+
+        foreach (HidDevice hidDevice in devices)
+            hidDevice.Dispose();
     }
 
     public virtual void Close()

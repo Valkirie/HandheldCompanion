@@ -317,9 +317,7 @@ public class LegionGo : IDevice
     public override void Close()
     {
         // close devices
-        foreach (HidDevice hidDevice in hidDevices.Values)
-            hidDevice.Dispose();
-        hidDevices.Clear();
+        try { DisposeHidDevices(); } catch { }
 
         // Reset the fan speed to default before device shutdown/restart
         SetFanFullSpeed(false);
@@ -399,10 +397,11 @@ public class LegionGo : IDevice
 
     protected override void Device_Removed()
     {
-        if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
-        {
-            try { device.Dispose(); } catch { }
-        }
+        // Release custom buttons so none remain logically pressed after disconnect.
+        KeyRelease(ButtonFlags.OEM1); // LegionR
+        KeyRelease(ButtonFlags.OEM2); // LegionL
+
+        try { DisposeHidDevices(); } catch { }
 
         // unload SapientiaUsb
         FreeSapientiaUsb();

@@ -170,12 +170,7 @@ namespace HandheldCompanion.Devices.Zotac
         public override void Close()
         {
             // close devices
-            lock (this.updateLock)
-            {
-                foreach (HidDevice hidDevice in hidDevices.Values)
-                    hidDevice.Dispose();
-                hidDevices.Clear();
-            }
+            try { DisposeHidDevices(); } catch { }
 
             base.Close();
         }
