@@ -198,6 +198,7 @@
                     </Border>
 
                     <ui:InfoBar
+                        d:Visibility="Visible"
                         IsClosable="False"
                         IsOpen="{Binding HasWarning}"
                         Message="{Binding Warning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -205,6 +206,7 @@
                         Visibility="{Binding HasWarning, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                     <ui:InfoBar
+                        d:Visibility="Visible"
                         IsClosable="False"
                         IsOpen="{Binding IsSelectedPresetUsed}"
                         Message="This preset is currently applied."
@@ -595,9 +597,11 @@
 
                         <!--  CPU Parking Mode  -->
                         <ui:SettingsCard
+                            d:Visibility="Visible"
                             Description="{l:Static resx:Resources.PerformancePage_CPUParkingModeDesc}"
                             Header="{l:Static resx:Resources.PerformancePage_CPUParkingMode}"
-                            IsEnabled="{Binding SupportsHeterogeneousCoreScheduling}">
+                            IsEnabled="{Binding SupportsHeterogeneousCoreScheduling}"
+                            Visibility="{Binding SupportsHeterogeneousCoreScheduling, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe964;" />
                             </ui:SettingsCard.HeaderIcon>
@@ -616,8 +620,12 @@
                     </ikw:SimpleStackPanel>
                 </ikw:SimpleStackPanel>
 
-                <!--  Power settings  -->
-                <ikw:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="8">
+                <!--  GPU settings (Intel)  -->
+                <ikw:SimpleStackPanel
+                    d:Visibility="Visible"
+                    IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    Spacing="8"
+                    Visibility="{Binding IsIntelCPU, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <DockPanel>
                         <TextBlock
                             VerticalAlignment="Center"
@@ -635,8 +643,7 @@
                         <ui:SettingsExpander
                             Description="{l:Static resx:Resources.PerformancePage_EnduranceGaming_Desc}"
                             Header="{l:Static resx:Resources.PerformancePage_EnduranceGaming_Title}"
-                            IsEnabled="{Binding SupportsIntelEnduranceGaming, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            Visibility="{Binding IsIntelCPU, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            IsEnabled="{Binding SupportsIntelEnduranceGaming, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                             <ui:SettingsExpander.HeaderIcon>
                                 <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe964;" />
                             </ui:SettingsExpander.HeaderIcon>
@@ -693,6 +700,7 @@
                         <!--  Graph and presets for custom fan curves  -->
                         <Border
                             Padding="15,12,12,12"
+                            d:Visibility="Visible"
                             Background="{DynamicResource ExpanderHeaderBackground}"
                             CornerRadius="{DynamicResource ControlCornerRadius}"
                             Visibility="{Binding FanMode, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1}">
@@ -700,7 +708,6 @@
                                 <lvc:CartesianChart
                                     Name="lvc"
                                     Height="400"
-                                    d:Visibility="Visible"
                                     DataTooltip="{x:Null}"
                                     DisableAnimations="True"
                                     Zoom="None">

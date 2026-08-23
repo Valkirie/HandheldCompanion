@@ -407,7 +407,12 @@
             </ikw:SimpleStackPanel>
 
             <!--  Platform options  -->
-            <ikw:SimpleStackPanel Name="PlatformOptionsStack" Spacing="8">
+            <ikw:SimpleStackPanel
+                Name="PlatformOptionsStack"
+                d:Visibility="Visible"
+                IsEnabled="{Binding HasManufacturerPlatform}"
+                Spacing="8"
+                Visibility="{Binding HasManufacturerPlatform, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <!--  OEM Frontend  -->
                 <DockPanel>
                     <TextBlock
@@ -421,10 +426,7 @@
                         Text="OEM frontend and manufacturer application" />
                 </DockPanel>
 
-                <ui:SettingsCard
-                    Description="{l:Static resx:Resources.DevicePage_ManufacturerApplicationDesc}"
-                    Header="{l:Static resx:Resources.DevicePage_ManufacturerApplication}"
-                    IsEnabled="{Binding HasManufacturerPlatform}">
+                <ui:SettingsCard Description="{l:Static resx:Resources.DevicePage_ManufacturerApplicationDesc}" Header="{l:Static resx:Resources.DevicePage_ManufacturerApplication}">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Glyph="&#xF156;" />
                     </ui:SettingsCard.HeaderIcon>
@@ -1078,7 +1080,8 @@
                         Name="ExternalSensorExpander"
                         d:IsExpanded="True"
                         Header="External sensor"
-                        IsEnabled="{Binding IsExternalSensorExpanderEnabled}">
+                        IsEnabled="{Binding IsExternalSensorExpanderEnabled}"
+                        Visibility="{Binding IsExternalSensorExpanderEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <ui:SettingsExpander.HeaderIcon>
                             <ui:FontIcon Glyph="&#xE950;" />
                         </ui:SettingsExpander.HeaderIcon>
