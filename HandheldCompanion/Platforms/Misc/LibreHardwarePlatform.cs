@@ -31,6 +31,7 @@ namespace HandheldCompanion.Platforms.Misc
         private float? CPUClock;
         private float? CPUPower;
         private float? CPUTemperature;
+        private bool cpuTemperatureMatched;
 
         // GPU
         private float? GPULoad;
@@ -427,6 +428,8 @@ namespace HandheldCompanion.Platforms.Misc
 
         private void HandleCPU(IHardware cpu)
         {
+            cpuTemperatureMatched = false;
+
             float highestClock = 0;
             foreach (var sensor in cpu.Sensors)
             {
@@ -448,6 +451,20 @@ namespace HandheldCompanion.Platforms.Misc
                     case SensorType.Temperature:
                         HandleCPU_Temperature(sensor);
                         break;
+                }
+            }
+
+            // Fallback for CPUs whose package temperature LibreHardwareMonitor cannot read
+            // (e.g. very recent Intel parts such as the X2's Panther Lake, where every MSR
+            // temperature sensor reports null). Let the device supply the temperature so the
+            // fan curve and OSD keep working.
+            if (!cpuTemperatureMatched)
+            {
+                float? deviceTemperature = IDevice.GetCurrent().ReadCPUTemperature();
+                if (deviceTemperature.HasValue && CPUTemperature != deviceTemperature)
+                {
+                    CPUTemperature = deviceTemperature;
+                    CPUTemperatureChanged?.Invoke(CPUTemperature);
                 }
             }
         }
@@ -521,6 +538,8 @@ namespace HandheldCompanion.Platforms.Misc
 
             if (sensor.Name == "CPU Package" || sensor.Name == "Core (Tctl/Tdie)")
             {
+                cpuTemperatureMatched = true;
+
                 float value = sensorValue.Value;
                 if (CPUTemperature != value)
                 {
