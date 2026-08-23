@@ -99,21 +99,31 @@ public static class KeyboardSimulator
     // A function that sends a key down event for a KeyEventArgs object using the keybd_event function
     public static void KeyDown(KeyEventArgsExt e)
     {
+        KeyDown(e, UIntPtr.Zero);
+    }
+
+    public static void KeyDown(KeyEventArgsExt e, UIntPtr extraInfo)
+    {
         byte vk = (byte)e.KeyValue;
         byte scan = (byte)e.ScanCode;
         uint flags = IsExtendedKey((VirtualKeyCode)e.KeyValue) ? KEYEVENTF_EXTENDEDKEY : 0;
 
-        keybd_event(vk, scan, flags, UIntPtr.Zero);
+        keybd_event(vk, scan, flags, extraInfo);
     }
 
     // A function that sends a key up event for a KeyEventArgs object using the keybd_event function
     public static void KeyUp(KeyEventArgsExt e)
     {
+        KeyUp(e, UIntPtr.Zero);
+    }
+
+    public static void KeyUp(KeyEventArgsExt e, UIntPtr extraInfo)
+    {
         byte vk = (byte)e.KeyValue;
         byte scan = (byte)e.ScanCode;
         uint flags = (IsExtendedKey((VirtualKeyCode)e.KeyValue) ? KEYEVENTF_EXTENDEDKEY : 0) | KEYEVENTF_KEYUP;
 
-        keybd_event(vk, scan, flags, UIntPtr.Zero);
+        keybd_event(vk, scan, flags, extraInfo);
     }
 
     public static void KeyDown(VirtualKeyCode key)
@@ -126,6 +136,15 @@ public static class KeyboardSimulator
         {
             // Some simulated input commands were not sent successfully.
         }
+    }
+
+    public static void KeyUp(VirtualKeyCode key, UIntPtr extraInfo)
+    {
+        byte vk = (byte)key;
+        byte scan = (byte)MapVirtualKey((int)key, MAPVK_VK_TO_VSC_EX);
+        uint flags = (IsExtendedKey(key) ? KEYEVENTF_EXTENDEDKEY : 0) | KEYEVENTF_KEYUP;
+
+        keybd_event(vk, scan, flags, extraInfo);
     }
 
     public static void KeyDown(KeyCode[] keys)
