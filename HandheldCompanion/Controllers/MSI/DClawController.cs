@@ -35,6 +35,11 @@ public class DClawController : DInputController
         Capabilities |= ControllerCapabilities.Rumble;
     }
 
+    public override string ToString()
+    {
+        return "MSI Claw DInput Controller";
+    }
+
     protected override void InitializeInputOutput()
     {
         // Additional controller specific source buttons

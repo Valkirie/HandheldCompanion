@@ -155,6 +155,8 @@ public abstract class IDevice
 
     protected int vendorId;
     protected int[] productIds = [];
+    private readonly System.Threading.Timer hidDeviceArrivedTimer;
+    private readonly System.Threading.Timer hidDeviceRemovedTimer;
 
     protected Dictionary<int, HidDevice> hidDevices = [];
     protected Dictionary<int, HidFilter> hidFilters = [];
@@ -244,6 +246,17 @@ public abstract class IDevice
 
     public IDevice()
     {
+        hidDeviceArrivedTimer = new(_ =>
+        {
+            lock (updateLock)
+                Device_Inserted(true);
+        });
+        hidDeviceRemovedTimer = new(_ =>
+        {
+            lock (updateLock)
+                Device_Removed();
+        });
+
         GamepadMotion = new(ProductIllustration, SensorsManager.ActiveCalibrationMode);
 
         // initialize IMU matrices with default values
@@ -485,7 +498,7 @@ public abstract class IDevice
         lock (updateLock)
         {
             if (device.VendorID == vendorId && productIds.Contains(device.ProductID))
-                Device_Removed();
+                hidDeviceRemovedTimer.Change(TimeSpan.FromSeconds(2), System.Threading.Timeout.InfiniteTimeSpan);
         }
     }
 
@@ -494,7 +507,7 @@ public abstract class IDevice
         lock (updateLock)
         {
             if (device.VendorID == vendorId && productIds.Contains(device.ProductID))
-                Device_Inserted(true);
+                hidDeviceArrivedTimer.Change(TimeSpan.FromSeconds(2), System.Threading.Timeout.InfiniteTimeSpan);
         }
     }
 
@@ -642,6 +655,9 @@ public abstract class IDevice
         ManagerFactory.deviceManager.UsbDeviceRemoved -= GenericDeviceUpdated;
         ManagerFactory.deviceManager.HidDeviceArrived -= DeviceManager_HidDeviceArrived;
         ManagerFactory.deviceManager.HidDeviceRemoved -= DeviceManager_HidDeviceRemoved;
+
+        hidDeviceArrivedTimer.Dispose();
+        hidDeviceRemovedTimer.Dispose();
 
         Closed?.Invoke(this);
     }

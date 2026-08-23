@@ -20,5 +20,10 @@ namespace HandheldCompanion.Controllers.MSI
 
         public XClawController(PnPDetails details) : base(details)
         { }
+
+        public override string ToString()
+        {
+            return "MSI Claw XInput Controller";
+        }
     }
 }
