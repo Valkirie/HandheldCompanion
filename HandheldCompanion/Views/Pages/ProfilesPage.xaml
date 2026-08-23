@@ -801,15 +801,13 @@
                             Description="{l:Static resx:Resources.ProfilesPage_ControllerLayoutDesc}"
                             Header="{l:Static resx:Resources.ProfilesPage_ControllerLayout}"
                             IsClickEnabled="True"
+                            Style="{StaticResource AccentSettingsCardStyle}"
                             Tag="Navigation">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xE7FC;" />
                             </ui:SettingsCard.HeaderIcon>
 
-                            <TextBlock
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="{Binding SelectedMainProfile.LayoutTitle, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{Binding SelectedMainProfile.LayoutTitle, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                         </ui:SettingsCard>
 
                         <!--  Controller type  -->
