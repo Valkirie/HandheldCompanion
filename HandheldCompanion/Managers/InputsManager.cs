@@ -250,16 +250,11 @@ public static class InputsManager
             return;
 
         lock (KeyboardBufferLock)
-            M_GlobalHook_KeyEventLocked(sender, e);
+            M_GlobalHook_KeyEventLocked(args, e);
     }
 
-    private static void M_GlobalHook_KeyEventLocked(object? sender, KeyEventArgs e)
+    private static void M_GlobalHook_KeyEventLocked(KeyEventArgsExt args, KeyEventArgs e)
     {
-        KeyEventArgsExt args = (KeyEventArgsExt)e;
-
-        bool Injected = (args.Flags & LLKHF_INJECTED) > 0;
-        bool InjectedLL = (args.Flags & LLKHF_LOWER_IL_INJECTED) > 0;
-
         // don't catch keyboard inputs until user is logged-in
         if (SystemManager.IsSessionLocked)
         {
@@ -267,7 +262,8 @@ public static class InputsManager
             return;
         }
 
-        bool fromPhysicalKeyboard = !(Injected || InjectedLL);
+        bool isInjected = (args.Flags & (LLKHF_INJECTED | LLKHF_LOWER_IL_INJECTED)) != 0;
+        bool fromPhysicalKeyboard = !isInjected;
 
         if (fromPhysicalKeyboard)
         {
@@ -305,12 +301,8 @@ public static class InputsManager
             }
         }
 
-        if (MsiFirmwareWorkaround.ProcessKeyboardEvent(args, Injected || InjectedLL))
+        if (MsiFirmwareWorkaround.ProcessKeyboardEvent(args, isInjected))
             return;
-
-        if ((Injected || InjectedLL))
-            if (IsListening && currentChord.chordTarget != InputsChordTarget.Output)
-                return;
 
         KeyCode hookKey = (KeyCode)args.KeyValue;
 
