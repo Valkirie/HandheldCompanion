@@ -16,10 +16,20 @@ namespace HandheldCompanion.Devices;
 
 public class OneXPlayerX2 : OneXPlayerX1
 {
+    private OneXPlayerWmiEc? _wmiEc;
+
     // X2 uses the banked WMI EC address. OneXConsole initializes its application
     // function/turbo register as decimal 1259 (0x04EB), not legacy port address 0xEB.
     private const ushort TurboTakeoverRegister = 0x04EB;
     private const byte TurboTakeoverMask = 0x40;
+
+    // CPU package temperature (°C) exposed by the EC. LibreHardwareMonitor cannot read
+    // the MSR temperatures on the X2's Panther Lake CPU, so ReadCPUTemperature() feeds
+    // this register into the sensor pipeline as a fallback (see LibreHardwarePlatform),
+    // which drives the fan curve exactly like the LHM-read CPUs on other OneXPlayers.
+    // Identified by probing the EC under load: it tracks CPU load directly and recovers
+    // on cooldown, unlike the neighbouring board/SSD sensors.
+    private const ushort CPUTemperatureRegister = 0x0470;
 
     public OneXPlayerX2()
     {
@@ -41,7 +51,7 @@ public class OneXPlayerX2 : OneXPlayerX1
             AddressStatusCommandPort = 0x4E,
             AddressDataPort = 0x4F,
             FanValueMin = 0,
-            FanValueMax = 255
+            FanValueMax = 184
         };
 
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBattery, Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBatteryDesc)
@@ -110,44 +120,116 @@ public class OneXPlayerX2 : OneXPlayerX1
         DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = false;
     }
 
+    public override bool Open()
+    {
+        // The X2 firmware exposes its EC through the SuRwECRegInterface ACPI/WMI
+        // provider. WinRing0 port I/O (used by older OXP models) cannot access this
+        // register on the X2, which is why takeover previously worked only after
+        // OneXConsole had initialized it.
+        try
+        {
+            lock (updateLock)
+            {
+                _wmiEc = new OneXPlayerWmiEc();
+            }
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogWarning("Failed to open X2 WMI EC interface: {0}", ex.Message);
+            return false;
+        }
+
+        return base.Open();
+    }
+
+    public override void Close()
+    {
+        lock (updateLock)
+        {
+            _wmiEc?.Dispose();
+            _wmiEc = null;
+        }
+
+        base.Close();
+    }
+
+    protected override async Task ConfigureController()
+    {
+        WriteVendorHidCommand(0xB4, BuildRemapPage1(0x01));
+        await Task.Delay(50);
+
+        WriteVendorHidCommand(0xB4, BuildRemapPage2(0x01, 0x67, 0x66));
+    }
+
     public override void SetFanControl(bool enable, int mode = 0)
     {
-        if (!UseOpenLib || !IsOpen)
-            return;
+        byte value = enable ? (byte)FanControlMode.Manual : (byte)FanControlMode.Automatic;
+        WriteFanRegister(ECDetails.AddressFanControl, value);
 
-        EcWriteByte(ACPI_FanMode_Address, enable ? (byte)FanControlMode.Manual : (byte)FanControlMode.Automatic);
+        // set flag
+        hasAppliedSoftwareFanProfile = enable;
     }
 
     public override void SetFanDuty(double percent)
     {
-        if (!UseOpenLib || !IsOpen)
-            return;
-
         double clampedPercent = Math.Clamp(percent, 0.0d, 100.0d);
-        byte duty = (byte)Math.Round(clampedPercent * 255.0d / 100.0d);
-        EcWriteByte(ACPI_FanPWMDutyCycle_Address, duty);
+        double scaled = clampedPercent * (ECDetails.FanValueMax - ECDetails.FanValueMin) / 100.0d + ECDetails.FanValueMin;
+
+        byte duty = (byte)Math.Round(scaled);
+        WriteFanRegister(ECDetails.AddressFanDuty, duty);
     }
 
     public override float ReadFanDuty()
     {
-        if (!UseOpenLib || !IsOpen)
-            return 0;
-
-        return EcReadByte(ACPI_FanPWMDutyCycle_Address);
+        lock (updateLock)
+        {
+            try
+            {
+                return _wmiEc?.ReadByte(ECDetails.AddressFanDuty) ?? 0;
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to read fan duty through X2 WMI EC interface: {0}", ex.Message);
+                return 0;
+            }
+        }
     }
 
-    protected override void InitializeVendorHidCommands()
+    public override float? ReadCPUTemperature()
     {
-        Thread.Sleep(4000);
+        lock (updateLock)
+        {
+            try
+            {
+                // Reject obviously invalid readings (EC not ready / out of range) so the fan
+                // curve falls back to its default rather than acting on a bogus temperature.
+                byte value = _wmiEc?.ReadByte(CPUTemperatureRegister) ?? 0;
+                if (value == 0 || value > 110)
+                    return null;
 
-        WriteVendorHidCommand(0xB4, BuildRemapPage1(0x01));
-        Thread.Sleep(50);
+                return value;
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to read CPU temperature through X2 WMI EC interface: {0}", ex.Message);
+                return null;
+            }
+        }
+    }
 
-        WriteVendorHidCommand(0xB4, BuildRemapPage2(0x01, 0x67, 0x66));
-        Thread.Sleep(50);
-
-        // X2-specific B2 setup; this is not HHD gen_intercept(False).
-        // WriteVendorHidCommand(0xB2, [0x01, 0x1F, 0x40, 0x03, 0x02, 0x03, 0x00, 0x00, 0x00, 0x01]);
+    private void WriteFanRegister(ushort register, byte value)
+    {
+        lock (updateLock)
+        {
+            try
+            {
+                (_wmiEc ?? throw new InvalidOperationException("X2 WMI EC is not open")).WriteByte(register, value);
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to write fan register 0x{0:X3} through X2 WMI EC interface: {1}", register, ex.Message);
+            }
+        }
     }
 
     public override XInputController? CreateController(PnPDetails details)
@@ -170,32 +252,31 @@ public class OneXPlayerX2 : OneXPlayerX1
 
     protected override void SetTurboButtonTakeover(bool enabled)
     {
-        // The X2 firmware exposes its EC through the SuRwECRegInterface ACPI/WMI
-        // provider. WinRing0 port I/O (used by older OXP models) cannot access this
-        // register on the X2, which is why takeover previously worked only after
-        // OneXConsole had initialized it.
-        try
+        lock (updateLock)
         {
-            using (OneXPlayerWmiEc ec = new())
+            try
             {
+                OneXPlayerWmiEc ec = _wmiEc ?? throw new InvalidOperationException("X2 WMI EC is not open");
+
+                // read the current register value, set or clear the takeover bit, and write it back
                 byte currentValue = ec.ReadByte(TurboTakeoverRegister);
                 byte value = enabled ? (byte)(currentValue | TurboTakeoverMask) : (byte)(currentValue & ~TurboTakeoverMask);
-
                 ec.WriteByte(TurboTakeoverRegister, value);
 
                 // wait a bit for the EC to process the change
                 Thread.Sleep(50);
 
+                // check that the register now contains the expected value
                 byte actualValue = ec.ReadByte(TurboTakeoverRegister);
                 if (actualValue == value)
                     LogManager.LogInformation("{0} {1} OEM button through X2 WMI EC interface", enabled ? "Unlocked" : "Locked", ButtonFlags.OEM1);
                 else
                     LogManager.LogWarning("Failed to {0} OEM button through X2 WMI EC interface (expected 0x{1:X2}, actual 0x{2:X2})", enabled ? "unlock" : "lock", value, actualValue);
             }
-        }
-        catch (Exception ex)
-        {
-            LogManager.LogWarning("Failed to {0} {1} OEM button through X2 WMI EC interface: {2}", enabled ? "unlock" : "lock", ButtonFlags.OEM1, ex.Message);
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to {0} {1} OEM button through X2 WMI EC interface: {2}", enabled ? "unlock" : "lock", ButtonFlags.OEM1, ex.Message);
+            }
         }
     }
 

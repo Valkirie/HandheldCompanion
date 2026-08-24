@@ -65,6 +65,9 @@ public class OneXPlayerMini : OneXAOKZOE
 
         // Update the fan control mode
         EcWriteByte(ACPI_FanMode_Address, controlValue);
+
+        // set flag
+        hasAppliedSoftwareFanProfile = enable;
     }
 
     public override void SetFanDuty(double percent)
@@ -132,6 +135,16 @@ public class OneXPlayerMiniAMD : OneXPlayerMini
         CpuClock = 4400;
 
         // IMU matrices loaded from OneXPlayerMiniAMD.json
+
+        ECDetails = new ECDetails
+        {
+            AddressFanControl = 0x44A,
+            AddressFanDuty = 0x44B,
+            AddressStatusCommandPort = 0x4E,
+            AddressDataPort = 0x4F,
+            FanValueMin = 0,
+            FanValueMax = 100
+        };
     }
 }
 

@@ -106,6 +106,9 @@ public class OneXPlayerOneXFly : OneXAOKZOE
 
         // Update the fan control mode
         EcWriteByte(ACPI_FanMode_Address, controlValue);
+
+        // set flag
+        hasAppliedSoftwareFanProfile = enable;
     }
 
     public override void SetFanDuty(double percent)

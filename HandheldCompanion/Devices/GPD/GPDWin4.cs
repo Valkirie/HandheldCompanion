@@ -74,8 +74,11 @@ public class GPDWin4 : IDevice
         {
             case false:
                 base.SetFanDuty(0);
-                return;
+                break;
         }
+        
+        // set flag
+        hasAppliedSoftwareFanProfile = enable;
     }
 
     public override void SetFanDuty(double percent)

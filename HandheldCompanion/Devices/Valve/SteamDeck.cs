@@ -246,6 +246,9 @@ public class SteamDeck : IDevice
         SetRampRate(enable ? (byte)10 : (byte)20);
 
         inpOut?.DlPortWritePortUchar(IO6C, enable ? (byte)0xCC : (byte)0xCD);
+
+        // set flag
+        hasAppliedSoftwareFanProfile = enable;
     }
 
     public override void SetFanDuty(double percent)

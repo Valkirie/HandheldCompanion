@@ -91,8 +91,9 @@ namespace HandheldCompanion.Devices.OneXPlayer
             if (!UseOpenLib || !IsOpen)
                 return;
 
-            var data = Convert.ToByte(enable);
-            ECRamDirectWriteByte(ECDetails.AddressFanControl, ECDetails, data);
+            byte data = Convert.ToByte(enable);
+            if (ECRamDirectWriteByte(ECDetails.AddressFanControl, ECDetails, data))
+                hasAppliedSoftwareFanProfile = enable;
         }
 
         /// <summary>

@@ -305,8 +305,6 @@ public class ClawA1M : IDevice
 
     public override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
-        bool shouldReleaseFanControl = ShouldReleaseFanControl(profile);
-
         byte[] fanTable = new byte[8];
         if (profile.FanProfile.fanMode == FanMode.Software)
         {
@@ -326,7 +324,7 @@ public class ClawA1M : IDevice
             // update fan mode
             SetFanControl(true);
         }
-        else if (shouldReleaseFanControl)
+        else if (hasAppliedSoftwareFanProfile)
         {
             // restore default fan table
             fanTable = new byte[8] { 40, 0, 40, 49, 58, 67, 75, 75 };
@@ -1004,6 +1002,9 @@ public class ClawA1M : IDevice
         fullPackage[1] = data[0];
 
         WMI.Set(WmiScope, WmiPath, "Set_Data", fullPackage);
+
+        // set flag
+        hasAppliedSoftwareFanProfile = enable;
     }
 
     public void SetFanFullSpeed(bool enable)

@@ -54,8 +54,6 @@ public class AynLoki : IDevice
 
     public override void SetFanControl(bool enable, int mode)
     {
-        //LogManager.LogDebug("AynLoki Set Fan Control {0}", enable);
-
         // Define the ACPI memory address for fan control mode
         byte ACPI_FanMode_Address = 0x10;
 
@@ -64,6 +62,9 @@ public class AynLoki : IDevice
 
         // Update the fan control mode
         EcWriteByte(ACPI_FanMode_Address, controlValue);
+
+        // set flag
+        hasAppliedSoftwareFanProfile = enable;
     }
 
     public override void SetFanDuty(double percent)

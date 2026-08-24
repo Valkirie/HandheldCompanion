@@ -87,7 +87,8 @@ namespace HandheldCompanion.Devices.AYANEO
                 return;
 
             byte data = enable ? (byte)0xa5 : (byte)0x00;
-            this.ECRamDirectWrite((byte)this.ECDetails.AddressFanControl, data);
+            if (ECRamDirectWrite((byte)this.ECDetails.AddressFanControl, data))
+                hasAppliedSoftwareFanProfile = enable;
         }
 
         // Based on CEiiEcHelper_RgbI2cWrite (AYASpace) but renamed to override existing function

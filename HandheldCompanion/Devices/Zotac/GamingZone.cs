@@ -659,7 +659,9 @@ namespace HandheldCompanion.Devices.Zotac
             if (!UseOpenLib || !IsOpen)
                 return;
 
-            ECRamDirectWriteByte(ECDetails.AddressFanControl, ECDetails, Convert.ToByte(enable));
+            byte data = Convert.ToByte(enable);
+            if (ECRamDirectWriteByte(ECDetails.AddressFanControl, ECDetails, data))
+                hasAppliedSoftwareFanProfile = enable;
         }
 
         public override void SetFanDuty(double percent)

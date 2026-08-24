@@ -368,6 +368,9 @@ public class LegionGo : IDevice
         uint[] currentFanSpeeds = GetFanTable();
         if (profile.FanProfile.fanMode != FanMode.Hardware)
         {
+            // set flag
+            hasAppliedSoftwareFanProfile = true;
+
             // prepare array of fan speeds
             ushort[] fanSpeeds = profile.FanProfile.fanSpeeds.Skip(1).Take(10).Select(speed => (ushort)speed).ToArray();
 
@@ -379,13 +382,14 @@ public class LegionGo : IDevice
             FanTable fanTable = new(fanSpeeds);
             SetFanTable(fanTable);
         }
-        else
+        else if (hasAppliedSoftwareFanProfile)
         {
             // restore default FanTable if not already set
-            if (currentFanSpeeds.Select(v => (ushort)v).SequenceEqual(defaultFanTable.GetTable()))
-                return;
+            if (!currentFanSpeeds.Select(v => (ushort)v).SequenceEqual(defaultFanTable.GetTable()))
+                SetFanTable(defaultFanTable);
 
-            SetFanTable(defaultFanTable);
+            // set flag
+            hasAppliedSoftwareFanProfile = false;
         }
     }
 

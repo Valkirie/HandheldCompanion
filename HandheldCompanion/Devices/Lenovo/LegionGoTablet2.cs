@@ -76,6 +76,9 @@ namespace HandheldCompanion.Devices.Lenovo
                 // Release fan control back to EC/BIOS
                 ECWriteUInt16(REG_OVERRIDE_WRITE, 0);
             }
+            
+            // set flag
+            hasAppliedSoftwareFanProfile = enable;
         }
 
         /// <summary>
@@ -112,8 +115,6 @@ namespace HandheldCompanion.Devices.Lenovo
 
         public override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
         {
-            bool shouldReleaseFanControl = ShouldReleaseFanControl(profile);
-
             // Apply OEM power mode via WMI (inherited from LegionGo)
             int currentFanMode = GetSmartFanMode();
             if (Enum.IsDefined(typeof(LegionMode), profile.OEMPowerMode) && currentFanMode != profile.OEMPowerMode)
@@ -126,11 +127,10 @@ namespace HandheldCompanion.Devices.Lenovo
                 double fanPercent = profile.FanProfile.GetFanSpeed();
                 SetFanDuty(fanPercent);
             }
-            else
+            else if (hasAppliedSoftwareFanProfile)
             {
                 // Hardware fan control: release EC override
-                if (shouldReleaseFanControl)
-                    SetFanControl(false);
+                SetFanControl(false);
             }
         }
 

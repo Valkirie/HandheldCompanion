@@ -149,7 +149,7 @@ public abstract class IDevice
 
     protected static OpenLibSys? openLibSys;
     protected object updateLock = new();
-    private bool hasAppliedSoftwareFanProfile;
+    protected bool hasAppliedSoftwareFanProfile;
 
     private static IDevice? device;
 
@@ -589,29 +589,16 @@ public abstract class IDevice
 
     public virtual void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
-        bool shouldReleaseFanControl = ShouldReleaseFanControl(profile);
-
         // apply profile Fan mode
         if (profile.FanProfile.fanMode == FanMode.Software)
         {
             SetFanControl(true, profile.OEMPowerMode);
         }
-        else if (shouldReleaseFanControl)
+        else if (hasAppliedSoftwareFanProfile)
         {
             // restore default fan table
             SetFanControl(false, profile.OEMPowerMode);
         }
-    }
-
-    protected bool ShouldReleaseFanControl(PowerProfile profile)
-    {
-        if (profile.FanProfile.fanMode != FanMode.Hardware)
-        {
-            hasAppliedSoftwareFanProfile = true;
-            return false;
-        }
-
-        return true;
     }
 
     protected void DisposeHidDevices()
@@ -1234,8 +1221,9 @@ public abstract class IDevice
         if (!UseOpenLib || !IsOpen)
             return;
 
-        var data = Convert.ToByte(enable);
-        ECRamDirectWriteByte(ECDetails.AddressFanControl, ECDetails, data);
+        byte data = Convert.ToByte(enable);
+        if (ECRamDirectWriteByte(ECDetails.AddressFanControl, ECDetails, data))
+            hasAppliedSoftwareFanProfile = enable;
     }
 
     public virtual float ReadFanDuty()
@@ -1246,6 +1234,13 @@ public abstract class IDevice
         // todo: implement me
         return 0;
     }
+
+    /// <summary>
+    /// Optional device-specific CPU temperature source (in degrees C), used by the sensor
+    /// layer as a fallback when LibreHardwareMonitor cannot read the CPU package temperature
+    /// (e.g. very recent Intel parts). Returns null when the device has no such source.
+    /// </summary>
+    public virtual float? ReadCPUTemperature() => null;
 
     public virtual bool SetLedStatus(bool status)
     {

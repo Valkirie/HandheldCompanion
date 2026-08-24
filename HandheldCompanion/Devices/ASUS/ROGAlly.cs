@@ -188,11 +188,6 @@ public class ROGAlly : AsusDevice
     private byte[] commitReset4of4 = new byte[] { 0x5A, 0xD1, 0x05, 0x04, 0x00, 0x64, 0x00, 0x64 };
     #endregion
 
-    public override void OpenEvents()
-    {
-        base.OpenEvents();
-    }
-
     private static byte[] defaultCPUFan = new byte[] { 0x3A, 0x3D, 0x40, 0x44, 0x48, 0x4D, 0x51, 0x62, 0x08, 0x11, 0x16, 0x1A, 0x22, 0x29, 0x30, 0x45 };
     private static byte[] defaultGPUFan = new byte[] { 0x3A, 0x3D, 0x40, 0x44, 0x48, 0x4D, 0x51, 0x62, 0x0C, 0x16, 0x1D, 0x1F, 0x26, 0x2D, 0x34, 0x4A };
 
@@ -223,16 +218,15 @@ public class ROGAlly : AsusDevice
 
     public override void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
-        bool shouldReleaseFanControl = ShouldReleaseFanControl(profile);
-
         if (profile.FanProfile.fanMode == FanMode.Software)
         {
             byte[] asus = ToAsusCurve(profile.FanProfile.fanSpeeds);
             AsusACPI.SetFanCurve(AsusFan.CPU, asus);
             AsusACPI.SetFanCurve(AsusFan.GPU, asus);
             AsusACPI.SetFanCurve(AsusFan.Mid, asus);
+            SetFanControl(true);
         }
-        else if (shouldReleaseFanControl)
+        else if (hasAppliedSoftwareFanProfile)
         {
             // restore default fan table
             SetFanControl(false);
@@ -263,6 +257,8 @@ public class ROGAlly : AsusDevice
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
         {
             device.OpenDevice();
+            if (!device.IsOpen)
+                return;
 
             // fire‐and‐forget the read loop
             IsReading = true;
@@ -390,6 +386,9 @@ public class ROGAlly : AsusDevice
                 AsusACPI.SetFanCurve(AsusFan.Mid, defaultCPUFan);
                 break;
         }
+
+        // set flag
+        hasAppliedSoftwareFanProfile = enable;
     }
 
     /*

@@ -164,14 +164,18 @@ public class GPDWin5 : IDevice
 
     public override void SetFanControl(bool enable, int mode = 0)
     {
+        if (!UseOpenLib || !IsOpen)
+            return;
+
         // On Win 5, "auto" is simply duty 0 on both fan registers.
         if (!enable)
         {
-            if (!UseOpenLib || !IsOpen) return;
             ECRamDirectWriteByte(EC_FAN_DUTY_1, ECDetails, 0x00);
             ECRamDirectWriteByte(EC_FAN_DUTY_2, ECDetails, 0x00);
-            return;
         }
+
+        // set flag
+        hasAppliedSoftwareFanProfile = enable;
     }
 
     public override void SetFanDuty(double percent)

@@ -106,6 +106,16 @@ namespace HandheldCompanion.Devices
             }
 
             // IMU matrices are now loaded from OneXPlayerG1.json via IDevice.ApplyDeviceConfiguration()
+
+            ECDetails = new ECDetails
+            {
+                AddressFanControl = 0x44A,
+                AddressFanDuty = 0x44B,
+                AddressStatusCommandPort = 0x4E,
+                AddressDataPort = 0x4F,
+                FanValueMin = 0,
+                FanValueMax = 255
+            };
         }
     }
 
@@ -123,6 +133,16 @@ namespace HandheldCompanion.Devices
             CpuClock = 5100;
 
             // IMU matrices are now loaded from OneXPlayerG1Intel.json via IDevice.ApplyDeviceConfiguration()
+
+            ECDetails = new ECDetails
+            {
+                AddressFanControl = 0x44A,
+                AddressFanDuty = 0x44B,
+                AddressStatusCommandPort = 0x4E,
+                AddressDataPort = 0x4F,
+                FanValueMin = 0,
+                FanValueMax = 184
+            };
         }
     }
 }
