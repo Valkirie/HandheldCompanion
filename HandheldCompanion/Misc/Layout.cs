@@ -66,8 +66,9 @@ public partial class Layout : ICloneable, IDisposable
             {
                 ButtonFlags.LeftPadTouch => [new TouchpadActions(ButtonFlags.TouchpadTouch) { Finger = 1 }],
                 ButtonFlags.RightPadTouch => [new TouchpadActions(ButtonFlags.TouchpadTouch) { Finger = 2 }],
-                ButtonFlags.LeftPadClick => [new TouchpadActions(ButtonFlags.TouchpadClick) { Finger = 1 }],
-                ButtonFlags.RightPadClick => [new TouchpadActions(ButtonFlags.TouchpadClick) { Finger = 2 }],
+                ButtonFlags.LeftPadClick => [new TouchpadActions(ButtonFlags.TouchpadClick) { Finger = 1, HapticMode = HapticMode.Both, HapticStrength = HapticStrength.High }],
+                ButtonFlags.RightPadClick => [new TouchpadActions(ButtonFlags.TouchpadClick) { Finger = 2, HapticMode = HapticMode.Both, HapticStrength = HapticStrength.High }],
+                _ when TouchpadActions.IsPhysicalClick(button) => [new TouchpadActions(button) { HapticMode = HapticMode.Both, HapticStrength = HapticStrength.High }],
                 _ when TouchpadActions.IsTouchpadButton(button) => [new TouchpadActions(button)],
                 _ => [new ButtonActions { Button = button }],
             };
