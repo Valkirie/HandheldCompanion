@@ -1,6 +1,7 @@
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
 using System.Threading;
+using System.Threading.Tasks;
 using WindowsInput.Events;
 using static HandheldCompanion.Utils.DeviceUtils;
 
@@ -25,21 +26,19 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         OEMChords.Add(new KeyboardChord("M2", [KeyCode.F16], [KeyCode.F16], false, ButtonFlags.R4));
     }
 
-    protected override void InitializeVendorHidCommands()
+    protected override async Task ConfigureController()
     {
-        Thread.Sleep(4000);
-
         // Equivalent to hid_v1.INITIALIZE_X2[0].
         WriteVendorHidCommand(0xB4, BuildRemapPage1(0x01));
-        Thread.Sleep(50);
+        await Task.Delay(50);
 
         // Equivalent to hid_v1.INITIALIZE_X2[1], including M1/M2 -> F15/F16.
         WriteVendorHidCommand(0xB4, BuildRemapPage2(0x01, 0x68, 0x69));
-        Thread.Sleep(50);
+        await Task.Delay(50);
 
         // Equivalent to hid_v1.INITIALIZE_X2[2], the required third partial page.
         WriteVendorHidCommand(0xB4, BuildRemapPage3());
-        Thread.Sleep(50);
+        await Task.Delay(50);
 
         // Equivalent to hid_v1.gen_intercept(False), releasing vendor interception.
         WriteVendorHidCommand(0xB2, BuildIntercept(false));
@@ -84,14 +83,6 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
     {
         // do nothing; the X2 Mini Pro does not support ACPI/WMI interception of the Turbo button
         // it's instead handled by OneXAOKZOE Open()
-    }
-
-    protected override void HandleEvent(byte buttonId, bool pressed)
-    {
-        if (buttonId is 0x22 or 0x23)
-            LogManager.LogTrace("X2 Mini Pro vendor paddle report: button 0x{0:X2}, pressed {1}", buttonId, pressed);
-
-        base.HandleEvent(buttonId, pressed);
     }
 
     public override bool SetLedBrightness(int brightness)

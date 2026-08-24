@@ -281,6 +281,8 @@ public class ROGAlly : AsusDevice
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
         {
             device.OpenDevice();
+            if (!device.IsOpen)
+                return;
 
             // fire‐and‐forget the read loop
             IsReading = true;

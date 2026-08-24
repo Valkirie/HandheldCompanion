@@ -516,20 +516,22 @@ public class OneXPlayerX1 : OneXAOKZOE
         if (!device.IsOpen)
             return;
 
+        // fire‐and‐forget the read loop
         IsReading = true;
-        // HHD's controller opens the hid_v1/hid_v2_x2 OxpHidraw instance here,
-        // then lets the device-specific protocol choose its initialization pages.
-        InitializeVendorHidCommands();
         _ = ReadLoopAsync(device);
+
+        // Wait for the vendor HID interface to be ready after enumeration
+        await Task.Delay(4000);
+
+        // Send remap pages to expose the M1/M2 paddles and OEM buttons
+        await ConfigureController();
     }
 
-    protected virtual void InitializeVendorHidCommands()
+    protected virtual async Task ConfigureController()
     {
-        Thread.Sleep(4000);
-
         // Equivalent to hid_v1.INITIALIZE for standard X1 devices.
         WriteVendorHidCommand(0xB4, BuildRemapPage1(0x01));
-        Thread.Sleep(50);
+        await Task.Delay(50);
 
         WriteVendorHidCommand(0xB4, BuildRemapPage2(0x01, 0x67, 0x66));
     }

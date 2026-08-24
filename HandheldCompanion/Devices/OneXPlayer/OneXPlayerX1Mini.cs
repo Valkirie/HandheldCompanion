@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using static HandheldCompanion.Utils.DeviceUtils;
 
@@ -34,13 +35,8 @@ public class OneXPlayerX1Mini : OneXPlayerX1
         // vendor button/LED interface (0x1A86 / 0xFE00, usage FF00:0001) is inherited from OneXPlayerX1
     }
 
-    protected override async void Device_Inserted(bool reScan = false)
+    protected override async Task ConfigureController()
     {
-        if (reScan)
-            await WaitUntilReady();
-
-        base.Device_Inserted();
-        Thread.Sleep(50);
         WriteVendorHidCommand(VibrationCommandId, [0x01, 0x05, 0x05]);
     }
 

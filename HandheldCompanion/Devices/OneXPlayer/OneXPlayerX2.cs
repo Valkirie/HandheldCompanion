@@ -235,16 +235,10 @@ public class OneXPlayerX2 : OneXPlayerX1
         }
     }
 
-    protected override void InitializeVendorHidCommands()
+    protected override async Task ConfigureController()
     {
-        // Wait for the vendor HID interface to be ready after enumeration, then send
-        // only the two remap pages to expose the M1/M2 paddles and OEM buttons.
-        // Do NOT send the vendor 0xB2 command: on the X2 it puts the pad firmware into
-        // intercept mode and kills its XInput gamepad reports until a power-cycle.
-        Thread.Sleep(4000);
-
         WriteVendorHidCommand(0xB4, BuildRemapPage1(0x01));
-        Thread.Sleep(50);
+        await Task.Delay(50);
 
         WriteVendorHidCommand(0xB4, BuildRemapPage2(0x01, 0x67, 0x66));
     }

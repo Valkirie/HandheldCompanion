@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading;
+using System.Threading.Tasks;
 using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Inputs;
@@ -88,18 +89,16 @@ namespace HandheldCompanion.Devices.OneXPlayer
             DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
         }
 
-        protected override void InitializeVendorHidCommands()
+        protected override async Task ConfigureController()
         {
-            Thread.Sleep(4000);
-
             WriteVendorHidCommand(0xB4, BuildRemapPage1(0x01));
-            Thread.Sleep(50);
+            await Task.Delay(50);
 
             WriteVendorHidCommand(0xB4, BuildRemapPage2(0x01, 0x67, 0x66));
-            Thread.Sleep(50);
+            await Task.Delay(50);
 
             WriteVendorHidCommand(0xB2, BuildRemapPage3());
-            Thread.Sleep(50);
+            await Task.Delay(50);
 
             WriteVendorHidCommand(0xB2, BuildIntercept(false));
         }
