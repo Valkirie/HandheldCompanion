@@ -128,6 +128,39 @@ public class OneXPlayerX2 : OneXPlayerX1
         DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = false;
     }
 
+    public override bool Open()
+    {
+        // The X2 firmware exposes its EC through the SuRwECRegInterface ACPI/WMI
+        // provider. WinRing0 port I/O (used by older OXP models) cannot access this
+        // register on the X2, which is why takeover previously worked only after
+        // OneXConsole had initialized it.
+        try
+        {
+            lock (updateLock)
+            {
+                _wmiEc = new OneXPlayerWmiEc();
+            }
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogWarning("Failed to open X2 WMI EC interface: {0}", ex.Message);
+            return false;
+        }
+
+        return base.Open();
+    }
+
+    public override void Close()
+    {
+        lock (updateLock)
+        {
+            _wmiEc?.Dispose();
+            _wmiEc = null;
+        }
+
+        base.Close();
+    }
+
     public override void SetFanControl(bool enable, int mode = 0)
     {
         // The X2 EC is only reachable through the SuRwECRegInterface WMI provider.
@@ -199,17 +232,6 @@ public class OneXPlayerX2 : OneXPlayerX1
             {
                 LogManager.LogWarning("Failed to write fan register 0x{0:X3} through X2 WMI EC interface: {1}", register, ex.Message);
             }
-        }
-    }
-
-    public override void Close()
-    {
-        base.Close();
-
-        lock (updateLock)
-        {
-            _wmiEc?.Dispose();
-            _wmiEc = null;
         }
     }
 
