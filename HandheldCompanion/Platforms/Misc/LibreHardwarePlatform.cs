@@ -31,8 +31,6 @@ namespace HandheldCompanion.Platforms.Misc
         private float? CPUClock;
         private float? CPUPower;
         private float? CPUTemperature;
-        private bool cpuTemperatureMatched;
-
         // GPU
         private float? GPULoad;
         private float? GPUClock;
@@ -428,7 +426,7 @@ namespace HandheldCompanion.Platforms.Misc
 
         private void HandleCPU(IHardware cpu)
         {
-            cpuTemperatureMatched = false;
+            bool cpuTemperatureMatched = false;
 
             float highestClock = 0;
             foreach (var sensor in cpu.Sensors)
@@ -449,7 +447,7 @@ namespace HandheldCompanion.Platforms.Misc
                         HandleCPU_Power(sensor);
                         break;
                     case SensorType.Temperature:
-                        HandleCPU_Temperature(sensor);
+                        cpuTemperatureMatched |= HandleCPU_Temperature(sensor);
                         break;
                 }
             }
@@ -530,23 +528,25 @@ namespace HandheldCompanion.Platforms.Misc
             }
         }
 
-        private void HandleCPU_Temperature(ISensor sensor)
+        private bool HandleCPU_Temperature(ISensor sensor)
         {
             float? sensorValue = sensor.Value;
             if (!sensorValue.HasValue)
-                return;
+                return false;
 
             if (sensor.Name == "CPU Package" || sensor.Name == "Core (Tctl/Tdie)")
             {
-                cpuTemperatureMatched = true;
-
                 float value = sensorValue.Value;
                 if (CPUTemperature != value)
                 {
                     CPUTemperature = value;
                     CPUTemperatureChanged?.Invoke(CPUTemperature);
                 }
+
+                return true;
             }
+
+            return false;
         }
         #endregion
 
