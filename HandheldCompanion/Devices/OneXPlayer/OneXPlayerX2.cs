@@ -16,6 +16,8 @@ namespace HandheldCompanion.Devices;
 
 public class OneXPlayerX2 : OneXPlayerX1
 {
+    private OneXPlayerWmiEc? _wmiEc;
+
     // X2 uses the banked WMI EC address. OneXConsole initializes its application
     // function/turbo register as decimal 1259 (0x04EB), not legacy port address 0xEB.
     private const ushort TurboTakeoverRegister = 0x04EB;
@@ -47,8 +49,6 @@ public class OneXPlayerX2 : OneXPlayerX1
             AddressStatusCommandPort = 0x4E,
             AddressDataPort = 0x4F,
             FanValueMin = 0,
-            // The X2 EC rejects PWM values above ~184 (same ceiling as the X1) and
-            // turns the fan off, so cap the usable range here rather than at 255.
             FanValueMax = 184
         };
 
@@ -143,55 +143,73 @@ public class OneXPlayerX2 : OneXPlayerX1
     {
         double clampedPercent = Math.Clamp(percent, 0.0d, 100.0d);
         double scaled = clampedPercent * (ECDetails.FanValueMax - ECDetails.FanValueMin) / 100.0d + ECDetails.FanValueMin;
+
         byte duty = (byte)Math.Round(scaled);
         WriteFanRegister(ECDetails.AddressFanDuty, duty);
     }
 
     public override float ReadFanDuty()
     {
-        try
+        lock (updateLock)
         {
-            using OneXPlayerWmiEc ec = new();
-            return ec.ReadByte(ECDetails.AddressFanDuty);
-        }
-        catch (Exception ex)
-        {
-            LogManager.LogWarning("Failed to read fan duty through X2 WMI EC interface: {0}", ex.Message);
-            return 0;
+            try
+            {
+                return _wmiEc?.ReadByte(ECDetails.AddressFanDuty) ?? 0;
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to read fan duty through X2 WMI EC interface: {0}", ex.Message);
+                return 0;
+            }
         }
     }
 
     public override float? ReadCPUTemperature()
     {
-        try
+        lock (updateLock)
         {
-            using OneXPlayerWmiEc ec = new();
-            byte value = ec.ReadByte(CPUTemperatureRegister);
+            try
+            {
+                byte value = _wmiEc?.ReadByte(CPUTemperatureRegister) ?? 0;
 
-            // Reject obviously invalid readings (EC not ready / out of range) so the fan
-            // curve falls back to its default rather than acting on a bogus temperature.
-            if (value == 0 || value > 110)
+                // Reject obviously invalid readings (EC not ready / out of range) so the fan
+                // curve falls back to its default rather than acting on a bogus temperature.
+                if (value == 0 || value > 110)
+                    return null;
+
+                return value;
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to read CPU temperature through X2 WMI EC interface: {0}", ex.Message);
                 return null;
-
-            return value;
-        }
-        catch (Exception ex)
-        {
-            LogManager.LogWarning("Failed to read CPU temperature through X2 WMI EC interface: {0}", ex.Message);
-            return null;
+            }
         }
     }
 
     private void WriteFanRegister(ushort register, byte value)
     {
-        try
+        lock (updateLock)
         {
-            using OneXPlayerWmiEc ec = new();
-            ec.WriteByte(register, value);
+            try
+            {
+                _wmiEc?.WriteByte(register, value);
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to write fan register 0x{0:X3} through X2 WMI EC interface: {1}", register, ex.Message);
+            }
         }
-        catch (Exception ex)
+    }
+
+    public override void Close()
+    {
+        base.Close();
+
+        lock (updateLock)
         {
-            LogManager.LogWarning("Failed to write fan register 0x{0:X3} through X2 WMI EC interface: {1}", register, ex.Message);
+            _wmiEc?.Dispose();
+            _wmiEc = null;
         }
     }
 
