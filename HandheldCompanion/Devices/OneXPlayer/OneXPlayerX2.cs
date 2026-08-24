@@ -16,10 +16,20 @@ namespace HandheldCompanion.Devices;
 
 public class OneXPlayerX2 : OneXPlayerX1
 {
+    private OneXPlayerWmiEc? _wmiEc;
+
     // X2 uses the banked WMI EC address. OneXConsole initializes its application
     // function/turbo register as decimal 1259 (0x04EB), not legacy port address 0xEB.
     private const ushort TurboTakeoverRegister = 0x04EB;
     private const byte TurboTakeoverMask = 0x40;
+
+    // CPU package temperature (°C) exposed by the EC. LibreHardwareMonitor cannot read
+    // the MSR temperatures on the X2's Panther Lake CPU, so ReadCPUTemperature() feeds
+    // this register into the sensor pipeline as a fallback (see LibreHardwarePlatform),
+    // which drives the fan curve exactly like the LHM-read CPUs on other OneXPlayers.
+    // Identified by probing the EC under load: it tracks CPU load directly and recovers
+    // on cooldown, unlike the neighbouring board/SSD sensors.
+    private const ushort CPUTemperatureRegister = 0x0470;
 
     public OneXPlayerX2()
     {
@@ -39,7 +49,7 @@ public class OneXPlayerX2 : OneXPlayerX1
             AddressStatusCommandPort = 0x4E,
             AddressDataPort = 0x4F,
             FanValueMin = 0,
-            FanValueMax = 255
+            FanValueMax = 184
         };
 
         Capabilities |= DeviceCapabilities.FanControl;
@@ -120,28 +130,87 @@ public class OneXPlayerX2 : OneXPlayerX1
 
     public override void SetFanControl(bool enable, int mode = 0)
     {
-        if (!UseOpenLib || !IsOpen)
-            return;
-
-        EcWriteByte(ACPI_FanMode_Address, enable ? (byte)FanControlMode.Manual : (byte)FanControlMode.Automatic);
+        // The X2 EC is only reachable through the SuRwECRegInterface WMI provider.
+        // WinRing0 port I/O (EcWriteByte / ECRamDirectWriteByte) cannot access it,
+        // which is why the fan register lives in the banked space (0x044A) like the
+        // turbo takeover register (0x04EB). Writing the legacy ACPI offset (0x4A)
+        // through WinRing0 silently does nothing on this hardware.
+        byte value = enable ? (byte)FanControlMode.Manual : (byte)FanControlMode.Automatic;
+        WriteFanRegister(ECDetails.AddressFanControl, value);
     }
 
     public override void SetFanDuty(double percent)
     {
-        if (!UseOpenLib || !IsOpen)
-            return;
-
         double clampedPercent = Math.Clamp(percent, 0.0d, 100.0d);
-        byte duty = (byte)Math.Round(clampedPercent * 255.0d / 100.0d);
-        EcWriteByte(ACPI_FanPWMDutyCycle_Address, duty);
+        double scaled = clampedPercent * (ECDetails.FanValueMax - ECDetails.FanValueMin) / 100.0d + ECDetails.FanValueMin;
+
+        byte duty = (byte)Math.Round(scaled);
+        WriteFanRegister(ECDetails.AddressFanDuty, duty);
     }
 
     public override float ReadFanDuty()
     {
-        if (!UseOpenLib || !IsOpen)
-            return 0;
+        lock (updateLock)
+        {
+            try
+            {
+                return _wmiEc?.ReadByte(ECDetails.AddressFanDuty) ?? 0;
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to read fan duty through X2 WMI EC interface: {0}", ex.Message);
+                return 0;
+            }
+        }
+    }
 
-        return EcReadByte(ACPI_FanPWMDutyCycle_Address);
+    public override float? ReadCPUTemperature()
+    {
+        lock (updateLock)
+        {
+            try
+            {
+                byte value = _wmiEc?.ReadByte(CPUTemperatureRegister) ?? 0;
+
+                // Reject obviously invalid readings (EC not ready / out of range) so the fan
+                // curve falls back to its default rather than acting on a bogus temperature.
+                if (value == 0 || value > 110)
+                    return null;
+
+                return value;
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to read CPU temperature through X2 WMI EC interface: {0}", ex.Message);
+                return null;
+            }
+        }
+    }
+
+    private void WriteFanRegister(ushort register, byte value)
+    {
+        lock (updateLock)
+        {
+            try
+            {
+                _wmiEc?.WriteByte(register, value);
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to write fan register 0x{0:X3} through X2 WMI EC interface: {1}", register, ex.Message);
+            }
+        }
+    }
+
+    public override void Close()
+    {
+        base.Close();
+
+        lock (updateLock)
+        {
+            _wmiEc?.Dispose();
+            _wmiEc = null;
+        }
     }
 
     protected override void InitializeVendorHidCommands()

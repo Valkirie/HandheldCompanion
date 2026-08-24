@@ -31,7 +31,6 @@ namespace HandheldCompanion.Platforms.Misc
         private float? CPUClock;
         private float? CPUPower;
         private float? CPUTemperature;
-
         // GPU
         private float? GPULoad;
         private float? GPUClock;
@@ -427,6 +426,8 @@ namespace HandheldCompanion.Platforms.Misc
 
         private void HandleCPU(IHardware cpu)
         {
+            bool cpuTemperatureMatched = false;
+
             float highestClock = 0;
             foreach (var sensor in cpu.Sensors)
             {
@@ -446,8 +447,22 @@ namespace HandheldCompanion.Platforms.Misc
                         HandleCPU_Power(sensor);
                         break;
                     case SensorType.Temperature:
-                        HandleCPU_Temperature(sensor);
+                        cpuTemperatureMatched |= HandleCPU_Temperature(sensor);
                         break;
+                }
+            }
+
+            // Fallback for CPUs whose package temperature LibreHardwareMonitor cannot read
+            // (e.g. very recent Intel parts such as the X2's Panther Lake, where every MSR
+            // temperature sensor reports null). Let the device supply the temperature so the
+            // fan curve and OSD keep working.
+            if (!cpuTemperatureMatched)
+            {
+                float? deviceTemperature = IDevice.GetCurrent().ReadCPUTemperature();
+                if (deviceTemperature.HasValue && CPUTemperature != deviceTemperature)
+                {
+                    CPUTemperature = deviceTemperature;
+                    CPUTemperatureChanged?.Invoke(CPUTemperature);
                 }
             }
         }
@@ -513,11 +528,11 @@ namespace HandheldCompanion.Platforms.Misc
             }
         }
 
-        private void HandleCPU_Temperature(ISensor sensor)
+        private bool HandleCPU_Temperature(ISensor sensor)
         {
             float? sensorValue = sensor.Value;
             if (!sensorValue.HasValue)
-                return;
+                return false;
 
             if (sensor.Name == "CPU Package" || sensor.Name == "Core (Tctl/Tdie)")
             {
@@ -527,7 +542,11 @@ namespace HandheldCompanion.Platforms.Misc
                     CPUTemperature = value;
                     CPUTemperatureChanged?.Invoke(CPUTemperature);
                 }
+
+                return true;
             }
+
+            return false;
         }
         #endregion
 
