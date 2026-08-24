@@ -74,6 +74,8 @@
 		<None Remove="Resources\DeviceImages\device_msi_claw8ex.png" />
 		<None Remove="Resources\DeviceImages\device_onexplayer_apex.png" />
 		<None Remove="Resources\DeviceImages\device_onexplayer_g1.png" />
+		<None Remove="Resources\DeviceImages\device_onexplayer_x2.png" />
+		<None Remove="Resources\DeviceImages\device_onexplayer_x2minipro.png" />
 		<None Remove="Resources\DeviceImages\device_suiplay_0x1.png" />
 		<None Remove="Resources\DeviceImages\device_xbox_rog_ally.png" />
 		<None Remove="Resources\DeviceImages\device_xbox_rog_ally_x.png" />
@@ -189,6 +191,8 @@
 		<Resource Include="Resources\DeviceImages\device_onexplayer_mini.png" />
 		<Resource Include="Resources\DeviceImages\device_onexplayer_onexfly.png" />
 		<Resource Include="Resources\DeviceImages\device_onexplayer_x1.png" />
+		<Resource Include="Resources\DeviceImages\device_onexplayer_x2.png" />
+		<Resource Include="Resources\DeviceImages\device_onexplayer_x2minipro.png" />
 		<Resource Include="Resources\DeviceImages\device_rog_ally.png" />
 		<Resource Include="Resources\DeviceImages\device_rog_ally_x.png" />
 		<Resource Include="Resources\DeviceImages\device_suiplay_0x1.png" />

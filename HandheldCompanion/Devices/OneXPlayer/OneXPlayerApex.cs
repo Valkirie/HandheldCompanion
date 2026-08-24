@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
+using System.Threading;
 using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices.OneXPlayer
@@ -13,8 +17,6 @@ namespace HandheldCompanion.Devices.OneXPlayer
         {
             ProductIllustration = "device_onexplayer_apex";
             ProductModel = "ONEXPLAYERAPEX";
-            VendorHidInitProfile = OxpHidInitProfile.Apex;
-
             GyroMatrix = new()
             {
                 Axis = new Vector3(1.0f, -1.0f, 1.0f),
@@ -85,6 +87,55 @@ namespace HandheldCompanion.Devices.OneXPlayer
             DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
             DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
         }
+
+        protected override void InitializeVendorHidCommands()
+        {
+            Thread.Sleep(4000);
+
+            WriteVendorHidCommand(0xB4, BuildRemapPage1(0x01));
+            Thread.Sleep(50);
+
+            WriteVendorHidCommand(0xB4, BuildRemapPage2(0x01, 0x67, 0x66));
+            Thread.Sleep(50);
+
+            WriteVendorHidCommand(0xB2, BuildRemapPage3());
+            Thread.Sleep(50);
+
+            WriteVendorHidCommand(0xB2, BuildIntercept(false));
+        }
+
+        protected override byte[] BuildRemapPage1(byte preset) =>
+        [
+            0x02, 0x38, 0x02, 0x01, preset,
+            0x01, 0x01, 0x01, 0x00, 0x00, 0x00,
+            0x02, 0x01, 0x02, 0x00, 0x00, 0x00,
+            0x03, 0x01, 0x03, 0x00, 0x00, 0x00,
+            0x04, 0x01, 0x04, 0x00, 0x00, 0x00,
+            0x05, 0x01, 0x05, 0x00, 0x00, 0x00,
+            0x06, 0x01, 0x06, 0x00, 0x00, 0x00,
+            0x07, 0x01, 0x07, 0x00, 0x00, 0x00,
+            0x08, 0x01, 0x08, 0x00, 0x00, 0x00,
+            0x09, 0x01, 0x09, 0x00, 0x00, 0x00,
+        ];
+
+        protected override byte[] BuildRemapPage2(byte preset, byte m1KeyCode, byte m2KeyCode) =>
+        [
+            0x02, 0x38, 0x02, 0x02, preset,
+            0x0A, 0x01, 0x0A, 0x00, 0x00, 0x00,
+            0x0B, 0x01, 0x0B, 0x00, 0x00, 0x00,
+            0x0C, 0x01, 0x0C, 0x00, 0x00, 0x00,
+            0x0D, 0x01, 0x0D, 0x00, 0x00, 0x00,
+            0x0E, 0x01, 0x0E, 0x00, 0x00, 0x00,
+            0x0F, 0x01, 0x0F, 0x00, 0x00, 0x00,
+            0x10, 0x01, 0x10, 0x00, 0x00, 0x00,
+            0x22, 0x02, 0x01, m1KeyCode, 0x00, 0x00,
+            0x23, 0x02, 0x01, m2KeyCode, 0x00, 0x00,
+        ];
+
+        protected byte[] BuildRemapPage3(byte preset = 0x01) =>
+        [
+            0x01, 0x1F, 0x40, 0x03, 0x02, 0x03, 0x00, 0x00, 0x00, 0x01,
+        ];
 
         protected override ButtonFlags MapVendorButton(byte buttonId)
         {

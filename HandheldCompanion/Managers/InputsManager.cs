@@ -411,8 +411,10 @@ public static class InputsManager
                 if (KeyIndexOEM[args.IsKeyDown] >= chord.Count)
                     continue;
 
-                KeyCode chordKey = chord[KeyIndexOEM[args.IsKeyDown]];
-                if (chordKey == hookKey)
+                bool keyMatches = pair.orderIndependent
+                    ? chord.Contains(hookKey)
+                    : chord[KeyIndexOEM[args.IsKeyDown]] == hookKey;
+                if (keyMatches)
                 {
                     KeyUsed[args.IsKeyDown] = true;
                     KeyIndexOEM[args.IsKeyDown]++;

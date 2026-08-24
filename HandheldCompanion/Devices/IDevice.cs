@@ -744,6 +744,12 @@ public abstract class IDevice
                         case "ONEXPLAYERAPEX":
                             device = new OneXPlayerApex();
                             break;
+                        case "ONEXPLAYER X2":
+                            device = new OneXPlayerX2();
+                            break;
+                        case "ONEXPLAYER X2Mini PRO":
+                            device = new OneXPlayerX2MiniPro();
+                            break;
                         case "ONEXPLAYER G1 i":
                             device = new OneXPlayerG1Intel();
                             break;
@@ -1028,6 +1034,13 @@ public abstract class IDevice
         return 0;
     }
 
+    /// <summary>
+    /// Optional device-specific CPU temperature source (in degrees C), used by the sensor
+    /// layer as a fallback when LibreHardwareMonitor cannot read the CPU package temperature
+    /// (e.g. very recent Intel parts). Returns null when the device has no such source.
+    /// </summary>
+    public virtual float? ReadCPUTemperature() => null;
+
     public virtual bool SetLedStatus(bool status)
     {
         return true;
@@ -1295,5 +1308,10 @@ public abstract class IDevice
         }
 
         return defaultGlyph;
+    }
+
+    public virtual XInputController? CreateController(PnPDetails details)
+    {
+        return null;
     }
 }
