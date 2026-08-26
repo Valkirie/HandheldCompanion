@@ -981,8 +981,9 @@ public static class ControllerManager
                     {
                         if (controller is DInputController) return;
                         if (controller is SDLController) return;
+                        if (controller is not IXInputController) return;
 
-                        ((XInputController)controller).AttachDetails(details);
+                        controller.AttachDetails(details);
 
                         if (controller.GetInstanceId() != details.deviceInstanceId)
                         {
@@ -1940,7 +1941,26 @@ public static class ControllerManager
         catch { }
     }
 
-    private static List<XInputController> InvalidSlotAssignments = new();
+    private static List<IController> InvalidSlotAssignments = new();
+
+    private static IEnumerable<IController> GetSlotXInputControllers(bool? physical = null)
+    {
+        return Controllers.Values.Where(controller =>
+            controller is IXInputController &&
+            !controller.IsDummy() &&
+            (physical is null || (physical.Value ? controller.IsPhysical() : controller.IsVirtual())));
+    }
+
+    private static bool HasSlotXInputController(bool physical)
+    {
+        return GetSlotXInputControllers(physical).Any();
+    }
+
+    private static IController? GetSlotXInputControllerFromSlot(UserIndex userIndex, bool physical)
+    {
+        return GetSlotXInputControllers(physical)
+            .FirstOrDefault(controller => controller.GetUserIndex() == (int)userIndex);
+    }
 
     private sealed record SlotProbeResult(
         bool NeedsFix,
@@ -2004,10 +2024,10 @@ public static class ControllerManager
 
         try
         {
-            var slotOwners = new Dictionary<byte, XInputController>();
-            var newInvalid = new List<XInputController>();
+            var slotOwners = new Dictionary<byte, IController>();
+            var newInvalid = new List<IController>();
 
-            var tasks = GetControllers<XInputController>()
+            var tasks = GetSlotXInputControllers()
                 .Where(c => !c.IsDummy() && !c.IsBusy)
                 .Select(controller => Task.Run(() =>
                 {
@@ -2019,7 +2039,7 @@ public static class ControllerManager
                     if (index == byte.MaxValue)
                         return;
 
-                    controller.AttachController(index);
+                    ((IXInputController)controller).AttachController(index);
 
                     lock (slotOwners)
                     {
@@ -2049,10 +2069,10 @@ public static class ControllerManager
             bool ensureVirtualSlot1 =
                 VirtualManager.HIDmode == HIDmode.Xbox360Controller &&
                 VirtualManager.HIDstatus == HIDstatus.Connected &&
-                (HasPhysicalController<XInputController>() || HasVirtualController<XInputController>());
+                (HasSlotXInputController(physical: true) || HasSlotXInputController(physical: false));
 
             bool virtualInSlot1 = !ensureVirtualSlot1 ||
-                GetControllerFromSlot<XInputController>(UserIndex.One, false) is not null;
+                GetSlotXInputControllerFromSlot(UserIndex.One, physical: false) is not null;
 
             bool needsFix = hasInvalidControllers || !virtualInSlot1;
 
@@ -2243,7 +2263,7 @@ public static class ControllerManager
             // cycling physical controllers — otherwise the freed slot can
             // be immediately reclaimed by a physical device.
             WaitUntil(
-                () => GetVirtualControllers<XInputController>().Any(),
+                () => HasSlotXInputController(physical: false),
                 TimeSpan.FromSeconds(4));
         }
 
@@ -2269,13 +2289,13 @@ public static class ControllerManager
     /// <param name="attempt">1-based attempt index used to decide the temporary-controller strategy.</param>
     private static bool FixVirtualSlot(SlotProbeResult probe, int attempt)
     {
-        if (!HasPhysicalController<XInputController>())
+        if (!HasSlotXInputController(physical: true))
         {
             if (attempt > ControllerManagementMaxAttempts)
                 return false;
 
             // No physical XInput controller — just cycle the virtual controller
-            if (HasVirtualController<XInputController>() && GetControllerFromSlot<XInputController>(UserIndex.One, false) is null)
+            if (HasSlotXInputController(physical: false) && GetSlotXInputControllerFromSlot(UserIndex.One, physical: false) is null)
             {
                 // Disconnect and reconnect the virtual controller so it re-enumerates from scratch and hopefully claims slot 1.
                 VirtualManager.Suspend(false).GetAwaiter().GetResult();
@@ -2283,17 +2303,18 @@ public static class ControllerManager
                 VirtualManager.Resume(false).GetAwaiter().GetResult();
 
                 // Wait for the virtual controller to actually reconnect before re-probing — otherwise we may end up in a tight loop if it fails to re-enumerate.
-                WaitUntil(() => GetVirtualControllers<XInputController>(VirtualManager.VendorId, VirtualManager.ProductId).Any(), TimeSpan.FromSeconds(4));
+                WaitUntil(() => GetSlotXInputControllers(physical: false)
+                    .Any(controller => controller.GetVendorID() == VirtualManager.VendorId && controller.GetProductID() == VirtualManager.ProductId), TimeSpan.FromSeconds(4));
             }
 
             return true;
         }
 
         // Check if a physical controller is plugged.
-        XInputController? pController = null;
+        IController? pController = null;
         foreach (UserIndex slot in new[] { UserIndex.One, UserIndex.Two, UserIndex.Three, UserIndex.Four, UserIndex.Any })
         {
-            pController = GetControllerFromSlot<XInputController>(slot, true);
+            pController = GetSlotXInputControllerFromSlot(slot, physical: true);
             if (pController is not null)
                 break;
         }
@@ -2302,18 +2323,18 @@ public static class ControllerManager
             return false;
 
         // Abort if a wireless controller is present and power-cycling, that's a human-only operation.
-        XInputController? busyWireless = GetPhysicalControllers<XInputController>().FirstOrDefault(c => c.IsBluetooth() && c.IsBusy);
+        IController? busyWireless = GetSlotXInputControllers(physical: true).FirstOrDefault(c => c.IsBluetooth() && c.IsBusy);
         if (busyWireless is not null && !PowerCyclers.TryGetValue(busyWireless.GetContainerInstanceId(), out _))
             return false;
 
         // Suspend the physical controller to force it off the bus, which should free up its slot for the virtual controller to claim.
         // Wait for the suspended controller to actually vacate its slot before manipulating the virtual controller.
         SuspendController(pController.GetContainerInstanceId());
-        WaitUntil(() => GetControllerFromSlot<XInputController>((UserIndex)pController.UserIndex, true) is null, TimeSpan.FromSeconds(4));
+        WaitUntil(() => GetSlotXInputControllerFromSlot((UserIndex)pController.UserIndex, physical: true) is null, TimeSpan.FromSeconds(4));
 
         // Disconnect the virtual controller and wait for it to fully disappear.
         VirtualManager.SetControllerMode(HIDmode.NoController).GetAwaiter().GetResult();
-        WaitUntil(() => !GetVirtualControllers<XInputController>().Any(), TimeSpan.FromSeconds(4));
+        WaitUntil(() => !HasSlotXInputController(physical: false), TimeSpan.FromSeconds(4));
 
         // On the first attempt, try with a single temporary controller (lighter/faster).
         // If that fails, subsequent attempts fill all available slots (up to 4).
@@ -2330,7 +2351,7 @@ public static class ControllerManager
 
         // Re-register the main virtual controller; it should now claim slot 1.
         VirtualManager.SetControllerMode(HIDmode.Xbox360Controller).GetAwaiter().GetResult();
-        WaitUntil(() => GetVirtualControllers<XInputController>().Any(), TimeSpan.FromSeconds(4));
+        WaitUntil(() => HasSlotXInputController(physical: false), TimeSpan.FromSeconds(4));
 
         return true;
     }

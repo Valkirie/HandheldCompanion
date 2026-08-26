@@ -3,7 +3,7 @@ using SharpDX.XInput;
 
 namespace HandheldCompanion.Controllers.Lenovo
 {
-    public class LegionControllerXInput : LegionController
+    public class LegionControllerXInput : LegionController, IXInputController
     {
         private Controller? xinputController;
         private Gamepad gamepad;
