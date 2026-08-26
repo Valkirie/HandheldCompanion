@@ -37,6 +37,34 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private Visibility _RemoteBroadcastingVisibility = Visibility.Collapsed;
+        public Visibility RemoteBroadcastingVisibility
+        {
+            get => _RemoteBroadcastingVisibility;
+            private set
+            {
+                if (value != _RemoteBroadcastingVisibility)
+                {
+                    _RemoteBroadcastingVisibility = value;
+                    OnPropertyChanged(nameof(RemoteBroadcastingVisibility));
+                }
+            }
+        }
+
+        private string _RemoteBroadcastingMessage = string.Empty;
+        public string RemoteBroadcastingMessage
+        {
+            get => _RemoteBroadcastingMessage;
+            private set
+            {
+                if (value != _RemoteBroadcastingMessage)
+                {
+                    _RemoteBroadcastingMessage = value;
+                    OnPropertyChanged(nameof(RemoteBroadcastingMessage));
+                }
+            }
+        }
+
         private bool _isMasterIntervalInfoBarOpen;
         public bool IsMasterIntervalInfoBarOpen
         {
@@ -472,6 +500,7 @@ namespace HandheldCompanion.ViewModels
             ControllerManager.SteamHybridModeOverride += ControllerManager_SteamHybridModeOverride;
             ControllerManager.StatusChanged += ControllerManager_StatusChanged;
             ControllerManager.SlotIssueChanged += ControllerManager_SlotIssueChanged;
+            NetworkControllerTransport.AuthorizationChanged += NetworkControllerTransport_AuthorizationChanged;
 
             // initialize slot issue state
             _hasSlotIssue = ControllerManager.HasSlotIssue;
@@ -483,6 +512,13 @@ namespace HandheldCompanion.ViewModels
 
             if (ControllerManager.HasTargetController && ControllerManager.GetTarget() is IController tController)
                 ControllerManager_ControllerSelected(tController);
+            else
+                Refresh();
+        }
+
+        private void NetworkControllerTransport_AuthorizationChanged()
+        {
+            Application.Current?.Dispatcher.BeginInvoke(Refresh);
         }
 
         private void VirtualManager_ControllerSelected(HIDmode mode)
@@ -630,6 +666,10 @@ namespace HandheldCompanion.ViewModels
                     controllers.Remove(foundController);
                     foundController.Dispose();
                 }
+                else if (foundController is not null)
+                {
+                    foundController.Updated();
+                }
                 else if (foundController is null)
                 {
                     LogManager.LogError("Couldn't find ControllerViewModel associated with {0}", Controller.ToString());
@@ -699,6 +739,10 @@ namespace HandheldCompanion.ViewModels
                 Monitor.Exit(_collectionLock2);
             }
 
+            bool isNetwork = hasTarget && targetController!.IsNetwork();
+            string? broadcastingPeer = hasTarget && !isNetwork
+                ? NetworkControllerTransport.GetBroadcastingPeer(targetController!)
+                : null;
             bool isHidden = hasTarget && targetController!.IsHidden();
             bool isPlugged = hasPhysical && hasTarget;
             bool hasDualInput = isPlugged && !isHidden && hasVirtual;
@@ -708,7 +752,11 @@ namespace HandheldCompanion.ViewModels
             VirtualDevicesVisibility = hasVirtual ? Visibility.Visible : Visibility.Collapsed;
             WarningNoVirtualVisibility = hasTarget && !hasVirtual && (_hidStatus != 0 || isHidden) ? Visibility.Visible : Visibility.Collapsed;
             WarningVirtualNotSlot1Visibility = isHidden && hasVirtual && _virtualNotInSlot1 ? Visibility.Visible : Visibility.Collapsed;
-            HintsNotMutedVisibility = hasDualInput ? Visibility.Visible : Visibility.Collapsed;
+            HintsNotMutedVisibility = hasDualInput && !isNetwork ? Visibility.Visible : Visibility.Collapsed;
+            RemoteBroadcastingVisibility = broadcastingPeer is not null ? Visibility.Visible : Visibility.Collapsed;
+            RemoteBroadcastingMessage = broadcastingPeer is not null
+                ? $"This controller is currently being used remotely by {broadcastingPeer}. Local controller input is disabled."
+                : string.Empty;
         }
 
         private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
@@ -789,6 +837,7 @@ namespace HandheldCompanion.ViewModels
                 ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
                 ControllerManager.StatusChanged -= ControllerManager_StatusChanged;
                 ControllerManager.SlotIssueChanged -= ControllerManager_SlotIssueChanged;
+                NetworkControllerTransport.AuthorizationChanged -= NetworkControllerTransport_AuthorizationChanged;
                 ControllerManager.SteamHybridModeOverride -= ControllerManager_SteamHybridModeOverride;
                 ControllerManager.Initialized -= ControllerManager_Initialized;
                 ManagerFactory.layoutManager.Initialized -= LayoutManager_Initialized;

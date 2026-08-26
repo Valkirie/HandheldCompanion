@@ -275,6 +275,11 @@ namespace HandheldCompanion.Controllers
             return IsBluetooth() || IsDongle();
         }
 
+        public virtual bool IsNetwork()
+        {
+            return false;
+        }
+
         public virtual bool IsBluetooth()
         {
             if (Details is not null)
@@ -294,28 +299,28 @@ namespace HandheldCompanion.Controllers
             return UserIndex;
         }
 
-        public string GetInstanceId()
+        public virtual string GetInstanceId()
         {
             if (Details is not null)
                 return Details.deviceInstanceId;
             return string.Empty;
         }
 
-        public string GetPath()
+        public virtual string GetPath()
         {
             if (Details is not null)
                 return Details.devicePath;
             return string.Empty;
         }
 
-        public string GetContainerInstanceId()
+        public virtual string GetContainerInstanceId()
         {
             if (Details is not null)
                 return Details.baseContainerDeviceInstanceId;
             return string.Empty;
         }
 
-        public string GetContainerPath()
+        public virtual string GetContainerPath()
         {
             if (Details is not null)
                 return Details.baseContainerDevicePath;
@@ -518,7 +523,7 @@ namespace HandheldCompanion.Controllers
         public virtual void Unplug()
         { }
 
-        public bool IsHidden()
+        public virtual bool IsHidden()
         {
             if (Details is not null)
                 return HidHide.IsRegistered(Details.baseContainerDeviceInstanceId);
@@ -865,6 +870,18 @@ namespace HandheldCompanion.Controllers
         public bool HasSourceButton(ButtonFlags button)
         {
             return SourceButtons.Contains(button);
+        }
+
+        public virtual IReadOnlyList<ButtonFlags> GetSourceButtons() => SourceButtons;
+
+        public virtual IReadOnlyList<AxisLayoutFlags> GetSourceAxis() => SourceAxis;
+
+        protected void SetSourceMetadata(IEnumerable<ButtonFlags> buttons, IEnumerable<AxisLayoutFlags> axes)
+        {
+            SourceButtons.Clear();
+            SourceButtons.AddRange(buttons);
+            SourceAxis.Clear();
+            SourceAxis.AddRange(axes);
         }
 
         public bool HasSourceButton(List<ButtonFlags> buttons)

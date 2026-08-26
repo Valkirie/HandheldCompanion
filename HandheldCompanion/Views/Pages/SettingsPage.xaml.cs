@@ -84,6 +84,7 @@ public partial class SettingsPage : Page
         SettingsManager_SettingValueChanged("QuicktoolsBackdrop", ManagerFactory.settingsManager.GetString("QuicktoolsBackdrop"), false, true);
         SettingsManager_SettingValueChanged("QuickToolsApplyNoise", ManagerFactory.settingsManager.GetString("QuickToolsApplyNoise"), false, true);
         SettingsManager_SettingValueChanged("RunAtStartup", ManagerFactory.settingsManager.GetString("RunAtStartup"), false, true);
+        SettingsManager_SettingValueChanged("NetworkControllersEnabled", ManagerFactory.settingsManager.GetBoolean("NetworkControllersEnabled"), false, true);
         SettingsManager_SettingValueChanged("StartMinimized", ManagerFactory.settingsManager.GetString("StartMinimized"), false, true);
         SettingsManager_SettingValueChanged("StartMaximized", ManagerFactory.settingsManager.GetString("StartMaximized"), false, true);
         SettingsManager_SettingValueChanged("CloseMinimises", ManagerFactory.settingsManager.GetString("CloseMinimises"), false, true);
@@ -222,6 +223,9 @@ public partial class SettingsPage : Page
                 case "RunAtStartup":
                     Toggle_AutoStart.IsOn = Convert.ToBoolean(value);
                     break;
+                case "NetworkControllersEnabled":
+                    Toggle_NetworkControllers.IsOn = Convert.ToBoolean(value);
+                    break;
                 case "StartMinimized":
                     {
                         bool enabled = Convert.ToBoolean(value);
@@ -346,6 +350,14 @@ public partial class SettingsPage : Page
             return;
 
         ManagerFactory.settingsManager.SetProperty("RunAtStartup", Toggle_AutoStart.IsOn);
+    }
+
+    private void Toggle_NetworkControllers_Toggled(object? sender, RoutedEventArgs? e)
+    {
+        if (!IsLoaded)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("NetworkControllersEnabled", Toggle_NetworkControllers.IsOn);
     }
 
     private void Toggle_StartMinimized_Toggled(object? sender, RoutedEventArgs? e)

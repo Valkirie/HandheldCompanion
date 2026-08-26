@@ -196,6 +196,36 @@ public class MultimediaManager : IManager
     }
 
     /// <summary>
+    /// Turns off the displays either through the Windows monitor power command or by changing display topology.
+    /// <paramref name="disable"/> = true disables the internal display in the display topology, preventing input from waking it.
+    /// </summary>
+    public static void TurnOffScreen(bool disable)
+    {
+        if (disable)
+        {
+            SetDisplayTopology(true);
+            return;
+        }
+
+        WinAPI.SendMessage((IntPtr)0xffff, WinAPI.WM_SYSCOMMAND, (IntPtr)0xf170, (IntPtr)2);
+    }
+
+    /// <summary>
+    /// Turns the displays back on either through the Windows monitor power command or by changing display topology.
+    /// <paramref name="disable"/> = true restores the internal display in the display topology.
+    /// </summary>
+    public static void TurnOnScreen(bool disable)
+    {
+        if (disable)
+        {
+            SetDisplayTopology(false);
+            return;
+        }
+
+        WinAPI.SendMessage((IntPtr)0xffff, WinAPI.WM_SYSCOMMAND, (IntPtr)0xf170, (IntPtr)(-1));
+    }
+
+    /// <summary>
     /// Switches display topology.
     /// <paramref name="externalOnly"/> = true  → external display only (handheld screen off).
     /// <paramref name="externalOnly"/> = false → internal display only (handheld screen back on).

@@ -21,10 +21,6 @@
     KeepAlive="True"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <converters:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
-    </Page.Resources>
-
     <Grid Name="MainGrid">
         <Image
             Margin="20,120,0,0"
@@ -138,6 +134,14 @@
                             Message="{l:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenDesc}"
                             Severity="Error"
                             Visibility="{Binding HintsNotMutedVisibility}" />
+                        <ui:InfoBar
+                            Name="RemoteBroadcasting"
+                            Title="Controller in remote use"
+                            IsClosable="False"
+                            IsOpen="True"
+                            Message="{Binding RemoteBroadcastingMessage}"
+                            Severity="Warning"
+                            Visibility="{Binding RemoteBroadcastingVisibility}" />
                         <ItemsControl
                             Name="PhysicalDevices"
                             d:Visibility="Visible"
@@ -152,7 +156,9 @@
                         </ItemsControl>
 
                         <ui:SettingsCard Name="ScanHardwareCard" Header="{l:Static resx:Resources.ControllerPage_ScanForHardwareChanges}">
-                            <Button Command="{Binding ScanHardwareCommand}" Style="{DynamicResource AccentButtonStyle}">Scan</Button>
+                            <Button Command="{Binding ScanHardwareCommand}" Style="{DynamicResource AccentButtonStyle}">
+                                Scan
+                            </Button>
                         </ui:SettingsCard>
 
                         <ui:ProgressBar IsIndeterminate="{Binding IsScanningHardware, Mode=OneWay}" Visibility="{Binding ScanHardwareVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -407,6 +413,8 @@
                             Header="{l:Static resx:Resources.ControllerPage_DesktopLayout}"
                             IsClickEnabled="True"
                             IsEnabled="{Binding LayoutManagerReady, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            Opacity="0.75"
+                            Style="{DynamicResource AccentSettingsCardStyle}"
                             Tag="Navigation">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xE713;" />

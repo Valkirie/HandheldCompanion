@@ -246,8 +246,8 @@
 		<PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
 		<PackageReference Include="PixiEditor.ColorPicker" Version="3.4.2.3" />
 		<PackageReference Include="PrecisionTimer.NET" Version="3.0.0.7" />
-		<PackageReference Include="protobuf-net" Version="3.4.14" />
-		<PackageReference Include="protobuf-net.Core" Version="3.4.14" />
+		<PackageReference Include="protobuf-net" Version="3.4.19" />
+		<PackageReference Include="protobuf-net.Core" Version="3.4.19" />
 		<PackageReference Include="RAMSPDToolkit-NDD" Version="1.6.0" />
 		<PackageReference Include="SDL3-CS" Version="3.4.14.1" />
 		<PackageReference Include="Sentry" Version="6.9.0" />

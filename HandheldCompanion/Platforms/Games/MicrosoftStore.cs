@@ -63,7 +63,7 @@ public class MicrosoftStore : IPlatform
                     if (parsedGame is not null && !BlacklistIds.Contains(parsedGame.Id))
                         refreshedGames.Add(parsedGame);
                 },
-                error => LogManager.LogDebug("Failed to inspect Microsoft Store game: {0}", error.Message));
+                error => LogManager.LogWarning("Failed to inspect Microsoft Store game: {0}", error.Message));
         }
 
         games = refreshedGames

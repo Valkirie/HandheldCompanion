@@ -31,9 +31,12 @@ namespace HandheldCompanion.ViewModels
         public bool IsBusy => _controller?.IsBusy == true;
         public bool IsVirtual => _controller?.IsVirtual() == true;
         public bool IsPlugged => _controller?.IsPlugged == true;
+        public bool CanConnect => !IsPlugged || IsNetwork;
         public bool IsHidden => _controller?.IsHidden() == true;
         public bool IsInternal => _controller?.IsInternal() == true;
         public bool IsWireless => _controller?.IsWireless() == true;
+        public bool IsNetwork => _controller?.IsNetwork() == true;
+        public bool CanHide => !IsNetwork;
         public bool IsDongle => _controller?.IsDongle() == true;
         public bool IsLegionWireless => _controller is LegionController && _controller.IsWireless();
         public int VisibleUserIndexCount => _controller is XInputController or LegionControllerXInput ? 4 : 8;
@@ -110,12 +113,21 @@ namespace HandheldCompanion.ViewModels
             ConnectCommand = new DelegateCommand(async () =>
             {
                 string path = Controller?.GetContainerInstanceId() ?? string.Empty;
-                if (!string.IsNullOrEmpty(path))
-                    await Task.Run(() => ControllerManager.SetTargetController(path, false));
+                string instanceId = Controller?.GetInstanceId() ?? string.Empty;
+                if (!string.IsNullOrEmpty(path) && !string.IsNullOrEmpty(instanceId))
+                {
+                    if (IsNetwork && IsPlugged)
+                        ControllerManager.DisconnectTargetController(instanceId);
+                    else
+                        ControllerManager.SetTargetController(path, false);
+                }
             });
 
             HideCommand = new DelegateCommand(async () =>
             {
+                if (IsNetwork)
+                    return;
+
                 await Task.Run(() =>
                 {
                     if (IsHidden)

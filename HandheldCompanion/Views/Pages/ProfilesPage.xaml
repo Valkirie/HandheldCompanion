@@ -801,7 +801,8 @@
                             Description="{l:Static resx:Resources.ProfilesPage_ControllerLayoutDesc}"
                             Header="{l:Static resx:Resources.ProfilesPage_ControllerLayout}"
                             IsClickEnabled="True"
-                            Style="{StaticResource AccentSettingsCardStyle}"
+                            Opacity="0.75"
+                            Style="{DynamicResource AccentSettingsCardStyle}"
                             Tag="Navigation">
                             <ui:SettingsCard.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xE7FC;" />

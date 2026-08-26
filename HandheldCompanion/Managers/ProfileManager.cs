@@ -422,6 +422,11 @@ public class ProfileManager : IManager
             {
                 Label = "Apply",
                 Command = "SetLayoutMode",
+            },
+            new ToastAction
+            {
+                Label = "Ignore",
+                Command = "IgnoreProfile",
             }
         };
 

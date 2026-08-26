@@ -276,12 +276,12 @@ namespace HandheldCompanion
                     sb.Capacity = requiredSize;
                     result = WinAPI.SetupDiGetDeviceInstanceId(handle.DangerousGetHandle(), ref diData[index], sb, sb.Capacity, out requiredSize);
                 }
+
                 if (result == false)
                     throw new Win32Exception();
-                if (instanceId.Equals(sb.ToString()))
-                {
+
+                if (instanceId.Equals(sb.ToString(), StringComparison.InvariantCultureIgnoreCase))
                     return index;
-                }
             }
             // not found
             return -1;

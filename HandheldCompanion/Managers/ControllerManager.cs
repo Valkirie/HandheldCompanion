@@ -44,6 +44,12 @@ public static class ControllerManager
 {
     private static readonly ConcurrentDictionary<uint, SDLController> SDLControllers = new();
     private static readonly ConcurrentDictionary<string, IController> Controllers = new();
+
+    #region Network controllers
+    private static readonly ConcurrentDictionary<Guid, RemoteController> NetworkControllers = new();
+    private static readonly ConcurrentDictionary<Guid, byte> DisconnectedNetworkControllers = new();
+    private static Timer networkTimer = new(500) { AutoReset = true };
+    #endregion
     public static readonly ConcurrentDictionary<string, bool> PowerCyclers = new();
 
     private static readonly ConcurrentDictionary<string, Task> xusbArrivalInProgress = new();
@@ -128,6 +134,9 @@ public static class ControllerManager
     private static IController? targetController;
     private static ProcessEx? foregroundProcess;
     private static bool ControllerMuted;
+    private static readonly object networkStreamingLock = new();
+    private static readonly HashSet<Guid> streamingControllers = [];
+    private static bool localScreenOffForStreaming;
 
     private static readonly object targetLock = new();
     private static readonly object targetTransitionLock = new();
@@ -198,6 +207,9 @@ public static class ControllerManager
 
         // manage events
         TimerManager.Tick += Tick;
+        NetworkControllerTransport.PacketReceived += NetworkControllerTransport_PacketReceived;
+        NetworkControllerTransport.VibrationReceived += NetworkControllerTransport_VibrationReceived;
+        NetworkControllerTransport.StreamingChanged += NetworkControllerTransport_StreamingChanged;
         UIGamepad.GotFocus += GamepadFocusManager_FocusChanged;
         UIGamepad.LostFocus += GamepadFocusManager_FocusChanged;
         VirtualManager.Vibrated += VirtualManager_Vibrated;
@@ -254,6 +266,9 @@ public static class ControllerManager
         pickTimer.Elapsed += PickTimer_Elapsed;
         pickTimer.Start();
 
+        networkTimer.Elapsed += NetworkTimer_Elapsed;
+        networkTimer.Start();
+
         // enable HidHide
         HidHide.SetCloaking(true);
 
@@ -304,6 +319,9 @@ public static class ControllerManager
         {
             switch (command)
             {
+                case "TurnOffLocalScreen":
+                    TurnOffLocalScreenForStreaming();
+                    break;
                 case "SetTarget":
                     if (args.TryGetValue("deviceId", out string? baseContainerDeviceInstanceId) && !string.IsNullOrEmpty(baseContainerDeviceInstanceId))
                     {
@@ -330,6 +348,8 @@ public static class ControllerManager
 
     private static void Tick(long ticks, float delta)
     {
+        RemoveTimedOutNetworkControllers();
+
         IController? tc;
         lock (targetLock)
             tc = targetController;
@@ -337,7 +357,6 @@ public static class ControllerManager
         if (tc is null)
             return;
 
-        // pull controller
         tc.Tick(ticks, delta);
 
         // snapshot inputs; bail if not ready
@@ -349,9 +368,6 @@ public static class ControllerManager
         Dictionary<byte, GamepadMotion>? motions = tc.gamepadMotions;
         if (motions is null || motions.Count == 0)
             return;
-
-        // raise event, before layout mapping
-        InputsUpdated?.Invoke(controllerState, false);
 
         // get main motion safely
         byte gamepadIndex = tc.gamepadIndex;
@@ -374,6 +390,19 @@ public static class ControllerManager
                     break;
                 }
         }
+
+        if (tc is not RemoteController)
+        {
+            // Publish local controller state to an authorized peer after the selected sensor has updated it.
+            NetworkControllerTransport.Publish(tc);
+
+            // Do not allow a controller to be used remotely if it is already broadcasting to a peer.
+            if (NetworkControllerTransport.IsBroadcasting(tc))
+                return;
+        }
+
+        // raise event, before layout mapping
+        InputsUpdated?.Invoke(controllerState, false);
 
         // Update motion consumers (null-safe)
         MotionManager.UpdateReport(controllerState, gamepadMotion, delta);
@@ -406,6 +435,18 @@ public static class ControllerManager
         DSUServer.Tick(ticks, delta);
     }
 
+    #region Network controller transport
+
+    private static void NetworkTimer_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        IController? controller;
+        lock (targetLock)
+            controller = targetController;
+
+        if (controller is RemoteController remoteController && !remoteController.IsTimedOut)
+            NetworkControllerTransport.RequestController(remoteController.NetworkId);
+    }
+
     private static void pumpThreadLoop(object? obj)
     {
         while (pumpThreadRunning)
@@ -433,8 +474,7 @@ public static class ControllerManager
         if (controller.IsVirtual())
             return;
 
-        var physicalControllers = GetPhysicalControllers<IController>();
-        bool showActions = physicalControllers.Count() > 1 && PlugBehavior == ControllerPlugBehavior.AlwaysAsk;
+        bool showActions = PlugBehavior == ControllerPlugBehavior.AlwaysAsk;
 
         Color winColor = App.uiSettings.GetColorValue(UIColorType.Foreground);
 
@@ -1179,6 +1219,10 @@ public static class ControllerManager
 
         // manage events
         TimerManager.Tick -= Tick;
+        NetworkControllerTransport.PacketReceived -= NetworkControllerTransport_PacketReceived;
+        NetworkControllerTransport.VibrationReceived -= NetworkControllerTransport_VibrationReceived;
+        StopNetworkControllers();
+        NetworkControllerTransport.StreamingChanged -= NetworkControllerTransport_StreamingChanged;
         ManagerFactory.deviceManager.XUsbDeviceArrived -= XUsbDeviceArrived;
         ManagerFactory.deviceManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
         ManagerFactory.deviceManager.HidDeviceArrived -= HidDeviceArrived;
@@ -1212,6 +1256,9 @@ public static class ControllerManager
         pickTimer.Elapsed -= PickTimer_Elapsed;
         pickTimer.Stop();
 
+        networkTimer.Elapsed -= NetworkTimer_Elapsed;
+        networkTimer.Stop();
+
         foreach (IController controller in GetPhysicalControllers<IController>())
         {
             // uncloak on close, if requested
@@ -1226,6 +1273,28 @@ public static class ControllerManager
 
         LogManager.LogInformation("{0} has stopped", "ControllerManager");
     }
+
+    private static void NetworkControllerTransport_VibrationReceived(Guid id, byte largeMotor, byte smallMotor)
+    {
+        IController? controller = Controllers.Values.FirstOrDefault(candidate =>
+            candidate is not RemoteController && NetworkControllerTransport.GetNetworkControllerId(candidate.GetInstanceId()) == id);
+        controller?.SetVibration(largeMotor, smallMotor);
+    }
+
+    public static void RemoteControllerSessionClosed(Guid id)
+    {
+        if (!NetworkControllers.TryRemove(id, out RemoteController? controller))
+            return;
+
+        Controllers.TryRemove(controller.GetContainerInstanceId(), out _);
+        bool wasTarget = IsTargetController(controller.GetInstanceId());
+        ControllerUnplugged?.Invoke(controller, false, wasTarget);
+        if (wasTarget)
+            ClearTargetIfMatch(controller.GetInstanceId());
+        controller.Dispose();
+    }
+
+    #endregion
 
     private static void OnColorValuesChanged(UISettings sender, object args)
     {
@@ -1385,6 +1454,15 @@ public static class ControllerManager
             case "SteamControllerMode":
                 CheckControllerScenario();
                 break;
+
+            case "NetworkControllersEnabled":
+                bool networkControllersEnabled = Convert.ToBoolean(value);
+                LogManager.LogInformation("Network controllers {0}", networkControllersEnabled ? "enabled" : "disabled");
+                if (networkControllersEnabled)
+                    NetworkControllerTransport.Start();
+                else
+                    StopNetworkControllers();
+                break;
         }
     }
 
@@ -1402,7 +1480,172 @@ public static class ControllerManager
         SettingsManager_SettingValueChanged("VibrationStrength", ManagerFactory.settingsManager.GetString("VibrationStrength"), false, true);
         SettingsManager_SettingValueChanged("ControllerSlotManagementMode", ManagerFactory.settingsManager.GetString("ControllerSlotManagementMode"), false, true);
         SettingsManager_SettingValueChanged("SteamControllerMode", ManagerFactory.settingsManager.GetString("SteamControllerMode"), false, true);
+        SettingsManager_SettingValueChanged("NetworkControllersEnabled", ManagerFactory.settingsManager.GetBoolean("NetworkControllersEnabled"), false, true);
     }
+
+    #region Network controller lifecycle
+
+    private static void NetworkControllerTransport_StreamingChanged(Guid id, bool streaming)
+    {
+        bool showPrompt = false;
+        bool restoreScreen = false;
+
+        lock (networkStreamingLock)
+        {
+            if (streaming)
+            {
+                bool wasEmpty = streamingControllers.Count == 0;
+                bool added = streamingControllers.Add(id);
+                showPrompt = wasEmpty && added;
+            }
+            else if (streamingControllers.Remove(id) && streamingControllers.Count == 0 && localScreenOffForStreaming)
+            {
+                localScreenOffForStreaming = false;
+                restoreScreen = true;
+            }
+        }
+
+        if (showPrompt)
+            ShowNetworkStreamingToast();
+
+        if (restoreScreen)
+            MultimediaManager.TurnOnScreen(true);
+    }
+
+    private static void ShowNetworkStreamingToast()
+    {
+        ToastManager.SendToast(new ToastRequest
+        {
+            Title = "Local controller streaming",
+            Content = "Do you want to turn off the local screen while the controller is streamed?",
+            Actions =
+            {
+                new ToastAction
+                {
+                    Label = "Turn off screen",
+                    Command = "TurnOffLocalScreen",
+                    Callback = _ => TurnOffLocalScreenForStreaming()
+                },
+                new ToastAction
+                {
+                    Label = "Keep screen on",
+                    Command = "KeepLocalScreenOn",
+                    Callback = _ => { }
+                }
+            }
+        });
+    }
+
+    private static void TurnOffLocalScreenForStreaming()
+    {
+        lock (networkStreamingLock)
+        {
+            if (streamingControllers.Count == 0)
+                return;
+
+            localScreenOffForStreaming = true;
+        }
+
+        MultimediaManager.TurnOffScreen(true);
+    }
+
+    private static void NetworkControllerTransport_PacketReceived(NetworkControllerPacket packet)
+    {
+        if (!ManagerFactory.settingsManager.GetBoolean("NetworkControllersEnabled"))
+            return;
+
+        if (DisconnectedNetworkControllers.ContainsKey(packet.Id))
+            return;
+
+        RemoveTimedOutNetworkControllers();
+
+        RemoteController controller = NetworkControllers.GetOrAdd(packet.Id, id =>
+        {
+            RemoteController created = new(id, packet.Name, packet.UserIndex);
+
+            Controllers[created.GetContainerInstanceId()] = created;
+
+            LogManager.LogInformation("Network controller connected: {0}", created.ToString());
+
+            ControllerPlugged?.Invoke(created, false);
+
+            if (PlugBehavior == ControllerPlugBehavior.AlwaysAsk)
+                ShowDetectedToast(created, false);
+
+            PickTargetController();
+            return created;
+        });
+
+        // manage packet opcodes
+        switch (packet.OpCode)
+        {
+            case NetworkControllerOpCode.ControllerState:
+                controller.Update(packet.Name, packet.UserIndex, packet.Sequence, packet.State);
+                break;
+
+            case NetworkControllerOpCode.Metadata:
+                if (packet.Metadata is not null)
+                    controller.ApplyMetadata(packet.Metadata);
+                break;
+
+            default:
+                controller.RefreshAdvertisement(packet.Name, packet.UserIndex);
+                break;
+        }
+    }
+
+    private static void RemoveTimedOutNetworkControllers()
+    {
+        foreach (var stale in NetworkControllers.Where(p => p.Value.IsTimedOut).ToArray())
+        {
+            if (DisconnectedNetworkControllers.ContainsKey(stale.Key))
+                continue;
+
+            if (!NetworkControllers.TryRemove(stale.Key, out RemoteController? removed))
+                continue;
+
+            LogManager.LogInformation("Network controller timed out: {0}", removed.ToString());
+            Controllers.TryRemove(removed.GetContainerInstanceId(), out _);
+
+            bool wasTarget = IsTargetController(removed.GetInstanceId());
+
+            ControllerUnplugged?.Invoke(removed, false, wasTarget);
+
+            if (wasTarget)
+                ClearTargetIfMatch(removed.GetInstanceId());
+
+            removed.Dispose();
+        }
+    }
+
+    private static void StopNetworkControllers()
+    {
+        NetworkControllerTransport.Stop();
+        DisconnectedNetworkControllers.Clear();
+
+        foreach (var entry in NetworkControllers.ToArray())
+        {
+            RemoteController controller = entry.Value;
+
+            NetworkControllers.TryRemove(entry.Key, out _);
+
+            Controllers.TryRemove(controller.GetContainerInstanceId(), out _);
+
+            LogManager.LogInformation("Network controller removed: {0}", controller.ToString());
+
+            bool wasTarget = IsTargetController(controller.GetInstanceId());
+
+            ControllerUnplugged?.Invoke(controller, false, wasTarget);
+
+            if (wasTarget)
+                ClearTargetIfMatch(controller.GetInstanceId());
+
+            controller.Dispose();
+        }
+        NetworkControllers.Clear();
+    }
+
+    #endregion
 
     private static void DeviceManager_Initialized()
     {
@@ -1427,6 +1670,11 @@ public static class ControllerManager
 
         // raise events
         ReopenSDLGamepads();
+
+        // Device enumeration can complete after the initial picker timer was started.
+        // Schedule one more pass so cold-start controllers are selected once all
+        // currently connected devices have been registered.
+        PickTargetController();
     }
 
     public static void Rescan()
@@ -2229,7 +2477,7 @@ public static class ControllerManager
 
         // Pick the most recently arrived external or wireless controller
         IController? latestExternalController = controllers
-            .Where(c => c.IsExternal() || c.IsWireless())
+            .Where(c => !c.IsNetwork() && (c.IsExternal() || c.IsWireless()))
             .OrderByDescending(c => c.GetLastArrivalDate())
             .FirstOrDefault();
 
@@ -2239,9 +2487,8 @@ public static class ControllerManager
         // Default: keep current target (reassigned below if a better candidate exists)
         string deviceInstanceId = current?.GetContainerInstanceId() ?? string.Empty;
 
-        // If the user disabled auto-connect, never switch to a newly plugged external controller.
-        // Keep the current real target when there is one, otherwise only fall back to the internal
-        // controller (or keep the dummy/default target if no internal controller exists).
+        // AlwaysAsk and DoNothing start on the internal controller. After startup, preserve an
+        // explicitly selected real target instead of switching it when another controller arrives.
         if (PlugBehavior != ControllerPlugBehavior.AutoConnect)
         {
             if (current is not null && !current.IsDummy())
@@ -2252,13 +2499,17 @@ public static class ControllerManager
             {
                 deviceInstanceId = internalController.GetContainerInstanceId();
             }
+            else if (internalController is null && latestExternalController is not null)
+            {
+                deviceInstanceId = latestExternalController.GetContainerInstanceId();
+            }
         }
         // Auto-connect to the most recently arrived external/wireless controller.
         else if (latestExternalController is not null)
         {
             // If the current target is already an external/wireless controller, keep it —
             // we don't want to switch away when a second external controller is plugged in.
-            if (current is not null && (current.IsWireless() || current.IsExternal()))
+            if (current is not null && (current.IsNetwork() || current.IsWireless() || current.IsExternal()))
                 deviceInstanceId = current.GetContainerInstanceId();
             else
                 deviceInstanceId = latestExternalController.GetContainerInstanceId();
@@ -2296,9 +2547,10 @@ public static class ControllerManager
             {
                 controller = targetController;
                 targetController = null;
+
             }
 
-            ClearTargetController(controller);
+            ClearTargetController(controller, manualDisconnect: false);
         }
     }
 
@@ -2320,6 +2572,7 @@ public static class ControllerManager
 
                 controller = targetController;
                 targetController = null;
+
             }
 
             ClearTargetController(controller);
@@ -2327,14 +2580,17 @@ public static class ControllerManager
         }
     }
 
-    private static void ClearTargetController(IController? controller)
+    private static void ClearTargetController(IController? controller, bool manualDisconnect = true)
     {
         if (controller is null)
             return;
 
         controller.SetLightColor(0, 0, 0);
         controller.StopRumble(waitForCompletion: false);
-        controller.Unplug();
+        if (controller is RemoteController remoteController && !manualDisconnect)
+            remoteController.UnplugFromRemoteSession();
+        else
+            controller.Unplug();
         ManagerFactory.settingsManager.SetProperty("HIDInstancePath", string.Empty);
     }
 
@@ -2356,6 +2612,9 @@ public static class ControllerManager
             // look for new controller
             if (!Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController? controller))
                 return;
+
+            if (controller is RemoteController remoteController)
+                DisconnectedNetworkControllers.TryRemove(remoteController.NetworkId, out _);
 
             // already self
             bool isCurrentTarget;
@@ -2436,6 +2695,29 @@ public static class ControllerManager
             selectedHandlers?.Invoke(selectedController);
         }
         catch { }
+    }
+
+    public static void DisconnectTargetController(string instanceId)
+    {
+        IController? controller;
+
+        lock (targetTransitionLock)
+        {
+            lock (targetLock)
+            {
+                if (targetController?.GetInstanceId() != instanceId)
+                    return;
+
+                controller = targetController;
+                targetController = null;
+
+            }
+
+            ClearTargetController(controller);
+        }
+
+        if (controller is not null)
+            ControllerUnplugged?.Invoke(controller, true, true);
     }
 
     public static bool SuspendController(string baseContainerDeviceInstanceId)
