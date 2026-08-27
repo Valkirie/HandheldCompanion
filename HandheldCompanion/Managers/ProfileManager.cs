@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
@@ -28,6 +28,11 @@ namespace HandheldCompanion.Managers;
 public class ProfileManager : IManager
 {
     public const string DefaultName = "Default";
+    private readonly ProfileCollectionHelper collectionHelper = new();
+
+    public event Action<GameCollection>? CollectionAdded;
+    public event Action<GameCollection>? CollectionRemoved;
+    public event Action<GameCollection>? CollectionUpdated;
 
     public ConcurrentDictionary<Guid, Profile> profiles = new();
     // public List<Profile> subProfiles = [];
@@ -39,6 +44,10 @@ public class ProfileManager : IManager
 
     public ProfileManager()
     {
+        collectionHelper.CollectionAdded += collection => CollectionAdded?.Invoke(collection);
+        collectionHelper.CollectionRemoved += collection => CollectionRemoved?.Invoke(collection);
+        collectionHelper.CollectionUpdated += collection => CollectionUpdated?.Invoke(collection);
+
         // initialize path
         ManagerPath = Path.Combine(App.SettingsPath, "profiles");
 
@@ -56,6 +65,16 @@ public class ProfileManager : IManager
             NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size
         };
     }
+
+    public IReadOnlyList<GameCollection> GetCollections() => collectionHelper.GetCollections();
+
+    public GameCollection? GetCollection(Guid id) => collectionHelper.GetCollection(id);
+
+    public GameCollection CreateCollection(string name) => collectionHelper.CreateCollection(name);
+
+    public bool DeleteCollection(Guid id) => collectionHelper.DeleteCollection(id);
+
+    public bool RenameCollection(Guid id, string newName) => collectionHelper.RenameCollection(id, newName);
 
     // match the standard GUID pattern
     private Regex guidRegex = new Regex(@"[0-9A-Fa-f]{8}(-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12}");
@@ -1136,13 +1155,10 @@ public class ProfileManager : IManager
                     profileToSanitize.PowerProfiles[idx] = Guid.Empty;
         }
 
-        // remove stale collection IDs (skip FavoritesId — it is a built-in sentinel, not a CollectionManager entry)
-        if (ManagerFactory.collectionManager.Status == ManagerStatus.Initialized)
-        {
-            HashSet<Guid> knownIds = ManagerFactory.collectionManager.GetCollections().Select(c => c.Id).ToHashSet();
-            lock (profileToSanitize.SyncRoot)
-                profileToSanitize.Collections.RemoveWhere(id => id != GameCollection.FavoritesId && !knownIds.Contains(id));
-        }
+        // remove stale collection IDs (skip FavoritesId — it is a built-in sentinel)
+        HashSet<Guid> knownIds = collectionHelper.GetCollections().Select(c => c.Id).ToHashSet();
+        lock (profileToSanitize.SyncRoot)
+            profileToSanitize.Collections.RemoveWhere(id => id != GameCollection.FavoritesId && !knownIds.Contains(id));
     }
 
     public bool IsCurrentProfile(Profile profile)

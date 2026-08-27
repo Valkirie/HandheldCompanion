@@ -1,4 +1,4 @@
-﻿using GameLib.Core;
+using GameLib.Core;
 using GameLib.Plugin.BattleNet.Model;
 using GameLib.Plugin.EA.Model;
 using GameLib.Plugin.Epic.Model;
@@ -575,18 +575,6 @@ namespace HandheldCompanion.ViewModels
             }
 
             // raise events
-            switch (ManagerFactory.collectionManager.Status)
-            {
-                default:
-                case ManagerStatus.Initializing:
-                    ManagerFactory.collectionManager.Initialized += CollectionManager_Initialized;
-                    break;
-                case ManagerStatus.Initialized:
-                    QueryCollections();
-                    break;
-            }
-
-            // raise events
             switch (ManagerFactory.platformManager.Status)
             {
                 default:
@@ -654,34 +642,19 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(IsLibraryConnected));
         }
 
-        private void QueryCollections()
-        {
-            ManagerFactory.collectionManager.CollectionAdded += CollectionManager_CollectionAdded;
-            ManagerFactory.collectionManager.CollectionRemoved += CollectionManager_CollectionRemoved;
-            ManagerFactory.collectionManager.CollectionUpdated += CollectionManager_CollectionUpdated;
-
-            RebuildNavigationItems();
-            ScheduleRebuildCollectionGroups();
-        }
-
-        private void CollectionManager_Initialized()
-        {
-            QueryCollections();
-        }
-
-        private void CollectionManager_CollectionAdded(GameCollection collection)
+        private void ProfileCollectionHelper_CollectionAdded(GameCollection collection)
         {
             RebuildNavigationItems();
             ScheduleRebuildCollectionGroups();
         }
 
-        private void CollectionManager_CollectionRemoved(GameCollection collection)
+        private void ProfileCollectionHelper_CollectionRemoved(GameCollection collection)
         {
             RebuildNavigationItems();
             ScheduleRebuildCollectionGroups();
         }
 
-        private void CollectionManager_CollectionUpdated(GameCollection collection)
+        private void ProfileCollectionHelper_CollectionUpdated(GameCollection collection)
         {
             UIHelper.TryBeginInvoke(() =>
             {
@@ -726,7 +699,7 @@ namespace HandheldCompanion.ViewModels
                 NavigationItems.Add(_navR2);
             }
 
-            var activeCollections = ManagerFactory.collectionManager
+            var activeCollections = ManagerFactory.profileManager
                 .GetCollections()
                 .OrderBy(collection => collection.Name, StringComparer.OrdinalIgnoreCase)
                 .ToList();
@@ -867,7 +840,7 @@ namespace HandheldCompanion.ViewModels
                 CollectionGroups.Add(favGroup);
 
             // User collections — a profile may appear in more than one
-            IReadOnlyList<GameCollection> userCollections = ManagerFactory.collectionManager.GetCollections();
+            IReadOnlyList<GameCollection> userCollections = ManagerFactory.profileManager.GetCollections();
             List<CollectionGroupViewModel> pending = [];
             foreach (GameCollection col in userCollections)
             {
@@ -921,6 +894,9 @@ namespace HandheldCompanion.ViewModels
             // manage events
             ManagerFactory.profileManager.Updated += ProfileManager_Updated;
             ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
+            ManagerFactory.profileManager.CollectionAdded += ProfileCollectionHelper_CollectionAdded;
+            ManagerFactory.profileManager.CollectionRemoved += ProfileCollectionHelper_CollectionRemoved;
+            ManagerFactory.profileManager.CollectionUpdated += ProfileCollectionHelper_CollectionUpdated;
 
             // Bind the repeater to the sorted view BEFORE any profiles arrive so cards can render incrementally rather than all at once after the bulk load completes
             _uiContext.Post(_ => UpdateSorting(), null);
@@ -1104,10 +1080,9 @@ namespace HandheldCompanion.ViewModels
                 ManagerFactory.profileManager.Deleted -= ProfileManager_Deleted;
                 ManagerFactory.libraryManager.ProfileStatusChanged -= LibraryManager_ProfileStatusChanged;
                 ManagerFactory.libraryManager.NetworkAvailabilityChanged -= LibraryManager_NetworkAvailabilityChanged;
-                ManagerFactory.collectionManager.CollectionAdded -= CollectionManager_CollectionAdded;
-                ManagerFactory.collectionManager.CollectionRemoved -= CollectionManager_CollectionRemoved;
-                ManagerFactory.collectionManager.CollectionUpdated -= CollectionManager_CollectionUpdated;
-                ManagerFactory.collectionManager.Initialized -= CollectionManager_Initialized;
+                ManagerFactory.profileManager.CollectionAdded -= ProfileCollectionHelper_CollectionAdded;
+                ManagerFactory.profileManager.CollectionRemoved -= ProfileCollectionHelper_CollectionRemoved;
+                ManagerFactory.profileManager.CollectionUpdated -= ProfileCollectionHelper_CollectionUpdated;
             }
 
             base.Dispose(disposing);

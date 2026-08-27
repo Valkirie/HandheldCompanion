@@ -1,7 +1,6 @@
 using Force.Crc32;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.DSU;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
@@ -265,7 +264,7 @@ public static class DSUServer
             if (crcValue != crcCalc)
                 return;
 
-            currIdx += 4; // clientId – not used
+            currIdx += 4; // clientId ï¿½ not used
 
             var messageType = BitConverter.ToUInt32(localMsg, currIdx);
             currIdx += 4;

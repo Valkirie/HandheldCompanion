@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
@@ -38,10 +38,10 @@ namespace HandheldCompanion.ViewModels
             {
                 switch (action)
                 {
-                    case "Sleep": PowerActions.Sleep(force: false); break;
-                    case "Shutdown": PowerActions.Shutdown(force: false, powerOff: true); break;
-                    case "Restart": PowerActions.Restart(force: false); break;
-                    case "Lock": PowerActions.Lock(); break;
+                    case "Sleep": PowerActionsHelper.Sleep(force: false); break;
+                    case "Shutdown": PowerActionsHelper.Shutdown(force: false, powerOff: true); break;
+                    case "Restart": PowerActionsHelper.Restart(force: false); break;
+                    case "Lock": PowerActionsHelper.Lock(); break;
                     case "Exit": MainWindow.GetCurrent().RequestClose(); break;
                 }
             });

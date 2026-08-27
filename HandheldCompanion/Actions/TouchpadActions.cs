@@ -2,14 +2,11 @@ using HandheldCompanion.Controllers;
 using HandheldCompanion.Controllers.Dummies;
 using HandheldCompanion.Controllers.Steam;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.Serialization;
 
 namespace HandheldCompanion.Actions
 {
@@ -26,9 +23,6 @@ namespace HandheldCompanion.Actions
         public const float MinimumSwipeDuration = 16.0f;
         public const float MaximumSwipeDuration = 5000.0f;
         public const float DefaultSwipeDuration = 300.0f;
-
-        private const float HapticStep = (short.MaxValue - short.MinValue) / 10.0f;
-        private const float HapticJitterThreshold = 128.0f;
 
         internal static readonly ButtonFlags[] GestureTargets =
         [
@@ -72,7 +66,6 @@ namespace HandheldCompanion.Actions
         [NonSerialized] private bool isKeyDown;
         [NonSerialized] private bool isTouched;
         [NonSerialized] private bool clickPressed;
-        [NonSerialized] private MovementHapticState movementHaptics = new();
 
         public TouchpadActions()
         {
@@ -191,16 +184,18 @@ namespace HandheldCompanion.Actions
                 outVector = layout.vector;
                 base.Execute(layout, shiftSlot, delta);
                 ApplyAxisDeadzones();
+                ApplyResponseCurve();
                 bool sourceReportsTouch = ControllerState.AxisTouchButtons.ContainsKey(layout.flags);
                 isTouched = !axisSlotDisabled &&
                     outVector != Vector2.Zero &&
                     (!sourceReportsTouch || touched);
-                UpdateMovementHaptics(isTouched, outVector);
+                UpdateMovementHaptics(Axis, isTouched, outVector);
                 return;
             }
 
             outVector = layout.vector;
             base.Execute(layout, shiftSlot, delta);
+            ApplyResponseCurve();
 
             DeflectionDirection direction = InputUtils.GetDeflectionDirection(outVector, motionThreshold);
             bool pressed = DirectionMatches(direction, motionDirection);
@@ -339,58 +334,6 @@ namespace HandheldCompanion.Actions
 
             if (ControllerState.AxisTouchButtons.TryGetValue(Axis, out ButtonFlags touchButton))
                 outputState.ButtonState[touchButton] |= GetTouchValue();
-        }
-
-        private void UpdateMovementHaptics(bool touched, Vector2 position)
-        {
-            if (!touched || HapticMode is not (HapticMode.Down or HapticMode.Both) ||
-                ControllerManager.GetTarget() is not IController controller ||
-                controller is SteamController { IsLizardModeEnabled: true })
-            {
-                movementHaptics.Reset(touched, position);
-                return;
-            }
-
-            if (!movementHaptics.WasTouched)
-            {
-                movementHaptics.Reset(touched: true, position);
-                return;
-            }
-
-            Vector2 delta = position - movementHaptics.PreviousPosition;
-            movementHaptics.PreviousPosition = position;
-            movementHaptics.Jitter += delta;
-
-            float distance = movementHaptics.Jitter.Length();
-            if (distance < HapticJitterThreshold)
-                return;
-
-            movementHaptics.Jitter = Vector2.Zero;
-            movementHaptics.Distance += distance;
-            if (movementHaptics.Distance < HapticStep)
-                return;
-
-            movementHaptics.Distance %= HapticStep;
-            ButtonFlags button = Axis == AxisLayoutFlags.LeftPad ? ButtonFlags.LeftPadTouch : ButtonFlags.RightPadTouch;
-
-            controller.SetHaptic(HapticStrength, button, released: false);
-        }
-
-        [Serializable]
-        private sealed class MovementHapticState
-        {
-            public bool WasTouched;
-            public Vector2 PreviousPosition;
-            public Vector2 Jitter;
-            public float Distance;
-
-            public void Reset(bool touched, Vector2 position)
-            {
-                WasTouched = touched;
-                PreviousPosition = position;
-                Jitter = Vector2.Zero;
-                Distance = 0.0f;
-            }
         }
 
         private readonly record struct ClickHapticProfile(HapticMode Mode, HapticStrength Strength);

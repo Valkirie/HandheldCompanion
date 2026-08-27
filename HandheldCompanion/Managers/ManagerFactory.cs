@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Shared;
+using HandheldCompanion.Shared;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
@@ -19,7 +19,6 @@ namespace HandheldCompanion.Managers
         public static NotificationManager notificationManager;
         public static LibraryManager libraryManager;
         public static PlatformManager platformManager;
-        public static CollectionManager collectionManager;
 
         public static List<IManager> Managers => new()
         {
@@ -34,8 +33,7 @@ namespace HandheldCompanion.Managers
             gpuManager,
             notificationManager,
             libraryManager,
-            platformManager,
-            collectionManager
+            platformManager
         };
 
         static ManagerFactory()
@@ -58,7 +56,6 @@ namespace HandheldCompanion.Managers
             notificationManager = new();
             libraryManager = new();
             platformManager = new();
-            collectionManager = new();
         }
 
         public static void Resume()

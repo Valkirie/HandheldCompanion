@@ -3,10 +3,8 @@ using HandheldCompanion.Controllers;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Misc;
-using HandheldCompanion.Notifications;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
-using iNKORE.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -733,7 +731,7 @@ public class LayoutManager : IManager
                     case ActionType.Joystick:
                         {
                             var aX = (AxisActions)action;
-                            aX.Execute(layout, shiftSlot, deltaMs);
+                            aX.Execute(layout, touched, shiftSlot, deltaMs);
                             var xyOut = _axisXY[aX.Axis];
                             outputState.AxisState[xyOut.X] = ClampShort(outputState.AxisState[xyOut.X] + (short)Math.Clamp(aX.XOuput, short.MinValue, short.MaxValue));
                             outputState.AxisState[xyOut.Y] = ClampShort(outputState.AxisState[xyOut.Y] + (short)Math.Clamp(aX.YOuput, short.MinValue, short.MaxValue));

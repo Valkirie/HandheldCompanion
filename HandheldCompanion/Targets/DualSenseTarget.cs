@@ -1,10 +1,8 @@
 using HandheldCompanion.Controllers;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
-using System.Threading.Tasks;
 
 namespace HandheldCompanion.Targets
 {

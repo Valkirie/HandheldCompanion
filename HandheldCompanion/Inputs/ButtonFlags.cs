@@ -61,7 +61,7 @@ public enum ButtonFlags : byte
     OEM8 = 37,
     OEM9 = 38,
     OEM10 = 39,
-    
+
     // UI only
     [Description("Left Pad Touch")] LeftPadTouch = 40,
     [Description("Right Pad Touch")] RightPadTouch = 41,

@@ -91,7 +91,7 @@ namespace HandheldCompanion.ViewModels
                         dialog.Hide();
                         break;
                     case ContentDialogResult.Primary:
-                        ManagerFactory.collectionManager.DeleteCollection(collection.Id);
+                        ManagerFactory.profileManager.DeleteCollection(collection.Id);
                         break;
                 }
             });

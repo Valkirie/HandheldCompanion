@@ -1,4 +1,3 @@
-﻿using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Utils;
 using System;

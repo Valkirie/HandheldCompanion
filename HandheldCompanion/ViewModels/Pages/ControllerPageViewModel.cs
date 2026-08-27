@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
@@ -147,6 +148,7 @@ namespace HandheldCompanion.ViewModels
         public ObservableCollection<ControllerViewModel> PhysicalControllers { get; set; } = [];
         public ObservableCollection<ControllerViewModel> VirtualControllers { get; set; } = [];
         public ICommand ScanHardwareCommand { get; private set; }
+        public ICommand DisconnectRemoteControllerCommand { get; private set; }
         public ICommand OpenWindowsControl { get; private set; }
         public ICommand NavigateSettings { get; private set; }
 
@@ -467,6 +469,12 @@ namespace HandheldCompanion.ViewModels
                 ScanHardwareVisibility = Visibility.Collapsed;
             });
 
+            DisconnectRemoteControllerCommand = new DelegateCommand(() =>
+            {
+                if (ControllerManager.GetTarget() is IController controller)
+                    ControllerManager.DisconnectNetworkController(controller);
+            });
+
             OpenWindowsControl = new DelegateCommand<string>(async (target) =>
             {
                 // Full-trust (Win32) component
@@ -500,7 +508,7 @@ namespace HandheldCompanion.ViewModels
             ControllerManager.SteamHybridModeOverride += ControllerManager_SteamHybridModeOverride;
             ControllerManager.StatusChanged += ControllerManager_StatusChanged;
             ControllerManager.SlotIssueChanged += ControllerManager_SlotIssueChanged;
-            NetworkControllerTransport.AuthorizationChanged += NetworkControllerTransport_AuthorizationChanged;
+            NetworkControllerHelper.AuthorizationChanged += NetworkControllerHelper_AuthorizationChanged;
 
             // initialize slot issue state
             _hasSlotIssue = ControllerManager.HasSlotIssue;
@@ -516,7 +524,7 @@ namespace HandheldCompanion.ViewModels
                 Refresh();
         }
 
-        private void NetworkControllerTransport_AuthorizationChanged()
+        private void NetworkControllerHelper_AuthorizationChanged()
         {
             Application.Current?.Dispatcher.BeginInvoke(Refresh);
         }
@@ -741,7 +749,7 @@ namespace HandheldCompanion.ViewModels
 
             bool isNetwork = hasTarget && targetController!.IsNetwork();
             string? broadcastingPeer = hasTarget && !isNetwork
-                ? NetworkControllerTransport.GetBroadcastingPeer(targetController!)
+                ? NetworkControllerHelper.GetBroadcastingPeer(targetController!)
                 : null;
             bool isHidden = hasTarget && targetController!.IsHidden();
             bool isPlugged = hasPhysical && hasTarget;
@@ -837,7 +845,7 @@ namespace HandheldCompanion.ViewModels
                 ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
                 ControllerManager.StatusChanged -= ControllerManager_StatusChanged;
                 ControllerManager.SlotIssueChanged -= ControllerManager_SlotIssueChanged;
-                NetworkControllerTransport.AuthorizationChanged -= NetworkControllerTransport_AuthorizationChanged;
+                NetworkControllerHelper.AuthorizationChanged -= NetworkControllerHelper_AuthorizationChanged;
                 ControllerManager.SteamHybridModeOverride -= ControllerManager_SteamHybridModeOverride;
                 ControllerManager.Initialized -= ControllerManager_Initialized;
                 ManagerFactory.layoutManager.Initialized -= LayoutManager_Initialized;

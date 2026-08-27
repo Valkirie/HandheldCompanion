@@ -2,7 +2,6 @@
 using HandheldCompanion.Devices.OneXPlayer;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
-using System.Numerics;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices

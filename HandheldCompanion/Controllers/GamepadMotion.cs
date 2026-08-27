@@ -4,7 +4,7 @@ using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-namespace HandheldCompanion.Helpers
+namespace HandheldCompanion.Controllers
 {
     public enum CalibrationMode
     {

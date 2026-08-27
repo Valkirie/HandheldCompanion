@@ -1,7 +1,5 @@
 ﻿using HandheldCompanion.Inputs;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace HandheldCompanion.Controllers.Steam
 {

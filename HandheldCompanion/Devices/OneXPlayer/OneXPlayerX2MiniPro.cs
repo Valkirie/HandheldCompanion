@@ -1,10 +1,8 @@
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Shared;
 using System.Threading;
 using System.Threading.Tasks;
 using WindowsInput.Events;
-using static HandheldCompanion.IGCL.IGCLBackend;
 using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices;

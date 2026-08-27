@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Shared;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;

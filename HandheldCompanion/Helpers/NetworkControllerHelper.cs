@@ -1,21 +1,23 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Shared;
 using System;
 using System.Buffers.Binary;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Numerics;
-using System.Collections.Generic;
 using System.Text;
-using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Text.Json;
-using HandheldCompanion.Shared;
 
-namespace HandheldCompanion.Managers;
+namespace HandheldCompanion.Helpers;
 
 internal enum NetworkControllerOpCode : byte
 {
@@ -33,7 +35,7 @@ internal sealed record NetworkControllerPacket(NetworkControllerOpCode OpCode, G
 
 internal sealed record NetworkControllerAuthorization(IPEndPoint Endpoint, long LastRequestTicks);
 
-internal static class NetworkControllerTransport
+internal static class NetworkControllerHelper
 {
     private const int Port = 26780;
     private const int NameLength = 64;
@@ -189,6 +191,18 @@ internal static class NetworkControllerTransport
         catch (ObjectDisposedException) { }
     }
 
+    public static void Disconnect(IController controller)
+    {
+        if (controller is RemoteController || !controller.IsPhysical())
+            return;
+
+        Guid id = GetNetworkControllerId(controller.GetInstanceId());
+        SendSessionClosed(id);
+        AuthorizedPeers.TryRemove(id, out _);
+        AuthorizationChanged?.Invoke();
+        EndPublishing(id);
+    }
+
     public static void Publish(IController controller)
     {
         if (!running)
@@ -243,6 +257,9 @@ internal static class NetworkControllerTransport
                 UdpReceiveResult result = await receiver!.ReceiveAsync(token).ConfigureAwait(false);
                 if (result.Buffer.Length == DiscoveryLength && result.Buffer[0] == (byte)NetworkControllerOpCode.Discovery)
                 {
+                    if (IsLocalAddress(result.RemoteEndPoint.Address))
+                        continue;
+
                     if (DiscoveryPeers.TryAdd(result.RemoteEndPoint.Address, 0))
                         LogManager.LogInformation("Network controller discovery request received from {0}", result.RemoteEndPoint.Address);
 
@@ -322,6 +339,16 @@ internal static class NetworkControllerTransport
     }
 
     private static IPEndPoint CreatePeerEndpoint(IPEndPoint endpoint) => new(endpoint.Address, Port);
+
+    private static bool IsLocalAddress(IPAddress address)
+    {
+        if (IPAddress.IsLoopback(address))
+            return true;
+
+        return NetworkInterface.GetAllNetworkInterfaces()
+            .SelectMany(networkInterface => networkInterface.GetIPProperties().UnicastAddresses)
+            .Any(unicastAddress => unicastAddress.Address.Equals(address));
+    }
 
     private static async Task DiscoveryLoop(CancellationToken token)
     {

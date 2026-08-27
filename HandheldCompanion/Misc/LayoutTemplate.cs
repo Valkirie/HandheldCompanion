@@ -51,6 +51,7 @@ namespace HandheldCompanion.Misc
                 {
                     Finger = 1,
                     UseCoordinates = true,
+                    HapticMode = HapticMode.Both,
                     Y = -28672,
                 }
             ];
@@ -61,6 +62,7 @@ namespace HandheldCompanion.Misc
                 {
                     Finger = 1,
                     UseCoordinates = true,
+                    HapticMode = HapticMode.Both,
                     Y = 28672,
                 }
             ];
@@ -71,6 +73,7 @@ namespace HandheldCompanion.Misc
                 {
                     Finger = 1,
                     UseCoordinates = true,
+                    HapticMode = HapticMode.Both,
                     X = -28672,
                 }
             ];
@@ -81,6 +84,7 @@ namespace HandheldCompanion.Misc
                 {
                     Finger = 1,
                     UseCoordinates = true,
+                    HapticMode = HapticMode.Both,
                     X = 28672,
                 }
             ];
@@ -89,7 +93,8 @@ namespace HandheldCompanion.Misc
             [
                 new TouchpadActions(ButtonFlags.TouchpadClick)
                 {
-                    Finger = 2
+                    Finger = 2,
+                    HapticMode = HapticMode.Both
                 }
             ];
 
@@ -97,7 +102,8 @@ namespace HandheldCompanion.Misc
             [
                 new TouchpadActions(AxisLayoutFlags.RightPad)
                 {
-                    AxisDeadZoneInner   = 5
+                    AxisDeadZoneInner = 5,
+                    HapticMode = HapticMode.Both
                 }
             ];
 
@@ -125,7 +131,7 @@ namespace HandheldCompanion.Misc
             };
         }
 
-        private static MouseActions CreateMouseAction(MouseActionsType mouseType, ModifierSet modifiers = ModifierSet.None, Utils.DeflectionDirection motionDirection = Utils.DeflectionDirection.None, float motionThreshold = 4000, HapticMode hapticMode = HapticMode.Off)
+        private static MouseActions CreateMouseAction(MouseActionsType mouseType, ModifierSet modifiers = ModifierSet.None, Utils.DeflectionDirection motionDirection = Utils.DeflectionDirection.None, float motionThreshold = 4000, HapticMode hapticMode = HapticMode.Off, HapticStrength hapticStrength = HapticStrength.Low)
         {
             return new MouseActions
             {
@@ -134,6 +140,7 @@ namespace HandheldCompanion.Misc
                 motionDirection = motionDirection,
                 motionThreshold = motionThreshold,
                 HapticMode = hapticMode,
+                HapticStrength = hapticStrength,
             };
         }
 
@@ -194,7 +201,7 @@ namespace HandheldCompanion.Misc
                         {
                             { AxisLayoutFlags.LeftStick, new List<IActions>() { CreateMouseAction(MouseActionsType.Scroll) } },
                             { AxisLayoutFlags.RightStick, new List<IActions>() { CreateMouseAction(MouseActionsType.Move) } },
-                            { AxisLayoutFlags.LeftPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Scroll, hapticMode: HapticMode.Down) } },
+                            { AxisLayoutFlags.LeftPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Scroll, hapticMode: HapticMode.Both) } },
                             { AxisLayoutFlags.RightPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Move, hapticMode: HapticMode.Down) } },
                             {
                                 AxisLayoutFlags.L2, new List<IActions>()
@@ -228,8 +235,8 @@ namespace HandheldCompanion.Misc
                             { ButtonFlags.DPadLeft, new List<IActions>() { CreateKeyboardAction(VirtualKeyCode.LEFT) } },
                             { ButtonFlags.DPadRight, new List<IActions>() { CreateKeyboardAction(VirtualKeyCode.RIGHT) } },
 
-                            { ButtonFlags.LeftPadClick, new List<IActions>() { CreateMouseAction(MouseActionsType.RightButton) } },
-                            { ButtonFlags.RightPadClick, new List<IActions>() { CreateMouseAction(MouseActionsType.LeftButton) } }
+                            { ButtonFlags.LeftPadClick, new List<IActions>() { CreateMouseAction(MouseActionsType.RightButton, hapticMode: HapticMode.Both, hapticStrength: HapticStrength.Medium) } },
+                            { ButtonFlags.RightPadClick, new List<IActions>() { CreateMouseAction(MouseActionsType.LeftButton, hapticMode: HapticMode.Both, hapticStrength: HapticStrength.Medium) } }
                         };
                     }
                     break;

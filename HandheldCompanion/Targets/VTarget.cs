@@ -1,5 +1,4 @@
 using HandheldCompanion.Controllers;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;

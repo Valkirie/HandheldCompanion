@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Commands.Functions.HC;
+using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices.AYANEO;
@@ -334,7 +334,7 @@ public abstract class IDevice
 
     protected virtual void ApplyDeviceConfiguration()
     {
-        DeviceConfiguration? config = DeviceConfigurationManager.LoadConfiguration(this.GetType().Name);
+        DeviceConfiguration? config = DeviceConfigurationHelper.LoadConfiguration(this.GetType().Name);
         if (config is null)
             return;
 
@@ -416,7 +416,7 @@ public abstract class IDevice
             WindowsGyrometerFields = WindowsGyrometerFields
         };
 
-        DeviceConfigurationManager.SaveConfiguration(data);
+        DeviceConfigurationHelper.SaveConfiguration(data);
     }
 
     private static IMUMatrixData ConvertToIMUMatrixData(IMUMatrix matrix)

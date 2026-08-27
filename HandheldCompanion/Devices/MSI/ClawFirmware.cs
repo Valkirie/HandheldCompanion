@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace HandheldCompanion.Helpers
+namespace HandheldCompanion.Devices.MSI
 {
     /// <summary>
     /// Groups firmware-specific input workarounds by device manufacturer.
     /// </summary>
-    public static class FirmwareWorkarounds
+    public static class ClawFirmware
     {
         /// <summary>
         /// Handles MSI firmware input quirks.

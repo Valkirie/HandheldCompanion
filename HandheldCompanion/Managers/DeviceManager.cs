@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers.Hid;
 using HandheldCompanion.Sensors;
@@ -107,7 +107,7 @@ public class DeviceManager : IManager
     private void RefreshDrivers()
     {
         // fail-safe: restore drivers from incomplete controller suspend/resume process (if any)
-        IEnumerable<string> drivers = DriverStore.GetKnownDrivers().Cast<string>();
+        IEnumerable<string> drivers = DriverStoreHelper.GetKnownDrivers().Cast<string>();
         if (drivers.Count() != 0)
         {
             foreach (string InfPath in drivers)

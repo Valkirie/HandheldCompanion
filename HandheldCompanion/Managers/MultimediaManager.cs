@@ -44,6 +44,7 @@ public class MultimediaManager : IManager
     private readonly ManagementEventWatcher _brightnessWatcher;
     private readonly ManagementScope _scope;
     private readonly bool _brightnessSupport;
+    private short _streamingBrightness = -1;
 
     public MultimediaManager()
     {
@@ -856,6 +857,29 @@ public class MultimediaManager : IManager
             }
         }
         catch { }
+    }
+
+    public void DimForStreaming()
+    {
+        if (!_brightnessSupport || _streamingBrightness >= 0)
+            return;
+
+        short brightness = GetBrightness();
+        if (brightness < 0)
+            return;
+
+        _streamingBrightness = brightness;
+        SetBrightness(0);
+    }
+
+    public void RestoreStreamingBrightness()
+    {
+        if (_streamingBrightness < 0)
+            return;
+
+        short brightness = _streamingBrightness;
+        _streamingBrightness = -1;
+        SetBrightness(brightness);
     }
 
     public void IncreaseBrightness()

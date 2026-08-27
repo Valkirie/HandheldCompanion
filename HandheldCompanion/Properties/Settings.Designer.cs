@@ -34,18 +34,6 @@ namespace HandheldCompanion.Properties
                 this["ToastEnable"] = value;
             }
         }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool NetworkControllersEnabled {
-            get {
-                return ((bool)(this["NetworkControllersEnabled"]));
-            }
-            set {
-                this["NetworkControllersEnabled"] = value;
-            }
-        }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -56,6 +44,18 @@ namespace HandheldCompanion.Properties
             }
             set {
                 this["RunAtStartup"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool NetworkControllersEnabled {
+            get {
+                return ((bool)(this["NetworkControllersEnabled"]));
+            }
+            set {
+                this["NetworkControllersEnabled"] = value;
             }
         }
         

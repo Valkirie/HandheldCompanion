@@ -29,7 +29,6 @@ namespace HandheldCompanion.Actions
 
         private const int ScrollAmountInClicks = 20;
         private const float FilterBeta = 0.5f;
-
         // Runtime
         private bool isCursorDown = false;
         private bool isTouched = false;
@@ -175,6 +174,7 @@ namespace HandheldCompanion.Actions
         {
             outVector = layout.vector;
             base.Execute(layout, shiftSlot, delta);
+            ApplyResponseCurve();
 
             if (outVector == Vector2.Zero && !isCursorDown)
                 return;
@@ -194,6 +194,7 @@ namespace HandheldCompanion.Actions
             base.Execute(layout, shiftSlot, delta);
 
             bool isTrackpad = layout.flags is AxisLayoutFlags.LeftPad or AxisLayoutFlags.RightPad;
+            UpdateMovementHaptics(layout.flags, touched && !axisSlotDisabled, outVector);
             if (axisSlotDisabled && isTrackpad)
             {
                 rawVector.Y *= -1;
@@ -305,6 +306,10 @@ namespace HandheldCompanion.Actions
 
             outVector = layout.vector;
             base.Execute(layout, shiftSlot, delta);
+            ApplyResponseCurve();
+
+            bool isTrackpad = layout.flags is AxisLayoutFlags.LeftPad or AxisLayoutFlags.RightPad;
+            UpdateMovementHaptics(layout.flags, touched && !axisSlotDisabled, outVector);
 
             float threshold = motionThreshold / short.MaxValue;
             bool hasMovement = outVector.Length() > threshold;
@@ -343,5 +348,6 @@ namespace HandheldCompanion.Actions
             isTouched = touched;
             return isTouched;
         }
+
     }
 }

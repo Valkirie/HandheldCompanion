@@ -1,3 +1,4 @@
+using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using Newtonsoft.Json;
@@ -7,9 +8,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace HandheldCompanion.Managers
+namespace HandheldCompanion.Helpers
 {
-    public class CollectionManager : IManager
+    public sealed class ProfileCollectionHelper
     {
         #region events
         public delegate void CollectionAddedEventHandler(GameCollection collection);
@@ -23,25 +24,22 @@ namespace HandheldCompanion.Managers
         #endregion
 
         private readonly string _filePath;
+        private readonly string _directoryPath;
         private List<GameCollection> _collections = [];
         private readonly object _lock = new();
 
-        public CollectionManager()
+        public ProfileCollectionHelper()
         {
-            ManagerPath = Path.Combine(App.SettingsPath, "collections");
-            if (!Directory.Exists(ManagerPath))
-                Directory.CreateDirectory(ManagerPath);
+            _directoryPath = Path.Combine(App.SettingsPath, "collections");
+            if (!Directory.Exists(_directoryPath))
+                Directory.CreateDirectory(_directoryPath);
 
-            _filePath = Path.Combine(ManagerPath, "collections.json");
+            _filePath = Path.Combine(_directoryPath, "collections.json");
+            Load();
         }
 
-        public override void Start()
+        private void Load()
         {
-            if (Status.HasFlag(ManagerStatus.Initializing) || Status.HasFlag(ManagerStatus.Initialized))
-                return;
-
-            base.PrepareStart();
-
             if (File.Exists(_filePath))
             {
                 try
@@ -55,16 +53,6 @@ namespace HandheldCompanion.Managers
                 }
             }
 
-            base.Start();
-        }
-
-        public override void Stop()
-        {
-            if (Status.HasFlag(ManagerStatus.Halting) || Status.HasFlag(ManagerStatus.Halted))
-                return;
-
-            base.PrepareStop();
-            base.Stop();
         }
 
         public IReadOnlyList<GameCollection> GetCollections()

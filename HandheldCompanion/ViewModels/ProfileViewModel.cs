@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
@@ -417,7 +417,7 @@ namespace HandheldCompanion.ViewModels
                     })));
 
                 // User collections
-                foreach (GameCollection col in ManagerFactory.collectionManager.GetCollections())
+                foreach (GameCollection col in ManagerFactory.profileManager.GetCollections())
                 {
                     Guid colId = col.Id;
                     items.Add(new CollectionMenuItemViewModel(col.Name, Profile.Collections.Contains(colId),
@@ -450,7 +450,7 @@ namespace HandheldCompanion.ViewModels
                         }.ShowAsync();
                         if (result != ContentDialogResult.Primary || string.IsNullOrWhiteSpace(textBox.Text))
                             return;
-                        GameCollection newCol = ManagerFactory.collectionManager.CreateCollection(textBox.Text.Trim());
+                        GameCollection newCol = ManagerFactory.profileManager.CreateCollection(textBox.Text.Trim());
                         lock (Profile.SyncRoot)
                             Profile.Collections.Add(newCol.Id);
                         OnPropertyChanged(nameof(CollectionMenuItems));

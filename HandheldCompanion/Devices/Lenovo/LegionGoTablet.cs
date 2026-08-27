@@ -1,4 +1,4 @@
-﻿// #define USE_SAPIENTIAUSB
+// #define USE_SAPIENTIAUSB
 using HandheldCompanion.Actions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;

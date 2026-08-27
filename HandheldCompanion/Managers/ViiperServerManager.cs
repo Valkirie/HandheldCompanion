@@ -114,8 +114,7 @@ public static class ViiperServerManager
             try
             {
                 UsbipCli.DetachAll();
-                if (_service is not null)
-                    _service.FeedbackReceived -= Service_FeedbackReceived;
+                _service?.FeedbackReceived -= Service_FeedbackReceived;
                 _service?.Dispose();
             }
             catch { }

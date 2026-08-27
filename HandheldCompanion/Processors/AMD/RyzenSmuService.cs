@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Notifications;
 using HandheldCompanion.Shared;
 using System;

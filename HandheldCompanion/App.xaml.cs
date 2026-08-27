@@ -250,7 +250,7 @@ public partial class App : Application
 
                     splashScreen.SetStatus("Restarting device...");
                     splashScreen.Close();
-                    PowerActions.Restart(force: false);
+                    PowerActionsHelper.Restart(force: false);
                     Shutdown(0);
                     return;
                 }

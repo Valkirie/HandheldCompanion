@@ -1,6 +1,5 @@
 using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Devices.Valve;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;

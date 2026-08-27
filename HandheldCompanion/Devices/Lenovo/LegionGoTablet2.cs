@@ -76,7 +76,7 @@ namespace HandheldCompanion.Devices.Lenovo
                 // Release fan control back to EC/BIOS
                 ECWriteUInt16(REG_OVERRIDE_WRITE, 0);
             }
-            
+
             // set flag
             hasAppliedSoftwareFanProfile = enable;
         }

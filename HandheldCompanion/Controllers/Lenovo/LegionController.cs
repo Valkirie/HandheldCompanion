@@ -1,6 +1,5 @@
 using HandheldCompanion.Devices;
 using HandheldCompanion.Devices.Lenovo;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;

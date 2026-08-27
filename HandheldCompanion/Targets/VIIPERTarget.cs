@@ -1,8 +1,6 @@
 using HandheldCompanion.Controllers;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
-using HandheldCompanion.Targets.Viiper;
 using HandheldCompanion.Utils;
 using System;
 

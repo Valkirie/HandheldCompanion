@@ -4,9 +4,9 @@ using System;
 using System.IO;
 using System.Text.Json;
 
-namespace HandheldCompanion.Managers
+namespace HandheldCompanion.Helpers
 {
-    public static class DeviceConfigurationManager
+    public static class DeviceConfigurationHelper
     {
         private static readonly string ConfigsDirectory =
             Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Devices");

@@ -76,7 +76,7 @@ public class GPDWin4 : IDevice
                 base.SetFanDuty(0);
                 break;
         }
-        
+
         // set flag
         hasAppliedSoftwareFanProfile = enable;
     }

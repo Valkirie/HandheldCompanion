@@ -1,6 +1,5 @@
-using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Helpers;
+using HandheldCompanion.Inputs;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -168,6 +167,6 @@ internal sealed class RemoteController : IController
 
     public override void SetVibration(byte largeMotor, byte smallMotor)
     {
-        NetworkControllerTransport.SendVibration(id, largeMotor, smallMotor);
+        NetworkControllerHelper.SendVibration(id, largeMotor, smallMotor);
     }
 }

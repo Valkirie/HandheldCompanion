@@ -18,6 +18,7 @@ namespace HandheldCompanion.Managers
     {
         private object profileLock = new();
         private PowerProfile? currentProfile;
+        private bool streamingPowerOverride;
 
         public ConcurrentDictionary<Guid, PowerProfile> profiles = [];
 
@@ -245,7 +246,8 @@ namespace HandheldCompanion.Managers
                 PowerStatus powerStatus = SystemInformation.PowerStatus;
 
                 // Get the power profile
-                PowerProfile powerProfile = GetProfile(profile.PowerProfiles[(int)powerStatus.PowerLineStatus]);
+                int powerLineStatus = streamingPowerOverride ? (int)PowerLineStatus.Offline : (int)powerStatus.PowerLineStatus;
+                PowerProfile powerProfile = GetProfile(profile.PowerProfiles[powerLineStatus]);
                 if (powerProfile is null)
                     return;
 
@@ -443,6 +445,20 @@ namespace HandheldCompanion.Managers
             {
                 Monitor.Exit(profileLock);
             }
+        }
+
+        public void SetStreamingPowerOverride(bool enabled)
+        {
+            lock (profileLock)
+            {
+                if (streamingPowerOverride == enabled)
+                    return;
+
+                streamingPowerOverride = enabled;
+            }
+
+            if (ManagerFactory.profileManager.IsReady)
+                ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
         }
 
         public void SerializeProfile(PowerProfile profile)

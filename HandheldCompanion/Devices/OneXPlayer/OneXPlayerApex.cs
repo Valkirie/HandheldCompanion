@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Threading;
-using System.Threading.Tasks;
-using HandheldCompanion.Commands.Functions.HC;
+﻿using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Shared;
+using System;
+using System.Threading.Tasks;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices.OneXPlayer

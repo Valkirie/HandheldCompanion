@@ -210,7 +210,7 @@ namespace HandheldCompanion.ViewModels
 
         public override Visibility AxisResponseCurveVisibility
         {
-            get => Action is AxisActions axisAction && axisAction.actionType == ActionType.Joystick ? Visibility.Visible : Visibility.Collapsed;
+            get => Action is GyroActions ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public override int Axis2AxisOutputShapeIndex
@@ -489,10 +489,10 @@ namespace HandheldCompanion.ViewModels
 
         private void ResetResponseCurve()
         {
-            if (Action is not AxisActions axisAction)
+            if (Action is not GyroActions action)
                 return;
 
-            axisAction.ResponseCurvePoints = new List<Vector2>
+            action.ResponseCurvePoints = new List<Vector2>
             {
                 new Vector2(0.0f, 0.0f),
                 new Vector2(0.2f, 0.2f),
@@ -527,8 +527,7 @@ namespace HandheldCompanion.ViewModels
 
         public void ReleaseViewDependencies()
         {
-            if (_responseCurveLineSeries is not null)
-                _responseCurveLineSeries.ActualValues.CollectionChanged -= ResponseCurveActualValues_CollectionChanged;
+            _responseCurveLineSeries?.ActualValues.CollectionChanged -= ResponseCurveActualValues_CollectionChanged;
 
             if (_responseCurveGraph is not null)
             {
@@ -572,7 +571,7 @@ namespace HandheldCompanion.ViewModels
 
         private void ResponseCurveActualValues_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            if (_updatingResponseCurveUI || _responseCurveLineSeries is null || Action is not AxisActions axisAction)
+            if (_updatingResponseCurveUI || _responseCurveLineSeries is null || Action is not GyroActions action)
                 return;
 
             if (_isDraggingResponseCurve)
@@ -581,15 +580,15 @@ namespace HandheldCompanion.ViewModels
                 return;
             }
 
-            CommitResponseCurveFromChart(axisAction, submitMapping: false);
+            CommitResponseCurveFromChart(action, submitMapping: false);
         }
 
-        private void CommitResponseCurveFromChart(AxisActions axisAction, bool submitMapping)
+        private void CommitResponseCurveFromChart(GyroActions action, bool submitMapping)
         {
             if (_responseCurveLineSeries is null)
                 return;
 
-            List<Vector2> responseCurvePoints = axisAction.ResponseCurvePoints;
+            List<Vector2> responseCurvePoints = action.ResponseCurvePoints;
             int count = Math.Min(_responseCurveLineSeries.ActualValues.Count, responseCurvePoints.Count);
             bool changed = false;
 
@@ -618,7 +617,7 @@ namespace HandheldCompanion.ViewModels
 
         private void PushResponseCurveToView()
         {
-            if (_responseCurveLineSeries is null || Action is not AxisActions axisAction)
+            if (_responseCurveLineSeries is null || Action is not GyroActions action)
                 return;
 
             if (_responseCurveLineSeries.ActualValues.Count == 0)
@@ -627,11 +626,11 @@ namespace HandheldCompanion.ViewModels
             _updatingResponseCurveUI = true;
             try
             {
-                int count = Math.Min(_responseCurveLineSeries.ActualValues.Count, axisAction.ResponseCurvePoints.Count);
+                int count = Math.Min(_responseCurveLineSeries.ActualValues.Count, action.ResponseCurvePoints.Count);
                 for (int idx = 0; idx < count; idx++)
-                    _responseCurveLineSeries.ActualValues[idx] = (double)axisAction.ResponseCurvePoints[idx].Y;
+                    _responseCurveLineSeries.ActualValues[idx] = (double)action.ResponseCurvePoints[idx].Y;
 
-                ResponseCurveUpdateRequested?.Invoke(axisAction.ResponseCurvePoints.Select(point => (double)point.Y).ToArray());
+                ResponseCurveUpdateRequested?.Invoke(action.ResponseCurvePoints.Select(point => (double)point.Y).ToArray());
             }
             finally
             {
@@ -703,7 +702,7 @@ namespace HandheldCompanion.ViewModels
 
         private void EndResponseCurveDrag()
         {
-            if (_responseCurveGraph is null || Action is not AxisActions axisAction)
+            if (_responseCurveGraph is null)
                 return;
 
             if (!_isDraggingResponseCurve)
@@ -712,8 +711,10 @@ namespace HandheldCompanion.ViewModels
             _isDraggingResponseCurve = false;
             _responseCurveDragIndex = -1;
 
-            if (_responseCurveDirty)
-                CommitResponseCurveFromChart(axisAction, submitMapping: true);
+            if (_responseCurveDirty && Action is GyroActions action)
+                CommitResponseCurveFromChart(action, submitMapping: true);
+            else
+                _responseCurveDirty = false;
 
             if (Mouse.Captured == _responseCurveGraph)
                 _responseCurveGraph.ReleaseMouseCapture();
@@ -732,7 +733,7 @@ namespace HandheldCompanion.ViewModels
 
         private void PushResponseCurveToViewIfNeeded()
         {
-            if (_responseCurveLineSeries is null || Action is not AxisActions axisAction)
+            if (_responseCurveLineSeries is null || Action is not GyroActions)
                 return;
 
             if (_responseCurveLineSeries.ActualValues.Count == 0)

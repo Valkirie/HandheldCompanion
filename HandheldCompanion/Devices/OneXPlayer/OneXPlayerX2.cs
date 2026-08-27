@@ -2,16 +2,12 @@ using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using System;
 using System.Linq;
-using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using WindowsInput.Events;
-using YamlDotNet.Core.Tokens;
-using static HandheldCompanion.IGCL.IGCLBackend;
 namespace HandheldCompanion.Devices;
 
 public class OneXPlayerX2 : OneXPlayerX1

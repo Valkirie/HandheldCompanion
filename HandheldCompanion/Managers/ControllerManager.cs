@@ -34,7 +34,7 @@ using Windows.UI;
 using Windows.UI.ViewManagement;
 using static HandheldCompanion.Misc.ProcessEx;
 using static HandheldCompanion.Utils.DeviceUtils;
-using DriverStore = HandheldCompanion.Helpers.DriverStore;
+using DriverStoreHelper = HandheldCompanion.Helpers.DriverStoreHelper;
 using MediaColor = System.Windows.Media.Color;
 using Timer = System.Timers.Timer;
 
@@ -66,24 +66,8 @@ public static class ControllerManager
     /// </summary>
     private static readonly TimeSpan CrossWaitTimeout = TimeSpan.FromSeconds(5);
 
-    private static Thread? watchdogThread = null!;
-    private static bool watchdogThreadRunning;
-    private static readonly object watchdogLock = new();
-    private static int watchdogStarted;
-    private static volatile bool watchdogSettling;
     private static Thread? pumpThread = null;
     private static bool pumpThreadRunning;
-
-    // Slot monitor runs independently from the actual slot manipulation logic.
-    // It is intentionally always running (light polling) so HC can detect slot issues
-    // and either auto-fix (Automatic) or prompt the user (Manual).
-    private static Thread? slotMonitorThread = null!;
-    private static bool slotMonitorThreadRunning;
-    private static readonly object slotMonitorLock = new();
-    private static int slotMonitorStarted;
-
-    // Ensures that probing/manipulating slot state is serialized across monitor/event/fix run.
-    private static readonly SemaphoreSlim slotStateSemaphore = new(1, 1);
 
     public enum ControllerSlotManagementMode
     {
@@ -98,28 +82,7 @@ public static class ControllerManager
         AutoConnect = 2,
     }
 
-    private static ControllerSlotManagementMode slotManagementMode = ControllerSlotManagementMode.Manual;
-
-    // Manual prompting (debounce / ignore)
-    private static DateTime slotFixIgnoreUntilUtc = DateTime.MinValue;
-    private static DateTime slotFixLastPromptUtc = DateTime.MinValue;
-
-    // Slot issue state (for UI + manual fallback)
-    public static bool HasSlotIssue { get; private set; }
-    public static bool HasVirtualSlot1Issue { get; private set; }
-    public static string SlotIssueReason { get; private set; } = string.Empty;
-
-    // Status toast debounce
-    private static DateTime slotFixLastStatusToastUtc = DateTime.MinValue;
-    private static ControllerManagerStatus slotFixLastStatusToast = ControllerManagerStatus.Pending;
-    private static int ControllerManagementAttempts = 0;
-    private const int ControllerManagementMaxAttempts = 4;
-
-    // Consecutive watchdog failure tracking – prevents infinite retry loops at boot
-    // when XInput slot assignments are not yet stable. After MaxConsecutiveWatchdogFailures
-    // failed runs the mode is switched to Manual, which never auto-triggers the watchdog.
-    private static int consecutiveWatchdogFailures = 0;
-    private const int MaxConsecutiveWatchdogFailures = 3;
+    private static readonly ControllerSlotHelper slotHelper = new(UpdateStatus, SetSlotIssueState);
 
     // Steam hybrid mode: temporarily overridden HIDmode when Steam process has foreground
     private static HIDmode previousHIDmode = HIDmode.NotSelected;
@@ -136,7 +99,7 @@ public static class ControllerManager
     private static bool ControllerMuted;
     private static readonly object networkStreamingLock = new();
     private static readonly HashSet<Guid> streamingControllers = [];
-    private static bool localScreenOffForStreaming;
+    private static bool localBrightnessDimmedForStreaming;
 
     private static readonly object targetLock = new();
     private static readonly object targetTransitionLock = new();
@@ -203,13 +166,13 @@ public static class ControllerManager
         pumpThread.Start();
 
         // Start controller slot monitor (always running)
-        StartSlotMonitor();
+        slotHelper.Start();
 
         // manage events
         TimerManager.Tick += Tick;
-        NetworkControllerTransport.PacketReceived += NetworkControllerTransport_PacketReceived;
-        NetworkControllerTransport.VibrationReceived += NetworkControllerTransport_VibrationReceived;
-        NetworkControllerTransport.StreamingChanged += NetworkControllerTransport_StreamingChanged;
+        NetworkControllerHelper.PacketReceived += NetworkControllerHelper_PacketReceived;
+        NetworkControllerHelper.VibrationReceived += NetworkControllerHelper_VibrationReceived;
+        NetworkControllerHelper.StreamingChanged += NetworkControllerHelper_StreamingChanged;
         UIGamepad.GotFocus += GamepadFocusManager_FocusChanged;
         UIGamepad.LostFocus += GamepadFocusManager_FocusChanged;
         VirtualManager.Vibrated += VirtualManager_Vibrated;
@@ -319,8 +282,8 @@ public static class ControllerManager
         {
             switch (command)
             {
-                case "TurnOffLocalScreen":
-                    TurnOffLocalScreenForStreaming();
+                case "DimLocalBrightness":
+                    DimLocalBrightnessForStreaming();
                     break;
                 case "SetTarget":
                     if (args.TryGetValue("deviceId", out string? baseContainerDeviceInstanceId) && !string.IsNullOrEmpty(baseContainerDeviceInstanceId))
@@ -334,11 +297,11 @@ public static class ControllerManager
 
                 case "SlotFixReset":
                     // Manual user action: force a fresh run (reset attempts)
-                    StartWatchdog(SlotFixTrigger.Manual, resetAttempts: true);
+                    slotHelper.TriggerFix(resetAttempts: true);
                     break;
                 case "SlotFixIgnore":
                     // User explicitly dismissed the prompt; suppress prompts for a short period.
-                    slotFixIgnoreUntilUtc = DateTime.UtcNow.AddMinutes(5);
+                    slotHelper.SetIgnoreWindow();
                     break;
             }
         }
@@ -364,15 +327,13 @@ public static class ControllerManager
         if (controllerState is null)
             return;
 
-        // snapshot motions; bail if not ready
-        Dictionary<byte, GamepadMotion>? motions = tc.gamepadMotions;
-        if (motions is null || motions.Count == 0)
-            return;
+        // snapshot motions; button-only controllers may not have a motion sensor
+        Dictionary<byte, GamepadMotion> motions = tc.gamepadMotions;
 
-        // get main motion safely
+        // get main motion, falling back to the device sensor for button-only controllers
         byte gamepadIndex = tc.gamepadIndex;
         if (!motions.TryGetValue(gamepadIndex, out GamepadMotion? gamepadMotion) || gamepadMotion is null)
-            return;
+            gamepadMotion = IDevice.GetCurrent().GamepadMotion;
 
         // sensor override
         switch (SensorsManager.ActiveSensorFamily)
@@ -394,10 +355,10 @@ public static class ControllerManager
         if (tc is not RemoteController)
         {
             // Publish local controller state to an authorized peer after the selected sensor has updated it.
-            NetworkControllerTransport.Publish(tc);
+            NetworkControllerHelper.Publish(tc);
 
             // Do not allow a controller to be used remotely if it is already broadcasting to a peer.
-            if (NetworkControllerTransport.IsBroadcasting(tc))
+            if (NetworkControllerHelper.IsBroadcasting(tc))
                 return;
         }
 
@@ -444,7 +405,7 @@ public static class ControllerManager
             controller = targetController;
 
         if (controller is RemoteController remoteController && !remoteController.IsTimedOut)
-            NetworkControllerTransport.RequestController(remoteController.NetworkId);
+            NetworkControllerHelper.RequestController(remoteController.NetworkId);
     }
 
     private static void pumpThreadLoop(object? obj)
@@ -1210,7 +1171,7 @@ public static class ControllerManager
         }
 
         // Stop slot monitor
-        StopSlotMonitor();
+        slotHelper.Stop();
 
         // Cleanup SDL3 controllers
         foreach (SDLController controller in SDLControllers.Values)
@@ -1220,10 +1181,10 @@ public static class ControllerManager
 
         // manage events
         TimerManager.Tick -= Tick;
-        NetworkControllerTransport.PacketReceived -= NetworkControllerTransport_PacketReceived;
-        NetworkControllerTransport.VibrationReceived -= NetworkControllerTransport_VibrationReceived;
+        NetworkControllerHelper.PacketReceived -= NetworkControllerHelper_PacketReceived;
+        NetworkControllerHelper.VibrationReceived -= NetworkControllerHelper_VibrationReceived;
         StopNetworkControllers();
-        NetworkControllerTransport.StreamingChanged -= NetworkControllerTransport_StreamingChanged;
+        NetworkControllerHelper.StreamingChanged -= NetworkControllerHelper_StreamingChanged;
         ManagerFactory.deviceManager.XUsbDeviceArrived -= XUsbDeviceArrived;
         ManagerFactory.deviceManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
         ManagerFactory.deviceManager.HidDeviceArrived -= HidDeviceArrived;
@@ -1275,11 +1236,37 @@ public static class ControllerManager
         LogManager.LogInformation("{0} has stopped", "ControllerManager");
     }
 
-    private static void NetworkControllerTransport_VibrationReceived(Guid id, byte largeMotor, byte smallMotor)
+    private static void NetworkControllerHelper_VibrationReceived(Guid id, byte largeMotor, byte smallMotor)
     {
         IController? controller = Controllers.Values.FirstOrDefault(candidate =>
-            candidate is not RemoteController && NetworkControllerTransport.GetNetworkControllerId(candidate.GetInstanceId()) == id);
+            candidate is not RemoteController && NetworkControllerHelper.GetNetworkControllerId(candidate.GetInstanceId()) == id);
         controller?.SetVibration(largeMotor, smallMotor);
+    }
+
+    public static void Unplug(IController controller)
+    {
+        string containerId = controller.GetContainerInstanceId();
+        try
+        {
+            bool wasTarget = IsTargetController(controller.GetInstanceId());
+            ControllerUnplugged?.Invoke(controller, false, wasTarget);
+            PowerCyclers.TryRemove(containerId, out _);
+            Controllers.TryRemove(containerId, out _);
+            bool isPhysical = controller.IsPhysical();
+            controller.Gone();
+            if (isPhysical && HIDuncloakondisconnect)
+                controller.Unhide(false);
+            if (isPhysical && ClearTargetIfMatch(controller.GetInstanceId()))
+                PickTargetController();
+            else
+                controller.Dispose();
+        }
+        catch { }
+    }
+
+    public static void DisconnectNetworkController(IController controller)
+    {
+        NetworkControllerHelper.Disconnect(controller);
     }
 
     public static void RemoteControllerSessionClosed(Guid id)
@@ -1444,11 +1431,7 @@ public static class ControllerManager
                     if (value is not null && int.TryParse(value.ToString(), out int parsed))
                         modeInt = parsed;
 
-                    slotManagementMode = (ControllerSlotManagementMode)Math.Max(0, Math.Min(1, modeInt));
-
-                    // Reset failure counter so re-enabling Automatic mode gets fresh attempts.
-                    if (slotManagementMode == ControllerSlotManagementMode.Automatic)
-                        consecutiveWatchdogFailures = 0;
+                    slotHelper.SetMode((ControllerSlotManagementMode)Math.Max(0, Math.Min(1, modeInt)));
                 }
                 break;
 
@@ -1460,7 +1443,7 @@ public static class ControllerManager
                 bool networkControllersEnabled = Convert.ToBoolean(value);
                 LogManager.LogInformation("Network controllers {0}", networkControllersEnabled ? "enabled" : "disabled");
                 if (networkControllersEnabled)
-                    NetworkControllerTransport.Start();
+                    NetworkControllerHelper.Start();
                 else
                     StopNetworkControllers();
                 break;
@@ -1486,7 +1469,7 @@ public static class ControllerManager
 
     #region Network controller lifecycle
 
-    private static void NetworkControllerTransport_StreamingChanged(Guid id, bool streaming)
+    private static void NetworkControllerHelper_StreamingChanged(Guid id, bool streaming)
     {
         bool showPrompt = false;
         bool restoreScreen = false;
@@ -1499,9 +1482,9 @@ public static class ControllerManager
                 bool added = streamingControllers.Add(id);
                 showPrompt = wasEmpty && added;
             }
-            else if (streamingControllers.Remove(id) && streamingControllers.Count == 0 && localScreenOffForStreaming)
+            else if (streamingControllers.Remove(id) && streamingControllers.Count == 0 && localBrightnessDimmedForStreaming)
             {
-                localScreenOffForStreaming = false;
+                localBrightnessDimmedForStreaming = false;
                 restoreScreen = true;
             }
         }
@@ -1510,26 +1493,29 @@ public static class ControllerManager
             ShowNetworkStreamingToast();
 
         if (restoreScreen)
-            MultimediaManager.TurnOnScreen(true);
+        {
+            ManagerFactory.multimediaManager.RestoreStreamingBrightness();
+            ManagerFactory.powerProfileManager.SetStreamingPowerOverride(false);
+        }
     }
 
     private static void ShowNetworkStreamingToast()
     {
         ToastManager.SendToast(new ToastRequest
         {
-            Title = "Local controller streaming",
-            Content = "Do you want to turn off the local screen while the controller is streamed?",
+            Title = "Controller is being streamed",
+            Content = "Dim the screen and use the profile’s on-battery power preset while streaming the controller to preserve battery life?",
             Actions =
             {
                 new ToastAction
                 {
-                    Label = "Turn off screen",
-                    Command = "TurnOffLocalScreen",
-                    Callback = _ => TurnOffLocalScreenForStreaming()
+                    Label = "Dim brightness and save power",
+                    Command = "DimLocalBrightness",
+                    Callback = _ => DimLocalBrightnessForStreaming()
                 },
                 new ToastAction
                 {
-                    Label = "Keep screen on",
+                    Label = "Keep current brightness and power mode",
                     Command = "KeepLocalScreenOn",
                     Callback = _ => { }
                 }
@@ -1537,20 +1523,29 @@ public static class ControllerManager
         });
     }
 
-    private static void TurnOffLocalScreenForStreaming()
+    private static void DimLocalBrightnessForStreaming()
     {
+        bool dimBrightness = false;
         lock (networkStreamingLock)
         {
             if (streamingControllers.Count == 0)
                 return;
 
-            localScreenOffForStreaming = true;
+            if (!localBrightnessDimmedForStreaming)
+            {
+                localBrightnessDimmedForStreaming = true;
+                dimBrightness = true;
+            }
         }
 
-        MultimediaManager.TurnOffScreen(true);
+        if (dimBrightness)
+        {
+            ManagerFactory.multimediaManager.DimForStreaming();
+            ManagerFactory.powerProfileManager.SetStreamingPowerOverride(true);
+        }
     }
 
-    private static void NetworkControllerTransport_PacketReceived(NetworkControllerPacket packet)
+    private static void NetworkControllerHelper_PacketReceived(NetworkControllerPacket packet)
     {
         if (!ManagerFactory.settingsManager.GetBoolean("NetworkControllersEnabled"))
             return;
@@ -1621,7 +1616,7 @@ public static class ControllerManager
 
     private static void StopNetworkControllers()
     {
-        NetworkControllerTransport.Stop();
+        NetworkControllerHelper.Stop();
         DisconnectedNetworkControllers.Clear();
 
         foreach (var entry in NetworkControllers.ToArray())
@@ -1733,7 +1728,7 @@ public static class ControllerManager
         }
 
         // Stop any in-flight slot fix to avoid manipulating devices during suspend/shutdown.
-        StopWatchdog();
+        slotHelper.StopWatchdog();
 
         ClearTargetController();
     }
@@ -1744,678 +1739,33 @@ public static class ControllerManager
         Automatic = 1
     }
 
-    /// <summary>
-    /// Update the public slot-issue state used by the UI (manual fallback button).
-    /// This must be low-noise: only raise when state/reason actually changes.
-    /// </summary>
-    private static void SetSlotIssueState(bool hasIssue, string reason)
-    {
-        reason ??= string.Empty;
-
-        if (HasSlotIssue == hasIssue && string.Equals(SlotIssueReason, reason, StringComparison.Ordinal))
-            return;
-
-        HasSlotIssue = hasIssue;
-        HasVirtualSlot1Issue = hasIssue && reason == "Virtual controller is not occupying slot 1.";
-        SlotIssueReason = reason;
-        SlotIssueChanged?.Invoke(hasIssue, reason);
-    }
+    public static bool HasSlotIssue => slotHelper.HasSlotIssue;
+    public static bool HasVirtualSlot1Issue => slotHelper.HasVirtualSlot1Issue;
+    public static string SlotIssueReason => slotHelper.SlotIssueReason;
 
     private static void ControllerManager_ControllerPlugged(IController controller, bool isPowerCycling)
     {
-        // Events caused by our own power-cycling (watchdog / hide) are not real topology changes.
-        if (isPowerCycling)
-            return;
-
-        _ = Task.Run(HandleControllerTopologyChangedAsync);
+        if (!isPowerCycling)
+            slotHelper.HandleTopologyChanged();
     }
 
     private static void ControllerManager_ControllerUnplugged(IController controller, bool isPowerCycling, bool wasTarget)
     {
-        // Events caused by our own power-cycling (watchdog / hide) are not real topology changes.
-        if (isPowerCycling)
+        if (!isPowerCycling)
+            slotHelper.HandleTopologyChanged();
+    }
+
+    public static void TriggerSlotFix(bool resetAttempts) => slotHelper.TriggerFix(resetAttempts);
+    public static void StartWatchdog() => slotHelper.TriggerFix(resetAttempts: false);
+    public static void StopWatchdog() => slotHelper.StopWatchdog();
+    public static bool AssignXInputSlot(XInputController controller, byte targetSlot) => slotHelper.AssignXInputSlot(controller, targetSlot);
+
+    private static void SetSlotIssueState(bool hasIssue, string reason) => SlotIssueChanged?.Invoke(hasIssue, reason);
+
+    private static void UpdateStatus(ControllerManagerStatus status, int attempts)
+    {
+        if (status == ControllerManagerStatus.Succeeded && managerStatus != ControllerManagerStatus.Busy)
             return;
-
-        _ = Task.Run(HandleControllerTopologyChangedAsync);
-    }
-
-    /// <summary>
-    /// A controller was plugged/unplugged. This is the only moment we proactively prompt the user (Manual mode).
-    /// </summary>
-    private static async Task HandleControllerTopologyChangedAsync()
-    {
-        // Let Windows settle XInput assignments.
-        await Task.Delay(500).ConfigureAwait(false);
-
-        // If a fix run is already active, let it finish; the monitor will update state.
-        if (watchdogThreadRunning)
-            return;
-
-        // Avoid re-triggering while controllers are still settling from a recent watchdog run.
-        if (watchdogSettling)
-            return;
-
-        SlotProbeResult probe = await ProbeSlotsAsync().ConfigureAwait(false);
-        if (!probe.IsAvailable)
-            return;
-
-        SetSlotIssueState(probe.NeedsFix, probe.Reason);
-
-        if (!probe.NeedsFix)
-            return;
-
-        switch (slotManagementMode)
-        {
-            case ControllerSlotManagementMode.Automatic:
-                StartWatchdog(SlotFixTrigger.Automatic, resetAttempts: false);
-                break;
-
-            case ControllerSlotManagementMode.Manual:
-            default:
-                TrySendSlotFixPromptToast(probe.Reason);
-                break;
-        }
-    }
-
-    /// <summary>
-    /// Starts the controller slot monitor thread (always running). The monitor detects invalid slot state and either
-    /// auto-fixes (Automatic) or prompts the user (Manual).
-    /// </summary>
-    private static void StartSlotMonitor()
-    {
-        if (Interlocked.Exchange(ref slotMonitorStarted, 1) == 1)
-            return;
-
-        lock (slotMonitorLock)
-        {
-            slotMonitorThreadRunning = true;
-            slotMonitorThread = new Thread(SlotMonitorLoop)
-            {
-                IsBackground = true,
-                Name = "ControllerSlotMonitor"
-            };
-            slotMonitorThread.Start();
-        }
-    }
-
-    private static void StopSlotMonitor()
-    {
-        if (Interlocked.Exchange(ref slotMonitorStarted, 0) == 0)
-            return;
-
-        slotMonitorThreadRunning = false;
-        if (slotMonitorThread?.IsAlive == true)
-            slotMonitorThread.Join(2000);
-        slotMonitorThread = null;
-    }
-
-    /// <summary>
-    /// Public entrypoint for Manual mode UI/button and toast action.
-    /// Starts a finite slot-fix run that will stop automatically once completed.
-    /// </summary>
-    public static void TriggerSlotFix(bool resetAttempts)
-    {
-        StartWatchdog(SlotFixTrigger.Manual, resetAttempts);
-    }
-
-    /// <summary>
-    /// Starts a slot-fix run using the current settings (defaults to Automatic trigger). The thread will automatically stop
-    /// once the run completes (success or failure).
-    /// </summary>
-    public static void StartWatchdog()
-    {
-        StartWatchdog(SlotFixTrigger.Automatic, resetAttempts: false);
-    }
-
-    private static void StartWatchdog(SlotFixTrigger trigger, bool resetAttempts)
-    {
-        if (resetAttempts)
-        {
-            Interlocked.Exchange(ref ControllerManagementAttempts, 0);
-            consecutiveWatchdogFailures = 0;
-            watchdogSettling = false;
-        }
-
-        // If a run is already active, do not start another one.
-        if (Interlocked.Exchange(ref watchdogStarted, 1) == 1)
-            return;
-
-        lock (watchdogLock)
-        {
-            watchdogThreadRunning = true;
-            watchdogThread = new Thread(() => WatchdogLoop(trigger))
-            {
-                IsBackground = true,
-                Name = "ControllerSlotFix"
-            };
-            watchdogThread.Start();
-        }
-    }
-
-    public static void StopWatchdog()
-    {
-        if (Interlocked.Exchange(ref watchdogStarted, 0) == 0)
-            return;
-
-        watchdogThreadRunning = false;
-        if (watchdogThread?.IsAlive == true)
-            watchdogThread.Join(3000);
-        watchdogThread = null;
-    }
-
-    private static void VirtualManager_Vibrated(byte LargeMotor, byte SmallMotor)
-    {
-        IController? controller;
-        lock (targetLock)
-            controller = targetController;
-
-        controller?.SetVibration(LargeMotor, SmallMotor);
-    }
-
-    public static void Unplug(IController controller)
-    {
-        string baseContainerDeviceInstanceId = controller.GetContainerInstanceId();
-
-        try
-        {
-            bool WasTarget = IsTargetController(controller.GetInstanceId());
-
-            LogManager.LogInformation("XInput controller {0} force unplugged", controller.ToString());
-            ControllerUnplugged?.Invoke(controller, false, WasTarget);
-
-            PowerCyclers.TryRemove(baseContainerDeviceInstanceId, out _);
-            Controllers.TryRemove(baseContainerDeviceInstanceId, out _);
-
-            bool isPhysical = controller.IsPhysical();
-
-            controller.Gone();
-
-            if (isPhysical && HIDuncloakondisconnect)
-                controller.Unhide(false);
-
-            if (isPhysical && ClearTargetIfMatch(controller.GetInstanceId()))
-                PickTargetController();
-            else
-                controller.Dispose();
-        }
-        catch { }
-    }
-
-    private static List<IController> InvalidSlotAssignments = new();
-
-    private static IEnumerable<IController> GetSlotXInputControllers(bool? physical = null)
-    {
-        return Controllers.Values.Where(controller =>
-            controller is IXInputController &&
-            !controller.IsDummy() &&
-            (physical is null || (physical.Value ? controller.IsPhysical() : controller.IsVirtual())));
-    }
-
-    private static bool HasSlotXInputController(bool physical)
-    {
-        return GetSlotXInputControllers(physical).Any();
-    }
-
-    private static IController? GetSlotXInputControllerFromSlot(UserIndex userIndex, bool physical)
-    {
-        return GetSlotXInputControllers(physical)
-            .FirstOrDefault(controller => controller.GetUserIndex() == (int)userIndex);
-    }
-
-    private sealed record SlotProbeResult(
-        bool NeedsFix,
-        bool EnsureVirtualSlot1,
-        bool VirtualInSlot1,
-        bool HasInvalidControllers,
-        bool HasInvalidVirtual,
-        string Reason,
-        bool IsAvailable)
-    {
-        public static readonly SlotProbeResult Healthy =
-            new(false, false, true, false, false, string.Empty, true);
-
-        public static readonly SlotProbeResult Unavailable =
-            new(false, false, true, false, false, string.Empty, false);
-    }
-
-    private static void SlotMonitorLoop()
-    {
-        // A small polling loop that detects invalid slot assignment.
-        // It MUST NOT proactively prompt (toast) in Manual mode; prompting is event-driven on plug/unplug.
-        while (slotMonitorThreadRunning)
-        {
-            Thread.Sleep(1000);
-
-            // If a slot-fix run is active, do not interfere.
-            if (watchdogThreadRunning)
-                continue;
-
-            // Wait for all power-cycled controllers to settle before probing again.
-            if (watchdogSettling)
-            {
-                if (PowerCyclers.IsEmpty)
-                    watchdogSettling = false;
-                continue;
-            }
-
-            // Update UI state continuously so the Manual fallback button is available even if a toast was ignored.
-            SlotProbeResult probe = ProbeSlotsAsync().GetAwaiter().GetResult();
-            if (!probe.IsAvailable)
-                continue;
-
-            SetSlotIssueState(probe.NeedsFix, probe.Reason);
-
-            if (!probe.NeedsFix)
-            {
-                MarkControllerManagementSuccess();
-                continue;
-            }
-
-            // Automatic mode can still self-heal from polling (no toast).
-            if (slotManagementMode == ControllerSlotManagementMode.Automatic)
-                StartWatchdog(SlotFixTrigger.Automatic, resetAttempts: false);
-        }
-    }
-
-    private static async Task<SlotProbeResult> ProbeSlotsAsync()
-    {
-        if (!await slotStateSemaphore.WaitAsync(CrossWaitTimeout).ConfigureAwait(false))
-            return SlotProbeResult.Unavailable;
-
-        try
-        {
-            var slotOwners = new Dictionary<byte, IController>();
-            var newInvalid = new List<IController>();
-
-            var tasks = GetSlotXInputControllers()
-                .Where(c => !c.IsDummy() && !c.IsBusy)
-                .Select(controller => Task.Run(() =>
-                {
-                    byte index = DeviceManager.GetXInputIndex(controller.GetContainerPath());
-
-                    // Skip controllers whose slot could not be determined —
-                    // they must not be attached (UserIndex.Any cross-talk) or
-                    // counted as duplicates (false-positive triggering FixDuplicateSlots).
-                    if (index == byte.MaxValue)
-                        return;
-
-                    ((IXInputController)controller).AttachController(index);
-
-                    lock (slotOwners)
-                    {
-                        if (slotOwners.TryGetValue(index, out var firstOwner))
-                        {
-                            // Mark both the original occupant and the new arrival as invalid.
-                            lock (newInvalid)
-                            {
-                                if (!newInvalid.Contains(firstOwner))
-                                    newInvalid.Add(firstOwner);
-                                newInvalid.Add(controller);
-                            }
-                        }
-                        else
-                        {
-                            slotOwners[index] = controller;
-                        }
-                    }
-                }));
-
-            await Task.WhenAll(tasks).ConfigureAwait(false);
-            InvalidSlotAssignments = newInvalid;
-
-            bool hasInvalidControllers = newInvalid.Count > 0;
-            bool hasInvalidVirtual = newInvalid.Any(c => c.IsVirtual());
-
-            bool ensureVirtualSlot1 =
-                VirtualManager.HIDmode == HIDmode.Xbox360Controller &&
-                VirtualManager.HIDstatus == HIDstatus.Connected &&
-                (HasSlotXInputController(physical: true) || HasSlotXInputController(physical: false));
-
-            bool virtualInSlot1 = !ensureVirtualSlot1 ||
-                GetSlotXInputControllerFromSlot(UserIndex.One, physical: false) is not null;
-
-            bool needsFix = hasInvalidControllers || !virtualInSlot1;
-
-            string reason = hasInvalidControllers ? "Duplicate controller slot assignment detected."
-                : !virtualInSlot1 ? "Virtual controller is not occupying slot 1."
-                : string.Empty;
-
-            return new SlotProbeResult(needsFix, ensureVirtualSlot1, virtualInSlot1, hasInvalidControllers, hasInvalidVirtual, reason, true);
-        }
-        finally
-        {
-            slotStateSemaphore.Release();
-        }
-    }
-
-    private static void TrySendSlotFixPromptToast(string reason)
-    {
-        // Ignore window
-        if (DateTime.UtcNow < slotFixIgnoreUntilUtc)
-            return;
-
-        // Debounce prompts
-        if ((DateTime.UtcNow - slotFixLastPromptUtc) < TimeSpan.FromSeconds(30))
-            return;
-
-        slotFixLastPromptUtc = DateTime.UtcNow;
-
-        ToastManager.SendToast(new ToastRequest
-        {
-            Title = "Controller slot management",
-            Content = string.IsNullOrWhiteSpace(reason)
-                ? "A controller slot issue was detected. Click Fix to attempt a reset."
-                : $"A controller slot issue was detected: {reason} Click Fix to attempt a reset.",
-            ActivationCommand = "OpenControllerPage",
-            Actions =
-        {
-            new ToastAction
-            {
-                Label = "Adjust order",
-                Command = "SlotFixReset",
-                Callback = _ => TriggerSlotFix(resetAttempts: true)
-            },
-            new ToastAction
-            {
-                Label = "Ignore",
-                Command = "SlotFixIgnore",
-                Callback = _ => slotFixIgnoreUntilUtc = DateTime.UtcNow.AddMinutes(5)
-            }
-        }
-        });
-    }
-
-    private static void WatchdogLoop(SlotFixTrigger trigger)
-    {
-        try
-        {
-            Interlocked.Exchange(ref ControllerManagementAttempts, 0);
-            UpdateStatus(ControllerManagerStatus.Busy);
-
-            for (int attempt = 1; attempt <= ControllerManagementMaxAttempts && watchdogThreadRunning; attempt++)
-            {
-                Interlocked.Exchange(ref ControllerManagementAttempts, attempt);
-                UpdateStatus(ControllerManagerStatus.Busy);
-
-                SlotProbeResult probe = ProbeSlotsAsync().GetAwaiter().GetResult();
-                if (!probe.IsAvailable)
-                {
-                    Thread.Sleep(100);
-                    continue;
-                }
-
-                if (!probe.NeedsFix)
-                {
-                    MarkControllerManagementSuccess();
-                    return;
-                }
-
-                if (probe.HasInvalidControllers || (probe.EnsureVirtualSlot1 && !probe.VirtualInSlot1))
-                {
-                    /*
-                    if (OpenXInput.IsAvailable)
-                    {
-                        XInputController? virtualController = GetVirtualControllers<XInputController>().FirstOrDefault();
-                        if (virtualController is not null && AssignXInputSlot(virtualController, 0))
-                        {
-                            MarkControllerManagementSuccess();
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        if (probe.HasInvalidControllers)
-                            FixDuplicateSlots(probe);
-
-                        if (probe.EnsureVirtualSlot1 && !probe.VirtualInSlot1)
-                        {
-                            bool shouldContinue = FixVirtualSlot(probe);
-                            if (!shouldContinue)
-                                break;
-                        }
-                    }
-                    */
-
-                    if (probe.HasInvalidControllers)
-                        FixDuplicateSlots(probe);
-
-                    if (probe.EnsureVirtualSlot1 && !probe.VirtualInSlot1)
-                    {
-                        bool shouldContinue = FixVirtualSlot(probe, attempt);
-                        if (!shouldContinue)
-                            break;
-                    }
-                }
-
-                // Give Windows a moment to settle, then re-probe.
-                Thread.Sleep(1000);
-
-                probe = ProbeSlotsAsync().GetAwaiter().GetResult();
-                if (!probe.IsAvailable)
-                    continue;
-
-                if (!probe.NeedsFix)
-                {
-                    MarkControllerManagementSuccess();
-                    return;
-                }
-            }
-
-            FinalizeFailedRun();
-        }
-        catch
-        {
-            FinalizeFailedRun();
-        }
-        finally
-        {
-            watchdogSettling = true;
-            watchdogThreadRunning = false;
-            Interlocked.Exchange(ref watchdogStarted, 0);
-            watchdogThread = null;
-        }
-    }
-
-    /// <summary>
-    /// Assigns <paramref name="controller"/> to <paramref name="targetSlot"/> via OpenXInput,
-    /// then power-cycles the moved controller and any controller displaced from that slot
-    /// so that running applications refresh their XInput slot bookkeeping.
-    /// </summary>
-    /// <returns>True on success; false if the SetUserIndex call failed.</returns>
-    public static bool AssignXInputSlot(XInputController controller, byte targetSlot)
-    {
-        if (controller.UserIndex == targetSlot)
-            return true;
-
-        // Snapshot the current occupant of targetSlot before the swap.
-        XInputController? displaced =
-            GetControllerFromSlot<XInputController>((UserIndex)targetSlot, true) ??
-            GetControllerFromSlot<XInputController>((UserIndex)targetSlot, false);
-
-        uint result = OpenXInput.SetUserIndex(controller.GetContainerPath(), targetSlot, false);
-        if (result != OpenXInput.ERROR_SUCCESS)
-            return false;
-
-        // Cycle the displaced controller first so it vacates the target slot on the bus
-        // before the moved controller reconnects under the new index.
-        if (displaced is not null && !ReferenceEquals(displaced, controller))
-            displaced.CyclePort();
-
-        // Cycle the moved controller — forces running apps to see it in its new slot.
-        controller.CyclePort();
-
-        return true;
-    }
-
-    /// <summary>
-    /// Handles duplicate slot assignments: restarts the virtual stack if involved,
-    /// then cycles the physical controllers that are in conflict.
-    /// </summary>
-    private static void FixDuplicateSlots(SlotProbeResult probe)
-    {
-        if (probe.HasInvalidVirtual)
-        {
-            VirtualManager.Suspend(false).GetAwaiter().GetResult();
-            Thread.Sleep(1000);
-            VirtualManager.Resume(false).GetAwaiter().GetResult();
-
-            // Wait for the virtual controller to actually reconnect before
-            // cycling physical controllers — otherwise the freed slot can
-            // be immediately reclaimed by a physical device.
-            WaitUntil(
-                () => HasSlotXInputController(physical: false),
-                TimeSpan.FromSeconds(4));
-        }
-
-        foreach (IController controller in InvalidSlotAssignments)
-        {
-            if (!controller.IsVirtual())
-            {
-                controller.CyclePort();
-
-                // Allow the device to fully disappear before cycling the next
-                // one — rapid back-to-back cycles can cause re-enumeration
-                // collisions in the USB stack.
-                Thread.Sleep(500);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Ensures the virtual Xbox 360 controller occupies slot 1.
-    /// Returns false if the run should be aborted (e.g. a busy wireless controller is blocking,
-    /// or repeated recovery without any physical XInput controller already failed once).
-    /// </summary>
-    /// <param name="attempt">1-based attempt index used to decide the temporary-controller strategy.</param>
-    private static bool FixVirtualSlot(SlotProbeResult probe, int attempt)
-    {
-        if (!HasSlotXInputController(physical: true))
-        {
-            if (attempt > ControllerManagementMaxAttempts)
-                return false;
-
-            // No physical XInput controller — just cycle the virtual controller
-            if (HasSlotXInputController(physical: false) && GetSlotXInputControllerFromSlot(UserIndex.One, physical: false) is null)
-            {
-                // Disconnect and reconnect the virtual controller so it re-enumerates from scratch and hopefully claims slot 1.
-                VirtualManager.Suspend(false).GetAwaiter().GetResult();
-                Thread.Sleep(1000);
-                VirtualManager.Resume(false).GetAwaiter().GetResult();
-
-                // Wait for the virtual controller to actually reconnect before re-probing — otherwise we may end up in a tight loop if it fails to re-enumerate.
-                WaitUntil(() => GetSlotXInputControllers(physical: false)
-                    .Any(controller => controller.GetVendorID() == VirtualManager.VendorId && controller.GetProductID() == VirtualManager.ProductId), TimeSpan.FromSeconds(4));
-            }
-
-            return true;
-        }
-
-        // Check if a physical controller is plugged.
-        IController? pController = null;
-        foreach (UserIndex slot in new[] { UserIndex.One, UserIndex.Two, UserIndex.Three, UserIndex.Four, UserIndex.Any })
-        {
-            pController = GetSlotXInputControllerFromSlot(slot, physical: true);
-            if (pController is not null)
-                break;
-        }
-
-        if (pController is null)
-            return false;
-
-        // Abort if a wireless controller is present and power-cycling, that's a human-only operation.
-        IController? busyWireless = GetSlotXInputControllers(physical: true).FirstOrDefault(c => c.IsBluetooth() && c.IsBusy);
-        if (busyWireless is not null && !PowerCyclers.TryGetValue(busyWireless.GetContainerInstanceId(), out _))
-            return false;
-
-        // Suspend the physical controller to force it off the bus, which should free up its slot for the virtual controller to claim.
-        // Wait for the suspended controller to actually vacate its slot before manipulating the virtual controller.
-        SuspendController(pController.GetContainerInstanceId());
-        WaitUntil(() => GetSlotXInputControllerFromSlot((UserIndex)pController.UserIndex, physical: true) is null, TimeSpan.FromSeconds(4));
-
-        // Disconnect the virtual controller and wait for it to fully disappear.
-        VirtualManager.SetControllerMode(HIDmode.NoController).GetAwaiter().GetResult();
-        WaitUntil(() => !HasSlotXInputController(physical: false), TimeSpan.FromSeconds(4));
-
-        // On the first attempt, try with a single temporary controller (lighter/faster).
-        // If that fails, subsequent attempts fill all available slots (up to 4).
-        if (attempt > 1)
-        {
-            // Temporarily fill slots so the physical controller cannot reclaim slot 1.
-            int usedSlots = VirtualManager.CreateTemporaryControllers(XInputController.MaxControllers);
-            WaitUntil(() => GetVirtualControllers<XInputController>().Count() >= usedSlots, TimeSpan.FromSeconds(4));
-
-            // Dismount all virtual controllers.
-            VirtualManager.DisposeTemporaryControllers();
-            WaitUntil(() => GetVirtualControllers<XInputController>().Count() <= usedSlots, TimeSpan.FromSeconds(4));
-        }
-
-        // Re-register the main virtual controller; it should now claim slot 1.
-        VirtualManager.SetControllerMode(HIDmode.Xbox360Controller).GetAwaiter().GetResult();
-        WaitUntil(() => HasSlotXInputController(physical: false), TimeSpan.FromSeconds(4));
-
-        return true;
-    }
-
-    /// <summary>
-    /// Blocks the current (dedicated background) thread until <paramref name="condition"/> is true
-    /// or <paramref name="timeout"/> elapses, polling every 100 ms.
-    /// </summary>
-    private static void WaitUntil(Func<bool> condition, TimeSpan timeout)
-    {
-        var deadline = DateTime.UtcNow + timeout;
-        while (DateTime.UtcNow < deadline && !condition())
-            Thread.Sleep(100);
-    }
-
-    private static void MarkControllerManagementSuccess()
-    {
-        ResumeControllers();
-
-        // Successful slot fix: clear the issue flag used by UI/manual mode.
-        SetSlotIssueState(false, string.Empty);
-
-        consecutiveWatchdogFailures = 0;
-
-        // Only transition to Succeeded if a slot-fix run was actively in progress (Busy).
-        // Avoids a spurious "succeeded" toast at startup when no issue existed yet.
-        if (managerStatus == ControllerManagerStatus.Busy)
-            UpdateStatus(ControllerManagerStatus.Succeeded);
-
-        Interlocked.Exchange(ref ControllerManagementAttempts, 0);
-    }
-
-    private static void FinalizeFailedRun()
-    {
-        ResumeControllers();
-
-        Interlocked.Increment(ref consecutiveWatchdogFailures);
-
-        // After repeated failures, fall back to Manual mode to stop the automatic retry loop.
-        // The user can re-enable Automatic mode from the UI once the system has settled.
-        if (consecutiveWatchdogFailures >= MaxConsecutiveWatchdogFailures &&
-            slotManagementMode == ControllerSlotManagementMode.Automatic)
-        {
-            slotManagementMode = ControllerSlotManagementMode.Manual;
-            ManagerFactory.settingsManager.SetProperty("ControllerSlotManagementMode", (int)ControllerSlotManagementMode.Manual);
-        }
-
-        try
-        {
-            SlotProbeResult finalProbe = ProbeSlotsAsync().GetAwaiter().GetResult();
-            if (finalProbe.IsAvailable)
-                SetSlotIssueState(finalProbe.NeedsFix, finalProbe.Reason);
-        }
-        catch { }
-
-        UpdateStatus(ControllerManagerStatus.Failed);
-        Interlocked.Exchange(ref ControllerManagementAttempts, 0);
-    }
-
-    private static Notification ManagerBusy = new("Controller Manager", "Controllers order is being adjusted, your gamepad might become irresponsive for a few seconds.") { IsInternal = true };
-
-    private static void UpdateStatus(ControllerManagerStatus status)
-    {
-        // skip if already correct
         if (managerStatus == status)
             return;
 
@@ -2430,62 +1780,20 @@ public static class ControllerManager
                 MainWindow.GetCurrent().UpdateTaskbarState(TaskbarItemProgressState.None);
                 ManagerFactory.notificationManager.Discard(ManagerBusy);
                 break;
-            case ControllerManagerStatus.Pending:
-                MainWindow.GetCurrent().UpdateTaskbarState(TaskbarItemProgressState.Paused);
-                break;
         }
 
         managerStatus = status;
-        StatusChanged?.Invoke(status, ControllerManagementAttempts);
-
-        TrySendSlotFixStatusToast(status);
+        StatusChanged?.Invoke(status, attempts);
     }
 
-    private static void TrySendSlotFixStatusToast(ControllerManagerStatus status)
+    private static readonly Notification ManagerBusy = new("Controller Manager", "Controllers order is being adjusted, your gamepad might become irresponsive for a few seconds.") { IsInternal = true };
+
+    private static void VirtualManager_Vibrated(byte largeMotor, byte smallMotor)
     {
-        if (status == ControllerManagerStatus.Pending)
-            return;
-
-        DateTime now = DateTime.UtcNow;
-
-        // Avoid spamming "Busy" toasts while the run loops.
-        if (status == ControllerManagerStatus.Busy)
-        {
-            if (slotFixLastStatusToast == ControllerManagerStatus.Busy &&
-                (now - slotFixLastStatusToastUtc) < TimeSpan.FromSeconds(20))
-                return;
-        }
-        else
-        {
-            // For terminal statuses, only de-duplicate exact repeats in short intervals.
-            if (slotFixLastStatusToast == status &&
-                (now - slotFixLastStatusToastUtc) < TimeSpan.FromSeconds(5))
-                return;
-        }
-
-        slotFixLastStatusToast = status;
-        slotFixLastStatusToastUtc = now;
-
-        string content = status switch
-        {
-            ControllerManagerStatus.Busy => ManagerBusy.Message,
-            ControllerManagerStatus.Succeeded => "Controllers order was sucessfully adjusted.",
-            ControllerManagerStatus.Failed => "Controllers order could not be adjusted. You can retry using the Manual action.",
-            _ => string.Empty
-        };
-
-        if (string.IsNullOrWhiteSpace(content))
-            return;
-
-        ToastManager.SendToast(new ToastRequest
-        {
-            Title = "Controller management",
-            Content = content,
-            ActivationCommand = "OpenControllerPage"
-        });
-
-        managerStatus = status;
-        StatusChanged?.Invoke(status, ControllerManagementAttempts);
+        IController? controller;
+        lock (targetLock)
+            controller = targetController;
+        controller?.SetVibration(largeMotor, smallMotor);
     }
 
     private static ControllerPlugBehavior PlugBehavior => (ControllerPlugBehavior)ManagerFactory.settingsManager.GetInt("ControllerPlugBehavior");
@@ -2553,10 +1861,6 @@ public static class ControllerManager
                 PowerCyclers.TryRemove(key, out _);
         }
 
-        // Once all power-cycled controllers have settled, clear the settling flag
-        // so the slot monitor and topology handlers can resume normal operation.
-        if (watchdogSettling && PowerCyclers.IsEmpty)
-            watchdogSettling = false;
     }
 
     private static void ClearTargetController()
@@ -2787,7 +2091,7 @@ public static class ControllerManager
                             if (!string.IsNullOrEmpty(pnPDriver?.InfPath))
                             {
                                 // store driver to collection
-                                DriverStore.AddOrUpdateDriverStore(baseContainerDeviceInstanceId, pnPDriver.InfPath);
+                                DriverStoreHelper.AddOrUpdateDriverStore(baseContainerDeviceInstanceId, pnPDriver.InfPath);
 
                                 // install empty drivers
                                 pnPDevice.InstallNullDriver(out bool rebootRequired);
@@ -2850,7 +2154,7 @@ public static class ControllerManager
                         string InfPath;
                         if (requireStoredDriver)
                         {
-                            if (!DriverStore.TryGetDriverFromDriverStore(baseContainerDeviceInstanceId, out InfPath))
+                            if (!DriverStoreHelper.TryGetDriverFromDriverStore(baseContainerDeviceInstanceId, out InfPath))
                             {
                                 LogManager.LogWarning("No stored OEM driver found for {0}", baseContainerDeviceInstanceId);
                                 return false;
@@ -2858,7 +2162,7 @@ public static class ControllerManager
                         }
                         else
                         {
-                            InfPath = DriverStore.GetDriverFromDriverStore(baseContainerDeviceInstanceId);
+                            InfPath = DriverStoreHelper.GetDriverFromDriverStore(baseContainerDeviceInstanceId);
                         }
 
                         if (!string.IsNullOrEmpty(InfPath))
@@ -2871,7 +2175,7 @@ public static class ControllerManager
                             }
 
                             // remove device from store
-                            DriverStore.RemoveFromDriverStore(baseContainerDeviceInstanceId);
+                            DriverStoreHelper.RemoveFromDriverStore(baseContainerDeviceInstanceId);
 
                             return true;
                         }
@@ -2908,7 +2212,7 @@ public static class ControllerManager
             }
         }
 
-        List<string> driverPaths = DriverStore.GetPaths().ToList();
+        List<string> driverPaths = DriverStoreHelper.GetPaths().ToList();
         int restored = 0;
         int restoreFailures = 0;
 
@@ -2983,7 +2287,7 @@ public static class ControllerManager
     public static void ResumeControllers()
     {
         // loop through controllers
-        foreach (string baseContainerDeviceInstanceId in DriverStore.GetPaths())
+        foreach (string baseContainerDeviceInstanceId in DriverStoreHelper.GetPaths())
             ResumeController(baseContainerDeviceInstanceId);
 
         // edge case
@@ -3053,7 +2357,8 @@ public static class ControllerManager
 
     public static T? GetControllerFromSlot<T>(UserIndex userIndex = 0, bool physical = true) where T : IController
     {
-        return Controllers.Values.FirstOrDefault(controller => typeof(T).IsAssignableFrom(controller.GetType()) && ((physical && controller.IsPhysical()) || (!physical && controller.IsVirtual())) && controller.GetUserIndex() == (int)userIndex) as T;
+        return (physical ? GetPhysicalControllers<T>() : GetVirtualControllers<T>())
+            .FirstOrDefault(controller => controller.GetUserIndex() == (int)userIndex);
     }
 
     public static IEnumerable<T> GetControllers<T>() where T : IController

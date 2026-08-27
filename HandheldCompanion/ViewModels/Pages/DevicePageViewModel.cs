@@ -2,7 +2,6 @@
 using HandheldCompanion.Devices;
 using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.GraphicsProcessingUnit;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Models;

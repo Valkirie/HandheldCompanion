@@ -1,20 +1,16 @@
 ﻿using HandheldCompanion.Commands.Functions.HC;
-using HandheldCompanion.Devices.MSI;
 using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
-using HandheldCompanion.Views;
 using HidLibrary;
-using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -111,6 +107,21 @@ public class ClawA1M : IDevice
         Deactive,
         ChangeToCurrentShiftType,
     }
+
+    public struct DeviceVersion
+    {
+        public int Firmware { get; set; }
+        public byte[] RGB { get; set; }
+        public byte[] M1DInput { get; set; }
+        public byte[] M2DInput { get; set; }
+        public byte[]? M1XInput { get; set; }
+        public byte[]? M2XInput { get; set; }
+
+        public bool IsSupported(int firmware)
+        {
+            return firmware == Firmware;
+        }
+    };
 
     private ManagementEventWatcher? specialKeyWatcher;
 

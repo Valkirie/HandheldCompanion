@@ -1,5 +1,4 @@
 using HandheldCompanion.Actions;
-using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Helpers;
@@ -1431,7 +1430,13 @@ namespace HandheldCompanion.ViewModels
             set
             {
                 if (value != -1)
+                {
+                    // Update the bound index before starting the asynchronous download.
+                    // Otherwise the UI observes the new page count while the index is
+                    // still -1 and may attempt to index the visual collection with it.
+                    SetLibraryCoversIndex(value);
                     _ = TriggerGameArtDownloadAsync(value, LibraryType.cover | LibraryType.thumbnails);
+                }
                 else
                     RefreshCover(value);
             }
@@ -1439,6 +1444,7 @@ namespace HandheldCompanion.ViewModels
 
         private void SetLibraryCoversIndex(int value)
         {
+            value = value >= 0 && value < LibraryCovers.Count ? value : -1;
             if (_LibraryCoversIndex != value)
             {
                 _LibraryCoversIndex = value;
@@ -1465,7 +1471,10 @@ namespace HandheldCompanion.ViewModels
             set
             {
                 if (value != -1)
+                {
+                    SetLibraryArtworksIndex(value);
                     _ = TriggerGameArtDownloadAsync(value, LibraryType.artwork | LibraryType.thumbnails);
+                }
                 else
                     RefreshArtwork(value);
             }
@@ -1473,6 +1482,7 @@ namespace HandheldCompanion.ViewModels
 
         private void SetLibraryArtworksIndex(int value)
         {
+            value = value >= 0 && value < LibraryArtworks.Count ? value : -1;
             if (_LibraryArtworksIndex != value)
             {
                 _LibraryArtworksIndex = value;
@@ -1499,7 +1509,10 @@ namespace HandheldCompanion.ViewModels
             set
             {
                 if (value != -1)
+                {
+                    SetLibraryLogosIndex(value);
                     _ = TriggerGameArtDownloadAsync(value, LibraryType.logo | LibraryType.thumbnails);
+                }
                 else
                     RefreshLogo(value);
             }
@@ -1507,6 +1520,7 @@ namespace HandheldCompanion.ViewModels
 
         private void SetLibraryLogosIndex(int value)
         {
+            value = value >= 0 && value < LibraryLogos.Count ? value : -1;
             if (_LibraryLogosIndex != value)
             {
                 _LibraryLogosIndex = value;
@@ -1778,7 +1792,7 @@ namespace HandheldCompanion.ViewModels
         public ICommand OpenPowerProfileOnBatteryCommand { get; private set; } = null!;
         public ICommand OpenPowerProfilePluggedCommand { get; private set; } = null!;
         public ICommand OpenProfilePageCommand { get; private set; } = null!;
-         public ICommand OpenProfileLayoutCommand { get; private set; } = null!;
+        public ICommand OpenProfileLayoutCommand { get; private set; } = null!;
         public ICommand CreatePowerProfileCommand { get; private set; } = null!;
         public ICommand ShowCreateProfileFlyoutCommand { get; private set; } = null!;
         public ICommand OpenAdditionalSettingsCommand { get; private set; } = null!;
@@ -3659,7 +3673,7 @@ namespace HandheldCompanion.ViewModels
             try
             {
                 UIHelper.TryBeginInvoke(() =>
-                {                
+                {
                     SelectedPickerAC = ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == powerProfileAC.Guid);
                     SelectedPickerDC = ProfilePicker.FirstOrDefault(a => a.LinkedPresetId == powerProfileDC.Guid);
                 });

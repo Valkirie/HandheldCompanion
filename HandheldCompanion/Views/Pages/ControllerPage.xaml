@@ -141,7 +141,16 @@
                             IsOpen="True"
                             Message="{Binding RemoteBroadcastingMessage}"
                             Severity="Warning"
-                            Visibility="{Binding RemoteBroadcastingVisibility}" />
+                            Visibility="{Binding RemoteBroadcastingVisibility}">
+                            <ui:InfoBar.ActionButton>
+                                <Button
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding DisconnectRemoteControllerCommand}"
+                                    Style="{DynamicResource AccentButtonStyle}">
+                                    Disconnect
+                                </Button>
+                            </ui:InfoBar.ActionButton>
+                        </ui:InfoBar>
                         <ItemsControl
                             Name="PhysicalDevices"
                             d:Visibility="Visible"

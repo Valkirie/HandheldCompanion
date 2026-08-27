@@ -1,7 +1,6 @@
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Utils;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -32,17 +31,6 @@ namespace HandheldCompanion.Actions
         public bool InvertHorizontal = false;
         public bool InvertVertical = false;
 
-        // Response curve: 6 control points from 0-1 range, default is linear
-        public List<Vector2> ResponseCurvePoints = new List<Vector2>
-        {
-            new Vector2(0.0f, 0.0f),
-            new Vector2(0.2f, 0.2f),
-            new Vector2(0.4f, 0.4f),
-            new Vector2(0.6f, 0.6f),
-            new Vector2(0.8f, 0.8f),
-            new Vector2(1.0f, 1.0f)
-        };
-
         public AxisActions()
         {
             actionType = ActionType.Joystick;
@@ -72,10 +60,16 @@ namespace HandheldCompanion.Actions
 
         public override void Execute(AxisLayout layout, ShiftSlot shiftSlot, float delta)
         {
+            Execute(layout, touched: false, shiftSlot, delta);
+        }
+
+        public void Execute(AxisLayout layout, bool touched, ShiftSlot shiftSlot, float delta)
+        {
             outVector = layout.vector;
             base.Execute(layout, shiftSlot, delta);
 
             ApplyAxisModifiers();
+            UpdateMovementHaptics(layout.flags, touched && !axisSlotDisabled, outVector);
         }
 
         private void ApplyAxisModifiers()
@@ -89,7 +83,7 @@ namespace HandheldCompanion.Actions
             outVector = InputUtils.ApplyAntiDeadzone(outVector, AxisAntiDeadZone);
 
             // Apply response curve
-            outVector = InputUtils.ApplyResponseCurve(outVector, ResponseCurvePoints);
+            ApplyResponseCurve();
 
             // Reshape the output
             outVector = OutputShape switch

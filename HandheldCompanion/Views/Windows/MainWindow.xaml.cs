@@ -1141,7 +1141,7 @@ public partial class MainWindow : GamepadWindow
                     }
                     break;
             }
-            
+
             NavView_Navigate(page, false);
             SetState(WindowState.Normal);
         });

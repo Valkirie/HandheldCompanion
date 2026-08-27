@@ -3,7 +3,7 @@ using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Commands;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
-using HandheldCompanion.Helpers;
+using HandheldCompanion.Devices.MSI;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Simulators;
@@ -67,14 +67,14 @@ public static class InputsManager
     // Keyboard vars
     private static IKeyboardMouseEvents? m_GlobalHook = null!;
 
-    private static readonly Dictionary<bool, List<KeyEventArgsExt>> BufferKeys = new() { { true, new() }, { false, new() } };               
+    private static readonly Dictionary<bool, List<KeyEventArgsExt>> BufferKeys = new() { { true, new() }, { false, new() } };
     private static readonly List<KeyboardChord> successkeyChords = [];
     private static readonly Dictionary<bool, short> KeyIndexOEM = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, short> KeyIndexHotkey = new() { { true, 0 }, { false, 0 } };
     private static readonly Dictionary<bool, bool> KeyUsed = new() { { true, false }, { false, false } };
     private static readonly HashSet<Keys> ReplayedModifiersDown = [];
     private static readonly object KeyboardBufferLock = new();
-    private static readonly FirmwareWorkarounds.MSI MsiFirmwareWorkaround = new();
+    private static readonly ClawFirmware.MSI MsiFirmwareWorkaround = new();
     private static int? PendingAltGrControlTimestamp;
     private static Keys? PendingAltGrControlKey;
     private static Keys? AltGrControlKey;
