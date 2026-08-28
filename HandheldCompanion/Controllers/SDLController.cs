@@ -211,8 +211,12 @@ namespace HandheldCompanion.Controllers
 
         public override void Plug()
         {
-            if (!IsConnected())
-                return;
+            if (gamepad == IntPtr.Zero)
+            {
+                gamepad = OpenGamepad(deviceIndex);
+                if (gamepad == IntPtr.Zero)
+                    return;
+            }
 
             base.Plug();
         }
@@ -445,10 +449,24 @@ namespace HandheldCompanion.Controllers
 
         public override void Unplug()
         {
-            if (!IsConnected())
+            if (gamepad == IntPtr.Zero)
                 return;
 
+            CloseGamepad(gamepad);
+            gamepad = IntPtr.Zero;
+
             base.Unplug();
+        }
+
+        public override void Gone()
+        {
+            if (gamepad != IntPtr.Zero)
+            {
+                CloseGamepad(gamepad);
+                gamepad = IntPtr.Zero;
+            }
+
+            base.Gone();
         }
 
         public override void SetVibration(byte LargeMotor, byte SmallMotor)
