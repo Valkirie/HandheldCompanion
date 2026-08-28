@@ -134,8 +134,9 @@ public static class ControllerManager
         SDL.SetHint(SDL.Hints.XInputEnabled, "0");
         // Prevent SDL from exposing the Steam virtual controller and Steam Deck built-in
         // controller through the HID API, avoiding double-enumeration with our own paths.
-        SDL.SetHint(SDL.Hints.JoystickHIDAPISteam, "1");
-        SDL.SetHint(SDL.Hints.JoystickHIDAPISteamdeck, "1");
+        string steamControllerSupport = ManagerFactory.settingsManager.GetBoolean("JoystickHIDAPISteam") ? "1" : "0";
+        SDL.SetHint(SDL.Hints.JoystickHIDAPISteam, steamControllerSupport);
+        SDL.SetHint(SDL.Hints.JoystickHIDAPISteamdeck, steamControllerSupport);
 
         // Initialize the SDL Gamepad subsystem
         if (!SDL.Init(SDL.InitFlags.Gamepad))
@@ -667,6 +668,7 @@ public static class ControllerManager
                     try
                     {
                         SDL.CloseGamepad(controller.gamepad);
+                        controller.gamepad = IntPtr.Zero;
 
                         PowerCyclers.TryGetValue(path, out bool IsPowerCycling);
                         bool WasTarget = IsTargetController(controller.GetInstanceId());
@@ -1175,7 +1177,10 @@ public static class ControllerManager
 
         // Cleanup SDL3 controllers
         foreach (SDLController controller in SDLControllers.Values)
+        {
             SDL.CloseGamepad(controller.gamepad);
+            controller.gamepad = IntPtr.Zero;
+        }
 
         SDL.Quit();
 
@@ -1439,6 +1444,24 @@ public static class ControllerManager
                 CheckControllerScenario();
                 break;
 
+            case "JoystickHIDAPISteam":
+                if (!Convert.ToBoolean(value))
+                {
+                    foreach (SteamController2026 steamController in GetControllers<SteamController2026>().ToArray())
+                    {
+                        if (SDLControllers.TryGetValue(steamController.deviceIndex, out SDLController? sdlController))
+                        {
+                            SDL.CloseGamepad(sdlController.gamepad);
+                            sdlController.gamepad = IntPtr.Zero;
+                            SDLControllers.TryRemove(steamController.deviceIndex, out _);
+                        }
+
+                        Unplug(steamController);
+                        steamController.Unhide(false);
+                    }
+                }
+                break;
+
             case "NetworkControllersEnabled":
                 bool networkControllersEnabled = Convert.ToBoolean(value);
                 LogManager.LogInformation("Network controllers {0}", networkControllersEnabled ? "enabled" : "disabled");
@@ -1464,6 +1487,7 @@ public static class ControllerManager
         SettingsManager_SettingValueChanged("VibrationStrength", ManagerFactory.settingsManager.GetString("VibrationStrength"), false, true);
         SettingsManager_SettingValueChanged("ControllerSlotManagementMode", ManagerFactory.settingsManager.GetString("ControllerSlotManagementMode"), false, true);
         SettingsManager_SettingValueChanged("SteamControllerMode", ManagerFactory.settingsManager.GetString("SteamControllerMode"), false, true);
+        SettingsManager_SettingValueChanged("JoystickHIDAPISteam", ManagerFactory.settingsManager.GetBoolean("JoystickHIDAPISteam"), false, true);
         SettingsManager_SettingValueChanged("NetworkControllersEnabled", ManagerFactory.settingsManager.GetBoolean("NetworkControllersEnabled"), false, true);
     }
 

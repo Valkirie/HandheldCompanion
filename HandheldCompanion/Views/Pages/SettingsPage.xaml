@@ -154,14 +154,6 @@
                     <ui:ToggleSwitch Name="Toggle_AutoStart" Toggled="Toggle_AutoStart_Toggled" />
                 </ui:SettingsCard>
 
-                <!--  Network controllers  -->
-                <ui:SettingsCard Description="Allow controller input to be shared with other Handheld Companion instances on the local network" Header="Network controllers">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE968;" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ui:ToggleSwitch x:Name="Toggle_NetworkControllers" Toggled="Toggle_NetworkControllers_Toggled" />
-                </ui:SettingsCard>
-
                 <!--  Open application in background  -->
                 <ui:SettingsCard Description="{l:Static resx:Resources.SettingsPage_OpenAppBackgroundDesc}" Header="{l:Static resx:Resources.SettingsPage_OpenAppBackground}">
                     <ui:SettingsCard.HeaderIcon>

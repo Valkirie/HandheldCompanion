@@ -530,6 +530,18 @@ namespace HandheldCompanion.Properties
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool JoystickHIDAPISteam {
+            get {
+                return ((bool)(this["JoystickHIDAPISteam"]));
+            }
+            set {
+                this["JoystickHIDAPISteam"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool HIDcloakonconnect {
             get {
                 return ((bool)(this["HIDcloakonconnect"]));

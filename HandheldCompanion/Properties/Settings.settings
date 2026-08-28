@@ -128,6 +128,9 @@
     <Setting Name="SteamControllerMode" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="JoystickHIDAPISteam" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
     <Setting Name="HIDcloakonconnect" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>

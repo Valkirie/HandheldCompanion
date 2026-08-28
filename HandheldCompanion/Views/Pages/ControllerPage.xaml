@@ -301,6 +301,29 @@
                     </ikw:SimpleStackPanel>
                 </ikw:SimpleStackPanel>
 
+                <ui:SettingsExpander d:Expanded="True" Header="Advanced settings">
+                    <ui:SettingsExpander.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" />
+                    </ui:SettingsExpander.HeaderIcon>
+                    <ui:SettingsExpander.Items>
+                        <!--  SDL: Steam support  -->
+                        <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_SteamControllerSupportDesc}" Header="{l:Static resx:Resources.ControllerPage_SteamControllerSupport}">
+                            <ui:SettingsCard.HeaderIcon>
+                                <ui:FontIcon Glyph="&#xE789;" />
+                            </ui:SettingsCard.HeaderIcon>
+                            <ui:ToggleSwitch x:Name="Toggle_SteamControllerSupport" Toggled="Toggle_SteamControllerSupport_Toggled" />
+                        </ui:SettingsCard>
+
+                        <!--  Network discovery support  -->
+                        <ui:SettingsCard Description="Allow controllers to be shared with other Handheld Companion instances on the local network" Header="Network discovery">
+                            <ui:SettingsCard.HeaderIcon>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE968;" />
+                            </ui:SettingsCard.HeaderIcon>
+                            <ui:ToggleSwitch x:Name="Toggle_NetworkControllers" Toggled="Toggle_NetworkControllers_Toggled" />
+                        </ui:SettingsCard>
+                    </ui:SettingsExpander.Items>
+                </ui:SettingsExpander>
+
                 <!--  Steam Deck settings  -->
                 <ikw:SimpleStackPanel
                     d:Visibility="Visible"

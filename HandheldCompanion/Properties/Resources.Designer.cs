@@ -916,6 +916,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Steam controllers support.
+        /// </summary>
+        public static string ControllerPage_SteamControllerSupport {
+            get {
+                return ResourceManager.GetString("ControllerPage_SteamControllerSupport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enabled Steam controllers support. Disable this to let Steam or another application use it natively..
+        /// </summary>
+        public static string ControllerPage_SteamControllerSupportDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_SteamControllerSupportDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Testing your game controller inputs.
         /// </summary>
         public static string ControllerPage_TestControllerInputs {

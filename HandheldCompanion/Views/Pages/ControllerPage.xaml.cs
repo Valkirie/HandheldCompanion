@@ -57,6 +57,8 @@ public partial class ControllerPage : Page
         SettingsManager_SettingValueChanged("HIDuncloakondisconnect", ManagerFactory.settingsManager.GetString("HIDuncloakondisconnect"), false, false);
         SettingsManager_SettingValueChanged("HIDvibrateonconnect", ManagerFactory.settingsManager.GetString("HIDvibrateonconnect"), false, false);
         SettingsManager_SettingValueChanged("VibrationStrength", ManagerFactory.settingsManager.GetString("VibrationStrength"), false, false);
+         SettingsManager_SettingValueChanged("JoystickHIDAPISteam", ManagerFactory.settingsManager.GetBoolean("JoystickHIDAPISteam"), false, false);
+         SettingsManager_SettingValueChanged("NetworkControllersEnabled", ManagerFactory.settingsManager.GetBoolean("NetworkControllersEnabled"), false, false);
         SettingsManager_SettingValueChanged("SteamControllerMode", ManagerFactory.settingsManager.GetString("SteamControllerMode"), false, false);
         SettingsManager_SettingValueChanged("SteamControllerRumbleInterval", ManagerFactory.settingsManager.GetString("SteamControllerRumbleInterval"), false, false);
         SettingsManager_SettingValueChanged("HIDmode", ManagerFactory.settingsManager.GetString("HIDmode"), false, false);
@@ -92,6 +94,12 @@ public partial class ControllerPage : Page
                 case "VibrationStrength":
                     SliderStrength.Value = Convert.ToDouble(value);
                     break;
+                 case "JoystickHIDAPISteam":
+                     Toggle_SteamControllerSupport.IsOn = Convert.ToBoolean(value);
+                     break;
+                 case "NetworkControllersEnabled":
+                     Toggle_NetworkControllers.IsOn = Convert.ToBoolean(value);
+                     break;
                 case "SteamControllerMode":
                     cB_SCModeController.SelectedIndex = Convert.ToInt32(value);
                     break;
@@ -282,6 +290,22 @@ public partial class ControllerPage : Page
 
         ManagerFactory.settingsManager.SetProperty("SteamControllerMode", cB_SCModeController.SelectedIndex);
     }
+
+     private void Toggle_SteamControllerSupport_Toggled(object sender, RoutedEventArgs e)
+     {
+         if (!IsLoaded)
+             return;
+
+         ManagerFactory.settingsManager.SetProperty("JoystickHIDAPISteam", Toggle_SteamControllerSupport.IsOn);
+     }
+
+     private void Toggle_NetworkControllers_Toggled(object? sender, RoutedEventArgs? e)
+     {
+         if (!IsLoaded)
+             return;
+
+         ManagerFactory.settingsManager.SetProperty("NetworkControllersEnabled", Toggle_NetworkControllers.IsOn);
+     }
 
     private void cB_ControllerPlugBehavior_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
