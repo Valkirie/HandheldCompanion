@@ -982,8 +982,7 @@
                         VerticalAlignment="Stretch"
                         Command="{Binding ConnectCommand}"
                         FontSize="14"
-                        IsChecked="{Binding IsPlugged, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        IsEnabled="{Binding CanConnect, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                        IsChecked="{Binding IsPlugged, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                         <ToggleButton.Style>
                             <Style BasedOn="{StaticResource {x:Type ToggleButton}}" TargetType="ToggleButton">
                                 <Setter Property="Content" Value="{l:Static resx:Resources.Controller_Connect}" />

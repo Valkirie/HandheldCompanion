@@ -2022,7 +2022,7 @@ public static class ControllerManager
         catch { }
     }
 
-    public static void DisconnectTargetController(string instanceId)
+    public static void UnsetTargetController(string instanceId)
     {
         IController? controller;
 

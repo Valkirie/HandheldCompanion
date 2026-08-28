@@ -31,7 +31,6 @@ namespace HandheldCompanion.ViewModels
         public bool IsBusy => _controller?.IsBusy == true;
         public bool IsVirtual => _controller?.IsVirtual() == true;
         public bool IsPlugged => _controller?.IsPlugged == true;
-        public bool CanConnect => !IsPlugged || IsNetwork;
         public bool IsHidden => _controller?.IsHidden() == true;
         public bool IsInternal => _controller?.IsInternal() == true;
         public bool IsWireless => _controller?.IsWireless() == true;
@@ -116,8 +115,8 @@ namespace HandheldCompanion.ViewModels
                 string instanceId = Controller?.GetInstanceId() ?? string.Empty;
                 if (!string.IsNullOrEmpty(path) && !string.IsNullOrEmpty(instanceId))
                 {
-                    if (IsNetwork && IsPlugged)
-                        ControllerManager.DisconnectTargetController(instanceId);
+                    if (IsPlugged)
+                        ControllerManager.UnsetTargetController(instanceId);
                     else
                         ControllerManager.SetTargetController(path, false);
                 }
