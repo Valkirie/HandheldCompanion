@@ -134,23 +134,6 @@
                             Message="{l:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenDesc}"
                             Severity="Error"
                             Visibility="{Binding HintsNotMutedVisibility}" />
-                        <ui:InfoBar
-                            Name="RemoteBroadcasting"
-                            Title="Controller in remote use"
-                            IsClosable="False"
-                            IsOpen="True"
-                            Message="{Binding RemoteBroadcastingMessage}"
-                            Severity="Warning"
-                            Visibility="{Binding RemoteBroadcastingVisibility}">
-                            <ui:InfoBar.ActionButton>
-                                <Button
-                                    HorizontalAlignment="Right"
-                                    Command="{Binding DisconnectRemoteControllerCommand}"
-                                    Style="{DynamicResource AccentButtonStyle}">
-                                    Disconnect
-                                </Button>
-                            </ui:InfoBar.ActionButton>
-                        </ui:InfoBar>
                         <ItemsControl
                             Name="PhysicalDevices"
                             d:Visibility="Visible"
@@ -171,6 +154,37 @@
                         </ui:SettingsCard>
 
                         <ui:ProgressBar IsIndeterminate="{Binding IsScanningHardware, Mode=OneWay}" Visibility="{Binding ScanHardwareVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </ikw:SimpleStackPanel>
+                </ikw:SimpleStackPanel>
+
+                <!--  Remote controllers  -->
+                <ikw:SimpleStackPanel Spacing="8" Visibility="{Binding RemoteDevicesVisibility}">
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Remote controllers" />
+                    <ikw:SimpleStackPanel Spacing="3">
+                        <ui:InfoBar
+                            Name="RemoteBroadcasting"
+                            Title="Controller in remote use"
+                            IsClosable="False"
+                            IsOpen="True"
+                            Message="{Binding RemoteBroadcastingMessage}"
+                            Severity="Warning"
+                            Visibility="{Binding RemoteBroadcastingVisibility}">
+                            <ui:InfoBar.ActionButton>
+                                <Button
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding DisconnectRemoteControllerCommand}"
+                                    Style="{DynamicResource AccentButtonStyle}">
+                                    Disconnect
+                                </Button>
+                            </ui:InfoBar.ActionButton>
+                        </ui:InfoBar>
+                        <ItemsControl ItemTemplate="{StaticResource ControllerTemplate}" ItemsSource="{Binding RemoteControllers}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ikw:SimpleStackPanel Orientation="Vertical" Spacing="3" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
                     </ikw:SimpleStackPanel>
                 </ikw:SimpleStackPanel>
 
@@ -301,29 +315,6 @@
                     </ikw:SimpleStackPanel>
                 </ikw:SimpleStackPanel>
 
-                <ui:SettingsExpander d:Expanded="True" Header="Advanced settings">
-                    <ui:SettingsExpander.HeaderIcon>
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" />
-                    </ui:SettingsExpander.HeaderIcon>
-                    <ui:SettingsExpander.Items>
-                        <!--  SDL: Steam support  -->
-                        <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_SteamControllerSupportDesc}" Header="{l:Static resx:Resources.ControllerPage_SteamControllerSupport}">
-                            <ui:SettingsCard.HeaderIcon>
-                                <ui:FontIcon Glyph="&#xE789;" />
-                            </ui:SettingsCard.HeaderIcon>
-                            <ui:ToggleSwitch x:Name="Toggle_SteamControllerSupport" Toggled="Toggle_SteamControllerSupport_Toggled" />
-                        </ui:SettingsCard>
-
-                        <!--  Network discovery support  -->
-                        <ui:SettingsCard Description="Allow controllers to be shared with other Handheld Companion instances on the local network" Header="Network discovery">
-                            <ui:SettingsCard.HeaderIcon>
-                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE968;" />
-                            </ui:SettingsCard.HeaderIcon>
-                            <ui:ToggleSwitch x:Name="Toggle_NetworkControllers" Toggled="Toggle_NetworkControllers_Toggled" />
-                        </ui:SettingsCard>
-                    </ui:SettingsExpander.Items>
-                </ui:SettingsExpander>
-
                 <!--  Steam Deck settings  -->
                 <ikw:SimpleStackPanel
                     d:Visibility="Visible"
@@ -431,6 +422,29 @@
 
                             <ui:ToggleSwitch Name="Toggle_UncloakOnClose" Toggled="Toggle_UncloakOnClose_Toggled" />
                         </ui:SettingsCard>
+
+                        <ui:SettingsExpander d:Expanded="True" Header="Advanced settings">
+                            <ui:SettingsExpander.HeaderIcon>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" />
+                            </ui:SettingsExpander.HeaderIcon>
+                            <ui:SettingsExpander.Items>
+                                <!--  SDL: Steam support  -->
+                                <ui:SettingsCard Description="{l:Static resx:Resources.ControllerPage_SteamControllerSupportDesc}" Header="{l:Static resx:Resources.ControllerPage_SteamControllerSupport}">
+                                    <ui:SettingsCard.HeaderIcon>
+                                        <ui:FontIcon Glyph="&#xE789;" />
+                                    </ui:SettingsCard.HeaderIcon>
+                                    <ui:ToggleSwitch x:Name="Toggle_SteamControllerSupport" Toggled="Toggle_SteamControllerSupport_Toggled" />
+                                </ui:SettingsCard>
+
+                                <!--  Network discovery support  -->
+                                <ui:SettingsCard Description="Allow controllers to be shared with other Handheld Companion instances on the local network" Header="Network discovery">
+                                    <ui:SettingsCard.HeaderIcon>
+                                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE968;" />
+                                    </ui:SettingsCard.HeaderIcon>
+                                    <ui:ToggleSwitch x:Name="Toggle_NetworkControllers" Toggled="Toggle_NetworkControllers_Toggled" />
+                                </ui:SettingsCard>
+                            </ui:SettingsExpander.Items>
+                        </ui:SettingsExpander>
                     </ikw:SimpleStackPanel>
                 </ikw:SimpleStackPanel>
 

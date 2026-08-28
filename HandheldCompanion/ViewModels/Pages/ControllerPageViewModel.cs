@@ -146,6 +146,7 @@ namespace HandheldCompanion.ViewModels
         }
 
         public ObservableCollection<ControllerViewModel> PhysicalControllers { get; set; } = [];
+        public ObservableCollection<ControllerViewModel> RemoteControllers { get; set; } = [];
         public ObservableCollection<ControllerViewModel> VirtualControllers { get; set; } = [];
         public ICommand ScanHardwareCommand { get; private set; }
         public ICommand DisconnectRemoteControllerCommand { get; private set; }
@@ -179,6 +180,20 @@ namespace HandheldCompanion.ViewModels
                 {
                     _PhysicalDevicesVisibility = value;
                     OnPropertyChanged(nameof(PhysicalDevicesVisibility));
+                }
+            }
+        }
+
+        private Visibility _RemoteDevicesVisibility = Visibility.Collapsed;
+        public Visibility RemoteDevicesVisibility
+        {
+            get => _RemoteDevicesVisibility;
+            private set
+            {
+                if (value != _RemoteDevicesVisibility)
+                {
+                    _RemoteDevicesVisibility = value;
+                    OnPropertyChanged(nameof(RemoteDevicesVisibility));
                 }
             }
         }
@@ -392,6 +407,7 @@ namespace HandheldCompanion.ViewModels
         {
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(PhysicalControllers, _collectionLock);
+            BindingOperations.EnableCollectionSynchronization(RemoteControllers, _collectionLock3);
             BindingOperations.EnableCollectionSynchronization(VirtualControllers, _collectionLock2);
 
             // raise events
@@ -631,8 +647,23 @@ namespace HandheldCompanion.ViewModels
 
         private void ControllerPlugged(IController Controller, bool WasPowerCycling)
         {
-            ObservableCollection<ControllerViewModel> controllers = Controller.IsVirtual() ? VirtualControllers : PhysicalControllers;
-            object lockObj = Controller.IsVirtual() ? _collectionLock2 : _collectionLock;
+            ObservableCollection<ControllerViewModel> controllers;
+            object lockObj;
+            if (Controller.IsVirtual())
+            {
+                controllers = VirtualControllers;
+                lockObj = _collectionLock2;
+            }
+            else if (Controller.IsNetwork())
+            {
+                controllers = RemoteControllers;
+                lockObj = _collectionLock3;
+            }
+            else
+            {
+                controllers = PhysicalControllers;
+                lockObj = _collectionLock;
+            }
 
             if (!Monitor.TryEnter(lockObj, TimeSpan.FromSeconds(2)))
                 return;
@@ -660,8 +691,23 @@ namespace HandheldCompanion.ViewModels
 
         private void ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
         {
-            ObservableCollection<ControllerViewModel> controllers = Controller.IsVirtual() ? VirtualControllers : PhysicalControllers;
-            object lockObj = Controller.IsVirtual() ? _collectionLock2 : _collectionLock;
+            ObservableCollection<ControllerViewModel> controllers;
+            object lockObj;
+            if (Controller.IsVirtual())
+            {
+                controllers = VirtualControllers;
+                lockObj = _collectionLock2;
+            }
+            else if (Controller.IsNetwork())
+            {
+                controllers = RemoteControllers;
+                lockObj = _collectionLock3;
+            }
+            else
+            {
+                controllers = PhysicalControllers;
+                lockObj = _collectionLock;
+            }
 
             if (!Monitor.TryEnter(lockObj, TimeSpan.FromSeconds(2)))
                 return;
@@ -710,6 +756,19 @@ namespace HandheldCompanion.ViewModels
                 Monitor.Exit(_collectionLock);
             }
 
+            if (!Monitor.TryEnter(_collectionLock3, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
+            {
+                foreach (ControllerViewModel controller in RemoteControllers)
+                    controller.Updated();
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock3);
+            }
+
             // check rumble
             CanRumble = Controller.Capabilities.HasFlag(ControllerCapabilities.Rumble);
 
@@ -721,7 +780,7 @@ namespace HandheldCompanion.ViewModels
         {
             IController? targetController = ControllerManager.GetTarget();
 
-            bool hasPhysical, hasVirtual, hasTarget;
+            bool hasPhysical, hasRemote, hasVirtual, hasTarget;
             if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
                 return;
 
@@ -733,6 +792,19 @@ namespace HandheldCompanion.ViewModels
             finally
             {
                 Monitor.Exit(_collectionLock);
+            }
+
+            if (!Monitor.TryEnter(_collectionLock3, TimeSpan.FromSeconds(2)))
+                return;
+
+            try
+            {
+                hasRemote = RemoteControllers.Any();
+                hasTarget |= targetController != null && RemoteControllers.Any(c => c.Controller?.GetInstanceId() == targetController.GetInstanceId());
+            }
+            finally
+            {
+                Monitor.Exit(_collectionLock3);
             }
 
             if (!Monitor.TryEnter(_collectionLock2, TimeSpan.FromSeconds(2)))
@@ -757,6 +829,7 @@ namespace HandheldCompanion.ViewModels
 
             PhysicalDevicesVisibility = hasPhysical ? Visibility.Visible : Visibility.Collapsed;
             WarningNoPhysicalVisibility = !hasPhysical ? Visibility.Visible : Visibility.Collapsed;
+            RemoteDevicesVisibility = hasRemote ? Visibility.Visible : Visibility.Collapsed;
             VirtualDevicesVisibility = hasVirtual ? Visibility.Visible : Visibility.Collapsed;
             WarningNoVirtualVisibility = hasTarget && !hasVirtual && (_hidStatus != 0 || isHidden) ? Visibility.Visible : Visibility.Collapsed;
             WarningVirtualNotSlot1Visibility = isHidden && hasVirtual && _virtualNotInSlot1 ? Visibility.Visible : Visibility.Collapsed;
