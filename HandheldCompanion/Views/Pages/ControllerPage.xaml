@@ -134,6 +134,23 @@
                             Message="{l:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenDesc}"
                             Severity="Error"
                             Visibility="{Binding HintsNotMutedVisibility}" />
+                        <ui:InfoBar
+                            Name="RemoteBroadcasting"
+                            Title="Controller in remote use"
+                            IsClosable="False"
+                            IsOpen="True"
+                            Message="{Binding RemoteBroadcastingMessage}"
+                            Severity="Warning"
+                            Visibility="{Binding RemoteBroadcastingVisibility}">
+                            <ui:InfoBar.ActionButton>
+                                <Button
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding DisconnectRemoteControllerCommand}"
+                                    Style="{DynamicResource AccentButtonStyle}">
+                                    Disconnect
+                                </Button>
+                            </ui:InfoBar.ActionButton>
+                        </ui:InfoBar>
                         <ItemsControl
                             Name="PhysicalDevices"
                             d:Visibility="Visible"
@@ -161,23 +178,6 @@
                 <ikw:SimpleStackPanel Spacing="8" Visibility="{Binding RemoteDevicesVisibility}">
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Remote controllers" />
                     <ikw:SimpleStackPanel Spacing="3">
-                        <ui:InfoBar
-                            Name="RemoteBroadcasting"
-                            Title="Controller in remote use"
-                            IsClosable="False"
-                            IsOpen="True"
-                            Message="{Binding RemoteBroadcastingMessage}"
-                            Severity="Warning"
-                            Visibility="{Binding RemoteBroadcastingVisibility}">
-                            <ui:InfoBar.ActionButton>
-                                <Button
-                                    HorizontalAlignment="Right"
-                                    Command="{Binding DisconnectRemoteControllerCommand}"
-                                    Style="{DynamicResource AccentButtonStyle}">
-                                    Disconnect
-                                </Button>
-                            </ui:InfoBar.ActionButton>
-                        </ui:InfoBar>
                         <ItemsControl ItemTemplate="{StaticResource ControllerTemplate}" ItemsSource="{Binding RemoteControllers}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
