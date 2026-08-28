@@ -33,8 +33,10 @@ public partial class Layout : ICloneable, IDisposable
         // Generic and device button mapping
         foreach (ButtonFlags button in ButtonState.AllButtons)
         {
+            /*
             if (ButtonState.UIButtons.Contains(button))
                 continue;
+            */
 
             ButtonLayout[button] = [new InheritActions()];
         }
