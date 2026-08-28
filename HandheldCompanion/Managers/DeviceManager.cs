@@ -1,9 +1,9 @@
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers.Hid;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Shared;
-using HandheldCompanion.Utils;
 using Microsoft.Win32.SafeHandles;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
@@ -11,7 +11,9 @@ using SharpDX.Direct3D9;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -27,6 +29,7 @@ public class DeviceManager : IManager
     private readonly DeviceNotificationListener UsbDeviceListener = new();
     private readonly DeviceNotificationListener XUsbDeviceListener = new();
     private readonly DeviceNotificationListener HidDeviceListener = new();
+    private ManagementEventWatcher? SensorDeviceWatcher;
 
     public readonly ConcurrentDictionary<string, PnPDetails> PnPDevices = new();
 
@@ -96,6 +99,13 @@ public class DeviceManager : IManager
         XUsbDeviceListener.StartListen(DeviceInterfaceIds.XUsbDevice);
         HidDeviceListener.StartListen(DeviceInterfaceIds.HidDevice);
 
+        WqlEventQuery sensorQuery = new(
+            "SELECT * FROM __InstanceOperationEvent WITHIN 1 " +
+            "WHERE TargetInstance ISA 'Win32_PnPEntity' AND TargetInstance.PNPClass = 'Sensor'");
+        SensorDeviceWatcher = new ManagementEventWatcher(sensorQuery);
+        SensorDeviceWatcher.EventArrived += SensorDeviceWatcher_EventArrived;
+        SensorDeviceWatcher.Start();
+
         RefreshDrivers();
         RefreshDInput();
         RefreshXInput();
@@ -135,6 +145,14 @@ public class DeviceManager : IManager
         UsbDeviceListener.StopListen(DeviceInterfaceIds.UsbDevice);
         XUsbDeviceListener.StopListen(DeviceInterfaceIds.XUsbDevice);
         HidDeviceListener.StopListen(DeviceInterfaceIds.HidDevice);
+
+        if (SensorDeviceWatcher is not null)
+        {
+            SensorDeviceWatcher.EventArrived -= SensorDeviceWatcher_EventArrived;
+            SensorDeviceWatcher.Stop();
+            SensorDeviceWatcher.Dispose();
+            SensorDeviceWatcher = null;
+        }
 
         adaptersTimer.Stop();
 
@@ -584,6 +602,11 @@ public class DeviceManager : IManager
     /// </summary>
     private static readonly TimeSpan CrossWaitTimeout = TimeSpan.FromSeconds(5);
 
+    private static void SensorDeviceWatcher_EventArrived(object sender, EventArrivedEventArgs args)
+    {
+        IDevice.GetCurrent().PullSensors();
+    }
+
     private void XUsbDevice_DeviceArrived(DeviceEventArgs obj)
     {
         var instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
@@ -744,46 +767,70 @@ public class DeviceManager : IManager
         return null;
     }
 
+    private static bool TryGetUsbIds(string symLink, out int vendorId, out int productId)
+    {
+        vendorId = 0;
+        productId = 0;
+        Match match = Regex.Match(symLink, @"VID_(?<vid>[0-9A-F]{4}).*PID_(?<pid>[0-9A-F]{4})", RegexOptions.IgnoreCase);
+        return match.Success &&
+            int.TryParse(match.Groups["vid"].Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out vendorId) &&
+            int.TryParse(match.Groups["pid"].Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out productId);
+    }
+
     private void UsbDevice_DeviceRemoved(DeviceEventArgs obj)
     {
-        try
+        string instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+        if (!removalInProgress.TryAdd(instanceId, Task.CompletedTask))
+            return;
+
+        Task removalTask = Task.Run(async () =>
         {
-            string? symLink = CommonUtils.Between(obj.SymLink, "#", "#");
-            if (string.IsNullOrEmpty(symLink))
-                return;
+            if (arrivalInProgress.TryGetValue(instanceId, out Task? pendingArrival))
+                try { await pendingArrival.WaitAsync(CrossWaitTimeout).ConfigureAwait(false); } catch { }
 
-            symLink += "&";
-            string? VendorID = CommonUtils.Between(symLink, "VID_", "&");
-            string? ProductID = CommonUtils.Between(symLink, "PID_", "&");
+            try
+            {
+                bool isSerialSensor = TryGetUsbIds(obj.SymLink, out int vendorId, out int productId) && SerialUSBIMU.IsSupportedDevice(vendorId, productId);
 
-            if (string.IsNullOrEmpty(VendorID) || string.IsNullOrEmpty(ProductID))
-                return;
+                if (isSerialSensor)
+                    UsbDeviceRemoved?.Invoke(null, obj.InterfaceGuid);
+            }
+            finally
+            {
+                removalInProgress.TryRemove(instanceId, out _);
+            }
+        });
 
-            if (SerialUSBIMU.vendors.ContainsKey(new KeyValuePair<string, string>(VendorID, ProductID)))
-                UsbDeviceRemoved?.Invoke(null, obj.InterfaceGuid);
-        }
-        catch { }
+        removalInProgress[instanceId] = removalTask;
     }
 
     private void UsbDevice_DeviceArrived(DeviceEventArgs obj)
     {
-        try
+        string instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+        var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        if (!arrivalInProgress.TryAdd(instanceId, tcs.Task))
+            return;
+
+        Task arrivalTask = Task.Run(async () =>
         {
-            string? symLink = CommonUtils.Between(obj.SymLink, "#", "#");
-            if (string.IsNullOrEmpty(symLink))
-                return;
+            if (removalInProgress.TryGetValue(instanceId, out Task? pendingRemoval))
+                try { await pendingRemoval.WaitAsync(CrossWaitTimeout).ConfigureAwait(false); } catch { }
 
-            symLink += "&";
-            string? VendorID = CommonUtils.Between(symLink, "VID_", "&");
-            string? ProductID = CommonUtils.Between(symLink, "PID_", "&");
+            try
+            {
+                bool isSerialSensor = TryGetUsbIds(obj.SymLink, out int vendorId, out int productId) && SerialUSBIMU.IsSupportedDevice(vendorId, productId);
 
-            if (string.IsNullOrEmpty(VendorID) || string.IsNullOrEmpty(ProductID))
-                return;
+                if (isSerialSensor)
+                    UsbDeviceArrived?.Invoke(null, obj.InterfaceGuid);
+            }
+            finally
+            {
+                arrivalInProgress.TryRemove(instanceId, out _);
+                tcs.TrySetResult();
+            }
+        });
 
-            if (SerialUSBIMU.vendors.ContainsKey(new KeyValuePair<string, string>(VendorID, ProductID)))
-                UsbDeviceArrived?.Invoke(null, obj.InterfaceGuid);
-        }
-        catch { }
+        arrivalInProgress[instanceId] = arrivalTask;
     }
 
     public static async Task<PnPDetails?> GetDeviceFromInstanceIdAsync(string instanceId)

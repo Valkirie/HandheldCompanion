@@ -23,7 +23,13 @@ public class IMUAccelerometer : IMUSensor
 
     public static bool HasLegacySensor()
     {
+        return TryGetLegacySensorName(out _);
+    }
+
+    public static bool TryGetLegacySensorName(out string name)
+    {
         using WindowsSensorHandle? sensor = WindowsSensorManager.Find(WindowsSensorKind.Accelerometer);
+        name = sensor?.FriendlyName ?? string.Empty;
         return sensor is not null;
     }
 

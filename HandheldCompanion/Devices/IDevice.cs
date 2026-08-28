@@ -490,7 +490,7 @@ public abstract class IDevice
             DeviceManager_HidDeviceArrived(pnPDetails, Guid.Empty);
 
         // raise events
-        GenericDeviceUpdated(null, Guid.Empty);
+        PullSensors();
     }
 
     private void DeviceManager_HidDeviceRemoved(PnPDetails device, Guid InterfaceGuid)
@@ -1168,14 +1168,20 @@ public abstract class IDevice
     {
         Gyrometer? gyrometer = IMUGyrometer.GetAvailableSensor();
         Accelerometer? accelerometer = IMUAccelerometer.GetAvailableSensor();
-        bool hasLegacyGyrometer = gyrometer is null && IMUGyrometer.HasLegacySensor();
-        bool hasLegacyAccelerometer = accelerometer is null && IMUAccelerometer.HasLegacySensor();
+        string legacyGyrometerName = string.Empty;
+        string legacyAccelerometerName = string.Empty;
+        bool hasLegacyGyrometer = gyrometer is null && IMUGyrometer.TryGetLegacySensorName(out legacyGyrometerName);
+        bool hasLegacyAccelerometer = accelerometer is null && IMUAccelerometer.TryGetLegacySensorName(out legacyAccelerometerName);
 
         if (gyrometer != null || accelerometer != null || hasLegacyGyrometer || hasLegacyAccelerometer)
         {
-            InternalSensorName = SensorsManager.Gyrometer?.Name
-                ?? SensorsManager.Accelerometer?.Name
-                ?? string.Empty;
+            InternalSensorName = gyrometer is not null ? IMUSensor.GetDeviceName(gyrometer.DeviceId) : legacyGyrometerName;
+
+            if (string.IsNullOrWhiteSpace(InternalSensorName) && accelerometer is not null)
+                InternalSensorName = IMUSensor.GetDeviceName(accelerometer.DeviceId);
+
+            if (string.IsNullOrWhiteSpace(InternalSensorName))
+                InternalSensorName = legacyAccelerometerName;
 
             Capabilities |= DeviceCapabilities.InternalSensor;
         }

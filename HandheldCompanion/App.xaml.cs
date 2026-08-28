@@ -393,9 +393,6 @@ public partial class App : Application
         splash.SetStatus("Detecting device...");
         IDevice device = IDevice.GetCurrent();
 
-        splash.SetStatus("Detecting sensors...");
-        device.PullSensors();
-
         // InputsManager installs WH_KEYBOARD_LL / WH_MOUSE_LL via Hook.GlobalEvents().
         // Low-level hooks require a Win32 message loop on the calling thread — UI thread only.
         splash.SetStatus("Starting core managers...");
