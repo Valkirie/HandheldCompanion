@@ -1,5 +1,6 @@
 using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Devices.Valve;
+using HandheldCompanion.Actions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
@@ -76,6 +77,32 @@ public class SteamDeck : IDevice
                 Capabilities |= DeviceCapabilities.BatteryChargeLimitPercent;
             }
         }
+
+        // device specific layout
+        DefaultLayout.ButtonLayout[ButtonFlags.LeftPadClickUp] = [new ButtonActions
+        {
+            Button = ButtonFlags.DPadUp,
+            HapticMode = HapticMode.Both,
+            HapticStrength = HapticStrength.High
+        }];
+        DefaultLayout.ButtonLayout[ButtonFlags.LeftPadClickDown] = [new ButtonActions
+        {
+            Button = ButtonFlags.DPadDown,
+            HapticMode = HapticMode.Both,
+            HapticStrength = HapticStrength.High
+        }];
+        DefaultLayout.ButtonLayout[ButtonFlags.LeftPadClickLeft] = [new ButtonActions
+        {
+            Button = ButtonFlags.DPadLeft,
+            HapticMode = HapticMode.Both,
+            HapticStrength = HapticStrength.High
+        }];
+        DefaultLayout.ButtonLayout[ButtonFlags.LeftPadClickRight] = [new ButtonActions
+        {
+            Button = ButtonFlags.DPadRight,
+            HapticMode = HapticMode.Both,
+            HapticStrength = HapticStrength.High
+        }];
 
         // https://www.steamdeck.com/en/tech
         nTDP = new double[] { 10, 10, 15 };

@@ -64,15 +64,58 @@ public partial class Layout : ICloneable, IDisposable
             if (ButtonState.UIButtons.Contains(button) || ButtonState.OEMButtons.Contains(button))
                 continue;
 
-            ButtonLayout[button] = button switch
+            List<IActions> actions;
+            switch (button)
             {
-                ButtonFlags.LeftPadTouch => [new TouchpadActions(ButtonFlags.TouchpadTouch) { Finger = 1 }],
-                ButtonFlags.RightPadTouch => [new TouchpadActions(ButtonFlags.TouchpadTouch) { Finger = 2 }],
-                ButtonFlags.LeftPadClick => [new TouchpadActions(ButtonFlags.TouchpadClick) { Finger = 1 }],
-                ButtonFlags.RightPadClick => [new TouchpadActions(ButtonFlags.TouchpadClick) { Finger = 2 }],
-                _ when TouchpadActions.IsTouchpadButton(button) => [new TouchpadActions(button)],
-                _ => [new ButtonActions { Button = button }],
-            };
+                case ButtonFlags.LeftPadTouch:
+                    actions = [new TouchpadActions(ButtonFlags.TouchpadTouch)
+                    {
+                        Finger = 1,
+                        HapticMode = HapticMode.Down,
+                        HapticStrength = HapticStrength.Low
+                    }];
+                    break;
+
+                case ButtonFlags.RightPadTouch:
+                    actions = [new TouchpadActions(ButtonFlags.TouchpadTouch)
+                    {
+                        Finger = 2,
+                        HapticMode = HapticMode.Down,
+                        HapticStrength = HapticStrength.Low
+                    }];
+                    break;
+
+                case ButtonFlags.LeftPadClick:
+                    actions = [new TouchpadActions(ButtonFlags.TouchpadClick)
+                    {
+                        Finger = 1,
+                        HapticMode = HapticMode.Both,
+                        HapticStrength = HapticStrength.High
+                    }];
+                    break;
+
+                case ButtonFlags.RightPadClick:
+                    actions = [new TouchpadActions(ButtonFlags.TouchpadClick)
+                    {
+                        Finger = 2,
+                        HapticMode = HapticMode.Both,
+                        HapticStrength = HapticStrength.High
+                    }];
+                    break;
+
+                default:
+                    if (TouchpadActions.IsTouchpadButton(button))
+                    {
+                        actions = [new TouchpadActions(button)];
+                    }
+                    else
+                    {
+                        actions = [new ButtonActions(button)];
+                    }
+                    break;
+            }
+
+            ButtonLayout[button] = actions;
         }
 
         // Generic axis mappings
@@ -81,9 +124,18 @@ public partial class Layout : ICloneable, IDisposable
             switch (axis)
             {
                 default:
-                    AxisLayout[axis] = TouchpadActions.IsTouchpadAxis(axis)
-                        ? [new TouchpadActions(axis) { HapticMode = HapticMode.Down, HapticStrength = HapticStrength.Low }]
-                        : [new AxisActions { Axis = axis }];
+                    if (TouchpadActions.IsTouchpadAxis(axis))
+                    {
+                        AxisLayout[axis] = [new TouchpadActions(axis)
+                        {
+                            HapticMode = HapticMode.Down,
+                            HapticStrength = HapticStrength.Low
+                        }];
+                    }
+                    else
+                    {
+                        AxisLayout[axis] = [new AxisActions { Axis = axis }];
+                    }
                     break;
                 case AxisLayoutFlags.Gyroscope:
                     break;
