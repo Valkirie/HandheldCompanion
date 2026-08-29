@@ -921,7 +921,6 @@ namespace HandheldCompanion.ViewModels
             nameof(FrameLimitMaximum),
 
             // Fan curve UI properties (handled separately for event notification)
-            nameof(FanMode),
             nameof(CpuTempX),
             nameof(CpuTempC),
             nameof(XPointer),
@@ -1033,16 +1032,17 @@ namespace HandheldCompanion.ViewModels
                 if (SelectedPreset is null || SelectedPreset.Name is null)
                     return;
 
-                // Handle fan curve UI updates on MainPage for relevant property changes
-                if (IsMainPage && e.PropertyName is not null && _fanCurveUIProperties.Contains(e.PropertyName))
+                // Handle fan curve UI updates for relevant property changes.
+                if (e.PropertyName is not null)
                 {
-                    FanCurveUpdateRequested?.Invoke(SelectedPreset.FanProfile.fanSpeeds);
-                    return;
-                }
+                    // If the property change affects the fan curve UI (only), raise the FanCurveUpdateRequested event.
+                    if (_fanCurveUIProperties.Contains(e.PropertyName))
+                        FanCurveUpdateRequested?.Invoke(SelectedPreset.FanProfile.fanSpeeds);
 
-                // Skip properties that don't need preset persistence
-                if (e.PropertyName is not null && _skipPropertyChangedUpdate.Contains(e.PropertyName))
-                    return;
+                    // Skip properties that don't need preset persistence
+                    if (_skipPropertyChangedUpdate.Contains(e.PropertyName))
+                        return;
+                }
 
                 // Trigger power profile update but don't freeze UI
                 // todo: implement proper debounce
@@ -1165,8 +1165,9 @@ namespace HandheldCompanion.ViewModels
                         OnPropertyChanged("ModifyPresets");
                     }
                 });
+            }
 
-                FanPresetSilentCommand = new DelegateCommand(() =>
+            FanPresetSilentCommand = new DelegateCommand(() =>
                 {
                     if (_fanGraphLineSeries is null)
                         return;
@@ -1179,7 +1180,7 @@ namespace HandheldCompanion.ViewModels
                     OnPropertyChanged("FanGraphPreset");
                 });
 
-                FanPresetPerformanceCommand = new DelegateCommand(() =>
+            FanPresetPerformanceCommand = new DelegateCommand(() =>
                 {
                     if (_fanGraphLineSeries is null)
                         return;
@@ -1192,7 +1193,7 @@ namespace HandheldCompanion.ViewModels
                     OnPropertyChanged("FanGraphPreset");
                 });
 
-                FanPresetTurboCommand = new DelegateCommand(() =>
+            FanPresetTurboCommand = new DelegateCommand(() =>
                 {
                     if (_fanGraphLineSeries is null)
                         return;
@@ -1204,15 +1205,13 @@ namespace HandheldCompanion.ViewModels
                     // Temporary until view dependencies could be removed
                     OnPropertyChanged("FanGraphPreset");
                 });
-            }
             #endregion
         }
 
         private void QueryPlatforms()
         {
             // manage events
-            if (IsMainPage)
-                PlatformManager.LibreHardware.CPUTemperatureChanged += LibreHardwareMonitor_CpuTemperatureChanged;
+            PlatformManager.LibreHardware.CPUTemperatureChanged += LibreHardwareMonitor_CpuTemperatureChanged;
 
             OnPropertyChanged(nameof(IsRunningRTSS));
             OnPropertyChanged(nameof(SupportsFramerateLimiter));
@@ -1389,22 +1388,19 @@ namespace HandheldCompanion.ViewModels
                 ManagerFactory.gpuManager.Hooked -= GPUManager_Hooked;
                 ManagerFactory.gpuManager.Unhooked -= GpuManager_Unhooked;
                 ManagerFactory.gpuManager.Initialized -= GpuManager_Initialized;
-                if (IsMainPage)
-                    PlatformManager.LibreHardware.CPUTemperatureChanged -= LibreHardwareMonitor_CpuTemperatureChanged;
+                PlatformManager.LibreHardware.CPUTemperatureChanged -= LibreHardwareMonitor_CpuTemperatureChanged;
                 ManagerFactory.platformManager.Initialized -= PlatformManager_Initialized;
 
-                if (IsMainPage)
-                {
-                    _fanGraphLineSeries?.ActualValues.CollectionChanged -= ActualValues_CollectionChanged;
+                _fanGraphLineSeries?.ActualValues.CollectionChanged -= ActualValues_CollectionChanged;
 
-                    if (_fanGraph is not null)
-                    {
-                        _fanGraph.DataClick -= ChartOnDataClick;
-                        _fanGraph.MouseLeave -= ChartMouseLeave;
-                        _fanGraph.MouseMove -= ChartMouseMove;
-                        _fanGraph.MouseUp -= ChartMouseUp;
-                        _fanGraph.TouchMove -= ChartTouchMove;
-                    }
+                if (_fanGraph is not null)
+                {
+                    _fanGraph.DataClick -= ChartOnDataClick;
+                    _fanGraph.MouseLeave -= ChartMouseLeave;
+                    _fanGraph.MouseMove -= ChartMouseMove;
+                    _fanGraph.MouseUp -= ChartMouseUp;
+                    _fanGraph.TouchMove -= ChartTouchMove;
+                    _fanGraph.PreviewTouchDown -= _fanGraph_PreviewTouchDown;
                 }
             }
 
@@ -1586,7 +1582,7 @@ namespace HandheldCompanion.ViewModels
         }
 
         // TODO: Get rid of View dependencies
-        public void InitializeViewDependencies(CartesianChart fanGraph, LineSeries fanGraphLineSeries, ContentDialog modifyDialog)
+        public void InitializeViewDependencies(CartesianChart fanGraph, LineSeries fanGraphLineSeries, ContentDialog? modifyDialog)
         {
             _fanGraph = fanGraph;
             _fanGraphLineSeries = fanGraphLineSeries;
