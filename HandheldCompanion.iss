@@ -10,7 +10,6 @@
 #endif
 
 #define UseDirectX
-#define UseViGem
 #define UseHideHide
 #define UseRTSS
 #define UsePawnIO
@@ -38,7 +37,6 @@
 
 #define DotNetName             ".NET Desktop Runtime"
 #define DirectXName            "DirectX Runtime"
-#define ViGemName              "ViGEmBus Setup"
 #define HidHideName            "HidHide Drivers"
 #define RtssName               "RTSS Setup"
 #define PawnIOName             "PawnIO"
@@ -46,14 +44,12 @@
 
 #define NewDotNetVersion       "10.0.9"
 #define NewDirectXVersion      "9.29.1974"
-#define NewViGemVersion        "1.22.0.0"
 #define NewHidHideVersion      "1.5.230"
 #define NewRtssVersion         "7.3.5.28314"
 #define NewPawnIOVersion       "2.1.0.0"
 #define NewUSBipVersion        "0.9.7.8"
 
 #define DirectXDownloadLink    "https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe"
-#define ViGemDownloadLink      "https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe"
 #define HidHideDownloadLink    "https://github.com/nefarius/HidHide/releases/download/v1.5.230.0/HidHide_1.5.230_x64.exe"
 #define RtssDownloadLink       "https://github.com/Valkirie/HandheldCompanion/raw/main/redist/RTSSSetup737.exe"
 #define PawnIODownloadLink     "https://github.com/namazso/PawnIO.Setup/releases/latest/download/PawnIO_setup.exe"
@@ -198,7 +194,6 @@ function Dependency_IsNetCoreInstalled(const Version: String): Boolean; forward;
 function Dependency_IsDirectXInstalled: Boolean; forward;
 procedure Dependency_AddDotNet10Desktop; forward;
 procedure Dependency_AddDirectX; forward;
-procedure Dependency_AddViGem; forward;
 procedure Dependency_AddHideHide; forward;
 procedure Dependency_AddRTSS; forward;
 procedure Dependency_AddPawnIO; forward;
@@ -521,20 +516,6 @@ begin
     if not(keepHidhideCheckbox.Checked) then
       uninstallHidHide();
 
-    if not(keepVigemCheckbox.Checked) then
-    begin
-      if ShellExec('', 'msiexec.exe', '/X{966606F3-2745-49E9-BF15-5C3EAA4E9077}', '', SW_SHOW, ewWaitUntilTerminated, resultCode) then
-      begin
-        Log('Successfully executed Vigem uninstaller');
-        if resultCode = 0 then
-          Log('Vigem uninstaller finished successfully')
-        else
-          Log('Vigem uninstaller failed with exit code ' + IntToStr(resultCode));
-      end
-      else
-        Log('Failed to execute Vigem uninstaller');
-    end;
-
     if deleteSettingsCheckbox.Checked then
       if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}')) then
         DelTree(ExpandConstant('{localappdata}\{#MyBuildId}'), True, True, True);
@@ -567,22 +548,6 @@ begin
   else
   begin
     Log('{#DirectXName} runtime already detected.');
-  end;
-#endif
-
-#ifdef UseViGem
-  if not IsViGemInstalled() then
-  begin
-    Dependency_AddViGem;
-  end
-  else
-  begin
-    installedVersion := RegGetInstalledVersion('{#ViGemName}');
-    if compareVersions('{#NewViGemVersion}', installedVersion, '.', '-') > 0 then
-    begin
-      Log('{#ViGemName} {#NewViGemVersion} needs update.');
-      Dependency_AddViGem;
-    end;
   end;
 #endif
 
@@ -913,16 +878,6 @@ begin
     '{#DirectXName}',
     '{#DirectXDownloadLink}',
     '', True, False, False, '');
-end;
-
-procedure Dependency_AddViGem;
-begin
-  Dependency_Add_With_Version('ViGEmBus_1.22.0_x64_x86_arm64.exe', '{#NewViGemVersion}', RegGetInstalledVersion('{#ViGemName}'),
-    '/quiet /norestart',
-    '{#ViGemName}',
-    '{#ViGemDownloadLink}',
-    '',
-    True, False, False, '');
 end;
 
 procedure Dependency_AddHideHide;

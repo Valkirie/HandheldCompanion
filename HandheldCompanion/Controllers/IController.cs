@@ -29,7 +29,7 @@ namespace HandheldCompanion.Controllers
         #endregion
 
         // Buttons and axes we should be able to map to.
-        // When we have target controllers with different buttons (e.g. in VigEm) this will have to be moved elsewhere.
+        // When target controllers have different buttons, this will have to be moved elsewhere.
         protected readonly List<ButtonFlags> TargetButtons =
         [
             ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,

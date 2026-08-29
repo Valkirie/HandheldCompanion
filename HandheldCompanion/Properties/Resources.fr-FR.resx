@@ -121,7 +121,7 @@
     <value>À propos</value>
   </data>
   <data name="AboutPage_AboutDescription" xml:space="preserve">
-    <value>Une combinaison d'un service Windows et d'une interface tactile optimisée pour améliorer votre expérience de jeu de poche. Le contrôle gyro, la simulation de contrôleur virtuel, la superposition d'outils rapides, les touchpads virtuels, le modèle de contrôleur 3D, par système de paramètres de profil basé sur l'application. Handheld Companion repose sur le pilote ViGEmBus et les bibliothèques ViGEmClient ainsi que sur le pilote de filtre en mode kernel-Hide HidHide . Les algorithmes de contrôle du mouvement sont basés sur le travail de Jibbsmart et les informations disponibles sur le GyroWiki.</value>
+    <value>Une combinaison d'un service Windows et d'une interface tactile optimisée pour améliorer votre expérience de jeu de poche. Le contrôle gyro, la simulation de contrôleur virtuel, la superposition d'outils rapides, les touchpads virtuels, le modèle de contrôleur 3D, par système de paramètres de profil basé sur l'application. Handheld Companion repose sur le pilote de filtre en mode kernel HidHide. Les algorithmes de contrôle du mouvement sont basés sur le travail de Jibbsmart et les informations disponibles sur le GyroWiki.</value>
   </data>
   <data name="AboutPage_Accelerometer" xml:space="preserve">
     <value>Accéléromètre</value>

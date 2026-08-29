@@ -25,8 +25,8 @@ public static class HidHide
         // verifying HidHide is installed
         if (!service.IsInstalled)
         {
-            LogManager.LogCritical("HidHide is missing. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
-            MessageBox.Show("Unable to start Handheld Companion, the HidHide application is missing.\n\nPlease get it from: https://github.com/ViGEm/HidHide/releases", "Error");
+            LogManager.LogCritical("HidHide is missing. Please get it from: {0}", "https://github.com/nefarius/HidHide/releases");
+            MessageBox.Show("Unable to start Handheld Companion, the HidHide application is missing.\n\nPlease get it from: https://github.com/nefarius/HidHide/releases", "Error");
             throw new InvalidOperationException();
         }
 

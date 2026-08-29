@@ -4,7 +4,7 @@ var
   UninstallSecondPage: TNewNotebookPage;
   UninstallBackButton: TNewButton;
   UninstallNextButton: TNewButton;
-  keepVigemCheckbox, keepHidHideCheckbox: TNewCheckBox;
+  keepHidHideCheckbox: TNewCheckBox;
 
 procedure UpdateUninstallWizard;
 begin
@@ -116,17 +116,10 @@ begin
     PageText.ShowAccelChar := False;
     PageText.Caption := 'Press Uninstall to proceeed with uninstallation.';   
     
-    keepVigemCheckbox := TNewCheckBox.Create(UninstallProgressForm);
-    keepVigemCheckbox.Parent := UninstallSecondPage;
-    keepVigemCheckbox.Left := UninstallProgressForm.StatusLabel.Left;
-    keepVigemCheckbox.Top := PageText.Top + PageText.height + 16;
-    keepVigemCheckbox.Caption := 'Keep Vigem';
-    keepVigemCheckbox.checked:= false;
-
     keepHidhideCheckbox := TNewCheckBox.Create(UninstallProgressForm);
     keepHidhideCheckbox.Parent := UninstallSecondPage;
     keepHidhideCheckbox.Left := UninstallProgressForm.StatusLabel.Left;
-    keepHidhideCheckbox.Top := keepVigemCheckbox.Top + PageText.height + 6;
+    keepHidhideCheckbox.Top := PageText.Top + PageText.height + 16;
     keepHidhideCheckbox.Caption := 'Keep HidHide';
     keepHidhideCheckbox.checked := false;
   

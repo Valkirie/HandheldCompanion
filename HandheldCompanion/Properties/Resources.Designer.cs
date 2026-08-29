@@ -70,7 +70,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A combination of a Windows service and a touch interface optimized GUI to increase your handheld gaming computer experience. Features include: motion control a.k.a. gyro control, virtual controller simulation, quick tools overlay, virtual touchpads, 3D controller model, per application based profile settings system. Handheld Companion relies on ViGEmBus driver and ViGEmClient libraries as well as HidHide kernel-mode filter driver. Motion control algorithms are based on work by Jibbsmart and availible inform [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to A touch-optimized GUI to improve your handheld gaming computer experience. Features include motion control through an IMU or external sensor, the QuickTools overlay, VIIPER virtual controller simulation for Xbox 360, DualShock 4, DualSense, Steam Controller, Steam Deck, and Nintendo Switch Pro controllers, application profiles, gamepad remapping, PS Remote Play support, a 3D controller overlay, and hotkeys. The all-in-one installer also installs the HidHide filter driver used to hide physical controllers when required.
         /// </summary>
         public static string AboutPage_AboutDescription {
             get {
@@ -1051,7 +1051,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The ViGEm driver is not ready yet. Attempt {0} of {1}, retrying....
+        ///   Looks up a localized string similar to The virtual controller is not ready yet. Attempt {0} of {1}, retrying....
         /// </summary>
         public static string ControllerPage_VirtualConnectRetryDesc {
             get {

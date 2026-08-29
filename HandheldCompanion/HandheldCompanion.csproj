@@ -2591,9 +2591,6 @@
 		<Reference Include="Microsoft.Win32.TaskScheduler">
 			<HintPath>..\Resources\Microsoft.Win32.TaskScheduler.dll</HintPath>
 		</Reference>
-		<Reference Include="Nefarius.ViGEm.Client">
-			<HintPath>..\Resources\Nefarius.ViGEm.Client.dll</HintPath>
-		</Reference>
 		<Reference Include="RTSSSharedMemoryNET">
 			<HintPath>Resources\RTSSSharedMemoryNET.dll</HintPath>
 		</Reference>

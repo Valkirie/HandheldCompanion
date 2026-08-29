@@ -134,7 +134,7 @@
     <value>정보</value>
   </data>
   <data name="AboutPage_AboutDescription" xml:space="preserve">
-    <value>Windows 서비스와 터치 인터페이스에 최적화된 GUI의 조합으로, 핸드헬드 게임 컴퓨터의 경험이 향상됩니다. 기능에는 자이로 컨트롤, 가상 컨트롤러 시뮬레이션, 빠른 도구 오버레이, 가상 터치패드, 3D 컨트롤러 모델, 애플리케이션별 기반의 프로파일 설정 시스템이 포함됩니다. Handheld Companion은 ViGEmBus 드라이버와 ViGEmClient 라이브러리, 그리고 HidHide 커널 모드 필터 드라이버에 의존하고 있습니다. 모션 컨트롤 알고리즘은 Jibbsmart에 의한 연구와 GyroWiki에서 얻은 정보에 기반하고 있습니다.</value>
+    <value>Windows 서비스와 터치 인터페이스에 최적화된 GUI의 조합으로, 핸드헬드 게임 컴퓨터의 경험이 향상됩니다. 기능에는 자이로 컨트롤, 가상 컨트롤러 시뮬레이션, 빠른 도구 오버레이, 가상 터치패드, 3D 컨트롤러 모델, 애플리케이션별 기반의 프로파일 설정 시스템이 포함됩니다. Handheld Companion은 HidHide 커널 모드 필터 드라이버에 의존하고 있습니다. 모션 컨트롤 알고리즘은 Jibbsmart에 의한 연구와 GyroWiki에서 얻은 정보에 기반하고 있습니다.</value>
   </data>
   <data name="AboutPage_Accelerometer" xml:space="preserve">
     <value>가속도계</value>
