@@ -29,6 +29,7 @@ namespace HandheldCompanion.Actions
 
         private const int ScrollAmountInClicks = 20;
         private const float FilterBeta = 0.5f;
+        private const float ExpectedTicksPerSecond = 125f;
         // Runtime
         private bool isCursorDown = false;
         private bool isTouched = false;
@@ -223,7 +224,7 @@ namespace HandheldCompanion.Actions
                 case AxisLayoutFlags.LeftStick:
                 case AxisLayoutFlags.RightStick:
                 case AxisLayoutFlags.Gyroscope:
-                    deltaVector = ComputeStickDelta(outVector);
+                    deltaVector = ComputeStickDelta(outVector) * (delta / 1000f * ExpectedTicksPerSecond);
                     sensitivityScale = MouseType == MouseActionsType.Move ? 0.3f : 0.1f;
                     break;
 
