@@ -432,6 +432,8 @@ public abstract class IDevice
 
     public override string ToString()
     {
+        if (!string.IsNullOrEmpty(ProductModel))
+            return ProductModel;
         return ProductName;
     }
 
@@ -950,9 +952,6 @@ public abstract class IDevice
                             break;
                         case "ONEXPLAYER X2":
                             device = new OneXPlayerX2();
-                            break;
-                        case "ONEXPLAYER 3":
-                            device = new OneXPlayer3();
                             break;
                         case "ONEXPLAYER X2Mini PRO":
                             device = new OneXPlayerX2MiniPro();
