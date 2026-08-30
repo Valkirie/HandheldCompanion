@@ -8,7 +8,7 @@ namespace HandheldCompanion.ViewModels
     public class AboutPageViewModel : BaseViewModel
     {
         public string Manufacturer => IDevice.GetCurrent().ManufacturerName;
-        public string ProductName => IDevice.GetCurrent().ProductName;
+        public string ProductName => IDevice.GetCurrent().ToString();
         public string Version => App.CurrentVersion.ToString();
 
         public string InternalSensor => IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.InternalSensor)

@@ -60,4 +60,9 @@ public class MinisforumV3 : IDevice
             TDPOverrideValues = new[] { 28.0d, 28.0d, 28.0d }
         });
     }
+
+    public override string ToString()
+    {
+        return "Minisforum V3";
+    }
 }
