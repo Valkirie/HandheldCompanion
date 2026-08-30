@@ -127,6 +127,7 @@
 		<None Remove="Resources\MissingArtwork.png" />
 		<None Remove="Resources\msiapcfg.dll" />
 		<None Remove="Resources\PawnIO\RyzenSMU.bin" />
+		<None Remove="Resources\PawnIO\LedsValve.bin" />
 		<None Remove="Resources\Screen.mtl" />
 		<None Remove="Resources\Screen.obj" />
 		<None Remove="Resources\seguiemj.ttf" />
@@ -148,6 +149,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Resources\PawnIO\RyzenSMU.bin" />
+		<EmbeddedResource Include="Resources\PawnIO\LedsValve.bin" />
 	</ItemGroup>
 	<ItemGroup>
 		<Resource Include="Resources\Controllers\controller_0_big.png" />
