@@ -430,6 +430,11 @@ public abstract class IDevice
         };
     }
 
+    public override string ToString()
+    {
+        return ProductName;
+    }
+
     public virtual void OpenEvents()
     {
         // raise opened event
@@ -945,6 +950,9 @@ public abstract class IDevice
                             break;
                         case "ONEXPLAYER X2":
                             device = new OneXPlayerX2();
+                            break;
+                        case "ONEXPLAYER 3":
+                            device = new OneXPlayer3();
                             break;
                         case "ONEXPLAYER X2Mini PRO":
                             device = new OneXPlayerX2MiniPro();
