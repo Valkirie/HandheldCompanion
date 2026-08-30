@@ -257,6 +257,50 @@ public class ProfileManager : IManager
         return profile;
     }
 
+    private Profile GetProfileFromProcess(ProcessEx processEx, bool ignoreStatus = true)
+    {
+        Profile selectedProfile = GetProfileFromPath(processEx.Path, ignoreStatus);
+        Profile parentProfile = GetProfileFromPath(processEx.Path, ignoreStatus, true);
+
+        if (parentProfile.Default || processEx.ProcessId == 0)
+            return selectedProfile;
+
+        string? arguments = ProcessUtils.GetCommandLineArguments(processEx.ProcessId);
+        if (string.IsNullOrWhiteSpace(arguments))
+            return selectedProfile;
+
+        IEnumerable<Profile> matches = GetSubProfilesFromProfile(parentProfile)
+            .Where(subProfile => !string.IsNullOrWhiteSpace(subProfile.Arguments))
+            .Where(subProfile => CommandLineContainsArguments(arguments, subProfile.Arguments));
+
+        return matches.Any() ? matches.First() : selectedProfile;
+    }
+
+    private static bool CommandLineContainsArguments(string commandLine, string arguments)
+    {
+        static string[] Tokenize(string value) => Regex.Matches(value, @"""([^""]*)""|\S+")
+            .Select(match => match.Groups[1].Success ? match.Groups[1].Value : match.Value)
+            .ToArray();
+
+        string[] commandLineArguments = Tokenize(commandLine);
+        string[] profileArguments = Tokenize(arguments);
+        int profileIndex = 0;
+
+        foreach (string commandLineArgument in commandLineArguments)
+        {
+            while (profileIndex < profileArguments.Length
+                && !profileArguments[profileIndex].Equals(commandLineArgument, StringComparison.OrdinalIgnoreCase))
+                profileIndex++;
+
+            if (profileIndex == profileArguments.Length)
+                return false;
+
+            profileIndex++;
+        }
+
+        return commandLineArguments.Length > 0;
+    }
+
     public Profile GetProfileFromGuid(Guid Guid, bool ignoreStatus = true, bool isSubProfile = false)
     {
         Profile? profile = null;
@@ -382,6 +426,8 @@ public class ProfileManager : IManager
         if (previousProfile is not null)
         {
             if (previousProfile.Guid == profile.Guid)
+                announce = false;
+            if (profile.Default)
                 announce = false;
         }
         else if (Status == ManagerStatus.Initializing)
@@ -525,7 +571,7 @@ public class ProfileManager : IManager
     {
         try
         {
-            Profile profile = GetProfileFromPath(processEx.Path, true);
+            Profile profile = GetProfileFromProcess(processEx, true);
             if (profile.Default)
                 return;
 
@@ -552,13 +598,16 @@ public class ProfileManager : IManager
     {
         try
         {
-            Profile profile = GetProfileFromPath(processEx.Path, true);
+            Profile profile = GetProfileFromProcess(processEx, true);
             var process = processEx.Process;
             if (process is null)
                 return;
 
             if (profile.Default)
                 return;
+
+            if (profile.IsSubProfile && !profile.IsFavoriteSubProfile)
+                SetFavorite(profile);
 
             // update vars
             if (profile.LastUsed != process.StartTime || !string.Equals(profile.Path, processEx.Path, StringComparison.OrdinalIgnoreCase))
@@ -586,10 +635,13 @@ public class ProfileManager : IManager
             if (processEx is null)
                 return;
 
-            Profile? profile = GetProfileFromPath(processEx.Path, false);
+            Profile? profile = GetProfileFromProcess(processEx, false);
 
             if (profile is null)
                 return;
+
+            if (profile.IsSubProfile && !profile.IsFavoriteSubProfile)
+                SetFavorite(profile);
 
             // skip if current
             if (!Monitor.TryEnter(profileLock, TimeSpan.FromSeconds(2)))
