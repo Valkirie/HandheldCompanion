@@ -16,6 +16,8 @@ namespace HandheldCompanion.ViewModels
 {
     public class TriggerMappingViewModel : MappingViewModel
     {
+        public override bool IsContinuousHaptics => Action is TriggerActions || base.IsContinuousHaptics;
+
         public override ActionType[] SupportedActionTypes =>
         [
             ActionType.Disabled,

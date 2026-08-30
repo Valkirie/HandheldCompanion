@@ -309,9 +309,6 @@ namespace HandheldCompanion.Actions
             base.Execute(layout, shiftSlot, delta);
             ApplyResponseCurve();
 
-            bool isTrackpad = layout.flags is AxisLayoutFlags.LeftPad or AxisLayoutFlags.RightPad;
-            UpdateMovementHaptics(layout.flags, touched && !axisSlotDisabled, outVector);
-
             float threshold = motionThreshold / short.MaxValue;
             bool hasMovement = outVector.Length() > threshold;
 

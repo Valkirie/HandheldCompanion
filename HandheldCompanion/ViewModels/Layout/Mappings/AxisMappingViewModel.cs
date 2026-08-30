@@ -21,6 +21,8 @@ namespace HandheldCompanion.ViewModels
 {
     public class AxisMappingViewModel : MappingViewModel
     {
+        public override bool IsContinuousHaptics => Action is AxisActions || base.IsContinuousHaptics;
+
         public override ActionType[] SupportedActionTypes =>
         [
             ActionType.Disabled,
