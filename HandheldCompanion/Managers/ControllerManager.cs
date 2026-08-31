@@ -1,4 +1,5 @@
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Controllers.AYANEO;
 using HandheldCompanion.Controllers.Dummies;
 using HandheldCompanion.Controllers.GameSir;
 using HandheldCompanion.Controllers.Lenovo;
@@ -752,6 +753,7 @@ public static class ControllerManager
 
                         switch (VendorId)
                         {
+                            // Valve
                             case 0x28DE:
                                 switch (ProductId)
                                 {
@@ -780,6 +782,7 @@ public static class ControllerManager
                                 }
                                 break;
 
+                            // Lenovo
                             case 0x17EF:
                                 switch (ProductId)
                                 {
@@ -800,12 +803,23 @@ public static class ControllerManager
                                 }
                                 break;
 
+                            // MSI
                             case 0x0DB0:
                                 switch (ProductId)
                                 {
                                     case 0x1902:
                                     case 0x1903:
                                         try { controller = new DClawController(details); } catch { }
+                                        break;
+                                }
+                                break;
+
+                            // AYANEO
+                            case 0x4001:
+                                switch (ProductId)
+                                {
+                                    case 0x0428: // AYANEO Next II DInput
+                                        try { controller = new AYANEODController(details); } catch { }
                                         break;
                                 }
                                 break;

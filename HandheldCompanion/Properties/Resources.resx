@@ -1647,6 +1647,33 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="Enum_AYANEO2_ButtonFlags_OEM4" xml:space="preserve">
     <value>LC</value>
   </data>
+  <data name="Enum_AYANEONEXT2_ButtonFlags_OEM1" xml:space="preserve">
+    <value>AYA</value>
+  </data>
+  <data name="Enum_AYANEONEXT2_ButtonFlags_OEM2" xml:space="preserve">
+    <value>≈</value>
+  </data>
+  <data name="Enum_AYANEONEXT2_ButtonFlags_OEM3" xml:space="preserve">
+    <value>LC</value>
+  </data>
+  <data name="Enum_AYANEONEXT2_ButtonFlags_OEM4" xml:space="preserve">
+    <value>RC</value>
+  </data>
+  <data name="Enum_AYANEONEXT2_ButtonFlags_OEM5" xml:space="preserve">
+    <value>T</value>
+  </data>
+  <data name="Enum_AYANEONEXT2_ButtonFlags_OEM6" xml:space="preserve">
+    <value>LC1</value>
+  </data>
+  <data name="Enum_AYANEONEXT2_ButtonFlags_OEM7" xml:space="preserve">
+    <value>LC2</value>
+  </data>
+  <data name="Enum_AYANEONEXT2_ButtonFlags_OEM8" xml:space="preserve">
+    <value>RC1</value>
+  </data>
+  <data name="Enum_AYANEONEXT2_ButtonFlags_OEM9" xml:space="preserve">
+    <value>RC2</value>
+  </data>
   <data name="Enum_AYANEOAIR_ButtonFlags_OEM1" xml:space="preserve">
     <value>AYA</value>
   </data>
@@ -2573,6 +2600,12 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   </data>
   <data name="Hint_CoreIsolationCheckReadme" xml:space="preserve">
     <value>You might want to turn off core isolation and restart your system to enable TDP manipulations</value>
+  </data>
+  <data name="Hint_AYANEONext2DInput" xml:space="preserve">
+    <value>AYANEO NEXT 2 DInput controller detected</value>
+  </data>
+  <data name="Hint_AYANEONext2DInputDesc" xml:space="preserve">
+    <value>Press LC and RC simultaneously to switch to XInput mode for proper controller compatibility</value>
   </data>
   <data name="ProfilesPage_SubProfiles" xml:space="preserve">
     <value>Sub Profiles</value>

@@ -695,6 +695,7 @@ public abstract class IDevice
         var ProductName = MotherboardInfo.Product;
         var SystemName = MotherboardInfo.SystemName;
         var SystemModel = MotherboardInfo.SystemModel;
+        var SystemSKU = MotherboardInfo.SystemSKU;
         var Version = MotherboardInfo.Version;
         var Processor = MotherboardInfo.ProcessorName;
         var NumberOfCores = MotherboardInfo.NumberOfCores;
@@ -759,6 +760,7 @@ public abstract class IDevice
 
             case "AYADEVICE":
             case "AYANEO":
+            case "AYA":
                 {
                     switch (ProductName)
                     {
@@ -798,6 +800,13 @@ public abstract class IDevice
                             device = Processor.Contains("4500U")
                                 ? new AYANEONEXTLite4500U()
                                 : new AYANEONEXTLite();
+                            break;
+                        case "NEXT II":
+                        case "NEXT 2":
+                        case "AYANEO NEXT II":
+                        case "AYANEO NEXT 2":
+                        case "AB09":
+                            device = new AYANEONEXT2();
                             break;
                         case "AYANEO 2":
                         case "GEEK":

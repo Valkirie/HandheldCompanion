@@ -2032,6 +2032,87 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AYA.
+        /// </summary>
+        public static string Enum_AYANEONEXT2_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ≈.
+        /// </summary>
+        public static string Enum_AYANEONEXT2_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LC.
+        /// </summary>
+        public static string Enum_AYANEONEXT2_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RC.
+        /// </summary>
+        public static string Enum_AYANEONEXT2_ButtonFlags_OEM4 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to T.
+        /// </summary>
+        public static string Enum_AYANEONEXT2_ButtonFlags_OEM5 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LC1.
+        /// </summary>
+        public static string Enum_AYANEONEXT2_ButtonFlags_OEM6 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LC2.
+        /// </summary>
+        public static string Enum_AYANEONEXT2_ButtonFlags_OEM7 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RC1.
+        /// </summary>
+        public static string Enum_AYANEONEXT2_ButtonFlags_OEM8 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RC2.
+        /// </summary>
+        public static string Enum_AYANEONEXT2_ButtonFlags_OEM9 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM9", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to M1.
         /// </summary>
         public static string Enum_DClawController_OEM3 {
@@ -4737,6 +4818,24 @@ namespace HandheldCompanion.Properties {
         public static string Hint_CoreIsolationCheckReadme {
             get {
                 return ResourceManager.GetString("Hint_CoreIsolationCheckReadme", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to AYANEO NEXT 2 DInput controller detected.
+        /// </summary>
+        public static string Hint_AYANEONext2DInput {
+            get {
+                return ResourceManager.GetString("Hint_AYANEONext2DInput", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Press LC and RC simultaneously to switch to XInput mode for proper controller compatibility.
+        /// </summary>
+        public static string Hint_AYANEONext2DInputDesc {
+            get {
+                return ResourceManager.GetString("Hint_AYANEONext2DInputDesc", resourceCulture);
             }
         }
         
