@@ -1,5 +1,4 @@
 using HandheldCompanion.Processors.AMD;
-using HandheldCompanion.Shared;
 using System;
 using System.Reflection;
 using System.Windows.Media;

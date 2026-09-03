@@ -1,7 +1,7 @@
 ﻿using HandheldCompanion.Inputs;
-using static HandheldCompanion.Utils.DeviceUtils;
 using System.Threading;
 using System.Windows.Media;
+using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices
 {

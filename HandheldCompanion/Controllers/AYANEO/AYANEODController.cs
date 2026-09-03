@@ -2,8 +2,8 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Notifications;
 using HandheldCompanion.Utils;
-using SharpDX.DirectInput;
 using iNKORE.UI.WPF.Modern.Controls;
+using SharpDX.DirectInput;
 
 namespace HandheldCompanion.Controllers.AYANEO;
 

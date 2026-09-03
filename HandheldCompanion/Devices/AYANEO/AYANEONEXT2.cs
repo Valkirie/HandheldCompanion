@@ -51,7 +51,7 @@ public class AYANEONEXT2 : AYANEODeviceCEc
         // until the stick LED rings glow green for expected InputPlumber mappings to work.
         OEMChords.Clear();
         OEMChords.Add(new KeyboardChord("AYANEO Button", [KeyCode.F23], [KeyCode.F23], false, ButtonFlags.OEM1));
-        OEMChords.Add(new KeyboardChord("Custom Key Small", [KeyCode.LWin, KeyCode.D], [KeyCode.LWin, KeyCode.D], false, ButtonFlags.OEM2 ));
+        OEMChords.Add(new KeyboardChord("Custom Key Small", [KeyCode.LWin, KeyCode.D], [KeyCode.LWin, KeyCode.D], false, ButtonFlags.OEM2));
         OEMChords.Add(new KeyboardChord("LC", [KeyCode.F21], [KeyCode.F21], false, ButtonFlags.OEM3));
         OEMChords.Add(new KeyboardChord("RC", [KeyCode.F22], [KeyCode.F22], false, ButtonFlags.OEM4));
         OEMChords.Add(new KeyboardChord("T", [KeyCode.F16], [KeyCode.F16], false, ButtonFlags.OEM5));

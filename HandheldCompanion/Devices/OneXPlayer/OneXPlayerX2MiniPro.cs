@@ -1,5 +1,4 @@
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using System.Threading;
 using System.Threading.Tasks;
 using WindowsInput.Events;

@@ -1,5 +1,4 @@
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Controllers.Steam;
 using HandheldCompanion.Utils;
 using System;
 
