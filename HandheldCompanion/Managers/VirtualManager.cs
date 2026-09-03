@@ -389,8 +389,8 @@ namespace HandheldCompanion.Managers
 
             try
             {
-                await controllerLock.WaitAsync().ConfigureAwait(false);
-                await Task.Run(() => SetControllerModeCore(mode)).ConfigureAwait(false);
+                await controllerLock.WaitAsync();
+                await SetControllerModeCore(mode);
             }
             catch { }
             finally
@@ -406,8 +406,8 @@ namespace HandheldCompanion.Managers
 
             try
             {
-                await controllerLock.WaitAsync().ConfigureAwait(false);
-                await Task.Run(() => SetControllerStatusCore(status)).ConfigureAwait(false);
+                await controllerLock.WaitAsync();
+                await SetControllerStatusCore(status);
             }
             catch { }
             finally
@@ -429,7 +429,7 @@ namespace HandheldCompanion.Managers
                 StatusChanged?.Invoke(VirtualManagerStatus.Ready, 0, 0);
         }
 
-        private static void SetControllerModeCore(HIDmode mode)
+        private static async Task SetControllerModeCore(HIDmode mode)
         {
             // If the requested mode is already active, do nothing
             if (HIDmode == mode)
@@ -447,6 +447,10 @@ namespace HandheldCompanion.Managers
                 vTarget.Disconnect();
                 vTarget.Dispose();
                 vTarget = null;
+
+                // Wait for a short delay to ensure the controller is fully disconnected before proceeding
+                await Task.Delay(2000);
+
                 NotifyMasterIntervalOverrideChanged();
             }
 
@@ -458,7 +462,7 @@ namespace HandheldCompanion.Managers
                 HIDmode = mode;
                 ControllerSelected?.Invoke(mode);
                 NotifyMasterIntervalOverrideChanged();
-                SetControllerStatusCore(HIDstatus);
+                await SetControllerStatusCore(HIDstatus);
                 return;
             }
 
@@ -488,7 +492,7 @@ namespace HandheldCompanion.Managers
             ControllerSelected?.Invoke(mode);
             NotifyMasterIntervalOverrideChanged();
 
-            SetControllerStatusCore(HIDstatus);
+            await SetControllerStatusCore(HIDstatus);
         }
 
         private static VTarget? CreateTarget(HIDmode mode)
@@ -513,7 +517,7 @@ namespace HandheldCompanion.Managers
             target.StatusChanged += (t, status, attempt, maxAttempts) => OnTargetConnectStatusChanged(t, status, attempt, maxAttempts);
         }
 
-        private static void SetControllerStatusCore(HIDstatus status)
+        private static async Task SetControllerStatusCore(HIDstatus status)
         {
             if (vTarget is null)
             {

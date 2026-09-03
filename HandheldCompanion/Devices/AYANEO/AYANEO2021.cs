@@ -26,7 +26,7 @@ public class AYANEO2021 : IDevice
         ));
 
         // Conflicts with OS
-        //listeners.Add("TM key", new ChordClick(KeyCode.RAlt, KeyCode.RControlKey, KeyCode.Delete));
+        //listeners.Add("TM key", new ChordClick(KeyCode.RAlt, KeyCode.RControl, KeyCode.Delete));
 
         this.OEMChords.Add(new KeyboardChord("ESC key",
             [KeyCode.Escape],
@@ -36,8 +36,8 @@ public class AYANEO2021 : IDevice
 
         // Conflicts with Ayaspace when installed
         this.OEMChords.Add(new KeyboardChord("KB key",
-            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.O],
-            [KeyCode.O, KeyCode.LWin, KeyCode.RControlKey],
+            [KeyCode.RControl, KeyCode.LWin, KeyCode.O],
+            [KeyCode.O, KeyCode.LWin, KeyCode.RControl],
             false, ButtonFlags.OEM3
         ));
     }

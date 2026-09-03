@@ -64,8 +64,8 @@ public class OneXPlayerOneXFly : OneXAOKZOE
         ));
 
         OEMChords.Add(new KeyboardChord("Keyboard",
-            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.O],
-            [KeyCode.O, KeyCode.LWin, KeyCode.RControlKey],
+            [KeyCode.RControl, KeyCode.LWin, KeyCode.O],
+            [KeyCode.O, KeyCode.LWin, KeyCode.RControl],
             false, ButtonFlags.OEM2
         ));
 
@@ -136,10 +136,6 @@ public class OneXPlayerOneXFly : OneXAOKZOE
                 return "\u2210";
             case ButtonFlags.OEM3:
                 return "\u2219";
-            case ButtonFlags.OEM4:
-                return "\u2212";
-            case ButtonFlags.OEM5:
-                return "\u2213";
         }
 
         return defaultGlyph;

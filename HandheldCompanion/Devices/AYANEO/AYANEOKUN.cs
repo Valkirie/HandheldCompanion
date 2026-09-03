@@ -19,8 +19,8 @@ public class AYANEOKUN : AYANEO.AYANEODeviceCEc
 
         // old EC
         this.OEMChords.Add(new KeyboardChord("T",
-            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F18],
-            [KeyCode.F18, KeyCode.LWin, KeyCode.RControlKey],
+            [KeyCode.RControl, KeyCode.LWin, KeyCode.F18],
+            [KeyCode.F18, KeyCode.LWin, KeyCode.RControl],
             false, ButtonFlags.OEM5
         ));
         this.OEMChords.Add(new KeyboardChord("Guide",

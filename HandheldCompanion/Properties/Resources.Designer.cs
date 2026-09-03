@@ -70,7 +70,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A touch-optimized GUI to improve your handheld gaming computer experience. Features include motion control through an IMU or external sensor, the QuickTools overlay, VIIPER virtual controller simulation for Xbox 360, DualShock 4, DualSense, Steam Controller, Steam Deck, and Nintendo Switch Pro controllers, application profiles, gamepad remapping, PS Remote Play support, a 3D controller overlay, and hotkeys. The all-in-one installer also installs the HidHide filter driver used to hide physical controllers when required.
+        ///   Looks up a localized string similar to A touch-optimized GUI to improve your handheld gaming computer experience. Features include motion control through an IMU or external sensor, the QuickTools overlay, VIIPER virtual controller simulation for Xbox 360, DualShock 4, DualSense, Steam Controller, Steam Deck, and Nintendo Switch Pro controllers, application profiles, gamepad remapping, PS Remote Play support, a 3D controller overlay, and hotkeys. The all-in-one installer also installs the HidHide filter driver used to hide physical controllers wh [rest of string was truncated]&quot;;.
         /// </summary>
         public static string AboutPage_AboutDescription {
             get {
@@ -466,7 +466,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Define the behavior when an external controller is detected.
+        ///   Looks up a localized string similar to Define whether an external controller should be connected when detected.
         /// </summary>
         public static string ControllerPage_ConnectWhenPluggedDesc {
             get {
@@ -4786,6 +4786,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AYANEO NEXT 2 DInput controller detected.
+        /// </summary>
+        public static string Hint_AYANEONext2DInput {
+            get {
+                return ResourceManager.GetString("Hint_AYANEONext2DInput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press LC and RC simultaneously to switch to XInput mode for proper controller compatibility.
+        /// </summary>
+        public static string Hint_AYANEONext2DInputDesc {
+            get {
+                return ResourceManager.GetString("Hint_AYANEONext2DInputDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Core isolation features are turned on.
         /// </summary>
         public static string Hint_CoreIsolationCheck {
@@ -4818,24 +4836,6 @@ namespace HandheldCompanion.Properties {
         public static string Hint_CoreIsolationCheckReadme {
             get {
                 return ResourceManager.GetString("Hint_CoreIsolationCheckReadme", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to AYANEO NEXT 2 DInput controller detected.
-        /// </summary>
-        public static string Hint_AYANEONext2DInput {
-            get {
-                return ResourceManager.GetString("Hint_AYANEONext2DInput", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Press LC and RC simultaneously to switch to XInput mode for proper controller compatibility.
-        /// </summary>
-        public static string Hint_AYANEONext2DInputDesc {
-            get {
-                return ResourceManager.GetString("Hint_AYANEONext2DInputDesc", resourceCulture);
             }
         }
         

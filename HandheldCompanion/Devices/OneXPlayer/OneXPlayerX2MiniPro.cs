@@ -36,38 +36,16 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         DynamicLightingCapabilities |= LEDLevel.Breathing;
 
         // MobiusBlack was here
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBattery, Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBatteryDesc)
+        // Override the default TDP values for each power profile to match the X2's presets.
+        foreach (var profile in DevicePowerProfiles)
         {
-            Default = true,
-            DeviceDefault = true,
-            OSPowerMode = OSPowerMode.BetterBattery,
-            CPUBoostLevel = CPUBoostLevel.Disabled,
-            Guid = BetterBatteryGuid,
-            TDPOverrideEnabled = true,
-            TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d },
-        });
-
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBetterPerformance, Properties.Resources.PowerProfileOneXPlayerX1IntelBetterPerformanceDesc)
-        {
-            Default = true,
-            DeviceDefault = true,
-            OSPowerMode = OSPowerMode.BetterPerformance,
-            CPUBoostLevel = CPUBoostLevel.Enabled,
-            Guid = BetterPerformanceGuid,
-            TDPOverrideEnabled = true,
-            TDPOverrideValues = new[] { 35.0d, 35.0d, 35.0d },
-        });
-
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBestPerformance, Properties.Resources.PowerProfileOneXPlayerX1IntelBestPerformanceDesc)
-        {
-            Default = true,
-            DeviceDefault = true,
-            OSPowerMode = OSPowerMode.BestPerformance,
-            CPUBoostLevel = CPUBoostLevel.Enabled,
-            Guid = BestPerformanceGuid,
-            TDPOverrideEnabled = true,
-            TDPOverrideValues = new[] { 55.0d, 55.0d, 55.0d },
-        });
+            if (profile.Guid == BetterBatteryGuid)
+                profile.TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d };
+            else if (profile.Guid == BetterPerformanceGuid)
+                profile.TDPOverrideValues = new[] { 35.0d, 35.0d, 35.0d };
+            else if (profile.Guid == BestPerformanceGuid)
+                profile.TDPOverrideValues = new[] { 55.0d, 55.0d, 55.0d };
+        }
 
         OEMChords.Add(new KeyboardChord("M1", [KeyCode.F15], [KeyCode.F15], false, ButtonFlags.L4));
         OEMChords.Add(new KeyboardChord("M2", [KeyCode.F16], [KeyCode.F16], false, ButtonFlags.R4));
@@ -84,7 +62,7 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         await Task.Delay(50);
 
         // Equivalent to hid_v1.INITIALIZE_X2[2], the required third partial page.
-        WriteVendorHidCommand(0xB4, BuildRemapPage3());
+        WriteVendorHidCommand(0xB4, BuildRemapPage3(0x01));
         await Task.Delay(50);
 
         // Equivalent to hid_v1.gen_intercept(False), releasing vendor interception.
@@ -119,7 +97,7 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         0x23, 0x02, 0x01, m2KeyCode, 0x00, 0x00,
     ];
 
-    protected byte[] BuildRemapPage3(byte preset = 0x01) =>
+    protected override byte[] BuildRemapPage3(byte preset) =>
     [
         0x02, 0x38, 0x02, 0x03, preset,
         0x24, 0x02, 0x02, 0x05, 0x00, 0x00,

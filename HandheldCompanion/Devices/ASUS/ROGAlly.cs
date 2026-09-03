@@ -4,6 +4,7 @@ using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Shared;
 using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
@@ -279,7 +280,11 @@ public class ROGAlly : AsusDevice
                 HandleReport(report, device);
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            LogManager.LogError("ROGAlly HID read loop stopped: {0}", ex.Message);
+            Device_Removed();
+        }
     }
 
     private void HandleReport(HidReport report, HidDevice device)

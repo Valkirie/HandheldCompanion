@@ -650,8 +650,8 @@ public abstract class IDevice
         ManagerFactory.deviceManager.HidDeviceArrived -= DeviceManager_HidDeviceArrived;
         ManagerFactory.deviceManager.HidDeviceRemoved -= DeviceManager_HidDeviceRemoved;
 
-        hidDeviceArrivedTimer.Dispose();
-        hidDeviceRemovedTimer.Dispose();
+        hidDeviceArrivedTimer.Change(System.Threading.Timeout.InfiniteTimeSpan, System.Threading.Timeout.InfiniteTimeSpan);
+        hidDeviceRemovedTimer.Change(System.Threading.Timeout.InfiniteTimeSpan, System.Threading.Timeout.InfiniteTimeSpan);
 
         Closed?.Invoke(this);
     }
@@ -972,27 +972,11 @@ public abstract class IDevice
                             device = new OneXPlayerG1AMD();
                             break;
                         case "ONEXPLAYER F1":
-                            {
-                                switch (Version)
-                                {
-                                    default:
-                                    case "Default string":
-                                        device = new OneXPlayerOneXFly();
-                                        break;
-                                }
-                                break;
-                            }
+                            device = new OneXPlayerOneXFly();
+                            break;
                         case "ONEXPLAYER F1Pro":
-                            {
-                                switch (Version)
-                                {
-                                    default:
-                                    case "Default string":
-                                        device = new OneXPlayerOneXFlyF1Pro();
-                                        break;
-                                }
-                                break;
-                            }
+                            device = new OneXPlayerOneXFlyF1Pro();
+                            break;
                         case "ONE XPLAYER":
                         case "ONEXPLAYER Mini Pro":
                             {
@@ -1015,25 +999,15 @@ public abstract class IDevice
                             device = new OneXPlayerMiniAMD();
                             break;
                         case "ONEXPLAYER 2 ARP23":
-                            {
-                                switch (Version)
-                                {
-                                    default:
-                                    case "Ver.1.0":
-                                        device = new OneXPlayer2();
-                                        break;
-                                }
-                                break;
-                            }
+                            device = new OneXPlayer2();
+                            break;
                         case "ONEXPLAYER 2 PRO ARP23P":
                         case "ONEXPLAYER 2 PRO ARP23P EVA-01":
-                            switch (Version)
-                            {
-                                default:
-                                case "Version 1.0":
-                                    device = new OneXPlayer2Pro();
-                                    break;
-                            }
+                            device = new OneXPlayer2Pro();
+                            break;
+                        case "ONEXPLAYER 3":
+                        case "ONEXPLAYER-3":
+                            device = new OneXPlayer3();
                             break;
                     }
                 }

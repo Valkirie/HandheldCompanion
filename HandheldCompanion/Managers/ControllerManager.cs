@@ -625,8 +625,11 @@ public static class ControllerManager
 
                         controller.IsBusy = false;
 
+                        if (controller is not SDLController sdlController)
+                            return;
+
                         Controllers[baseContainerDeviceInstanceId] = controller;
-                        SDLControllers[deviceIndex] = (SDLController)controller;
+                        SDLControllers[deviceIndex] = sdlController;
 
                         LogManager.LogInformation("SDL controller {0} plugged", controller.ToString());
                         ControllerPlugged?.Invoke(controller, wasPowerCycling);

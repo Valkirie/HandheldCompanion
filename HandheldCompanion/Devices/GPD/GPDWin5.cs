@@ -300,8 +300,9 @@ public class GPDWin5 : IDevice
                 HandleReport(report);
             }
         }
-        catch
+        catch (Exception ex)
         {
+            LogManager.LogError("GPDWin5 HID read loop stopped: {0}", ex.Message);
             Device_Removed();
         }
     }

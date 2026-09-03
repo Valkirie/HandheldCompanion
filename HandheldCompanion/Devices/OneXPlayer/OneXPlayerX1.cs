@@ -14,6 +14,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Management;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using WindowsInput.Events;
@@ -125,14 +126,14 @@ public class OneXPlayerX1 : OneXAOKZOE
         };
 
         OEMChords.Add(new KeyboardChord("Turbo",
-            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.LMenu],
-            [KeyCode.LMenu, KeyCode.LWin, KeyCode.RControlKey],
+            [KeyCode.RControl, KeyCode.LWin, KeyCode.LMenu],
+            [KeyCode.LMenu, KeyCode.LWin, KeyCode.RControl],
             false, ButtonFlags.OEM1
             ));
 
         OEMChords.Add(new KeyboardChord("Keyboard",
-            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.O],
-            [KeyCode.O, KeyCode.LWin, KeyCode.RControlKey],
+            [KeyCode.RControl, KeyCode.LWin, KeyCode.O],
+            [KeyCode.O, KeyCode.LWin, KeyCode.RControl],
             false, ButtonFlags.OEM2
             ));
 
@@ -538,32 +539,58 @@ public class OneXPlayerX1 : OneXAOKZOE
             while (IsReading)
             {
                 HidReport report = await device.ReadReportAsync().ConfigureAwait(false);
-                if (report?.Data is null || report.Data.Length < 14)
+                if (report?.Data is null)
                     continue;
 
                 byte[] data = report.Data;
+                if (data.Length < 14)
+                    continue;
+
                 if (data[1] != FrameMarker || data[^2] != FrameMarker)
                     continue;
 
                 if (data[0] == StatusCommandId)
                 {
                     HandleStatusReport(data);
-                    continue;
                 }
+                else if (data[0] == ButtonCommandId)
+                {
+                    byte buttonId = data[6];
+                    bool pressed = data[12] == 0x01;
 
-                if (data[0] != ButtonCommandId)
-                    continue;
+                    LogManager.LogTrace(
+                        "OXP Button: id=0x{0:X2}, pressed={1}",
+                        buttonId,
+                        pressed);
 
-                byte buttonId = data[6];
-                bool pressed = data[12] == 0x01;
-                HandleEvent(buttonId, pressed);
+                    HandleEvent(buttonId, pressed);
+                }
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            LogManager.LogError("OXP HID read loop stopped: {0}", ex.Message);
+            Device_Removed();
+        }
     }
 
-    protected virtual void HandleStatusReport(byte[] report)
-    { }
+    protected virtual async void HandleStatusReport(byte[] data)
+    {
+        if (data.Length <= 5)
+            return;
+
+        switch (data[5])
+        {
+            case 0x20:
+                {
+                    await Task.Delay(200);
+
+                    if (IsReading)
+                        await ConfigureController();
+                }
+                break;
+        }
+    }
 
     protected virtual void HandleEvent(byte buttonId, bool pressed)
     {
@@ -730,6 +757,44 @@ public class OneXPlayerX1AMD : OneXPlayerX1
         cTDP = new double[] { 15, 30 };
         GfxClock = new double[] { 100, 2700 };
         CpuClock = 5100;
+
+        // Power Saving
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBattery, Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBatteryDesc)
+        {
+            Default = true,
+            DeviceDefault = true,
+            OSPowerMode = OSPowerMode.BetterBattery,
+            CPUBoostLevel = CPUBoostLevel.Disabled,
+            Guid = BetterBatteryGuid,
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d }
+        });
+
+        // Performance
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBetterPerformance, Properties.Resources.PowerProfileOneXPlayerX1IntelBetterPerformanceDesc)
+        {
+            Default = true,
+            DeviceDefault = true,
+            OSPowerMode = OSPowerMode.BetterPerformance,
+            CPUBoostLevel = CPUBoostLevel.Enabled,
+            Guid = BetterPerformanceGuid,
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 30.0d, 30.0d, 30.0d }
+        });
+
+        // Max Performance
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBestPerformance, Properties.Resources.PowerProfileOneXPlayerX1IntelBestPerformanceDesc)
+        {
+            Default = true,
+            DeviceDefault = true,
+            OSPowerMode = OSPowerMode.BestPerformance,
+            CPUBoostLevel = CPUBoostLevel.Enabled,
+            Guid = BestPerformanceGuid,
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 35.0d, 35.0d, 64.0d },
+            EPPOverrideEnabled = true,
+            EPPOverrideValue = 32,
+        });
     }
 
     public override bool IsBatteryProtectionSupported(int majorVersion, int minorVersion)

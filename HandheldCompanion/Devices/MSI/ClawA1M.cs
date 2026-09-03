@@ -253,6 +253,7 @@ public class ClawA1M : IDevice
         OEMChords.Add(new KeyboardChord(name: "M1", button: ButtonFlags.OEM3));
         OEMChords.Add(new KeyboardChord(name: "M2", button: ButtonFlags.OEM4));
 
+        // Disabled this one as MSI also sends an Xbox guide input when Menu key is pressed.
         OEMChords.Add(new KeyboardChord("LButton",
             [KeyCode.LButton | KeyCode.OemClear],
             [KeyCode.LButton | KeyCode.OemClear],

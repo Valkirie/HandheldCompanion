@@ -26,8 +26,8 @@ public class AYANEOFlipDS : AYANEOFlipKB
 
         // TODO: Add OEMChords for "Dual-Screen Keys" key here
         this.OEMChords.Add(new KeyboardChord("Custom Key Screen",
-            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F18],
-            [KeyCode.F18, KeyCode.LWin, KeyCode.RControlKey],
+            [KeyCode.RControl, KeyCode.LWin, KeyCode.F18],
+            [KeyCode.F18, KeyCode.LWin, KeyCode.RControl],
             false, ButtonFlags.OEM5
         ));
     }

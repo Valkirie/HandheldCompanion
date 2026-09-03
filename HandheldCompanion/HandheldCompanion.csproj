@@ -11,7 +11,7 @@
 		<StartupObject>HandheldCompanion.App</StartupObject>
 		<OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
 		<ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-		<Version>1.2.1.1</Version>
+		<Version>1.2.2.0</Version>
 		<Platforms>x64</Platforms>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
@@ -73,6 +73,7 @@
 		<None Remove="Resources\DeviceImages\device_gpd5.png" />
 		<None Remove="Resources\DeviceImages\device_legion_go2.png" />
 		<None Remove="Resources\DeviceImages\device_msi_claw8ex.png" />
+		<None Remove="Resources\DeviceImages\device_onexplayer_3.png" />
 		<None Remove="Resources\DeviceImages\device_onexplayer_apex.png" />
 		<None Remove="Resources\DeviceImages\device_onexplayer_g1.png" />
 		<None Remove="Resources\DeviceImages\device_onexplayer_x2.png" />
@@ -191,6 +192,7 @@
 		<Resource Include="Resources\DeviceImages\device_msi_claw.png" />
 		<Resource Include="Resources\DeviceImages\device_msi_claw8ex.png" />
 		<Resource Include="Resources\DeviceImages\device_onexplayer_2.png" />
+		<Resource Include="Resources\DeviceImages\device_onexplayer_3.png" />
 		<Resource Include="Resources\DeviceImages\device_onexplayer_apex.png" />
 		<Resource Include="Resources\DeviceImages\device_onexplayer_g1.png" />
 		<Resource Include="Resources\DeviceImages\device_onexplayer_mini.png" />
@@ -250,9 +252,9 @@
 		<PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
 		<PackageReference Include="PixiEditor.ColorPicker" Version="3.4.2.3" />
 		<PackageReference Include="PrecisionTimer.NET" Version="3.0.0.7" />
-		<PackageReference Include="protobuf-net" Version="3.4.19" />
-		<PackageReference Include="protobuf-net.Core" Version="3.4.19" />
-		<PackageReference Include="RAMSPDToolkit-NDD" Version="1.6.0" />
+		<PackageReference Include="protobuf-net" Version="3.4.21" />
+		<PackageReference Include="protobuf-net.Core" Version="3.4.21" />
+		<PackageReference Include="RAMSPDToolkit-NDD" Version="1.6.1" />
 		<PackageReference Include="SDL3-CS" Version="3.4.14.1" />
 		<PackageReference Include="Sentry" Version="6.9.0" />
 		<PackageReference Include="SharpDX" Version="4.2.0" />

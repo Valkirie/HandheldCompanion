@@ -14,7 +14,7 @@ public class OneXPlayerX2Controller : XInputController
     public OneXPlayerX2Controller(PnPDetails details) : base(details)
     { }
 
-    public override string ToString() => "ONEXPLAYER X2 Controller";
+    public override string ToString() => "ONEXPLAYER Controller";
 
     protected override void InitializeInputOutput()
     {

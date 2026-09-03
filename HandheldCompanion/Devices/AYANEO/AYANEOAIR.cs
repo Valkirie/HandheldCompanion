@@ -20,8 +20,8 @@ public class AYANEOAIR : AYANEO.AYANEODeviceCEc
 
         this.OEMChords.Clear();
         this.OEMChords.Add(new KeyboardChord("Custom Key Big",
-            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12],
-            [KeyCode.F12, KeyCode.LWin, KeyCode.RControlKey],
+            [KeyCode.RControl, KeyCode.LWin, KeyCode.F12],
+            [KeyCode.F12, KeyCode.LWin, KeyCode.RControl],
             false, ButtonFlags.OEM1
         ));
         this.OEMChords.Add(new KeyboardChord("Custom Key Small",
@@ -30,13 +30,13 @@ public class AYANEOAIR : AYANEO.AYANEODeviceCEc
             false, ButtonFlags.OEM2
         ));
         this.OEMChords.Add(new KeyboardChord("Custom Key Top Left",
-            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F11],
-            [KeyCode.F11, KeyCode.LWin, KeyCode.RControlKey],
+            [KeyCode.RControl, KeyCode.LWin, KeyCode.F11],
+            [KeyCode.F11, KeyCode.LWin, KeyCode.RControl],
             false, ButtonFlags.OEM3
         ));
         this.OEMChords.Add(new KeyboardChord("Custom Key Top Right",
-            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F10],
-            [KeyCode.F10, KeyCode.LWin, KeyCode.RControlKey],
+            [KeyCode.RControl, KeyCode.LWin, KeyCode.F10],
+            [KeyCode.F10, KeyCode.LWin, KeyCode.RControl],
             false, ButtonFlags.OEM4
         ));
     }

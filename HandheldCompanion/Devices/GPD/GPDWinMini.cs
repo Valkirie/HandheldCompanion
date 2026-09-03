@@ -33,7 +33,7 @@ public class GPDWinMini : IDevice
 
         // IMU matrices loaded from GPDWinMini.json
 
-        // Disabled this one as Win Max 2 also sends an Xbox guide input when Menu key is pressed.
+        // Disabled this one as GPD also sends an Xbox guide input when Menu key is pressed.
         OEMChords.Add(new KeyboardChord("Menu",
             [KeyCode.LButton | KeyCode.XButton2],
             [KeyCode.LButton | KeyCode.XButton2],

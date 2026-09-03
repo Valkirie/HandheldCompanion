@@ -38,8 +38,8 @@ public class OneXPlayerMini : OneXAOKZOE
         ));
 
         OEMChords.Add(new KeyboardChord("Keyboard",
-            [KeyCode.LWin, KeyCode.RControlKey, KeyCode.O],
-            [KeyCode.O, KeyCode.RControlKey, KeyCode.LWin],
+            [KeyCode.LWin, KeyCode.RControl, KeyCode.O],
+            [KeyCode.O, KeyCode.RControl, KeyCode.LWin],
             false, ButtonFlags.OEM2
         ));
 
