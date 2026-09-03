@@ -1151,6 +1151,9 @@ namespace HandheldCompanion.ViewModels
 
                 ConfirmModifyCommand = new DelegateCommand(() =>
                 {
+                    if (string.IsNullOrWhiteSpace(ModifyPresetName))
+                        return;
+
                     // Update the name of the selected preset
                     SelectedPreset.Name = ModifyPresetName;
 
