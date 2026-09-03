@@ -2111,7 +2111,61 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM9", resourceCulture);
             }
         }
+        
+        public static string Enum_AYANEO3_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM1", resourceCulture);
+            }
+        }
 
+        public static string Enum_AYANEO3_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM2", resourceCulture);
+            }
+        }
+
+        public static string Enum_AYANEO3_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM3", resourceCulture);
+            }
+        }
+
+        public static string Enum_AYANEO3_ButtonFlags_OEM4 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM4", resourceCulture);
+            }
+        }
+
+        public static string Enum_AYANEO3_ButtonFlags_OEM5 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM5", resourceCulture);
+            }
+        }
+
+        public static string Enum_AYANEO3_ButtonFlags_OEM6 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM6", resourceCulture);
+            }
+        }
+
+        public static string Enum_AYANEO3_ButtonFlags_OEM7 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM7", resourceCulture);
+            }
+        }
+
+        public static string Enum_AYANEO3_ButtonFlags_OEM8 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM8", resourceCulture);
+            }
+        }
+
+        public static string Enum_AYANEO3_ButtonFlags_OEM9 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM9", resourceCulture);
+            }
+        }
+        
         public static string Enum_AYANEOAIR2_ButtonFlags_OEM1 {
             get {
                 return ResourceManager.GetString("Enum_AYANEOAIR2_ButtonFlags_OEM1", resourceCulture);
