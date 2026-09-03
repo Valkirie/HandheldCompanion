@@ -843,6 +843,10 @@ public abstract class IDevice
                         case "FLIP 1S KB":
                             device = new AYANEOFlip1SKB();
                             break;
+                        case "FLIP 11":
+                        case "AYANEO FLIP 11":
+                            device = new AYANEOFlip11();
+                            break;
                     }
                 }
                 break;
