@@ -15,18 +15,20 @@ namespace HandheldCompanion.Helpers
         }
 
         /// <summary>
-        /// Put the system to Sleep (S3). If hybrid sleep is enabled by policy, Windows may hibernate instead.
+        /// Put the system to sleep. If hybrid sleep is enabled by policy, Windows may hibernate instead.
         /// </summary>
-        public static void Sleep(bool force = false, bool disableWakeEvent = false)
+        public static bool Sleep(bool force = false, bool disableWakeEvent = false)
         {
             // SetSuspendState: (hibernate, forceCritical, disableWakeEvent)
-            if (!SetSuspendState(false, force, disableWakeEvent))
-            {
-                // If this returns false with no last error, Windows often returns "operation canceled" (e.g., veto by a driver).
-                var err = Marshal.GetLastWin32Error();
-                if (err != 0)
-                    ThrowLastError("SetSuspendState (Sleep) failed", err);
-            }
+            if (SetSuspendState(false, force, disableWakeEvent))
+                return true;
+
+            // If this returns false with no last error, Windows often returns "operation canceled" (e.g., veto by a driver).
+            var err = Marshal.GetLastWin32Error();
+            if (err != 0)
+                ThrowLastError("SetSuspendState (Sleep) failed", err);
+
+            return false;
         }
 
         /// <summary>
