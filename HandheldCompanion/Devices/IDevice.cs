@@ -767,6 +767,12 @@ public abstract class IDevice
                         case "AIR":
                             device = new AYANEOAIR();
                             break;
+                        case "AIR 2":
+                        case "AIR2":
+                        case "AYANEO AIR 2":
+                        case "AB10":
+                            device = new AYANEOAIR2();
+                            break;
                         case "AIR Pro":
                             device = new AYANEOAIRPro();
                             break;
