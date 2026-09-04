@@ -21,7 +21,7 @@ public sealed class ControllerSlotHelper
     private readonly object watchdogLock = new();
     private readonly object monitorLock = new();
     private readonly SemaphoreSlim stateSemaphore = new(1, 1);
-    private Thread? watchdogThread;
+    private Task? watchdogTask;
     private Thread? monitorThread;
     private volatile bool watchdogRunning;
     private volatile bool monitorRunning;
@@ -126,8 +126,7 @@ public sealed class ControllerSlotHelper
         lock (watchdogLock)
         {
             watchdogRunning = true;
-            watchdogThread = new Thread(() => WatchdogLoop(trigger)) { IsBackground = true, Name = "ControllerSlotFix" };
-            watchdogThread.Start();
+            watchdogTask = Task.Run(() => WatchdogLoop(trigger));
         }
     }
 
@@ -136,9 +135,9 @@ public sealed class ControllerSlotHelper
         if (Interlocked.Exchange(ref watchdogStarted, 0) == 0)
             return;
         watchdogRunning = false;
-        if (watchdogThread?.IsAlive == true)
-            watchdogThread.Join(3000);
-        watchdogThread = null;
+        if (watchdogTask is not null)
+            watchdogTask.Wait(3000);
+        watchdogTask = null;
     }
 
     private void MonitorLoop()
@@ -207,25 +206,30 @@ public sealed class ControllerSlotHelper
         finally { stateSemaphore.Release(); }
     }
 
-    private void WatchdogLoop(ControllerManager.SlotFixTrigger trigger)
+    private async Task WatchdogLoop(ControllerManager.SlotFixTrigger trigger)
     {
         try
         {
             Interlocked.Exchange(ref attempts, 0);
             updateStatus(ControllerManager.ControllerManagerStatus.Busy, 0);
+
             for (int attempt = 1; attempt <= MaxAttempts && watchdogRunning; attempt++)
             {
                 Interlocked.Exchange(ref attempts, attempt);
                 updateStatus(ControllerManager.ControllerManagerStatus.Busy, attempt);
-                SlotProbeResult probe = ProbeAsync().GetAwaiter().GetResult();
-                if (!probe.IsAvailable) { Thread.Sleep(100); continue; }
+
+                SlotProbeResult probe = await ProbeAsync().ConfigureAwait(false);
+                if (!probe.IsAvailable) { await Task.Delay(100).ConfigureAwait(false); continue; }
                 if (!probe.NeedsFix) { MarkSuccess(); return; }
-                if (probe.HasInvalidControllers) FixDuplicates(probe);
-                if (probe.EnsureVirtualSlot1 && !probe.VirtualInSlot1 && !FixVirtualSlot(attempt)) break;
-                Thread.Sleep(1000);
-                probe = ProbeAsync().GetAwaiter().GetResult();
+                if (probe.HasInvalidControllers) await FixDuplicates(probe).ConfigureAwait(false);
+                if (probe.EnsureVirtualSlot1 && !probe.VirtualInSlot1 && !await FixVirtualSlot(attempt).ConfigureAwait(false)) break;
+
+                await Task.Delay(1000).ConfigureAwait(false);
+
+                probe = await ProbeAsync().ConfigureAwait(false);
                 if (probe.IsAvailable && !probe.NeedsFix) { MarkSuccess(); return; }
             }
+
             FinalizeFailure();
         }
         catch { FinalizeFailure(); }
@@ -234,52 +238,66 @@ public sealed class ControllerSlotHelper
             settling = true;
             watchdogRunning = false;
             Interlocked.Exchange(ref watchdogStarted, 0);
-            watchdogThread = null;
+            watchdogTask = null;
         }
     }
 
-    private void FixDuplicates(SlotProbeResult probe)
+    private async Task FixDuplicates(SlotProbeResult probe)
     {
         if (probe.HasInvalidVirtual)
         {
-            VirtualManager.Suspend(false).GetAwaiter().GetResult();
-            Thread.Sleep(1000);
-            VirtualManager.Resume(false).GetAwaiter().GetResult();
-            WaitUntil(() => HasSlotController(false), TimeSpan.FromSeconds(4));
+            await VirtualManager.Suspend(false).ConfigureAwait(false);
+            await Task.Delay(1000).ConfigureAwait(false);
+            await VirtualManager.Resume(false).ConfigureAwait(false);
+            await WaitUntilAsync(() => HasSlotController(false), TimeSpan.FromSeconds(4)).ConfigureAwait(false);
         }
+
         foreach (IController controller in invalidAssignments)
-            if (!controller.IsVirtual()) { controller.CyclePort(); Thread.Sleep(500); }
+            if (!controller.IsVirtual()) { controller.CyclePort(); await Task.Delay(500).ConfigureAwait(false); }
     }
 
-    private bool FixVirtualSlot(int attempt)
+    private async Task<bool> FixVirtualSlot(int attempt)
     {
         if (!HasSlotController(true))
         {
             if (HasSlotController(false) && GetSlotController(UserIndex.One, false) is null)
             {
-                VirtualManager.Suspend(false).GetAwaiter().GetResult(); Thread.Sleep(1000); VirtualManager.Resume(false).GetAwaiter().GetResult();
-                WaitUntil(() => GetSlotControllers(false).Any(c => c.GetVendorID() == VirtualManager.VendorId && c.GetProductID() == VirtualManager.ProductId), TimeSpan.FromSeconds(4));
+                await VirtualManager.Suspend(false).ConfigureAwait(false);
+                await Task.Delay(1000).ConfigureAwait(false);
+                await VirtualManager.Resume(false).ConfigureAwait(false);
+                await WaitUntilAsync(() => GetSlotControllers(false).Any(c => c.GetVendorID() == VirtualManager.VendorId && c.GetProductID() == VirtualManager.ProductId), TimeSpan.FromSeconds(4)).ConfigureAwait(false);
             }
             return true;
         }
+
         IController? physical = new[] { UserIndex.One, UserIndex.Two, UserIndex.Three, UserIndex.Four, UserIndex.Any }.Select(slot => GetSlotController(slot, true)).FirstOrDefault(c => c is not null);
         if (physical is null)
             return false;
+
         if (GetSlotControllers(true).FirstOrDefault(c => c.IsBluetooth() && c.IsBusy) is IController busy && !ControllerManager.PowerCyclers.ContainsKey(busy.GetContainerInstanceId()))
             return false;
+
+        // Suspend the physical controller to free up the slot and wait for it to be released before attempting to fix the virtual controller slot.
         ControllerManager.SuspendController(physical.GetContainerInstanceId());
-        WaitUntil(() => GetSlotController((UserIndex)physical.UserIndex, true) is null, TimeSpan.FromSeconds(4));
-        VirtualManager.SetControllerMode(HIDmode.NoController).GetAwaiter().GetResult();
-        WaitUntil(() => !HasSlotController(false), TimeSpan.FromSeconds(4));
+        await WaitUntilAsync(() => GetSlotController((UserIndex)physical.UserIndex, true) is null, TimeSpan.FromSeconds(4)).ConfigureAwait(false);
+
+        // Suspend the virtual controller to free up the slot and wait for it to be released before attempting to fix the virtual controller slot.
+        await VirtualManager.SetControllerMode(HIDmode.NoController).ConfigureAwait(false);
+        await WaitUntilAsync(() => !HasSlotController(false), TimeSpan.FromSeconds(4)).ConfigureAwait(false);
+
         if (attempt > 1)
         {
+            // Create temporary virtual controllers to ensure all slots are occupied and wait for them to be created before disposing of them to free up the slot for the virtual controller.
             int used = VirtualManager.CreateTemporaryControllers(XInputController.MaxControllers);
-            WaitUntil(() => ControllerManager.GetVirtualControllers<XInputController>().Count() >= used, TimeSpan.FromSeconds(4));
+            await WaitUntilAsync(() => ControllerManager.GetVirtualControllers<XInputController>().Count() >= used, TimeSpan.FromSeconds(4)).ConfigureAwait(false);
             VirtualManager.DisposeTemporaryControllers();
-            WaitUntil(() => ControllerManager.GetVirtualControllers<XInputController>().Count() <= used, TimeSpan.FromSeconds(4));
+            await WaitUntilAsync(() => ControllerManager.GetVirtualControllers<XInputController>().Count() <= used, TimeSpan.FromSeconds(4)).ConfigureAwait(false);
         }
-        VirtualManager.SetControllerMode(HIDmode.Xbox360Controller).GetAwaiter().GetResult();
-        WaitUntil(() => HasSlotController(false), TimeSpan.FromSeconds(4));
+
+        // Create the virtual controller and wait for it to be created before returning success.
+        await VirtualManager.SetControllerMode(HIDmode.Xbox360Controller).ConfigureAwait(false);
+        await WaitUntilAsync(() => HasSlotController(false), TimeSpan.FromSeconds(4)).ConfigureAwait(false);
+
         return true;
     }
 
@@ -337,7 +355,12 @@ public sealed class ControllerSlotHelper
     };
     private static bool HasSlotController(bool physical) => GetSlotControllers(physical).Any();
     private static IController? GetSlotController(UserIndex slot, bool physical) => GetSlotControllers(physical).FirstOrDefault(c => c.GetUserIndex() == (int)slot);
-    private static void WaitUntil(Func<bool> condition, TimeSpan timeout) { DateTime deadline = DateTime.UtcNow + timeout; while (DateTime.UtcNow < deadline && !condition()) Thread.Sleep(100); }
+    private static async Task WaitUntilAsync(Func<bool> condition, TimeSpan timeout)
+    {
+        DateTime deadline = DateTime.UtcNow + timeout;
+        while (DateTime.UtcNow < deadline && !condition())
+            await Task.Delay(100).ConfigureAwait(false);
+    }
 
     private sealed record SlotProbeResult(bool NeedsFix, bool EnsureVirtualSlot1, bool VirtualInSlot1, bool HasInvalidControllers, bool HasInvalidVirtual, string Reason, bool IsAvailable)
     {
