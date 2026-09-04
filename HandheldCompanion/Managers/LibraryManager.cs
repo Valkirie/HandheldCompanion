@@ -39,6 +39,8 @@ namespace HandheldCompanion.Managers
 
     public class LibraryManager : IManager
     {
+        private const int MaxConcurrentProfileArtRefreshes = 4;
+
         [Flags]
         public enum LibraryType
         {
@@ -72,6 +74,7 @@ namespace HandheldCompanion.Managers
         private SteamGridDb? steamGridDb;
 
         private readonly ConcurrentDictionary<string, WeakReference<BitmapImage>> _imageCache = new();
+        private readonly SemaphoreSlim profileArtsSemaphore = new(MaxConcurrentProfileArtRefreshes);
 
         public bool HasIGDBClient => IGDBClient is not null;
         public bool HasSteamGridDb => steamGridDb is not null;
@@ -801,10 +804,7 @@ namespace HandheldCompanion.Managers
 
         public async Task RefreshProfilesArts()
         {
-            await Parallel.ForEachAsync(ManagerFactory.profileManager.GetProfiles(true), new ParallelOptions { MaxDegreeOfParallelism = 4 }, async (profile, cancellationToken) =>
-            {
-                await RefreshProfileArtsAsync(profile, UpdateSource.LibraryUpdate, includeFullResAssets: true);
-            });
+            await Task.WhenAll(ManagerFactory.profileManager.GetProfiles(true).Select(async profile => await RefreshProfileArtsAsync(profile, UpdateSource.LibraryUpdate, includeFullResAssets: true)));
         }
 
         public async void RefreshProfileArts(Profile profile, UpdateSource source = UpdateSource.LibraryUpdate, bool includeFullResAssets = false)
@@ -818,47 +818,56 @@ namespace HandheldCompanion.Managers
             if (profile.Default)
                 return;
 
-            // update status
-            ProfileStatusChanged?.Invoke(profile, ManagerStatus.Busy);
+            await profileArtsSemaphore.WaitAsync();
 
-            // update variables
-            LibraryEntry? entry = profile.LibraryEntry ?? null;
-            long entryId = entry?.Id ?? 0;
-            long coverId = entry?.GetCoverId() ?? 0;
-            long artworkId = entry?.GetArtworkId() ?? 0;
-            long logoId = entry?.GetLogoId() ?? 0;
-
-            // retrieve library entry
-            IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid, profile.Name);
-
-            if (entryId == 0)
+            try
             {
-                // pick most relevant entry
-                entry = ManagerFactory.libraryManager.GetGame(entries, profile.Name);
+                // update status
+                ProfileStatusChanged?.Invoke(profile, ManagerStatus.Busy);
 
                 // update variables
-                coverId = entry?.GetCoverId() ?? 0;
-                artworkId = entry?.GetArtworkId() ?? 0;
-                logoId = entry?.GetLogoId() ?? 0;
+                LibraryEntry? entry = profile.LibraryEntry ?? null;
+                long entryId = entry?.Id ?? 0;
+                long coverId = entry?.GetCoverId() ?? 0;
+                long artworkId = entry?.GetArtworkId() ?? 0;
+                long logoId = entry?.GetLogoId() ?? 0;
+
+                // retrieve library entry
+                IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid, profile.Name);
+
+                if (entryId == 0)
+                {
+                    // pick most relevant entry
+                    entry = ManagerFactory.libraryManager.GetGame(entries, profile.Name);
+
+                    // update variables
+                    coverId = entry?.GetCoverId() ?? 0;
+                    artworkId = entry?.GetArtworkId() ?? 0;
+                    logoId = entry?.GetLogoId() ?? 0;
+                }
+                else
+                {
+                    // update entry
+                    entry = entries.FirstOrDefault(e => e.Id == entryId);
+                }
+
+                // update status
+                ProfileStatusChanged?.Invoke(profile, ManagerStatus.None);
+
+                // failed to retrieve a library entry
+                if (entry is null)
+                    return;
+
+                // download arts
+                await UpdateProfileArts(profile, entry, (int)coverId, (int)artworkId, (int)logoId, includeFullResAssets);
+
+                // update profile (always use LibraryUpdate to avoid re-entering creation logic)
+                ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.LibraryUpdate);
             }
-            else
+            finally
             {
-                // update entry
-                entry = entries.FirstOrDefault(e => e.Id == entryId);
+                profileArtsSemaphore.Release();
             }
-
-            // update status
-            ProfileStatusChanged?.Invoke(profile, ManagerStatus.None);
-
-            // failed to retrieve a library entry
-            if (entry is null)
-                return;
-
-            // download arts
-            await UpdateProfileArts(profile, entry, (int)coverId, (int)artworkId, (int)logoId, includeFullResAssets);
-
-            // update profile (always use LibraryUpdate to avoid re-entering creation logic)
-            ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.LibraryUpdate);
         }
 
         public async Task UpdateProfileArts(Profile profile, LibraryEntry entry, int coverId = 0, int artworkId = 0, int logoId = 0, bool includeFullResAssets = true)
