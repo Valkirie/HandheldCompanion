@@ -59,7 +59,7 @@ public static class EmulatorDefinitions
             ProductNames = ["Cemu"],
             Systems = ["Wii U"],
             RomExtensions = [".wud", ".wux", ".wua", ".rpx"],
-            Configurations = [new() { Root = ConfigRoot.AppData, RelativePath = "Cemu", Files = ["settings.xml"], ContentKeys = ["GamePaths", "Entry"] }],
+            Configurations = [new() { Root = ConfigRoot.AppData, RelativePath = "Cemu", Files = ["settings.xml"], ContentKeys = ["GamePaths"] }],
             PortableLocations = [new() { Marker = "portable", ConfigPath = "portable", Files = ["settings.xml"] }]
         },
         new()
