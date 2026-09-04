@@ -360,9 +360,10 @@
                         <Border
                             Height="28"
                             Padding="10,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
                             Background="{Binding PlatformColor}"
+                            CornerRadius="{DynamicResource ControlCornerRadius}"
                             Visibility="{Binding HasPlatform, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <TextBlock
                                 HorizontalAlignment="Center"
@@ -512,9 +513,10 @@
                         <Border
                             Height="28"
                             Padding="10,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Top"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
                             Background="{Binding PlatformColor}"
+                            CornerRadius="{DynamicResource ControlCornerRadius}"
                             Visibility="{Binding HasPlatform, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <TextBlock
                                 VerticalAlignment="Center"
