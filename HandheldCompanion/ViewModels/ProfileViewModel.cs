@@ -463,6 +463,10 @@ namespace HandheldCompanion.ViewModels
         }
 
         public GamePlatform PlatformType => _Profile.PlatformType;
+        public string PlatformColor => PlatformManager.GetPlatformColor(PlatformType);
+        public string PlatformName => PlatformManager.GetPlatformName(PlatformType);
+        public bool HasPlatform => PlatformType != GamePlatform.Generic;
+        public bool HasError => _Profile.ErrorCode != ProfileErrorCode.None;
 
         public bool IsRunning => ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
         public bool IsAvailable => _Profile.CanExecute && !ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
@@ -499,20 +503,7 @@ namespace HandheldCompanion.ViewModels
                 if (_platformIconCache.TryGetValue(PlatformType, out BitmapSource? cached))
                     return cached;
 
-                Image? img = PlatformType switch
-                {
-                    GamePlatform.Steam => PlatformManager.Steam?.GetLogo(),
-                    GamePlatform.Origin => PlatformManager.Origin?.GetLogo(),
-                    GamePlatform.EADesktop => PlatformManager.EADesktop?.GetLogo(),
-                    GamePlatform.UbisoftConnect => PlatformManager.UbisoftConnect?.GetLogo(),
-                    GamePlatform.GOG => PlatformManager.GOGGalaxy?.GetLogo(),
-                    GamePlatform.BattleNet => PlatformManager.BattleNet?.GetLogo(),
-                    GamePlatform.Epic => PlatformManager.Epic?.GetLogo(),
-                    GamePlatform.RiotGames => PlatformManager.RiotGames?.GetLogo(),
-                    GamePlatform.Rockstar => PlatformManager.Rockstar?.GetLogo(),
-                    GamePlatform.MicrosoftStore => PlatformManager.MicrosoftStore?.GetLogo(),
-                    _ => null
-                };
+                Image? img = PlatformManager.GetPlatformLogo(PlatformType);
 
                 BitmapSource? result = null;
                 if (img is Bitmap bmp)

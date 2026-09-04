@@ -606,8 +606,7 @@ namespace HandheldCompanion.ViewModels
 
         private void PlatformManager_Initialized()
         {
-            // Clear cached platform logos so they can be freshly loaded now that platforms are initialized.
-            LibraryNavigationItemViewModel.ClearLogoCache();
+            PlatformManager.ClearPlatformLogoCache();
             RefreshPlatformIcons();
         }
 

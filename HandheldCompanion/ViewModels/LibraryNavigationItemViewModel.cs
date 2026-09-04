@@ -2,11 +2,9 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Platforms;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace HandheldCompanion.ViewModels
 {
@@ -113,80 +111,10 @@ namespace HandheldCompanion.ViewModels
             if (Kind != LibraryNavigationItemKind.Platform)
                 return;
 
-            // Check cache first on the UI thread to avoid any Task overhead when already resolved.
-            if (_logoCache.TryGetValue(Platform, out ImageSource? cached))
-            {
-                if (cached is not null)
-                    Icon = new System.Windows.Controls.Image { Source = cached, Width = 16, Height = 16, Stretch = Stretch.Uniform };
-                return;
-            }
-
-            // Run all heavy work (GDI draw, pixel-loop crop, PNG encode, BitmapImage decode) off the UI thread.
-            // The default await continuation resumes on the captured UI SynchronizationContext.
-            ImageSource? source = await Task.Run(() => GetPlatformLogoSource(Platform));
-
-            // Only cache successful conversions; avoid caching null so subsequent calls after
-            // PlatformManager initializes can retry fetching the logo.
+            ImageSource? source = await Task.Run(() => PlatformManager.GetPlatformLogoSource(Platform));
             if (source is not null)
             {
-                _logoCache[Platform] = source;
                 Icon = new System.Windows.Controls.Image { Source = source, Width = 16, Height = 16, Stretch = Stretch.Uniform };
-            }
-        }
-
-        /// <summary>
-        /// Clears the platform logo cache. Call this when platforms (re)initialize to allow fresh logo lookups.
-        /// </summary>
-        public static void ClearLogoCache()
-        {
-            _logoCache.Clear();
-        }
-
-        private static ImageSource? GetPlatformLogoSource(GamePlatform platform)
-        {
-            System.Drawing.Image? drawingImage = platform switch
-            {
-                GamePlatform.Steam => PlatformManager.Steam?.GetLogo(),
-                GamePlatform.Origin => PlatformManager.Origin?.GetLogo(),
-                GamePlatform.EADesktop => PlatformManager.EADesktop?.GetLogo(),
-                GamePlatform.UbisoftConnect => PlatformManager.UbisoftConnect?.GetLogo(),
-                GamePlatform.GOG => PlatformManager.GOGGalaxy?.GetLogo(),
-                GamePlatform.BattleNet => PlatformManager.BattleNet?.GetLogo(),
-                GamePlatform.Epic => PlatformManager.Epic?.GetLogo(),
-                GamePlatform.RiotGames => PlatformManager.RiotGames?.GetLogo(),
-                GamePlatform.Rockstar => PlatformManager.Rockstar?.GetLogo(),
-                GamePlatform.MicrosoftStore => PlatformManager.MicrosoftStore?.GetLogo(),
-                _ => null
-            };
-
-            if (drawingImage == null) return null;
-
-            try
-            {
-                // Save as PNG via MemoryStream to preserve alpha transparency.
-                // Wrap in a 32bppArgb Bitmap first so non-Bitmap Image types also work.
-                using var bmp = new System.Drawing.Bitmap(drawingImage.Width, drawingImage.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                using (var g = System.Drawing.Graphics.FromImage(bmp))
-                    g.DrawImage(drawingImage, 0, 0, drawingImage.Width, drawingImage.Height);
-
-                // Crop transparent/white padding so the logo fills the nav icon slot.
-                using var cropped = CropTransparentPadding(bmp);
-
-                using var ms = new MemoryStream();
-                cropped.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                ms.Seek(0, SeekOrigin.Begin);
-
-                var bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.StreamSource = ms;
-                bitmap.EndInit();
-                bitmap.Freeze();
-                return bitmap;
-            }
-            catch
-            {
-                return null;
             }
         }
 
