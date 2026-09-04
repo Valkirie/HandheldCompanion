@@ -353,15 +353,21 @@
                                 Style="{StaticResource LibraryImageFadeStyle}" />
                         </Grid>
 
-                        <Image
-                            Width="32"
-                            Height="32"
-                            Margin="4"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Bottom"
-                            RenderOptions.BitmapScalingMode="LowQuality"
-                            Source="{Binding Platform, Mode=OneWay}"
-                            Stretch="Uniform" />
+                        <Border
+                            Height="28"
+                            Padding="10,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Background="{Binding PlatformColor}"
+                            Visibility="{Binding HasPlatform, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="White"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="{Binding PlatformName}"
+                                TextWrapping="NoWrap" />
+                        </Border>
 
                         <!--  Visual states MUST live on the template root  -->
                         <VisualStateManager.VisualStateGroups>
@@ -499,15 +505,20 @@
                             </Image.Effect>
                         </Image>
 
-                        <Image
-                            Width="28"
+                        <Border
                             Height="28"
-                            Margin="4"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Bottom"
-                            RenderOptions.BitmapScalingMode="LowQuality"
-                            Source="{Binding Platform, Mode=OneWay}"
-                            Stretch="Uniform" />
+                            Padding="10,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Background="{Binding PlatformColor}"
+                            Visibility="{Binding HasPlatform, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Foreground="White"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="{Binding PlatformName}"
+                                TextWrapping="NoWrap" />
+                        </Border>
 
                         <!--  Visual states MUST live on the template root  -->
                         <VisualStateManager.VisualStateGroups>

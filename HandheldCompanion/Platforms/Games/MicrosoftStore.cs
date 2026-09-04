@@ -14,6 +14,8 @@ namespace HandheldCompanion.Platforms.Games;
 
 public class MicrosoftStore : IPlatform
 {
+    public override string PlatformColor => "#107C10";
+
     private static readonly string WindowsStorePackageName = "Microsoft.WindowsStore_";
     private static readonly string[] IgnoredGameNameKeywords =
     [

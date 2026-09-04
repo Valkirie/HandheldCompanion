@@ -12,6 +12,7 @@ public class UbisoftConnect : IPlatform
     // GameLib
     private UbisoftLauncher ubisoftLauncher = new(new LauncherOptions());
     public override string Name => ubisoftLauncher.Name;
+    public override string PlatformColor => "#0070FF";
     public override string InstallPath => ubisoftLauncher.InstallDir;
     public override string ExecutablePath => ubisoftLauncher.Executable;
     public override string ExecutableName => Path.GetFileName(ExecutablePath);

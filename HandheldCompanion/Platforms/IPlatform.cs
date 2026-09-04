@@ -55,6 +55,7 @@ public abstract class IPlatform : IDisposable
     public virtual string ExecutableName { get; set; } = string.Empty;
     public virtual string InstallPath { get; set; } = string.Empty;
     public virtual string ExecutablePath { get; set; } = string.Empty;
+    public virtual string PlatformColor { get; set; } = "#666666";
     public virtual bool IsInstalled { get; set; }
 
     protected Version? ExpectedVersion;
