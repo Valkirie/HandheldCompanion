@@ -12,6 +12,7 @@ namespace HandheldCompanion.Platforms.Misc
 {
     public class LibreHardwarePlatform : IPlatform
     {
+        public override string PlatformColor => "#4CAF50";
         private Computer computer;
         private bool computerOpened;
 

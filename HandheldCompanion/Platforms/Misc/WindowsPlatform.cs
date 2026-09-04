@@ -15,6 +15,7 @@ namespace HandheldCompanion.Platforms.Misc;
 
 public sealed class WindowsPlatform : IPlatform
 {
+    public override string PlatformColor => "#0078D4";
     public override string Name { get; set; } = "Windows";
     public bool EnhancedSleepEnabled { get; private set; }
     public bool GoBackToSleepEnabled { get; private set; }

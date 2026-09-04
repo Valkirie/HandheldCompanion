@@ -17,6 +17,7 @@ namespace HandheldCompanion.Platforms.Misc;
 
 public class RTSSPlatform : IPlatform
 {
+    public override string PlatformColor => "#FF6600";
     private const uint WM_APP = 0x8000;
     private const uint WM_RTSS_UPDATESETTINGS = WM_APP + 100;
     private const uint WM_RTSS_SHOW_PROPERTIES = WM_APP + 102;
