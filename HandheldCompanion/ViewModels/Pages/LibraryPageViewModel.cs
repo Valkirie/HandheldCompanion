@@ -832,6 +832,24 @@ namespace HandheldCompanion.ViewModels
             // Use the sorted+filtered view so profiles within each group respect the user's chosen sort order
             List<ProfileViewModel> displayProfiles = ProfilesView.Cast<ProfileViewModel>().ToList();
 
+            if (ShowGroupedProfilesList)
+            {
+                foreach (IGrouping<string, ProfileViewModel> platformGroup in displayProfiles
+                    .GroupBy(profile => profile.HasPlatform ? profile.PlatformName : "Other")
+                    .OrderBy(group => group.Key, StringComparer.OrdinalIgnoreCase))
+                {
+                    CollectionGroupViewModel group = new(platformGroup.Key, OpenCollection);
+                    foreach (ProfileViewModel profile in platformGroup)
+                        group.Profiles.Add(profile);
+                    CollectionGroups.Add(group);
+                }
+
+                foreach (CollectionGroupViewModel group in CollectionGroups)
+                    group.SetPreviewProfiles(group.Profiles.Take(CollectionPreviewImageCount));
+
+                return;
+            }
+
             // Favorites
             var favGroup = new CollectionGroupViewModel("Favorites", OpenCollection);
             foreach (ProfileViewModel pvm in displayProfiles.Where(p => p.IsLiked))
