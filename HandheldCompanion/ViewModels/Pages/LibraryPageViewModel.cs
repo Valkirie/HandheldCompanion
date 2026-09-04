@@ -303,6 +303,48 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private bool _isScanningLibrary;
+        public bool IsScanningLibrary
+        {
+            get => _isScanningLibrary;
+            private set => SetProperty(ref _isScanningLibrary, value);
+        }
+
+        private bool _isScanPreparing;
+        public bool IsScanPreparing
+        {
+            get => _isScanPreparing;
+            private set => SetProperty(ref _isScanPreparing, value);
+        }
+
+        private string _scanPlatformText = string.Empty;
+        public string ScanPlatformText
+        {
+            get => _scanPlatformText;
+            private set => SetProperty(ref _scanPlatformText, value);
+        }
+
+        private string _scanProgressText = string.Empty;
+        public string ScanProgressText
+        {
+            get => _scanProgressText;
+            private set => SetProperty(ref _scanProgressText, value);
+        }
+
+        private double _scanProgressValue;
+        public double ScanProgressValue
+        {
+            get => _scanProgressValue;
+            private set => SetProperty(ref _scanProgressValue, value);
+        }
+
+        private double _scanProgressMaximum;
+        public double ScanProgressMaximum
+        {
+            get => _scanProgressMaximum;
+            private set => SetProperty(ref _scanProgressMaximum, value);
+        }
+
         private Dictionary<Type, GamePlatform> keyValuePairs = new Dictionary<Type, GamePlatform>()
         {
             { typeof(BattleNetGame), GamePlatform.BattleNet },
@@ -463,9 +505,15 @@ namespace HandheldCompanion.ViewModels
                 }
             });
 
-            ScanLibraryCommand = new DelegateCommand<object>(async param =>
+            ScanLibraryCommand = new DelegateCommand<object>(param => _ = ScanLibraryAsync(param));
+
+            async Task ScanLibraryAsync(object? param)
             {
-                Task<ContentDialogResult> dialogTask = new Dialog(MainWindow.GetCurrent())
+                if (IsScanningLibrary)
+                    return;
+
+                string target = param?.ToString() ?? string.Empty;
+                ContentDialogResult result = await new Dialog(MainWindow.GetCurrent())
                 {
                     Title = string.Format(Properties.Resources.LibraryScanTitle, param),
                     Content = string.Format(Properties.Resources.LibraryScanContent, param),
@@ -473,114 +521,165 @@ namespace HandheldCompanion.ViewModels
                     PrimaryButtonText = Properties.Resources.ProfilesPage_Yes
                 }.ShowAsync();
 
-                await dialogTask; // sync call
+                if (result != ContentDialogResult.Primary)
+                    return;
 
-                switch (dialogTask.Result)
+                IsScanningLibrary = true;
+                IsScanPreparing = true;
+                ScanPlatformText = GetScanTargetDisplayName(target);
+                ScanProgressText = $"Discovering games for {ScanPlatformText}...";
+                ScanProgressValue = 0;
+                ScanProgressMaximum = 0;
+
+                try
                 {
-                    case ContentDialogResult.Primary:
-                        {
-                            IEnumerable<IGame> games = PlatformManager.GetGamesForScanTarget(param?.ToString());
-                            foreach (IGame game in games)
-                            {
-                                Profile? profile = null;
-                                bool isCreation;
-
-                                // Try to find an existing profile
-                                if (game is DiscoveredGame discoveredRom)
-                                {
-                                    if (discoveredRom.IsEmulator)
-                                    {
-                                        // An emulator discovery represents its parent profile.
-                                        profile = ManagerFactory.profileManager.GetProfiles()
-                                            .FirstOrDefault(existing => !existing.Default && !existing.IsSubProfile &&
-                                                (discoveredRom.Executables.Contains(existing.Path, StringComparer.OrdinalIgnoreCase) ||
-                                                 existing.Executables.Intersect(discoveredRom.Executables, StringComparer.OrdinalIgnoreCase).Any()));
-                                    }
-                                    else
-                                    {
-                                        // A ROM discovery represents a subprofile under the emulator parent.
-                                        profile = ManagerFactory.profileManager.GetProfiles(true)
-                                            .FirstOrDefault(existing => existing.IsSubProfile &&
-                                                (string.Equals(existing.Path, discoveredRom.Executable, StringComparison.OrdinalIgnoreCase) ||
-                                                 existing.Executables.Contains(discoveredRom.Executable, StringComparer.OrdinalIgnoreCase)) &&
-                                                (existing.Arguments.Equals(discoveredRom.Arguments, StringComparison.OrdinalIgnoreCase) ||
-                                                 existing.Arguments.Contains(discoveredRom.RomPath, StringComparison.OrdinalIgnoreCase)));
-                                    }
-                                }
-                                else if (game.Executables.Any())
-                                {
-                                    foreach (string executable in game.Executables)
-                                    {
-                                        profile = ManagerFactory.profileManager.GetProfileFromPath(executable, true, true);
-                                        if (!profile.Default)
-                                            break;
-                                    }
-                                }
-                                else
-                                {
-                                    profile = ManagerFactory.profileManager.GetProfileFromPath(game.Executable, true, true);
-                                }
-
-                                // If profile is found and not default, update it. Otherwise, create a new one.
-                                if (profile != null && !profile.Default)
-                                {
-                                    isCreation = false;
-                                }
-                                else
-                                {
-                                    isCreation = true;
-                                    profile = new Profile(game.Executable);
-                                }
-
-                                if (profile is null)
-                                    return;
-
-                                 if (game is DiscoveredGame childGame && !childGame.IsEmulator)
-                                 {
-                                     Profile parentProfile = ManagerFactory.profileManager.GetProfileFromPath(childGame.Executable, true, true);
-                                     if (!parentProfile.Default)
-                                     {
-                                         profile.IsSubProfile = true;
-                                         profile.ParentGuid = parentProfile.Guid;
-                                     }
-                                 }
-
-                                // Filter out unwanted executables
-                                IEnumerable<string> Executables = game.Executables.Where(exe =>
-                                exe.IndexOf("redist", StringComparison.OrdinalIgnoreCase) < 0 &&
-                                exe.IndexOf("crash", StringComparison.OrdinalIgnoreCase) < 0 &&
-                                exe.IndexOf("setup", StringComparison.OrdinalIgnoreCase) < 0 &&
-                                exe.IndexOf("error", StringComparison.OrdinalIgnoreCase) < 0 &&
-                                exe.IndexOf("updater", StringComparison.OrdinalIgnoreCase) < 0 &&
-                                exe.IndexOf("cheat", StringComparison.OrdinalIgnoreCase) < 0 &&
-                                exe.IndexOf("editor", StringComparison.OrdinalIgnoreCase) < 0 &&
-                                exe.IndexOf("tool", StringComparison.OrdinalIgnoreCase) < 0 &&
-                                exe.IndexOf("uninst", StringComparison.OrdinalIgnoreCase) < 0 &&
-                                exe.IndexOf("installer", StringComparison.OrdinalIgnoreCase) < 0);
-
-                                if (string.IsNullOrEmpty(profile.Path) && Executables.Any())
-                                    profile.Path = Executables.First();
-
-                                // Set common profile properties
-                                profile.Name = game.Name;
-                                if (game is DiscoveredGame emulatorGame)
-                                    profile.Arguments = emulatorGame.Arguments;
-                                profile.PlatformType = game is DiscoveredGame discovered
-                                    ? discovered.PlatformType
-                                    : keyValuePairs[game.GetType()];
-                                profile.LaunchString = game.LaunchString;
-                                profile.Executables = Executables.ToList();
-
-                                ManagerFactory.profileManager.UpdateOrCreateProfile(profile, isCreation ? UpdateSource.Creation : UpdateSource.LibraryUpdate);
-                            }
-
-                            MarkLibraryChecked();
-                        }
-                        break;
-                    default:
-                        break;
+                    await Task.Run(() => ScanGames(target));
+                    MarkLibraryChecked();
                 }
-            });
+                finally
+                {
+                    IsScanPreparing = false;
+                    IsScanningLibrary = false;
+                }
+            }
+
+            void ScanGames(string target)
+            {
+                List<IGame> games = PlatformManager.GetGamesForScanTarget(target).ToList();
+                _uiContext.Post(_ =>
+                {
+                    IsScanPreparing = false;
+                    ScanProgressMaximum = games.Count;
+                    ScanProgressText = games.Count == 0 ? "No games found" : $"0 of {games.Count} games";
+                }, null);
+
+                for (int index = 0; index < games.Count; index++)
+                {
+                    ProcessGame(games[index]);
+                    int completed = index + 1;
+                    _uiContext.Post(_ =>
+                    {
+                        ScanProgressValue = completed;
+                        ScanProgressText = $"{completed} of {games.Count} games";
+                    }, null);
+                }
+            }
+
+            void ProcessGame(IGame game)
+            {
+                Profile? profile = FindExistingProfile(game);
+
+                // If profile is found and not default, update it. Otherwise, create a new one.
+                bool isCreation = profile is null || profile.Default;
+                if (isCreation)
+                {
+                    profile = new Profile(game.Executable);
+                }
+
+                if (game is DiscoveredGame childGame && !childGame.IsEmulator)
+                {
+                    Profile parentProfile = ManagerFactory.profileManager.GetProfileFromPath(childGame.Executable, true, true);
+                    if (!parentProfile.Default)
+                    {
+                        profile.IsSubProfile = true;
+                        profile.ParentGuid = parentProfile.Guid;
+                    }
+                }
+
+                // Filter out unwanted executables
+                IEnumerable<string> executables = game.Executables.Where(exe =>
+                    exe.IndexOf("redist", StringComparison.OrdinalIgnoreCase) < 0 &&
+                    exe.IndexOf("crash", StringComparison.OrdinalIgnoreCase) < 0 &&
+                    exe.IndexOf("setup", StringComparison.OrdinalIgnoreCase) < 0 &&
+                    exe.IndexOf("error", StringComparison.OrdinalIgnoreCase) < 0 &&
+                    exe.IndexOf("updater", StringComparison.OrdinalIgnoreCase) < 0 &&
+                    exe.IndexOf("cheat", StringComparison.OrdinalIgnoreCase) < 0 &&
+                    exe.IndexOf("editor", StringComparison.OrdinalIgnoreCase) < 0 &&
+                    exe.IndexOf("tool", StringComparison.OrdinalIgnoreCase) < 0 &&
+                    exe.IndexOf("uninst", StringComparison.OrdinalIgnoreCase) < 0 &&
+                    exe.IndexOf("installer", StringComparison.OrdinalIgnoreCase) < 0);
+
+                if (string.IsNullOrEmpty(profile.Path) && executables.Any())
+                    profile.Path = executables.First();
+
+                // Set common profile properties
+                profile.Name = game.Name;
+                if (game is DiscoveredGame emulatorGame)
+                    profile.Arguments = emulatorGame.Arguments;
+                profile.PlatformType = game is DiscoveredGame discovered
+                    ? discovered.PlatformType
+                    : keyValuePairs[game.GetType()];
+                profile.LaunchString = game.LaunchString;
+                profile.Executables = executables.ToList();
+
+                ManagerFactory.profileManager.UpdateOrCreateProfile(profile, isCreation ? UpdateSource.Creation : UpdateSource.LibraryUpdate);
+            }
+
+            Profile? FindExistingProfile(IGame game)
+            {
+                if (game is DiscoveredGame discoveredGame)
+                    return discoveredGame.IsEmulator
+                        ? FindEmulatorProfile(discoveredGame)
+                        : FindRomProfile(discoveredGame);
+
+                IEnumerable<string> executables = game.Executables.Any() ? game.Executables : [game.Executable];
+                return executables
+                    .Select(executable => ManagerFactory.profileManager.GetProfileFromPath(executable, true, true))
+                    .FirstOrDefault(profile => !profile.Default);
+            }
+
+            Profile? FindEmulatorProfile(DiscoveredGame game)
+            {
+                return ManagerFactory.profileManager.GetProfiles()
+                    .FirstOrDefault(profile => !profile.Default && !profile.IsSubProfile &&
+                        ProfileContainsAnyPath(profile, game.Executables));
+            }
+
+            Profile? FindRomProfile(DiscoveredGame game)
+            {
+                Profile parentProfile = ManagerFactory.profileManager.GetProfileFromPath(game.Executable, true, true);
+                return ManagerFactory.profileManager.GetSubProfilesFromProfile(parentProfile)
+                    .FirstOrDefault(profile => string.Equals(profile.Arguments, game.Arguments, StringComparison.OrdinalIgnoreCase));
+            }
+
+            static bool ProfileContainsAnyPath(Profile profile, IEnumerable<string> paths)
+            {
+                return paths.Any(path => ProfileContainsPath(profile, path));
+            }
+
+            static bool ProfileContainsPath(Profile profile, string path)
+            {
+                return PathsEqual(profile.Path, path) ||
+                    profile.Executables.Any(executable => PathsEqual(executable, path));
+            }
+
+            static string GetScanTargetDisplayName(string target)
+            {
+                if (string.Equals(target, "All", StringComparison.OrdinalIgnoreCase))
+                    return "all platforms and emulators";
+                if (string.Equals(target, "Emulators", StringComparison.OrdinalIgnoreCase))
+                    return "all emulators";
+                if (target.StartsWith("Console:", StringComparison.OrdinalIgnoreCase))
+                    return target["Console:".Length..];
+                return target;
+            }
+
+            static bool PathsEqual(string first, string second)
+            {
+                if (string.IsNullOrWhiteSpace(first) || string.IsNullOrWhiteSpace(second))
+                    return false;
+
+                try
+                {
+                    string firstFullPath = Path.TrimEndingDirectorySeparator(Path.GetFullPath(first));
+                    string secondFullPath = Path.TrimEndingDirectorySeparator(Path.GetFullPath(second));
+                    return string.Equals(firstFullPath, secondFullPath, StringComparison.OrdinalIgnoreCase);
+                }
+                catch (ArgumentException)
+                {
+                    return false;
+                }
+            }
 
             // raise events
             switch (ManagerFactory.profileManager.Status)
