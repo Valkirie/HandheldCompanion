@@ -15,6 +15,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Platforms.Games;
+using HandheldCompanion.Platforms.Discovery;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using iNKORE.UI.WPF.Modern.Controls;
@@ -23,6 +24,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,7 +54,40 @@ namespace HandheldCompanion.ViewModels
             (GamePlatform.RiotGames, "Riot"),
             (GamePlatform.Rockstar, "Rockstar"),
             (GamePlatform.Steam, "Steam"),
-            (GamePlatform.UbisoftConnect, "Ubisoft")
+            (GamePlatform.UbisoftConnect, "Ubisoft"),
+
+            (GamePlatform.Cemu, "Cemu"),
+            (GamePlatform.Dolphin, "Dolphin"),
+            (GamePlatform.PCSX2, "PCSX2"),
+            (GamePlatform.RPCS3, "RPCS3"),
+            (GamePlatform.ShadPS4, "ShadPS4"),
+            (GamePlatform.Citra, "Citra"),
+            (GamePlatform.Azahar, "Azahar"),
+            (GamePlatform.DuckStation, "DuckStation"),
+            (GamePlatform.RetroArch, "RetroArch"),
+            (GamePlatform.PPSSPP, "PPSSPP"),
+            (GamePlatform.MAME, "MAME"),
+            (GamePlatform.Mupen64Plus, "Mupen64Plus"),
+            (GamePlatform.Project64, "Project64"),
+            (GamePlatform.Ryujinx, "Ryujinx"),
+            (GamePlatform.MelonDS, "melonDS"),
+            (GamePlatform.Vita3K, "Vita3K"),
+            (GamePlatform.Xenia, "Xenia"),
+            (GamePlatform.Xemu, "xemu"),
+            (GamePlatform.Flycast, "Flycast"),
+            (GamePlatform.Redream, "Redream"),
+            (GamePlatform.ScummVM, "ScummVM"),
+            (GamePlatform.DOSBox, "DOSBox"),
+            (GamePlatform.DOSBoxX, "DOSBox-X"),
+            (GamePlatform.Mednafen, "Mednafen"),
+            (GamePlatform.VisualBoyAdvance, "VisualBoyAdvance-M"),
+            (GamePlatform.Snes9x, "Snes9x"),
+            (GamePlatform.DeSmuME, "DeSmuME"),
+            (GamePlatform.AetherSX2, "AetherSX2"),
+            (GamePlatform.SameBoy, "SameBoy"),
+            (GamePlatform.Yuzu, "Yuzu"),
+            (GamePlatform.Citron, "Citron"),
+            (GamePlatform.Eden, "Eden")
         ];
 
         private readonly LibraryNavigationItemViewModel _navL2 = new("nav-l2", "\u21B2");
@@ -444,52 +479,35 @@ namespace HandheldCompanion.ViewModels
                 {
                     case ContentDialogResult.Primary:
                         {
-                            List<IGame> games = new();
-
-                            switch (param)
-                            {
-                                case "All":
-                                    games.AddRange(PlatformManager.GetGames(GamePlatform.All));
-                                    break;
-                                case "BattleNet":
-                                    games.AddRange(PlatformManager.GetGames(GamePlatform.BattleNet));
-                                    break;
-                                case "Epic":
-                                    games.AddRange(PlatformManager.GetGames(GamePlatform.Epic));
-                                    break;
-                                case "GOG":
-                                    games.AddRange(PlatformManager.GetGames(GamePlatform.GOG));
-                                    break;
-                                case "Origin":
-                                    games.AddRange(PlatformManager.GetGames(GamePlatform.Origin));
-                                    break;
-                                case "EA Desktop":
-                                    games.AddRange(PlatformManager.GetGames(GamePlatform.EADesktop));
-                                    break;
-                                case "Riot":
-                                    games.AddRange(PlatformManager.GetGames(GamePlatform.RiotGames));
-                                    break;
-                                case "Rockstar":
-                                    games.AddRange(PlatformManager.GetGames(GamePlatform.Rockstar));
-                                    break;
-                                case "Steam":
-                                    games.AddRange(PlatformManager.GetGames(GamePlatform.Steam));
-                                    break;
-                                case "Microsoft Store":
-                                    games.AddRange(PlatformManager.GetGames(GamePlatform.MicrosoftStore));
-                                    break;
-                                case "Ubisoft":
-                                    games.AddRange(PlatformManager.GetGames(GamePlatform.UbisoftConnect));
-                                    break;
-                            }
-
+                            IEnumerable<IGame> games = PlatformManager.GetGamesForScanTarget(param?.ToString());
                             foreach (IGame game in games)
                             {
                                 Profile? profile = null;
                                 bool isCreation;
 
                                 // Try to find an existing profile
-                                if (game.Executables.Any())
+                                if (game is DiscoveredGame discoveredRom)
+                                {
+                                    if (discoveredRom.IsEmulator)
+                                    {
+                                        // An emulator discovery represents its parent profile.
+                                        profile = ManagerFactory.profileManager.GetProfiles()
+                                            .FirstOrDefault(existing => !existing.Default && !existing.IsSubProfile &&
+                                                (discoveredRom.Executables.Contains(existing.Path, StringComparer.OrdinalIgnoreCase) ||
+                                                 existing.Executables.Intersect(discoveredRom.Executables, StringComparer.OrdinalIgnoreCase).Any()));
+                                    }
+                                    else
+                                    {
+                                        // A ROM discovery represents a subprofile under the emulator parent.
+                                        profile = ManagerFactory.profileManager.GetProfiles(true)
+                                            .FirstOrDefault(existing => existing.IsSubProfile &&
+                                                (string.Equals(existing.Path, discoveredRom.Executable, StringComparison.OrdinalIgnoreCase) ||
+                                                 existing.Executables.Contains(discoveredRom.Executable, StringComparer.OrdinalIgnoreCase)) &&
+                                                (existing.Arguments.Equals(discoveredRom.Arguments, StringComparison.OrdinalIgnoreCase) ||
+                                                 existing.Arguments.Contains(discoveredRom.RomPath, StringComparison.OrdinalIgnoreCase)));
+                                    }
+                                }
+                                else if (game.Executables.Any())
                                 {
                                     foreach (string executable in game.Executables)
                                     {
@@ -517,6 +535,16 @@ namespace HandheldCompanion.ViewModels
                                 if (profile is null)
                                     return;
 
+                                 if (game is DiscoveredGame childGame && !childGame.IsEmulator)
+                                 {
+                                     Profile parentProfile = ManagerFactory.profileManager.GetProfileFromPath(childGame.Executable, true, true);
+                                     if (!parentProfile.Default)
+                                     {
+                                         profile.IsSubProfile = true;
+                                         profile.ParentGuid = parentProfile.Guid;
+                                     }
+                                 }
+
                                 // Filter out unwanted executables
                                 IEnumerable<string> Executables = game.Executables.Where(exe =>
                                 exe.IndexOf("redist", StringComparison.OrdinalIgnoreCase) < 0 &&
@@ -535,7 +563,11 @@ namespace HandheldCompanion.ViewModels
 
                                 // Set common profile properties
                                 profile.Name = game.Name;
-                                profile.PlatformType = keyValuePairs[game.GetType()];
+                                if (game is DiscoveredGame emulatorGame)
+                                    profile.Arguments = emulatorGame.Arguments;
+                                profile.PlatformType = game is DiscoveredGame discovered
+                                    ? discovered.PlatformType
+                                    : keyValuePairs[game.GetType()];
                                 profile.LaunchString = game.LaunchString;
                                 profile.Executables = Executables.ToList();
 

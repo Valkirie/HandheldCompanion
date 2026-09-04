@@ -134,6 +134,8 @@ public partial class LibraryPage : Page
                 => new LibrarySteamPage(ViewModel!),
             _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.UbisoftConnect
                 => new LibraryUbisoftPage(ViewModel!),
+            _ when selection.Kind == LibraryNavigationItemKind.Platform
+                => new LibraryEmulatorPage(ViewModel!, selection.Platform),
             _ => new LibraryAllGamesPage(ViewModel!)
         };
     }

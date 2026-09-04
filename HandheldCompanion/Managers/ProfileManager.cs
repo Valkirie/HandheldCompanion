@@ -3,6 +3,7 @@ using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Platforms;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
@@ -278,27 +279,7 @@ public class ProfileManager : IManager
 
     private static bool CommandLineContainsArguments(string commandLine, string arguments)
     {
-        static string[] Tokenize(string value) => Regex.Matches(value, @"""([^""]*)""|\S+")
-            .Select(match => match.Groups[1].Success ? match.Groups[1].Value : match.Value)
-            .ToArray();
-
-        string[] commandLineArguments = Tokenize(commandLine);
-        string[] profileArguments = Tokenize(arguments);
-        int profileIndex = 0;
-
-        foreach (string commandLineArgument in commandLineArguments)
-        {
-            while (profileIndex < profileArguments.Length
-                && !profileArguments[profileIndex].Equals(commandLineArgument, StringComparison.OrdinalIgnoreCase))
-                profileIndex++;
-
-            if (profileIndex == profileArguments.Length)
-                return false;
-
-            profileIndex++;
-        }
-
-        return commandLineArguments.Length > 0;
+        return commandLine.Contains(arguments, StringComparison.InvariantCultureIgnoreCase) || arguments.Contains(commandLine, StringComparison.InvariantCultureIgnoreCase);
     }
 
     public Profile GetProfileFromGuid(Guid Guid, bool ignoreStatus = true, bool isSubProfile = false)

@@ -196,6 +196,36 @@
                                         Command="{Binding ScanLibraryCommand}"
                                         CommandParameter="Ubisoft"
                                         Header="Ubisoft Connect" />
+                                    <Separator />
+                                    <MenuItem Header="Consoles">
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Emulators" Header="All" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:GameCube" Header="GameCube" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:Wii" Header="Wii" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:Wii U" Header="Wii U" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:PlayStation" Header="PlayStation" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:PlayStation 2" Header="PlayStation 2" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:PlayStation 3" Header="PlayStation 3" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:PlayStation 4" Header="PlayStation 4" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:PlayStation Portable" Header="PlayStation Portable" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:PlayStation Vita" Header="PlayStation Vita" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:Nintendo 3DS" Header="Nintendo 3DS" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:Nintendo Switch" Header="Nintendo Switch" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:Nintendo 64" Header="Nintendo 64" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:Nintendo DS" Header="Nintendo DS" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:Arcade" Header="Arcade" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:Multi-system" Header="Multi-system" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:Game Boy" Header="Game Boy" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:Game Boy Color" Header="Game Boy Color" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:Game Boy Advance" Header="Game Boy Advance" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:Super Nintendo" Header="Super Nintendo" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:Xbox" Header="Xbox" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:Xbox 360" Header="Xbox 360" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:Dreamcast" Header="Dreamcast" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:Naomi" Header="Naomi" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:Atomiswave" Header="Atomiswave" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:PC Adventure" Header="PC Adventure" />
+                                        <MenuItem Command="{Binding ScanLibraryCommand}" CommandParameter="Console:DOS" Header="DOS" />
+                                    </MenuItem>
                                 </MenuItem>
                             </ui:MenuFlyout>
                         </ui:DropDownButton.Flyout>

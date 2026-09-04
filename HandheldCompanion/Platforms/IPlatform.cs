@@ -16,7 +16,7 @@ using Timer = System.Timers.Timer;
 namespace HandheldCompanion.Platforms;
 
 [Flags]
-public enum GamePlatform
+public enum GamePlatform : long
 {
     Generic = 0,
     Steam = 1,
@@ -29,8 +29,40 @@ public enum GamePlatform
     Rockstar = 128,
     EADesktop = 256,
     MicrosoftStore = 512,
+    Cemu = 1024,
+    Dolphin = 4096,
+    PCSX2 = 8192,
+    RPCS3 = 16384,
+    ShadPS4 = 32768,
+    Citra = 562949953421312,
+    Azahar = 1125899906842624,
+    DuckStation = 131072,
+    RetroArch = 262144,
+    PPSSPP = 524288,
+    MAME = 1048576,
+    Mupen64Plus = 2097152,
+    Project64 = 4194304,
+    Ryujinx = 8388608,
+    MelonDS = 16777216,
+    Vita3K = 33554432,
+    Xenia = 67108864,
+    Xemu = 134217728,
+    Flycast = 268435456,
+    Redream = 536870912,
+    ScummVM = 1073741824,
+    DOSBox = 2147483648,
+    DOSBoxX = 4294967296,
+    Mednafen = 8589934592,
+    VisualBoyAdvance = 17179869184,
+    Snes9x = 34359738368,
+    DeSmuME = 68719476736,
+    AetherSX2 = 137438953472,
+    SameBoy = 274877906944,
+    Yuzu = 549755813888,
+    Citron = 1099511627776,
+    Eden = 2199023255552,
 
-    All = Generic | Steam | Origin | UbisoftConnect | GOG | BattleNet | Epic | RiotGames | Rockstar | EADesktop | MicrosoftStore
+    All = -1
 }
 
 public enum PlatformStatus
@@ -122,6 +154,18 @@ public abstract class IPlatform : IDisposable
             {
             }
 
+            return false;
+        }
+    }
+
+    public virtual bool IsRelated(string path)
+    {
+        try
+        {
+            return GetGames().Any(game => game.Executables.Contains(path, StringComparer.InvariantCultureIgnoreCase));
+        }
+        catch
+        {
             return false;
         }
     }

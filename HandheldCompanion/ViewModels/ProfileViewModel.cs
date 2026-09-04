@@ -2,6 +2,7 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
+using HandheldCompanion.Platforms.Discovery;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;
@@ -706,8 +707,7 @@ namespace HandheldCompanion.ViewModels
                 page.viewModel.SelectedMainProfile = target;
 
                 // Set selected sub-profile
-                if (Profile.IsSubProfile)
-                    page.viewModel.SelectedProfile = Profile;
+                page.viewModel.SelectedProfile = Profile;
 
                 MainWindow.GetCurrent().NavigateToPage("ProfilesPage");
             });
