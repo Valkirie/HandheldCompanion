@@ -1284,6 +1284,14 @@ public class ProfileManager : IManager
             }
         }
 
+        // if profile is not default and platform is generic, try to get the platform type from the executable
+        if (!profile.Default && (source is UpdateSource.LibraryUpdate or UpdateSource.Creation or UpdateSource.QuickProfilesCreation))
+        {
+            GamePlatform platform = PlatformManager.GetPlatform(profile);
+            if (platform != GamePlatform.Generic)
+                profile.PlatformType = platform;
+        }
+
         // used to get and store a few previous values
         XInputPlusMethod prevWrapper = XInputPlusMethod.Disabled;
         if (!profile.IsSubProfile && profiles.TryGetValue(profile.Guid, out Profile? prevProfile))
