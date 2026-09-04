@@ -839,153 +839,179 @@
                         Glyph="{Binding ControllerGlyph, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard.HeaderIcon>
 
-                <!--  UserIndex  -->
                 <ui:SettingsCard.Description>
-                    <ikw:SimpleStackPanel
-                        HorizontalAlignment="Left"
-                        Orientation="Horizontal"
-                        Spacing="2">
+                    <Grid>
+                        <!--  UserIndex  -->
+                        <ikw:SimpleStackPanel
+                            HorizontalAlignment="Left"
+                            Orientation="Horizontal"
+                            Spacing="2"
+                            Visibility="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=False}">
 
-                        <Border
-                            Width="12"
-                            Height="12"
-                            CornerRadius="2">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+                            <Border
+                                Width="12"
+                                Height="12"
+                                CornerRadius="2">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding UserIndex}" Value="0">
+                                                <Setter Property="Background" Value="{DynamicResource AccentAAFillColorDefaultBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+
+                            <Border
+                                Width="12"
+                                Height="12"
+                                CornerRadius="2">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding UserIndex}" Value="1">
+                                                <Setter Property="Background" Value="{DynamicResource AccentAAFillColorDefaultBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+
+                            <Border
+                                Width="12"
+                                Height="12"
+                                CornerRadius="2">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding UserIndex}" Value="2">
+                                                <Setter Property="Background" Value="{DynamicResource AccentAAFillColorDefaultBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+
+                            <Border
+                                Width="12"
+                                Height="12"
+                                CornerRadius="2">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding UserIndex}" Value="3">
+                                                <Setter Property="Background" Value="{DynamicResource AccentAAFillColorDefaultBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+
+                            <Border
+                                Width="12"
+                                Height="12"
+                                CornerRadius="2">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding VisibleUserIndexCount}" Value="4">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding UserIndex}" Value="4">
+                                                <Setter Property="Background" Value="{DynamicResource AccentAAFillColorDefaultBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+
+                            <Border
+                                Width="12"
+                                Height="12"
+                                CornerRadius="2">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding VisibleUserIndexCount}" Value="4">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding UserIndex}" Value="5">
+                                                <Setter Property="Background" Value="{DynamicResource AccentAAFillColorDefaultBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+
+                            <Border
+                                Width="12"
+                                Height="12"
+                                CornerRadius="2">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding VisibleUserIndexCount}" Value="4">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding UserIndex}" Value="6">
+                                                <Setter Property="Background" Value="{DynamicResource AccentAAFillColorDefaultBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+
+                            <Border
+                                Width="12"
+                                Height="12"
+                                CornerRadius="2">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding VisibleUserIndexCount}" Value="4">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding UserIndex}" Value="7">
+                                                <Setter Property="Background" Value="{DynamicResource AccentAAFillColorDefaultBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+                        </ikw:SimpleStackPanel>
+
+                        <!--  Busy text  -->
+                        <TextBlock Visibility="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock.Style>
+                                <Style BasedOn="{StaticResource CaptionTextBlockStyle}" TargetType="TextBlock">
+                                    <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_USB}" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding UserIndex}" Value="0">
-                                            <Setter Property="Background" Value="{DynamicResource AccentAAFillColorDefaultBrush}" />
+                                        <DataTrigger Binding="{Binding IsLegionWireless}" Value="True">
+                                            <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_LegionWireless}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Enumerator}" Value="USB">
+                                            <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_USB}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Enumerator}" Value="BTHENUM">
+                                            <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_BTH}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Enumerator}" Value="BTHLEDEVICE">
+                                            <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_BTH}" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </Border.Style>
-                        </Border>
-
-                        <Border
-                            Width="12"
-                            Height="12"
-                            CornerRadius="2">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding UserIndex}" Value="1">
-                                            <Setter Property="Background" Value="{DynamicResource AccentAAFillColorDefaultBrush}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                        </Border>
-
-                        <Border
-                            Width="12"
-                            Height="12"
-                            CornerRadius="2">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding UserIndex}" Value="2">
-                                            <Setter Property="Background" Value="{DynamicResource AccentAAFillColorDefaultBrush}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                        </Border>
-
-                        <Border
-                            Width="12"
-                            Height="12"
-                            CornerRadius="2">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding UserIndex}" Value="3">
-                                            <Setter Property="Background" Value="{DynamicResource AccentAAFillColorDefaultBrush}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                        </Border>
-
-                        <Border
-                            Width="12"
-                            Height="12"
-                            CornerRadius="2">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding VisibleUserIndexCount}" Value="4">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding UserIndex}" Value="4">
-                                            <Setter Property="Background" Value="{DynamicResource AccentAAFillColorDefaultBrush}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                        </Border>
-
-                        <Border
-                            Width="12"
-                            Height="12"
-                            CornerRadius="2">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding VisibleUserIndexCount}" Value="4">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding UserIndex}" Value="5">
-                                            <Setter Property="Background" Value="{DynamicResource AccentAAFillColorDefaultBrush}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                        </Border>
-
-                        <Border
-                            Width="12"
-                            Height="12"
-                            CornerRadius="2">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding VisibleUserIndexCount}" Value="4">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding UserIndex}" Value="6">
-                                            <Setter Property="Background" Value="{DynamicResource AccentAAFillColorDefaultBrush}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                        </Border>
-
-                        <Border
-                            Width="12"
-                            Height="12"
-                            CornerRadius="2">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding VisibleUserIndexCount}" Value="4">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding UserIndex}" Value="7">
-                                            <Setter Property="Background" Value="{DynamicResource AccentAAFillColorDefaultBrush}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                        </Border>
-                    </ikw:SimpleStackPanel>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
                 </ui:SettingsCard.Description>
 
                 <!--  Commands  -->
@@ -1084,49 +1110,11 @@
             </ui:SettingsCard>
 
             <!--  Busy indicator  -->
-            <ikw:SimpleStackPanel
-                Orientation="Vertical"
-                Spacing="6"
-                Visibility="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                <TextBlock
-                    Foreground="{DynamicResource AccentAAFillColorDefaultBrush}"
-                    TextAlignment="Center"
-                    TextWrapping="Wrap">
-                    <TextBlock.Style>
-                        <Style BasedOn="{StaticResource CaptionTextBlockStyle}" TargetType="TextBlock">
-                            <!--  Default Text if none of the conditions are met  -->
-                            <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_USB}" />
-
-                            <Style.Triggers>
-                                <!--  Trigger for Legion Wireless  -->
-                                <DataTrigger Binding="{Binding IsLegionWireless}" Value="True">
-                                    <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_LegionWireless}" />
-                                </DataTrigger>
-                                <!--  Trigger for USB  -->
-                                <DataTrigger Binding="{Binding Enumerator}" Value="USB">
-                                    <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_USB}" />
-                                </DataTrigger>
-
-                                <!--  Trigger for BTHENUM  -->
-                                <DataTrigger Binding="{Binding Enumerator}" Value="BTHENUM">
-                                    <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_BTH}" />
-                                </DataTrigger>
-
-                                <!--  Trigger for BTHLEDEVICE  -->
-                                <DataTrigger Binding="{Binding Enumerator}" Value="BTHLEDEVICE">
-                                    <Setter Property="Text" Value="{x:Static resx:Resources.XInputController_Warning_BTH}" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-
-                <ui:ProgressBar
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Bottom"
-                    IsIndeterminate="{Binding IsBusy}" />
-            </ikw:SimpleStackPanel>
+            <ui:ProgressBar
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Bottom"
+                IsIndeterminate="{Binding IsBusy}"
+                Visibility="{Binding IsBusy, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </StackPanel>
     </DataTemplate>
 
