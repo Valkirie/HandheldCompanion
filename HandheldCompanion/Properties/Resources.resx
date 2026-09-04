@@ -4422,4 +4422,244 @@ Thank you for using HC and helping us make it better.</value>
   <data name="DevicePage_GPUOptions" xml:space="preserve">
     <value>GPU options</value>
   </data>
+  <data name="Library_ScanDownloadMetadata" xml:space="preserve">
+    <value>Download metadata and artworks</value>
+  </data>
+  <data name="Library_ScanUpdateGameLibrary" xml:space="preserve">
+    <value>Update game library</value>
+  </data>
+  <data name="Library_ScanAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Library_ScanLaunchers" xml:space="preserve">
+    <value>Launchers</value>
+  </data>
+  <data name="Library_ScanEmulators" xml:space="preserve">
+    <value>Emulators</value>
+  </data>
+  <data name="Library_ScanBattleNet" xml:space="preserve">
+    <value>Battle.net</value>
+  </data>
+  <data name="Library_ScanEpic" xml:space="preserve">
+    <value>Epic</value>
+  </data>
+  <data name="Library_ScanGOG" xml:space="preserve">
+    <value>GOG GALAXY</value>
+  </data>
+  <data name="Library_ScanOrigin" xml:space="preserve">
+    <value>Origin</value>
+  </data>
+  <data name="Library_ScanEADesktop" xml:space="preserve">
+    <value>EA Desktop</value>
+  </data>
+  <data name="Library_ScanRiotGames" xml:space="preserve">
+    <value>Riot Games</value>
+  </data>
+  <data name="Library_ScanRockstar" xml:space="preserve">
+    <value>Rockstar</value>
+  </data>
+  <data name="Library_ScanSteam" xml:space="preserve">
+    <value>Steam</value>
+  </data>
+  <data name="Library_ScanMicrosoftStore" xml:space="preserve">
+    <value>Microsoft Store</value>
+  </data>
+  <data name="Library_ScanUbisoftConnect" xml:space="preserve">
+    <value>Ubisoft Connect</value>
+  </data>
+  <data name="Library_ScanGameCube" xml:space="preserve">
+    <value>GameCube</value>
+  </data>
+  <data name="Library_ScanWii" xml:space="preserve">
+    <value>Wii</value>
+  </data>
+  <data name="Library_ScanWiiU" xml:space="preserve">
+    <value>Wii U</value>
+  </data>
+  <data name="Library_ScanPlayStation" xml:space="preserve">
+    <value>PlayStation</value>
+  </data>
+  <data name="Library_ScanPlayStation2" xml:space="preserve">
+    <value>PlayStation 2</value>
+  </data>
+  <data name="Library_ScanPlayStation3" xml:space="preserve">
+    <value>PlayStation 3</value>
+  </data>
+  <data name="Library_ScanPlayStation4" xml:space="preserve">
+    <value>PlayStation 4</value>
+  </data>
+  <data name="Library_ScanPlayStationPortable" xml:space="preserve">
+    <value>PlayStation Portable</value>
+  </data>
+  <data name="Library_ScanPlayStationVita" xml:space="preserve">
+    <value>PlayStation Vita</value>
+  </data>
+  <data name="Library_ScanNintendo3DS" xml:space="preserve">
+    <value>Nintendo 3DS</value>
+  </data>
+  <data name="Library_ScanNintendoSwitch" xml:space="preserve">
+    <value>Nintendo Switch</value>
+  </data>
+  <data name="Library_ScanNintendo64" xml:space="preserve">
+    <value>Nintendo 64</value>
+  </data>
+  <data name="Library_ScanNintendoDS" xml:space="preserve">
+    <value>Nintendo DS</value>
+  </data>
+  <data name="Library_ScanArcade" xml:space="preserve">
+    <value>Arcade</value>
+  </data>
+  <data name="Library_ScanMultiSystem" xml:space="preserve">
+    <value>Multi-system</value>
+  </data>
+  <data name="Library_ScanGameBoy" xml:space="preserve">
+    <value>Game Boy</value>
+  </data>
+  <data name="Library_ScanGameBoyColor" xml:space="preserve">
+    <value>Game Boy Color</value>
+  </data>
+  <data name="Library_ScanGameBoyAdvance" xml:space="preserve">
+    <value>Game Boy Advance</value>
+  </data>
+  <data name="Library_ScanSuperNintendo" xml:space="preserve">
+    <value>Super Nintendo</value>
+  </data>
+  <data name="Library_ScanXbox" xml:space="preserve">
+    <value>Xbox</value>
+  </data>
+  <data name="Library_ScanXbox360" xml:space="preserve">
+    <value>Xbox 360</value>
+  </data>
+  <data name="Library_ScanDreamcast" xml:space="preserve">
+    <value>Dreamcast</value>
+  </data>
+  <data name="Library_ScanNaomi" xml:space="preserve">
+    <value>Naomi</value>
+  </data>
+  <data name="Library_ScanAtomiswave" xml:space="preserve">
+    <value>Atomiswave</value>
+  </data>
+  <data name="Library_ScanPCAdventure" xml:space="preserve">
+    <value>PC Adventure</value>
+  </data>
+  <data name="Library_ScanDOS" xml:space="preserve">
+    <value>DOS</value>
+  </data>
+  <data name="Library_ScanCemu" xml:space="preserve">
+    <value>Cemu</value>
+  </data>
+  <data name="Library_ScanDolphin" xml:space="preserve">
+    <value>Dolphin</value>
+  </data>
+  <data name="Library_ScanPCSX2" xml:space="preserve">
+    <value>PCSX2</value>
+  </data>
+  <data name="Library_ScanRPCS3" xml:space="preserve">
+    <value>RPCS3</value>
+  </data>
+  <data name="Library_ScanShadPS4" xml:space="preserve">
+    <value>ShadPS4</value>
+  </data>
+  <data name="Library_ScanCitra" xml:space="preserve">
+    <value>Citra</value>
+  </data>
+  <data name="Library_ScanAzahar" xml:space="preserve">
+    <value>Azahar</value>
+  </data>
+  <data name="Library_ScanDuckStation" xml:space="preserve">
+    <value>DuckStation</value>
+  </data>
+  <data name="Library_ScanRetroArch" xml:space="preserve">
+    <value>RetroArch</value>
+  </data>
+  <data name="Library_ScanPPSSPP" xml:space="preserve">
+    <value>PPSSPP</value>
+  </data>
+  <data name="Library_ScanMAME" xml:space="preserve">
+    <value>MAME</value>
+  </data>
+  <data name="Library_ScanMupen64Plus" xml:space="preserve">
+    <value>Mupen64Plus</value>
+  </data>
+  <data name="Library_ScanProject64" xml:space="preserve">
+    <value>Project64</value>
+  </data>
+  <data name="Library_ScanRyujinx" xml:space="preserve">
+    <value>Ryujinx</value>
+  </data>
+  <data name="Library_ScanMelonDS" xml:space="preserve">
+    <value>melonDS</value>
+  </data>
+  <data name="Library_ScanVita3K" xml:space="preserve">
+    <value>Vita3K</value>
+  </data>
+  <data name="Library_ScanXenia" xml:space="preserve">
+    <value>Xenia</value>
+  </data>
+  <data name="Library_ScanXemu" xml:space="preserve">
+    <value>xemu</value>
+  </data>
+  <data name="Library_ScanFlycast" xml:space="preserve">
+    <value>Flycast</value>
+  </data>
+  <data name="Library_ScanRedream" xml:space="preserve">
+    <value>Redream</value>
+  </data>
+  <data name="Library_ScanScummVM" xml:space="preserve">
+    <value>ScummVM</value>
+  </data>
+  <data name="Library_ScanDOSBox" xml:space="preserve">
+    <value>DOSBox</value>
+  </data>
+  <data name="Library_ScanDOSBoxX" xml:space="preserve">
+    <value>DOSBox-X</value>
+  </data>
+  <data name="Library_ScanMednafen" xml:space="preserve">
+    <value>Mednafen</value>
+  </data>
+  <data name="Library_ScanVisualBoyAdvance" xml:space="preserve">
+    <value>VisualBoyAdvance-M</value>
+  </data>
+  <data name="Library_ScanSnes9x" xml:space="preserve">
+    <value>Snes9x</value>
+  </data>
+  <data name="Library_ScanDeSmuME" xml:space="preserve">
+    <value>DeSmuME</value>
+  </data>
+  <data name="Library_ScanAetherSX2" xml:space="preserve">
+    <value>AetherSX2</value>
+  </data>
+  <data name="Library_ScanSameBoy" xml:space="preserve">
+    <value>SameBoy</value>
+  </data>
+  <data name="Library_ScanYuzu" xml:space="preserve">
+    <value>Yuzu</value>
+  </data>
+  <data name="Library_ScanCitron" xml:space="preserve">
+    <value>Citron</value>
+  </data>
+  <data name="Library_ScanEden" xml:space="preserve">
+    <value>Eden</value>
+  </data>
+  <data name="Library_ScanAllPlatformsAndEmulators" xml:space="preserve">
+    <value>all platforms and emulators</value>
+  </data>
+  <data name="Library_ScanAllLaunchers" xml:space="preserve">
+    <value>all launchers</value>
+  </data>
+  <data name="Library_ScanAllEmulators" xml:space="preserve">
+    <value>all emulators</value>
+  </data>
+  <data name="Library_ScanDiscoveringGames" xml:space="preserve">
+    <value>Discovering games for {0}...</value>
+  </data>
+  <data name="Library_ScanScanning" xml:space="preserve">
+    <value>Scanning {0}...</value>
+  </data>
+  <data name="Library_ScanNoGamesFound" xml:space="preserve">
+    <value>No games found</value>
+  </data>
+  <data name="Library_ScanProgress" xml:space="preserve">
+    <value>{0} of {1} games</value>
+  </data>
 </root>

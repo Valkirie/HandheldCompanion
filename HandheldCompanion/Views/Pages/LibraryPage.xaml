@@ -158,172 +158,172 @@
                             <ui:MenuFlyout Placement="Bottom">
                                 <MenuItem
                                     Command="{Binding RefreshMetadataCommand}"
-                                    Header="Download metadata and artworks"
+                                    Header="{l:Static resx:Resources.Library_ScanDownloadMetadata}"
                                     IsEnabled="{Binding IsLibraryConnected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                 <Separator />
-                                <MenuItem Header="Update game library" IsEnabled="{Binding IsScanningLibrary, Converter={StaticResource InvertBooleanConverter}}">
+                                <MenuItem Header="{l:Static resx:Resources.Library_ScanUpdateGameLibrary}" IsEnabled="{Binding IsScanningLibrary, Converter={StaticResource InvertBooleanConverter}}">
                                     <MenuItem
                                         Command="{Binding ScanLibraryCommand}"
                                         CommandParameter="All"
-                                        Header="All" />
+                                        Header="{l:Static resx:Resources.Library_ScanAll}" />
                                     <Separator />
-                                    <MenuItem Header="Launchers">
+                                    <MenuItem Header="{l:Static resx:Resources.Library_ScanLaunchers}">
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Launchers"
-                                            Header="All" />
+                                            Header="{l:Static resx:Resources.Library_ScanAll}" />
                                         <Separator />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="BattleNet"
-                                            Header="Battle.net" />
+                                            Header="{l:Static resx:Resources.Library_ScanBattleNet}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Epic"
-                                            Header="Epic" />
+                                            Header="{l:Static resx:Resources.Library_ScanEpic}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="GOG"
-                                            Header="GOG GALAXY" />
+                                            Header="{l:Static resx:Resources.Library_ScanGOG}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Origin"
-                                            Header="Origin" />
+                                            Header="{l:Static resx:Resources.Library_ScanOrigin}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="EA Desktop"
-                                            Header="EA Desktop" />
+                                            Header="{l:Static resx:Resources.Library_ScanEADesktop}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Riot"
-                                            Header="Riot Games" />
+                                            Header="{l:Static resx:Resources.Library_ScanRiotGames}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Rockstar"
-                                            Header="Rockstar" />
+                                            Header="{l:Static resx:Resources.Library_ScanRockstar}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Steam"
-                                            Header="Steam" />
+                                            Header="{l:Static resx:Resources.Library_ScanSteam}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Microsoft Store"
-                                            Header="Microsoft Store" />
+                                            Header="{l:Static resx:Resources.Library_ScanMicrosoftStore}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Ubisoft"
-                                            Header="Ubisoft Connect" />
+                                            Header="{l:Static resx:Resources.Library_ScanUbisoftConnect}" />
                                     </MenuItem>
-                                    <MenuItem Header="Emulators">
+                                    <MenuItem Header="{l:Static resx:Resources.Library_ScanEmulators}">
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Emulators"
-                                            Header="All" />
+                                            Header="{l:Static resx:Resources.Library_ScanAll}" />
                                         <Separator />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:GameCube"
-                                            Header="GameCube" />
+                                            Header="{l:Static resx:Resources.Library_ScanGameCube}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:Wii"
-                                            Header="Wii" />
+                                            Header="{l:Static resx:Resources.Library_ScanWii}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:Wii U"
-                                            Header="Wii U" />
+                                            Header="{l:Static resx:Resources.Library_ScanWiiU}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:PlayStation"
-                                            Header="PlayStation" />
+                                            Header="{l:Static resx:Resources.Library_ScanPlayStation}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:PlayStation 2"
-                                            Header="PlayStation 2" />
+                                            Header="{l:Static resx:Resources.Library_ScanPlayStation2}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:PlayStation 3"
-                                            Header="PlayStation 3" />
+                                            Header="{l:Static resx:Resources.Library_ScanPlayStation3}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:PlayStation 4"
-                                            Header="PlayStation 4" />
+                                            Header="{l:Static resx:Resources.Library_ScanPlayStation4}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:PlayStation Portable"
-                                            Header="PlayStation Portable" />
+                                            Header="{l:Static resx:Resources.Library_ScanPlayStationPortable}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:PlayStation Vita"
-                                            Header="PlayStation Vita" />
+                                            Header="{l:Static resx:Resources.Library_ScanPlayStationVita}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:Nintendo 3DS"
-                                            Header="Nintendo 3DS" />
+                                            Header="{l:Static resx:Resources.Library_ScanNintendo3DS}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:Nintendo Switch"
-                                            Header="Nintendo Switch" />
+                                            Header="{l:Static resx:Resources.Library_ScanNintendoSwitch}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:Nintendo 64"
-                                            Header="Nintendo 64" />
+                                            Header="{l:Static resx:Resources.Library_ScanNintendo64}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:Nintendo DS"
-                                            Header="Nintendo DS" />
+                                            Header="{l:Static resx:Resources.Library_ScanNintendoDS}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:Arcade"
-                                            Header="Arcade" />
+                                            Header="{l:Static resx:Resources.Library_ScanArcade}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:Multi-system"
-                                            Header="Multi-system" />
+                                            Header="{l:Static resx:Resources.Library_ScanMultiSystem}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:Game Boy"
-                                            Header="Game Boy" />
+                                            Header="{l:Static resx:Resources.Library_ScanGameBoy}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:Game Boy Color"
-                                            Header="Game Boy Color" />
+                                            Header="{l:Static resx:Resources.Library_ScanGameBoyColor}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:Game Boy Advance"
-                                            Header="Game Boy Advance" />
+                                            Header="{l:Static resx:Resources.Library_ScanGameBoyAdvance}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:Super Nintendo"
-                                            Header="Super Nintendo" />
+                                            Header="{l:Static resx:Resources.Library_ScanSuperNintendo}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:Xbox"
-                                            Header="Xbox" />
+                                            Header="{l:Static resx:Resources.Library_ScanXbox}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:Xbox 360"
-                                            Header="Xbox 360" />
+                                            Header="{l:Static resx:Resources.Library_ScanXbox360}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:Dreamcast"
-                                            Header="Dreamcast" />
+                                            Header="{l:Static resx:Resources.Library_ScanDreamcast}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:Naomi"
-                                            Header="Naomi" />
+                                            Header="{l:Static resx:Resources.Library_ScanNaomi}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:Atomiswave"
-                                            Header="Atomiswave" />
+                                            Header="{l:Static resx:Resources.Library_ScanAtomiswave}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:PC Adventure"
-                                            Header="PC Adventure" />
+                                            Header="{l:Static resx:Resources.Library_ScanPCAdventure}" />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:DOS"
-                                            Header="DOS" />
+                                            Header="{l:Static resx:Resources.Library_ScanDOS}" />
                                     </MenuItem>
                                 </MenuItem>
                             </ui:MenuFlyout>

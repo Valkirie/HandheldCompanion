@@ -45,49 +45,49 @@ namespace HandheldCompanion.ViewModels
         private const int CollectionPreviewImageCount = 4;
         private static readonly (GamePlatform Platform, string Title)[] SupportedPlatforms =
         [
-            (GamePlatform.BattleNet, "Battle.net"),
-            (GamePlatform.EADesktop, "EA"),
-            (GamePlatform.Epic, "Epic"),
-            (GamePlatform.GOG, "GOG"),
-            (GamePlatform.MicrosoftStore, "Microsoft"),
-            (GamePlatform.Origin, "Origin"),
-            (GamePlatform.RiotGames, "Riot"),
-            (GamePlatform.Rockstar, "Rockstar"),
-            (GamePlatform.Steam, "Steam"),
-            (GamePlatform.UbisoftConnect, "Ubisoft"),
+            (GamePlatform.BattleNet, Properties.Resources.Library_ScanBattleNet),
+            (GamePlatform.EADesktop, Properties.Resources.Library_ScanEADesktop),
+            (GamePlatform.Epic, Properties.Resources.Library_ScanEpic),
+            (GamePlatform.GOG, Properties.Resources.Library_ScanGOG),
+            (GamePlatform.MicrosoftStore, Properties.Resources.Library_ScanMicrosoftStore),
+            (GamePlatform.Origin, Properties.Resources.Library_ScanOrigin),
+            (GamePlatform.RiotGames, Properties.Resources.Library_ScanRiotGames),
+            (GamePlatform.Rockstar, Properties.Resources.Library_ScanRockstar),
+            (GamePlatform.Steam, Properties.Resources.Library_ScanSteam),
+            (GamePlatform.UbisoftConnect, Properties.Resources.Library_ScanUbisoftConnect),
 
-            (GamePlatform.Cemu, "Cemu"),
-            (GamePlatform.Dolphin, "Dolphin"),
-            (GamePlatform.PCSX2, "PCSX2"),
-            (GamePlatform.RPCS3, "RPCS3"),
-            (GamePlatform.ShadPS4, "ShadPS4"),
-            (GamePlatform.Citra, "Citra"),
-            (GamePlatform.Azahar, "Azahar"),
-            (GamePlatform.DuckStation, "DuckStation"),
-            (GamePlatform.RetroArch, "RetroArch"),
-            (GamePlatform.PPSSPP, "PPSSPP"),
-            (GamePlatform.MAME, "MAME"),
-            (GamePlatform.Mupen64Plus, "Mupen64Plus"),
-            (GamePlatform.Project64, "Project64"),
-            (GamePlatform.Ryujinx, "Ryujinx"),
-            (GamePlatform.MelonDS, "melonDS"),
-            (GamePlatform.Vita3K, "Vita3K"),
-            (GamePlatform.Xenia, "Xenia"),
-            (GamePlatform.Xemu, "xemu"),
-            (GamePlatform.Flycast, "Flycast"),
-            (GamePlatform.Redream, "Redream"),
-            (GamePlatform.ScummVM, "ScummVM"),
-            (GamePlatform.DOSBox, "DOSBox"),
-            (GamePlatform.DOSBoxX, "DOSBox-X"),
-            (GamePlatform.Mednafen, "Mednafen"),
-            (GamePlatform.VisualBoyAdvance, "VisualBoyAdvance-M"),
-            (GamePlatform.Snes9x, "Snes9x"),
-            (GamePlatform.DeSmuME, "DeSmuME"),
-            (GamePlatform.AetherSX2, "AetherSX2"),
-            (GamePlatform.SameBoy, "SameBoy"),
-            (GamePlatform.Yuzu, "Yuzu"),
-            (GamePlatform.Citron, "Citron"),
-            (GamePlatform.Eden, "Eden")
+            (GamePlatform.Cemu, Properties.Resources.Library_ScanCemu),
+            (GamePlatform.Dolphin, Properties.Resources.Library_ScanDolphin),
+            (GamePlatform.PCSX2, Properties.Resources.Library_ScanPCSX2),
+            (GamePlatform.RPCS3, Properties.Resources.Library_ScanRPCS3),
+            (GamePlatform.ShadPS4, Properties.Resources.Library_ScanShadPS4),
+            (GamePlatform.Citra, Properties.Resources.Library_ScanCitra),
+            (GamePlatform.Azahar, Properties.Resources.Library_ScanAzahar),
+            (GamePlatform.DuckStation, Properties.Resources.Library_ScanDuckStation),
+            (GamePlatform.RetroArch, Properties.Resources.Library_ScanRetroArch),
+            (GamePlatform.PPSSPP, Properties.Resources.Library_ScanPPSSPP),
+            (GamePlatform.MAME, Properties.Resources.Library_ScanMAME),
+            (GamePlatform.Mupen64Plus, Properties.Resources.Library_ScanMupen64Plus),
+            (GamePlatform.Project64, Properties.Resources.Library_ScanProject64),
+            (GamePlatform.Ryujinx, Properties.Resources.Library_ScanRyujinx),
+            (GamePlatform.MelonDS, Properties.Resources.Library_ScanMelonDS),
+            (GamePlatform.Vita3K, Properties.Resources.Library_ScanVita3K),
+            (GamePlatform.Xenia, Properties.Resources.Library_ScanXenia),
+            (GamePlatform.Xemu, Properties.Resources.Library_ScanXemu),
+            (GamePlatform.Flycast, Properties.Resources.Library_ScanFlycast),
+            (GamePlatform.Redream, Properties.Resources.Library_ScanRedream),
+            (GamePlatform.ScummVM, Properties.Resources.Library_ScanScummVM),
+            (GamePlatform.DOSBox, Properties.Resources.Library_ScanDOSBox),
+            (GamePlatform.DOSBoxX, Properties.Resources.Library_ScanDOSBoxX),
+            (GamePlatform.Mednafen, Properties.Resources.Library_ScanMednafen),
+            (GamePlatform.VisualBoyAdvance, Properties.Resources.Library_ScanVisualBoyAdvance),
+            (GamePlatform.Snes9x, Properties.Resources.Library_ScanSnes9x),
+            (GamePlatform.DeSmuME, Properties.Resources.Library_ScanDeSmuME),
+            (GamePlatform.AetherSX2, Properties.Resources.Library_ScanAetherSX2),
+            (GamePlatform.SameBoy, Properties.Resources.Library_ScanSameBoy),
+            (GamePlatform.Yuzu, Properties.Resources.Library_ScanYuzu),
+            (GamePlatform.Citron, Properties.Resources.Library_ScanCitron),
+            (GamePlatform.Eden, Properties.Resources.Library_ScanEden)
         ];
 
         private readonly LibraryNavigationItemViewModel _navL2 = new("nav-l2", "\u21B2");
@@ -528,7 +528,7 @@ namespace HandheldCompanion.ViewModels
                 IsScanningLibrary = true;
                 IsScanPreparing = true;
                 ScanPlatformText = targetName;
-                ScanProgressText = $"Discovering games for {ScanPlatformText}...";
+                ScanProgressText = string.Format(Properties.Resources.Library_ScanDiscoveringGames, ScanPlatformText);
                 ScanProgressValue = 0;
                 ScanProgressMaximum = 0;
 
@@ -546,24 +546,53 @@ namespace HandheldCompanion.ViewModels
 
             void ScanGames(string target)
             {
-                List<IGame> games = PlatformManager.GetGamesForScanTarget(target).ToList();
-                _uiContext.Post(_ =>
-                {
-                    IsScanPreparing = false;
-                    ScanProgressMaximum = games.Count;
-                    ScanProgressText = games.Count == 0 ? "No games found" : $"0 of {games.Count} games";
-                }, null);
+                IEnumerable<(string Target, string Name)> scanTargets = GetScanTargets(target);
 
-                for (int index = 0; index < games.Count; index++)
+                foreach ((string scanTarget, string scanTargetName) in scanTargets)
                 {
-                    ProcessGame(games[index]);
-                    int completed = index + 1;
                     _uiContext.Post(_ =>
                     {
-                        ScanProgressValue = completed;
-                        ScanProgressText = $"{completed} of {games.Count} games";
+                        ScanPlatformText = scanTargetName;
+                        ScanProgressText = string.Format(Properties.Resources.Library_ScanScanning, scanTargetName);
                     }, null);
+
+                    List<IGame> games = PlatformManager.GetGamesForScanTarget(scanTarget).ToList();
+                    _uiContext.Post(_ =>
+                    {
+                        IsScanPreparing = false;
+                        ScanProgressMaximum = games.Count;
+                        ScanProgressValue = 0;
+                        ScanProgressText = games.Count == 0
+                            ? Properties.Resources.Library_ScanNoGamesFound
+                            : string.Format(Properties.Resources.Library_ScanProgress, 0, games.Count);
+                    }, null);
+
+                    for (int index = 0; index < games.Count; index++)
+                    {
+                        ProcessGame(games[index]);
+                        int completed = index + 1;
+                        _uiContext.Post(_ =>
+                        {
+                            ScanPlatformText = scanTargetName;
+                            ScanProgressValue = completed;
+                            ScanProgressText = string.Format(Properties.Resources.Library_ScanProgress, completed, games.Count);
+                        }, null);
+                    }
                 }
+            }
+
+            static IEnumerable<(string Target, string Name)> GetScanTargets(string target)
+            {
+                if (string.Equals(target, "All", StringComparison.OrdinalIgnoreCase))
+                    return SupportedPlatforms.Select(platform => (platform.Platform.ToString(), platform.Title));
+
+                if (string.Equals(target, "Launchers", StringComparison.OrdinalIgnoreCase))
+                    return SupportedPlatforms.Where(platform => GamePlatform.Launchers.HasFlag(platform.Platform)).Select(platform => (platform.Platform.ToString(), platform.Title));
+
+                if (string.Equals(target, "Emulators", StringComparison.OrdinalIgnoreCase))
+                    return SupportedPlatforms.Where(platform => GamePlatform.Emulators.HasFlag(platform.Platform)).Select(platform => (platform.Platform.ToString(), platform.Title));
+
+                return [(target, GetScanTargetDisplayName(target))];
             }
 
             void ProcessGame(IGame game)
@@ -657,14 +686,48 @@ namespace HandheldCompanion.ViewModels
             static string GetScanTargetDisplayName(string target)
             {
                 if (string.Equals(target, "All", StringComparison.OrdinalIgnoreCase))
-                    return "all platforms and emulators";
+                    return Properties.Resources.Library_ScanAllPlatformsAndEmulators;
                 if (string.Equals(target, "Launchers", StringComparison.OrdinalIgnoreCase))
-                    return "all launchers";
+                    return Properties.Resources.Library_ScanAllLaunchers;
                 if (string.Equals(target, "Emulators", StringComparison.OrdinalIgnoreCase))
-                    return "all emulators";
+                    return Properties.Resources.Library_ScanAllEmulators;
                 if (target.StartsWith("Console:", StringComparison.OrdinalIgnoreCase))
-                    return target["Console:".Length..];
+                    return GetConsoleDisplayName(target["Console:".Length..]);
                 return target;
+            }
+
+            static string GetConsoleDisplayName(string console)
+            {
+                return console switch
+                {
+                    "GameCube" => Properties.Resources.Library_ScanGameCube,
+                    "Wii" => Properties.Resources.Library_ScanWii,
+                    "Wii U" => Properties.Resources.Library_ScanWiiU,
+                    "PlayStation" => Properties.Resources.Library_ScanPlayStation,
+                    "PlayStation 2" => Properties.Resources.Library_ScanPlayStation2,
+                    "PlayStation 3" => Properties.Resources.Library_ScanPlayStation3,
+                    "PlayStation 4" => Properties.Resources.Library_ScanPlayStation4,
+                    "PlayStation Portable" => Properties.Resources.Library_ScanPlayStationPortable,
+                    "PlayStation Vita" => Properties.Resources.Library_ScanPlayStationVita,
+                    "Nintendo 3DS" => Properties.Resources.Library_ScanNintendo3DS,
+                    "Nintendo Switch" => Properties.Resources.Library_ScanNintendoSwitch,
+                    "Nintendo 64" => Properties.Resources.Library_ScanNintendo64,
+                    "Nintendo DS" => Properties.Resources.Library_ScanNintendoDS,
+                    "Arcade" => Properties.Resources.Library_ScanArcade,
+                    "Multi-system" => Properties.Resources.Library_ScanMultiSystem,
+                    "Game Boy" => Properties.Resources.Library_ScanGameBoy,
+                    "Game Boy Color" => Properties.Resources.Library_ScanGameBoyColor,
+                    "Game Boy Advance" => Properties.Resources.Library_ScanGameBoyAdvance,
+                    "Super Nintendo" => Properties.Resources.Library_ScanSuperNintendo,
+                    "Xbox" => Properties.Resources.Library_ScanXbox,
+                    "Xbox 360" => Properties.Resources.Library_ScanXbox360,
+                    "Dreamcast" => Properties.Resources.Library_ScanDreamcast,
+                    "Naomi" => Properties.Resources.Library_ScanNaomi,
+                    "Atomiswave" => Properties.Resources.Library_ScanAtomiswave,
+                    "PC Adventure" => Properties.Resources.Library_ScanPCAdventure,
+                    "DOS" => Properties.Resources.Library_ScanDOS,
+                    _ => console
+                };
             }
 
             static bool PathsEqual(string first, string second)
