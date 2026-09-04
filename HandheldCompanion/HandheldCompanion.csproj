@@ -255,7 +255,7 @@
 		<PackageReference Include="protobuf-net" Version="3.4.21" />
 		<PackageReference Include="protobuf-net.Core" Version="3.4.21" />
 		<PackageReference Include="RAMSPDToolkit-NDD" Version="1.6.1" />
-		<PackageReference Include="SDL3-CS" Version="3.4.14.2" />
+		<PackageReference Include="SDL3-CS" Version="3.4.16" />
 		<PackageReference Include="Sentry" Version="6.10.0" />
 		<PackageReference Include="SharpDX" Version="4.2.0" />
 		<PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
