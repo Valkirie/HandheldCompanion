@@ -53,20 +53,25 @@ public static class EmulatorDiscoveryService
     {
         HashSet<string> executablePaths = new(StringComparer.OrdinalIgnoreCase);
         List<string> discoveredExecutables = [];
+
         foreach (string executable in definition.Executables)
-        foreach (string candidate in ManagerFactory.profileManager.GetProfiles()
-            .Where(profile => !profile.Default &&
-                string.Equals(Path.GetFileName(profile.Path), executable, StringComparison.OrdinalIgnoreCase))
-            .Select(profile => profile.Path)
-            .Concat(FindExecutableCandidates(definition, executable)))
-            if (File.Exists(candidate) && executablePaths.Add(candidate))
-                discoveredExecutables.Add(candidate);
+        {
+            foreach (string candidate in ManagerFactory.profileManager.GetProfiles()
+                .Where(profile => !profile.Default && string.Equals(Path.GetFileName(profile.Path), executable, StringComparison.OrdinalIgnoreCase))
+                .Select(profile => profile.Path)
+                .Concat(FindExecutableCandidates(definition, executable)))
+            {
+                if (File.Exists(candidate) && executablePaths.Add(candidate))
+                    discoveredExecutables.Add(candidate);
+            }
+        }
 
         if (discoveredExecutables.Count == 0)
             yield break;
 
-        List<string> configFiles = discoveredExecutables.SelectMany(candidate => FindConfigurationFiles(definition, candidate)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-        List<string> contentPaths = configFiles.SelectMany(file => ReadContentPaths(file, definition)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        IEnumerable<string> configFiles = discoveredExecutables.SelectMany(candidate => FindConfigurationFiles(definition, candidate)).Distinct(StringComparer.OrdinalIgnoreCase);
+        IEnumerable<string> contentPaths = configFiles.SelectMany(file => ReadContentPaths(file, definition)).Distinct(StringComparer.OrdinalIgnoreCase);
+        
         yield return new EmulatorInstallation
         {
             Definition = definition,
@@ -279,7 +284,7 @@ public static class EmulatorDiscoveryService
                 configuredPaths = ReadIniContentPaths(content, definition);
                 break;
             default:
-                configuredPaths = [];
+                configuredPaths = ReadTextContentPaths(content, definition);
                 break;
         }
 
