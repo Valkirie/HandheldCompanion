@@ -1050,11 +1050,14 @@ public class ProfileManager : IManager
 
         if (profiles.ContainsKey(profile.Guid))
         {
-            // delete associated subprofiles
-            foreach (Profile subprofile in GetSubProfilesFromProfile(profile))
-                DeleteProfile(subprofile);
+            if (!profile.IsSubProfile)
+            {
+                // delete associated subprofiles
+                foreach (Profile subprofile in GetSubProfilesFromProfile(profile).ToList())
+                    DeleteProfile(subprofile);
 
-            LogManager.LogInformation("Deleted subprofiles for profile: {0}", profile);
+                LogManager.LogInformation("Deleted subprofiles for profile: {0}", profile);
+            }
 
             // Unregister application from HidHide
             HidHide.UnregisterApplication(profile.Path);
