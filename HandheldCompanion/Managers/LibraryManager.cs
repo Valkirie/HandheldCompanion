@@ -975,8 +975,8 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static Notification Notification_IsBusy = new("Library Manager", "Downloading artworks and metadatas.") { IsInternal = true, IsIndeterminate = false };
-        private static Notification Notification_Failed = new("Library Manager", "Unknown error.") { IsInternal = true, IsIndeterminate = true };
+        private static Notification Notification_IsBusy = new(Properties.Resources.LibraryManager_Title, Properties.Resources.LibraryManager_DownloadingArtworks) { IsInternal = true, IsIndeterminate = false };
+        private static Notification Notification_Failed = new(Properties.Resources.LibraryManager_Title, Properties.Resources.LibraryManager_UnknownError) { IsInternal = true, IsIndeterminate = true };
 
         protected override void AddStatus(ManagerStatus status, params object[] args)
         {
@@ -995,17 +995,17 @@ namespace HandheldCompanion.Managers
                         switch (errorType)
                         {
                             case ErrorType.None:
-                                Notification_Failed.Message = "Unknown error.";
+                                Notification_Failed.Message = Properties.Resources.LibraryManager_UnknownError;
                                 break;
                             case ErrorType.NoResults:
-                                Notification_Failed.Message = "No artworks found.";
+                                Notification_Failed.Message = Properties.Resources.LibraryManager_NoArtworksFound;
                                 break;
                             case ErrorType.Exception:
                                 {
                                     if (args.Length != 0 && args[0] is string messageError)
-                                        Notification_Failed.Message = string.Format("Exception raised: {0}", messageError);
+                                        Notification_Failed.Message = string.Format(Properties.Resources.LibraryManager_ExceptionRaised, messageError);
                                     else
-                                        Notification_Failed.Message = "Unknown exception.";
+                                        Notification_Failed.Message = Properties.Resources.LibraryManager_UnknownException;
                                 }
                                 break;
                         }
@@ -1029,8 +1029,8 @@ namespace HandheldCompanion.Managers
             base.RemoveStatus(status, args);
         }
 
-        private static Notification Notification_ConnectivityDown = new("Library Manager", "Oops, we're offline! We will let you know when we are back.") { IsInternal = true, IsIndeterminate = true };
-        private static Notification Notification_ConnectivityUp = new("Library Manager", "We are back online. All features are available.") { IsInternal = true, IsIndeterminate = true };
+        private static Notification Notification_ConnectivityDown = new(Properties.Resources.LibraryManager_Title, Properties.Resources.LibraryManager_ConnectivityDown) { IsInternal = true, IsIndeterminate = true };
+        private static Notification Notification_ConnectivityUp = new(Properties.Resources.LibraryManager_Title, Properties.Resources.LibraryManager_ConnectivityUp) { IsInternal = true, IsIndeterminate = true };
 
         private void NetworkChange_NetworkAddressChanged(bool startup)
         {

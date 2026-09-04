@@ -7838,6 +7838,78 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Oops, we&apos;re offline! We will let you know when we are back..
+        /// </summary>
+        public static string LibraryManager_ConnectivityDown {
+            get {
+                return ResourceManager.GetString("LibraryManager_ConnectivityDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to We are back online. All features are available..
+        /// </summary>
+        public static string LibraryManager_ConnectivityUp {
+            get {
+                return ResourceManager.GetString("LibraryManager_ConnectivityUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloading artworks and metadatas..
+        /// </summary>
+        public static string LibraryManager_DownloadingArtworks {
+            get {
+                return ResourceManager.GetString("LibraryManager_DownloadingArtworks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exception raised: {0}.
+        /// </summary>
+        public static string LibraryManager_ExceptionRaised {
+            get {
+                return ResourceManager.GetString("LibraryManager_ExceptionRaised", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No artworks found..
+        /// </summary>
+        public static string LibraryManager_NoArtworksFound {
+            get {
+                return ResourceManager.GetString("LibraryManager_NoArtworksFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Library Manager.
+        /// </summary>
+        public static string LibraryManager_Title {
+            get {
+                return ResourceManager.GetString("LibraryManager_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown error..
+        /// </summary>
+        public static string LibraryManager_UnknownError {
+            get {
+                return ResourceManager.GetString("LibraryManager_UnknownError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown exception..
+        /// </summary>
+        public static string LibraryManager_UnknownException {
+            get {
+                return ResourceManager.GetString("LibraryManager_UnknownException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This will scan {0} library and create profiles for each of your games. It may take several seconds to a few seconds. Do you want to proceed?.
         /// </summary>
         public static string LibraryScanContent {
