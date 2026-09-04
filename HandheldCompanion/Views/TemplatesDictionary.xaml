@@ -12,6 +12,7 @@
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:platforms="clr-namespace:HandheldCompanion.Platforms"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
@@ -72,6 +73,8 @@
                 Command="{Binding OpenExecutableLocation}"
                 Header="Open executable location"
                 IsEnabled="{Binding CanOpenExecutableLocation}" />
+            <Separator />
+            <MenuItem Command="{Binding DeleteProfileCommand}" Header="Delete profile" />
         </MenuItem>
     </ControlTemplate>
 
@@ -126,6 +129,7 @@
                 Command="{Binding OpenExecutableLocation}"
                 Header="Open executable location"
                 IsEnabled="{Binding CanOpenExecutableLocation}" />
+            <MenuItem Command="{Binding DeleteProfileCommand}" Header="Delete profile" />
         </MenuItem>
     </ContextMenu>
 

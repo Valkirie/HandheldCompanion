@@ -32,6 +32,7 @@ namespace HandheldCompanion.ViewModels
         public ICommand? OpenLayout { get; private set; }
         public ICommand? OpenExecutableLocation { get; private set; }
         public ICommand? DownloadMetadataAndArtworks { get; private set; }
+        public ICommand? DeleteProfileCommand { get; private set; }
 
         public readonly bool IsQuickTools;
         public bool IsMainPage => !IsQuickTools;
@@ -771,6 +772,20 @@ namespace HandheldCompanion.ViewModels
             {
                 ManagerFactory.libraryManager.RefreshProfileArts(Profile, UpdateSource.LibraryUpdate, includeFullResAssets: true);
             });
+
+            DeleteProfileCommand = new AsyncDelegateCommand(async () =>
+            {
+                ContentDialogResult result = await new Dialog(MainWindow.GetCurrent())
+                {
+                    Title = string.Format(Properties.Resources.ProfilesPage_AreYouSureDelete1, Profile.Name),
+                    Content = Properties.Resources.ProfilesPage_AreYouSureDelete2,
+                    CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
+                    PrimaryButtonText = Properties.Resources.ProfilesPage_Delete
+                }.ShowAsync();
+
+                if (result == ContentDialogResult.Primary)
+                    ManagerFactory.profileManager.DeleteProfile(Profile);
+            });
         }
 
         private void ProcessManager_ProcessStarted(ProcessEx processEx, bool OnStartup)
@@ -796,6 +811,7 @@ namespace HandheldCompanion.ViewModels
             OpenLayout = null;
             OpenExecutableLocation = null;
             DownloadMetadataAndArtworks = null;
+            DeleteProfileCommand = null;
 
             base.Dispose();
         }
