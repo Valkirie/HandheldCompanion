@@ -62,7 +62,9 @@ public enum GamePlatform : long
     Citron = 1099511627776,
     Eden = 2199023255552,
 
-    All = -1
+    Launchers = Steam | Origin | UbisoftConnect | GOG | BattleNet | Epic | RiotGames | Rockstar | EADesktop | MicrosoftStore,
+    Emulators = Cemu | Dolphin | PCSX2 | RPCS3 | ShadPS4 | Citra | Azahar | DuckStation | RetroArch | PPSSPP | MAME | Mupen64Plus | Project64 | Ryujinx | MelonDS | Vita3K | Xenia | Xemu | Flycast | Redream | ScummVM | DOSBox | DOSBoxX | Mednafen | VisualBoyAdvance | Snes9x | DeSmuME | AetherSX2 | SameBoy | Yuzu | Citron | Eden,
+    All = Launchers | Emulators
 }
 
 public enum PlatformStatus

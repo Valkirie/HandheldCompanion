@@ -513,10 +513,11 @@ namespace HandheldCompanion.ViewModels
                     return;
 
                 string target = param?.ToString() ?? string.Empty;
+                string targetName = GetScanTargetDisplayName(target);
                 ContentDialogResult result = await new Dialog(MainWindow.GetCurrent())
                 {
-                    Title = string.Format(Properties.Resources.LibraryScanTitle, param),
-                    Content = string.Format(Properties.Resources.LibraryScanContent, param),
+                    Title = string.Format(Properties.Resources.LibraryScanTitle, targetName),
+                    Content = string.Format(Properties.Resources.LibraryScanContent, targetName),
                     CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
                     PrimaryButtonText = Properties.Resources.ProfilesPage_Yes
                 }.ShowAsync();
@@ -526,7 +527,7 @@ namespace HandheldCompanion.ViewModels
 
                 IsScanningLibrary = true;
                 IsScanPreparing = true;
-                ScanPlatformText = GetScanTargetDisplayName(target);
+                ScanPlatformText = targetName;
                 ScanProgressText = $"Discovering games for {ScanPlatformText}...";
                 ScanProgressValue = 0;
                 ScanProgressMaximum = 0;
@@ -657,6 +658,8 @@ namespace HandheldCompanion.ViewModels
             {
                 if (string.Equals(target, "All", StringComparison.OrdinalIgnoreCase))
                     return "all platforms and emulators";
+                if (string.Equals(target, "Launchers", StringComparison.OrdinalIgnoreCase))
+                    return "all launchers";
                 if (string.Equals(target, "Emulators", StringComparison.OrdinalIgnoreCase))
                     return "all emulators";
                 if (target.StartsWith("Console:", StringComparison.OrdinalIgnoreCase))

@@ -166,52 +166,60 @@
                                         Command="{Binding ScanLibraryCommand}"
                                         CommandParameter="All"
                                         Header="All" />
-                                    <MenuItem
-                                        Command="{Binding ScanLibraryCommand}"
-                                        CommandParameter="BattleNet"
-                                        Header="Battle.net" />
-                                    <MenuItem
-                                        Command="{Binding ScanLibraryCommand}"
-                                        CommandParameter="Epic"
-                                        Header="Epic" />
-                                    <MenuItem
-                                        Command="{Binding ScanLibraryCommand}"
-                                        CommandParameter="GOG"
-                                        Header="GOG GALAXY" />
-                                    <MenuItem
-                                        Command="{Binding ScanLibraryCommand}"
-                                        CommandParameter="Origin"
-                                        Header="Origin" />
-                                    <MenuItem
-                                        Command="{Binding ScanLibraryCommand}"
-                                        CommandParameter="EA Desktop"
-                                        Header="EA Desktop" />
-                                    <MenuItem
-                                        Command="{Binding ScanLibraryCommand}"
-                                        CommandParameter="Riot"
-                                        Header="Riot Games" />
-                                    <MenuItem
-                                        Command="{Binding ScanLibraryCommand}"
-                                        CommandParameter="Rockstar"
-                                        Header="Rockstar" />
-                                    <MenuItem
-                                        Command="{Binding ScanLibraryCommand}"
-                                        CommandParameter="Steam"
-                                        Header="Steam" />
-                                    <MenuItem
-                                        Command="{Binding ScanLibraryCommand}"
-                                        CommandParameter="Microsoft Store"
-                                        Header="Microsoft Store" />
-                                    <MenuItem
-                                        Command="{Binding ScanLibraryCommand}"
-                                        CommandParameter="Ubisoft"
-                                        Header="Ubisoft Connect" />
                                     <Separator />
-                                    <MenuItem Header="Consoles">
+                                    <MenuItem Header="Launchers">
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="Launchers"
+                                            Header="All" />
+                                        <Separator />
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="BattleNet"
+                                            Header="Battle.net" />
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="Epic"
+                                            Header="Epic" />
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="GOG"
+                                            Header="GOG GALAXY" />
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="Origin"
+                                            Header="Origin" />
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="EA Desktop"
+                                            Header="EA Desktop" />
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="Riot"
+                                            Header="Riot Games" />
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="Rockstar"
+                                            Header="Rockstar" />
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="Steam"
+                                            Header="Steam" />
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="Microsoft Store"
+                                            Header="Microsoft Store" />
+                                        <MenuItem
+                                            Command="{Binding ScanLibraryCommand}"
+                                            CommandParameter="Ubisoft"
+                                            Header="Ubisoft Connect" />
+                                    </MenuItem>
+                                    <MenuItem Header="Emulators">
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Emulators"
                                             Header="All" />
+                                        <Separator />
                                         <MenuItem
                                             Command="{Binding ScanLibraryCommand}"
                                             CommandParameter="Console:GameCube"
