@@ -35,6 +35,7 @@ using static HandheldCompanion.Managers.SystemManager;
 using Control = System.Windows.Controls.Control;
 using Page = System.Windows.Controls.Page;
 using RadioButton = System.Windows.Controls.RadioButton;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Views;
 
@@ -81,6 +82,9 @@ public partial class MainWindow : GamepadWindow
     private bool startupWindowReady;
     private bool applyingStartupWindowState;
     private WindowState deferredStartupWindowState = WindowState.Minimized;
+
+    private Timer? shutdownTimer;
+    private bool shutdownCompleted = false;
 
     // Track tray menu items for liked profiles
     private readonly Dictionary<Guid, ToolStripMenuItem> profileMenuItems = new();
@@ -237,6 +241,9 @@ public partial class MainWindow : GamepadWindow
         // prepare toast manager
         ToastManager.Start();
         ToastManager.SendToast(Title, "is starting");
+
+        shutdownTimer = new(250) { AutoReset = false };
+        shutdownTimer.Elapsed += ShutdownTimer_Elapsed;
 
         // load gamepad navigation manager
         gamepadFocusManager = new(this, ContentFrame);
@@ -1147,88 +1154,107 @@ public partial class MainWindow : GamepadWindow
         });
     }
 
+    private void ShutdownTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        LogManager.LogWarning("Application shutdown exceeded 10 seconds; forcing process exit");
+        Environment.Exit(0);
+    }
 
     private async void Window_Closed(object sender, EventArgs e)
     {
-        // wait until all managers have initialized
-        if (ManagerFactory.Managers.Any(manager => manager.Status.HasFlag(ManagerStatus.Initializing)))
+        try
         {
-            LogManager.LogWarning("Waiting for all managers to be fully initialized before halting them");
+            // wait until all managers have initialized
+            if (ManagerFactory.Managers.Any(manager => manager.Status.HasFlag(ManagerStatus.Initializing)))
+            {
+                LogManager.LogWarning("Waiting for all managers to be fully initialized before halting them");
 
-            while (ManagerFactory.Managers.Any(manager => manager.Status.HasFlag(ManagerStatus.Initializing)))
-                await Task.Delay(250).ConfigureAwait(false);
+                while (ManagerFactory.Managers.Any(manager => manager.Status.HasFlag(ManagerStatus.Initializing)))
+                    await Task.Delay(250).ConfigureAwait(false);
+            }
+
+            CurrentDevice.Close();
+
+            // Clean up tray menu items - must be done on UI thread
+            UIHelper.TryInvoke(() =>
+            {
+                foreach (var menuItem in profileMenuItems.Values)
+                    menuItem.Dispose();
+                profileMenuItems.Clear();
+
+                trayContextMenu.Dispose();
+                notifyIcon.Visible = false;
+                notifyIcon.Dispose();
+            });
+
+            // manage events
+            SystemManager.Initialized -= SystemManager_Initialized;
+            SystemManager.SystemStatusChanged -= SystemManager_SystemStatusChanged;
+            SystemManager.SessionLockChanged -= SystemManager_SessionLockChanged;
+            ToastManager.CommandReceived -= ToastManager_CommandReceived;
+
+            ManagerFactory.notificationManager.Initialized -= NotificationManager_Initialized;
+            ManagerFactory.notificationManager.Added -= NotificationManagerUpdated;
+            ManagerFactory.notificationManager.Discarded -= NotificationManagerUpdated;
+
+            ControllerManager.Initialized -= ControllerManager_Initialized;
+            ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
+
+            ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
+            // UI thread
+            UIHelper.TryInvoke(() =>
+            {
+                // stop windows
+                App.overlayModel.Close(true);
+                App.overlayTrackpad.Close();
+                App.overlayquickTools.Close(true);
+
+                // stop pages
+                controllerPage.Dispose();
+                profilesPage.Dispose();
+                settingsPage.Dispose();
+                overlayPage.Dispose();
+                performancePage.Dispose();
+                hotkeysPage.Dispose();
+                layoutPage.Dispose();
+                notificationsPage.Dispose();
+                libraryPage?.Dispose();
+            });
+
+            // remove all automation event handlers
+            ProcessUtils.TaskWithTimeout(() => Automation.RemoveAllEventHandlers(), TimeSpan.FromSeconds(3));
+
+            foreach (IManager manager in ManagerFactory.Managers)
+                manager.Stop();
+
+            // stop managers
+            await VirtualManager.Stop().ConfigureAwait(false);
+            MotionManager.Stop();
+            SensorsManager.Stop();
+            ControllerManager.Stop();
+            InputsManager.Stop(true);
+            TimerManager.Stop();
+            OSDManager.Stop();
+            SystemManager.Stop();
+            DynamicLightingManager.Stop();
+            ToastManager.Stop();
+            TaskManager.Stop();
+            PerformanceManager.Stop();
+            UpdateManager.Stop();
+
+            // mark shutdown as completed
+            shutdownCompleted = true;
         }
-
-        CurrentDevice.Close();
-
-        // Clean up tray menu items - must be done on UI thread
-        UIHelper.TryInvoke(() =>
+        finally
         {
-            foreach (var menuItem in profileMenuItems.Values)
-                menuItem.Dispose();
-            profileMenuItems.Clear();
-
-            trayContextMenu.Dispose();
-            notifyIcon.Visible = false;
-            notifyIcon.Dispose();
-        });
-
-        // manage events
-        SystemManager.Initialized -= SystemManager_Initialized;
-        SystemManager.SystemStatusChanged -= SystemManager_SystemStatusChanged;
-        SystemManager.SessionLockChanged -= SystemManager_SessionLockChanged;
-        ToastManager.CommandReceived -= ToastManager_CommandReceived;
-
-        ManagerFactory.notificationManager.Initialized -= NotificationManager_Initialized;
-        ManagerFactory.notificationManager.Added -= NotificationManagerUpdated;
-        ManagerFactory.notificationManager.Discarded -= NotificationManagerUpdated;
-
-        ControllerManager.Initialized -= ControllerManager_Initialized;
-        ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
-
-        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
-        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-
-        // UI thread
-        UIHelper.TryInvoke(() =>
-        {
-            // stop windows
-            App.overlayModel.Close(true);
-            App.overlayTrackpad.Close();
-            App.overlayquickTools.Close(true);
-
-            // stop pages
-            controllerPage.Dispose();
-            profilesPage.Dispose();
-            settingsPage.Dispose();
-            overlayPage.Dispose();
-            performancePage.Dispose();
-            hotkeysPage.Dispose();
-            layoutPage.Dispose();
-            notificationsPage.Dispose();
-            libraryPage?.Dispose();
-        });
-
-        // remove all automation event handlers
-        ProcessUtils.TaskWithTimeout(() => Automation.RemoveAllEventHandlers(), TimeSpan.FromSeconds(3));
-
-        foreach (IManager manager in ManagerFactory.Managers)
-            manager.Stop();
-
-        // stop managers
-        await VirtualManager.Stop().ConfigureAwait(false);
-        MotionManager.Stop();
-        SensorsManager.Stop();
-        ControllerManager.Stop();
-        InputsManager.Stop(true);
-        TimerManager.Stop();
-        OSDManager.Stop();
-        SystemManager.Stop();
-        DynamicLightingManager.Stop();
-        ToastManager.Stop();
-        TaskManager.Stop();
-        PerformanceManager.Stop();
-        UpdateManager.Stop();
+            if (shutdownCompleted)
+            {
+                shutdownTimer?.Dispose();
+                shutdownTimer = null;
+            }
+        }
     }
 
     private async void Window_Closing(object sender, CancelEventArgs e)
