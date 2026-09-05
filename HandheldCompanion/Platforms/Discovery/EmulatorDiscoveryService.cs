@@ -142,10 +142,18 @@ public static class EmulatorDiscoveryService
 
         foreach (string root in GetShortcutRoots())
         {
+            EnumerationOptions options = new()
+            {
+                RecurseSubdirectories = true,
+                IgnoreInaccessible = true,
+                ReturnSpecialDirectories = false
+            };
+
             IEnumerable<string> shortcuts;
-            try { shortcuts = Directory.EnumerateFiles(root, "*.lnk", SearchOption.AllDirectories); }
+            try { shortcuts = Directory.EnumerateFiles(root, "*.lnk", options); }
             catch (IOException) { continue; }
             catch (UnauthorizedAccessException) { continue; }
+
             foreach (string shortcut in shortcuts)
             {
                 string? target = null;
@@ -280,6 +288,9 @@ public static class EmulatorDiscoveryService
             case ".xml":
                 configuredPaths = ReadXmlContentPaths(content, definition);
                 break;
+            case ".toml":
+                configuredPaths = ReadTomlContentPaths(content, definition);
+                break;
             case ".ini":
                 configuredPaths = ReadIniContentPaths(content, definition);
                 break;
@@ -388,6 +399,163 @@ public static class EmulatorDiscoveryService
             foreach (string path in value.Split([';', ','], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
                 yield return path.Trim().Trim('"', '\'');
         }
+    }
+
+    private static IEnumerable<string> ReadTomlContentPaths(string content, EmulatorDefinition definition)
+    {
+        string uncommentedContent = RemoveTomlComments(content);
+        foreach (string key in definition.Configurations.SelectMany(configuration => configuration.ContentKeys).Distinct(StringComparer.OrdinalIgnoreCase))
+        {
+            string pattern = $@"(?im)^\s*{Regex.Escape(key)}\s*=\s*";
+            foreach (Match match in Regex.Matches(uncommentedContent, pattern, RegexOptions.CultureInvariant))
+            {
+                int valueStart = match.Index + match.Length;
+                int arrayStart = uncommentedContent.IndexOf('[', valueStart);
+                if (arrayStart < 0 || uncommentedContent[valueStart..arrayStart].Contains('\n'))
+                    continue;
+
+                int arrayEnd = FindTomlArrayEnd(uncommentedContent, arrayStart);
+                if (arrayEnd < 0)
+                    continue;
+
+                foreach (string value in ReadTomlStrings(uncommentedContent, arrayStart + 1, arrayEnd))
+                    if (!string.IsNullOrWhiteSpace(value))
+                        yield return value;
+            }
+        }
+    }
+
+    private static int FindTomlArrayEnd(string content, int start)
+    {
+        int depth = 0;
+        char quote = '\0';
+        bool escaped = false;
+        for (int i = start; i < content.Length; i++)
+        {
+            char character = content[i];
+            if (quote != '\0')
+            {
+                if (quote == '"' && character == '\\' && !escaped)
+                {
+                    escaped = true;
+                    continue;
+                }
+
+                if (character == quote && !escaped)
+                    quote = '\0';
+                escaped = false;
+                continue;
+            }
+
+            if (character is '"' or '\'')
+                quote = character;
+            else if (character == '[')
+                depth++;
+            else if (character == ']' && --depth == 0)
+                return i;
+        }
+
+        return -1;
+    }
+
+    private static IEnumerable<string> ReadTomlStrings(string content, int start, int end)
+    {
+        for (int i = start; i < end; i++)
+        {
+            if (content[i] is not ('"' or '\''))
+                continue;
+
+            char quote = content[i++];
+            StringBuilder value = new();
+            bool escaped = false;
+            for (; i < end; i++)
+            {
+                char character = content[i];
+                if (quote == '"' && character == '\\' && !escaped)
+                {
+                    escaped = true;
+                    continue;
+                }
+
+                if (character == quote && !escaped)
+                    break;
+
+                if (escaped)
+                {
+                    value.Append(character switch
+                    {
+                        'b' => '\b',
+                        't' => '\t',
+                        'n' => '\n',
+                        'f' => '\f',
+                        'r' => '\r',
+                        '"' => '"',
+                        '\\' => '\\',
+                        _ => character
+                    });
+                    escaped = false;
+                }
+                else
+                {
+                    value.Append(character);
+                }
+            }
+
+            if (i < end && content[i] == quote)
+                yield return value.ToString();
+        }
+    }
+
+    private static string RemoveTomlComments(string content)
+    {
+        StringBuilder result = new(content.Length);
+        char quote = '\0';
+        bool escaped = false;
+        bool comment = false;
+        foreach (char character in content)
+        {
+            if (comment)
+            {
+                if (character is '\r' or '\n')
+                {
+                    comment = false;
+                    result.Append(character);
+                }
+                else
+                {
+                    result.Append(' ');
+                }
+                continue;
+            }
+
+            if (quote != '\0')
+            {
+                result.Append(character);
+                if (quote == '"' && character == '\\' && !escaped)
+                {
+                    escaped = true;
+                    continue;
+                }
+
+                if (character == quote && !escaped)
+                    quote = '\0';
+                escaped = false;
+                continue;
+            }
+
+            if (character is '"' or '\'')
+                quote = character;
+            else if (character == '#')
+            {
+                comment = true;
+                result.Append(' ');
+                continue;
+            }
+
+            result.Append(character);
+        }
+
+        return result.ToString();
     }
 
     private static IEnumerable<string> ReadJsonContentPaths(string content, EmulatorDefinition definition)

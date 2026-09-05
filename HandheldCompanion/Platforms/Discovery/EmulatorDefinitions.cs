@@ -94,7 +94,11 @@ public static class EmulatorDefinitions
             RomExtensions = [],
             DirectoryRoms = true,
             RomMetadata = new() { Provider = RomMetadataProvider.ParamSfo, RelativePath = "sce_sys\\param.sfo", SearchParentDirectories = false },
-            Configurations = [new() { Root = ConfigRoot.AppData, RelativePath = "shadPS4", Files = ["config.json"], ContentKeys = ["install_dirs"] }]
+            Configurations =
+            [
+                new() { Root = ConfigRoot.AppData, RelativePath = "shadPS4", Files = ["config.json"], ContentKeys = ["install_dirs"] },
+                new() { Root = ConfigRoot.AppData, RelativePath = "shadPS4", Files = ["config.toml"], ContentKeys = ["installDirs"] }
+            ]
         },
         new()
         {
