@@ -837,7 +837,7 @@ namespace HandheldCompanion.ViewModels
 
         private ObservableCollection<ProfilesPickerViewModel> _profilePickerItems = [];
         public ObservableCollection<ProfilesPickerViewModel> ProfilePickerItems => _profilePickerItems;
-        public bool IsSelectedPresetUsed => SelectedPreset is not null && ManagerFactory.profileManager.GetCurrent().PowerProfiles.Values.Contains(SelectedPreset.Guid);
+        public bool IsSelectedPresetUsed => SelectedPreset is not null && ManagerFactory.powerProfileManager.GetCurrent().Guid == SelectedPreset.Guid;
         public ICommand OpenModifyDialogCommand { get; private set; } = new DelegateCommand(() => { });
         public ICommand ConfirmModifyCommand { get; private set; } = new DelegateCommand(() => { });
         public ICommand CreatePresetCommand { get; private set; } = new DelegateCommand(() => { });
