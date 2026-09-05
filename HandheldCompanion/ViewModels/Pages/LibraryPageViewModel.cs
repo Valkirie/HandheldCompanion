@@ -43,6 +43,7 @@ namespace HandheldCompanion.ViewModels
         private const string FavoritesNavigationKey = "favorites";
         private const string CollectionsNavigationKey = "collections";
         private const int CollectionPreviewImageCount = 4;
+
         private static readonly (GamePlatform Platform, string Title)[] SupportedPlatforms =
         [
             (GamePlatform.BattleNet, Properties.Resources.Library_ScanBattleNet),
