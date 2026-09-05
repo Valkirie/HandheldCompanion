@@ -3432,9 +3432,22 @@ namespace HandheldCompanion.ViewModels
 
         private void SelectedLibraryChanged()
         {
+            // These collections depend on SelectedLibraryIndex. Refresh the
+            // FlipView item sources before synchronizing their selected indices.
+            OnPropertyChanged(nameof(LibraryCovers));
+            OnPropertyChanged(nameof(LibraryArtworks));
+            OnPropertyChanged(nameof(LibraryLogos));
+
             LibraryArtworksIndex = GetLibraryVisualIndex(LibraryArtworks, SelectedLibraryEntry?.GetArtworkId() ?? 0);
             LibraryCoversIndex = GetLibraryVisualIndex(LibraryCovers, SelectedLibraryEntry?.GetCoverId() ?? 0);
             LibraryLogosIndex = GetLibraryVisualIndex(LibraryLogos, SelectedLibraryEntry?.GetLogoId() ?? 0);
+
+            // An index can have the same numeric value for two different item
+            // sources, in which case its setter does not raise a notification.
+            OnPropertyChanged(nameof(LibraryCoversIndex));
+            OnPropertyChanged(nameof(LibraryArtworksIndex));
+            OnPropertyChanged(nameof(LibraryLogosIndex));
+
             OnPropertyChanged(nameof(LibraryCoversPageCount));
             OnPropertyChanged(nameof(LibraryArtworksPageCount));
             OnPropertyChanged(nameof(LibraryLogosPageCount));
