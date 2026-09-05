@@ -1,10 +1,9 @@
+using GameLib.Core;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using HandheldCompanion.Platforms;
-using GameLib.Core;
 
 namespace HandheldCompanion.Platforms.Discovery;
 

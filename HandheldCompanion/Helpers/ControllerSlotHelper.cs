@@ -135,8 +135,7 @@ public sealed class ControllerSlotHelper
         if (Interlocked.Exchange(ref watchdogStarted, 0) == 0)
             return;
         watchdogRunning = false;
-        if (watchdogTask is not null)
-            watchdogTask.Wait(3000);
+        watchdogTask?.Wait(3000);
         watchdogTask = null;
     }
 
