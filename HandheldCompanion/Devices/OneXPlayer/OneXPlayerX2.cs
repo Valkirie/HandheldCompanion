@@ -109,7 +109,6 @@ public class OneXPlayerX2 : OneXPlayerX1
         catch (Exception ex)
         {
             LogManager.LogWarning("Failed to open X2 WMI EC interface: {0}", ex.Message);
-            return false;
         }
 
         return base.Open();
