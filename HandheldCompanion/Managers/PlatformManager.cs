@@ -1,16 +1,15 @@
 ﻿using GameLib.Core;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
+using HandheldCompanion.Platforms.Discovery;
 using HandheldCompanion.Platforms.Games;
 using HandheldCompanion.Platforms.Misc;
-using HandheldCompanion.Platforms.Discovery;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 

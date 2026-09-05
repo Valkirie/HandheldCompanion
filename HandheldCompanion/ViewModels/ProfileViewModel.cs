@@ -2,7 +2,6 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
-using HandheldCompanion.Platforms.Discovery;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Windows;

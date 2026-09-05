@@ -1,15 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Xml.Linq;
-using System.Text;
-using HandheldCompanion.Platforms;
 using HandheldCompanion.Managers;
 using IWshRuntimeLibrary;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using File = System.IO.File;
 
 namespace HandheldCompanion.Platforms.Discovery;
@@ -36,15 +35,15 @@ public static class EmulatorDiscoveryService
                 yield return new DiscoveredGame(definition.Name, installation.ExecutablePath, installation.ExecutablePath, string.Empty, definition.PlatformType, true, installation.ExecutablePaths);
 
                 foreach (string contentPath in installation.ContentPaths)
-                foreach (string rom in EnumerateRoms(contentPath, definition))
-                {
-                    string? arguments = BuildArguments(definition, rom);
-                    if (arguments is not null)
+                    foreach (string rom in EnumerateRoms(contentPath, definition))
                     {
-                        string fallbackName = Path.GetFileNameWithoutExtension(rom);
-                    yield return new DiscoveredGame(ReadRomName(definition, rom) ?? fallbackName, rom, installation.ExecutablePath, arguments, definition.PlatformType);
+                        string? arguments = BuildArguments(definition, rom);
+                        if (arguments is not null)
+                        {
+                            string fallbackName = Path.GetFileNameWithoutExtension(rom);
+                            yield return new DiscoveredGame(ReadRomName(definition, rom) ?? fallbackName, rom, installation.ExecutablePath, arguments, definition.PlatformType);
+                        }
                     }
-                }
             }
         }
     }
@@ -71,7 +70,7 @@ public static class EmulatorDiscoveryService
 
         IEnumerable<string> configFiles = discoveredExecutables.SelectMany(candidate => FindConfigurationFiles(definition, candidate)).Distinct(StringComparer.OrdinalIgnoreCase);
         IEnumerable<string> contentPaths = configFiles.SelectMany(file => ReadContentPaths(file, definition)).Distinct(StringComparer.OrdinalIgnoreCase);
-        
+
         yield return new EmulatorInstallation
         {
             Definition = definition,
@@ -95,39 +94,39 @@ public static class EmulatorDiscoveryService
             yield return Path.Combine(directory.Trim(), executable);
 
         foreach (RegistryHive hive in new[] { RegistryHive.CurrentUser, RegistryHive.LocalMachine })
-        foreach (RegistryView view in new[] { RegistryView.Default, RegistryView.Registry32, RegistryView.Registry64 }.Distinct())
-        {
-            List<string> registryCandidates = [];
-            RegistryKey? baseKey = null;
-            try
+            foreach (RegistryView view in new[] { RegistryView.Default, RegistryView.Registry32, RegistryView.Registry64 }.Distinct())
             {
-                baseKey = RegistryKey.OpenBaseKey(hive, view);
-                using RegistryKey? appPath = baseKey.OpenSubKey($@"Software\Microsoft\Windows\CurrentVersion\App Paths\{executable}");
-                string? appPathValue = appPath?.GetValue(null) as string;
-                if (!string.IsNullOrWhiteSpace(appPathValue))
-                    registryCandidates.Add(UnquoteExecutable(appPathValue));
+                List<string> registryCandidates = [];
+                RegistryKey? baseKey = null;
+                try
+                {
+                    baseKey = RegistryKey.OpenBaseKey(hive, view);
+                    using RegistryKey? appPath = baseKey.OpenSubKey($@"Software\Microsoft\Windows\CurrentVersion\App Paths\{executable}");
+                    string? appPathValue = appPath?.GetValue(null) as string;
+                    if (!string.IsNullOrWhiteSpace(appPathValue))
+                        registryCandidates.Add(UnquoteExecutable(appPathValue));
 
-                using RegistryKey? uninstall = baseKey.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall");
-                if (uninstall is not null)
-                    foreach (string name in uninstall.GetSubKeyNames())
-                    {
-                        using RegistryKey? entry = uninstall.OpenSubKey(name);
-                        if (!MatchesProduct(entry, definition))
-                            continue;
-                        foreach (string valueName in new[] { "InstallLocation", "DisplayIcon", "UninstallString" })
+                    using RegistryKey? uninstall = baseKey.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall");
+                    if (uninstall is not null)
+                        foreach (string name in uninstall.GetSubKeyNames())
                         {
-                            string? registryValue = entry?.GetValue(valueName) as string;
-                            if (!string.IsNullOrWhiteSpace(registryValue))
-                                registryCandidates.AddRange(CandidatesFromValue(registryValue, executable));
+                            using RegistryKey? entry = uninstall.OpenSubKey(name);
+                            if (!MatchesProduct(entry, definition))
+                                continue;
+                            foreach (string valueName in new[] { "InstallLocation", "DisplayIcon", "UninstallString" })
+                            {
+                                string? registryValue = entry?.GetValue(valueName) as string;
+                                if (!string.IsNullOrWhiteSpace(registryValue))
+                                    registryCandidates.AddRange(CandidatesFromValue(registryValue, executable));
+                            }
                         }
-                    }
+                }
+                catch (System.Security.SecurityException) { }
+                catch (UnauthorizedAccessException) { }
+                finally { baseKey?.Dispose(); }
+                foreach (string candidate in registryCandidates)
+                    yield return candidate;
             }
-            catch (System.Security.SecurityException) { }
-            catch (UnauthorizedAccessException) { }
-            finally { baseKey?.Dispose(); }
-            foreach (string candidate in registryCandidates)
-                yield return candidate;
-        }
 
         foreach (string root in GetKnownRoots(definition))
         {
@@ -355,8 +354,8 @@ public static class EmulatorDiscoveryService
         }
 
         foreach (XElement child in element.Elements())
-        foreach (string value in EnumerateXmlText(child))
-            yield return value;
+            foreach (string value in EnumerateXmlText(child))
+                yield return value;
     }
 
     private static IEnumerable<XElement> EnumerateXmlElements(XElement? element)
@@ -366,8 +365,8 @@ public static class EmulatorDiscoveryService
 
         yield return element;
         foreach (XElement child in element.Elements())
-        foreach (XElement descendant in EnumerateXmlElements(child))
-            yield return descendant;
+            foreach (XElement descendant in EnumerateXmlElements(child))
+                yield return descendant;
     }
 
     private static IEnumerable<string> ReadIniContentPaths(string content, EmulatorDefinition definition)
@@ -397,11 +396,11 @@ public static class EmulatorDiscoveryService
         catch { yield break; }
 
         foreach (string key in definition.Configurations.SelectMany(configuration => configuration.ContentKeys).Distinct(StringComparer.OrdinalIgnoreCase))
-        foreach (JProperty property in EnumerateJsonProperties(document)
-            .Where(property => string.Equals(property.Name, key, StringComparison.OrdinalIgnoreCase)))
-        foreach (JValue value in EnumerateJsonValues(property.Value))
-            if (value.Type == JTokenType.String && !string.IsNullOrWhiteSpace(value.Value<string>()))
-                yield return value.Value<string>()!;
+            foreach (JProperty property in EnumerateJsonProperties(document)
+                .Where(property => string.Equals(property.Name, key, StringComparison.OrdinalIgnoreCase)))
+                foreach (JValue value in EnumerateJsonValues(property.Value))
+                    if (value.Type == JTokenType.String && !string.IsNullOrWhiteSpace(value.Value<string>()))
+                        yield return value.Value<string>()!;
     }
 
     private static IEnumerable<JValue> EnumerateJsonValues(JToken token)
@@ -413,8 +412,8 @@ public static class EmulatorDiscoveryService
         }
 
         foreach (JToken child in token.Children())
-        foreach (JValue childValue in EnumerateJsonValues(child))
-            yield return childValue;
+            foreach (JValue childValue in EnumerateJsonValues(child))
+                yield return childValue;
     }
 
     private static IEnumerable<JProperty> EnumerateJsonProperties(JToken token)

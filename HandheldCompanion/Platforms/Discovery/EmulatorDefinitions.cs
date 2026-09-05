@@ -1,4 +1,3 @@
-using HandheldCompanion.Platforms;
 using System.Linq;
 
 namespace HandheldCompanion.Platforms.Discovery;
