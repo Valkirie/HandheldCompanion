@@ -287,10 +287,19 @@ public sealed class ControllerSlotHelper
         if (attempt > 1)
         {
             // Create temporary virtual controllers to ensure all slots are occupied and wait for them to be created before disposing of them to free up the slot for the virtual controller.
-            int used = VirtualManager.CreateTemporaryControllers(XInputController.MaxControllers);
-            await WaitUntilAsync(() => ControllerManager.GetVirtualControllers<XInputController>().Count() >= used, TimeSpan.FromSeconds(4)).ConfigureAwait(false);
-            VirtualManager.DisposeTemporaryControllers();
-            await WaitUntilAsync(() => ControllerManager.GetVirtualControllers<XInputController>().Count() <= used, TimeSpan.FromSeconds(4)).ConfigureAwait(false);
+            try
+            {
+                int used = VirtualManager.CreateTemporaryControllers(XInputController.MaxControllers);
+                if (!await WaitUntilAsync(() => ControllerManager.GetVirtualControllers<XInputController>().Count() >= used, TimeSpan.FromSeconds(4)).ConfigureAwait(false))
+                    return false;
+            }
+            finally
+            {
+                VirtualManager.DisposeTemporaryControllers();
+            }
+
+            if (!await WaitUntilAsync(() => !HasSlotController(false), TimeSpan.FromSeconds(4)).ConfigureAwait(false))
+                return false;
         }
 
         // Create the virtual controller and wait for it to be created before returning success.
@@ -354,11 +363,12 @@ public sealed class ControllerSlotHelper
     };
     private static bool HasSlotController(bool physical) => GetSlotControllers(physical).Any();
     private static IController? GetSlotController(UserIndex slot, bool physical) => GetSlotControllers(physical).FirstOrDefault(c => c.GetUserIndex() == (int)slot);
-    private static async Task WaitUntilAsync(Func<bool> condition, TimeSpan timeout)
+    private static async Task<bool> WaitUntilAsync(Func<bool> condition, TimeSpan timeout)
     {
         DateTime deadline = DateTime.UtcNow + timeout;
         while (DateTime.UtcNow < deadline && !condition())
             await Task.Delay(100).ConfigureAwait(false);
+        return condition();
     }
 
     private sealed record SlotProbeResult(bool NeedsFix, bool EnsureVirtualSlot1, bool VirtualInSlot1, bool HasInvalidControllers, bool HasInvalidVirtual, string Reason, bool IsAvailable)
