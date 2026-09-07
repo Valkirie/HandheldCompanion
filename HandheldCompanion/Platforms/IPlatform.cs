@@ -90,6 +90,9 @@ public abstract class IPlatform : IDisposable
     public virtual string InstallPath { get; set; } = string.Empty;
     public virtual string ExecutablePath { get; set; } = string.Empty;
     public virtual string PlatformColor { get; set; } = "#666666";
+    public virtual string PlatformGlyph { get; set; } = "\uF712";
+    public virtual string PlatformFont { get; set; } = "Simple Icons Fit";
+    public virtual double PlatformFontSize { get; set; } = 22;
     public virtual bool IsInstalled { get; set; }
 
     protected Version? ExpectedVersion;

@@ -1,0 +1,46 @@
+{
+  "Id": "ryujinx",
+  "Name": "Ryujinx",
+  "PlatformType": "Ryujinx",
+  "PlatformColor": "#3949AB",
+  "PlatformGlyph": "\uF787",
+  "Executables": [
+    "Ryujinx.exe"
+  ],
+  "ProductNames": [
+    "Ryujinx"
+  ],
+  "Companies": [],
+  "Configurations": [
+    {
+      "Root": "AppData",
+      "RelativePath": "Ryujinx",
+      "Files": [
+        "Config.json"
+      ],
+      "ContentKeys": []
+    }
+  ],
+  "PortableLocations": [
+    {
+      "Marker": "portable",
+      "ConfigPath": "portable",
+      "Files": [
+        "Config.json"
+      ]
+    }
+  ],
+  "Systems": [
+    "Nintendo Switch"
+  ],
+  "RomExtensions": [
+    ".nsp",
+    ".xci",
+    ".nca"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

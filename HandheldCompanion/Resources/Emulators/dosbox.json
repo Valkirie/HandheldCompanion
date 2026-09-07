@@ -1,0 +1,38 @@
+{
+  "Id": "dosbox",
+  "Name": "DOSBox",
+  "PlatformType": "DOSBox",
+  "PlatformColor": "#666666",
+  "PlatformGlyph": "\uF712",
+  "Executables": [
+    "DOSBox.exe"
+  ],
+  "ProductNames": [
+    "DOSBox"
+  ],
+  "Companies": [],
+  "Configurations": [
+    {
+      "Root": "AppData",
+      "RelativePath": "DOSBox",
+      "Files": [
+        "dosbox*.conf"
+      ],
+      "ContentKeys": []
+    }
+  ],
+  "PortableLocations": [],
+  "Systems": [
+    "DOS"
+  ],
+  "RomExtensions": [
+    ".exe",
+    ".com",
+    ".bat"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "Unsupported",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

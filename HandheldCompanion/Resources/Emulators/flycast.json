@@ -1,0 +1,40 @@
+{
+  "Id": "flycast",
+  "Name": "Flycast",
+  "PlatformType": "Flycast",
+  "PlatformColor": "#455A64",
+  "PlatformGlyph": "\uED2F",
+  "Executables": [
+    "flycast.exe"
+  ],
+  "ProductNames": [
+    "Flycast"
+  ],
+  "Companies": [],
+  "Configurations": [
+    {
+      "Root": "AppData",
+      "RelativePath": "flycast",
+      "Files": [
+        "emu.cfg"
+      ],
+      "ContentKeys": []
+    }
+  ],
+  "PortableLocations": [],
+  "Systems": [
+    "Dreamcast",
+    "Naomi",
+    "Atomiswave"
+  ],
+  "RomExtensions": [
+    ".gdi",
+    ".cdi",
+    ".chd"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

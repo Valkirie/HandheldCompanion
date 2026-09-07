@@ -1,0 +1,36 @@
+{
+  "Id": "scummvm",
+  "Name": "ScummVM",
+  "PlatformType": "ScummVM",
+  "PlatformColor": "#666666",
+  "PlatformGlyph": "\uF712",
+  "Executables": [
+    "scummvm.exe"
+  ],
+  "ProductNames": [
+    "ScummVM"
+  ],
+  "Companies": [],
+  "Configurations": [
+    {
+      "Root": "AppData",
+      "RelativePath": "ScummVM",
+      "Files": [
+        "scummvm.ini"
+      ],
+      "ContentKeys": []
+    }
+  ],
+  "PortableLocations": [],
+  "Systems": [
+    "PC Adventure"
+  ],
+  "RomExtensions": [
+    ".scummvm"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "Unsupported",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

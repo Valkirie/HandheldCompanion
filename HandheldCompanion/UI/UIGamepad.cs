@@ -361,6 +361,8 @@ namespace HandheldCompanion.Managers
 
         private static string? GetLibraryCollectionKey(Control? control)
         {
+            // Collection cards are identified by collection ID rather than their display name,
+            // because names can change while focus is being restored.
             if (control is not Button button || button.DataContext is not CollectionGroupViewModel group)
                 return null;
 
@@ -375,6 +377,7 @@ namespace HandheldCompanion.Managers
             if (string.IsNullOrWhiteSpace(collectionKey))
                 return null;
 
+            // Search the rendered page because collection cards are regenerated when the collection changes.
             return WPFUtils.FindVisualChildren<Button>(page).FirstOrDefault(button => WPFUtils.CanTarget(button, gamepadWindow, includeContentRules: true) && string.Equals(GetLibraryCollectionKey(button), collectionKey, StringComparison.Ordinal));
         }
 
@@ -573,7 +576,8 @@ namespace HandheldCompanion.Managers
 
         private DependencyObject? GetNavigationViewContentRoot(NavigationView? navigationView, Page? page)
         {
-            // Resolve the content root for the embedded NavigationView (pageNavigationView).
+            // An embedded NavigationView owns its own focus universe. Resolve its frame content
+            // instead of returning the host page, otherwise restoration can target host-page controls.
             if (navigationView == pageNavigationView)
             {
                 Frame? embeddedFrame = FindEmbeddedNavFrame(navigationView);
@@ -618,6 +622,33 @@ namespace HandheldCompanion.Managers
             return WPFUtils.FindVisualChild<Frame>(navigationView);
         }
 
+        private static bool IsWithinFocusScope(Control? control, DependencyObject? scopeRoot)
+        {
+            if (control is null)
+                return false;
+
+            return scopeRoot is null || ReferenceEquals(control, scopeRoot) || control.IsDescendantOf(scopeRoot);
+        }
+
+        private static bool IsRecentGameControl(Page page, Control control)
+        {
+            if (page is not LibraryPage)
+                return false;
+
+            // Recent Games and the embedded library view can expose the same ProfileViewModel.
+            // The visual ancestor is therefore the only reliable way to preserve which card was focused.
+            DependencyObject? current = control;
+            while (current is not null && !ReferenceEquals(current, page))
+            {
+                if (current is FrameworkElement element && element.Name == "RecentGamesItems")
+                    return true;
+
+                current = VisualTreeHelper.GetParent(current);
+            }
+
+            return false;
+        }
+
         private Control? GetTopLeftFocusableContentControl(DependencyObject? scopeRoot, bool includeNavigationViewItems = false)
         {
             if (scopeRoot is null)
@@ -647,7 +678,16 @@ namespace HandheldCompanion.Managers
             DependencyObject? contentRoot = GetNavigationViewContentRoot(navigationView, page);
             string? viewKey = GetActivePageViewKey(page, navigationView);
 
-            // Library pages need a small special-case for the collections view.
+            // A Recent Games card lives on LibraryPage, outside the embedded frame. Restore it
+            // before view-specific recovery, which may otherwise resolve the same profile in a collection.
+            if (state.LastContentControl is not null
+                && IsRecentGameControl(page, state.LastContentControl)
+                && WPFUtils.CanTarget(state.LastContentControl, gamepadWindow, includeContentRules: true))
+            {
+                return state.LastContentControl;
+            }
+
+            // The collections overview has its own remembered item and must win when that view is active.
             if (page is LibraryPage)
             {
                 DependencyObject? embeddedContentRoot = GetNavigationViewContentRoot(pageNavigationView ?? FindActivePageNavigationView(page), page);
@@ -665,7 +705,7 @@ namespace HandheldCompanion.Managers
                 }
             }
 
-            // Restore the last control used for this specific view.
+            // Restore the last control used for this specific embedded view.
             if (!string.IsNullOrWhiteSpace(viewKey) && state.LastContentControlsByView.TryGetValue(viewKey, out Control? storedViewControl))
             {
                 Control? recoveredViewControl = RecoverStoredContentControl(page, storedViewControl, contentRoot);
@@ -676,13 +716,13 @@ namespace HandheldCompanion.Managers
                     return recoveredViewControl;
                 }
 
-                if (WPFUtils.CanTarget(storedViewControl, gamepadWindow, includeContentRules: true))
+                if (IsWithinFocusScope(storedViewControl, contentRoot) && WPFUtils.CanTarget(storedViewControl, gamepadWindow, includeContentRules: true))
                     return storedViewControl;
 
                 state.LastContentControlsByView.Remove(viewKey);
             }
 
-            // Fall back to the page-wide last focused control.
+            // Fall back to the page-wide control only after the active view-specific state was checked.
             if (state.LastContentControl is not null)
             {
                 Control? recoveredControl = RecoverStoredContentControl(page, state.LastContentControl, contentRoot);
@@ -695,15 +735,15 @@ namespace HandheldCompanion.Managers
                     return recoveredControl;
                 }
 
-                if (WPFUtils.CanTarget(state.LastContentControl, gamepadWindow, includeContentRules: true))
+                if (IsWithinFocusScope(state.LastContentControl, contentRoot) && WPFUtils.CanTarget(state.LastContentControl, gamepadWindow, includeContentRules: true))
                     return state.LastContentControl;
             }
 
-            // Last known profile, if we have one.
+            // A profile ID is only a last resort: the same profile can appear in Recent Games and a collection.
             if (state.LastContentProfileGuid.HasValue)
             {
                 Control? resolvedControl = FindProfileControl(state.LastContentProfileGuid.Value, page);
-                if (WPFUtils.CanTarget(resolvedControl, gamepadWindow, includeContentRules: true))
+                if (IsWithinFocusScope(resolvedControl, contentRoot) && WPFUtils.CanTarget(resolvedControl, gamepadWindow, includeContentRules: true))
                 {
                     state.LastContentControl = resolvedControl;
                     return resolvedControl;
@@ -756,7 +796,8 @@ namespace HandheldCompanion.Managers
 
         private Control? RecoverStoredContentControl(Page page, Control storedControl, DependencyObject? contentRoot)
         {
-            if (WPFUtils.CanTarget(storedControl, gamepadWindow, includeContentRules: true))
+            // Never recover a control from the host page when the active view is embedded.
+            if (IsWithinFocusScope(storedControl, contentRoot) && WPFUtils.CanTarget(storedControl, gamepadWindow, includeContentRules: true))
                 return storedControl;
 
             if (storedControl is Button button && button.DataContext is CollectionGroupViewModel group)
@@ -768,8 +809,10 @@ namespace HandheldCompanion.Managers
 
             if (TryGetProfileGuid(storedControl, out Guid profileGuid))
             {
+                // Profile identity can locate a replacement after re-rendering, but the content root
+                // check below prevents it from crossing from an embedded view into its host page.
                 Control? profileControl = FindProfileControl(profileGuid, page);
-                if (profileControl is not null)
+                if (IsWithinFocusScope(profileControl, contentRoot))
                     return profileControl;
             }
 
@@ -784,6 +827,7 @@ namespace HandheldCompanion.Managers
 
             return WPFUtils.FindVisualChildren<Control>(contentRoot)
                 .FirstOrDefault(control => WPFUtils.CanTarget(control, gamepadWindow, includeContentRules: true)
+                && IsWithinFocusScope(control, contentRoot)
                 && !ReferenceEquals(control, storedControl)
                 && (ReferenceEquals(control.DataContext, storedDataContext) || ReferenceEquals(control.Tag, storedTag)));
         }
@@ -1648,10 +1692,13 @@ namespace HandheldCompanion.Managers
                 state.LastContentControlsByView[viewKey] = control;
 
             if (page.DataContext is LibraryPageViewModel libraryPageViewModel && control.DataContext is CollectionGroupViewModel collectionGroup)
+                // Keep the last item for the collections overview independently of profile focus.
                 libraryPageViewModel.RememberCollectionsOverviewItem(collectionGroup);
 
             if (TryGetProfileGuid(control, out Guid profileGuid))
             {
+                // This ID supports recovery after a profile card is recreated; it is intentionally
+                // only a fallback because one profile may be rendered in multiple Library regions.
                 state.LastContentProfileGuid = profileGuid;
             }
 

@@ -1,0 +1,31 @@
+{
+  "Id": "visualboyadvance",
+  "Name": "VisualBoyAdvance-M",
+  "PlatformType": "VisualBoyAdvance",
+  "PlatformColor": "#666666",
+  "PlatformGlyph": "\uF712",
+  "Executables": [
+    "visualboyadvance-m.exe"
+  ],
+  "ProductNames": [
+    "VisualBoyAdvance-M"
+  ],
+  "Companies": [],
+  "Configurations": [],
+  "PortableLocations": [],
+  "Systems": [
+    "Game Boy",
+    "Game Boy Color",
+    "Game Boy Advance"
+  ],
+  "RomExtensions": [
+    ".gb",
+    ".gbc",
+    ".gba"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

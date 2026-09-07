@@ -1,0 +1,28 @@
+{
+  "Id": "snes9x",
+  "Name": "Snes9x",
+  "PlatformType": "Snes9x",
+  "PlatformColor": "#666666",
+  "PlatformGlyph": "\uF712",
+  "Executables": [
+    "snes9x.exe"
+  ],
+  "ProductNames": [
+    "Snes9x"
+  ],
+  "Companies": [],
+  "Configurations": [],
+  "PortableLocations": [],
+  "Systems": [
+    "Super Nintendo"
+  ],
+  "RomExtensions": [
+    ".smc",
+    ".sfc"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

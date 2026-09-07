@@ -23,35 +23,7 @@
     mc:Ignorable="d">
 
     <StackPanel>
-        <TextBlock
-            Margin="0,0,0,8"
-            behaviors:TextBlockUpperCase.IsUpperCase="True"
-            Style="{StaticResource CapitalAccentTextBlockStyle}"
-            Text="{Binding Name, RelativeSource={RelativeSource AncestorType=Page}}" />
-
-        <ikw:SimpleStackPanel Spacing="28">
-            <DockPanel>
-                <TextBlock
-                    VerticalAlignment="Center"
-                    Style="{StaticResource BaseTextBlockStyle}"
-                    Text="{Binding GameCount, StringFormat={}{0} games}" />
-                <TextBlock
-                    Margin="4,0,0,0"
-                    VerticalAlignment="Center"
-                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                    Text="{Binding LastLibraryCheckText}" />
-            </DockPanel>
-
-            <StackPanel d:Visibility="Visible" Visibility="{Binding IsScanningLibrary, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <ui:SettingsCard Description="{Binding ScanPlatformText}" Header="Updating game library">
-                    <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Text="{Binding ScanProgressText}" />
-                </ui:SettingsCard>
-                <ui:ProgressBar
-                    IsIndeterminate="{Binding IsScanPreparing, Mode=OneWay}"
-                    Maximum="{Binding ScanProgressMaximum, Mode=OneWay}"
-                    Value="{Binding ScanProgressValue, Mode=OneWay}" />
-            </StackPanel>
-
+        <ikw:SimpleStackPanel Spacing="8">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="7*" />
@@ -73,6 +45,8 @@
                     Margin="6,0,0,0"
                     Orientation="Horizontal"
                     Spacing="3">
+
+                    <!--  Sort by type  -->
                     <ComboBox
                         HorizontalAlignment="Right"
                         VerticalAlignment="Stretch"
@@ -83,6 +57,7 @@
                         <ComboBoxItem Content="Recently played" />
                     </ComboBox>
 
+                    <!--  Sort order  -->
                     <Button Height="31" Command="{Binding ToggleSortCommand}">
                         <Button.Style>
                             <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
@@ -111,6 +86,7 @@
                         </Button.Style>
                     </Button>
 
+                    <!--  Sort view mode  -->
                     <Button Height="31" Command="{Binding ToggleViewModeCommand}">
                         <Button.Style>
                             <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
@@ -149,6 +125,7 @@
                         </Button.Style>
                     </Button>
 
+                    <!--  Metadata & scan  -->
                     <ui:DropDownButton HorizontalAlignment="Left" VerticalAlignment="Stretch">
                         <ui:DropDownButton.Content>
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe712;" />
@@ -214,116 +191,14 @@
                                             CommandParameter="Ubisoft"
                                             Header="{l:Static resx:Resources.Library_ScanUbisoftConnect}" />
                                     </MenuItem>
-                                    <MenuItem Header="{l:Static resx:Resources.Library_ScanEmulators}">
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Emulators"
-                                            Header="{l:Static resx:Resources.Library_ScanAll}" />
-                                        <Separator />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:GameCube"
-                                            Header="{l:Static resx:Resources.Library_ScanGameCube}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:Wii"
-                                            Header="{l:Static resx:Resources.Library_ScanWii}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:Wii U"
-                                            Header="{l:Static resx:Resources.Library_ScanWiiU}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:PlayStation"
-                                            Header="{l:Static resx:Resources.Library_ScanPlayStation}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:PlayStation 2"
-                                            Header="{l:Static resx:Resources.Library_ScanPlayStation2}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:PlayStation 3"
-                                            Header="{l:Static resx:Resources.Library_ScanPlayStation3}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:PlayStation 4"
-                                            Header="{l:Static resx:Resources.Library_ScanPlayStation4}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:PlayStation Portable"
-                                            Header="{l:Static resx:Resources.Library_ScanPlayStationPortable}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:PlayStation Vita"
-                                            Header="{l:Static resx:Resources.Library_ScanPlayStationVita}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:Nintendo 3DS"
-                                            Header="{l:Static resx:Resources.Library_ScanNintendo3DS}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:Nintendo Switch"
-                                            Header="{l:Static resx:Resources.Library_ScanNintendoSwitch}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:Nintendo 64"
-                                            Header="{l:Static resx:Resources.Library_ScanNintendo64}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:Nintendo DS"
-                                            Header="{l:Static resx:Resources.Library_ScanNintendoDS}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:Arcade"
-                                            Header="{l:Static resx:Resources.Library_ScanArcade}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:Multi-system"
-                                            Header="{l:Static resx:Resources.Library_ScanMultiSystem}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:Game Boy"
-                                            Header="{l:Static resx:Resources.Library_ScanGameBoy}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:Game Boy Color"
-                                            Header="{l:Static resx:Resources.Library_ScanGameBoyColor}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:Game Boy Advance"
-                                            Header="{l:Static resx:Resources.Library_ScanGameBoyAdvance}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:Super Nintendo"
-                                            Header="{l:Static resx:Resources.Library_ScanSuperNintendo}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:Xbox"
-                                            Header="{l:Static resx:Resources.Library_ScanXbox}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:Xbox 360"
-                                            Header="{l:Static resx:Resources.Library_ScanXbox360}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:Dreamcast"
-                                            Header="{l:Static resx:Resources.Library_ScanDreamcast}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:Naomi"
-                                            Header="{l:Static resx:Resources.Library_ScanNaomi}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:Atomiswave"
-                                            Header="{l:Static resx:Resources.Library_ScanAtomiswave}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:PC Adventure"
-                                            Header="{l:Static resx:Resources.Library_ScanPCAdventure}" />
-                                        <MenuItem
-                                            Command="{Binding ScanLibraryCommand}"
-                                            CommandParameter="Console:DOS"
-                                            Header="{l:Static resx:Resources.Library_ScanDOS}" />
+                                    <MenuItem Header="{l:Static resx:Resources.Library_ScanEmulators}" ItemsSource="{Binding EmulatorScanTargets}">
+                                        <MenuItem.ItemContainerStyle>
+                                            <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="MenuItem">
+                                                <Setter Property="Command" Value="{Binding DataContext.ScanLibraryCommand, RelativeSource={RelativeSource AncestorType=Page}}" />
+                                                <Setter Property="CommandParameter" Value="{Binding Target}" />
+                                                <Setter Property="Header" Value="{Binding Name}" />
+                                            </Style>
+                                        </MenuItem.ItemContainerStyle>
                                     </MenuItem>
                                 </MenuItem>
                             </ui:MenuFlyout>
@@ -331,6 +206,78 @@
                     </ui:DropDownButton>
                 </ikw:SimpleStackPanel>
             </Grid>
+            <!--
+            <TextBlock
+            Margin="0,0,0,8"
+            behaviors:TextBlockUpperCase.IsUpperCase="True"
+            Style="{StaticResource CapitalAccentTextBlockStyle}"
+            Text="{Binding Name, RelativeSource={RelativeSource AncestorType=Page}}" />
+            -->
+            <DockPanel>
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="{Binding GameCount, StringFormat={}{0} games}" />
+                <TextBlock
+                    Margin="4,0,0,0"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                    Text="{Binding LastLibraryCheckText}" />
+            </DockPanel>
+        </ikw:SimpleStackPanel>
+
+        <ikw:SimpleStackPanel Spacing="28">
+            <!--  Filters  -->
+            <ikw:SimpleStackPanel Spacing="8">
+                <StackPanel d:Visibility="Visible" Visibility="{Binding IsScanningLibrary, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ui:SettingsCard Description="{Binding ScanPlatformText}" Header="Updating game library">
+                        <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Text="{Binding ScanProgressText}" />
+                    </ui:SettingsCard>
+                    <ui:ProgressBar
+                        IsIndeterminate="{Binding IsScanPreparing, Mode=OneWay}"
+                        Maximum="{Binding ScanProgressMaximum, Mode=OneWay}"
+                        Value="{Binding ScanProgressValue, Mode=OneWay}" />
+                </StackPanel>
+            </ikw:SimpleStackPanel>
+
+            <!--  Recent games  -->
+            <StackPanel Visibility="{Binding HasRecentGames, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBlock
+                    Margin="0,0,0,8"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="Recent Games" />
+
+                <ui:ScrollViewerEx
+                    CanContentScroll="False"
+                    HorizontalScrollBarVisibility="Hidden"
+                    IsScrollAnimationEnabled="False"
+                    VerticalScrollBarVisibility="Disabled">
+                    <ItemsControl
+                        x:Name="RecentGamesItems"
+                        AlternationCount="10"
+                        ItemsSource="{Binding RecentGames}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="ContentTemplate" Value="{StaticResource LibraryTemplate}" />
+                                <Setter Property="Margin" Value="0,0,8,0" />
+                                <Setter Property="Width" Value="160" />
+                                <Setter Property="Height" Value="235" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource Self}}" Value="0">
+                                        <Setter Property="ContentTemplate" Value="{StaticResource LibraryTemplateWide}" />
+                                        <Setter Property="Width" Value="500" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                    </ItemsControl>
+                </ui:ScrollViewerEx>
+            </StackPanel>
 
             <controls:AdaptiveNavigationView
                 x:Name="navView"
@@ -386,7 +333,7 @@
                 <ui:Frame
                     Name="ContentFrame"
                     Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
-                    Margin="0,20,0,0"
+                    Margin="0,8,0,0"
                     HorizontalAlignment="Left"
                     Navigated="ContentFrame_Navigated" />
             </controls:AdaptiveNavigationView>

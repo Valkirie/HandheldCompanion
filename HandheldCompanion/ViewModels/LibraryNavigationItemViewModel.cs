@@ -2,7 +2,6 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Platforms;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -20,11 +19,12 @@ namespace HandheldCompanion.ViewModels
     public class LibraryNavigationItemViewModel : BaseViewModel
     {
         public string Key { get; }
-        public string Title { get; }
+        private string _title;
+        public string Title => _title;
         public LibraryNavigationItemKind Kind { get; }
         public GamePlatform Platform { get; }
         public Guid? CollectionId { get; }
-        public string? IconGlyph { get; }
+        public string? IconGlyph { get; private set; }
 
         private int _gameCount;
         public int GameCount
@@ -35,6 +35,12 @@ namespace HandheldCompanion.ViewModels
                 if (SetProperty(ref _gameCount, value))
                     InfoBadge?.Value = value;
             }
+        }
+
+        public void RefreshTitle(string title)
+        {
+            if (SetProperty(ref _title, title))
+                OnPropertyChanged(nameof(Title));
         }
 
         public InfoBadge? InfoBadge { get; }
@@ -69,7 +75,7 @@ namespace HandheldCompanion.ViewModels
         public LibraryNavigationItemViewModel(string key, string title, LibraryNavigationItemKind kind)
         {
             Key = key;
-            Title = title;
+            _title = title;
             Kind = kind;
             InfoBadge = kind is not LibraryNavigationItemKind.CollectionsRoot and not LibraryNavigationItemKind.TriggerGlyph
                 ? new InfoBadge
@@ -81,45 +87,25 @@ namespace HandheldCompanion.ViewModels
                     Foreground = (Brush)Application.Current.FindResource("SystemControlForegroundBaseMediumBrush")
                 }
                 : null;
+
             IconGlyph = kind switch
             {
                 LibraryNavigationItemKind.AllGames => "\uE80F",
                 LibraryNavigationItemKind.CollectionsRoot => "\uE8B7",
                 LibraryNavigationItemKind.Collection => "\uE734",
-                _ => null
+                _ => string.Empty
             };
 
             if (!string.IsNullOrWhiteSpace(IconGlyph))
                 Icon = new FontIcon() { Glyph = IconGlyph };
         }
 
-        public LibraryNavigationItemViewModel(string key, string title, GamePlatform platform)
-            : this(key, title, LibraryNavigationItemKind.Platform)
+        public LibraryNavigationItemViewModel(string key, string title, GamePlatform platform) : this(key, title, LibraryNavigationItemKind.Platform)
         {
             Platform = platform;
-            Icon = new FontIcon() { Glyph = "\uF712" };
         }
 
-        // Cached frozen ImageSource per platform type — computed once across all instances.
-        private static readonly System.Collections.Generic.Dictionary<GamePlatform, ImageSource?> _logoCache = new();
-
-        /// <summary>
-        /// (Re-)loads the platform logo. Safe to call after PlatformManager has started.
-        /// </summary>
-        public async void RefreshIcon()
-        {
-            if (Kind != LibraryNavigationItemKind.Platform)
-                return;
-
-            ImageSource? source = await Task.Run(() => PlatformManager.GetPlatformLogoSource(Platform));
-            if (source is not null)
-            {
-                Icon = new System.Windows.Controls.Image { Source = source, Width = 16, Height = 16, Stretch = Stretch.Uniform };
-            }
-        }
-
-        public LibraryNavigationItemViewModel(string key, string title, Guid collectionId)
-            : this(key, title, LibraryNavigationItemKind.Collection)
+        public LibraryNavigationItemViewModel(string key, string title, Guid collectionId) : this(key, title, LibraryNavigationItemKind.Collection)
         {
             CollectionId = collectionId;
         }
@@ -142,6 +128,21 @@ namespace HandheldCompanion.ViewModels
         {
             if (Icon is FontIcon fi)
                 fi.Glyph = glyph;
+        }
+
+        public void RefreshPlatformGlyph()
+        {
+            if (Kind != LibraryNavigationItemKind.Platform)
+                return;
+
+            IconGlyph = PlatformManager.GetPlatformGlyph(Platform);
+            Icon = new FontIcon()
+            {
+                Glyph = IconGlyph,
+                FontFamily = new FontFamily(PlatformManager.GetPlatformFont(Platform)),
+                FontSize = PlatformManager.GetPlatformFontSize(Platform),
+                Margin = new Thickness(-6)
+            };
         }
 
         /// <summary>Crops fully-transparent rows/columns from all four sides of a 32bppArgb bitmap.</summary>

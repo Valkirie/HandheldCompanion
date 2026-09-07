@@ -26,6 +26,12 @@ public static class EmulatorDiscoveryService
             definition.Systems.Contains(system, StringComparer.OrdinalIgnoreCase)));
     }
 
+    public static IEnumerable<DiscoveredGame> DiscoverByDefinition(string id)
+    {
+        return Discover(EmulatorDefinitions.All.Where(definition =>
+            string.Equals(definition.Id, id, StringComparison.OrdinalIgnoreCase)));
+    }
+
     private static IEnumerable<DiscoveredGame> Discover(IEnumerable<EmulatorDefinition> definitions)
     {
         foreach (EmulatorDefinition definition in definitions)

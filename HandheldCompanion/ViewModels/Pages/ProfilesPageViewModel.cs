@@ -3483,6 +3483,9 @@ namespace HandheldCompanion.ViewModels
         {
             try
             {
+                if (index >= 0 && index < LibraryCovers.Count)
+                    LibraryCovers[index].RefreshImage();
+
                 OnPropertyChanged(nameof(LibraryCovers));
                 OnPropertyChanged(nameof(LibraryCoversPageCount));
                 SetLibraryCoversIndex(index);
@@ -3494,6 +3497,9 @@ namespace HandheldCompanion.ViewModels
         {
             try
             {
+                if (index >= 0 && index < LibraryArtworks.Count)
+                    LibraryArtworks[index].RefreshImage();
+
                 OnPropertyChanged(nameof(LibraryArtworks));
                 OnPropertyChanged(nameof(LibraryArtworksPageCount));
                 SetLibraryArtworksIndex(index);
@@ -3505,6 +3511,9 @@ namespace HandheldCompanion.ViewModels
         {
             try
             {
+                if (index >= 0 && index < LibraryLogos.Count)
+                    LibraryLogos[index].RefreshImage();
+
                 OnPropertyChanged(nameof(LibraryLogos));
                 OnPropertyChanged(nameof(LibraryLogosPageCount));
                 SetLibraryLogosIndex(index);

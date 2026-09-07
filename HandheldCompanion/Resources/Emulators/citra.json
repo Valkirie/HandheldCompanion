@@ -1,0 +1,40 @@
+{
+  "Id": "citra",
+  "Name": "Citra",
+  "PlatformType": "Citra",
+  "PlatformColor": "#D32F2F",
+  "PlatformGlyph": "\uF784",
+  "Executables": [
+    "citra.exe",
+    "citra-qt.exe"
+  ],
+  "ProductNames": [
+    "Citra"
+  ],
+  "Companies": [],
+  "Configurations": [
+    {
+      "Root": "AppData",
+      "RelativePath": "Citra\\config",
+      "Files": [
+        "qt-config.ini"
+      ],
+      "ContentKeys": []
+    }
+  ],
+  "PortableLocations": [],
+  "Systems": [
+    "Nintendo 3DS"
+  ],
+  "RomExtensions": [
+    ".3ds",
+    ".3dsx",
+    ".cia",
+    ".cci"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

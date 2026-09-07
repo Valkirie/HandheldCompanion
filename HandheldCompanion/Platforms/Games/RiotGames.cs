@@ -13,6 +13,7 @@ public class RiotGames : IPlatform
     private RiotGamesLauncher riotLauncher = new(new LauncherOptions());
     public override string Name => riotLauncher.Name;
     public override string PlatformColor => "#D32936";
+    public override string PlatformGlyph => "\uF3F5";
     public override string InstallPath => riotLauncher.InstallDir;
     public override string ExecutablePath => riotLauncher.Executable;
     public override string ExecutableName => Path.GetFileName(ExecutablePath);

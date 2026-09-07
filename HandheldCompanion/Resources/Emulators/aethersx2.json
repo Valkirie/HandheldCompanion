@@ -1,0 +1,30 @@
+{
+  "Id": "aethersx2",
+  "Name": "AetherSX2",
+  "PlatformType": "AetherSX2",
+  "PlatformColor": "#666666",
+  "PlatformGlyph": "\uF2F1",
+  "Executables": [
+    "aethersx2.exe"
+  ],
+  "ProductNames": [
+    "AetherSX2"
+  ],
+  "Companies": [],
+  "Configurations": [],
+  "PortableLocations": [],
+  "Systems": [
+    "PlayStation 2"
+  ],
+  "RomExtensions": [
+    ".iso",
+    ".cso",
+    ".chd",
+    ".bin"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

@@ -774,8 +774,8 @@ public class ProfileManager : IManager
                 return;
             }
 
-            string outputraw = File.ReadAllText(fileName);
-            JObject jObject = JObject.Parse(outputraw);
+            string json = File.ReadAllText(fileName);
+            JObject jObject = JObject.Parse(json);
 
             // latest pre-versionning release
             Version version = new();
@@ -840,7 +840,7 @@ public class ProfileManager : IManager
                         }
 
                         // Convert the modified JObject back to a JSON string.
-                        outputraw = jObject.ToString();
+                        json = jObject.ToString();
                     }
                 }
             }
@@ -852,18 +852,18 @@ public class ProfileManager : IManager
             if (version <= Version.Parse("0.27.0.7"))
             {
                 // let's make sure we get a Dictionary
-                outputraw = outputraw.Replace(
+                json = json.Replace(
                     "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"",
                     "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"");
             }
             if (version <= Version.Parse("0.27.0.13"))
             {
                 // Clean legacy/unknown ButtonFlags
-                outputraw = HotkeysManager.StripUnknownButtonFlags(outputraw, out var removed);
+                json = HotkeysManager.StripUnknownButtonFlags(json, out var removed);
             }
 
             // parse profile
-            profile = JsonConvert.DeserializeObject<Profile>(outputraw, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+            profile = JsonConvert.DeserializeObject<Profile>(json, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
             if (profile is null)
                 return;
 
@@ -1236,8 +1236,6 @@ public class ProfileManager : IManager
         {
             // update vars
             profile.DateModified = profile.DateCreated = DateTime.Now;
-            if (source is UpdateSource.QuickProfilesCreation)
-                profile.LastUsed = profile.DateModified;
 
             // download arts
             switch (profile.Executable)

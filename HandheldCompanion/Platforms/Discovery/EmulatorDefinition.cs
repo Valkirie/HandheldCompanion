@@ -6,6 +6,9 @@ public sealed class EmulatorDefinition
     public required string Name { get; init; }
     public required GamePlatform PlatformType { get; init; }
     public string PlatformColor { get; init; } = "#666666";
+    public string PlatformGlyph { get; init; } = "\uF712";
+    public string PlatformFont { get; init; } = "Simple Icons Fit";
+    public double PlatformFontSize { get; init; } = 22;
 
     public string[] Executables { get; init; } = [];
     public string[] ProductNames { get; init; } = [];

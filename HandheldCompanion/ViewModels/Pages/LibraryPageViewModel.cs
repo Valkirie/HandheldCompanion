@@ -1,35 +1,18 @@
-using GameLib.Core;
-using GameLib.Plugin.BattleNet.Model;
-using GameLib.Plugin.EA.Model;
-using GameLib.Plugin.Epic.Model;
-using GameLib.Plugin.Gog.Model;
-using GameLib.Plugin.Origin.Model;
-using GameLib.Plugin.Rockstar.Model;
-using GameLib.Plugin.Steam.Model;
-using GameLib.Plugin.Ubisoft.Model;
-using HandheldCompanion.Controllers;
-using HandheldCompanion.Controls;
+﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
-using HandheldCompanion.Platforms.Discovery;
-using HandheldCompanion.Platforms.Games;
-using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -38,64 +21,22 @@ using System.Windows.Media.Imaging;
 
 namespace HandheldCompanion.ViewModels
 {
-    public class LibraryPageViewModel : BaseViewModel
+    public sealed record LibraryScanTarget(string Target, string Name);
+
+    public partial class LibraryPageViewModel : BaseViewModel
     {
         private const string AllGamesNavigationKey = "all-games";
         private const string FavoritesNavigationKey = "favorites";
         private const string CollectionsNavigationKey = "collections";
         private const int CollectionPreviewImageCount = 4;
-
-        private static readonly (GamePlatform Platform, string Title)[] SupportedPlatforms =
-        [
-            (GamePlatform.BattleNet, Properties.Resources.Library_ScanBattleNet),
-            (GamePlatform.EADesktop, Properties.Resources.Library_ScanEADesktop),
-            (GamePlatform.Epic, Properties.Resources.Library_ScanEpic),
-            (GamePlatform.GOG, Properties.Resources.Library_ScanGOG),
-            (GamePlatform.MicrosoftStore, Properties.Resources.Library_ScanMicrosoftStore),
-            (GamePlatform.Origin, Properties.Resources.Library_ScanOrigin),
-            (GamePlatform.RiotGames, Properties.Resources.Library_ScanRiotGames),
-            (GamePlatform.Rockstar, Properties.Resources.Library_ScanRockstar),
-            (GamePlatform.Steam, Properties.Resources.Library_ScanSteam),
-            (GamePlatform.UbisoftConnect, Properties.Resources.Library_ScanUbisoftConnect),
-
-            (GamePlatform.Cemu, Properties.Resources.Library_ScanCemu),
-            (GamePlatform.Dolphin, Properties.Resources.Library_ScanDolphin),
-            (GamePlatform.PCSX2, Properties.Resources.Library_ScanPCSX2),
-            (GamePlatform.RPCS3, Properties.Resources.Library_ScanRPCS3),
-            (GamePlatform.ShadPS4, Properties.Resources.Library_ScanShadPS4),
-            (GamePlatform.Citra, Properties.Resources.Library_ScanCitra),
-            (GamePlatform.Azahar, Properties.Resources.Library_ScanAzahar),
-            (GamePlatform.DuckStation, Properties.Resources.Library_ScanDuckStation),
-            (GamePlatform.RetroArch, Properties.Resources.Library_ScanRetroArch),
-            (GamePlatform.PPSSPP, Properties.Resources.Library_ScanPPSSPP),
-            (GamePlatform.MAME, Properties.Resources.Library_ScanMAME),
-            (GamePlatform.Mupen64Plus, Properties.Resources.Library_ScanMupen64Plus),
-            (GamePlatform.Project64, Properties.Resources.Library_ScanProject64),
-            (GamePlatform.Ryujinx, Properties.Resources.Library_ScanRyujinx),
-            (GamePlatform.MelonDS, Properties.Resources.Library_ScanMelonDS),
-            (GamePlatform.Vita3K, Properties.Resources.Library_ScanVita3K),
-            (GamePlatform.Xenia, Properties.Resources.Library_ScanXenia),
-            (GamePlatform.Xemu, Properties.Resources.Library_ScanXemu),
-            (GamePlatform.Flycast, Properties.Resources.Library_ScanFlycast),
-            (GamePlatform.Redream, Properties.Resources.Library_ScanRedream),
-            (GamePlatform.ScummVM, Properties.Resources.Library_ScanScummVM),
-            (GamePlatform.DOSBox, Properties.Resources.Library_ScanDOSBox),
-            (GamePlatform.DOSBoxX, Properties.Resources.Library_ScanDOSBoxX),
-            (GamePlatform.Mednafen, Properties.Resources.Library_ScanMednafen),
-            (GamePlatform.VisualBoyAdvance, Properties.Resources.Library_ScanVisualBoyAdvance),
-            (GamePlatform.Snes9x, Properties.Resources.Library_ScanSnes9x),
-            (GamePlatform.DeSmuME, Properties.Resources.Library_ScanDeSmuME),
-            (GamePlatform.AetherSX2, Properties.Resources.Library_ScanAetherSX2),
-            (GamePlatform.SameBoy, Properties.Resources.Library_ScanSameBoy),
-            (GamePlatform.Yuzu, Properties.Resources.Library_ScanYuzu),
-            (GamePlatform.Citron, Properties.Resources.Library_ScanCitron),
-            (GamePlatform.Eden, Properties.Resources.Library_ScanEden)
-        ];
+        private const int RecentGamesCount = 10;
 
         private readonly LibraryNavigationItemViewModel _navL2 = new("nav-l2", "\u21B2");
         private readonly LibraryNavigationItemViewModel _navR2 = new("nav-r2", "\u21B3");
 
         public ObservableCollection<ProfileViewModel> Profiles { get; set; } = [];
+        public ObservableCollection<ProfileViewModel> RecentGames { get; } = [];
+        public bool HasRecentGames => RecentGames.Count > 0;
         public ListCollectionView ProfilesView { get; }
         public ItemsPanelTemplate ProfilesCardsItemsPanel { get; } = CreateProfilesCardsItemsPanel();
 
@@ -116,58 +57,6 @@ namespace HandheldCompanion.ViewModels
         private volatile bool _rebuildCollectionGroupsPending;
         private bool _collectionGroupsDirty = true;
         private string? _lastCollectionsOverviewItemKey;
-
-        private LibraryNavigationItemViewModel? _selectedNavigationItem;
-        public LibraryNavigationItemViewModel? SelectedNavigationItem
-        {
-            get => _selectedNavigationItem;
-            set
-            {
-                if (SetProperty(ref _selectedNavigationItem, value))
-                {
-                    OnPropertyChanged(nameof(NavigationViewSelectedItem));
-                    OnPropertyChanged(nameof(IsCollectionsOverviewSelected));
-                    OnPropertyChanged(nameof(IsSingleCollectionSelection));
-                    OnPropertyChanged(nameof(ShowProfilesCards));
-                    OnPropertyChanged(nameof(ShowProfilesList));
-                    OnPropertyChanged(nameof(ShowGroupedProfilesList));
-                    OnPropertyChanged(nameof(ShowCollectionsOverview));
-                    UpdateFiltering();
-                    EnsureCollectionGroupsReady();
-                    BackAvailabilityChanged?.Invoke(CanGoBack);
-                }
-            }
-        }
-
-        public LibraryNavigationItemViewModel? NavigationViewSelectedItem
-        {
-            get => SelectedNavigationItem?.CollectionId.HasValue == true
-                ? FindNavigationItemByKey(CollectionsNavigationKey)
-                : SelectedNavigationItem;
-            set
-            {
-                // Prevent auto-selection of disabled trigger glyphs by the NavigationView
-                if (value?.Kind == LibraryNavigationItemKind.TriggerGlyph)
-                {
-                    OnPropertyChanged(nameof(NavigationViewSelectedItem));
-                    return;
-                }
-
-                // The getter returns the "Collections" parent item when a specific collection is active,
-                // so the navView's TwoWay binding can back-write the parent item when the page re-enters
-                // the frame (e.g. after ContentFrame.GoBack()). Guard against that: if the navView
-                // reports the collections root as selected but a specific collection is already active,
-                // do not override it. Explicit user navigation goes through navView_ItemInvoked →
-                // SelectNavigationItemByKey which sets SelectedNavigationItem directly.
-                if (value?.Kind == LibraryNavigationItemKind.CollectionsRoot
-                    && SelectedNavigationItem?.Kind == LibraryNavigationItemKind.Collection)
-                    return;
-
-                SelectedNavigationItem = value;
-            }
-        }
-
-        public bool IsCollectionsOverviewSelected => SelectedNavigationItem?.Kind == LibraryNavigationItemKind.CollectionsRoot;
 
         private bool _sortAscending => ManagerFactory.settingsManager.GetBoolean("LibrarySortAscending");
         public bool SortAscending
@@ -305,146 +194,9 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private bool _isScanningLibrary;
-        public bool IsScanningLibrary
-        {
-            get => _isScanningLibrary;
-            private set => SetProperty(ref _isScanningLibrary, value);
-        }
-
-        private bool _isScanPreparing;
-        public bool IsScanPreparing
-        {
-            get => _isScanPreparing;
-            private set => SetProperty(ref _isScanPreparing, value);
-        }
-
-        private string _scanPlatformText = string.Empty;
-        public string ScanPlatformText
-        {
-            get => _scanPlatformText;
-            private set => SetProperty(ref _scanPlatformText, value);
-        }
-
-        private string _scanProgressText = string.Empty;
-        public string ScanProgressText
-        {
-            get => _scanProgressText;
-            private set => SetProperty(ref _scanProgressText, value);
-        }
-
-        private double _scanProgressValue;
-        public double ScanProgressValue
-        {
-            get => _scanProgressValue;
-            private set => SetProperty(ref _scanProgressValue, value);
-        }
-
-        private double _scanProgressMaximum;
-        public double ScanProgressMaximum
-        {
-            get => _scanProgressMaximum;
-            private set => SetProperty(ref _scanProgressMaximum, value);
-        }
-
-        private Dictionary<Type, GamePlatform> keyValuePairs = new Dictionary<Type, GamePlatform>()
-        {
-            { typeof(BattleNetGame), GamePlatform.BattleNet },
-            { typeof(EpicGame), GamePlatform.Epic },
-            { typeof(GogGame), GamePlatform.GOG },
-            { typeof(OriginGame), GamePlatform.Origin },
-            { typeof(GameLib.Plugin.RiotGames.Model.Game), GamePlatform.RiotGames },
-            { typeof(RockstarGame), GamePlatform.Rockstar },
-            { typeof(SteamGame), GamePlatform.Steam },
-            { typeof(UbisoftGame), GamePlatform.UbisoftConnect },
-            { typeof(EAGame), GamePlatform.EADesktop },
-            { typeof(MicrosoftStoreGame), GamePlatform.MicrosoftStore },
-        };
-
         private readonly SynchronizationContext _uiContext;
 
-        public event Action<bool>? BackAvailabilityChanged;
-        public event Action? CollectionOpened;
-        public event Action? NavigatedBackToCollections;
         public event Action? Initialized;
-
-        public bool CanGoBack => IsSingleCollectionSelection
-            && !string.Equals(SelectedNavigationItem?.Key, FavoritesNavigationKey, StringComparison.Ordinal);
-
-        public bool IsCollectionsOverviewNavigationKey(string? key)
-        {
-            return string.Equals(key, CollectionsNavigationKey, StringComparison.Ordinal);
-        }
-
-        public string? GetCollectionsOverviewItemKey(CollectionGroupViewModel? group)
-        {
-            if (group is null)
-                return null;
-
-            if (group.Collection is not null)
-                return $"collection:{group.Collection.Id}";
-
-            return string.Equals(group.Name, "Favorites", StringComparison.Ordinal)
-                ? FavoritesNavigationKey
-                : null;
-        }
-
-        public void RememberCollectionsOverviewItem(CollectionGroupViewModel? group)
-        {
-            string? key = GetCollectionsOverviewItemKey(group);
-            if (!string.IsNullOrWhiteSpace(key))
-                _lastCollectionsOverviewItemKey = key;
-        }
-
-        public string? GetLastCollectionsOverviewItemKey()
-        {
-            if (string.IsNullOrWhiteSpace(_lastCollectionsOverviewItemKey))
-            {
-                _lastCollectionsOverviewItemKey = CollectionGroups
-                    .Select(GetCollectionsOverviewItemKey)
-                    .FirstOrDefault(key => !string.IsNullOrWhiteSpace(key));
-            }
-
-            return _lastCollectionsOverviewItemKey;
-        }
-
-        private void OpenCollection(CollectionGroupViewModel group)
-        {
-            RememberCollectionsOverviewItem(group);
-
-            string? collectionKey = GetCollectionsOverviewItemKey(group);
-            LibraryNavigationItemViewModel? collectionItem = FindNavigationItemByKey(collectionKey);
-
-            if (collectionItem is not null)
-            {
-                SelectedNavigationItem = collectionItem;
-                CollectionOpened?.Invoke();
-            }
-        }
-
-        public bool SelectNavigationItemByKey(string? key)
-        {
-            LibraryNavigationItemViewModel? selectedItem = FindNavigationItemByKey(key);
-            if (selectedItem is null || !selectedItem.IsVisible)
-                return false;
-
-            SelectedNavigationItem = selectedItem;
-            return true;
-        }
-
-        public bool TryGoBack()
-        {
-            if (!CanGoBack)
-                return false;
-
-            LibraryNavigationItemViewModel? collectionsItem = FindNavigationItemByKey(CollectionsNavigationKey);
-            if (collectionsItem is null)
-                return false;
-
-            SelectedNavigationItem = collectionsItem;
-            NavigatedBackToCollections?.Invoke();
-            return true;
-        }
 
         public LibraryPageViewModel()
         {
@@ -507,247 +259,7 @@ namespace HandheldCompanion.ViewModels
                 }
             });
 
-            ScanLibraryCommand = new DelegateCommand<object>(param => _ = ScanLibraryAsync(param));
-
-            async Task ScanLibraryAsync(object? param)
-            {
-                if (IsScanningLibrary)
-                    return;
-
-                string target = param?.ToString() ?? string.Empty;
-                string targetName = GetScanTargetDisplayName(target);
-                ContentDialogResult result = await new Dialog(MainWindow.GetCurrent())
-                {
-                    Title = string.Format(Properties.Resources.LibraryScanTitle, targetName),
-                    Content = string.Format(Properties.Resources.LibraryScanContent, targetName),
-                    CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
-                    PrimaryButtonText = Properties.Resources.ProfilesPage_Yes
-                }.ShowAsync();
-
-                if (result != ContentDialogResult.Primary)
-                    return;
-
-                IsScanningLibrary = true;
-                IsScanPreparing = true;
-                ScanPlatformText = targetName;
-                ScanProgressText = string.Format(Properties.Resources.Library_ScanDiscoveringGames, ScanPlatformText);
-                ScanProgressValue = 0;
-                ScanProgressMaximum = 0;
-
-                try
-                {
-                    await Task.Run(() => ScanGames(target));
-                    MarkLibraryChecked();
-                }
-                finally
-                {
-                    IsScanPreparing = false;
-                    IsScanningLibrary = false;
-                }
-            }
-
-            void ScanGames(string target)
-            {
-                IEnumerable<(string Target, string Name)> scanTargets = GetScanTargets(target);
-
-                foreach ((string scanTarget, string scanTargetName) in scanTargets)
-                {
-                    _uiContext.Post(_ =>
-                    {
-                        ScanPlatformText = scanTargetName;
-                        ScanProgressText = string.Format(Properties.Resources.Library_ScanScanning, scanTargetName);
-                    }, null);
-
-                    List<IGame> games = PlatformManager.GetGamesForScanTarget(scanTarget).ToList();
-                    _uiContext.Post(_ =>
-                    {
-                        IsScanPreparing = false;
-                        ScanProgressMaximum = games.Count;
-                        ScanProgressValue = 0;
-                        ScanProgressText = games.Count == 0
-                            ? Properties.Resources.Library_ScanNoGamesFound
-                            : string.Format(Properties.Resources.Library_ScanProgress, 0, games.Count);
-                    }, null);
-
-                    for (int index = 0; index < games.Count; index++)
-                    {
-                        ProcessGame(games[index]);
-                        int completed = index + 1;
-                        _uiContext.Post(_ =>
-                        {
-                            ScanPlatformText = scanTargetName;
-                            ScanProgressValue = completed;
-                            ScanProgressText = string.Format(Properties.Resources.Library_ScanProgress, completed, games.Count);
-                        }, null);
-                    }
-                }
-            }
-
-            static IEnumerable<(string Target, string Name)> GetScanTargets(string target)
-            {
-                if (string.Equals(target, "All", StringComparison.OrdinalIgnoreCase))
-                    return SupportedPlatforms.Select(platform => (platform.Platform.ToString(), platform.Title));
-
-                if (string.Equals(target, "Launchers", StringComparison.OrdinalIgnoreCase))
-                    return SupportedPlatforms.Where(platform => GamePlatform.Launchers.HasFlag(platform.Platform)).Select(platform => (platform.Platform.ToString(), platform.Title));
-
-                if (string.Equals(target, "Emulators", StringComparison.OrdinalIgnoreCase))
-                    return SupportedPlatforms.Where(platform => GamePlatform.Emulators.HasFlag(platform.Platform)).Select(platform => (platform.Platform.ToString(), platform.Title));
-
-                return [(target, GetScanTargetDisplayName(target))];
-            }
-
-            void ProcessGame(IGame game)
-            {
-                Profile? profile = FindExistingProfile(game);
-
-                // If profile is found and not default, update it. Otherwise, create a new one.
-                bool isCreation = profile is null || profile.Default;
-                if (isCreation)
-                {
-                    profile = new Profile(game.Executable);
-                }
-
-                if (game is DiscoveredGame childGame && !childGame.IsEmulator)
-                {
-                    Profile parentProfile = ManagerFactory.profileManager.GetProfileFromPath(childGame.Executable, true, true);
-                    if (!parentProfile.Default)
-                    {
-                        profile.IsSubProfile = true;
-                        profile.ParentGuid = parentProfile.Guid;
-                    }
-                }
-
-                // Filter out unwanted executables
-                IEnumerable<string> executables = game.Executables.Where(exe =>
-                    exe.IndexOf("redist", StringComparison.OrdinalIgnoreCase) < 0 &&
-                    exe.IndexOf("crash", StringComparison.OrdinalIgnoreCase) < 0 &&
-                    exe.IndexOf("setup", StringComparison.OrdinalIgnoreCase) < 0 &&
-                    exe.IndexOf("error", StringComparison.OrdinalIgnoreCase) < 0 &&
-                    exe.IndexOf("updater", StringComparison.OrdinalIgnoreCase) < 0 &&
-                    exe.IndexOf("cheat", StringComparison.OrdinalIgnoreCase) < 0 &&
-                    exe.IndexOf("editor", StringComparison.OrdinalIgnoreCase) < 0 &&
-                    exe.IndexOf("tool", StringComparison.OrdinalIgnoreCase) < 0 &&
-                    exe.IndexOf("uninst", StringComparison.OrdinalIgnoreCase) < 0 &&
-                    exe.IndexOf("installer", StringComparison.OrdinalIgnoreCase) < 0);
-
-                if (string.IsNullOrEmpty(profile.Path) && executables.Any())
-                    profile.Path = executables.First();
-
-                // Set common profile properties
-                profile.Name = game.Name;
-                if (game is DiscoveredGame emulatorGame)
-                    profile.Arguments = emulatorGame.Arguments;
-                profile.PlatformType = game is DiscoveredGame discovered
-                    ? discovered.PlatformType
-                    : keyValuePairs[game.GetType()];
-                profile.LaunchString = game.LaunchString;
-                profile.Executables = executables.ToList();
-
-                ManagerFactory.profileManager.UpdateOrCreateProfile(profile, isCreation ? UpdateSource.Creation : UpdateSource.LibraryUpdate);
-            }
-
-            Profile? FindExistingProfile(IGame game)
-            {
-                if (game is DiscoveredGame discoveredGame)
-                    return discoveredGame.IsEmulator
-                        ? FindEmulatorProfile(discoveredGame)
-                        : FindRomProfile(discoveredGame);
-
-                IEnumerable<string> executables = game.Executables.Any() ? game.Executables : [game.Executable];
-                return executables
-                    .Select(executable => ManagerFactory.profileManager.GetProfileFromPath(executable, true, true))
-                    .FirstOrDefault(profile => !profile.Default);
-            }
-
-            Profile? FindEmulatorProfile(DiscoveredGame game)
-            {
-                return ManagerFactory.profileManager.GetProfiles()
-                    .FirstOrDefault(profile => !profile.Default && !profile.IsSubProfile &&
-                        ProfileContainsAnyPath(profile, game.Executables));
-            }
-
-            Profile? FindRomProfile(DiscoveredGame game)
-            {
-                Profile parentProfile = ManagerFactory.profileManager.GetProfileFromPath(game.Executable, true, true);
-                return ManagerFactory.profileManager.GetSubProfilesFromProfile(parentProfile)
-                    .FirstOrDefault(profile => string.Equals(profile.Arguments, game.Arguments, StringComparison.OrdinalIgnoreCase));
-            }
-
-            static bool ProfileContainsAnyPath(Profile profile, IEnumerable<string> paths)
-            {
-                return paths.Any(path => ProfileContainsPath(profile, path));
-            }
-
-            static bool ProfileContainsPath(Profile profile, string path)
-            {
-                return PathsEqual(profile.Path, path) ||
-                    profile.Executables.Any(executable => PathsEqual(executable, path));
-            }
-
-            static string GetScanTargetDisplayName(string target)
-            {
-                if (string.Equals(target, "All", StringComparison.OrdinalIgnoreCase))
-                    return Properties.Resources.Library_ScanAllPlatformsAndEmulators;
-                if (string.Equals(target, "Launchers", StringComparison.OrdinalIgnoreCase))
-                    return Properties.Resources.Library_ScanAllLaunchers;
-                if (string.Equals(target, "Emulators", StringComparison.OrdinalIgnoreCase))
-                    return Properties.Resources.Library_ScanAllEmulators;
-                if (target.StartsWith("Console:", StringComparison.OrdinalIgnoreCase))
-                    return GetConsoleDisplayName(target["Console:".Length..]);
-                return target;
-            }
-
-            static string GetConsoleDisplayName(string console)
-            {
-                return console switch
-                {
-                    "GameCube" => Properties.Resources.Library_ScanGameCube,
-                    "Wii" => Properties.Resources.Library_ScanWii,
-                    "Wii U" => Properties.Resources.Library_ScanWiiU,
-                    "PlayStation" => Properties.Resources.Library_ScanPlayStation,
-                    "PlayStation 2" => Properties.Resources.Library_ScanPlayStation2,
-                    "PlayStation 3" => Properties.Resources.Library_ScanPlayStation3,
-                    "PlayStation 4" => Properties.Resources.Library_ScanPlayStation4,
-                    "PlayStation Portable" => Properties.Resources.Library_ScanPlayStationPortable,
-                    "PlayStation Vita" => Properties.Resources.Library_ScanPlayStationVita,
-                    "Nintendo 3DS" => Properties.Resources.Library_ScanNintendo3DS,
-                    "Nintendo Switch" => Properties.Resources.Library_ScanNintendoSwitch,
-                    "Nintendo 64" => Properties.Resources.Library_ScanNintendo64,
-                    "Nintendo DS" => Properties.Resources.Library_ScanNintendoDS,
-                    "Arcade" => Properties.Resources.Library_ScanArcade,
-                    "Multi-system" => Properties.Resources.Library_ScanMultiSystem,
-                    "Game Boy" => Properties.Resources.Library_ScanGameBoy,
-                    "Game Boy Color" => Properties.Resources.Library_ScanGameBoyColor,
-                    "Game Boy Advance" => Properties.Resources.Library_ScanGameBoyAdvance,
-                    "Super Nintendo" => Properties.Resources.Library_ScanSuperNintendo,
-                    "Xbox" => Properties.Resources.Library_ScanXbox,
-                    "Xbox 360" => Properties.Resources.Library_ScanXbox360,
-                    "Dreamcast" => Properties.Resources.Library_ScanDreamcast,
-                    "Naomi" => Properties.Resources.Library_ScanNaomi,
-                    "Atomiswave" => Properties.Resources.Library_ScanAtomiswave,
-                    "PC Adventure" => Properties.Resources.Library_ScanPCAdventure,
-                    "DOS" => Properties.Resources.Library_ScanDOS,
-                    _ => console
-                };
-            }
-
-            static bool PathsEqual(string first, string second)
-            {
-                if (string.IsNullOrWhiteSpace(first) || string.IsNullOrWhiteSpace(second))
-                    return false;
-
-                try
-                {
-                    string firstFullPath = Path.TrimEndingDirectorySeparator(Path.GetFullPath(first));
-                    string secondFullPath = Path.TrimEndingDirectorySeparator(Path.GetFullPath(second));
-                    return string.Equals(firstFullPath, secondFullPath, StringComparison.OrdinalIgnoreCase);
-                }
-                catch (ArgumentException)
-                {
-                    return false;
-                }
-            }
+            ScanLibraryCommand = CreateScanLibraryCommand();
 
             // raise events
             switch (ManagerFactory.profileManager.Status)
@@ -773,7 +285,6 @@ namespace HandheldCompanion.ViewModels
                     break;
             }
 
-            // raise events
             switch (ManagerFactory.platformManager.Status)
             {
                 default:
@@ -805,17 +316,11 @@ namespace HandheldCompanion.ViewModels
 
         private void PlatformManager_Initialized()
         {
-            PlatformManager.ClearPlatformLogoCache();
-            RefreshPlatformIcons();
-        }
-
-        private void RefreshPlatformIcons()
-        {
             UIHelper.TryBeginInvoke(() =>
             {
                 foreach (LibraryNavigationItemViewModel item in NavigationItems)
-                    item.RefreshIcon();
-            }, System.Windows.Threading.DispatcherPriority.Loaded);
+                    item.RefreshPlatformGlyph();
+            });
         }
 
         private void QueryLibrary()
@@ -842,14 +347,50 @@ namespace HandheldCompanion.ViewModels
 
         private void ProfileCollectionHelper_CollectionAdded(GameCollection collection)
         {
-            RebuildNavigationItems();
-            ScheduleRebuildCollectionGroups();
+            UIHelper.TryBeginInvoke(() =>
+            {
+                // Add the collection navigation item.
+                string key = $"collection:{collection.Id}";
+                if (!collectionNavigationItems.ContainsKey(key))
+                {
+                    collectionNavigationItems[key] = new LibraryNavigationItemViewModel(key, collection.Name, collection.Id)
+                    {
+                        IsVisible = HasProfilesForCollection(collection.Id)
+                    };
+                    OnPropertyChanged(nameof(NavigationItems));
+                }
+
+                // Add the collection group when it already contains profiles.
+                if (ShouldShowCollectionGroups && !CollectionGroups.Any(group => group.Collection?.Id == collection.Id))
+                {
+                    CollectionGroupViewModel group = new(collection, OpenCollection);
+                    foreach (ProfileViewModel profile in Profiles.Where(profile => profile.Profile.Collections.Contains(collection.Id)))
+                        group.Profiles.Add(profile);
+
+                    if (group.Profiles.Count > 0)
+                    {
+                        group.SetPreviewProfiles(group.Profiles.Take(CollectionPreviewImageCount));
+                        CollectionGroups.Add(group);
+                    }
+                }
+            });
         }
 
         private void ProfileCollectionHelper_CollectionRemoved(GameCollection collection)
         {
-            RebuildNavigationItems();
-            ScheduleRebuildCollectionGroups();
+            UIHelper.TryBeginInvoke(() =>
+            {
+                // Remove the collection navigation item.
+                collectionNavigationItems.Remove($"collection:{collection.Id}");
+                if (SelectedNavigationItem?.CollectionId == collection.Id)
+                    SelectedNavigationItem = FindNavigationItemByKey(AllGamesNavigationKey);
+                OnPropertyChanged(nameof(NavigationItems));
+
+                // Remove the collection group.
+                CollectionGroupViewModel? group = CollectionGroups.FirstOrDefault(candidate => candidate.Collection?.Id == collection.Id);
+                if (group is not null)
+                    CollectionGroups.Remove(group);
+            });
         }
 
         private void ProfileCollectionHelper_CollectionUpdated(GameCollection collection)
@@ -858,7 +399,8 @@ namespace HandheldCompanion.ViewModels
             {
                 CollectionGroupViewModel? group = CollectionGroups.FirstOrDefault(g => g.Collection?.Id == collection.Id);
                 group?.RefreshName();
-                RebuildNavigationItemsInternal();
+                if (collectionNavigationItems.TryGetValue($"collection:{collection.Id}", out LibraryNavigationItemViewModel? item))
+                    item.RefreshTitle(collection.Name);
             });
         }
 
@@ -874,481 +416,5 @@ namespace HandheldCompanion.ViewModels
             });
         }
 
-        private void RebuildNavigationItems()
-        {
-            UIHelper.TryBeginInvoke(RebuildNavigationItemsInternal);
-        }
-
-        private void RebuildNavigationItemsInternal()
-        {
-            string selectedKey = SelectedNavigationItem?.Key ?? AllGamesNavigationKey;
-            HashSet<GamePlatform> availablePlatforms = AvailablePlatforms.ToHashSet();
-
-            if (NavigationItems.Count == 0)
-            {
-                NavigationItems.Add(_navL2);
-                NavigationItems.Add(new LibraryNavigationItemViewModel(AllGamesNavigationKey, "All games", LibraryNavigationItemKind.AllGames));
-                NavigationItems.Add(new LibraryNavigationItemViewModel(FavoritesNavigationKey, "Favorites", LibraryNavigationItemKind.Collection));
-
-                foreach ((GamePlatform platform, string title) in SupportedPlatforms)
-                    NavigationItems.Add(new LibraryNavigationItemViewModel($"platform:{platform}", title, platform));
-
-                NavigationItems.Add(new LibraryNavigationItemViewModel(CollectionsNavigationKey, "Collections", LibraryNavigationItemKind.CollectionsRoot));
-                NavigationItems.Add(_navR2);
-            }
-
-            var activeCollections = ManagerFactory.profileManager
-                .GetCollections()
-                .OrderBy(collection => collection.Name, StringComparer.OrdinalIgnoreCase)
-                .ToList();
-            HashSet<Guid> activeCollectionIds = activeCollections.Select(collection => collection.Id).ToHashSet();
-
-            foreach (var item in NavigationItems)
-            {
-                if (item.Key == FavoritesNavigationKey)
-                {
-                    item.IsVisible = HasLiked;
-                    item.GameCount = Profiles.Count(profile => profile.IsLiked);
-                }
-                else if (item.Kind == LibraryNavigationItemKind.Platform)
-                {
-                    item.IsVisible = availablePlatforms.Contains(item.Platform);
-                    item.GameCount = Profiles.Count(profile => profile.PlatformType == item.Platform);
-                }
-                else if (item.Kind == LibraryNavigationItemKind.AllGames)
-                {
-                    item.GameCount = Profiles.Count;
-                }
-                else if (item.Kind == LibraryNavigationItemKind.CollectionsRoot)
-                {
-                    item.GameCount = Profiles.Count(profile => profile.Profile.Collections.Any(activeCollectionIds.Contains));
-                }
-            }
-
-            collectionNavigationItems.Clear();
-
-            foreach (GameCollection collection in activeCollections)
-            {
-                string key = $"collection:{collection.Id}";
-                bool isVisible = HasProfilesForCollection(collection.Id);
-
-                LibraryNavigationItemViewModel collectionItem = new(key, collection.Name, collection.Id)
-                {
-                    IsVisible = isVisible
-                };
-
-                collectionNavigationItems[key] = collectionItem;
-            }
-
-            LibraryNavigationItemViewModel? selectedItem = FindNavigationItemByKey(selectedKey);
-
-            if (selectedItem is null || !selectedItem.IsVisible)
-                selectedItem = NavigationItems.FirstOrDefault(item => item.IsVisible && item.Kind != LibraryNavigationItemKind.TriggerGlyph)
-                               ?? NavigationItems.FirstOrDefault(item => item.Kind != LibraryNavigationItemKind.TriggerGlyph);
-
-            SelectedNavigationItem = selectedItem;
-
-            OnPropertyChanged(nameof(NavigationItems));
-            OnPropertyChanged(nameof(AvailablePlatforms));
-
-            BackAvailabilityChanged?.Invoke(CanGoBack);
-        }
-
-        public LibraryNavigationItemViewModel? FindNavigationItemByKey(string? key)
-        {
-            if (string.IsNullOrWhiteSpace(key))
-                return null;
-
-            foreach (LibraryNavigationItemViewModel item in NavigationItems)
-            {
-                if (item.Key.Equals(key, StringComparison.Ordinal))
-                    return item;
-            }
-
-            if (collectionNavigationItems.TryGetValue(key, out LibraryNavigationItemViewModel? collectionItem))
-                return collectionItem;
-
-            return null;
-        }
-
-        private bool HasProfilesForCollection(Guid collectionId)
-        {
-            return Profiles.Any(profile => profile.Profile.Collections.Contains(collectionId));
-        }
-
-        private void ScheduleRebuildCollectionGroups()
-        {
-            _collectionGroupsDirty = true;
-
-            if (!ShouldShowCollectionGroups)
-                return;
-
-            if (_rebuildCollectionGroupsPending)
-                return;
-
-            _rebuildCollectionGroupsPending = true;
-            UIHelper.TryBeginInvoke(() =>
-            {
-                _rebuildCollectionGroupsPending = false;
-                RebuildCollectionGroups();
-            });
-        }
-
-        private void EnsureCollectionGroupsReady()
-        {
-            if (!ShouldShowCollectionGroups || !_collectionGroupsDirty)
-                return;
-
-            ScheduleRebuildCollectionGroups();
-        }
-
-        private static ItemsPanelTemplate CreateProfilesCardsItemsPanel()
-        {
-            FrameworkElementFactory factory = new(typeof(JustifiedWrapPanel));
-            factory.SetValue(JustifiedWrapPanel.HorizontalSpacingProperty, 6.0);
-            factory.SetValue(JustifiedWrapPanel.VerticalSpacingProperty, 6.0);
-            factory.SetValue(JustifiedWrapPanel.TargetRowHeightProperty, 240.0);
-            factory.SetValue(JustifiedWrapPanel.ItemAspectRatioProperty, 565.0 / 900.0);
-
-            return new ItemsPanelTemplate(factory);
-        }
-
-        private void RefreshProfilesCardsItemsSource()
-        {
-            UIHelper.TryBeginInvoke(() =>
-            {
-                ProfilesCardsItemsSource = null;
-                ProfilesCardsItemsSource = ProfilesView;
-            });
-        }
-
-        private void RebuildCollectionGroups()
-        {
-            _collectionGroupsDirty = false;
-            CollectionGroups.Clear();
-
-            // Use the sorted+filtered view so profiles within each group respect the user's chosen sort order
-            List<ProfileViewModel> displayProfiles = ProfilesView.Cast<ProfileViewModel>().ToList();
-
-            if (ShowGroupedProfilesList)
-            {
-                foreach (IGrouping<string, ProfileViewModel> platformGroup in displayProfiles
-                    .GroupBy(profile => profile.HasPlatform ? profile.PlatformName : "Other")
-                    .OrderBy(group => group.Key, StringComparer.OrdinalIgnoreCase))
-                {
-                    CollectionGroupViewModel group = new(platformGroup.Key, OpenCollection);
-                    foreach (ProfileViewModel profile in platformGroup)
-                        group.Profiles.Add(profile);
-                    CollectionGroups.Add(group);
-                }
-
-                foreach (CollectionGroupViewModel group in CollectionGroups)
-                    group.SetPreviewProfiles(group.Profiles.Take(CollectionPreviewImageCount));
-
-                return;
-            }
-
-            // Favorites
-            var favGroup = new CollectionGroupViewModel("Favorites", OpenCollection);
-            foreach (ProfileViewModel pvm in displayProfiles.Where(p => p.IsLiked))
-                favGroup.Profiles.Add(pvm);
-            if (favGroup.Profiles.Count > 0)
-                CollectionGroups.Add(favGroup);
-
-            // User collections — a profile may appear in more than one
-            IReadOnlyList<GameCollection> userCollections = ManagerFactory.profileManager.GetCollections();
-            List<CollectionGroupViewModel> pending = [];
-            foreach (GameCollection col in userCollections)
-            {
-                CollectionGroupViewModel group = new(col, OpenCollection);
-                foreach (ProfileViewModel pvm in displayProfiles.Where(p => p.Profile.Collections.Contains(col.Id)))
-                    group.Profiles.Add(pvm);
-                if (group.Profiles.Count > 0)
-                    pending.Add(group);
-            }
-            foreach (CollectionGroupViewModel group in pending.OrderBy(g => g.Name, StringComparer.OrdinalIgnoreCase))
-                CollectionGroups.Add(group);
-
-            // Other: not liked and not in any user collection
-            HashSet<Guid> allColIds = userCollections.Select(c => c.Id).ToHashSet();
-            CollectionGroupViewModel otherGroup = new("Other", OpenCollection);
-            foreach (ProfileViewModel pvm in displayProfiles.Where(p => !p.IsLiked && !p.Profile.Collections.Any(id => allColIds.Contains(id))))
-                otherGroup.Profiles.Add(pvm);
-            if (otherGroup.Profiles.Count > 0)
-                CollectionGroups.Add(otherGroup);
-
-            foreach (CollectionGroupViewModel group in CollectionGroups)
-            {
-                IEnumerable<ProfileViewModel> previewProfiles = group.Collection is not null
-                    ? displayProfiles.Where(profile => profile.Profile.Collections.Contains(group.Collection.Id))
-                    : group.Name switch
-                    {
-                        "Favorites" => displayProfiles.Where(profile => profile.IsLiked),
-                        "Other" => displayProfiles.Where(profile => !profile.IsLiked && !profile.Profile.Collections.Any(id => allColIds.Contains(id))),
-                        _ => Enumerable.Empty<ProfileViewModel>()
-                    };
-
-                group.SetPreviewProfiles(previewProfiles.Take(CollectionPreviewImageCount));
-            }
-
-        }
-
-        private void LibraryManager_Initialized()
-        {
-            QueryLibrary();
-        }
-
-        private void LibraryManager_ProfileStatusChanged(Profile profile, ManagerStatus status)
-        {
-            ProfileViewModel? profileViewModel = Profiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid);
-
-            profileViewModel?.IsBusy = status.HasFlag(ManagerStatus.Busy);
-        }
-
-        private void QueryProfile()
-        {
-            // manage events
-            ManagerFactory.profileManager.Updated += ProfileManager_Updated;
-            ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
-            ManagerFactory.profileManager.CollectionAdded += ProfileCollectionHelper_CollectionAdded;
-            ManagerFactory.profileManager.CollectionRemoved += ProfileCollectionHelper_CollectionRemoved;
-            ManagerFactory.profileManager.CollectionUpdated += ProfileCollectionHelper_CollectionUpdated;
-
-            // Bind the repeater to the sorted view BEFORE any profiles arrive so cards can render incrementally rather than all at once after the bulk load completes
-            _uiContext.Post(_ => UpdateSorting(), null);
-
-            foreach (Profile profile in ManagerFactory.profileManager.GetProfiles())
-            {
-                ProfileManager_Updated(profile, UpdateSource.Background, false);
-
-                foreach (Profile subProfile in ManagerFactory.profileManager.GetSubProfilesFromProfile(profile))
-                    ProfileManager_Updated(subProfile, UpdateSource.Background, false);
-            }
-
-            // Hide the spinner once every card has been dispatched to the UI
-            IsInitializing = false;
-
-            RebuildNavigationItems();
-            ScheduleRebuildCollectionGroups();
-        }
-
-        private void ProfileManager_Initialized()
-        {
-            QueryProfile();
-        }
-
-        private void UpdateSorting()
-        {
-            ListSortDirection direction = SortAscending ? ListSortDirection.Ascending : ListSortDirection.Descending;
-
-            ProfilesView.SortDescriptions.Clear();
-            ProfilesView.LiveSortingProperties.Clear();
-
-            // Always sort favorites first (descending IsLiked = favorites on top)
-            ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.IsLiked), ListSortDirection.Descending));
-            ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.IsLiked));
-
-            // Then apply secondary sort based on user selection
-            SortDescription secondary;
-            string secondaryProperty;
-            switch (SortTarget)
-            {
-                default:
-                case 0:
-                    secondary = new SortDescription(nameof(ProfileViewModel.Name), direction);
-                    secondaryProperty = nameof(ProfileViewModel.Name);
-                    break;
-                case 1:
-                    secondary = new SortDescription(nameof(ProfileViewModel.PlatformType), direction);
-                    secondaryProperty = nameof(ProfileViewModel.PlatformType);
-                    break;
-                case 2:
-                    secondary = new SortDescription(nameof(ProfileViewModel.DateCreated), direction);
-                    secondaryProperty = nameof(ProfileViewModel.DateCreated);
-                    break;
-                case 3:
-                    secondary = new SortDescription(nameof(ProfileViewModel.LastUsed), direction);
-                    secondaryProperty = nameof(ProfileViewModel.LastUsed);
-                    break;
-            }
-            ProfilesView.SortDescriptions.Add(secondary);
-            ProfilesView.LiveSortingProperties.Add(secondaryProperty);
-
-            // Workaround for iNKORE ItemsRepeater not observing ICollectionView changes
-            RefreshProfilesCardsItemsSource();
-
-            ScheduleRebuildCollectionGroups();
-
-            OnPropertyChanged(nameof(HasLiked));
-        }
-
-        private void ProfileManager_Deleted(Profile profile)
-        {
-            UIHelper.TryBeginInvoke(() =>
-            {
-                // ignore me
-                if (profile.Default)
-                    return;
-
-                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                    return;
-
-                try
-                {
-                    ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
-                    if (foundProfile is not null)
-                    {
-                        Profiles.Remove(foundProfile);
-                        foundProfile.Dispose();
-                        OnPropertyChanged(nameof(GameCount));
-                    }
-                }
-                finally
-                {
-                    Monitor.Exit(_collectionLock);
-                }
-
-                RebuildNavigationItems();
-                ScheduleRebuildCollectionGroups();
-            });
-        }
-
-        private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
-        {
-            UIHelper.TryBeginInvoke(() =>
-            {
-                // ignore me
-                if (profile.Default)
-                    return;
-
-                bool shouldShow = profile.ShowInLibrary;
-
-                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                    return;
-
-                try
-                {
-                    // find based on guid
-                    ProfileViewModel? existingVm = Profiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid);
-
-                    if (shouldShow)
-                    {
-                        if (existingVm is null)
-                        {
-                            // Not yet in list, add
-                            Profiles.Add(new ProfileViewModel(profile, false, true));
-                            OnPropertyChanged(nameof(GameCount));
-                        }
-                        else
-                        {
-                            // Already in list, only update
-                            existingVm.Profile = profile;
-                        }
-                    }
-                    else
-                    {
-                        if (existingVm is not null)
-                        {
-                            // Remove from list and dispose
-                            Profiles.Remove(existingVm);
-                            existingVm.Dispose();
-                            OnPropertyChanged(nameof(GameCount));
-                        }
-                    }
-                }
-                finally
-                {
-                    Monitor.Exit(_collectionLock);
-                }
-
-                if (!IsInitializing)
-                {
-                    RebuildNavigationItems();
-                    ScheduleRebuildCollectionGroups();
-                }
-            });
-        }
-
-        public void MarkLibraryChecked()
-        {
-            ManagerFactory.settingsManager.SetProperty(
-                "LibraryLastChecked",
-                DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture));
-            OnPropertyChanged(nameof(LastLibraryCheckText));
-        }
-
-        private static string GetLastLibraryCheckText()
-        {
-            string value = ManagerFactory.settingsManager.GetString("LibraryLastChecked");
-            if (!long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out long timestamp))
-                return Properties.Resources.SettingsPage_LastChecked;
-
-            return Properties.Resources.SettingsPage_LastChecked +
-                   CommonUtils.GetTime(DateTimeOffset.FromUnixTimeSeconds(timestamp).LocalDateTime);
-        }
-
-        public override void Dispose()
-        {
-            base.Dispose();
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                // manage events
-                ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
-                ManagerFactory.profileManager.Deleted -= ProfileManager_Deleted;
-                ManagerFactory.libraryManager.ProfileStatusChanged -= LibraryManager_ProfileStatusChanged;
-                ManagerFactory.libraryManager.NetworkAvailabilityChanged -= LibraryManager_NetworkAvailabilityChanged;
-                ManagerFactory.profileManager.CollectionAdded -= ProfileCollectionHelper_CollectionAdded;
-                ManagerFactory.profileManager.CollectionRemoved -= ProfileCollectionHelper_CollectionRemoved;
-                ManagerFactory.profileManager.CollectionUpdated -= ProfileCollectionHelper_CollectionUpdated;
-            }
-
-            base.Dispose(disposing);
-        }
-
-        private void UpdateFiltering()
-        {
-            UIHelper.TryBeginInvoke(() =>
-            {
-                ProfilesView.Filter = o => o is ProfileViewModel vm && MatchesFilters(vm);
-
-                // Workaround for iNKORE ItemsRepeater not observing ICollectionView changes
-                RefreshProfilesCardsItemsSource();
-
-                ScheduleRebuildCollectionGroups();
-            });
-        }
-
-        private bool MatchesFilters(ProfileViewModel profile)
-        {
-            return MatchesSearchFilter(profile) && MatchesNavigationFilter(profile);
-        }
-
-        private bool MatchesSearchFilter(ProfileViewModel profile)
-        {
-            if (string.IsNullOrWhiteSpace(SearchText))
-                return true;
-
-            return profile.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                   profile.Profile.Executable.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
-        }
-
-        private bool MatchesNavigationFilter(ProfileViewModel profile)
-        {
-            return SelectedNavigationItem?.Kind switch
-            {
-                null => true,
-                LibraryNavigationItemKind.AllGames => true,
-                LibraryNavigationItemKind.CollectionsRoot => true,
-                _ when string.Equals(SelectedNavigationItem.Key, FavoritesNavigationKey, StringComparison.Ordinal) => profile.IsLiked,
-                LibraryNavigationItemKind.Platform => profile.PlatformType == SelectedNavigationItem.Platform,
-                LibraryNavigationItemKind.Collection => SelectedNavigationItem.CollectionId.HasValue &&
-                                                        profile.Profile.Collections.Contains(SelectedNavigationItem.CollectionId.Value),
-                _ => true
-            };
-        }
     }
 }

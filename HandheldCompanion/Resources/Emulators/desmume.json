@@ -1,0 +1,27 @@
+{
+  "Id": "desmume",
+  "Name": "DeSmuME",
+  "PlatformType": "DeSmuME",
+  "PlatformColor": "#666666",
+  "PlatformGlyph": "\uF783",
+  "Executables": [
+    "DeSmuME.exe"
+  ],
+  "ProductNames": [
+    "DeSmuME"
+  ],
+  "Companies": [],
+  "Configurations": [],
+  "PortableLocations": [],
+  "Systems": [
+    "Nintendo DS"
+  ],
+  "RomExtensions": [
+    ".nds"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

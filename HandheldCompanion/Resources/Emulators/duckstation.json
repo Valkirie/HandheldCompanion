@@ -1,0 +1,58 @@
+{
+  "Id": "duckstation",
+  "Name": "DuckStation",
+  "PlatformType": "DuckStation",
+  "PlatformColor": "#2E7D32",
+  "PlatformGlyph": "\uF2F0",
+  "Executables": [
+    "duckstation-qt-x64-ReleaseLTCG.exe",
+    "duckstation-qt-x64-Release.exe",
+    "duckstation-qt.exe"
+  ],
+  "ProductNames": [
+    "DuckStation"
+  ],
+  "Companies": [],
+  "Configurations": [
+    {
+      "Root": "LocalAppData",
+      "RelativePath": "DuckStation",
+      "Files": [
+        "settings.ini"
+      ],
+      "ContentKeys": []
+    },
+    {
+      "Root": "Documents",
+      "RelativePath": "DuckStation",
+      "Files": [
+        "settings.ini"
+      ],
+      "ContentKeys": []
+    }
+  ],
+  "PortableLocations": [
+    {
+      "Marker": "portable.txt",
+      "ConfigPath": "",
+      "Files": [
+        "settings.ini"
+      ]
+    }
+  ],
+  "Systems": [
+    "PlayStation"
+  ],
+  "RomExtensions": [
+    ".iso",
+    ".bin",
+    ".cue",
+    ".chd",
+    ".ecm"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

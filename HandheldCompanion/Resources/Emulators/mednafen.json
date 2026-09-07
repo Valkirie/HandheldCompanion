@@ -1,0 +1,41 @@
+{
+  "Id": "mednafen",
+  "Name": "Mednafen",
+  "PlatformType": "Mednafen",
+  "PlatformColor": "#666666",
+  "PlatformGlyph": "\uF712",
+  "Executables": [
+    "mednafen.exe"
+  ],
+  "ProductNames": [
+    "Mednafen"
+  ],
+  "Companies": [],
+  "Configurations": [
+    {
+      "Root": "AppData",
+      "RelativePath": "mednafen",
+      "Files": [
+        "mednafen-09x.cfg"
+      ],
+      "ContentKeys": []
+    }
+  ],
+  "PortableLocations": [],
+  "Systems": [
+    "Multi-system"
+  ],
+  "RomExtensions": [
+    ".cue",
+    ".iso",
+    ".nes",
+    ".sfc",
+    ".gb",
+    ".gba"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

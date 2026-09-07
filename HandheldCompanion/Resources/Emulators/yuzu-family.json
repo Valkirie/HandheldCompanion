@@ -1,0 +1,57 @@
+{
+  "Id": "yuzu-family",
+  "Name": "Yuzu / Citron / Eden",
+  "PlatformType": "Yuzu",
+  "PlatformColor": "#E60012",
+  "PlatformGlyph": "\uF787",
+  "Executables": [
+    "yuzu.exe",
+    "yuzu-windows-msvc.exe"
+  ],
+  "ProductNames": [
+    "yuzu"
+  ],
+  "Companies": [],
+  "Configurations": [
+    {
+      "Root": "AppData",
+      "RelativePath": "yuzu\\config",
+      "Files": [
+        "qt-config.ini"
+      ],
+      "ContentKeys": [
+        "Paths\\gamedirs\\1\\path",
+        "Paths\\gamedirs\\2\\path",
+        "Paths\\gamedirs\\3\\path",
+        "Paths\\gamedirs\\4\\path"
+      ]
+    },
+    {
+      "Root": "AppData",
+      "RelativePath": "yuzu\\config",
+      "Files": [
+        "qt-config.ini"
+      ],
+      "ContentKeys": [
+        "Paths\\gamedirs\\1\\path",
+        "Paths\\gamedirs\\2\\path",
+        "Paths\\gamedirs\\3\\path",
+        "Paths\\gamedirs\\4\\path"
+      ]
+    }
+  ],
+  "PortableLocations": [],
+  "Systems": [
+    "Nintendo Switch"
+  ],
+  "RomExtensions": [
+    ".nsp",
+    ".xci",
+    ".nca"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "Template",
+  "ArgumentTemplate": "-g {rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

@@ -1,0 +1,48 @@
+{
+  "Id": "pcsx2",
+  "Name": "PCSX2",
+  "PlatformType": "PCSX2",
+  "PlatformColor": "#1565C0",
+  "PlatformGlyph": "\uF2F1",
+  "Executables": [
+    "pcsx2-qt.exe",
+    "pcsx2.exe"
+  ],
+  "ProductNames": [
+    "PCSX2"
+  ],
+  "Companies": [],
+  "Configurations": [
+    {
+      "Root": "AppData",
+      "RelativePath": "PCSX2",
+      "Files": [
+        "PCSX2.ini"
+      ],
+      "ContentKeys": []
+    },
+    {
+      "Root": "ExecutableDirectory",
+      "RelativePath": "inis",
+      "Files": [
+        "PCSX2.ini"
+      ],
+      "ContentKeys": []
+    }
+  ],
+  "PortableLocations": [],
+  "Systems": [
+    "PlayStation 2"
+  ],
+  "RomExtensions": [
+    ".iso",
+    ".cso",
+    ".chd",
+    ".bin"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

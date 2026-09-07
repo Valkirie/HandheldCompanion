@@ -1,0 +1,55 @@
+{
+  "Id": "cemu",
+  "Name": "Cemu",
+  "PlatformType": "Cemu",
+  "PlatformColor": "#00A3E0",
+  "PlatformGlyph": "\uF789",
+  "Executables": [
+    "Cemu.exe"
+  ],
+  "ProductNames": [
+    "Cemu"
+  ],
+  "Companies": [],
+  "Configurations": [
+    {
+      "Root": "AppData",
+      "RelativePath": "Cemu",
+      "Files": [
+        "settings.xml"
+      ],
+      "ContentKeys": [
+        "GamePaths"
+      ]
+    }
+  ],
+  "PortableLocations": [
+    {
+      "Marker": "portable",
+      "ConfigPath": "portable",
+      "Files": [
+        "settings.xml"
+      ]
+    }
+  ],
+  "Systems": [
+    "Wii U"
+  ],
+  "RomExtensions": [
+    ".wud",
+    ".wux",
+    ".wua",
+    ".rpx"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "Template",
+  "ArgumentTemplate": "-g {rom}",
+  "RomMetadata": {
+    "Provider": "XmlElement",
+    "RelativePath": "meta\\meta.xml",
+    "ElementName": "longname_en",
+    "RelativePaths": [],
+    "SearchParentDirectories": true
+  },
+  "DirectoryRoms": false
+}

@@ -1,0 +1,54 @@
+{
+  "Id": "ppsspp",
+  "Name": "PPSSPP",
+  "PlatformType": "PPSSPP",
+  "PlatformColor": "#1565C0",
+  "PlatformGlyph": "\uF2F5",
+  "Executables": [
+    "PPSSPPWindows64.exe",
+    "PPSSPPWindows.exe"
+  ],
+  "ProductNames": [
+    "PPSSPP"
+  ],
+  "Companies": [],
+  "Configurations": [
+    {
+      "Root": "ExecutableDirectory",
+      "RelativePath": "memstick\\PSP\\SYSTEM",
+      "Files": [
+        "ppsspp.ini"
+      ],
+      "ContentKeys": []
+    },
+    {
+      "Root": "Documents",
+      "RelativePath": "PPSSPP\\PSP\\SYSTEM",
+      "Files": [
+        "ppsspp.ini"
+      ],
+      "ContentKeys": []
+    }
+  ],
+  "PortableLocations": [],
+  "Systems": [
+    "PlayStation Portable"
+  ],
+  "RomExtensions": [
+    ".iso",
+    ".cso",
+    ".chd",
+    ".pbp"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": {
+    "Provider": "ParamSfo",
+    "RelativePath": "PSP_GAME\\PARAM.SFO",
+    "ElementName": "",
+    "RelativePaths": [],
+    "SearchParentDirectories": false
+  },
+  "DirectoryRoms": false
+}

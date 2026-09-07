@@ -1,0 +1,37 @@
+{
+  "Id": "xemu",
+  "Name": "xemu",
+  "PlatformType": "Xemu",
+  "PlatformColor": "#666666",
+  "PlatformGlyph": "\uF712",
+  "Executables": [
+    "xemu.exe"
+  ],
+  "ProductNames": [
+    "xemu"
+  ],
+  "Companies": [],
+  "Configurations": [
+    {
+      "Root": "LocalAppData",
+      "RelativePath": "xemu",
+      "Files": [
+        "xemu.toml"
+      ],
+      "ContentKeys": []
+    }
+  ],
+  "PortableLocations": [],
+  "Systems": [
+    "Xbox"
+  ],
+  "RomExtensions": [
+    ".iso",
+    ".xiso"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

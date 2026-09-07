@@ -85,6 +85,7 @@ namespace HandheldCompanion.ViewModels
                 // refresh all properties
                 OnPropertyChanged(string.Empty);
                 OnPropertyChanged(nameof(Name));
+                OnPropertyChanged(nameof(LastUsed));
                 OnPropertyChanged(nameof(CanOpenExecutableLocation));
 
                 if (IsLibrary)

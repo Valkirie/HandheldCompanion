@@ -114,26 +114,18 @@ public partial class LibraryPage : Page
             LibraryNavigationKeys.Collections => new LibraryCollectionsOverviewPage(ViewModel!),
             _ when selection.Kind == LibraryNavigationItemKind.Collection && selection.CollectionId.HasValue
                 => new LibraryCollectionPage(ViewModel!, selection.CollectionId.Value),
-            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.BattleNet
-                => new LibraryBattleNetPage(ViewModel!),
-            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.EADesktop
-                => new LibraryEADesktopPage(ViewModel!),
-            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.Epic
-                => new LibraryEpicPage(ViewModel!),
-            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.GOG
-                => new LibraryGOGPage(ViewModel!),
-            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.MicrosoftStore
-                => new LibraryMicrosoftStorePage(ViewModel!),
-            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.Origin
-                => new LibraryOriginPage(ViewModel!),
-            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.RiotGames
-                => new LibraryRiotPage(ViewModel!),
-            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.Rockstar
-                => new LibraryRockstarPage(ViewModel!),
-            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.Steam
-                => new LibrarySteamPage(ViewModel!),
-            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform == GamePlatform.UbisoftConnect
-                => new LibraryUbisoftPage(ViewModel!),
+            _ when selection.Kind == LibraryNavigationItemKind.Platform && selection.Platform is
+                GamePlatform.BattleNet or
+                GamePlatform.EADesktop or
+                GamePlatform.Epic or
+                GamePlatform.GOG or
+                GamePlatform.MicrosoftStore or
+                GamePlatform.Origin or
+                GamePlatform.RiotGames or
+                GamePlatform.Rockstar or
+                GamePlatform.Steam or
+                GamePlatform.UbisoftConnect
+                => new LibraryPlatformPage(ViewModel!, selection.Platform),
             _ when selection.Kind == LibraryNavigationItemKind.Platform
                 => new LibraryEmulatorPage(ViewModel!, selection.Platform),
             _ => new LibraryAllGamesPage(ViewModel!)

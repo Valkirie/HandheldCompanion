@@ -386,6 +386,7 @@ namespace HandheldCompanion.Controls
             {
                 double previousRowScale = previousRow.Height / Math.Max(1.0, targetHeight);
                 scale = Math.Min(scale, previousRowScale);
+                baseItemWidth = Math.Max(1.0, targetWidth * scale);
             }
             else if (!justify && previousRow is null && referenceScale.HasValue)
             {

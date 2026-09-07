@@ -337,11 +337,11 @@ public class LayoutManager : IManager
     // Called from a non-UI thread by FileSystemWatcher
     private void LayoutWatcher_Template(object sender, FileSystemEventArgs e) => ProcessLayoutTemplate(e.FullPath);
 
-    private Layout? ProcessLayout(string fileName)
+    private Layout? ProcessLayout(string filePath)
     {
         try
         {
-            string json = File.ReadAllText(fileName);
+            string json = File.ReadAllText(filePath);
             return JsonConvert.DeserializeObject<Layout>(json, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
@@ -349,18 +349,18 @@ public class LayoutManager : IManager
         }
         catch (Exception ex)
         {
-            LogManager.LogError("Could not parse Layout {0}. {1}", fileName, ex.Message);
+            LogManager.LogError("Could not parse Layout {0}. {1}", filePath, ex.Message);
             return null;
         }
     }
 
-    private void ProcessLayoutTemplate(string fileName)
+    private void ProcessLayoutTemplate(string filePath)
     {
         LayoutTemplate? layoutTemplate = null;
 
         try
         {
-            string json = File.ReadAllText(fileName);
+            string json = File.ReadAllText(filePath);
             layoutTemplate = JsonConvert.DeserializeObject<LayoutTemplate>(json, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
@@ -368,12 +368,12 @@ public class LayoutManager : IManager
         }
         catch (Exception ex)
         {
-            LogManager.LogError("Could not parse LayoutTemplate {0}. {1}", fileName, ex.Message);
+            LogManager.LogError("Could not parse LayoutTemplate {0}. {1}", filePath, ex.Message);
         }
 
         if (layoutTemplate?.Layout is null)
         {
-            LogManager.LogError("Could not parse LayoutTemplate {0}", fileName);
+            LogManager.LogError("Could not parse LayoutTemplate {0}", filePath);
             return;
         }
 

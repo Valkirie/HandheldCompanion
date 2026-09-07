@@ -1,0 +1,36 @@
+{
+  "Id": "melonds",
+  "Name": "melonDS",
+  "PlatformType": "MelonDS",
+  "PlatformColor": "#666666",
+  "PlatformGlyph": "\uF783",
+  "Executables": [
+    "melonDS.exe"
+  ],
+  "ProductNames": [
+    "melonDS"
+  ],
+  "Companies": [],
+  "Configurations": [
+    {
+      "Root": "ExecutableDirectory",
+      "RelativePath": "",
+      "Files": [
+        "melonDS.ini"
+      ],
+      "ContentKeys": []
+    }
+  ],
+  "PortableLocations": [],
+  "Systems": [
+    "Nintendo DS"
+  ],
+  "RomExtensions": [
+    ".nds"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

@@ -10,17 +10,11 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace HandheldCompanion.Managers;
 
 public class PlatformManager : IManager
 {
-    private static readonly string PlatformLogoCacheDirectory = Path.Combine(App.SettingsPath, "cache", "platform-logos");
-    private static readonly Dictionary<GamePlatform, ImageSource?> PlatformLogoCache = [];
-    private static readonly object PlatformLogoCacheLock = new();
-
     private static readonly IReadOnlyDictionary<string, GamePlatform> ScanPlatformAliases = new Dictionary<string, GamePlatform>(StringComparer.OrdinalIgnoreCase)
     {
         ["BattleNet"] = GamePlatform.BattleNet,
@@ -169,6 +163,33 @@ public class PlatformManager : IManager
         return EmulatorDefinitions.All.FirstOrDefault(definition => definition.PlatformType == platform)?.PlatformColor ?? "#666666";
     }
 
+    public static string GetPlatformGlyph(GamePlatform platform)
+    {
+        IPlatform? registeredPlatform = AllPlatforms?.FirstOrDefault(candidate => candidate.PlatformType == platform);
+        if (registeredPlatform is not null)
+            return registeredPlatform.PlatformGlyph;
+
+        return EmulatorDefinitions.All.FirstOrDefault(definition => definition.PlatformType == platform)?.PlatformGlyph ?? "\uF712";
+    }
+
+    public static string GetPlatformFont(GamePlatform platform)
+    {
+        IPlatform? registeredPlatform = AllPlatforms?.FirstOrDefault(candidate => candidate.PlatformType == platform);
+        if (registeredPlatform is not null)
+            return registeredPlatform.PlatformFont;
+
+        return EmulatorDefinitions.All.FirstOrDefault(definition => definition.PlatformType == platform)?.PlatformFont ?? "Simple Icons Fit";
+    }
+
+    public static double GetPlatformFontSize(GamePlatform platform)
+    {
+        IPlatform? registeredPlatform = AllPlatforms?.FirstOrDefault(candidate => candidate.PlatformType == platform);
+        if (registeredPlatform is not null)
+            return registeredPlatform.PlatformFontSize;
+
+        return EmulatorDefinitions.All.FirstOrDefault(definition => definition.PlatformType == platform)?.PlatformFontSize ?? 22;
+    }
+
     public static string GetPlatformName(GamePlatform platform)
     {
         IPlatform? registeredPlatform = AllPlatforms?.FirstOrDefault(candidate => candidate.PlatformType == platform);
@@ -185,6 +206,10 @@ public class PlatformManager : IManager
 
         if (string.Equals(target, "Emulators", StringComparison.OrdinalIgnoreCase))
             return EmulatorDiscoveryService.Discover();
+
+        if (target is not null && EmulatorDefinitions.All.Any(definition =>
+            string.Equals(definition.Id, target, StringComparison.OrdinalIgnoreCase)))
+            return EmulatorDiscoveryService.DiscoverByDefinition(target);
 
         if (target?.StartsWith("Console:", StringComparison.OrdinalIgnoreCase) == true)
             return EmulatorDiscoveryService.DiscoverBySystem(target["Console:".Length..]);
@@ -230,125 +255,6 @@ public class PlatformManager : IManager
         }
 
         return null;
-    }
-
-    public static ImageSource? GetPlatformLogoSource(GamePlatform platform)
-    {
-        lock (PlatformLogoCacheLock)
-            if (PlatformLogoCache.TryGetValue(platform, out ImageSource? cached))
-                return cached;
-
-        string cacheFile = Path.Combine(PlatformLogoCacheDirectory, $"{platform}.png");
-        ImageSource? source = LoadCachedPlatformLogo(cacheFile);
-        if (source is not null)
-        {
-            lock (PlatformLogoCacheLock)
-                PlatformLogoCache[platform] = source;
-            return source;
-        }
-
-        Image? drawingImage = GetPlatformLogo(platform);
-        source = drawingImage is null ? null : ConvertToImageSource(drawingImage);
-        if (source is not null)
-        {
-            SaveCachedPlatformLogo(source, cacheFile);
-            lock (PlatformLogoCacheLock)
-                PlatformLogoCache[platform] = source;
-        }
-
-        return source;
-    }
-
-    public static void ClearPlatformLogoCache()
-    {
-        lock (PlatformLogoCacheLock)
-            PlatformLogoCache.Clear();
-    }
-
-    private static ImageSource? LoadCachedPlatformLogo(string cacheFile)
-    {
-        if (!File.Exists(cacheFile))
-            return null;
-
-        try
-        {
-            BitmapImage image = new();
-            image.BeginInit();
-            image.CacheOption = BitmapCacheOption.OnLoad;
-            image.UriSource = new Uri(cacheFile, UriKind.Absolute);
-            image.EndInit();
-            image.Freeze();
-            return image;
-        }
-        catch
-        {
-            try { File.Delete(cacheFile); } catch { }
-            return null;
-        }
-    }
-
-    private static void SaveCachedPlatformLogo(ImageSource source, string cacheFile)
-    {
-        if (source is not BitmapSource bitmap)
-            return;
-
-        try
-        {
-            Directory.CreateDirectory(PlatformLogoCacheDirectory);
-            using FileStream stream = File.Create(cacheFile);
-            PngBitmapEncoder encoder = new();
-            encoder.Frames.Add(BitmapFrame.Create(bitmap));
-            encoder.Save(stream);
-        }
-        catch
-        {
-        }
-    }
-
-    private static ImageSource? ConvertToImageSource(Image drawingImage)
-    {
-        try
-        {
-            using var bitmap = new Bitmap(drawingImage.Width, drawingImage.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            using (Graphics graphics = Graphics.FromImage(bitmap))
-                graphics.DrawImage(drawingImage, 0, 0, drawingImage.Width, drawingImage.Height);
-
-            using Bitmap cropped = CropTransparentPadding(bitmap);
-            using MemoryStream stream = new();
-            cropped.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-            stream.Position = 0;
-
-            BitmapImage image = new();
-            image.BeginInit();
-            image.CacheOption = BitmapCacheOption.OnLoad;
-            image.StreamSource = stream;
-            image.EndInit();
-            image.Freeze();
-            return image;
-        }
-        catch
-        {
-            return null;
-        }
-    }
-
-    private static Bitmap CropTransparentPadding(Bitmap source)
-    {
-        int minX = source.Width, minY = source.Height, maxX = -1, maxY = -1;
-        for (int y = 0; y < source.Height; y++)
-            for (int x = 0; x < source.Width; x++)
-                if (source.GetPixel(x, y).A > 10)
-                {
-                    minX = Math.Min(minX, x);
-                    minY = Math.Min(minY, y);
-                    maxX = Math.Max(maxX, x);
-                    maxY = Math.Max(maxY, y);
-                }
-
-        if (maxX < 0)
-            return new Bitmap(source);
-
-        return source.Clone(new Rectangle(minX, minY, maxX - minX + 1, maxY - minY + 1), source.PixelFormat);
     }
 
     public static IEnumerable<IGame> GetGames(GamePlatform gamePlatform)

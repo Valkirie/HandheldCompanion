@@ -13,6 +13,7 @@ public class Origin : IPlatform
     private OriginLauncher originLauncher = new(new LauncherOptions());
     public override string Name => originLauncher.Name;
     public override string PlatformColor => "#F56C2D";
+    public override string PlatformGlyph => "\uF264";
     public override string InstallPath => originLauncher.InstallDir;
     public override string ExecutablePath => originLauncher.Executable;
     public override string ExecutableName => Path.GetFileName(ExecutablePath);

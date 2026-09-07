@@ -1,0 +1,51 @@
+{
+  "Id": "vita3k",
+  "Name": "Vita3K",
+  "PlatformType": "Vita3K",
+  "PlatformColor": "#00838F",
+  "PlatformGlyph": "\uF2F6",
+  "Executables": [
+    "Vita3K.exe"
+  ],
+  "ProductNames": [
+    "Vita3K"
+  ],
+  "Companies": [],
+  "Configurations": [
+    {
+      "Root": "ExecutableDirectory",
+      "RelativePath": "",
+      "Files": [
+        "config.yml"
+      ],
+      "ContentKeys": []
+    },
+    {
+      "Root": "AppData",
+      "RelativePath": "Vita3K",
+      "Files": [
+        "config.yml"
+      ],
+      "ContentKeys": []
+    }
+  ],
+  "PortableLocations": [],
+  "Systems": [
+    "PlayStation Vita"
+  ],
+  "RomExtensions": [
+    ".pkg",
+    ".zip"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": {
+    "Provider": "ParamSfo",
+    "RelativePath": "sce_sys\\param.sfo",
+    "ElementName": "",
+    "RelativePaths": [],
+    "SearchParentDirectories": false
+  },
+  "DirectoryRoms": false
+}

@@ -1,0 +1,29 @@
+{
+  "Id": "redream",
+  "Name": "Redream",
+  "PlatformType": "Redream",
+  "PlatformColor": "#666666",
+  "PlatformGlyph": "\uED2F",
+  "Executables": [
+    "redream.exe"
+  ],
+  "ProductNames": [
+    "redream"
+  ],
+  "Companies": [],
+  "Configurations": [],
+  "PortableLocations": [],
+  "Systems": [
+    "Dreamcast"
+  ],
+  "RomExtensions": [
+    ".gdi",
+    ".cdi",
+    ".chd"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

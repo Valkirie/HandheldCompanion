@@ -1,0 +1,44 @@
+{
+  "Id": "eden",
+  "Name": "Eden",
+  "PlatformType": "Eden",
+  "PlatformColor": "#E60012",
+  "PlatformGlyph": "\uF787",
+  "Executables": [
+    "eden.exe"
+  ],
+  "ProductNames": [
+    "Eden"
+  ],
+  "Companies": [],
+  "Configurations": [
+    {
+      "Root": "AppData",
+      "RelativePath": "Eden\\config",
+      "Files": [
+        "qt-config.ini",
+        "config.json"
+      ],
+      "ContentKeys": [
+        "Paths\\gamedirs\\1\\path",
+        "Paths\\gamedirs\\2\\path",
+        "Paths\\gamedirs\\3\\path",
+        "Paths\\gamedirs\\4\\path"
+      ]
+    }
+  ],
+  "PortableLocations": [],
+  "Systems": [
+    "Nintendo Switch"
+  ],
+  "RomExtensions": [
+    ".nsp",
+    ".xci",
+    ".nca"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

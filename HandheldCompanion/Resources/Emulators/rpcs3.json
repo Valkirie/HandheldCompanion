@@ -1,0 +1,52 @@
+{
+  "Id": "rpcs3",
+  "Name": "RPCS3",
+  "PlatformType": "RPCS3",
+  "PlatformColor": "#5B5B5B",
+  "PlatformGlyph": "\uF2F2",
+  "Executables": [
+    "rpcs3.exe"
+  ],
+  "ProductNames": [
+    "RPCS3"
+  ],
+  "Companies": [],
+  "Configurations": [
+    {
+      "Root": "ExecutableDirectory",
+      "RelativePath": "",
+      "Files": [
+        "config.yml",
+        "games.yml"
+      ],
+      "ContentKeys": []
+    },
+    {
+      "Root": "ExecutableDirectory",
+      "RelativePath": "config",
+      "Files": [
+        "config.yml"
+      ],
+      "ContentKeys": []
+    }
+  ],
+  "PortableLocations": [],
+  "Systems": [
+    "PlayStation 3"
+  ],
+  "RomExtensions": [
+    ".self",
+    ".iso"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": {
+    "Provider": "ParamSfo",
+    "RelativePath": "PS3_GAME\\PARAM.SFO",
+    "ElementName": "",
+    "RelativePaths": [],
+    "SearchParentDirectories": false
+  },
+  "DirectoryRoms": false
+}
