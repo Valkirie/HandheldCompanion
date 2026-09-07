@@ -117,6 +117,7 @@ Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#Win
 Source: "{#SourcePath}\Certificate.pfx"; DestDir: "{tmp}"; Flags: deleteafterinstall
 Source: "{#SourcePath}\Certificate.ps1"; DestDir: "{tmp}"; Flags: deleteafterinstall
 Source: "{#SourcePath}\redist\PromptFont.otf"; DestDir: "{autofonts}"; FontInstall: "PromptFont"; Flags: uninsneveruninstall
+Source: "{#SourcePath}\redist\SimpleIcons-Gaming-Restored.ttf"; DestDir: "{autofonts}"; FontInstall: "Simple Icons Fit"; Flags: uninsneveruninstall
 
 [Icons]
 Name: "{group}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"
