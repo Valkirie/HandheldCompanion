@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.ViewModels.Commands;
 using System;
 using System.Collections.Generic;
@@ -197,139 +198,133 @@ namespace HandheldCompanion.ViewModels
             QueryProfiles();
         }
 
-        private void ProfileManager_Deleted(Profile profile)
-        {
-            // ignore me
-            if (profile.Default)
-                return;
-
-            bool removed = false;
-            if (!Monitor.TryEnter(_collectionLock2, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
-            {
-                ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
-                if (foundProfile is not null)
-                {
-                    Profiles.Remove(foundProfile);
-                    foundProfile.Dispose();
-                    removed = true;
-                }
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock2);
-            }
-
-            if (removed)
-            {
-                // re-compute pages
-                OnPropertyChanged(nameof(TotalPages));
-                RefreshPage();
-            }
-        }
-
-        private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
-        {
-            // Serializer loads are handled in bulk after ProfileManager initializes.
-            if (source == UpdateSource.Serializer)
-                return;
-
-            // ignore me
-            if (profile.Default)
-                return;
-
-            if (!Monitor.TryEnter(_collectionLock2, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
-            {
-                ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
-                if (foundProfile is null)
-                {
-                    if (profile.IsLiked)
-                        Profiles.Add(new ProfileViewModel(profile, true));
-                }
-                else
-                {
-                    if (profile.IsLiked)
-                        foundProfile.Profile = profile;
-                    else
-                        ProfileManager_Deleted(profile);
-                }
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock2);
-            }
-
-            // re-compute pages
-            OnPropertyChanged(nameof(TotalPages));
-            RefreshPage();
-        }
-
         private void OnRadioButtonChecked(object parameter)
         {
             if (parameter is string paramString && int.TryParse(paramString, out int value))
                 windowPositions = (WindowPositions)value;
         }
 
+        private void ProfileManager_Deleted(Profile profile)
+        {
+            UIHelper.TryBeginInvoke(() =>
+            {
+                if (profile.Default)
+                    return;
+
+                bool removed = false;
+                if (!Monitor.TryEnter(_collectionLock2, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
+                {
+                    ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
+                    if (foundProfile is not null)
+                    {
+                        Profiles.Remove(foundProfile);
+                        foundProfile.Dispose();
+                        removed = true;
+                    }
+                }
+                finally
+                {
+                    Monitor.Exit(_collectionLock2);
+                }
+
+                if (removed)
+                {
+                    OnPropertyChanged(nameof(TotalPages));
+                    RefreshPage();
+                }
+            });
+        }
+
+        private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
+        {
+            UIHelper.TryBeginInvoke(() =>
+            {
+                if (source == UpdateSource.Serializer || profile.Default)
+                    return;
+
+                if (!Monitor.TryEnter(_collectionLock2, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
+                {
+                    ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
+                    if (foundProfile is null)
+                    {
+                        if (profile.IsLiked)
+                            Profiles.Add(new ProfileViewModel(profile, true));
+                    }
+                    else if (profile.IsLiked)
+                    {
+                        foundProfile.Profile = profile;
+                    }
+                    else
+                    {
+                        Profiles.Remove(foundProfile);
+                        foundProfile.Dispose();
+                    }
+                }
+                finally
+                {
+                    Monitor.Exit(_collectionLock2);
+                }
+
+                OnPropertyChanged(nameof(TotalPages));
+                RefreshPage();
+            });
+        }
+
         private void ProcessStopped(ProcessEx processEx)
         {
-            if (processEx is null)
-                return;
-
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
+            UIHelper.TryBeginInvoke(() =>
             {
-                ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
-                if (foundProcess is not null)
+                if (processEx is null)
+                    return;
+
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
                 {
-                    Processes.Remove(foundProcess);
-                    foundProcess.Dispose();
+                    ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
+                    if (foundProcess is not null)
+                    {
+                        Processes.Remove(foundProcess);
+                        foundProcess.Dispose();
+                    }
                 }
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
+                }
+            });
         }
 
         private void ProcessStarted(ProcessEx processEx, bool OnStartup)
         {
-            if (processEx is null)
-                return;
-
-            switch (processEx.Filter)
+            UIHelper.TryBeginInvoke(() =>
             {
-                // prevent critical processes from being listed
-                case ProcessEx.ProcessFilter.Restricted:
+                if (processEx is null || processEx.Filter == ProcessEx.ProcessFilter.Restricted)
                     return;
-            }
 
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
 
-            try
-            {
-                ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
-                if (foundProcess is null)
+                try
                 {
-                    Processes.Add(new ProcessExViewModel(processEx, true));
+                    ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
+                    if (foundProcess is null)
+                        Processes.Add(new ProcessExViewModel(processEx, true));
+                    else
+                        foundProcess.Process = processEx;
                 }
-                else
+                finally
                 {
-                    // Some apps might have the process come in twice, update the process on the viewmodel
-                    foundProcess.Process = processEx;
+                    Monitor.Exit(_collectionLock);
                 }
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
+            });
         }
 
         public override void Dispose()

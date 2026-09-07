@@ -655,91 +655,119 @@ namespace HandheldCompanion.ViewModels
 
         private void ControllerPlugged(IController Controller, bool WasPowerCycling)
         {
-            UIHelper.TryBeginInvoke(() => ControllerPluggedOnUI(Controller));
-        }
+            LogManager.LogTrace("ControllerPage plug received: container={0}, instance={1}, type={2}, virtual={3}, network={4}, cycling={5}",
+                Controller.GetContainerInstanceId(), Controller.GetInstanceId(), Controller.GetType().Name, Controller.IsVirtual(), Controller.IsNetwork(), WasPowerCycling);
 
-        private void ControllerPluggedOnUI(IController Controller)
-        {
-            ObservableCollection<ControllerViewModel> controllers;
-            object lockObj;
-            if (Controller.IsVirtual())
+            bool queued = UIHelper.TryBeginInvoke(() =>
             {
-                controllers = VirtualControllers;
-                lockObj = _collectionLock2;
-            }
-            else if (Controller.IsNetwork())
-            {
-                controllers = RemoteControllers;
-                lockObj = _collectionLock3;
-            }
-            else
-            {
-                controllers = PhysicalControllers;
-                lockObj = _collectionLock;
-            }
-
-            lock (lockObj)
-            {
-                ControllerViewModel? foundController = controllers.FirstOrDefault(controller => controller.Controller?.GetInstanceId() == Controller.GetInstanceId());
-                if (foundController is null)
+                ObservableCollection<ControllerViewModel> controllers;
+                object lockObj;
+                string collectionName;
+                if (Controller.IsVirtual())
                 {
-                    controllers.Add(new ControllerViewModel(Controller));
+                    controllers = VirtualControllers;
+                    lockObj = _collectionLock2;
+                    collectionName = nameof(VirtualControllers);
+                }
+                else if (Controller.IsNetwork())
+                {
+                    controllers = RemoteControllers;
+                    lockObj = _collectionLock3;
+                    collectionName = nameof(RemoteControllers);
                 }
                 else
                 {
-                    foundController.Controller = Controller;
+                    controllers = PhysicalControllers;
+                    lockObj = _collectionLock;
+                    collectionName = nameof(PhysicalControllers);
                 }
-            }
 
-            Refresh();
+                string action;
+                lock (lockObj)
+                {
+                    ControllerViewModel? foundController = controllers.FirstOrDefault(controller => controller.Controller?.GetInstanceId() == Controller.GetInstanceId());
+                    if (foundController is null)
+                    {
+                        controllers.Add(new ControllerViewModel(Controller));
+                        action = "added";
+                    }
+                    else
+                    {
+                        foundController.Controller = Controller;
+                        action = "updated";
+                    }
+
+                    LogManager.LogTrace("ControllerPage plug applied: collection={0}, action={1}, instance={2}, count={3}",
+                        collectionName, action, Controller.GetInstanceId(), controllers.Count);
+                }
+
+                Refresh();
+            });
+
+            if (!queued)
+                LogManager.LogWarning("ControllerPage plug UI dispatch failed: instance={0}", Controller.GetInstanceId());
         }
-
 
         private void ControllerUnplugged(IController Controller, bool IsPowerCycling, bool WasTarget)
         {
-            UIHelper.TryBeginInvoke(() => ControllerUnpluggedOnUI(Controller, IsPowerCycling));
-        }
+            LogManager.LogTrace("ControllerPage unplug received: container={0}, instance={1}, type={2}, virtual={3}, network={4}, cycling={5}, target={6}",
+                Controller.GetContainerInstanceId(), Controller.GetInstanceId(), Controller.GetType().Name, Controller.IsVirtual(), Controller.IsNetwork(), IsPowerCycling, WasTarget);
 
-        private void ControllerUnpluggedOnUI(IController Controller, bool IsPowerCycling)
-        {
-            ObservableCollection<ControllerViewModel> controllers;
-            object lockObj;
-            if (Controller.IsVirtual())
+            bool queued = UIHelper.TryBeginInvoke(() =>
             {
-                controllers = VirtualControllers;
-                lockObj = _collectionLock2;
-            }
-            else if (Controller.IsNetwork())
-            {
-                controllers = RemoteControllers;
-                lockObj = _collectionLock3;
-            }
-            else
-            {
-                controllers = PhysicalControllers;
-                lockObj = _collectionLock;
-            }
+                ObservableCollection<ControllerViewModel> controllers;
+                object lockObj;
+                string collectionName;
+                if (Controller.IsVirtual())
+                {
+                    controllers = VirtualControllers;
+                    lockObj = _collectionLock2;
+                    collectionName = nameof(VirtualControllers);
+                }
+                else if (Controller.IsNetwork())
+                {
+                    controllers = RemoteControllers;
+                    lockObj = _collectionLock3;
+                    collectionName = nameof(RemoteControllers);
+                }
+                else
+                {
+                    controllers = PhysicalControllers;
+                    lockObj = _collectionLock;
+                    collectionName = nameof(PhysicalControllers);
+                }
 
-            lock (lockObj)
-            {
-                ControllerViewModel? foundController = controllers.FirstOrDefault(controller => controller.Controller?.GetInstanceId() == Controller.GetInstanceId());
-                if (foundController is not null && !IsPowerCycling)
+                string action;
+                lock (lockObj)
                 {
-                    controllers.Remove(foundController);
-                    foundController.Dispose();
-                }
-                else if (foundController is not null)
-                {
-                    foundController.Updated();
-                }
-                else if (foundController is null)
-                {
-                    LogManager.LogError("Couldn't find ControllerViewModel associated with {0}", Controller.ToString());
-                }
-            }
+                    ControllerViewModel? foundController = controllers.FirstOrDefault(controller => controller.Controller?.GetInstanceId() == Controller.GetInstanceId());
+                    if (foundController is not null && !IsPowerCycling)
+                    {
+                        controllers.Remove(foundController);
+                        foundController.Dispose();
+                        action = "removed";
+                    }
+                    else if (foundController is not null)
+                    {
+                        foundController.Updated();
+                        action = "retained-power-cycling";
+                    }
+                    else
+                    {
+                        LogManager.LogError("Couldn't find ControllerViewModel associated with {0}", Controller.ToString());
+                        action = "not-found";
+                    }
 
-            // do something
-            Refresh();
+                    LogManager.LogTrace("ControllerPage unplug applied: collection={0}, action={1}, instance={2}, count={3}",
+                        collectionName, action, Controller.GetInstanceId(), controllers.Count);
+                }
+
+                // do something
+                Refresh();
+            });
+
+            if (!queued)
+                LogManager.LogWarning("ControllerPage unplug UI dispatch failed: instance={0}", Controller.GetInstanceId());
         }
 
         private void ControllerManager_ControllerSelected(IController? Controller)
@@ -867,27 +895,23 @@ namespace HandheldCompanion.ViewModels
 
         private void ControllerManager_StatusChanged(ControllerManagerStatus status, int attempts)
         {
-            UIHelper.TryBeginInvoke(() => ControllerManager_StatusChangedOnUI(status));
-        }
-
-        private void ControllerManager_StatusChangedOnUI(ControllerManagerStatus status)
-        {
-            bool enabled = status != ControllerManagerStatus.Busy;
-            ControllerSettingsEnabled = enabled;
-            Refresh();
+            UIHelper.TryBeginInvoke(() =>
+            {
+                bool enabled = status != ControllerManagerStatus.Busy;
+                ControllerSettingsEnabled = enabled;
+                Refresh();
+            });
         }
 
         private void ControllerManager_SlotIssueChanged(bool hasIssue, string reason)
         {
-            UIHelper.TryBeginInvoke(() => ControllerManager_SlotIssueChangedOnUI(hasIssue));
-        }
-
-        private void ControllerManager_SlotIssueChangedOnUI(bool hasIssue)
-        {
-            _hasSlotIssue = hasIssue;
-            _virtualNotInSlot1 = ControllerManager.HasVirtualSlot1Issue;
-            UpdateSlotFixVisibility();
-            Refresh();
+            UIHelper.TryBeginInvoke(() =>
+            {
+                _hasSlotIssue = hasIssue;
+                _virtualNotInSlot1 = ControllerManager.HasVirtualSlot1Issue;
+                UpdateSlotFixVisibility();
+                Refresh();
+            });
         }
 
         private void UpdateSlotFixVisibility()

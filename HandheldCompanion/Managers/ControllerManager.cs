@@ -529,9 +529,6 @@ public static class ControllerManager
                             if (controller is XInputController or LegionControllerXInput) return;
                             if (controller is DInputController) return;
 
-                            IsPowerCycling = true;
-                            PowerCyclers[details.baseContainerDeviceInstanceId] = IsPowerCycling;
-
                             if (controller is SDLController SDLController)
                             {
                                 SDLController.gamepad = gamepad;
@@ -715,8 +712,13 @@ public static class ControllerManager
     private static void HidDeviceArrived(PnPDetails details, Guid InterfaceGuid)
     {
         var key = details.baseContainerDeviceInstanceId;
+        LogManager.LogTrace("ControllerManager HID arrival received: key={0}, device={1}, gaming={2}",
+            key, details.deviceInstanceId, details.isGaming);
 
-        var addTask = Task.Run(async () =>
+        var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        hidArrivalInProgress[key] = completion.Task;
+
+        _ = Task.Run(async () =>
         {
             // If a removal is running for this device, wait it out (with timeout to avoid deadlock)
             if (hidRemovalInProgress.TryGetValue(key, out var pendingRemove))
@@ -724,7 +726,11 @@ public static class ControllerManager
 
             try
             {
-                if (!details.isGaming) return;
+                if (!details.isGaming)
+                {
+                    LogManager.LogTrace("ControllerManager HID arrival ignored: key={0}, reason=not-gaming", key);
+                    return;
+                }
 
                 try
                 {
@@ -733,8 +739,16 @@ public static class ControllerManager
 
                     if (controller is not null)
                     {
-                        if (controller is XInputController or LegionControllerXInput) return;
-                        if (controller is SDLController) return;
+                        if (controller is XInputController or LegionControllerXInput)
+                        {
+                            LogManager.LogTrace("ControllerManager HID arrival ignored: key={0}, reason=xinput-owned, type={1}", key, controller.GetType().Name);
+                            return;
+                        }
+                        if (controller is SDLController)
+                        {
+                            LogManager.LogTrace("ControllerManager HID arrival ignored: key={0}, reason=sdl-owned, type={1}", key, controller.GetType().Name);
+                            return;
+                        }
 
                         controller.AttachDetails(details);
 
@@ -746,8 +760,6 @@ public static class ControllerManager
                                 controller.Unhide(false);
                         }
 
-                        IsPowerCycling = true;
-                        PowerCyclers[details.baseContainerDeviceInstanceId] = IsPowerCycling;
                     }
                     else
                     {
@@ -850,7 +862,11 @@ public static class ControllerManager
 
                     Controllers[baseContainerDeviceInstanceId] = controller;
 
+                    LogManager.LogTrace("ControllerManager HID registry upsert: key={0}, instance={1}, type={2}, cycling={3}, count={4}",
+                        baseContainerDeviceInstanceId, controller.GetInstanceId(), controller.GetType().Name, wasPowerCycling, Controllers.Count);
                     LogManager.LogInformation("Generic controller {0} plugged", controller.ToString());
+                    LogManager.LogTrace("ControllerManager HID plugged emitting: key={0}, instance={1}, cycling={2}",
+                        baseContainerDeviceInstanceId, controller.GetInstanceId(), wasPowerCycling);
                     ControllerPlugged?.Invoke(controller, wasPowerCycling);
 
                     bool isPhysical = controller.IsPhysical();
@@ -862,23 +878,33 @@ public static class ControllerManager
                         PickTargetController();
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    LogManager.LogError("ControllerManager HID arrival failed: key={0}, error={1}", key, ex);
+                }
                 finally { }
             }
             finally
             {
-                hidArrivalInProgress.TryRemove(key, out _);
+                ((ICollection<KeyValuePair<string, Task>>)hidArrivalInProgress).Remove(new(key, completion.Task));
+                completion.TrySetResult();
             }
         });
-
-        hidArrivalInProgress[key] = addTask;
     }
 
     private static void HidDeviceRemoved(PnPDetails details, Guid InterfaceGuid)
     {
         var key = details.baseContainerDeviceInstanceId;
+        LogManager.LogTrace("ControllerManager HID removal received: key={0}, device={1}", key, details.deviceInstanceId);
 
-        var removeTask = Task.Run(async () =>
+        var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        if (!hidRemovalInProgress.TryAdd(key, completion.Task))
+        {
+            LogManager.LogTrace("ControllerManager HID removal suppressed: key={0}, reason=removal-in-progress", key);
+            return;
+        }
+
+        _ = Task.Run(async () =>
         {
             // If add is still running for this HID device, wait before removing (with timeout to avoid deadlock)
             if (hidArrivalInProgress.TryGetValue(key, out var pendingAdd))
@@ -899,19 +925,35 @@ public static class ControllerManager
                         await Task.Delay(100).ConfigureAwait(false);
                     }
 
-                    if (controller == null) return;
-                    if (controller is XInputController or LegionControllerXInput) return;
-                    if (controller is SDLController) return;
+                    if (controller == null)
+                    {
+                        LogManager.LogWarning("ControllerManager HID removal unresolved: key={0}, registryCount={1}", key, Controllers.Count);
+                        return;
+                    }
+                    if (controller is XInputController or LegionControllerXInput)
+                    {
+                        LogManager.LogTrace("ControllerManager HID removal ignored: key={0}, reason=xinput-owned, type={1}", key, controller.GetType().Name);
+                        return;
+                    }
+                    if (controller is SDLController)
+                    {
+                        LogManager.LogTrace("ControllerManager HID removal ignored: key={0}, reason=sdl-owned, type={1}", key, controller.GetType().Name);
+                        return;
+                    }
 
                     PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
                     bool WasTarget = IsTargetController(controller.GetInstanceId());
 
                     LogManager.LogInformation("Generic controller {0} unplugged, cycling {1}", controller.ToString(), IsPowerCycling);
+                    LogManager.LogTrace("ControllerManager HID unplugged emitting: key={0}, instance={1}, cycling={2}, target={3}",
+                        key, controller.GetInstanceId(), IsPowerCycling, WasTarget);
                     ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
 
                     if (!IsPowerCycling)
                     {
-                        Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
+                        bool removed = Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
+                        LogManager.LogTrace("ControllerManager HID registry removal: key={0}, removed={1}, remaining={2}",
+                            key, removed, Controllers.Count);
 
                         bool isPhysical = controller.IsPhysical();
 
@@ -925,17 +967,23 @@ public static class ControllerManager
                         else
                             controller.Dispose();
                     }
+                    else
+                    {
+                        LogManager.LogTrace("ControllerManager HID registry retained: key={0}, reason=power-cycling", key);
+                    }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    LogManager.LogError("ControllerManager HID removal failed: key={0}, error={1}", key, ex);
+                }
                 finally { }
             }
             finally
             {
-                hidRemovalInProgress.TryRemove(key, out _);
+                ((ICollection<KeyValuePair<string, Task>>)hidRemovalInProgress).Remove(new(key, completion.Task));
+                completion.TrySetResult();
             }
         });
-
-        hidRemovalInProgress[key] = removeTask;
     }
     #endregion
 
@@ -943,8 +991,13 @@ public static class ControllerManager
     private static void XUsbDeviceArrived(PnPDetails details, Guid InterfaceGuid)
     {
         var key = details.baseContainerDeviceInstanceId;
+        LogManager.LogTrace("ControllerManager XUSB arrival received: key={0}, device={1}, virtual={2}, slot={3}",
+            key, details.deviceInstanceId, details.isVirtual, details.XInputUserIndex);
 
-        var addTask = Task.Run(async () =>
+        var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        xusbArrivalInProgress[key] = completion.Task;
+
+        _ = Task.Run(async () =>
         {
             // If a removal is running for this controller, wait first (with timeout to avoid deadlock)
             if (xusbRemovalInProgress.TryGetValue(key, out var pendingRemove))
@@ -959,9 +1012,21 @@ public static class ControllerManager
 
                     if (controller != null)
                     {
-                        if (controller is DInputController) return;
-                        if (controller is SDLController) return;
-                        if (controller is not IXInputController) return;
+                        if (controller is DInputController)
+                        {
+                            LogManager.LogTrace("ControllerManager XUSB arrival ignored: key={0}, reason=dinput-owned, type={1}", key, controller.GetType().Name);
+                            return;
+                        }
+                        if (controller is SDLController)
+                        {
+                            LogManager.LogTrace("ControllerManager XUSB arrival ignored: key={0}, reason=sdl-owned, type={1}", key, controller.GetType().Name);
+                            return;
+                        }
+                        if (controller is not IXInputController)
+                        {
+                            LogManager.LogTrace("ControllerManager XUSB arrival ignored: key={0}, reason=not-xinput, type={1}", key, controller.GetType().Name);
+                            return;
+                        }
 
                         controller.AttachDetails(details);
 
@@ -973,8 +1038,6 @@ public static class ControllerManager
                                 controller.Unhide(false);
                         }
 
-                        IsPowerCycling = true;
-                        PowerCyclers[details.baseContainerDeviceInstanceId] = IsPowerCycling;
                     }
                     else
                     {
@@ -1075,7 +1138,11 @@ public static class ControllerManager
 
                     Controllers[baseContainerDeviceInstanceId] = controller;
 
+                    LogManager.LogTrace("ControllerManager XUSB registry upsert: key={0}, instance={1}, type={2}, cycling={3}, count={4}",
+                        baseContainerDeviceInstanceId, controller.GetInstanceId(), controller.GetType().Name, wasPowerCycling, Controllers.Count);
                     LogManager.LogInformation("XInput controller {0} plugged", controller.ToString());
+                    LogManager.LogTrace("ControllerManager XUSB plugged emitting: key={0}, instance={1}, cycling={2}",
+                        baseContainerDeviceInstanceId, controller.GetInstanceId(), wasPowerCycling);
                     ControllerPlugged?.Invoke(controller, wasPowerCycling);
 
                     bool isPhysical = controller.IsPhysical();
@@ -1087,23 +1154,34 @@ public static class ControllerManager
                         PickTargetController();
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    LogManager.LogError("ControllerManager XUSB arrival failed: key={0}, error={1}", key, ex);
+                }
                 finally { }
             }
             finally
             {
-                xusbArrivalInProgress.TryRemove(key, out _);
+                ((ICollection<KeyValuePair<string, Task>>)xusbArrivalInProgress).Remove(new(key, completion.Task));
+                completion.TrySetResult();
             }
         });
-
-        xusbArrivalInProgress[key] = addTask;
     }
 
     private static void XUsbDeviceRemoved(PnPDetails details, Guid InterfaceGuid)
     {
         var key = details.baseContainerDeviceInstanceId;
+        LogManager.LogTrace("ControllerManager XUSB removal received: key={0}, device={1}, virtual={2}, slot={3}",
+            key, details.deviceInstanceId, details.isVirtual, details.XInputUserIndex);
 
-        var removeTask = Task.Run(async () =>
+        var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        if (!xusbRemovalInProgress.TryAdd(key, completion.Task))
+        {
+            LogManager.LogTrace("ControllerManager XUSB removal suppressed: key={0}, reason=removal-in-progress", key);
+            return;
+        }
+
+        _ = Task.Run(async () =>
         {
             // If add is still running for this controller, wait before removing (with timeout to avoid deadlock)
             if (xusbArrivalInProgress.TryGetValue(key, out var pendingAdd))
@@ -1124,21 +1202,37 @@ public static class ControllerManager
                         await Task.Delay(100).ConfigureAwait(false);
                     }
 
-                    if (controller == null) return;
-                    if (controller is DInputController) return;
-                    if (controller is SDLController) return;
+                    if (controller == null)
+                    {
+                        LogManager.LogWarning("ControllerManager XUSB removal unresolved: key={0}, registryCount={1}", key, Controllers.Count);
+                        return;
+                    }
+                    if (controller is DInputController)
+                    {
+                        LogManager.LogTrace("ControllerManager XUSB removal ignored: key={0}, reason=dinput-owned, type={1}", key, controller.GetType().Name);
+                        return;
+                    }
+                    if (controller is SDLController)
+                    {
+                        LogManager.LogTrace("ControllerManager XUSB removal ignored: key={0}, reason=sdl-owned, type={1}", key, controller.GetType().Name);
+                        return;
+                    }
 
                     PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
                     bool WasTarget = IsTargetController(controller.GetInstanceId());
 
                     LogManager.LogInformation("XInput controller {0} unplugged, cycling {1}", controller.ToString(), IsPowerCycling);
+                    LogManager.LogTrace("ControllerManager XUSB unplugged emitting: key={0}, instance={1}, cycling={2}, target={3}",
+                        key, controller.GetInstanceId(), IsPowerCycling, WasTarget);
                     ControllerUnplugged?.Invoke(controller, IsPowerCycling, WasTarget);
 
                     if (!IsPowerCycling)
                     {
                         // Remove from the dictionary first so PickTargetController and any
                         // callbacks triggered by Gone()/Dispose() never see this controller.
-                        Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
+                        bool removed = Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
+                        LogManager.LogTrace("ControllerManager XUSB registry removal: key={0}, removed={1}, remaining={2}",
+                            key, removed, Controllers.Count);
 
                         bool isPhysical = controller.IsPhysical();
 
@@ -1154,17 +1248,23 @@ public static class ControllerManager
                         else
                             controller.Dispose();
                     }
+                    else
+                    {
+                        LogManager.LogTrace("ControllerManager XUSB registry retained: key={0}, reason=power-cycling", key);
+                    }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    LogManager.LogError("ControllerManager XUSB removal failed: key={0}, error={1}", key, ex);
+                }
                 finally { }
             }
             finally
             {
-                xusbRemovalInProgress.TryRemove(key, out _);
+                ((ICollection<KeyValuePair<string, Task>>)xusbRemovalInProgress).Remove(new(key, completion.Task));
+                completion.TrySetResult();
             }
         });
-
-        xusbRemovalInProgress[key] = removeTask;
     }
     #endregion
 

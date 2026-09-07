@@ -1,4 +1,5 @@
 using HandheldCompanion.Managers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels.Misc;
@@ -170,12 +171,14 @@ namespace HandheldCompanion.ViewModels
 
         private void UpdateManager_Updated(UpdateStatus status, UpdateFile? updateFile, object? value)
         {
-            GithubUpdateViewModel? vm = null;
-            if (updateFile is not null && !TryFindVm(updateFile, out vm))
-                return;
-
-            switch (status)
+            UIHelper.TryBeginInvoke(() =>
             {
+                GithubUpdateViewModel? vm = null;
+                if (updateFile is not null && !TryFindVm(updateFile, out vm))
+                    return;
+
+                switch (status)
+                {
                 case UpdateStatus.Initialized:
                 case UpdateStatus.Updated:
                     UpdateStatusText = Properties.Resources.SettingsPage_UpToDate;
@@ -284,7 +287,8 @@ namespace HandheldCompanion.ViewModels
                     vm?.OnDownloadCompleted();
                     CheckUpdateEnabled = true;
                     break;
-            }
+                }
+            });
         }
 
         private bool TryFindVm(UpdateFile updateFile, out GithubUpdateViewModel? viewModel)
@@ -323,17 +327,20 @@ namespace HandheldCompanion.ViewModels
 
         private void OnInstalled(GithubUpdateViewModel vm)
         {
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
+            UIHelper.TryBeginInvoke(() =>
+            {
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
 
-            try
-            {
-                UpdateFiles.Remove(vm);
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
+                try
+                {
+                    UpdateFiles.Remove(vm);
+                }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
+                }
+            });
         }
 
         #endregion

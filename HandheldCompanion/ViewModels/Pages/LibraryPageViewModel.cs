@@ -12,6 +12,7 @@ using HandheldCompanion.Controls;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Platforms.Discovery;
@@ -1183,84 +1184,89 @@ namespace HandheldCompanion.ViewModels
 
         private void ProfileManager_Deleted(Profile profile)
         {
-            // ignore me
-            if (profile.Default)
-                return;
-
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
+            UIHelper.TryBeginInvoke(() =>
             {
-                ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
-                if (foundProfile is not null)
+                // ignore me
+                if (profile.Default)
+                    return;
+
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
                 {
-                    Profiles.Remove(foundProfile);
-                    foundProfile.Dispose();
-                    OnPropertyChanged(nameof(GameCount));
+                    ProfileViewModel? foundProfile = Profiles.FirstOrDefault(p => p.Profile == profile || p.Profile.Guid == profile.Guid);
+                    if (foundProfile is not null)
+                    {
+                        Profiles.Remove(foundProfile);
+                        foundProfile.Dispose();
+                        OnPropertyChanged(nameof(GameCount));
+                    }
                 }
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
+                }
 
-            RebuildNavigationItems();
-            ScheduleRebuildCollectionGroups();
+                RebuildNavigationItems();
+                ScheduleRebuildCollectionGroups();
+            });
         }
 
         private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
         {
-            // ignore me
-            if (profile.Default)
-                return;
-
-            bool shouldShow = profile.ShowInLibrary;
-
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
+            UIHelper.TryBeginInvoke(() =>
             {
-                // find based on guid
-                ProfileViewModel? existingVm = Profiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid);
+                // ignore me
+                if (profile.Default)
+                    return;
 
-                if (shouldShow)
+                bool shouldShow = profile.ShowInLibrary;
+
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
                 {
-                    if (existingVm is null)
-                    {
-                        // Not yet in list, add
-                        Profiles.Add(new ProfileViewModel(profile, false, true));
-                        OnPropertyChanged(nameof(GameCount));
-                    }
+                    // find based on guid
+                    ProfileViewModel? existingVm = Profiles.FirstOrDefault(p => p.Profile.Guid == profile.Guid);
 
+                    if (shouldShow)
+                    {
+                        if (existingVm is null)
+                        {
+                            // Not yet in list, add
+                            Profiles.Add(new ProfileViewModel(profile, false, true));
+                            OnPropertyChanged(nameof(GameCount));
+                        }
+                        else
+                        {
+                            // Already in list, only update
+                            existingVm.Profile = profile;
+                        }
+                    }
                     else
                     {
-                        // Already in list, only update
-                        existingVm.Profile = profile;
+                        if (existingVm is not null)
+                        {
+                            // Remove from list and dispose
+                            Profiles.Remove(existingVm);
+                            existingVm.Dispose();
+                            OnPropertyChanged(nameof(GameCount));
+                        }
                     }
                 }
-                else
+                finally
                 {
-                    if (existingVm is not null)
-                    {
-                        // Remove from list and dispose
-                        Profiles.Remove(existingVm);
-                        existingVm.Dispose();
-                        OnPropertyChanged(nameof(GameCount));
-                    }
+                    Monitor.Exit(_collectionLock);
                 }
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
 
-            if (!IsInitializing)
-            {
-                RebuildNavigationItems();
-                ScheduleRebuildCollectionGroups();
-            }
+                if (!IsInitializing)
+                {
+                    RebuildNavigationItems();
+                    ScheduleRebuildCollectionGroups();
+                }
+            });
         }
 
         public void MarkLibraryChecked()

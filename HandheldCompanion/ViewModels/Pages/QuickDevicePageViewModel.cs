@@ -2,6 +2,7 @@ using HandheldCompanion.Devices;
 using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels.Misc;
@@ -485,54 +486,60 @@ namespace HandheldCompanion.ViewModels
 
         private void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
         {
-            isLoadingDisplay = true;
-            try
+            UIHelper.TryBeginInvoke(() =>
             {
-                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                    return;
-
+                isLoadingDisplay = true;
                 try
                 {
-                    Resolutions.Clear();
-                    foreach (ScreenResolution resolution in screen.screenResolutions)
-                        Resolutions.Add(resolution);
+                    if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                        return;
+
+                    try
+                    {
+                        Resolutions.Clear();
+                        foreach (ScreenResolution resolution in screen.screenResolutions)
+                            Resolutions.Add(resolution);
+                    }
+                    finally
+                    {
+                        Monitor.Exit(_collectionLock);
+                    }
                 }
                 finally
                 {
-                    Monitor.Exit(_collectionLock);
+                    isLoadingDisplay = false;
                 }
-            }
-            finally
-            {
-                isLoadingDisplay = false;
-            }
+            });
         }
 
         private void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution? resolution)
         {
-            isLoadingDisplay = true;
-            try
+            UIHelper.TryBeginInvoke(() =>
             {
-                // Don't change display settings if profile has integer scaling enabled
-                Profile? currentProfile = ManagerFactory.profileManager.GetCurrent();
-                if (currentProfile is not null && currentProfile.IntegerScalingEnabled)
+                isLoadingDisplay = true;
+                try
                 {
-                    ProfileManager_Applied(currentProfile, UpdateSource.Background);
-                    return;
+                    // Don't change display settings if profile has integer scaling enabled
+                    Profile? currentProfile = ManagerFactory.profileManager.GetCurrent();
+                    if (currentProfile is not null && currentProfile.IntegerScalingEnabled)
+                    {
+                        ProfileManager_Applied(currentProfile, UpdateSource.Background);
+                        return;
+                    }
+
+                    int screenFrequency = desktopScreen.GetCurrentFrequency();
+
+                    if (resolution is not null)
+                    {
+                        SelectedResolution = resolution;
+                        UpdateFrequenciesForResolution(resolution, screenFrequency);
+                    }
                 }
-
-                int screenFrequency = desktopScreen.GetCurrentFrequency();
-
-                if (resolution is not null)
+                finally
                 {
-                    SelectedResolution = resolution;
-                    UpdateFrequenciesForResolution(resolution, screenFrequency);
+                    isLoadingDisplay = false;
                 }
-            }
-            finally
-            {
-                isLoadingDisplay = false;
-            }
+            });
         }
 
         private void UpdateFrequenciesForResolution(ScreenResolution resolution, int? currentFrequency = null)

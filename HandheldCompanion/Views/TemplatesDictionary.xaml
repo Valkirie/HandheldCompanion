@@ -359,9 +359,10 @@
 
                         <Border
                             Height="28"
+                            Margin="6"
                             Padding="10,0"
                             HorizontalAlignment="Right"
-                            VerticalAlignment="Bottom"
+                            VerticalAlignment="Top"
                             Background="{Binding PlatformColor}"
                             CornerRadius="{DynamicResource ControlCornerRadius}"
                             Visibility="{Binding HasPlatform, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -512,9 +513,10 @@
 
                         <Border
                             Height="28"
+                            Margin="6"
                             Padding="10,0"
                             HorizontalAlignment="Right"
-                            VerticalAlignment="Bottom"
+                            VerticalAlignment="Top"
                             Background="{Binding PlatformColor}"
                             CornerRadius="{DynamicResource ControlCornerRadius}"
                             Visibility="{Binding HasPlatform, Converter={StaticResource BooleanToVisibilityConverter}}">
