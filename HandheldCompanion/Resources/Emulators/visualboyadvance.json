@@ -10,14 +10,8 @@
   "ProductNames": [
     "VisualBoyAdvance-M"
   ],
-  "Companies": [],
   "Configurations": [],
   "PortableLocations": [],
-  "Systems": [
-    "Game Boy",
-    "Game Boy Color",
-    "Game Boy Advance"
-  ],
   "RomExtensions": [
     ".gb",
     ".gbc",

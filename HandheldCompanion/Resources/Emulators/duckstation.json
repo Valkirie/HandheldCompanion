@@ -12,7 +12,6 @@
   "ProductNames": [
     "DuckStation"
   ],
-  "Companies": [],
   "Configurations": [
     {
       "Root": "LocalAppData",
@@ -39,9 +38,6 @@
         "settings.ini"
       ]
     }
-  ],
-  "Systems": [
-    "PlayStation"
   ],
   "RomExtensions": [
     ".iso",

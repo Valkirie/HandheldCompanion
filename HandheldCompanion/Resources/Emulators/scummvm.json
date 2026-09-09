@@ -10,7 +10,6 @@
   "ProductNames": [
     "ScummVM"
   ],
-  "Companies": [],
   "Configurations": [
     {
       "Root": "AppData",
@@ -22,9 +21,6 @@
     }
   ],
   "PortableLocations": [],
-  "Systems": [
-    "PC Adventure"
-  ],
   "RomExtensions": [
     ".scummvm"
   ],

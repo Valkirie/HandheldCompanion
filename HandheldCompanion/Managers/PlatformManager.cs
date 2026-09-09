@@ -211,9 +211,6 @@ public class PlatformManager : IManager
             string.Equals(definition.Id, target, StringComparison.OrdinalIgnoreCase)))
             return EmulatorDiscoveryService.DiscoverByDefinition(target);
 
-        if (target?.StartsWith("Console:", StringComparison.OrdinalIgnoreCase) == true)
-            return EmulatorDiscoveryService.DiscoverBySystem(target["Console:".Length..]);
-
         if (target is not null && ScanPlatformAliases.TryGetValue(target, out GamePlatform aliasPlatform))
             return GetGames(aliasPlatform);
 

@@ -149,6 +149,7 @@ namespace HandheldCompanion.ViewModels
         public ICommand ToggleViewModeCommand { get; }
         public ICommand RefreshMetadataCommand { get; }
         public ICommand ScanLibraryCommand { get; }
+        public ICommand OpenEmulatorSettingsCommand { get; }
 
         private Color _highlightColor = Colors.Red;
         public Color HighlightColor
@@ -220,6 +221,9 @@ namespace HandheldCompanion.ViewModels
             {
                 SortAscending = !SortAscending;
             });
+
+            OpenEmulatorSettingsCommand = new DelegateCommand(() =>
+                MainWindow.NavView_Navigate(new HandheldCompanion.Views.Pages.EmulatorSettingsPage()));
 
             ToggleViewModeCommand = new DelegateCommand(() =>
             {

@@ -10,13 +10,8 @@
   "ProductNames": [
     "SameBoy"
   ],
-  "Companies": [],
   "Configurations": [],
   "PortableLocations": [],
-  "Systems": [
-    "Game Boy",
-    "Game Boy Color"
-  ],
   "RomExtensions": [
     ".gb",
     ".gbc"

@@ -301,14 +301,12 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
-                            <DockPanel>
-                                <ui:FontIcon
-                                    Name="ProfileIcon"
-                                    HorizontalAlignment="Left"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                    Glyph="&#xE7EE;" />
-                            </DockPanel>
+                            <ui:FontIcon
+                                Name="ProfileIcon"
+                                HorizontalAlignment="Left"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                Glyph="&#xE7EE;" />
 
                             <Grid Grid.Column="1" Margin="12,0,0,0">
                                 <Grid.ColumnDefinitions>

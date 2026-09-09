@@ -10,7 +10,6 @@
   "ProductNames": [
     "RPCS3"
   ],
-  "Companies": [],
   "Configurations": [
     {
       "Root": "ExecutableDirectory",
@@ -31,9 +30,6 @@
     }
   ],
   "PortableLocations": [],
-  "Systems": [
-    "PlayStation 3"
-  ],
   "RomExtensions": [
     ".self",
     ".iso"
@@ -42,7 +38,6 @@
   "LaunchArgumentMode": "RomPath",
   "ArgumentTemplate": "{rom}",
   "RomMetadata": {
-    "Provider": "ParamSfo",
     "RelativePath": "PS3_GAME\\PARAM.SFO",
     "ElementName": "",
     "RelativePaths": [],

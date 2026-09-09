@@ -11,7 +11,6 @@
   "ProductNames": [
     "PCSX2"
   ],
-  "Companies": [],
   "Configurations": [
     {
       "Root": "AppData",
@@ -31,9 +30,6 @@
     }
   ],
   "PortableLocations": [],
-  "Systems": [
-    "PlayStation 2"
-  ],
   "RomExtensions": [
     ".iso",
     ".cso",

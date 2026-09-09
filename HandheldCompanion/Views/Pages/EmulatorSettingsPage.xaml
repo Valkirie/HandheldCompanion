@@ -1,0 +1,367 @@
+<Page
+    x:Class="HandheldCompanion.Views.Pages.EmulatorSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="clr-namespace:HandheldCompanion.Behaviors"
+    xmlns:colorpicker="clr-namespace:ColorPicker;assembly=ColorPicker"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
+    Name="EmulatorSettingsPage"
+    Title="Emulator settings"
+    Margin="0,20,0,0"
+    d:Background="White"
+    d:DataContext="{d:DesignInstance Type=viewmodels:EmulatorSettingsPageViewModel}"
+    d:DesignHeight="4000"
+    d:DesignWidth="1000"
+    KeepAlive="True"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <viewmodels:BindingProxy x:Key="PageProxy" Data="{Binding}" />
+        <DataTemplate x:Key="ConfigTemplate" DataType="{x:Type viewmodels:ConfigLocationViewModel}">
+            <ui:SettingsCard>
+                <ui:SettingsCard.Content>
+                    <Grid Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
+                        <ikw:SimpleStackPanel Margin="0,0,105,0" Spacing="3">
+                            <Button
+                                HorizontalAlignment="Right"
+                                Command="{Binding Data.RemoveConfigurationCommand, Source={StaticResource PageProxy}}"
+                                CommandParameter="{Binding}"
+                                Content="Remove" />
+
+                            <ui:SettingsCard Header="Root">
+                                <ComboBox ItemsSource="{Binding Data.ConfigRoots, Source={StaticResource PageProxy}}" SelectedItem="{Binding Root}" />
+                            </ui:SettingsCard>
+
+                            <ui:SettingsCard Header="Relative path">
+                                <TextBox Text="{Binding RelativePath, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+
+                            <ui:SettingsCard Header="Files (one per line)">
+                                <TextBox
+                                    MinHeight="64"
+                                    AcceptsReturn="True"
+                                    Text="{Binding Files.Text, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+
+                            <ui:SettingsCard Header="Content keys (one per line)">
+                                <TextBox
+                                    MinHeight="64"
+                                    AcceptsReturn="True"
+                                    Text="{Binding ContentKeys.Text, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+                        </ikw:SimpleStackPanel>
+                    </Grid>
+                </ui:SettingsCard.Content>
+            </ui:SettingsCard>
+        </DataTemplate>
+        <DataTemplate x:Key="PortableTemplate" DataType="{x:Type viewmodels:PortableLocationViewModel}">
+            <ui:SettingsCard>
+                <ui:SettingsCard.Content>
+                    <Grid Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
+                        <ikw:SimpleStackPanel Margin="0,0,105,0" Spacing="3">
+                            <Button
+                                HorizontalAlignment="Right"
+                                Command="{Binding Data.RemovePortableLocationCommand, Source={StaticResource PageProxy}}"
+                                CommandParameter="{Binding}"
+                                Content="Remove" />
+
+                            <ui:SettingsCard Description="A file or folder next to the emulator executable that identifies a portable installation" Header="Marker">
+                                <TextBox Text="{Binding Marker, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+
+                            <ui:SettingsCard Description="The configuration folder path relative to the emulator executable when the marker is found" Header="Config path">
+                                <TextBox Text="{Binding ConfigPath, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+
+                            <ui:SettingsCard Header="Files (one per line)">
+                                <TextBox
+                                    MinHeight="64"
+                                    AcceptsReturn="True"
+                                    Text="{Binding Files.Text, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+                        </ikw:SimpleStackPanel>
+                    </Grid>
+                </ui:SettingsCard.Content>
+            </ui:SettingsCard>
+        </DataTemplate>
+        <DataTemplate x:Key="RomMetadataTemplate" DataType="{x:Type viewmodels:RomMetadataViewModel}">
+            <ui:SettingsCard>
+                <ui:SettingsCard.Content>
+                    <Grid Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
+                        <ikw:SimpleStackPanel Margin="0,0,105,0" Spacing="3">
+                            <Button
+                                HorizontalAlignment="Right"
+                                Command="{Binding Data.RemoveRomMetadataCommand, Source={StaticResource PageProxy}}"
+                                CommandParameter="{Binding}"
+                                Content="Remove" />
+
+                            <ui:SettingsCard Header="Relative path">
+                                <TextBox Text="{Binding RelativePath, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+
+                            <ui:SettingsCard Header="Element name">
+                                <TextBox Text="{Binding ElementName, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+
+                            <ui:SettingsCard Header="Relative paths (one per line)">
+                                <TextBox
+                                    MinHeight="64"
+                                    AcceptsReturn="True"
+                                    Text="{Binding RelativePaths.Text, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+
+                            <ui:SettingsCard ContentAlignment="Left">
+                                <CheckBox Content="Search parent directories" IsChecked="{Binding SearchParentDirectories}" />
+                            </ui:SettingsCard>
+                        </ikw:SimpleStackPanel>
+                    </Grid>
+                </ui:SettingsCard.Content>
+            </ui:SettingsCard>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid Name="MainGrid">
+        <StackPanel>
+            <TextBlock
+                Margin="0,0,0,8"
+                behaviors:TextBlockUpperCase.IsUpperCase="True"
+                Style="{StaticResource CapitalAccentTextBlockStyle}"
+                Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Page}}" />
+
+            <ikw:SimpleStackPanel Name="StackPanel_Profiles" Spacing="28">
+
+                <!--  Profile picker  -->
+                <ikw:SimpleStackPanel Spacing="3">
+                    <Border
+                        Padding="15,12,12,12"
+                        Background="{DynamicResource ExpanderHeaderBackground}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <ui:FontIcon
+                                Name="ProfileIcon"
+                                HorizontalAlignment="Left"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                Glyph="&#xE7EE;" />
+
+                            <Grid Grid.Column="1" Margin="12,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="8*" MinWidth="140" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <ComboBox
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Stretch"
+                                    DisplayMemberPath="Name"
+                                    ItemsSource="{Binding Files, Mode=OneWay}"
+                                    ScrollViewer.CanContentScroll="True"
+                                    SelectedItem="{Binding SelectedFile, Mode=TwoWay}"
+                                    VirtualizingPanel.IsVirtualizing="True"
+                                    VirtualizingPanel.VirtualizationMode="Recycling">
+                                    <ComboBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel />
+                                        </ItemsPanelTemplate>
+                                    </ComboBox.ItemsPanel>
+                                </ComboBox>
+
+                                <Button
+                                    Grid.Column="1"
+                                    Margin="6,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Command="{Binding NewCommand}"
+                                    Style="{DynamicResource AccentButtonStyle}">
+                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe710;" />
+                                </Button>
+
+                                <Button
+                                    Grid.Column="2"
+                                    Margin="6,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Command="{Binding DeleteCommand}"
+                                    IsEnabled="{Binding IsFileManagementEnabled, Mode=OneWay}">
+                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe738;" />
+                                </Button>
+
+                                <Button
+                                    Grid.Column="3"
+                                    Margin="6,0,0,0"
+                                    Command="{Binding SaveCommand}"
+                                    Style="{DynamicResource AccentButtonStyle}">
+                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe738;" />
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </ikw:SimpleStackPanel>
+
+                <!--  Global settings  -->
+                <ikw:SimpleStackPanel Spacing="8">
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Global settings" />
+
+                    <!--  Identity  -->
+                    <ui:SettingsExpander Header="Identity" IsExpanded="True">
+                        <ui:SettingsExpander.Items>
+                            <ui:SettingsCard Header="Id">
+                                <TextBox Text="{Binding Definition.Id, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+                            <ui:SettingsCard Header="Name">
+                                <TextBox Text="{Binding Definition.Name, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+                            <ui:SettingsCard Header="Platform">
+                                <ComboBox ItemsSource="{Binding PlatformTypes}" SelectedItem="{Binding Definition.PlatformType}" />
+                            </ui:SettingsCard>
+                        </ui:SettingsExpander.Items>
+                    </ui:SettingsExpander>
+
+                    <!--  Appearance  -->
+                    <ui:SettingsExpander Header="Platform appearance" IsExpanded="True">
+                        <ui:SettingsExpander.Items>
+                            <ui:SettingsCard Header="Color">
+                                <StackPanel Orientation="Horizontal">
+                                    <colorpicker:PortableColorPicker
+                                        Name="PlatformColorPicker"
+                                        Width="32"
+                                        Height="31"
+                                        ColorChanged="PlatformColorPicker_ColorChanged"
+                                        Style="{StaticResource DefaultColorPickerStyle}" />
+                                    <TextBox
+                                        MinWidth="180"
+                                        Margin="6,0,0,0"
+                                        VerticalContentAlignment="Center"
+                                        IsReadOnly="True"
+                                        Text="{Binding Definition.PlatformColor, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                            </ui:SettingsCard>
+                            <ui:SettingsCard Header="Glyph">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:FontIcon FontFamily="{Binding Definition.PlatformFont, UpdateSourceTrigger=PropertyChanged}" Glyph="{Binding Definition.PlatformGlyph, UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBox
+                                        MinWidth="180"
+                                        Margin="6,0,0,0"
+                                        VerticalContentAlignment="Center"
+                                        Text="{Binding Definition.PlatformGlyphText, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                            </ui:SettingsCard>
+                            <ui:SettingsCard Header="Font">
+                                <TextBox Text="{Binding Definition.PlatformFont, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+                            <ui:SettingsCard Header="Font size">
+                                <TextBox Text="{Binding Definition.PlatformFontSize, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+                        </ui:SettingsExpander.Items>
+                    </ui:SettingsExpander>
+
+                    <!--  Executables  -->
+                    <ui:SettingsExpander Header="Discovery lists">
+                        <ui:SettingsExpander.Items>
+                            <ui:SettingsCard Header="Executables (one per line)">
+                                <TextBox
+                                    MinHeight="64"
+                                    AcceptsReturn="True"
+                                    Text="{Binding Definition.Executables.Text, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+                            <ui:SettingsCard Description="Used for windows registry lookup" Header="Product names (one per line)">
+                                <TextBox
+                                    MinHeight="64"
+                                    AcceptsReturn="True"
+                                    Text="{Binding Definition.ProductNames.Text, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+                            <ui:SettingsCard Description="Used to discover roms" Header="ROM extensions (one per line)">
+                                <TextBox
+                                    MinHeight="64"
+                                    AcceptsReturn="True"
+                                    Text="{Binding Definition.RomExtensions.Text, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+                        </ui:SettingsExpander.Items>
+                    </ui:SettingsExpander>
+
+                    <!--  Configurations  -->
+                    <ui:SettingsExpander
+                        Header="Configurations"
+                        ItemTemplate="{StaticResource ConfigTemplate}"
+                        ItemsSource="{Binding Definition.Configurations}">
+                        <Button
+                            Grid.Column="2"
+                            Margin="6,0,12,0"
+                            Command="{Binding Data.AddConfigurationCommand, Source={StaticResource PageProxy}}"
+                            Style="{DynamicResource AccentButtonStyle}"
+                            ToolTip="Add configuration">
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe710;" />
+                        </Button>
+                    </ui:SettingsExpander>
+
+                    <ui:SettingsExpander
+                        Header="Portable locations"
+                        ItemTemplate="{StaticResource PortableTemplate}"
+                        ItemsSource="{Binding Definition.PortableLocations}">
+                        <Button
+                            Grid.Column="2"
+                            Margin="6,0,12,0"
+                            Command="{Binding Data.AddPortableLocationCommand, Source={StaticResource PageProxy}}"
+                            Style="{DynamicResource AccentButtonStyle}"
+                            ToolTip="Add portable location">
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe710;" />
+                        </Button>
+                    </ui:SettingsExpander>
+
+                    <!--  Arguments  -->
+                    <ui:SettingsExpander Header="Arguments">
+                        <ui:SettingsExpander.Items>
+                            <ui:SettingsCard Header="Argument prefix">
+                                <TextBox Text="{Binding Definition.ArgumentPrefix, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+
+                            <ui:SettingsCard Header="Argument mode">
+                                <ComboBox ItemsSource="{Binding LaunchArgumentModes}" SelectedItem="{Binding Definition.LaunchArgumentMode}" />
+                            </ui:SettingsCard>
+
+                            <ui:SettingsCard Header="Argument template">
+                                <TextBox Text="{Binding Definition.ArgumentTemplate, UpdateSourceTrigger=PropertyChanged}" />
+                            </ui:SettingsCard>
+
+                            <ui:SettingsCard ContentAlignment="Left">
+                                <CheckBox Content="Treat directories as ROMs" IsChecked="{Binding Definition.DirectoryRoms}" />
+                            </ui:SettingsCard>
+                        </ui:SettingsExpander.Items>
+                    </ui:SettingsExpander>
+
+                    <ui:SettingsExpander
+                        Header="ROM metadata"
+                        ItemTemplate="{StaticResource RomMetadataTemplate}"
+                        ItemsSource="{Binding Definition.RomMetadata}">
+                        <Button
+                            Grid.Column="2"
+                            Margin="6,0,12,0"
+                            Command="{Binding Data.AddRomMetadataCommand, Source={StaticResource PageProxy}}"
+                            Style="{DynamicResource AccentButtonStyle}"
+                            ToolTip="Add metadata rule">
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe710;" />
+                        </Button>
+                    </ui:SettingsExpander>
+
+                    <DockPanel Grid.Row="2" Margin="0,12,0,0">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                            Text="{Binding StatusText}" />
+                    </DockPanel>
+                </ikw:SimpleStackPanel>
+            </ikw:SimpleStackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

@@ -10,7 +10,6 @@
   "ProductNames": [
     "Cemu"
   ],
-  "Companies": [],
   "Configurations": [
     {
       "Root": "AppData",
@@ -32,9 +31,6 @@
       ]
     }
   ],
-  "Systems": [
-    "Wii U"
-  ],
   "RomExtensions": [
     ".wud",
     ".wux",
@@ -45,8 +41,7 @@
   "LaunchArgumentMode": "Template",
   "ArgumentTemplate": "-g {rom}",
   "RomMetadata": {
-    "Provider": "XmlElement",
-    "RelativePath": "meta\\meta.xml",
+    "RelativePath": "..\\meta\\meta.xml",
     "ElementName": "longname_en",
     "RelativePaths": [],
     "SearchParentDirectories": true

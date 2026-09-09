@@ -10,12 +10,8 @@
   "ProductNames": [
     "Snes9x"
   ],
-  "Companies": [],
   "Configurations": [],
   "PortableLocations": [],
-  "Systems": [
-    "Super Nintendo"
-  ],
   "RomExtensions": [
     ".smc",
     ".sfc"

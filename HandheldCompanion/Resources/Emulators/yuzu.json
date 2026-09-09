@@ -1,6 +1,6 @@
 {
-  "Id": "yuzu-family",
-  "Name": "Yuzu / Citron / Eden",
+  "Id": "yuzu",
+  "Name": "Yuzu",
   "PlatformType": "Yuzu",
   "PlatformColor": "#E60012",
   "PlatformGlyph": "\uF787",
@@ -11,21 +11,7 @@
   "ProductNames": [
     "yuzu"
   ],
-  "Companies": [],
   "Configurations": [
-    {
-      "Root": "AppData",
-      "RelativePath": "yuzu\\config",
-      "Files": [
-        "qt-config.ini"
-      ],
-      "ContentKeys": [
-        "Paths\\gamedirs\\1\\path",
-        "Paths\\gamedirs\\2\\path",
-        "Paths\\gamedirs\\3\\path",
-        "Paths\\gamedirs\\4\\path"
-      ]
-    },
     {
       "Root": "AppData",
       "RelativePath": "yuzu\\config",
@@ -41,9 +27,6 @@
     }
   ],
   "PortableLocations": [],
-  "Systems": [
-    "Nintendo Switch"
-  ],
   "RomExtensions": [
     ".nsp",
     ".xci",

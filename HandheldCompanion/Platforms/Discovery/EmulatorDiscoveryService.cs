@@ -15,23 +15,20 @@ namespace HandheldCompanion.Platforms.Discovery;
 
 public static class EmulatorDiscoveryService
 {
+    // Discovers installations and ROMs for all definitions belonging to the requested platform.
     public static IEnumerable<DiscoveredGame> Discover(GamePlatform platform = GamePlatform.All)
     {
         return Discover(EmulatorDefinitions.All.Where(definition => platform.HasFlag(definition.PlatformType)));
     }
 
-    public static IEnumerable<DiscoveredGame> DiscoverBySystem(string system)
-    {
-        return Discover(EmulatorDefinitions.All.Where(definition =>
-            definition.Systems.Contains(system, StringComparer.OrdinalIgnoreCase)));
-    }
-
+    // Discovers only the installation and ROMs described by one emulator definition.
     public static IEnumerable<DiscoveredGame> DiscoverByDefinition(string id)
     {
         return Discover(EmulatorDefinitions.All.Where(definition =>
             string.Equals(definition.Id, id, StringComparison.OrdinalIgnoreCase)));
     }
 
+    // Converts discovered emulator installations and their content folders into library games.
     private static IEnumerable<DiscoveredGame> Discover(IEnumerable<EmulatorDefinition> definitions)
     {
         foreach (EmulatorDefinition definition in definitions)
@@ -54,6 +51,7 @@ public static class EmulatorDiscoveryService
         }
     }
 
+    // Finds executable instances, then resolves their configuration files and ROM content paths.
     private static IEnumerable<EmulatorInstallation> DiscoverInstallations(EmulatorDefinition definition)
     {
         HashSet<string> executablePaths = new(StringComparer.OrdinalIgnoreCase);
@@ -61,6 +59,7 @@ public static class EmulatorDiscoveryService
 
         foreach (string executable in definition.Executables)
         {
+            // Existing non-default profiles are useful candidates because the user may have launched the emulator from a custom location.
             foreach (string candidate in ManagerFactory.profileManager.GetProfiles()
                 .Where(profile => !profile.Default && string.Equals(Path.GetFileName(profile.Path), executable, StringComparison.OrdinalIgnoreCase))
                 .Select(profile => profile.Path)
@@ -87,6 +86,7 @@ public static class EmulatorDiscoveryService
         };
     }
 
+    // Searches Windows activity data, PATH, registry entries, known roots, and shortcuts for an executable.
     private static IEnumerable<string> FindExecutableCandidates(EmulatorDefinition definition, string executable)
     {
         foreach (string candidate in FindUserAssistCandidates(executable))
@@ -108,12 +108,14 @@ public static class EmulatorDiscoveryService
                 {
                     baseKey = RegistryKey.OpenBaseKey(hive, view);
                     using RegistryKey? appPath = baseKey.OpenSubKey($@"Software\Microsoft\Windows\CurrentVersion\App Paths\{executable}");
+                    // App Paths provides a direct executable path and is more reliable than scanning an install directory.
                     string? appPathValue = appPath?.GetValue(null) as string;
                     if (!string.IsNullOrWhiteSpace(appPathValue))
                         registryCandidates.Add(UnquoteExecutable(appPathValue));
 
                     using RegistryKey? uninstall = baseKey.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall");
                     if (uninstall is not null)
+                        // Uninstall entries can expose an install directory, icon, or uninstall command containing the executable.
                         foreach (string name in uninstall.GetSubKeyNames())
                         {
                             using RegistryKey? entry = uninstall.OpenSubKey(name);
@@ -136,6 +138,7 @@ public static class EmulatorDiscoveryService
 
         foreach (string root in GetKnownRoots(definition))
         {
+            // Check the root itself and its immediate child directories without recursively scanning the whole profile.
             yield return Path.Combine(root, executable);
             IEnumerable<string> directories;
             try { directories = Directory.EnumerateDirectories(root); }
@@ -147,6 +150,7 @@ public static class EmulatorDiscoveryService
 
         foreach (string root in GetShortcutRoots())
         {
+            // Shortcuts are searched recursively because installed emulators are often exposed through nested Start Menu folders.
             EnumerationOptions options = new()
             {
                 RecurseSubdirectories = true,
@@ -175,6 +179,7 @@ public static class EmulatorDiscoveryService
         }
     }
 
+    // Reads executable paths recorded by Windows UserAssist, whose value names are ROT13-encoded.
     private static IEnumerable<string> FindUserAssistCandidates(string executable)
     {
         using RegistryKey? userAssist = Registry.CurrentUser.OpenSubKey(
@@ -197,6 +202,7 @@ public static class EmulatorDiscoveryService
         }
     }
 
+    // Reads executable paths from Windows' RecentApps registry data.
     private static IEnumerable<string> FindRecentAppCandidates(string executable)
     {
         using RegistryKey? recentApps = Registry.CurrentUser.OpenSubKey(
@@ -224,6 +230,7 @@ public static class EmulatorDiscoveryService
         }
     }
 
+    // Decodes the ROT13 value-name encoding used by UserAssist.
     private static string DecodeRot13(string value)
     {
         return string.Create(value.Length, value, static (buffer, source) =>
@@ -241,6 +248,7 @@ public static class EmulatorDiscoveryService
         });
     }
 
+    // Locates configured files in standard roots and portable installations.
     private static IEnumerable<string> FindConfigurationFiles(EmulatorDefinition definition, string executable)
     {
         string executableDirectory = Path.GetDirectoryName(executable) ?? string.Empty;
@@ -267,6 +275,7 @@ public static class EmulatorDiscoveryService
 
         foreach (PortableLocation location in definition.PortableLocations)
         {
+            // A marker distinguishes a portable configuration from the regular per-user configuration.
             string marker = Path.Combine(executableDirectory, location.Marker);
             if (!File.Exists(marker) && !Directory.Exists(marker)) continue;
             string directory = Path.Combine(executableDirectory, location.ConfigPath);
@@ -278,6 +287,7 @@ public static class EmulatorDiscoveryService
         }
     }
 
+    // Reads a configuration file using a parser selected by its extension and returns existing directories.
     private static IEnumerable<string> ReadContentPaths(string file, EmulatorDefinition definition)
     {
         string content;
@@ -285,7 +295,10 @@ public static class EmulatorDiscoveryService
         catch { yield break; }
 
         IEnumerable<string> configuredPaths;
-        switch (Path.GetExtension(file).ToLowerInvariant())
+
+        // Configuration formats are intentionally handled without assuming every file is structured text.
+        string extension = Path.GetExtension(file).ToLowerInvariant();
+        switch (extension)
         {
             case ".json":
                 configuredPaths = ReadJsonContentPaths(content, definition);
@@ -309,6 +322,7 @@ public static class EmulatorDiscoveryService
                 yield return path;
     }
 
+    // Extracts configured directory paths from generic text or from all absolute paths when no keys are configured.
     private static IEnumerable<string> ReadTextContentPaths(string content, EmulatorDefinition definition)
     {
         string[] keys = definition.Configurations
@@ -318,6 +332,7 @@ public static class EmulatorDiscoveryService
 
         if (keys.Length > 0)
         {
+            // When keys are known, restrict matches to values associated with those keys to avoid unrelated paths.
             foreach (string key in keys)
             {
                 string pattern = "(?im)(?:^[\"'<>]|\\s|[=:])"
@@ -335,6 +350,7 @@ public static class EmulatorDiscoveryService
         }
         else
         {
+            // Some definitions have no keys, so fall back to collecting absolute Windows and UNC paths.
             const string pathPattern = "(?<value>[A-Za-z]:[\\\\/][^\\\"'<>\\r\\n,;]+|\\\\\\\\[^\\\"'<>\\r\\n,;]+)";
             foreach (Match match in Regex.Matches(content, pathPattern, RegexOptions.CultureInvariant))
             {
@@ -347,6 +363,7 @@ public static class EmulatorDiscoveryService
         }
     }
 
+    // Extracts values from XML elements whose names match configured content keys.
     private static IEnumerable<string> ReadXmlContentPaths(string content, EmulatorDefinition definition)
     {
         XDocument document;
@@ -362,6 +379,7 @@ public static class EmulatorDiscoveryService
                         yield return value.Trim();
     }
 
+    // Recursively yields text from an XML element's leaf nodes.
     private static IEnumerable<string> EnumerateXmlText(XElement element)
     {
         if (!element.Elements().Any())
@@ -375,6 +393,7 @@ public static class EmulatorDiscoveryService
                 yield return value;
     }
 
+    // Recursively yields an XML element and all of its descendants.
     private static IEnumerable<XElement> EnumerateXmlElements(XElement? element)
     {
         if (element is null)
@@ -386,6 +405,7 @@ public static class EmulatorDiscoveryService
                 yield return descendant;
     }
 
+    // Extracts values from matching INI keys, supporting semicolon- and comma-separated paths.
     private static IEnumerable<string> ReadIniContentPaths(string content, EmulatorDefinition definition)
     {
         HashSet<string> keys = definition.Configurations.SelectMany(configuration => configuration.ContentKeys)
@@ -406,6 +426,7 @@ public static class EmulatorDiscoveryService
         }
     }
 
+    // Extracts string-array values from matching TOML keys while ignoring comments.
     private static IEnumerable<string> ReadTomlContentPaths(string content, EmulatorDefinition definition)
     {
         string uncommentedContent = RemoveTomlComments(content);
@@ -430,6 +451,7 @@ public static class EmulatorDiscoveryService
         }
     }
 
+    // Finds the closing bracket for a TOML array while ignoring brackets inside quoted strings.
     private static int FindTomlArrayEnd(string content, int start)
     {
         int depth = 0;
@@ -463,6 +485,7 @@ public static class EmulatorDiscoveryService
         return -1;
     }
 
+    // Reads quoted strings from a TOML array and handles common escape sequences.
     private static IEnumerable<string> ReadTomlStrings(string content, int start, int end)
     {
         for (int i = start; i < end; i++)
@@ -511,6 +534,7 @@ public static class EmulatorDiscoveryService
         }
     }
 
+    // Removes TOML comments without changing quoted text or line positions.
     private static string RemoveTomlComments(string content)
     {
         StringBuilder result = new(content.Length);
@@ -563,6 +587,7 @@ public static class EmulatorDiscoveryService
         return result.ToString();
     }
 
+    // Extracts string values from JSON properties matching configured content keys at any nesting level.
     private static IEnumerable<string> ReadJsonContentPaths(string content, EmulatorDefinition definition)
     {
         JObject document;
@@ -577,6 +602,7 @@ public static class EmulatorDiscoveryService
                         yield return value.Value<string>()!;
     }
 
+    // Recursively yields all JSON leaf values below a token.
     private static IEnumerable<JValue> EnumerateJsonValues(JToken token)
     {
         if (token is JValue value)
@@ -590,6 +616,7 @@ public static class EmulatorDiscoveryService
                 yield return childValue;
     }
 
+    // Recursively yields all properties in a JSON object tree.
     private static IEnumerable<JProperty> EnumerateJsonProperties(JToken token)
     {
         if (token is not JObject objectToken)
@@ -604,6 +631,7 @@ public static class EmulatorDiscoveryService
         }
     }
 
+    // Enumerates ROM files or directories according to the emulator definition.
     private static IEnumerable<string> EnumerateRoms(string root, EmulatorDefinition definition)
     {
         if (definition.DirectoryRoms)
@@ -625,15 +653,18 @@ public static class EmulatorDiscoveryService
             if (definition.RomExtensions.Contains(Path.GetExtension(file), StringComparer.OrdinalIgnoreCase)) yield return file;
     }
 
+    // Checks whether a directory contains one of the metadata files required for directory-based ROM discovery.
     private static bool HasRomMetadata(string directory, RomMetadataRule? rule)
     {
         if (rule is null)
             return false;
 
         string[] relativePaths = rule.RelativePaths.Length > 0 ? rule.RelativePaths : [rule.RelativePath];
+        // RelativePaths supports definitions that use different metadata layouts across emulator versions.
         return relativePaths.Any(path => File.Exists(Path.Combine(directory, path)));
     }
 
+    // Resolves a schema root to an absolute Windows folder.
     private static string ResolveRoot(ConfigRoot root, string executableDirectory) => root switch
     {
         ConfigRoot.ExecutableDirectory => executableDirectory,
@@ -644,18 +675,25 @@ public static class EmulatorDiscoveryService
         _ => string.Empty
     };
 
+    // Returns existing standard roots used when searching for installed executables.
     private static IEnumerable<string> GetKnownRoots(EmulatorDefinition definition) => definition.Configurations.Select(configuration => ResolveRoot(configuration.Root, string.Empty)).Where(Directory.Exists).Distinct(StringComparer.OrdinalIgnoreCase);
 
+    // Returns existing Windows locations that may contain emulator shortcuts.
     private static IEnumerable<string> GetShortcutRoots() => new[] { Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu), Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory) }.Where(Directory.Exists);
 
+    // Accepts every uninstall entry when no product names are configured; otherwise matches DisplayName substrings.
     private static bool MatchesProduct(RegistryKey? key, EmulatorDefinition definition) => definition.ProductNames.Length == 0 || definition.ProductNames.Any(name => (key?.GetValue("DisplayName") as string)?.Contains(name, StringComparison.OrdinalIgnoreCase) == true);
 
+    // Converts an App Paths or uninstall value into a candidate executable path.
     private static IEnumerable<string> CandidatesFromValue(string value, string executable) { string candidate = UnquoteExecutable(value); if (File.Exists(candidate) && Path.GetFileName(candidate).Equals(executable, StringComparison.OrdinalIgnoreCase)) yield return candidate; if (Directory.Exists(candidate)) yield return Path.Combine(candidate, executable); }
 
+    // Removes command-line quoting and arguments from a registry-provided executable value.
     private static string UnquoteExecutable(string value) { value = value.Trim(); if (value.StartsWith('"')) { int end = value.IndexOf('"', 1); return end > 0 ? value[1..end] : value.Trim('"'); } int space = value.IndexOf(' '); return space > 0 ? value[..space] : value; }
 
+    // Quotes a ROM path and prepends the configured argument prefix when needed.
     private static string Quote(string path, string prefix) => string.IsNullOrEmpty(prefix) ? $"\"{path}\"" : $"{prefix} \"{path}\"";
 
+    // Builds the emulator launch arguments, or suppresses ROM entries for unsupported launch modes.
     private static string? BuildArguments(EmulatorDefinition definition, string rom) => definition.LaunchArgumentMode switch
     {
         LaunchArgumentMode.Template => definition.ArgumentTemplate.Replace("{rom}", Quote(rom, string.Empty), StringComparison.Ordinal),
@@ -663,6 +701,7 @@ public static class EmulatorDiscoveryService
         _ => Quote(rom, definition.ArgumentPrefix)
     };
 
+    // Reads a configured display name from XML or Param.SFO metadata files near the ROM.
     private static string? ReadRomName(EmulatorDefinition definition, string rom)
     {
         RomMetadataRule? rule = definition.RomMetadata;
@@ -674,24 +713,25 @@ public static class EmulatorDiscoveryService
             return null;
 
         string[] relativePaths = rule.RelativePaths.Length > 0 ? rule.RelativePaths : [rule.RelativePath];
-        IEnumerable<string> roots = rule.SearchParentDirectories
-            ? EnumerateParentDirectories(romDirectory)
-            : [romDirectory];
+        IEnumerable<string> roots = rule.SearchParentDirectories ? EnumerateParentDirectories(romDirectory) : [romDirectory];
+
         IEnumerable<string> metadataPaths = roots.SelectMany(root => relativePaths.Select(path => Path.Combine(root, path)));
         foreach (string metadataPath in metadataPaths)
         {
-            string? value = rule.Provider switch
+            string extension = Path.GetExtension(metadataPath).ToLowerInvariant();
+            switch (extension)
             {
-                RomMetadataProvider.ParamSfo => ReadParamSfoName(metadataPath),
-                _ => ReadXmlElementName(metadataPath, rule.ElementName)
-            };
-            if (!string.IsNullOrWhiteSpace(value))
-                return value;
+                case ".sfo":
+                    return ReadParamSfoName(metadataPath);
+                case ".xml":
+                    return ReadXmlElementName(metadataPath, rule.ElementName);
+            }
         }
 
         return null;
     }
 
+    // Yields a directory and each of its parents for metadata lookup.
     private static IEnumerable<string> EnumerateParentDirectories(string directory)
     {
         DirectoryInfo? current = new(directory);
@@ -702,6 +742,7 @@ public static class EmulatorDiscoveryService
         }
     }
 
+    // Reads the first matching XML element value from a metadata file.
     private static string? ReadXmlElementName(string path, string elementName)
     {
         try
@@ -711,6 +752,7 @@ public static class EmulatorDiscoveryService
         catch { return null; }
     }
 
+    // Reads the TITLE entry from a PlayStation Param.SFO metadata file.
     private static string? ReadParamSfoName(string path)
     {
         try
@@ -726,6 +768,7 @@ public static class EmulatorDiscoveryService
             stream.Position = 20;
             for (int i = 0; i < entryCount; i++)
             {
+                // Each Param.SFO index entry is 16 bytes and points into separate key and value tables.
                 stream.Position = 20 + i * 16;
                 uint keyIndex = reader.ReadUInt16();
                 reader.ReadByte();
@@ -741,6 +784,7 @@ public static class EmulatorDiscoveryService
                 if (!string.Equals(key, "TITLE", StringComparison.OrdinalIgnoreCase))
                     continue;
                 long valuePosition = valueOffset + dataOffset;
+                // Reject malformed offsets before converting the declared byte length to an array size.
                 if (valuePosition < 0 || valuePosition >= stream.Length || valueLength > stream.Length - valuePosition)
                     return null;
                 stream.Position = valuePosition;
@@ -753,6 +797,7 @@ public static class EmulatorDiscoveryService
         return null;
     }
 
+    // Reads a bounded null-terminated string from a binary stream.
     private static string ReadNullTerminated(BinaryReader reader, int maxLength)
     {
         StringBuilder value = new();

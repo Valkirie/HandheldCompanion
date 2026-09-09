@@ -10,7 +10,6 @@
   "ProductNames": [
     "melonDS"
   ],
-  "Companies": [],
   "Configurations": [
     {
       "Root": "ExecutableDirectory",
@@ -22,9 +21,6 @@
     }
   ],
   "PortableLocations": [],
-  "Systems": [
-    "Nintendo DS"
-  ],
   "RomExtensions": [
     ".nds"
   ],

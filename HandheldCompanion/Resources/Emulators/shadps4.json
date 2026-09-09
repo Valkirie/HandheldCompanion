@@ -12,7 +12,6 @@
   "ProductNames": [
     "ShadPS4"
   ],
-  "Companies": [],
   "Configurations": [
     {
       "Root": "AppData",
@@ -36,15 +35,11 @@
     }
   ],
   "PortableLocations": [],
-  "Systems": [
-    "PlayStation 4"
-  ],
   "RomExtensions": [],
   "ArgumentPrefix": "",
   "LaunchArgumentMode": "Template",
   "ArgumentTemplate": "-g {rom}",
   "RomMetadata": {
-    "Provider": "ParamSfo",
     "RelativePath": "sce_sys\\param.sfo",
     "ElementName": "",
     "RelativePaths": [],

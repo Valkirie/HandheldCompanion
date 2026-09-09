@@ -10,7 +10,6 @@
   "ProductNames": [
     "xemu"
   ],
-  "Companies": [],
   "Configurations": [
     {
       "Root": "LocalAppData",
@@ -22,9 +21,6 @@
     }
   ],
   "PortableLocations": [],
-  "Systems": [
-    "Xbox"
-  ],
   "RomExtensions": [
     ".iso",
     ".xiso"

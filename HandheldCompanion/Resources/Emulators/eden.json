@@ -10,7 +10,6 @@
   "ProductNames": [
     "Eden"
   ],
-  "Companies": [],
   "Configurations": [
     {
       "Root": "AppData",
@@ -28,9 +27,6 @@
     }
   ],
   "PortableLocations": [],
-  "Systems": [
-    "Nintendo Switch"
-  ],
   "RomExtensions": [
     ".nsp",
     ".xci",

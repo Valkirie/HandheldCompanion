@@ -283,43 +283,7 @@ namespace HandheldCompanion.ViewModels
                 return Properties.Resources.Library_ScanAllLaunchers;
             if (string.Equals(target, "Emulators", StringComparison.OrdinalIgnoreCase))
                 return Properties.Resources.Library_ScanAllEmulators;
-            if (target.StartsWith("Console:", StringComparison.OrdinalIgnoreCase))
-                return GetConsoleDisplayName(target["Console:".Length..]);
             return target;
-        }
-
-        private static string GetConsoleDisplayName(string console)
-        {
-            return console switch
-            {
-                "GameCube" => Properties.Resources.Library_ScanGameCube,
-                "Wii" => Properties.Resources.Library_ScanWii,
-                "Wii U" => Properties.Resources.Library_ScanWiiU,
-                "PlayStation" => Properties.Resources.Library_ScanPlayStation,
-                "PlayStation 2" => Properties.Resources.Library_ScanPlayStation2,
-                "PlayStation 3" => Properties.Resources.Library_ScanPlayStation3,
-                "PlayStation 4" => Properties.Resources.Library_ScanPlayStation4,
-                "PlayStation Portable" => Properties.Resources.Library_ScanPlayStationPortable,
-                "PlayStation Vita" => Properties.Resources.Library_ScanPlayStationVita,
-                "Nintendo 3DS" => Properties.Resources.Library_ScanNintendo3DS,
-                "Nintendo Switch" => Properties.Resources.Library_ScanNintendoSwitch,
-                "Nintendo 64" => Properties.Resources.Library_ScanNintendo64,
-                "Nintendo DS" => Properties.Resources.Library_ScanNintendoDS,
-                "Arcade" => Properties.Resources.Library_ScanArcade,
-                "Multi-system" => Properties.Resources.Library_ScanMultiSystem,
-                "Game Boy" => Properties.Resources.Library_ScanGameBoy,
-                "Game Boy Color" => Properties.Resources.Library_ScanGameBoyColor,
-                "Game Boy Advance" => Properties.Resources.Library_ScanGameBoyAdvance,
-                "Super Nintendo" => Properties.Resources.Library_ScanSuperNintendo,
-                "Xbox" => Properties.Resources.Library_ScanXbox,
-                "Xbox 360" => Properties.Resources.Library_ScanXbox360,
-                "Dreamcast" => Properties.Resources.Library_ScanDreamcast,
-                "Naomi" => Properties.Resources.Library_ScanNaomi,
-                "Atomiswave" => Properties.Resources.Library_ScanAtomiswave,
-                "PC Adventure" => Properties.Resources.Library_ScanPCAdventure,
-                "DOS" => Properties.Resources.Library_ScanDOS,
-                _ => console
-            };
         }
 
         private static bool PathsEqual(string first, string second)

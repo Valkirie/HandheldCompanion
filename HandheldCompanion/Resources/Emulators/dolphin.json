@@ -10,7 +10,6 @@
   "ProductNames": [
     "Dolphin Emulator"
   ],
-  "Companies": [],
   "Configurations": [
     {
       "Root": "AppData",
@@ -51,10 +50,6 @@
         "Dolphin.ini"
       ]
     }
-  ],
-  "Systems": [
-    "GameCube",
-    "Wii"
   ],
   "RomExtensions": [
     ".gcm",

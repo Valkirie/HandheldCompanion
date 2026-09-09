@@ -15,13 +15,18 @@ public static class EmulatorDefinitions
         Converters = { new JsonStringEnumConverter() }
     };
 
-    private static readonly string ConfigsDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Emulators");
+    public static string ConfigsDirectory { get; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Emulators");
 
     public static GamePlatform AllPlatforms => All.Aggregate(GamePlatform.Generic, (platform, definition) => platform | definition.PlatformType);
 
     public static EmulatorDefinition[] All = Array.Empty<EmulatorDefinition>();
 
     static EmulatorDefinitions()
+    {
+        All = LoadDefinitions();
+    }
+
+    public static void Reload()
     {
         All = LoadDefinitions();
     }

@@ -10,7 +10,6 @@
   "ProductNames": [
     "Ryujinx"
   ],
-  "Companies": [],
   "Configurations": [
     {
       "Root": "AppData",
@@ -29,9 +28,6 @@
         "Config.json"
       ]
     }
-  ],
-  "Systems": [
-    "Nintendo Switch"
   ],
   "RomExtensions": [
     ".nsp",

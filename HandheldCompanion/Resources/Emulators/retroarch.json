@@ -10,7 +10,6 @@
   "ProductNames": [
     "RetroArch"
   ],
-  "Companies": [],
   "Configurations": [
     {
       "Root": "ExecutableDirectory",
@@ -53,9 +52,6 @@
     }
   ],
   "PortableLocations": [],
-  "Systems": [
-    "Multi-system"
-  ],
   "RomExtensions": [
     ".zip",
     ".7z",

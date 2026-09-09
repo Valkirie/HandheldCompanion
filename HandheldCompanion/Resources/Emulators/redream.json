@@ -10,12 +10,8 @@
   "ProductNames": [
     "redream"
   ],
-  "Companies": [],
   "Configurations": [],
   "PortableLocations": [],
-  "Systems": [
-    "Dreamcast"
-  ],
   "RomExtensions": [
     ".gdi",
     ".cdi",

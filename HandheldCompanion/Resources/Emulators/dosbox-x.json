@@ -10,7 +10,6 @@
   "ProductNames": [
     "DOSBox-X"
   ],
-  "Companies": [],
   "Configurations": [
     {
       "Root": "AppData",
@@ -22,9 +21,6 @@
     }
   ],
   "PortableLocations": [],
-  "Systems": [
-    "DOS"
-  ],
   "RomExtensions": [
     ".exe",
     ".com",

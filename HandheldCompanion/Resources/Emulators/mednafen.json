@@ -10,7 +10,6 @@
   "ProductNames": [
     "Mednafen"
   ],
-  "Companies": [],
   "Configurations": [
     {
       "Root": "AppData",
@@ -22,9 +21,6 @@
     }
   ],
   "PortableLocations": [],
-  "Systems": [
-    "Multi-system"
-  ],
   "RomExtensions": [
     ".cue",
     ".iso",

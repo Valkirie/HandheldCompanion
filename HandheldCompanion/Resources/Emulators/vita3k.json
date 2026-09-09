@@ -10,7 +10,6 @@
   "ProductNames": [
     "Vita3K"
   ],
-  "Companies": [],
   "Configurations": [
     {
       "Root": "ExecutableDirectory",
@@ -30,9 +29,6 @@
     }
   ],
   "PortableLocations": [],
-  "Systems": [
-    "PlayStation Vita"
-  ],
   "RomExtensions": [
     ".pkg",
     ".zip"
@@ -41,7 +37,6 @@
   "LaunchArgumentMode": "RomPath",
   "ArgumentTemplate": "{rom}",
   "RomMetadata": {
-    "Provider": "ParamSfo",
     "RelativePath": "sce_sys\\param.sfo",
     "ElementName": "",
     "RelativePaths": [],

@@ -10,7 +10,6 @@
   "ProductNames": [
     "Flycast"
   ],
-  "Companies": [],
   "Configurations": [
     {
       "Root": "AppData",
@@ -22,11 +21,6 @@
     }
   ],
   "PortableLocations": [],
-  "Systems": [
-    "Dreamcast",
-    "Naomi",
-    "Atomiswave"
-  ],
   "RomExtensions": [
     ".gdi",
     ".cdi",

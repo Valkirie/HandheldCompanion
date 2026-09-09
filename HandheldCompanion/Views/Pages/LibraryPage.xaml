@@ -137,6 +137,10 @@
                                     Command="{Binding RefreshMetadataCommand}"
                                     Header="{l:Static resx:Resources.Library_ScanDownloadMetadata}"
                                     IsEnabled="{Binding IsLibraryConnected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <MenuItem
+                                    Command="{Binding OpenEmulatorSettingsCommand}"
+                                    Header="Configure emulators"
+                                    IsEnabled="{Binding IsLibraryConnected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                 <Separator />
                                 <MenuItem Header="{l:Static resx:Resources.Library_ScanUpdateGameLibrary}" IsEnabled="{Binding IsScanningLibrary, Converter={StaticResource InvertBooleanConverter}}">
                                     <MenuItem

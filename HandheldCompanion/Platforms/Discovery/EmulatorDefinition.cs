@@ -12,10 +12,8 @@ public sealed class EmulatorDefinition
 
     public string[] Executables { get; init; } = [];
     public string[] ProductNames { get; init; } = [];
-    public string[] Companies { get; init; } = [];
     public ConfigLocation[] Configurations { get; init; } = [];
     public PortableLocation[] PortableLocations { get; init; } = [];
-    public string[] Systems { get; init; } = [];
     public string[] RomExtensions { get; init; } = [];
     public string ArgumentPrefix { get; init; } = "";
     public LaunchArgumentMode LaunchArgumentMode { get; init; } = LaunchArgumentMode.RomPath;
@@ -33,17 +31,10 @@ public enum LaunchArgumentMode
 
 public sealed class RomMetadataRule
 {
-    public RomMetadataProvider Provider { get; init; } = RomMetadataProvider.XmlElement;
     public string RelativePath { get; init; } = "";
     public string ElementName { get; init; } = "";
     public string[] RelativePaths { get; init; } = [];
     public bool SearchParentDirectories { get; init; }
-}
-
-public enum RomMetadataProvider
-{
-    XmlElement,
-    ParamSfo
 }
 
 public sealed class ConfigLocation
