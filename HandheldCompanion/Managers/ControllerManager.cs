@@ -1899,7 +1899,6 @@ public static class ControllerManager
     public static void TriggerSlotFix(bool resetAttempts) => slotHelper.TriggerFix(resetAttempts);
     public static void StartWatchdog() => slotHelper.TriggerFix(resetAttempts: false);
     public static void StopWatchdog() => slotHelper.StopWatchdog();
-    public static bool AssignXInputSlot(XInputController controller, byte targetSlot) => slotHelper.AssignXInputSlot(controller, targetSlot);
 
     private static void SetSlotIssueState(bool hasIssue, string reason) => SlotIssueChanged?.Invoke(hasIssue, reason);
 

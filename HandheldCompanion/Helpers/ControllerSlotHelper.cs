@@ -100,19 +100,6 @@ public sealed class ControllerSlotHelper
 
     public void SetIgnoreWindow() => ignoreUntilUtc = DateTime.UtcNow.AddMinutes(5);
 
-    public bool AssignXInputSlot(XInputController controller, byte targetSlot)
-    {
-        if (controller.UserIndex == targetSlot)
-            return true;
-        XInputController? displaced = ControllerManager.GetControllerFromSlot<XInputController>((UserIndex)targetSlot, true) ?? ControllerManager.GetControllerFromSlot<XInputController>((UserIndex)targetSlot, false);
-        if (OpenXInput.SetUserIndex(controller.GetContainerPath(), targetSlot, false) != OpenXInput.ERROR_SUCCESS)
-            return false;
-        if (displaced is not null && !ReferenceEquals(displaced, controller))
-            displaced.CyclePort();
-        controller.CyclePort();
-        return true;
-    }
-
     private void StartWatchdog(bool reset, ControllerManager.SlotFixTrigger trigger)
     {
         if (reset)
@@ -179,6 +166,7 @@ public sealed class ControllerSlotHelper
                 byte index = DeviceManager.GetXInputIndex(controller.GetContainerPath());
                 if (index == byte.MaxValue)
                     return;
+
                 ((IXInputController)controller).AttachController(index);
                 lock (owners)
                 {
@@ -252,7 +240,17 @@ public sealed class ControllerSlotHelper
         }
 
         foreach (IController controller in invalidAssignments)
-            if (!controller.IsVirtual()) { controller.CyclePort(); await Task.Delay(500).ConfigureAwait(false); }
+        {
+            if (controller.IsVirtual())
+                continue;
+
+            if (controller.IsBusy)
+                continue;
+
+            // cycle the physical controller to free up the slot and wait a bit
+            controller.CyclePort();
+            await Task.Delay(500).ConfigureAwait(false);
+        }
     }
 
     private async Task<bool> FixVirtualSlot(int attempt)
@@ -269,10 +267,16 @@ public sealed class ControllerSlotHelper
             return true;
         }
 
+        // Select the first available physical XInput controller, preferring assigned slots before the unassigned fallback.
         IController? physical = new[] { UserIndex.One, UserIndex.Two, UserIndex.Three, UserIndex.Four, UserIndex.Any }.Select(slot => GetSlotController(slot, true)).FirstOrDefault(c => c is not null);
         if (physical is null)
             return false;
 
+        // Do not change slots while the controller being suspended or any virtual controller is handling another operation.
+        if (physical.IsBusy || GetSlotControllers(false).Any(c => c.IsBusy))
+            return false;
+
+        // A busy Bluetooth controller may block removal from the slot. Ignore only controllers already being power-cycled by us.
         if (GetSlotControllers(true).FirstOrDefault(c => c.IsBluetooth() && c.IsBusy) is IController busy && !ControllerManager.PowerCyclers.ContainsKey(busy.GetContainerInstanceId()))
             return false;
 
