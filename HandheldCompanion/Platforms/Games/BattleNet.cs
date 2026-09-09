@@ -13,7 +13,7 @@ public class BattleNet : IPlatform
     private BattleNetLauncher battlenetLauncher = new(new LauncherOptions());
     public override string Name => battlenetLauncher.Name;
     public override string PlatformColor => "#148EFF";
-    public override string PlatformGlyph => "\uEB37";
+    public override string PlatformGlyph => "\uEB38";
     public override string InstallPath => battlenetLauncher.InstallDir;
     public override string ExecutablePath => battlenetLauncher.Executable;
     public override string ExecutableName => Path.GetFileName(ExecutablePath);
