@@ -75,6 +75,35 @@
                         </DockPanel>
                     </ui:SettingsCard>
 
+                    <!--  On-screen display brightness  -->
+                    <ui:SettingsCard Description="Adjusts the on-screen display color intensity" Header="Overlay brightness">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE706;" />
+                        </ui:SettingsCard.HeaderIcon>
+                        <DockPanel>
+                            <TextBox
+                                Height="31"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding OnScreenDisplayBrightness, StringFormat={}{0:N0}%, Mode=OneWay}" />
+                            <Slider
+                                Width="200"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="100"
+                                Minimum="0"
+                                SmallChange="1"
+                                TickFrequency="10"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding OnScreenDisplayBrightness, StringFormat={}{0:N0}%, Mode=OneWay}"
+                                Value="{Binding OnScreenDisplayBrightness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </ui:SettingsCard>
+
                     <!--  On-screen display level  -->
                     <ui:SettingsExpander
                         Name="OnScreenDisplayLevelExpander"

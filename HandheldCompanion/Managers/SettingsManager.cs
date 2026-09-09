@@ -21,6 +21,7 @@ public static class Settings
     public static readonly string GPUManagementEnabled = "GPUManagementEnabled";
 
     public static readonly string OnScreenDisplayRefreshRate = "OnScreenDisplayRefreshRate";
+    public static readonly string OnScreenDisplayBrightness = "OnScreenDisplayBrightness";
     public static readonly string OnScreenDisplayLevel = "OnScreenDisplayLevel";
     public static readonly string OnScreenDisplayTimeLevel = "OnScreenDisplayTimeLevel";
     public static readonly string OnScreenDisplayFPSLevel = "OnScreenDisplayFPSLevel";

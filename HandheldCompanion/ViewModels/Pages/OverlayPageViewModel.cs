@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Overlay;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using LiveCharts;
@@ -40,6 +41,39 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private double _OverlayRenderInterval;
+        public double OverlayRenderInterval
+        {
+            get => _OverlayRenderInterval;
+            set
+            {
+                if (value != OverlayRenderInterval)
+                {
+                    _OverlayRenderInterval = value;
+                    OnPropertyChanged(nameof(OverlayRenderInterval));
+
+                    ManagerFactory.settingsManager.SetProperty("OverlayRenderInterval", value);
+                }
+            }
+        }
+
+        private double _onScreenDisplayBrightness;
+        public double OnScreenDisplayBrightness
+        {
+            get => _onScreenDisplayBrightness;
+            set
+            {
+                value = Math.Clamp(value, 0, 100);
+                if (value != OnScreenDisplayBrightness)
+                {
+                    _onScreenDisplayBrightness = value;
+                    OnPropertyChanged(nameof(OnScreenDisplayBrightness));
+                    OverlayColors.Brightness = value / 100;
+                    ManagerFactory.settingsManager.SetProperty(Settings.OnScreenDisplayBrightness, value);
+                }
+            }
+        }
+
         public void OnPageLoaded()
         {
             _isPageLoaded = true;
@@ -57,22 +91,6 @@ namespace HandheldCompanion.ViewModels
             {
                 updateTimer.Stop();
                 framerateTimer.Stop();
-            }
-        }
-
-        private double _OverlayRenderInterval;
-        public double OverlayRenderInterval
-        {
-            get => _OverlayRenderInterval;
-            set
-            {
-                if (value != OverlayRenderInterval)
-                {
-                    _OverlayRenderInterval = value;
-                    OnPropertyChanged(nameof(OverlayRenderInterval));
-
-                    ManagerFactory.settingsManager.SetProperty("OverlayRenderInterval", value);
-                }
             }
         }
 
@@ -554,6 +572,7 @@ namespace HandheldCompanion.ViewModels
 
             // raise events
             SettingsManager_SettingValueChanged(Settings.OnScreenDisplayRefreshRate, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayRefreshRate), false, true);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayBrightness, ManagerFactory.settingsManager.GetDouble(Settings.OnScreenDisplayBrightness), false, true);
             SettingsManager_SettingValueChanged("OverlayRenderInterval", ManagerFactory.settingsManager.GetDouble("OverlayRenderInterval"), false, true);
             SettingsManager_SettingValueChanged(Settings.OnScreenDisplayLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayLevel), false, true);
             SettingsManager_SettingValueChanged(Settings.OnScreenDisplayCustomOrientation, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayCustomOrientation), false, true);
@@ -792,6 +811,11 @@ namespace HandheldCompanion.ViewModels
 
                 framerateInterval = Convert.ToInt32(value);
                 framerateTimer.Interval = framerateInterval;
+            }
+            else if (name == Settings.OnScreenDisplayBrightness)
+            {
+                _onScreenDisplayBrightness = Math.Clamp(Convert.ToDouble(value), 0, 100);
+                OverlayColors.Brightness = _onScreenDisplayBrightness / 100;
             }
             else if (name == "OverlayRenderInterval")
                 _OverlayRenderInterval = Convert.ToDouble(value);

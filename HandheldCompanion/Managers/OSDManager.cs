@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Shared;
+using HandheldCompanion.Managers.Overlay;
 
 using RTSSSharedMemoryNET;
 
@@ -21,7 +22,7 @@ public static class OSDManager
     // C4: VRAM
     // C5: BATT
     // C6: FPS
-    private const string Header = "<C0=FFFFFF><C1=8000FF><A0=-4><S0=-50><S1=50>";
+    private static string Header => $"<C0={OverlayColors.Color("DEFAULT")}><C1={OverlayColors.Color("VRAM")}><A0=-4><S0=-50><S1=50>";
 
     private static bool IsInitialized;
     public static string[] OverlayOrder = [];
@@ -115,6 +116,7 @@ public static class OSDManager
 
         // raise events
         SettingsManager_SettingValueChanged("OnScreenDisplayRefreshRate", ManagerFactory.settingsManager.GetString("OnScreenDisplayRefreshRate"), false, true);
+        SettingsManager_SettingValueChanged("OnScreenDisplayBrightness", ManagerFactory.settingsManager.GetString("OnScreenDisplayBrightness"), false, true);
         SettingsManager_SettingValueChanged("OnScreenDisplayLevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayLevel"), false, true);
         SettingsManager_SettingValueChanged("OnScreenDisplayOrder", ManagerFactory.settingsManager.GetString("OnScreenDisplayOrder"), false, true);
         SettingsManager_SettingValueChanged("OnScreenDisplayTimeLevel", ManagerFactory.settingsManager.GetString("OnScreenDisplayTimeLevel"), false, true);
@@ -260,6 +262,10 @@ public static class OSDManager
                         RefreshTimer.Start();
                     }
                 }
+                break;
+
+            case "OnScreenDisplayBrightness":
+                OverlayColors.Brightness = Convert.ToDouble(value) / 100;
                 break;
 
             case "OnScreenDisplayLevel":

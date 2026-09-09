@@ -673,6 +673,18 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public double OnScreenDisplayBrightness {
+            get {
+                return ((double)(this["OnScreenDisplayBrightness"]));
+            }
+            set {
+                this["OnScreenDisplayBrightness"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool PlatformRTSSEnabled {
             get {
