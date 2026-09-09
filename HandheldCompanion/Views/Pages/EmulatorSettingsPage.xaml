@@ -10,7 +10,6 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
-    Name="EmulatorSettingsPage"
     Title="Emulator settings"
     Margin="0,20,0,0"
     d:Background="White"
