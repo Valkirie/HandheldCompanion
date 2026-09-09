@@ -2,6 +2,8 @@ using HandheldCompanion.Platforms;
 using HandheldCompanion.Platforms.Discovery;
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
@@ -156,6 +158,14 @@ public sealed class EmulatorDefinitionViewModel : BaseViewModel
         return result;
     }
 }
+/// <summary>
+/// Provides the data and commands used to manage emulator definition files.
+/// </summary>
+/// <remarks>
+/// The selected definition is exposed as editable view-model data. Changes to
+/// the definition and its nested settings are persisted immediately, so the
+/// page does not require a separate save operation.
+/// </remarks>
 public sealed class EmulatorSettingsPageViewModel : BaseViewModel
 {
     private static readonly JsonSerializerOptions SerializerOptions = new() { WriteIndented = true, Converters = { new JsonStringEnumConverter() } };
@@ -185,7 +195,6 @@ public sealed class EmulatorSettingsPageViewModel : BaseViewModel
     public bool IsFileManagementEnabled => SelectedFile is not null;
     public string StatusText { get => _statusText; private set => SetProperty(ref _statusText, value); }
     public DelegateCommand NewCommand { get; }
-    public DelegateCommand SaveCommand { get; }
     public DelegateCommand DeleteCommand { get; }
     public DelegateCommand AddConfigurationCommand { get; }
     public DelegateCommand<ConfigLocationViewModel> RemoveConfigurationCommand { get; }
@@ -194,9 +203,12 @@ public sealed class EmulatorSettingsPageViewModel : BaseViewModel
     public DelegateCommand AddRomMetadataCommand { get; }
     public DelegateCommand<RomMetadataViewModel> RemoveRomMetadataCommand { get; }
 
+    /// <summary>
+    /// Initializes the emulator settings view model and loads the available definitions.
+    /// </summary>
     public EmulatorSettingsPageViewModel()
     {
-        NewCommand = new DelegateCommand(NewFile); SaveCommand = new DelegateCommand(SaveFile); DeleteCommand = new DelegateCommand(DeleteFile);
+        NewCommand = new DelegateCommand(NewFile); DeleteCommand = new DelegateCommand(DeleteFile);
         AddConfigurationCommand = new DelegateCommand(() => Definition?.Configurations.Add(new ConfigLocationViewModel()));
         RemoveConfigurationCommand = new DelegateCommand<ConfigLocationViewModel>(item => Definition?.Configurations.Remove(item));
         AddPortableLocationCommand = new DelegateCommand(() => Definition?.PortableLocations.Add(new PortableLocationViewModel()));
@@ -226,9 +238,113 @@ public sealed class EmulatorSettingsPageViewModel : BaseViewModel
 
     private void LoadDefinition(string filePath)
     {
-        try { Definition = EmulatorDefinitionViewModel.FromModel(JsonSerializer.Deserialize<EmulatorDefinition>(File.ReadAllText(filePath), SerializerOptions) ?? throw new JsonException("The file is empty.")); StatusText = string.Empty; }
-        catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException) { Definition = null; StatusText = $"Could not load: {ex.Message}"; }
+        try
+        {
+            UnsubscribeDefinition();
+            Definition = EmulatorDefinitionViewModel.FromModel(JsonSerializer.Deserialize<EmulatorDefinition>(File.ReadAllText(filePath), SerializerOptions) ?? throw new JsonException("The file is empty."));
+            SubscribeDefinition();
+            StatusText = string.Empty;
+        }
+        catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
+        {
+            UnsubscribeDefinition();
+            Definition = null;
+            StatusText = $"Could not load: {ex.Message}";
+        }
     }
+
+    private void SubscribeDefinition()
+    {
+        if (Definition is null)
+            return;
+
+        Definition.PropertyChanged += Definition_PropertyChanged;
+        Definition.Executables.PropertyChanged += Definition_PropertyChanged;
+        Definition.ProductNames.PropertyChanged += Definition_PropertyChanged;
+        Definition.RomExtensions.PropertyChanged += Definition_PropertyChanged;
+        SubscribeCollection(Definition.Configurations);
+        SubscribeCollection(Definition.PortableLocations);
+        SubscribeCollection(Definition.RomMetadata);
+    }
+
+    private void UnsubscribeDefinition()
+    {
+        if (Definition is null)
+            return;
+
+        Definition.PropertyChanged -= Definition_PropertyChanged;
+        Definition.Executables.PropertyChanged -= Definition_PropertyChanged;
+        Definition.ProductNames.PropertyChanged -= Definition_PropertyChanged;
+        Definition.RomExtensions.PropertyChanged -= Definition_PropertyChanged;
+        UnsubscribeCollection(Definition.Configurations);
+        UnsubscribeCollection(Definition.PortableLocations);
+        UnsubscribeCollection(Definition.RomMetadata);
+    }
+
+    private void SubscribeCollection<T>(ObservableCollection<T> collection) where T : BaseViewModel
+    {
+        collection.CollectionChanged += Collection_CollectionChanged;
+        foreach (T item in collection)
+            SubscribeItem(item);
+    }
+
+    private void UnsubscribeCollection<T>(ObservableCollection<T> collection) where T : BaseViewModel
+    {
+        collection.CollectionChanged -= Collection_CollectionChanged;
+        foreach (T item in collection)
+            UnsubscribeItem(item);
+    }
+
+    private void SubscribeItem(BaseViewModel item)
+    {
+        item.PropertyChanged += Definition_PropertyChanged;
+        if (item is ConfigLocationViewModel config)
+        {
+            config.Files.PropertyChanged += Definition_PropertyChanged;
+            config.ContentKeys.PropertyChanged += Definition_PropertyChanged;
+        }
+        else if (item is PortableLocationViewModel portable)
+        {
+            portable.Files.PropertyChanged += Definition_PropertyChanged;
+        }
+        else if (item is RomMetadataViewModel metadata)
+        {
+            metadata.RelativePaths.PropertyChanged += Definition_PropertyChanged;
+        }
+    }
+
+    private void UnsubscribeItem(BaseViewModel item)
+    {
+        item.PropertyChanged -= Definition_PropertyChanged;
+        if (item is ConfigLocationViewModel config)
+        {
+            config.Files.PropertyChanged -= Definition_PropertyChanged;
+            config.ContentKeys.PropertyChanged -= Definition_PropertyChanged;
+        }
+        else if (item is PortableLocationViewModel portable)
+        {
+            portable.Files.PropertyChanged -= Definition_PropertyChanged;
+        }
+        else if (item is RomMetadataViewModel metadata)
+        {
+            metadata.RelativePaths.PropertyChanged -= Definition_PropertyChanged;
+        }
+    }
+
+    private void Collection_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.OldItems is not null)
+            foreach (BaseViewModel item in e.OldItems)
+                UnsubscribeItem(item);
+
+        if (e.NewItems is not null)
+            foreach (BaseViewModel item in e.NewItems)
+                SubscribeItem(item);
+
+        SaveFile();
+    }
+
+    private void Definition_PropertyChanged(object? sender, PropertyChangedEventArgs e) => SaveFile();
 
     private void NewFile()
     {
@@ -247,7 +363,7 @@ public sealed class EmulatorSettingsPageViewModel : BaseViewModel
             if (string.IsNullOrWhiteSpace(model.Id) || string.IsNullOrWhiteSpace(model.Name)) throw new JsonException("Id and Name are required.");
             string temporaryPath = SelectedFile.FilePath + ".tmp";
             File.WriteAllText(temporaryPath, JsonSerializer.Serialize(model, SerializerOptions)); File.Move(temporaryPath, SelectedFile.FilePath, true);
-            string selectedPath = SelectedFile.FilePath; EmulatorDefinitions.Reload(); LoadFiles(); SelectedFile = Files.FirstOrDefault(x => x.FilePath == selectedPath) ?? Files.FirstOrDefault(); StatusText = "Saved.";
+            EmulatorDefinitions.Reload(); StatusText = "Saved.";
         }
         catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException or NotSupportedException) { StatusText = $"Could not save: {ex.Message}"; }
     }

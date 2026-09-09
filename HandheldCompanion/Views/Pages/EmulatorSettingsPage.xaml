@@ -159,7 +159,6 @@
                                     <ColumnDefinition Width="8*" MinWidth="140" />
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
                                 <ComboBox
