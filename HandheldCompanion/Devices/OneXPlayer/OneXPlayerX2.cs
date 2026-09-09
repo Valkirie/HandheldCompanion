@@ -27,6 +27,8 @@ public class OneXPlayerX2 : OneXPlayerX1
     // on cooldown, unlike the neighbouring board/SSD sensors.
     private const ushort CPUTemperatureRegister = 0x0470;
 
+    protected virtual bool UseWmiEc => true;
+
     public OneXPlayerX2()
     {
         // device specific settings
@@ -49,6 +51,9 @@ public class OneXPlayerX2 : OneXPlayerX1
             FanValueMin = 0,
             FanValueMax = 184
         };
+
+        // The X2 does not have a serial port, so we disable it to avoid unnecessary errors in the logs.
+        EnableSerialPort = false;
 
         // Override the default TDP values for each power profile to match the X2's presets.
         foreach (var profile in DevicePowerProfiles)
@@ -77,7 +82,7 @@ public class OneXPlayerX2 : OneXPlayerX1
 
         // Suppress the X2 keyboard shortcut; OEM2 is delivered over vendor HID.
         OEMChords.RemoveAll(c => c.state.Buttons.Contains(ButtonFlags.OEM2));
-        OEMChords.Add(new KeyboardChord("Keyboard", [KeyCode.LControl, KeyCode.LWin, KeyCode.O], [KeyCode.O, KeyCode.LWin, KeyCode.LControl], false, ButtonFlags.OEM2, flushInterval: 300));
+        OEMChords.Add(new KeyboardChord("Keyboard", [KeyCode.LControl, KeyCode.LWin, KeyCode.O], [KeyCode.O, KeyCode.LWin, KeyCode.LControl], false, ButtonFlags.OEM2, flushInterval: 100));
 
         // OEM buttons that does not emit keyboard events are still mapped to their respective chords for hotkey support.
         OEMChords.Add(new KeyboardChord("Home", null, null, false, ButtonFlags.OEM3));
@@ -99,16 +104,19 @@ public class OneXPlayerX2 : OneXPlayerX1
         // provider. WinRing0 port I/O (used by older OXP models) cannot access this
         // register on the X2, which is why takeover previously worked only after
         // OneXConsole had initialized it.
-        try
+        if (UseWmiEc)
         {
-            lock (updateLock)
+            try
             {
-                _wmiEc = new OneXPlayerWmiEc();
+                lock (updateLock)
+                {
+                    _wmiEc = new OneXPlayerWmiEc();
+                }
             }
-        }
-        catch (Exception ex)
-        {
-            LogManager.LogWarning("Failed to open X2 WMI EC interface: {0}", ex.Message);
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to open X2 WMI EC interface: {0}", ex.Message);
+            }
         }
 
         return base.Open();
@@ -116,10 +124,13 @@ public class OneXPlayerX2 : OneXPlayerX1
 
     public override void Close()
     {
-        lock (updateLock)
+        if (UseWmiEc)
         {
-            _wmiEc?.Dispose();
-            _wmiEc = null;
+            lock (updateLock)
+            {
+                _wmiEc?.Dispose();
+                _wmiEc = null;
+            }
         }
 
         base.Close();

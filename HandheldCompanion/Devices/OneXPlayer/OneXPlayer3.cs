@@ -48,7 +48,7 @@ namespace HandheldCompanion.Devices
             foreach (byte side in new byte[] { 0x01, 0x02, 0x07, 0x05, 0x06 })
             {
                 result &= SendV1Brightness(device, brightness, side);
-                Thread.Sleep(100);
+                Thread.Sleep(200);
             }
             return result;
         }
@@ -68,13 +68,13 @@ namespace HandheldCompanion.Devices
             foreach (byte side in new byte[] { 0x01, 0x02, 0x07 })
             {
                 result &= SendV1SolidColor(device, mainColor, side, breathing);
-                Thread.Sleep(100);
+                Thread.Sleep(200);
             }
             // There is intentionally no side 0 aggregate zone on the X2 Mini Pro.
             foreach (byte side in new byte[] { 0x05, 0x06 })
             {
                 result &= SendV1SolidColor(device, secondaryColor, side, breathing);
-                Thread.Sleep(100);
+                Thread.Sleep(200);
             }
             return result;
         }

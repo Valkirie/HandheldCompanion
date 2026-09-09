@@ -123,11 +123,13 @@ public class AYANEO3 : AYANEODeviceCEc
         if (!superJoy.IsOpen && !TryBindSuperJoy())
             return;
 
-        superJoy.SetSticks(left, right, brightness, isEnabled);
+        lock (HidWriteLock)
+            superJoy.SetSticks(left, right, brightness, isEnabled);
         if (superJoy.IsOpen || !TryBindSuperJoy())
             return;
 
-        superJoy.SetSticks(left, right, brightness, isEnabled);
+        lock (HidWriteLock)
+            superJoy.SetSticks(left, right, brightness, isEnabled);
     }
 
     protected override void CEcRgb_GlobalOn(LEDGroup group, byte speed = 0x00)

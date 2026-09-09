@@ -621,19 +621,22 @@ public class OneXPlayerX1 : OneXAOKZOE
         frame[^2] = FrameMarker;
         frame[^1] = commandId;
 
-        if (reportLength == 64)
+        lock (HidWriteLock)
         {
-            // Older X2 interfaces expose the protocol frame as the complete
-            // output report, without a separate report-ID byte.
-            return device.Write(frame);
-        }
+            if (reportLength == 64)
+            {
+                // Older X2 interfaces expose the protocol frame as the complete
+                // output report, without a separate report-ID byte.
+                return WriteReport(device, frame);
+            }
 
-        // Newer interfaces, including X2 Mini Pro, expose a 65-byte HID
-        // report: report ID 0x00 followed by the 64-byte protocol frame.
-        // Use the same raw-write path as the other 65-byte devices in this
-        // codebase; HidLibrary adds no framing beyond the byte array here.
-        byte[] report = WithReportID(frame, 0x00, frame.Length);
-        return device.Write(report);
+            // Newer interfaces, including X2 Mini Pro, expose a 65-byte HID
+            // report: report ID 0x00 followed by the 64-byte protocol frame.
+            // Use the same raw-write path as the other 65-byte devices in this
+            // codebase; HidLibrary adds no framing beyond the byte array here.
+            byte[] report = WithReportID(frame, 0x00, frame.Length);
+            return WriteReport(device, report);
+        }
     }
 
     protected virtual byte[] BuildRemapPage1(byte preset) =>

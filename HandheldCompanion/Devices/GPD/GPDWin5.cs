@@ -222,7 +222,7 @@ public class GPDWin5 : IDevice
             request.ReportId = 0x01;
             request.Data[0] = 0x41;
 
-            if (!device.WriteReportSync(request))
+            if (!WriteReport(device, request))
                 return null;
 
             Thread.Sleep(50); // controller needs a moment.

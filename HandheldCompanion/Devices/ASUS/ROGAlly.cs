@@ -449,7 +449,7 @@ public class ROGAlly : AsusDevice
                 return false;
 
             byte[] msg = { AURA_HID_ID, 0xba, 0xc5, 0xc4, (byte)brightness };
-            return hidDevice.WriteFeatureData(msg);
+            return WriteFeatureReport(hidDevice, msg);
         }
 
         return false;
@@ -502,9 +502,12 @@ public class ROGAlly : AsusDevice
             if (!hidDevice.IsConnected)
                 return false;
 
-            hidDevice.Write(AuraMessage(mode, MainColor, SecondaryColor, speed, LEDZone.All));
-            hidDevice.Write(MESSAGE_APPLY);
-            hidDevice.Write(MESSAGE_SET);
+            lock (HidWriteLock)
+            {
+                WriteReport(hidDevice, AuraMessage(mode, MainColor, SecondaryColor, speed, LEDZone.All));
+                WriteReport(hidDevice, MESSAGE_APPLY);
+                WriteReport(hidDevice, MESSAGE_SET);
+            }
 
             return true;
         }
@@ -520,12 +523,15 @@ public class ROGAlly : AsusDevice
                 return false;
 
             // Left joystick
-            hidDevice.Write(AuraMessage(AuraMode.SolidColor, MainColor, MainColor, AuraSpeed.Slow, LEDZone.JoystickLeftSideLeft));
-            hidDevice.Write(AuraMessage(AuraMode.SolidColor, MainColor, MainColor, AuraSpeed.Slow, LEDZone.JoystickLeftSideRight));
+            lock (HidWriteLock)
+            {
+                WriteReport(hidDevice, AuraMessage(AuraMode.SolidColor, MainColor, MainColor, AuraSpeed.Slow, LEDZone.JoystickLeftSideLeft));
+                WriteReport(hidDevice, AuraMessage(AuraMode.SolidColor, MainColor, MainColor, AuraSpeed.Slow, LEDZone.JoystickLeftSideRight));
 
-            // Right joystick
-            hidDevice.Write(AuraMessage(AuraMode.SolidColor, SecondaryColor, SecondaryColor, AuraSpeed.Slow, LEDZone.JoystickRightSideLeft));
-            hidDevice.Write(AuraMessage(AuraMode.SolidColor, SecondaryColor, SecondaryColor, AuraSpeed.Slow, LEDZone.JoystickRightSideRight));
+                // Right joystick
+                WriteReport(hidDevice, AuraMessage(AuraMode.SolidColor, SecondaryColor, SecondaryColor, AuraSpeed.Slow, LEDZone.JoystickRightSideLeft));
+                WriteReport(hidDevice, AuraMessage(AuraMode.SolidColor, SecondaryColor, SecondaryColor, AuraSpeed.Slow, LEDZone.JoystickRightSideRight));
+            }
 
             return true;
         }
@@ -588,22 +594,25 @@ public class ROGAlly : AsusDevice
             if (!device.IsConnected)
                 return;
 
-            device.WriteFeatureData(modeGame, 64);
-            device.WriteFeatureData(dPadUpDownDefault, 64);
-            device.WriteFeatureData(dPadLeftRightDefault, 64);
-            device.WriteFeatureData(joySticksDefault, 64);
-            device.WriteFeatureData(shoulderButtonsDefault, 64);
-            device.WriteFeatureData(faceButtonsABDefault, 64);
-            device.WriteFeatureData(faceButtonsXYDefault, 64);
-            device.WriteFeatureData(viewAndMenuDefault, 64);
+            lock (HidWriteLock)
+            {
+                WriteFeatureReport(device, modeGame, 64);
+                WriteFeatureReport(device, dPadUpDownDefault, 64);
+                WriteFeatureReport(device, dPadLeftRightDefault, 64);
+                WriteFeatureReport(device, joySticksDefault, 64);
+                WriteFeatureReport(device, shoulderButtonsDefault, 64);
+                WriteFeatureReport(device, faceButtonsABDefault, 64);
+                WriteFeatureReport(device, faceButtonsXYDefault, 64);
+                WriteFeatureReport(device, viewAndMenuDefault, 64);
 
-            device.WriteFeatureData((Remap ? M1F18M2F17 : M1M2Default), 64);
+                WriteFeatureReport(device, (Remap ? M1F18M2F17 : M1M2Default), 64);
 
-            device.WriteFeatureData(triggersDefault, 64);
-            device.WriteFeatureData(commitReset1of4, 64);
-            device.WriteFeatureData(commitReset2of4, 64);
-            device.WriteFeatureData(commitReset3of4, 64);
-            device.WriteFeatureData(commitReset4of4, 64);
+                WriteFeatureReport(device, triggersDefault, 64);
+                WriteFeatureReport(device, commitReset1of4, 64);
+                WriteFeatureReport(device, commitReset2of4, 64);
+                WriteFeatureReport(device, commitReset3of4, 64);
+                WriteFeatureReport(device, commitReset4of4, 64);
+            }
         }
     }
 
@@ -614,7 +623,7 @@ public class ROGAlly : AsusDevice
             if (!device.IsConnected)
                 return false;
 
-            return device.WriteFeatureData(new byte[] { 0x5A, 0xD1, 0x0B, 0x01, disabled ? (byte)0x02 : (byte)0x01 }, 64);
+            return WriteFeatureReport(device, new byte[] { 0x5A, 0xD1, 0x0B, 0x01, disabled ? (byte)0x02 : (byte)0x01 }, 64);
         }
 
         return false;

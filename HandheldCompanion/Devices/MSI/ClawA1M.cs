@@ -289,9 +289,11 @@ public class ClawA1M : IDevice
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
         {
             Thread.Sleep(300);
-            device.Write(GetM12(true, gamepadMode == GamepadMode.XInput), 0, 64);
+            lock (HidWriteLock)
+                WriteReport(device, GetM12(true, gamepadMode == GamepadMode.XInput), 0, 64);
             Thread.Sleep(500);
-            device.Write(GetM12(false, gamepadMode == GamepadMode.XInput), 0, 64);
+            lock (HidWriteLock)
+                WriteReport(device, GetM12(false, gamepadMode == GamepadMode.XInput), 0, 64);
             Thread.Sleep(500);
             SyncToROM();
             Thread.Sleep(500);
@@ -437,9 +439,11 @@ public class ClawA1M : IDevice
             return;
 
         Thread.Sleep(300);
-        device.Write(GetM12(true, gamepadMode == GamepadMode.XInput), 0, 64);
+        lock (HidWriteLock)
+            WriteReport(device, GetM12(true, gamepadMode == GamepadMode.XInput), 0, 64);
         Thread.Sleep(500);
-        device.Write(GetM12(false, gamepadMode == GamepadMode.XInput), 0, 64);
+        lock (HidWriteLock)
+            WriteReport(device, GetM12(false, gamepadMode == GamepadMode.XInput), 0, 64);
         Thread.Sleep(500);
         SyncToROM();
         Thread.Sleep(500);
@@ -462,7 +466,10 @@ public class ClawA1M : IDevice
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
         {
             byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SetMotionStatus, (byte)(enabled ? 1 : 0) };
-            if (device.Write(msg, 0, 64))
+            bool written;
+            lock (HidWriteLock)
+                written = WriteReport(device, msg, 0, 64);
+            if (written)
             {
                 LogManager.LogInformation("Successfully SetMotionStatus to {0}", enabled);
                 return true;
@@ -482,7 +489,10 @@ public class ClawA1M : IDevice
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
         {
             byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SwitchMode, (byte)gamepadMode, (byte)MKeysFunction.Macro };
-            if (device.Write(msg, 0, 64))
+            bool written;
+            lock (HidWriteLock)
+                written = WriteReport(device, msg, 0, 64);
+            if (written)
             {
                 LogManager.LogInformation("Successfully switched controller mode to {0}", gamepadMode);
                 return true;
@@ -517,7 +527,10 @@ public class ClawA1M : IDevice
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
         {
             byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SyncToROM };
-            if (device.Write(msg, 0, 64))
+            bool written;
+            lock (HidWriteLock)
+                written = WriteReport(device, msg, 0, 64);
+            if (written)
             {
                 LogManager.LogInformation("Successfully synced to ROM");
                 return true;
@@ -682,7 +695,8 @@ public class ClawA1M : IDevice
         LEDBrightness = brightness;
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
-            return device.Write(GetRGB(brightness, LEDMainColor, LEDSecondColor), 0, 64);
+            lock (HidWriteLock)
+                return WriteReport(device, GetRGB(brightness, LEDMainColor, LEDSecondColor), 0, 64);
 
         return false;
     }
@@ -698,9 +712,11 @@ public class ClawA1M : IDevice
             switch (level)
             {
                 case LEDLevel.SolidColor:
-                    return device.Write(GetRGB(LEDBrightness, MainColor, MainColor), 0, 64);
+                    lock (HidWriteLock)
+                        return WriteReport(device, GetRGB(LEDBrightness, MainColor, MainColor), 0, 64);
                 case LEDLevel.Ambilight:
-                    return device.Write(GetRGB(LEDBrightness, MainColor, SecondaryColor), 0, 64);
+                    lock (HidWriteLock)
+                        return WriteReport(device, GetRGB(LEDBrightness, MainColor, SecondaryColor), 0, 64);
             }
         }
 

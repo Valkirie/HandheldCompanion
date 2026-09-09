@@ -80,12 +80,15 @@ namespace HandheldCompanion.Devices.Lenovo
                 device.OpenDevice();
 
                 // Send controller init packet sequence
-                foreach (byte[] cmd in ControllerFactoryReset())
-                    device.Write(WithReportID(cmd));
+                lock (HidWriteLock)
+                {
+                    foreach (byte[] cmd in ControllerFactoryReset())
+                        WriteReport(device, WithReportID(cmd));
 
-                // load RGB profile
-                lightProfile.profile = 0x03;
-                device.Write(WithReportID(RgbLoadProfile((byte)lightProfile.profile)));
+                    // load RGB profile
+                    lightProfile.profile = 0x03;
+                    WriteReport(device, WithReportID(RgbLoadProfile((byte)lightProfile.profile)));
+                }
             }
 
             base.Device_Inserted(reScan);
@@ -122,8 +125,11 @@ namespace HandheldCompanion.Devices.Lenovo
 #else
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
             {
-                device.Write(WithReportID([0x04, 0x08, (enabled ? (byte)0x00 : (byte)0x01)])); // touchpad
-                device.Write(WithReportID([0x08, 0x03, (enabled ? (byte)0x00 : (byte)0x01)])); // touchpad vibration
+                lock (HidWriteLock)
+                {
+                    WriteReport(device, WithReportID([0x04, 0x08, (enabled ? (byte)0x00 : (byte)0x01)])); // touchpad
+                    WriteReport(device, WithReportID([0x08, 0x03, (enabled ? (byte)0x00 : (byte)0x01)])); // touchpad vibration
+                }
             }
 #endif
             base.SetPassthrough(enabled);
@@ -159,7 +165,7 @@ namespace HandheldCompanion.Devices.Lenovo
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
             {
                 byte[] cmd = RgbSetProfile((byte)lightProfile.profile, (byte)lightProfile.effect, (byte)lightProfile.r, (byte)lightProfile.g, (byte)lightProfile.b, lightProfile.brightness, lightProfile.speed);
-                return device.Write(WithReportID(cmd));
+                return WriteReport(device, WithReportID(cmd));
             }
 #endif
             return false;
@@ -171,7 +177,7 @@ namespace HandheldCompanion.Devices.Lenovo
             return SetLightingEnable(3, status);
 #else
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
-                return device.Write(WithReportID(RgbEnable(status)));
+                return WriteReport(device, WithReportID(RgbEnable(status)));
 #endif
             return false;
         }
@@ -212,7 +218,7 @@ namespace HandheldCompanion.Devices.Lenovo
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
             {
                 byte[] cmd = RgbSetProfile((byte)lightProfile.profile, (byte)lightProfile.effect, (byte)lightProfile.r, (byte)lightProfile.g, (byte)lightProfile.b, lightProfile.brightness, lightProfile.speed);
-                return device.Write(WithReportID(cmd));
+                return WriteReport(device, WithReportID(cmd));
             }
 #endif
             return false;

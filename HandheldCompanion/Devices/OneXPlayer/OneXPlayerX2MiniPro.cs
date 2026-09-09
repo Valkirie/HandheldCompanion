@@ -1,4 +1,5 @@
 using HandheldCompanion.Inputs;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using WindowsInput.Events;
@@ -8,6 +9,10 @@ namespace HandheldCompanion.Devices;
 
 public class OneXPlayerX2MiniPro : OneXPlayerX2
 {
+    private const ushort CPUTemperatureRegister = 0x0470;
+
+    protected override bool UseWmiEc => false;
+
     public OneXPlayerX2MiniPro()
     {
         // todo: ProductIllustration
@@ -29,8 +34,8 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
             FanValueMax = 255
         };
 
-        // The X2 Mini Pro does not have a serial port, so we disable it to avoid unnecessary errors in the logs.
-        EnableSerialPort = false;
+        // The X2 does not have a wmiEc
+        EnableSerialPort = true;
 
         DynamicLightingCapabilities |= LEDLevel.Breathing;
 
@@ -119,7 +124,7 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         foreach (byte side in new byte[] { 0x01, 0x02, 0x07, 0x05, 0x06 })
         {
             result &= SendV1Brightness(device, brightness, side);
-            Thread.Sleep(100);
+            Thread.Sleep(200);
         }
         return result;
     }
@@ -139,14 +144,69 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         foreach (byte side in new byte[] { 0x01, 0x02, 0x07 })
         {
             result &= SendV1SolidColor(device, mainColor, side, breathing);
-            Thread.Sleep(100);
+            Thread.Sleep(200);
         }
         // There is intentionally no side 0 aggregate zone on the X2 Mini Pro.
         foreach (byte side in new byte[] { 0x05, 0x06 })
         {
             result &= SendV1SolidColor(device, secondaryColor, side, breathing);
-            Thread.Sleep(100);
+            Thread.Sleep(200);
         }
         return result;
+    }
+
+    public override void SetFanControl(bool enable, int mode = 0)
+    {
+        if (ECDetails.AddressFanControl == 0)
+            return;
+
+        if (!UseOpenLib || !IsOpen)
+            return;
+
+        byte data = Convert.ToByte(enable);
+        if (ECRamDirectWriteByte(ECDetails.AddressFanControl, ECDetails, data))
+            hasAppliedSoftwareFanProfile = enable;
+    }
+
+    public override void SetFanDuty(double percent)
+    {
+        if (ECDetails.AddressFanDuty == 0)
+            return;
+
+        if (!UseOpenLib || !IsOpen)
+            return;
+
+        double clampedPercent = Math.Clamp(percent, 0.0d, 100.0d);
+        double scaled = clampedPercent * (ECDetails.FanValueMax - ECDetails.FanValueMin) / 100.0d + ECDetails.FanValueMin;
+        byte data = (byte)Math.Round(scaled);
+
+        ECRamDirectWriteByte(ECDetails.AddressFanDuty, ECDetails, data);
+    }
+
+    public override float ReadFanDuty()
+    {
+        return ECRamDirectReadByte(ECDetails.AddressFanDuty, ECDetails);
+    }
+
+    public override float? ReadCPUTemperature()
+    {
+        byte value = ECRamDirectReadByte(CPUTemperatureRegister, ECDetails);
+        if (value == 0 || value > 110)
+            return null;
+
+        return value;
+    }
+
+    protected override ButtonFlags MapVendorButton(byte buttonId)
+    {
+        return buttonId switch
+        {
+            0x20 => ButtonFlags.OEM1,
+            0x21 => ButtonFlags.OEM2, // KEYBOARD
+            0x22 => ButtonFlags.L4,   // M1 (left back paddle)
+            0x23 => ButtonFlags.R4,   // M2 (right back paddle)
+            0x24 => ButtonFlags.OEM3, // HOME
+            _ => base.MapVendorButton(buttonId),
+        };
     }
 }

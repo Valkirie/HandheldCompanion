@@ -159,8 +159,43 @@ public abstract class IDevice
     private readonly System.Threading.Timer hidDeviceRemovedTimer;
 
     protected Dictionary<int, HidDevice> hidDevices = [];
+    protected readonly object HidWriteLock = new();
     protected Dictionary<int, HidFilter> hidFilters = [];
     protected bool IsReading = false;
+
+    protected bool WriteReport(HidDevice device, byte[] report)
+    {
+        lock (HidWriteLock)
+            return device.Write(report);
+    }
+
+    protected bool WriteReport(HidDevice device, byte[] report, int offset, int length)
+    {
+        byte[] payload = new byte[length];
+        Buffer.BlockCopy(report, offset, payload, 0, length);
+        lock (HidWriteLock)
+            return device.Write(payload);
+    }
+
+    protected bool WriteFeatureReport(HidDevice device, byte[] report)
+    {
+        lock (HidWriteLock)
+            return device.WriteFeatureData(report);
+    }
+
+    protected bool WriteFeatureReport(HidDevice device, byte[] report, int length)
+    {
+        byte[] payload = new byte[length];
+        Buffer.BlockCopy(report, 0, payload, 0, length);
+        lock (HidWriteLock)
+            return device.WriteFeatureData(payload);
+    }
+
+    protected bool WriteReport(HidDevice device, HidReport report)
+    {
+        lock (HidWriteLock)
+            return device.WriteReportSync(report);
+    }
 
     public IMUMatrix AcceleroMatrix;
     public IMUMatrix GyroMatrix;
