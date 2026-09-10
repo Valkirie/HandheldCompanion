@@ -177,6 +177,17 @@ public abstract class IDevice
             return device.Write(payload);
     }
 
+    protected bool WriteReport(HidDevice device, byte[] report, int length)
+    {
+        if (length < 0 || report.Length > length)
+            return false;
+
+        byte[] payload = new byte[length];
+        Buffer.BlockCopy(report, 0, payload, 0, report.Length);
+        lock (HidWriteLock)
+            return device.Write(payload);
+    }
+
     protected bool WriteFeatureReport(HidDevice device, byte[] report)
     {
         lock (HidWriteLock)

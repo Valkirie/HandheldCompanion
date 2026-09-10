@@ -289,11 +289,9 @@ public class ClawA1M : IDevice
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
         {
             Thread.Sleep(300);
-            lock (HidWriteLock)
-                WriteReport(device, GetM12(true, gamepadMode == GamepadMode.XInput), 0, 64);
+            WriteReport(device, GetM12(true, gamepadMode == GamepadMode.XInput), 64);
             Thread.Sleep(500);
-            lock (HidWriteLock)
-                WriteReport(device, GetM12(false, gamepadMode == GamepadMode.XInput), 0, 64);
+            WriteReport(device, GetM12(false, gamepadMode == GamepadMode.XInput), 64);
             Thread.Sleep(500);
             SyncToROM();
             Thread.Sleep(500);
@@ -439,11 +437,9 @@ public class ClawA1M : IDevice
             return;
 
         Thread.Sleep(300);
-        lock (HidWriteLock)
-            WriteReport(device, GetM12(true, gamepadMode == GamepadMode.XInput), 0, 64);
+        WriteReport(device, GetM12(true, gamepadMode == GamepadMode.XInput), 64);
         Thread.Sleep(500);
-        lock (HidWriteLock)
-            WriteReport(device, GetM12(false, gamepadMode == GamepadMode.XInput), 0, 64);
+        WriteReport(device, GetM12(false, gamepadMode == GamepadMode.XInput), 64);
         Thread.Sleep(500);
         SyncToROM();
         Thread.Sleep(500);
@@ -467,8 +463,7 @@ public class ClawA1M : IDevice
         {
             byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SetMotionStatus, (byte)(enabled ? 1 : 0) };
             bool written;
-            lock (HidWriteLock)
-                written = WriteReport(device, msg, 0, 64);
+            written = WriteReport(device, msg, 64);
             if (written)
             {
                 LogManager.LogInformation("Successfully SetMotionStatus to {0}", enabled);
@@ -490,8 +485,7 @@ public class ClawA1M : IDevice
         {
             byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SwitchMode, (byte)gamepadMode, (byte)MKeysFunction.Macro };
             bool written;
-            lock (HidWriteLock)
-                written = WriteReport(device, msg, 0, 64);
+            written = WriteReport(device, msg, 64);
             if (written)
             {
                 LogManager.LogInformation("Successfully switched controller mode to {0}", gamepadMode);
@@ -528,8 +522,7 @@ public class ClawA1M : IDevice
         {
             byte[] msg = { 15, 0, 0, 60, (byte)CommandType.SyncToROM };
             bool written;
-            lock (HidWriteLock)
-                written = WriteReport(device, msg, 0, 64);
+            written = WriteReport(device, msg, 64);
             if (written)
             {
                 LogManager.LogInformation("Successfully synced to ROM");
@@ -695,8 +688,7 @@ public class ClawA1M : IDevice
         LEDBrightness = brightness;
 
         if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
-            lock (HidWriteLock)
-                return WriteReport(device, GetRGB(brightness, LEDMainColor, LEDSecondColor), 0, 64);
+            return WriteReport(device, GetRGB(brightness, LEDMainColor, LEDSecondColor), 64);
 
         return false;
     }
@@ -712,11 +704,9 @@ public class ClawA1M : IDevice
             switch (level)
             {
                 case LEDLevel.SolidColor:
-                    lock (HidWriteLock)
-                        return WriteReport(device, GetRGB(LEDBrightness, MainColor, MainColor), 0, 64);
+                    return WriteReport(device, GetRGB(LEDBrightness, MainColor, MainColor), 64);
                 case LEDLevel.Ambilight:
-                    lock (HidWriteLock)
-                        return WriteReport(device, GetRGB(LEDBrightness, MainColor, SecondaryColor), 0, 64);
+                    return WriteReport(device, GetRGB(LEDBrightness, MainColor, SecondaryColor), 64);
             }
         }
 
