@@ -1,3 +1,5 @@
+using HandheldCompanion.Devices;
+using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
@@ -5,6 +7,7 @@ using HandheldCompanion.Utils;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.DirectInput;
 using System;
+using System.Threading;
 
 namespace HandheldCompanion.Controllers.Lenovo
 {
@@ -44,6 +47,25 @@ namespace HandheldCompanion.Controllers.Lenovo
                         joystick = candidate;
                         dinputController = new(details.VendorID, details.ProductID, 64, -1);
                         UserIndex = (byte)joystick.Properties.JoystickId;
+
+                        if (IDevice.GetCurrent() is LegionGoTablet device && device.ControllerMode != LegionGoTablet.GamepadMode.DInput)
+                        {
+                            // During the transition, ControllerManager keeps the original
+                            // Legion controller registered and marks its container as cycling.
+                            // Restore XInput only after this DInput endpoint is initialized.
+                            foreach (LegionController controller in ControllerManager.GetControllers<LegionController>())
+                            {
+                                if (ControllerManager.PowerCyclers.TryGetValue(controller.GetContainerInstanceId(), out bool isPowerCycling) && isPowerCycling)
+                                {
+                                    while (!device.IsReady())
+                                        Thread.Sleep(500);
+
+                                    bool success = device.ApplyGamepadMode(LegionGoTablet.GamepadMode.XInput);
+                                    break;
+                                }
+                            }
+                        }
+
                         return;
                     }
                     catch { }

@@ -592,7 +592,8 @@ namespace HandheldCompanion.Controllers
 
             if (!success)
             {
-                // (re)set status
+                // A failed cycle may not raise device events, so the controller
+                // must clear its state here instead of waiting for the manager.
                 IsBusy = false;
                 ControllerManager.PowerCyclers[GetContainerInstanceId()] = false;
             }

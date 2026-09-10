@@ -14,11 +14,19 @@ namespace HandheldCompanion.Devices.Lenovo
 {
     public class LegionGoTablet : LegionGo
     {
+        public enum GamepadMode : byte
+        {
+            XInput = 1,
+            DInput = 2,
+        }
+
         public const int LeftJoyconIndex = 3;
         public const int RightJoyconIndex = 4;
 
         private LightionProfile lightProfileL = new();
         private LightionProfile lightProfileR = new();
+
+        public GamepadMode ControllerMode => (GamepadMode)(ManagerFactory.settingsManager.GetInt("LegionControllerMode") + 1);
 
         public LegionGoTablet()
         {
@@ -102,7 +110,7 @@ namespace HandheldCompanion.Devices.Lenovo
             {
                 case "LegionControllerMode":
                     {
-                        int controllerMode = Convert.ToInt32(value) + 1;
+                        GamepadMode controllerMode = (GamepadMode)(Convert.ToInt32(value) + 1);
                         ApplyGamepadMode(controllerMode);
                     }
                     break;
@@ -186,10 +194,9 @@ namespace HandheldCompanion.Devices.Lenovo
             return new byte[] { 0x05, 0x06, 0x69, 0x09, 0x01, (byte)(enabled ? 0x02 : 0x01), 0x01 };
         }
 
-        public bool ApplyGamepadMode(int mode)
+        public bool ApplyGamepadMode(GamepadMode mode)
         {
-            // 1 = XInput, 2 = DInput  (0 = "unknown" — never send)
-            if (mode != 1 && mode != 2)
+            if (mode != GamepadMode.XInput && mode != GamepadMode.DInput)
                 return false;
 
             if (!hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))

@@ -1,5 +1,9 @@
+using HandheldCompanion.Devices;
+using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
 using SharpDX.XInput;
+using System.Threading;
 
 namespace HandheldCompanion.Controllers.Lenovo
 {
@@ -20,6 +24,24 @@ namespace HandheldCompanion.Controllers.Lenovo
         {
             AttachController(details.XInputUserIndex);
             base.AttachDetails(details);
+
+            if (IDevice.GetCurrent() is LegionGoTablet device && device.ControllerMode != LegionGoTablet.GamepadMode.XInput)
+            {
+                // During the transition, ControllerManager keeps the original
+                // Legion controller registered and marks its container as cycling.
+                // Restore XInput only after this DInput endpoint is initialized.
+                foreach (LegionController controller in ControllerManager.GetControllers<LegionController>())
+                {
+                    if (ControllerManager.PowerCyclers.TryGetValue(controller.GetContainerInstanceId(), out bool isPowerCycling) && isPowerCycling)
+                    {
+                        while (!device.IsReady())
+                            Thread.Sleep(500);
+
+                        bool success = device.ApplyGamepadMode(LegionGoTablet.GamepadMode.DInput);
+                        break;
+                    }
+                }
+            }
         }
 
         public override bool IsConnected() => xinputController?.IsConnected == true;
