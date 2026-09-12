@@ -41,6 +41,7 @@ namespace HandheldCompanion.Managers
         private static string updateUrl = string.Empty;
         private static readonly HttpClient httpClient;
         private static readonly string InstallPath;
+        private static readonly TimeSpan DownloadReadTimeout = TimeSpan.FromSeconds(30);
 
         private static Timer autoTimer = new(TimeSpan.FromMinutes(10)) { AutoReset = true };
 
@@ -280,7 +281,7 @@ namespace HandheldCompanion.Managers
                 var buffer = new byte[81920];
                 long bytesReadSoFar = 0;
                 int read;
-                while ((read = await sourceStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                while ((read = await sourceStream.ReadAsync(buffer, 0, buffer.Length).WaitAsync(DownloadReadTimeout)) > 0)
                 {
                     await destStream.WriteAsync(buffer, 0, read);
                     bytesReadSoFar += read;
