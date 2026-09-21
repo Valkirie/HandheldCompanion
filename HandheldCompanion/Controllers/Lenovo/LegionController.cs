@@ -112,6 +112,8 @@ namespace HandheldCompanion.Controllers.Lenovo
 
         public override string ToString() => "Legion Controller";
 
+        protected void TickControllerState(long ticks, float delta) => base.Tick(ticks, delta, true);
+
         protected override void InitializeInputOutput()
         {
             // Additional controller specific source buttons
@@ -287,7 +289,7 @@ namespace HandheldCompanion.Controllers.Lenovo
                     gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
             }
 
-            base.Tick(ticks, delta, true);
+            TickControllerState(ticks, delta);
         }
 
         public void HandleTouchpadInput(bool touched, ushort TouchpadX, ushort TouchpadY)

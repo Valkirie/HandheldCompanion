@@ -53,8 +53,8 @@ namespace HandheldCompanion.Controllers.Lenovo
         private enum FrontButtons
         {
             None = 0,
-            LegionL = 1,
-            LegionR = 2,
+            LegionR = 0x40,
+            LegionL = 0x80,
         }
 
         [Flags]
@@ -126,7 +126,7 @@ namespace HandheldCompanion.Controllers.Lenovo
                 }
             }
 
-            base.Tick(ticks, delta, true);
+            TickControllerState(ticks, delta);
         }
     }
 }

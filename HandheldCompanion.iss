@@ -117,6 +117,9 @@ Source: "{#SourcePath}\redist\netcorecheck.exe"; Flags: dontcopy noencryption
 Source: "{#SourcePath}\redist\netcorecheck_x64.exe"; Flags: dontcopy noencryption
 Source: "{#SourcePath}\redist\PawnIO_setup.exe"; Flags: dontcopy noencryption
 #endif
+#ifdef UseUSBip
+Source: "{#SourcePath}\redist\USBip-{#NewUSBipVersion}-x64.exe"; Flags: dontcopy noencryption
+#endif
 Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#WindowsVersion}.0\win-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#SourcePath}\Certificate.pfx"; DestDir: "{tmp}"; Flags: deleteafterinstall
 Source: "{#SourcePath}\Certificate.ps1"; DestDir: "{tmp}"; Flags: deleteafterinstall
@@ -955,6 +958,9 @@ end;
 
 procedure Dependency_AddUSBip;
 begin
+  if not FileExists(ExpandConstant('{tmp}\USBip-{#NewUSBipVersion}-x64.exe')) then
+    ExtractTemporaryFile('USBip-{#NewUSBipVersion}-x64.exe');
+
   Dependency_Add_With_Version('USBip-{#NewUSBipVersion}-x64.exe', '{#NewUSBipVersion}', RegGetInstalledVersion('{#USBipName}'),
     '/VERYSILENT /COMPONENTS=main,client /SUPPRESSMSGBOXES /NORESTART /SP-',
     '{#USBipName}',
