@@ -14,11 +14,19 @@ namespace HandheldCompanion.Devices.Lenovo
 {
     public class LegionGoTablet : LegionGo
     {
+        public enum GamepadMode : byte
+        {
+            XInput = 1,
+            DInput = 2,
+        }
+
         public const int LeftJoyconIndex = 3;
         public const int RightJoyconIndex = 4;
 
         private LightionProfile lightProfileL = new();
         private LightionProfile lightProfileR = new();
+
+        public GamepadMode ControllerMode => (GamepadMode)(ManagerFactory.settingsManager.GetInt("LegionControllerMode") + 1);
 
         public LegionGoTablet()
         {
@@ -102,7 +110,7 @@ namespace HandheldCompanion.Devices.Lenovo
             {
                 case "LegionControllerMode":
                     {
-                        int controllerMode = Convert.ToInt32(value) + 1;
+                        GamepadMode controllerMode = (GamepadMode)(Convert.ToInt32(value) + 1);
                         ApplyGamepadMode(controllerMode);
                     }
                     break;
@@ -131,22 +139,25 @@ namespace HandheldCompanion.Devices.Lenovo
                 device.OpenDevice();
 
                 // reset controller to factory default
-                foreach (byte[] cmd in ControllerFactoryReset())
-                    device.Write(cmd);
+                lock (HidWriteLock)
+                {
+                    foreach (byte[] cmd in ControllerFactoryReset())
+                        WriteReport(device, cmd);
 
-                // enable left gyro
-                foreach (byte[] cmd in EnableControllerGyro(LeftJoyconIndex))
-                    device.Write(cmd);
-                // enable right gyro
-                foreach (byte[] cmd in EnableControllerGyro(RightJoyconIndex))
-                    device.Write(cmd);
+                    // enable left gyro
+                    foreach (byte[] cmd in EnableControllerGyro(LeftJoyconIndex))
+                        WriteReport(device, cmd);
+                    // enable right gyro
+                    foreach (byte[] cmd in EnableControllerGyro(RightJoyconIndex))
+                        WriteReport(device, cmd);
 
-                // load RGB profiles
-                device.Write(RgbLoadProfile(LeftJoyconIndex, 0x03));
-                device.Write(RgbLoadProfile(RightJoyconIndex, 0x03));
+                    // load RGB profiles
+                    WriteReport(device, RgbLoadProfile(LeftJoyconIndex, 0x03));
+                    WriteReport(device, RgbLoadProfile(RightJoyconIndex, 0x03));
 
-                // disable windows-specific keyboard commands
-                device.Write(SetSteamOSMode(true));
+                    // disable windows-specific keyboard commands
+                    WriteReport(device, SetSteamOSMode(true));
+                }
             }
 
             base.Device_Inserted(reScan);
@@ -183,16 +194,15 @@ namespace HandheldCompanion.Devices.Lenovo
             return new byte[] { 0x05, 0x06, 0x69, 0x09, 0x01, (byte)(enabled ? 0x02 : 0x01), 0x01 };
         }
 
-        public bool ApplyGamepadMode(int mode)
+        public bool ApplyGamepadMode(GamepadMode mode)
         {
-            // 1 = XInput, 2 = DInput  (0 = "unknown" — never send)
-            if (mode != 1 && mode != 2)
+            if (mode != GamepadMode.XInput && mode != GamepadMode.DInput)
                 return false;
 
             if (!hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
                 return false;
 
-            return device.Write([0x05, 0x00, 0x04, 0x0E, 0x03, (byte)mode]);
+            return WriteReport(device, [0x05, 0x00, 0x04, 0x0E, 0x03, (byte)mode]);
         }
 
         public bool SetPhysicalXInputEnabled(bool enabled)
@@ -202,9 +212,12 @@ namespace HandheldCompanion.Devices.Lenovo
 
             byte value = enabled ? (byte)0x01 : (byte)0x02;
             bool result = true;
-            result &= device.Write([0x05, 0x00, 0x04, 0x0F, 0x00, value]);
-            result &= device.Write([0x05, 0x00, 0x04, 0x0F, LeftJoyconIndex, value]);
-            result &= device.Write([0x05, 0x00, 0x04, 0x0F, RightJoyconIndex, value]);
+            lock (HidWriteLock)
+            {
+                result &= WriteReport(device, [0x05, 0x00, 0x04, 0x0F, 0x00, value]);
+                result &= WriteReport(device, [0x05, 0x00, 0x04, 0x0F, LeftJoyconIndex, value]);
+                result &= WriteReport(device, [0x05, 0x00, 0x04, 0x0F, RightJoyconIndex, value]);
+            }
             return result;
         }
 
@@ -215,7 +228,8 @@ namespace HandheldCompanion.Devices.Lenovo
 #else
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
             {
-                device.Write([0x05, 0x06, 0x6B, 0x02, 0x04, (enabled ? (byte)0x01 : (byte)0x00), 0x01]);
+                lock (HidWriteLock)
+                    WriteReport(device, [0x05, 0x06, 0x6B, 0x02, 0x04, (enabled ? (byte)0x01 : (byte)0x00), 0x01]);
             }
 #endif
             base.SetPassthrough(enabled);
@@ -244,8 +258,9 @@ namespace HandheldCompanion.Devices.Lenovo
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
             {
                 // write RGB
-                foreach (byte[] cmd in RgbMultiLoadSettings((RgbMode)lightProfileL.effect, 0x03, (byte)lightProfileL.r, (byte)lightProfileL.g, (byte)lightProfileL.b, lightProfileL.brightness, lightProfileL.speed, false))
-                    device.Write(cmd);
+                lock (HidWriteLock)
+                    foreach (byte[] cmd in RgbMultiLoadSettings((RgbMode)lightProfileL.effect, 0x03, (byte)lightProfileL.r, (byte)lightProfileL.g, (byte)lightProfileL.b, lightProfileL.brightness, lightProfileL.speed, false))
+                        WriteReport(device, cmd);
             }
 #endif
             return true;
@@ -259,8 +274,9 @@ namespace HandheldCompanion.Devices.Lenovo
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
             {
                 // write RGB
-                foreach (byte[] cmd in RgbMultiEnable(status))
-                    device.Write(cmd);
+                lock (HidWriteLock)
+                    foreach (byte[] cmd in RgbMultiEnable(status))
+                        WriteReport(device, cmd);
             }
 #endif
             return true;
@@ -313,8 +329,9 @@ namespace HandheldCompanion.Devices.Lenovo
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
             {
                 // write RGB
-                foreach (byte[] cmd in RgbMultiLoadSettings((RgbMode)lightProfileL.effect, 0x03, (byte)lightProfileL.r, (byte)lightProfileL.g, (byte)lightProfileL.b, lightProfileL.brightness, lightProfileL.speed, false))
-                    device.Write(cmd);
+                lock (HidWriteLock)
+                    foreach (byte[] cmd in RgbMultiLoadSettings((RgbMode)lightProfileL.effect, 0x03, (byte)lightProfileL.r, (byte)lightProfileL.g, (byte)lightProfileL.b, lightProfileL.brightness, lightProfileL.speed, false))
+                        WriteReport(device, cmd);
             }
 #endif
             return true;

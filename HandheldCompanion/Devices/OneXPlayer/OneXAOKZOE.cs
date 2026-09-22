@@ -155,7 +155,7 @@ namespace HandheldCompanion.Devices.OneXPlayer
             };
             byte[] payload = BuildV1Command(0xB8, 0x01, cmd);
 
-            return device.Write(WithReportID(payload));
+            return WriteReport(device, WithReportID(payload));
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace HandheldCompanion.Devices.OneXPlayer
             cmd.Add(color.G);
 
             byte[] payload = BuildV1Command(0xB8, 0x01, cmd);
-            return device.Write(WithReportID(payload));
+            return WriteReport(device, WithReportID(payload));
         }
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace HandheldCompanion.Devices.OneXPlayer
                 0x02
             };
             byte[] payload = BuildV1Command(0xB8, 0x01, cmd);
-            return device.Write(WithReportID(payload));
+            return WriteReport(device, WithReportID(payload));
         }
 
         #endregion
@@ -224,7 +224,7 @@ namespace HandheldCompanion.Devices.OneXPlayer
 
             // [0x00, 0x07, 0xFF, 0xFD, 0x01, 0x05, level] – HidLibrary pads the rest with zeros
             byte[] msg = { 0x00, 0x07, 0xFF, 0xFD, 0x01, 0x05, (byte)level };
-            return device.Write(msg);
+            return WriteReport(device, msg);
         }
 
         /// <summary>
@@ -249,7 +249,7 @@ namespace HandheldCompanion.Devices.OneXPlayer
                 .Concat(new byte[] { 0x00 })
                 .ToArray();
 
-            return device.Write(msg);
+            return WriteReport(device, msg);
         }
 
         /// <summary>
@@ -270,7 +270,7 @@ namespace HandheldCompanion.Devices.OneXPlayer
                 .Concat(new byte[] { 0x00 })
                 .ToArray();
 
-            return device.Write(msg);
+            return WriteReport(device, msg);
         }
 
         #endregion

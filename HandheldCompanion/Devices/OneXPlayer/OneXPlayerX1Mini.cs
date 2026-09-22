@@ -37,12 +37,21 @@ public class OneXPlayerX1Mini : OneXPlayerX1
         WriteVendorHidCommand(VibrationCommandId, [0x01, 0x05, 0x05]);
     }
 
-    protected override void HandleStatusReport(byte[] report)
+    protected override async void HandleStatusReport(byte[] data)
     {
-        if (report[3] == 0xFE)
+        if (data.Length <= 3)
+            return;
+
+        switch (data[3])
         {
-            Device_Removed();
-            Device_Inserted(true);
+            case 0xFE:
+                {
+                    await Task.Delay(200);
+
+                    if (IsReading)
+                        await ConfigureController();
+                }
+                break;
         }
     }
 

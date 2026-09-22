@@ -159,8 +159,49 @@ public abstract class IDevice
     private readonly System.Threading.Timer hidDeviceRemovedTimer;
 
     protected Dictionary<int, HidDevice> hidDevices = [];
+    protected readonly object HidWriteLock = new();
     protected Dictionary<int, HidFilter> hidFilters = [];
     protected bool IsReading = false;
+
+    protected bool WriteReport(HidDevice device, byte[] report)
+    {
+        lock (HidWriteLock)
+            return device.Write(report);
+    }
+
+    protected bool WriteReport(HidDevice device, byte[] report, int length)
+    {
+        if (length < 0 || report.Length > length)
+            return false;
+
+        byte[] payload = new byte[length];
+        Buffer.BlockCopy(report, 0, payload, 0, report.Length);
+        lock (HidWriteLock)
+            return device.Write(payload);
+    }
+
+    protected bool WriteFeatureReport(HidDevice device, byte[] report)
+    {
+        lock (HidWriteLock)
+            return device.WriteFeatureData(report);
+    }
+
+    protected bool WriteFeatureReport(HidDevice device, byte[] report, int length)
+    {
+        if (length < 0 || report.Length > length)
+            return false;
+
+        byte[] payload = new byte[length];
+        Buffer.BlockCopy(report, 0, payload, 0, report.Length);
+        lock (HidWriteLock)
+            return device.WriteFeatureData(payload);
+    }
+
+    protected bool WriteReport(HidDevice device, HidReport report)
+    {
+        lock (HidWriteLock)
+            return device.WriteReportSync(report);
+    }
 
     public IMUMatrix AcceleroMatrix;
     public IMUMatrix GyroMatrix;
@@ -430,6 +471,13 @@ public abstract class IDevice
         };
     }
 
+    public override string ToString()
+    {
+        if (!string.IsNullOrEmpty(ProductModel))
+            return ProductModel;
+        return ProductName;
+    }
+
     public virtual void OpenEvents()
     {
         // raise opened event
@@ -490,7 +538,7 @@ public abstract class IDevice
             DeviceManager_HidDeviceArrived(pnPDetails, Guid.Empty);
 
         // raise events
-        GenericDeviceUpdated(null, Guid.Empty);
+        PullSensors();
     }
 
     private void DeviceManager_HidDeviceRemoved(PnPDetails device, Guid InterfaceGuid)
@@ -611,8 +659,21 @@ public abstract class IDevice
             hidDevices.Clear();
         }
 
-        foreach (HidDevice hidDevice in devices)
-            hidDevice.Dispose();
+        Task[] disposeTasks = devices.Select(hidDevice => Task.Run(() =>
+        {
+            try
+            {
+                hidDevice.Dispose();
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to dispose HID device {0}: {1}", hidDevice.DevicePath, ex.Message);
+            }
+        })).ToArray();
+
+        // ponytail: A stalled native HID close cannot be canceled; isolate it until HidLibrary supports bounded disposal.
+        if (!Task.WaitAll(disposeTasks, TimeSpan.FromSeconds(2)))
+            LogManager.LogWarning("Timed out disposing {0} HID device(s); continuing shutdown", disposeTasks.Count(task => !task.IsCompleted));
     }
 
     public virtual void Close()
@@ -643,8 +704,8 @@ public abstract class IDevice
         ManagerFactory.deviceManager.HidDeviceArrived -= DeviceManager_HidDeviceArrived;
         ManagerFactory.deviceManager.HidDeviceRemoved -= DeviceManager_HidDeviceRemoved;
 
-        hidDeviceArrivedTimer.Dispose();
-        hidDeviceRemovedTimer.Dispose();
+        hidDeviceArrivedTimer.Change(System.Threading.Timeout.InfiniteTimeSpan, System.Threading.Timeout.InfiniteTimeSpan);
+        hidDeviceRemovedTimer.Change(System.Threading.Timeout.InfiniteTimeSpan, System.Threading.Timeout.InfiniteTimeSpan);
 
         Closed?.Invoke(this);
     }
@@ -752,6 +813,7 @@ public abstract class IDevice
 
             case "AYADEVICE":
             case "AYANEO":
+            case "AYA":
                 {
                     switch (ProductName)
                     {
@@ -956,27 +1018,11 @@ public abstract class IDevice
                             device = new OneXPlayerG1AMD();
                             break;
                         case "ONEXPLAYER F1":
-                            {
-                                switch (Version)
-                                {
-                                    default:
-                                    case "Default string":
-                                        device = new OneXPlayerOneXFly();
-                                        break;
-                                }
-                                break;
-                            }
+                            device = new OneXPlayerOneXFly();
+                            break;
                         case "ONEXPLAYER F1Pro":
-                            {
-                                switch (Version)
-                                {
-                                    default:
-                                    case "Default string":
-                                        device = new OneXPlayerOneXFlyF1Pro();
-                                        break;
-                                }
-                                break;
-                            }
+                            device = new OneXPlayerOneXFlyF1Pro();
+                            break;
                         case "ONE XPLAYER":
                         case "ONEXPLAYER Mini Pro":
                             {
@@ -999,25 +1045,11 @@ public abstract class IDevice
                             device = new OneXPlayerMiniAMD();
                             break;
                         case "ONEXPLAYER 2 ARP23":
-                            {
-                                switch (Version)
-                                {
-                                    default:
-                                    case "Ver.1.0":
-                                        device = new OneXPlayer2();
-                                        break;
-                                }
-                                break;
-                            }
+                            device = new OneXPlayer2();
+                            break;
                         case "ONEXPLAYER 2 PRO ARP23P":
                         case "ONEXPLAYER 2 PRO ARP23P EVA-01":
-                            switch (Version)
-                            {
-                                default:
-                                case "Version 1.0":
-                                    device = new OneXPlayer2Pro();
-                                    break;
-                            }
+                            device = new OneXPlayer2Pro();
                             break;
                     }
                 }
@@ -1420,7 +1452,7 @@ public abstract class IDevice
         Task.Run(async () =>
         {
             KeyPress(button);
-            await Task.Delay(delay).ConfigureAwait(false); // Avoid blocking the synchronization context
+            await Task.Delay(delay);
             KeyRelease(button);
         });
     }

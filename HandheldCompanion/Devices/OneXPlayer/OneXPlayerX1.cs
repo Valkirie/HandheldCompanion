@@ -538,32 +538,54 @@ public class OneXPlayerX1 : OneXAOKZOE
             while (IsReading)
             {
                 HidReport report = await device.ReadReportAsync().ConfigureAwait(false);
-                if (report?.Data is null || report.Data.Length < 14)
+                if (report?.Data is null)
                     continue;
 
                 byte[] data = report.Data;
+                if (data.Length < 14)
+                    continue;
+
                 if (data[1] != FrameMarker || data[^2] != FrameMarker)
                     continue;
 
                 if (data[0] == StatusCommandId)
                 {
                     HandleStatusReport(data);
-                    continue;
                 }
+                else if (data[0] == ButtonCommandId)
+                {
+                    byte buttonId = data[6];
+                    bool pressed = data[12] == 0x01;
 
-                if (data[0] != ButtonCommandId)
-                    continue;
+                    LogManager.LogTrace(
+                        "OXP Button: id=0x{0:X2}, pressed={1}",
+                        buttonId,
+                        pressed);
 
-                byte buttonId = data[6];
-                bool pressed = data[12] == 0x01;
-                HandleEvent(buttonId, pressed);
+                    HandleEvent(buttonId, pressed);
+                }
             }
         }
         catch { }
     }
 
-    protected virtual void HandleStatusReport(byte[] report)
-    { }
+    protected virtual async void HandleStatusReport(byte[] data)
+    {
+        if (data.Length <= 5)
+            return;
+
+        switch (data[5])
+        {
+            case 0x20:
+                {
+                    await Task.Delay(200);
+
+                    if (IsReading)
+                        await ConfigureController();
+                }
+                break;
+        }
+    }
 
     protected virtual void HandleEvent(byte buttonId, bool pressed)
     {
@@ -595,19 +617,22 @@ public class OneXPlayerX1 : OneXAOKZOE
         frame[^2] = FrameMarker;
         frame[^1] = commandId;
 
-        if (reportLength == 64)
+        lock (HidWriteLock)
         {
-            // Older X2 interfaces expose the protocol frame as the complete
-            // output report, without a separate report-ID byte.
-            return device.Write(frame);
-        }
+            if (reportLength == 64)
+            {
+                // Older X2 interfaces expose the protocol frame as the complete
+                // output report, without a separate report-ID byte.
+                return WriteReport(device, frame);
+            }
 
-        // Newer interfaces, including X2 Mini Pro, expose a 65-byte HID
-        // report: report ID 0x00 followed by the 64-byte protocol frame.
-        // Use the same raw-write path as the other 65-byte devices in this
-        // codebase; HidLibrary adds no framing beyond the byte array here.
-        byte[] report = WithReportID(frame, 0x00, frame.Length);
-        return device.Write(report);
+            // Newer interfaces, including X2 Mini Pro, expose a 65-byte HID
+            // report: report ID 0x00 followed by the 64-byte protocol frame.
+            // Use the same raw-write path as the other 65-byte devices in this
+            // codebase; HidLibrary adds no framing beyond the byte array here.
+            byte[] report = WithReportID(frame, 0x00, frame.Length);
+            return WriteReport(device, report);
+        }
     }
 
     protected virtual byte[] BuildRemapPage1(byte preset) =>
