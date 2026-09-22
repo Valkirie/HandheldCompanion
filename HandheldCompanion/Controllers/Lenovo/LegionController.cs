@@ -457,21 +457,15 @@ namespace HandheldCompanion.Controllers.Lenovo
             {
                 if (IDevice.GetCurrent() is LegionGoTablet device)
                 {
-                    // set status
+                    // Switching to DInput disconnects XInput immediately. The DInput
+                    // arrival path below restores XInput after the new endpoint exists.
                     IsBusy = true;
                     ControllerManager.PowerCyclers[GetContainerInstanceId()] = true;
 
-                    device.ApplyGamepadMode(this.GetType() == typeof(LegionControllerDInput) ? 1 : 2);
-                    Thread.Sleep(3000);
-                    device.ApplyGamepadMode(this.GetType() == typeof(LegionControllerDInput) ? 2 : 1);
-                    Thread.Sleep(3000);
-
-
-                    // set status
-                    IsBusy = false;
-                    ControllerManager.PowerCyclers[GetContainerInstanceId()] = false;
-
-                    return true;
+                    if (this is LegionControllerXInput)
+                        return device.ApplyGamepadMode(LegionGoTablet.GamepadMode.DInput);
+                    else
+                        return device.ApplyGamepadMode(LegionGoTablet.GamepadMode.XInput);
                 }
             }
 
