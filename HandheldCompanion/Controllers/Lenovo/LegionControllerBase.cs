@@ -91,6 +91,14 @@ namespace HandheldCompanion.Controllers.Lenovo
             base.Tick(ticks, delta, commit);
         }
 
+        protected byte GetStatus(int idx)
+        {
+            if (idx < 0 || idx >= data.Length)
+                return 0;
+
+            return data[idx];
+        }
+
         protected override void QuerySettings()
         {
             SettingsManager_SettingValueChanged("LegionControllerPassthrough", ManagerFactory.settingsManager.GetBoolean("LegionControllerPassthrough"), false, true);

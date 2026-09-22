@@ -6,7 +6,6 @@ using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
 using System;
 using System.Runtime.InteropServices;
-using System.Threading;
 
 namespace HandheldCompanion.Controllers.Lenovo
 {
@@ -141,12 +140,12 @@ namespace HandheldCompanion.Controllers.Lenovo
         }
 
         public bool IsWired() =>
-            Controller?.GetStatus(LCONTROLLER_STATE_IDX) == (byte)ControllerState.Wired ||
-            Controller?.GetStatus(RCONTROLLER_STATE_IDX) == (byte)ControllerState.Wired;
+            GetStatus(LCONTROLLER_STATE_IDX) == (byte)ControllerState.Wired ||
+            GetStatus(RCONTROLLER_STATE_IDX) == (byte)ControllerState.Wired;
 
         public override bool IsWireless() =>
-            Controller?.GetStatus(LCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless ||
-            Controller?.GetStatus(RCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless || base.IsWireless();
+            GetStatus(LCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless ||
+            GetStatus(RCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless || base.IsWireless();
 
         /// <summary>
         /// Detects if the HID report is misaligned (borked state).
