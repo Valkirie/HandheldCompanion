@@ -42,8 +42,8 @@ namespace HandheldCompanion.Devices.OneXPlayer
                 ));
 
             OEMChords.Add(new KeyboardChord("Keyboard + Orange",
-                [KeyCode.RControlKey, KeyCode.RAlt, KeyCode.Delete],
-                [KeyCode.Delete, KeyCode.RAlt, KeyCode.RControlKey],
+                [KeyCode.RControl, KeyCode.RAlt, KeyCode.Delete],
+                [KeyCode.Delete, KeyCode.RAlt, KeyCode.RControl],
                 false, ButtonFlags.OEM4
                 ));
 
