@@ -86,6 +86,11 @@ namespace HandheldCompanion.Controllers.Lenovo
 
         protected virtual bool UpdateState() => false;
 
+        protected void TickInputs(long ticks, float delta, bool commit)
+        {
+            base.Tick(ticks, delta, commit);
+        }
+
         protected override void QuerySettings()
         {
             SettingsManager_SettingValueChanged("LegionControllerPassthrough", ManagerFactory.settingsManager.GetBoolean("LegionControllerPassthrough"), false, true);

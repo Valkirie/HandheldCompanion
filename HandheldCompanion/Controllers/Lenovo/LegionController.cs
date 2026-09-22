@@ -209,6 +209,12 @@ namespace HandheldCompanion.Controllers.Lenovo
             if (!UpdateState())
                 return;
 
+            ParseHidState(delta);
+            TickInputs(ticks, delta, commit);
+        }
+
+        protected virtual void ParseHidState(float delta)
+        {
             FrontEnum frontButton = (FrontEnum)data[FRONT_IDX];
             Inputs.ButtonState[ButtonFlags.OEM1] = frontButton.HasFlag(FrontEnum.LegionR);
             Inputs.ButtonState[ButtonFlags.OEM2] = frontButton.HasFlag(FrontEnum.LegionL);
@@ -286,8 +292,6 @@ namespace HandheldCompanion.Controllers.Lenovo
                 if (gamepadMotions.TryGetValue(idx, out GamepadMotion? gamepadMotion))
                     gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
             }
-
-            base.Tick(ticks, delta, true);
         }
 
         public void HandleTouchpadInput(bool touched, ushort TouchpadX, ushort TouchpadY)
