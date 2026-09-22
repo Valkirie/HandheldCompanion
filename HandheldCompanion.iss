@@ -204,6 +204,7 @@ procedure Dependency_AddRTSS; forward;
 procedure Dependency_AddPawnIO; forward;
 procedure Dependency_AddUSBip; forward;
 function BoolToStr(Value: Boolean): String; forward;
+procedure TeardownUSBip; forward;
 
 #include "./utils/CompareVersions.iss"
 #include "./utils/ApiUtils.iss"
@@ -654,6 +655,7 @@ begin
     if compareVersions('{#NewUSBipVersion}', installedVersion, '.', '-') > 0 then
     begin
       Log('{#USBipName} update required. Installed: ' + installedVersion + ' New: {#NewUSBipVersion}');
+      TeardownUSBip;
       Dependency_AddUSBip;
     end;
   end;

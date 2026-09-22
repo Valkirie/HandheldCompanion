@@ -136,6 +136,28 @@ begin
 end;
 
 
+procedure TeardownUSBip;
+var
+  usbipExecutable: string;
+  resultCode: Integer;
+begin
+  usbipExecutable := GetUSBipExecutablePath();
+  if usbipExecutable = '' then
+    Log('usbip.exe was not found in USBip InstallLocation or PATH; skipping detach')
+  else if Exec(usbipExecutable, 'detach --all', '', SW_HIDE, ewWaitUntilTerminated, resultCode) then
+    Log('usbip detach --all exit=' + IntToStr(resultCode))
+  else
+    Log('Failed to launch usbip detach --all from ' + usbipExecutable);
+
+  if Exec(ExpandConstant('{sys}\net.exe'), 'stop {#USBipService}', '', SW_HIDE, ewWaitUntilTerminated, resultCode) then
+    Log('usbipd stop exit=' + IntToStr(resultCode))
+  else
+    Log('Failed to launch usbipd stop command');
+  Sleep(1000);
+  StopProcess('{#USBipProcess}');
+end;
+
+
 function UninstallUSBip(): Boolean;
 var
   uninstallString: string;
