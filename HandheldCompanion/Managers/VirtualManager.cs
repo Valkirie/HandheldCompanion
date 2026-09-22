@@ -1,8 +1,10 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Notifications;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
+using iNKORE.UI.WPF.Modern.Controls;
 using Nefarius.ViGEm.Client;
 using SharpDX.XInput;
 using System;
@@ -39,6 +41,15 @@ namespace HandheldCompanion.Managers
 
         private static readonly SemaphoreSlim controllerLock = new SemaphoreSlim(1, 1);
         private static int controllerOperationCount;
+
+        private static readonly Notification controllerStatusNotification = new(
+            "Virtual controller warning",
+            "Failed to change the virtual controller status.",
+            severity: InfoBarSeverity.Warning)
+        {
+            IsInternal = true,
+            IsIndeterminate = true
+        };
 
         public static ushort VendorId = 0x45E;
         public static ushort ProductId = 0x28E;
@@ -338,7 +349,7 @@ namespace HandheldCompanion.Managers
                         if (initializing)
                             return;
 
-                        _ = SetControllerMode(defaultHIDmode);
+                        _ = Task.Run(() => SetControllerMode(defaultHIDmode));
                     }
                     break;
                 case "HIDstatus":
@@ -351,7 +362,7 @@ namespace HandheldCompanion.Managers
                             return;
                         }
 
-                        _ = SetControllerStatus(selectedHIDstatus);
+                        _ = Task.Run(() => SetControllerStatus(selectedHIDstatus));
                     }
                     break;
                 case "DSUEnabled":
@@ -380,7 +391,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             while (ControllerManager.managerStatus == ControllerManagerStatus.Busy)
-                await Task.Delay(1000).ConfigureAwait(false); // Avoid blocking the synchronization context
+                await Task.Delay(1000);
 
             switch (profile.HID)
             {
@@ -390,11 +401,11 @@ namespace HandheldCompanion.Managers
                 case HIDmode.DualSenseController:
                 case HIDmode.SteamDeckController:
                 case HIDmode.SwitchProController:
-                    await SetControllerMode(profile.HID).ConfigureAwait(false);
+                    await SetControllerMode(profile.HID);
                     break;
 
                 case HIDmode.NotSelected:
-                    await SetControllerMode(defaultHIDmode).ConfigureAwait(false);
+                    await SetControllerMode(defaultHIDmode);
                     break;
             }
         }
@@ -406,11 +417,11 @@ namespace HandheldCompanion.Managers
                 return;
 
             while (ControllerManager.managerStatus == ControllerManagerStatus.Busy)
-                await Task.Delay(1000).ConfigureAwait(false); // Avoid blocking the synchronization context
+                await Task.Delay(1000);
 
             // restore default HID mode
             if (profile.HID != HIDmode.NotSelected)
-                await SetControllerMode(defaultHIDmode).ConfigureAwait(false);
+                await SetControllerMode(defaultHIDmode);
         }
 
         public static int CreateTemporaryControllers(int maxCount = 4)
@@ -526,8 +537,8 @@ namespace HandheldCompanion.Managers
 
             try
             {
-                await controllerLock.WaitAsync().ConfigureAwait(false);
-                await Task.Run(() => SetControllerModeCore(mode)).ConfigureAwait(false);
+                await controllerLock.WaitAsync();
+                await SetControllerModeCore(mode);
             }
             catch { }
             finally
@@ -543,8 +554,8 @@ namespace HandheldCompanion.Managers
 
             try
             {
-                await controllerLock.WaitAsync().ConfigureAwait(false);
-                await Task.Run(() => SetControllerStatusCore(status)).ConfigureAwait(false);
+                await controllerLock.WaitAsync();
+                await SetControllerStatusCore(status);
             }
             catch { }
             finally
@@ -566,7 +577,7 @@ namespace HandheldCompanion.Managers
                 StatusChanged?.Invoke(VirtualManagerStatus.Ready, 0, 0);
         }
 
-        private static void SetControllerModeCore(HIDmode mode)
+        private static async Task SetControllerModeCore(HIDmode mode)
         {
             // If the requested mode is already active, do nothing
             if (HIDmode == mode)
@@ -584,6 +595,10 @@ namespace HandheldCompanion.Managers
                 vTarget.Disconnect();
                 vTarget.Dispose();
                 vTarget = null;
+
+                // Wait for a short delay to ensure the controller is fully disconnected before proceeding
+                await Task.Delay(2000);
+
                 NotifyMasterIntervalOverrideChanged();
             }
 
@@ -595,7 +610,7 @@ namespace HandheldCompanion.Managers
                 HIDmode = mode;
                 ControllerSelected?.Invoke(mode);
                 NotifyMasterIntervalOverrideChanged();
-                SetControllerStatusCore(HIDstatus);
+                await SetControllerStatusCore(HIDstatus);
                 return;
             }
 
@@ -625,7 +640,7 @@ namespace HandheldCompanion.Managers
             ControllerSelected?.Invoke(mode);
             NotifyMasterIntervalOverrideChanged();
 
-            SetControllerStatusCore(HIDstatus);
+            await SetControllerStatusCore(HIDstatus);
         }
 
         private static VTarget? CreateTarget(HIDmode mode)
@@ -650,7 +665,7 @@ namespace HandheldCompanion.Managers
             target.StatusChanged += (t, status, attempt, maxAttempts) => OnTargetConnectStatusChanged(t, status, attempt, maxAttempts);
         }
 
-        private static void SetControllerStatusCore(HIDstatus status)
+        private static async Task SetControllerStatusCore(HIDstatus status)
         {
             if (vTarget is null)
             {
@@ -675,7 +690,22 @@ namespace HandheldCompanion.Managers
 
             // Only update the internal status if the operation was successful
             if (success)
+            {
                 HIDstatus = status;
+                return;
+            }
+
+            string operation = status == HIDstatus.Connected ? "connect" : "disconnect";
+            string message = $"Failed to {operation} the virtual controller.";
+
+            ManagerFactory.notificationManager.Add(controllerStatusNotification);
+
+            ToastManager.SendToast(new ToastRequest
+            {
+                Title = "Virtual controller warning",
+                Content = message,
+                ActivationCommand = "OpenControllerPage"
+            });
         }
 
         private static void OnTargetConnectStatusChanged(VTarget target, VirtualManagerStatus status, int attempt, int maxAttempts)
@@ -712,7 +742,7 @@ namespace HandheldCompanion.Managers
         /// Sets the system sleep state. When sleeping, UpdateInputs will only update the virtual
         /// controller if button state has changed, preventing gyro from waking the device.
         /// </summary>
-        public static void SetSystemSleepState(bool sleeping)
+        public static async Task SetSystemSleepState(bool sleeping)
         {
             isSystemSleeping = sleeping;
         }

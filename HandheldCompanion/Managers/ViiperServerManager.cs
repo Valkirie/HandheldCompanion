@@ -72,6 +72,8 @@ public static class ViiperServerManager
             if (Port <= 0)
                 Port = 3241;
 
+            UsbipCli.Configure(Host, Port);
+
             try
             {
                 _service = new ViiperService();
