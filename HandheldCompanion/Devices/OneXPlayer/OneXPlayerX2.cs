@@ -1,7 +1,7 @@
+using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Commands.Functions.Windows;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using System;
 using System.Linq;
@@ -27,6 +27,8 @@ public class OneXPlayerX2 : OneXPlayerX1
     // on cooldown, unlike the neighbouring board/SSD sensors.
     private const ushort CPUTemperatureRegister = 0x0470;
 
+    protected virtual bool UseWmiEc => true;
+
     public OneXPlayerX2()
     {
         // device specific settings
@@ -50,38 +52,19 @@ public class OneXPlayerX2 : OneXPlayerX1
             FanValueMax = 184
         };
 
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBattery, Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBatteryDesc)
-        {
-            Default = true,
-            DeviceDefault = true,
-            OSPowerMode = OSPowerMode.BetterBattery,
-            CPUBoostLevel = CPUBoostLevel.Disabled,
-            Guid = BetterBatteryGuid,
-            TDPOverrideEnabled = true,
-            TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d },
-        });
+        // The X2 does not have a serial port, so we disable it to avoid unnecessary errors in the logs.
+        EnableSerialPort = false;
 
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBetterPerformance, Properties.Resources.PowerProfileOneXPlayerX1IntelBetterPerformanceDesc)
+        // Override the default TDP values for each power profile to match the X2's presets.
+        foreach (var profile in DevicePowerProfiles)
         {
-            Default = true,
-            DeviceDefault = true,
-            OSPowerMode = OSPowerMode.BetterPerformance,
-            CPUBoostLevel = CPUBoostLevel.Enabled,
-            Guid = BetterPerformanceGuid,
-            TDPOverrideEnabled = true,
-            TDPOverrideValues = new[] { 25.0d, 25.0d, 25.0d },
-        });
-
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBestPerformance, Properties.Resources.PowerProfileOneXPlayerX1IntelBestPerformanceDesc)
-        {
-            Default = true,
-            DeviceDefault = true,
-            OSPowerMode = OSPowerMode.BestPerformance,
-            CPUBoostLevel = CPUBoostLevel.Enabled,
-            Guid = BestPerformanceGuid,
-            TDPOverrideEnabled = true,
-            TDPOverrideValues = new[] { 35.0d, 35.0d, 35.0d },
-        });
+            if (profile.Guid == BetterBatteryGuid)
+                profile.TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d };
+            else if (profile.Guid == BetterPerformanceGuid)
+                profile.TDPOverrideValues = new[] { 25.0d, 25.0d, 25.0d };
+            else if (profile.Guid == BestPerformanceGuid)
+                profile.TDPOverrideValues = new[] { 35.0d, 35.0d, 35.0d };
+        }
 
         vendorId = 0x1A86;
         productIds = [0xFE00, 0x1305];
@@ -92,28 +75,27 @@ public class OneXPlayerX2 : OneXPlayerX1
 
         // Suppress both firmware chord variants; OEM1 is delivered over vendor HID.
         OEMChords.RemoveAll(c => c.state.Buttons.Contains(ButtonFlags.OEM1));
-        OEMChords.Add(new KeyboardChord("Turbo",
-            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.LMenu],
-            [KeyCode.LMenu, KeyCode.LWin, KeyCode.RControlKey],
-            false, ButtonFlags.OEM1, flushInterval: 100/*, orderIndependent: true*/));
-        OEMChords.Add(new KeyboardChord("Turbo",
-            [KeyCode.LControlKey, KeyCode.LWin, KeyCode.LMenu],
-            [KeyCode.LMenu, KeyCode.LWin, KeyCode.LControlKey],
-            false, ButtonFlags.OEM1, flushInterval: 100/*, orderIndependent: true*/));
-
-        // Vendor-only buttons use empty chords so they remain visible in the mapping UI.
-        OEMChords.Add(new KeyboardChord("Home", null, null, false, ButtonFlags.OEM3));
+        // OXP sends keyUp events in random order
+        OEMChords.Add(new KeyboardChord("Turbo", [KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu], [KeyCode.LMenu, KeyCode.LWin, KeyCode.LControl], false, ButtonFlags.OEM1, flushInterval: 100));
+        OEMChords.Add(new KeyboardChord("Turbo", [KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu], [KeyCode.LMenu, KeyCode.LControl, KeyCode.LWin], false, ButtonFlags.OEM1, flushInterval: 100));
+        OEMChords.Add(new KeyboardChord("Turbo", [KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu], [KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu], false, ButtonFlags.OEM1, flushInterval: 100));
 
         // Suppress the X2 keyboard shortcut; OEM2 is delivered over vendor HID.
         OEMChords.RemoveAll(c => c.state.Buttons.Contains(ButtonFlags.OEM2));
-        OEMChords.Add(new KeyboardChord("Keyboard",
-            [KeyCode.LControlKey, KeyCode.LWin, KeyCode.RControlKey, KeyCode.O],
-            [KeyCode.LControlKey, KeyCode.LWin, KeyCode.RControlKey, KeyCode.O],
-            true, ButtonFlags.OEM2, flushInterval: 300));
-        OEMChords.Add(new KeyboardChord("Keyboard", null, null, false, ButtonFlags.OEM2));
+        OEMChords.Add(new KeyboardChord("Keyboard", [KeyCode.LControl, KeyCode.LWin, KeyCode.O], [KeyCode.O, KeyCode.LWin, KeyCode.LControl], false, ButtonFlags.OEM2, flushInterval: 100));
 
-        // X2 OEM2 is remappable and has no default keyboard action.
-        DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = false;
+        // OEM buttons that does not emit keyboard events are still mapped to their respective chords for hotkey support.
+        OEMChords.Add(new KeyboardChord("Home", null, null, false, ButtonFlags.OEM3));
+
+        // Disabled this one as ONEX also sends an Xbox guide input when Menu key is pressed.
+        OEMChords.RemoveAll(c => c.state.Buttons.Contains(ButtonFlags.OEM4));
+        OEMChords.Add(new KeyboardChord("G-Key", [KeyCode.LButton, KeyCode.XButton2], [KeyCode.LButton, KeyCode.XButton2], true, ButtonFlags.OEM4));
+
+        // override hotkeys triggers
+        DeviceHotkeys[typeof(MainWindowCommands)].inputsChord.ButtonState[ButtonFlags.OEM3] = true;
+        DeviceHotkeys[typeof(MainWindowCommands)].InputsChordType = InputsChordType.Click;
+        DeviceHotkeys[typeof(QuickToolsCommands)].inputsChord.ButtonState[ButtonFlags.OEM1] = true;
+        DeviceHotkeys[typeof(OnScreenKeyboardCommands)].inputsChord.ButtonState[ButtonFlags.OEM2] = true;
     }
 
     public override bool Open()
@@ -122,17 +104,19 @@ public class OneXPlayerX2 : OneXPlayerX1
         // provider. WinRing0 port I/O (used by older OXP models) cannot access this
         // register on the X2, which is why takeover previously worked only after
         // OneXConsole had initialized it.
-        try
+        if (UseWmiEc)
         {
-            lock (updateLock)
+            try
             {
-                _wmiEc = new OneXPlayerWmiEc();
+                lock (updateLock)
+                {
+                    _wmiEc = new OneXPlayerWmiEc();
+                }
             }
-        }
-        catch (Exception ex)
-        {
-            LogManager.LogWarning("Failed to open X2 WMI EC interface: {0}", ex.Message);
-            return false;
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to open X2 WMI EC interface: {0}", ex.Message);
+            }
         }
 
         return base.Open();
@@ -140,10 +124,13 @@ public class OneXPlayerX2 : OneXPlayerX1
 
     public override void Close()
     {
-        lock (updateLock)
+        if (UseWmiEc)
         {
-            _wmiEc?.Dispose();
-            _wmiEc = null;
+            lock (updateLock)
+            {
+                _wmiEc?.Dispose();
+                _wmiEc = null;
+            }
         }
 
         base.Close();
@@ -155,7 +142,18 @@ public class OneXPlayerX2 : OneXPlayerX1
         await Task.Delay(50);
 
         WriteVendorHidCommand(0xB4, BuildRemapPage2(0x01, 0x67, 0x66));
+        await Task.Delay(50);
+
+        WriteVendorHidCommand(0xB4, BuildRemapPage3(0x01));
+        await Task.Delay(50);
     }
+
+    protected virtual byte[] BuildRemapPage3(byte preset) =>
+    [
+        0x02, 0x38, 0x20, 0x03, preset,
+        0x24, 0x02, 0x02, 0x05, 0x00, 0x00,
+        0x25, 0x01, 0x21, 0x00, 0x00, 0x00,
+    ];
 
     public override void SetFanControl(bool enable, int mode = 0)
     {
@@ -238,10 +236,10 @@ public class OneXPlayerX2 : OneXPlayerX1
         return buttonId switch
         {
             0x20 => ButtonFlags.OEM1,
-            0x21 => ButtonFlags.OEM3,
+            0x21 => ButtonFlags.OEM3, // HOME
             0x22 => ButtonFlags.L4,   // M1 (left back paddle)
             0x23 => ButtonFlags.R4,   // M2 (right back paddle)
-            0x24 => ButtonFlags.OEM2,
+            0x24 => ButtonFlags.OEM2, // KEYBOARD
             _ => base.MapVendorButton(buttonId),
         };
     }
@@ -297,12 +295,14 @@ public class OneXPlayerX2 : OneXPlayerX1
     {
         switch (button)
         {
-            case ButtonFlags.OEM3:
-                return "\u2219";
-            case ButtonFlags.OEM1:
+            case ButtonFlags.OEM1:  // Turbo
                 return "\u2211";
-            case ButtonFlags.OEM2:
+            case ButtonFlags.OEM2:  // Keyboard
                 return "\u2210";
+            case ButtonFlags.OEM3:  // Home
+                return "\u221C";
+            case ButtonFlags.OEM4:  // G-Key/Function
+                return "\u2218";
         }
 
         return base.GetGlyph(button);

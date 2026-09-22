@@ -1,5 +1,5 @@
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using WindowsInput.Events;
@@ -9,6 +9,10 @@ namespace HandheldCompanion.Devices;
 
 public class OneXPlayerX2MiniPro : OneXPlayerX2
 {
+    private const ushort CPUTemperatureRegister = 0x0470;
+
+    protected override bool UseWmiEc => false;
+
     public OneXPlayerX2MiniPro()
     {
         // todo: ProductIllustration
@@ -30,44 +34,22 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
             FanValueMax = 255
         };
 
-        // The X2 Mini Pro does not have a serial port, so we disable it to avoid unnecessary errors in the logs.
-        EnableSerialPort = false;
+        // The X2 does not have a wmiEc
+        EnableSerialPort = true;
 
         DynamicLightingCapabilities |= LEDLevel.Breathing;
 
         // MobiusBlack was here
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBattery, Properties.Resources.PowerProfileOneXPlayerX1IntelBetterBatteryDesc)
+        // Override the default TDP values for each power profile to match the X2's presets.
+        foreach (var profile in DevicePowerProfiles)
         {
-            Default = true,
-            DeviceDefault = true,
-            OSPowerMode = OSPowerMode.BetterBattery,
-            CPUBoostLevel = CPUBoostLevel.Disabled,
-            Guid = BetterBatteryGuid,
-            TDPOverrideEnabled = true,
-            TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d },
-        });
-
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBetterPerformance, Properties.Resources.PowerProfileOneXPlayerX1IntelBetterPerformanceDesc)
-        {
-            Default = true,
-            DeviceDefault = true,
-            OSPowerMode = OSPowerMode.BetterPerformance,
-            CPUBoostLevel = CPUBoostLevel.Enabled,
-            Guid = BetterPerformanceGuid,
-            TDPOverrideEnabled = true,
-            TDPOverrideValues = new[] { 35.0d, 35.0d, 35.0d },
-        });
-
-        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileOneXPlayerX1IntelBestPerformance, Properties.Resources.PowerProfileOneXPlayerX1IntelBestPerformanceDesc)
-        {
-            Default = true,
-            DeviceDefault = true,
-            OSPowerMode = OSPowerMode.BestPerformance,
-            CPUBoostLevel = CPUBoostLevel.Enabled,
-            Guid = BestPerformanceGuid,
-            TDPOverrideEnabled = true,
-            TDPOverrideValues = new[] { 55.0d, 55.0d, 55.0d },
-        });
+            if (profile.Guid == BetterBatteryGuid)
+                profile.TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d };
+            else if (profile.Guid == BetterPerformanceGuid)
+                profile.TDPOverrideValues = new[] { 35.0d, 35.0d, 35.0d };
+            else if (profile.Guid == BestPerformanceGuid)
+                profile.TDPOverrideValues = new[] { 55.0d, 55.0d, 55.0d };
+        }
 
         OEMChords.Add(new KeyboardChord("M1", [KeyCode.F15], [KeyCode.F15], false, ButtonFlags.L4));
         OEMChords.Add(new KeyboardChord("M2", [KeyCode.F16], [KeyCode.F16], false, ButtonFlags.R4));
@@ -84,7 +66,7 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         await Task.Delay(50);
 
         // Equivalent to hid_v1.INITIALIZE_X2[2], the required third partial page.
-        WriteVendorHidCommand(0xB4, BuildRemapPage3());
+        WriteVendorHidCommand(0xB4, BuildRemapPage3(0x01));
         await Task.Delay(50);
 
         // Equivalent to hid_v1.gen_intercept(False), releasing vendor interception.
@@ -119,7 +101,7 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         0x23, 0x02, 0x01, m2KeyCode, 0x00, 0x00,
     ];
 
-    protected byte[] BuildRemapPage3(byte preset = 0x01) =>
+    protected override byte[] BuildRemapPage3(byte preset) =>
     [
         0x02, 0x38, 0x02, 0x03, preset,
         0x24, 0x02, 0x02, 0x05, 0x00, 0x00,
@@ -142,7 +124,7 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         foreach (byte side in new byte[] { 0x01, 0x02, 0x07, 0x05, 0x06 })
         {
             result &= SendV1Brightness(device, brightness, side);
-            Thread.Sleep(100);
+            Thread.Sleep(200);
         }
         return result;
     }
@@ -162,14 +144,69 @@ public class OneXPlayerX2MiniPro : OneXPlayerX2
         foreach (byte side in new byte[] { 0x01, 0x02, 0x07 })
         {
             result &= SendV1SolidColor(device, mainColor, side, breathing);
-            Thread.Sleep(100);
+            Thread.Sleep(200);
         }
         // There is intentionally no side 0 aggregate zone on the X2 Mini Pro.
         foreach (byte side in new byte[] { 0x05, 0x06 })
         {
             result &= SendV1SolidColor(device, secondaryColor, side, breathing);
-            Thread.Sleep(100);
+            Thread.Sleep(200);
         }
         return result;
+    }
+
+    public override void SetFanControl(bool enable, int mode = 0)
+    {
+        if (ECDetails.AddressFanControl == 0)
+            return;
+
+        if (!UseOpenLib || !IsOpen)
+            return;
+
+        byte data = Convert.ToByte(enable);
+        if (ECRamDirectWriteByte(ECDetails.AddressFanControl, ECDetails, data))
+            hasAppliedSoftwareFanProfile = enable;
+    }
+
+    public override void SetFanDuty(double percent)
+    {
+        if (ECDetails.AddressFanDuty == 0)
+            return;
+
+        if (!UseOpenLib || !IsOpen)
+            return;
+
+        double clampedPercent = Math.Clamp(percent, 0.0d, 100.0d);
+        double scaled = clampedPercent * (ECDetails.FanValueMax - ECDetails.FanValueMin) / 100.0d + ECDetails.FanValueMin;
+        byte data = (byte)Math.Round(scaled);
+
+        ECRamDirectWriteByte(ECDetails.AddressFanDuty, ECDetails, data);
+    }
+
+    public override float ReadFanDuty()
+    {
+        return ECRamDirectReadByte(ECDetails.AddressFanDuty, ECDetails);
+    }
+
+    public override float? ReadCPUTemperature()
+    {
+        byte value = ECRamDirectReadByte(CPUTemperatureRegister, ECDetails);
+        if (value == 0 || value > 110)
+            return null;
+
+        return value;
+    }
+
+    protected override ButtonFlags MapVendorButton(byte buttonId)
+    {
+        return buttonId switch
+        {
+            0x20 => ButtonFlags.OEM1,
+            0x21 => ButtonFlags.OEM2, // KEYBOARD
+            0x22 => ButtonFlags.L4,   // M1 (left back paddle)
+            0x23 => ButtonFlags.R4,   // M2 (right back paddle)
+            0x24 => ButtonFlags.OEM3, // HOME
+            _ => base.MapVendorButton(buttonId),
+        };
     }
 }
