@@ -113,6 +113,87 @@ begin
 end;
 
 
+function PathContainsDirectory(const PathValue, Directory: string): Boolean;
+var
+  Entry, Remaining: string;
+  Separator: Integer;
+begin
+  Result := False;
+  Remaining := PathValue;
+
+  while Remaining <> '' do
+  begin
+    Separator := Pos(';', Remaining);
+    if Separator = 0 then
+    begin
+      Entry := Remaining;
+      Remaining := '';
+    end
+    else
+    begin
+      Entry := Copy(Remaining, 1, Separator - 1);
+      Delete(Remaining, 1, Separator);
+    end;
+
+    Entry := RemoveBackslashUnlessRoot(Trim(RemoveQuotes(Entry)));
+    if CompareText(Entry, RemoveBackslashUnlessRoot(Directory)) = 0 then
+    begin
+      Result := True;
+      Exit;
+    end;
+  end;
+end;
+
+
+procedure EnsureUSBipSystemPath;
+var
+  EnvironmentKey, SystemPath, USBipDirectory: string;
+begin
+  EnvironmentKey := 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment';
+  USBipDirectory := ExpandConstant('{commonpf}\USBip');
+
+  if not DirExists(USBipDirectory) then
+  begin
+    Log('USBip directory not found; creating: ' + USBipDirectory);
+    if not ForceDirectories(USBipDirectory) then
+    begin
+      Log('Failed to create USBip directory: ' + USBipDirectory);
+      Exit;
+    end;
+  end;
+
+  if RegValueExists(HKLM, EnvironmentKey, 'Path') then
+  begin
+    if not RegQueryStringValue(HKLM, EnvironmentKey, 'Path', SystemPath) then
+    begin
+      Log('Unable to read the system Path environment variable.');
+      Exit;
+    end;
+  end
+  else
+  begin
+    Log('System Path environment variable not found; creating it.');
+    SystemPath := '';
+  end;
+
+  if PathContainsDirectory(SystemPath, USBipDirectory) then
+  begin
+    Log('USBip directory already exists in the system Path: ' + USBipDirectory);
+    Exit;
+  end;
+
+  Log('USBip directory not found in the system Path; adding: ' + USBipDirectory);
+  if SystemPath <> '' then
+  begin
+    if SystemPath[Length(SystemPath)] <> ';' then
+      SystemPath := SystemPath + ';';
+  end;
+
+  if not RegWriteExpandStringValue(HKLM, EnvironmentKey, 'Path', SystemPath + USBipDirectory) then
+    Log('Failed to add the USBip directory to the system Path.');
+end;
+
+
 function GetUSBipExecutablePath(): string;
 var
   installLocation, executablePath: string;
@@ -136,28 +217,45 @@ begin
 end;
 
 
-function UninstallUSBip(): Boolean;
+function ExecWithTimeout(const Filename, Parameters: string; TimeoutSeconds: Integer;
+  var ResultCode: Integer): Boolean;
 var
-  uninstallString: string;
-  resultCode: Integer;
+  PowerShellPath, ScriptBody, ScriptPath: string;
 begin
-  Result := False;
-  uninstallString := regGetUninstallValue('{199505b0-b93d-4521-a8c7-897818e0205a}_is1', 'UninstallString');
-  if uninstallString = '' then
+  ScriptPath := ExpandConstant('{tmp}\HC_ExecWithTimeout.ps1');
+  ScriptBody :=
+    'param([string]$Executable, [string]$Arguments, [int]$TimeoutSeconds)' + #13#10 +
+    '$ErrorActionPreference = ''Stop''' + #13#10 +
+    'try {' + #13#10 +
+    '  $process = Start-Process -FilePath $Executable -ArgumentList $Arguments -WindowStyle Hidden -PassThru' + #13#10 +
+    '  if (-not $process.WaitForExit($TimeoutSeconds * 1000)) {' + #13#10 +
+    '    $killer = Start-Process -FilePath "$env:SystemRoot\System32\taskkill.exe" -ArgumentList "/PID $($process.Id) /T /F" -WindowStyle Hidden -PassThru' + #13#10 +
+    '    if (-not $killer.WaitForExit(5000)) { $killer.Kill() }' + #13#10 +
+    '    if (-not $process.HasExited) { $process.Kill() }' + #13#10 +
+    '    exit 1460' + #13#10 +
+    '  }' + #13#10 +
+    '  exit $process.ExitCode' + #13#10 +
+    '} catch {' + #13#10 +
+    '  Write-Error $_' + #13#10 +
+    '  exit 1' + #13#10 +
+    '}' + #13#10;
+
+  if not SaveStringToFile(ScriptPath, ScriptBody, False) then
   begin
-    Log('USBip UninstallString is empty or missing.');
+    Log('Unable to create the process timeout helper.');
+    ResultCode := 1;
+    Result := False;
     Exit;
   end;
 
-  uninstallString := RemoveQuotes(uninstallString);
-  Log('Running USBip uninstaller: ' + uninstallString);
-  if ShellExec('', uninstallString, '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-', '', SW_SHOWNORMAL, ewWaitUntilTerminated, resultCode) then
-  begin
-    Log('USBip uninstaller finished with exit code ' + IntToStr(resultCode));
-    Result := resultCode = 0;
-  end
-  else
-    Log('Unable to launch USBip uninstaller.');
+  PowerShellPath := ExpandConstant('{sys}\WindowsPowerShell\v1.0\powershell.exe');
+  Result := Exec(
+    PowerShellPath,
+    '-NoProfile -NonInteractive -ExecutionPolicy Bypass -File "' + ScriptPath +
+      '" -Executable "' + Filename + '" -Arguments "' + Parameters +
+      '" -TimeoutSeconds ' + IntToStr(TimeoutSeconds),
+    '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+  Result := Result and (ResultCode = 0);
 end;
 
 
@@ -249,5 +347,3 @@ function uninstallHidHide():boolean;
 begin
   Result := UninstallMsiByDisplayName('HidHide');
 end;
-
-
