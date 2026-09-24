@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -879,6 +880,7 @@ namespace HandheldCompanion.Managers
             if (string.IsNullOrEmpty(input))
                 return input;
 
+            // Remove any metadata or suffixes that may be present in the string (e.g., "[Metadata]", "(Metadata)", "{Metadata}", " - Suffix")
             int metadataStart = input.IndexOfAny(['[', '(', '{']);
             int suffixStart = input.IndexOf(" -", StringComparison.Ordinal);
             if (metadataStart < 0 || (suffixStart >= 0 && suffixStart < metadataStart))
@@ -886,6 +888,9 @@ namespace HandheldCompanion.Managers
 
             if (metadataStart >= 0)
                 input = input[..metadataStart].TrimEnd();
+
+            // Remove version numbers (e.g., "v1.2.3") from the string using a regular expression
+            input = Regex.Replace(input, @"\s+\bv\d+(?:\.\d+)+\b", string.Empty, RegexOptions.IgnoreCase);
 
             // Define a set of allowed characters (letters, digits, '.', '_', and space)
             var allowedCharacters = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._ ");
