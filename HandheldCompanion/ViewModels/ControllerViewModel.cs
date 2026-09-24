@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Controllers.GameSir;
 using HandheldCompanion.Controllers.Lenovo;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -16,7 +17,25 @@ namespace HandheldCompanion.ViewModels
             get => _controller;
             set
             {
+                if (ReferenceEquals(_controller, value))
+                {
+                    Updated();
+                    return;
+                }
+
+                DisposeController();
                 _controller = value;
+
+                if (_controller is not null)
+                {
+                    _controller.UserIndexChanged += Controller_UserIndexChanged;
+                    _controller.StateChanged += Controller_StateChanged;
+                    _controller.VisibilityChanged += Controller_VisibilityChanged;
+
+                    if (_controller is TarantulaProController proController)
+                        proController.OnLayoutChanged += ProController_OnLayoutChanged;
+                }
+
                 Updated();
             }
         }
@@ -99,15 +118,7 @@ namespace HandheldCompanion.ViewModels
 
         public ControllerViewModel(IController controller)
         {
-            DisposeController();
-
             Controller = controller;
-            Controller.UserIndexChanged += Controller_UserIndexChanged;
-            Controller.StateChanged += Controller_StateChanged;
-            Controller.VisibilityChanged += Controller_VisibilityChanged;
-
-            if (Controller is TarantulaProController proController)
-                proController.OnLayoutChanged += ProController_OnLayoutChanged;
 
             ConnectCommand = new DelegateCommand(async () =>
             {
@@ -152,7 +163,8 @@ namespace HandheldCompanion.ViewModels
 
         private void Controller_StateChanged()
         {
-            OnPropertyChanged(nameof(IsBusy));
+            if (!UIHelper.TryBeginInvoke(() => OnPropertyChanged(nameof(IsBusy))))
+                OnPropertyChanged(nameof(IsBusy));
         }
 
         private void Controller_UserIndexChanged(byte UserIndex)

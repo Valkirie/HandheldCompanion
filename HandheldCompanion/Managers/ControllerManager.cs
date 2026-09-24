@@ -1017,7 +1017,7 @@ public static partial class ControllerManager
         // raise HID events
         foreach (PnPDetails details in ManagerFactory.deviceManager.GetGamingDevices(false))
         {
-            string key = details.deviceInstanceId;
+            string key = details.baseContainerDeviceInstanceId;
             HidDeviceArrived(details, details.InterfaceGuid);
 
             if (hidArrivalInProgress.TryGetValue(key, out Task? task))
@@ -1027,7 +1027,7 @@ public static partial class ControllerManager
         // raise XUSB events
         foreach (PnPDetails details in ManagerFactory.deviceManager.GetGamingDevices(true))
         {
-            string key = details.deviceInstanceId;
+            string key = details.baseContainerDeviceInstanceId;
             XUsbDeviceArrived(details, details.InterfaceGuid);
 
             if (xusbArrivalInProgress.TryGetValue(key, out Task? task))
