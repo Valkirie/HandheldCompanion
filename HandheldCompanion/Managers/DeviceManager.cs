@@ -13,7 +13,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -26,10 +25,11 @@ namespace HandheldCompanion.Managers;
 public class DeviceManager : IManager
 {
     public Guid HidDevice;
+    private static readonly Guid SensorDevice = new("BA1BB692-9B7A-4833-9A1E-525ED134E7E2");
     private readonly DeviceNotificationListener UsbDeviceListener = new();
     private readonly DeviceNotificationListener XUsbDeviceListener = new();
     private readonly DeviceNotificationListener HidDeviceListener = new();
-    private ManagementEventWatcher? SensorDeviceWatcher;
+    private readonly DeviceNotificationListener SensorDeviceListener = new();
 
     public readonly ConcurrentDictionary<string, PnPDetails> PnPDevices = new();
 
@@ -87,6 +87,13 @@ public class DeviceManager : IManager
 
         base.PrepareStart();
 
+        Resume();
+
+        base.Start();
+    }
+
+    public override void Resume()
+    {
         // manage events
         UsbDeviceListener.DeviceArrived += UsbDevice_DeviceArrived;
         UsbDeviceListener.DeviceRemoved += UsbDevice_DeviceRemoved;
@@ -94,24 +101,18 @@ public class DeviceManager : IManager
         XUsbDeviceListener.DeviceRemoved += XUsbDevice_DeviceRemoved;
         HidDeviceListener.DeviceArrived += HidDevice_DeviceArrived;
         HidDeviceListener.DeviceRemoved += HidDevice_DeviceRemoved;
+        SensorDeviceListener.DeviceArrived += SensorDevice_Changed;
+        SensorDeviceListener.DeviceRemoved += SensorDevice_Changed;
 
         UsbDeviceListener.StartListen(DeviceInterfaceIds.UsbDevice);
         XUsbDeviceListener.StartListen(DeviceInterfaceIds.XUsbDevice);
         HidDeviceListener.StartListen(DeviceInterfaceIds.HidDevice);
-
-        WqlEventQuery sensorQuery = new(
-            "SELECT * FROM __InstanceOperationEvent WITHIN 1 " +
-            "WHERE TargetInstance ISA 'Win32_PnPEntity' AND TargetInstance.PNPClass = 'Sensor'");
-        SensorDeviceWatcher = new ManagementEventWatcher(sensorQuery);
-        SensorDeviceWatcher.EventArrived += SensorDeviceWatcher_EventArrived;
-        SensorDeviceWatcher.Start();
+        SensorDeviceListener.StartListen(SensorDevice);
 
         RefreshDrivers();
         RefreshDInput();
         RefreshXInput();
         RefreshDisplayAdapters(true);
-
-        base.Start();
     }
 
     private void RefreshDrivers()
@@ -134,6 +135,13 @@ public class DeviceManager : IManager
 
         base.PrepareStop();
 
+        Suspend();
+
+        base.Stop();
+    }
+
+    public override void Suspend()
+    {
         // manage events
         UsbDeviceListener.DeviceArrived -= UsbDevice_DeviceArrived;
         UsbDeviceListener.DeviceRemoved -= UsbDevice_DeviceRemoved;
@@ -141,22 +149,15 @@ public class DeviceManager : IManager
         XUsbDeviceListener.DeviceRemoved -= XUsbDevice_DeviceRemoved;
         HidDeviceListener.DeviceArrived -= HidDevice_DeviceArrived;
         HidDeviceListener.DeviceRemoved -= HidDevice_DeviceRemoved;
+        SensorDeviceListener.DeviceArrived -= SensorDevice_Changed;
+        SensorDeviceListener.DeviceRemoved -= SensorDevice_Changed;
 
         UsbDeviceListener.StopListen(DeviceInterfaceIds.UsbDevice);
         XUsbDeviceListener.StopListen(DeviceInterfaceIds.XUsbDevice);
         HidDeviceListener.StopListen(DeviceInterfaceIds.HidDevice);
-
-        if (SensorDeviceWatcher is not null)
-        {
-            SensorDeviceWatcher.EventArrived -= SensorDeviceWatcher_EventArrived;
-            SensorDeviceWatcher.Stop();
-            SensorDeviceWatcher.Dispose();
-            SensorDeviceWatcher = null;
-        }
+        SensorDeviceListener.StopListen(SensorDevice);
 
         adaptersTimer.Stop();
-
-        base.Stop();
     }
 
     public void RefreshXInput()
@@ -604,7 +605,7 @@ public class DeviceManager : IManager
     /// </summary>
     private static readonly TimeSpan CrossWaitTimeout = TimeSpan.FromSeconds(5);
 
-    private static void SensorDeviceWatcher_EventArrived(object sender, EventArrivedEventArgs args)
+    private static void SensorDevice_Changed(DeviceEventArgs obj)
     {
         IDevice.GetCurrent().PullSensors();
     }

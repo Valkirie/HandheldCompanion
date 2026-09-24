@@ -16,7 +16,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Device"
     Title="{l:Static resx:Resources.DevicePage_Device}"
-    Margin="0,20,0,0"
+    Margin="20"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:DevicePageViewModel}"
     d:DesignHeight="4300"
@@ -302,55 +302,6 @@
                         <ui:ToggleSwitch x:Name="Toggle_EnhancedSleep" Toggled="Toggle_EnhancedSleep_Toggled" />
                     </ui:SettingsCard>
 
-                    <!--  Go Back To Sleep  -->
-                    <ui:SettingsExpander
-                        x:Name="GoBackToSleepExpander"
-                        d:IsExpanded="True"
-                        Description="{l:Static resx:Resources.DevicePage_GoBackToSleepDesc}"
-                        Header="{l:Static resx:Resources.DevicePage_GoBackToSleep}">
-                        <ui:SettingsExpander.HeaderIcon>
-                            <ui:FontIcon Glyph="&#xE72E;" />
-                        </ui:SettingsExpander.HeaderIcon>
-                        <ui:ToggleSwitch x:Name="Toggle_GoBackToSleep" Toggled="Toggle_GoBackToSleep_Toggled" />
-
-                        <ui:SettingsExpander.Items>
-                            <!--  Power button  -->
-                            <ui:SettingsCard ContentAlignment="Left" IsEnabled="{Binding GoBackToSleep}">
-                                <CheckBox
-                                    x:Name="CB_GoBackToSleepOnPowerButton"
-                                    Checked="CB_GoBackToSleepOnWakeReason_Changed"
-                                    Content="{l:Static resx:Resources.DevicePage_GoBackToSleepOnPowerButtonDesc}"
-                                    Unchecked="CB_GoBackToSleepOnWakeReason_Changed" />
-                            </ui:SettingsCard>
-
-                            <!--  Fingerprint reader  -->
-                            <ui:SettingsCard ContentAlignment="Left" IsEnabled="{Binding GoBackToSleep}">
-                                <CheckBox
-                                    x:Name="CB_GoBackToSleepOnFingerprintReader"
-                                    Checked="CB_GoBackToSleepOnWakeReason_Changed"
-                                    Content="{l:Static resx:Resources.DevicePage_GoBackToSleepOnFingerprintReaderDesc}"
-                                    Unchecked="CB_GoBackToSleepOnWakeReason_Changed" />
-                            </ui:SettingsCard>
-
-                            <!--  Joystick / controller  -->
-                            <ui:SettingsCard ContentAlignment="Left" IsEnabled="{Binding GoBackToSleep}">
-                                <CheckBox
-                                    x:Name="CB_GoBackToSleepOnJoystick"
-                                    Checked="CB_GoBackToSleepOnWakeReason_Changed"
-                                    Content="{l:Static resx:Resources.DevicePage_GoBackToSleepOnJoystickDesc}"
-                                    Unchecked="CB_GoBackToSleepOnWakeReason_Changed" />
-                            </ui:SettingsCard>
-
-                            <!--  Charger connected  -->
-                            <ui:SettingsCard ContentAlignment="Left" IsEnabled="{Binding GoBackToSleep}">
-                                <CheckBox
-                                    x:Name="CB_GoBackToSleepOnChargerConnected"
-                                    Checked="CB_GoBackToSleepOnWakeReason_Changed"
-                                    Content="{l:Static resx:Resources.DevicePage_GoBackToSleepOnChargerConnectedDesc}"
-                                    Unchecked="CB_GoBackToSleepOnWakeReason_Changed" />
-                            </ui:SettingsCard>
-                        </ui:SettingsExpander.Items>
-                    </ui:SettingsExpander>
                 </ikw:SimpleStackPanel>
             </ikw:SimpleStackPanel>
 

@@ -143,8 +143,12 @@ namespace HandheldCompanion.Targets.Viiper
             // usbip client explicitly to land it. UsbipCli is idempotent — a device already
             // attached (e.g. the internal auto-attach DID fire) is skipped, so this never
             // produces the duplicate USBIP attachment the old auto-attach-only path warned of.
-            // Function is very slow.
-            // UsbipCli.AttachExportedDevices();
+            if (!UsbipCli.AttachExportedDevices(vid, pid))
+            {
+                LibViiper.viiper_device_remove(busId, deviceId);
+                LogManager.LogWarning("VIIPER device attach failed: {0} (bus={1}, dev={2})", typeName, busId, deviceId);
+                return new ViiperAddDeviceResult(false, 0);
+            }
 
             RegisterFeedbackCallback(busId, deviceId);
             return new ViiperAddDeviceResult(true, deviceId);

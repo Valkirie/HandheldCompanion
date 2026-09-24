@@ -102,6 +102,7 @@ public partial class SettingsPage : Page
         SettingsManager_SettingValueChanged("PerformanceManagerEnabled", ManagerFactory.settingsManager.GetString("PerformanceManagerEnabled"), false, true);
         SettingsManager_SettingValueChanged("GPUManagementEnabled", ManagerFactory.settingsManager.GetString("GPUManagementEnabled"), false, true);
         SettingsManager_SettingValueChanged("LibraryPageEnabled", ManagerFactory.settingsManager.GetString("LibraryPageEnabled"), false, true);
+        SettingsManager_SettingValueChanged("LibraryBigArtMode", ManagerFactory.settingsManager.GetString("LibraryBigArtMode"), false, true);
         SettingsManager_SettingValueChanged("ShowSplashScreen", ManagerFactory.settingsManager.GetString("ShowSplashScreen"), false, true);
         SettingsManager_SettingValueChanged("DSUEnabled", ManagerFactory.settingsManager.GetString("DSUEnabled"), false, true);
         SettingsManager_SettingValueChanged("DSUport", ManagerFactory.settingsManager.GetString("DSUport"), false, true);
@@ -305,6 +306,9 @@ public partial class SettingsPage : Page
                 case "LibraryPageEnabled":
                     Toggle_LibraryPage.IsOn = Convert.ToBoolean(value);
                     break;
+                case "LibraryBigArtMode":
+                    Toggle_LibraryBigArtMode.IsOn = Convert.ToBoolean(value);
+                    break;
                 case "QuickToolsApplyNoise":
                     QuickToolsNoiseToggle.IsOn = Convert.ToBoolean(value);
                     break;
@@ -328,6 +332,14 @@ public partial class SettingsPage : Page
                     break;
             }
         });
+    }
+
+    private void Toggle_LibraryBigArtMode_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        ManagerFactory.settingsManager.SetProperty("LibraryBigArtMode", Toggle_LibraryBigArtMode.IsOn);
     }
 
     public void Dispose()

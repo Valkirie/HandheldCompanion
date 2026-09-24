@@ -95,11 +95,6 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager_SettingValueChanged("MsrUndervoltGpu", ManagerFactory.settingsManager.GetString("MsrUndervoltGpu"), false, true);
             SettingsManager_SettingValueChanged("MsrUndervoltSoc", ManagerFactory.settingsManager.GetString("MsrUndervoltSoc"), false, true);
             SettingsManager_SettingValueChanged("EnhancedSleep", ManagerFactory.settingsManager.GetString("EnhancedSleep"), false, true);
-            SettingsManager_SettingValueChanged("GoBackToSleep", ManagerFactory.settingsManager.GetString("GoBackToSleep"), false, true);
-            SettingsManager_SettingValueChanged("GoBackToSleepOnPowerButton", ManagerFactory.settingsManager.GetString("GoBackToSleepOnPowerButton"), false, true);
-            SettingsManager_SettingValueChanged("GoBackToSleepOnFingerprintReader", ManagerFactory.settingsManager.GetString("GoBackToSleepOnFingerprintReader"), false, true);
-            SettingsManager_SettingValueChanged("GoBackToSleepOnJoystick", ManagerFactory.settingsManager.GetString("GoBackToSleepOnJoystick"), false, true);
-            SettingsManager_SettingValueChanged("GoBackToSleepOnChargerConnected", ManagerFactory.settingsManager.GetString("GoBackToSleepOnChargerConnected"), false, true);
             SettingsManager_SettingValueChanged("DockedDisplayBehavior", ManagerFactory.settingsManager.GetString("DockedDisplayBehavior"), false, true);
         }
 
@@ -217,21 +212,6 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "EnhancedSleep":
                         Toggle_EnhancedSleep.IsOn = Convert.ToBoolean(value);
-                        break;
-                    case "GoBackToSleep":
-                        Toggle_GoBackToSleep.IsOn = Convert.ToBoolean(value);
-                        break;
-                    case "GoBackToSleepOnPowerButton":
-                        CB_GoBackToSleepOnPowerButton.IsChecked = Convert.ToBoolean(value);
-                        break;
-                    case "GoBackToSleepOnFingerprintReader":
-                        CB_GoBackToSleepOnFingerprintReader.IsChecked = Convert.ToBoolean(value);
-                        break;
-                    case "GoBackToSleepOnJoystick":
-                        CB_GoBackToSleepOnJoystick.IsChecked = Convert.ToBoolean(value);
-                        break;
-                    case "GoBackToSleepOnChargerConnected":
-                        CB_GoBackToSleepOnChargerConnected.IsChecked = Convert.ToBoolean(value);
                         break;
                     case "DockedDisplayBehavior":
                         cB_DockedDisplayBehavior.SelectedIndex = Convert.ToInt32(value);
@@ -562,25 +542,6 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             ManagerFactory.settingsManager.SetProperty("EnhancedSleep", Toggle_EnhancedSleep.IsOn);
-        }
-
-        private void Toggle_GoBackToSleep_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (!IsLoaded)
-                return;
-
-            ManagerFactory.settingsManager.SetProperty("GoBackToSleep", Toggle_GoBackToSleep.IsOn);
-        }
-
-        private void CB_GoBackToSleepOnWakeReason_Changed(object sender, RoutedEventArgs e)
-        {
-            if (!IsLoaded)
-                return;
-
-            ManagerFactory.settingsManager.SetProperty("GoBackToSleepOnPowerButton", CB_GoBackToSleepOnPowerButton.IsChecked == true);
-            ManagerFactory.settingsManager.SetProperty("GoBackToSleepOnFingerprintReader", CB_GoBackToSleepOnFingerprintReader.IsChecked == true);
-            ManagerFactory.settingsManager.SetProperty("GoBackToSleepOnJoystick", CB_GoBackToSleepOnJoystick.IsChecked == true);
-            ManagerFactory.settingsManager.SetProperty("GoBackToSleepOnChargerConnected", CB_GoBackToSleepOnChargerConnected.IsChecked == true);
         }
 
         #region Display

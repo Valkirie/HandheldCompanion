@@ -11,10 +11,12 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Platforms.Discovery;
+using HandheldCompanion.Shared;
 using HandheldCompanion.Views;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -95,8 +97,36 @@ namespace HandheldCompanion.ViewModels
         };
 
         public IReadOnlyList<EmulatorDefinition> SupportedEmulators { get; } = EmulatorDefinitions.All;
-        public IReadOnlyList<LibraryScanTarget> EmulatorScanTargets { get; } =
-            [new("Emulators", Properties.Resources.Library_ScanAll), .. EmulatorDefinitions.All.Select(definition => new LibraryScanTarget(definition.Id, definition.Name))];
+        public ObservableCollection<LibraryScanTarget> EmulatorScanTargets { get; } = [];
+
+        private void AddEmulatorScanTarget(EmulatorDefinition definition)
+        {
+            EmulatorScanTargets.Add(new(definition.Id, definition.Name));
+        }
+
+        private void RemoveEmulatorScanTarget(EmulatorDefinition definition)
+        {
+            for (int index = 1; index < EmulatorScanTargets.Count; index++)
+            {
+                if (EmulatorScanTargets[index].Target == definition.Id)
+                {
+                    EmulatorScanTargets.RemoveAt(index);
+                    return;
+                }
+            }
+        }
+
+        private void UpdateEmulatorScanTarget(EmulatorDefinition definition)
+        {
+            for (int index = 1; index < EmulatorScanTargets.Count; index++)
+            {
+                if (EmulatorScanTargets[index].Target == definition.Id)
+                {
+                    EmulatorScanTargets[index] = new(definition.Id, definition.Name);
+                    return;
+                }
+            }
+        }
 
         private ICommand CreateScanLibraryCommand()
         {
@@ -222,16 +252,29 @@ namespace HandheldCompanion.ViewModels
                 exe.IndexOf("uninst", StringComparison.OrdinalIgnoreCase) < 0 &&
                 exe.IndexOf("installer", StringComparison.OrdinalIgnoreCase) < 0);
 
+            if (string.IsNullOrWhiteSpace(profile.Path) && !executables.Any())
+            {
+                LogManager.LogError("Skipping game '{0}' because it has no path and no executables.", game.Name);
+                return;
+            }
+
             if (string.IsNullOrEmpty(profile.Path) && executables.Any())
                 profile.Path = executables.First();
 
             profile.Name = game.Name;
+
             if (game is DiscoveredGame emulatorGame)
                 profile.Arguments = emulatorGame.Arguments;
-            profile.PlatformType = game is DiscoveredGame discovered
-                ? discovered.PlatformType
-                : keyValuePairs[game.GetType()];
-            profile.LaunchString = game.LaunchString;
+            else if (game is GogGame gogGame)
+            {
+                string platformPath = PlatformManager.GOGGalaxy.ExecutablePath;
+                profile.LaunchString = platformPath;
+                profile.Arguments = $"/command=runGame /gameId={gogGame.Id} /path=\"{gogGame.InstallDir}\"";
+            }
+            else
+                profile.LaunchString = game.LaunchString;
+
+            profile.PlatformType = game is DiscoveredGame discovered ? discovered.PlatformType : keyValuePairs[game.GetType()];
             profile.Executables = executables.ToList();
 
             ManagerFactory.profileManager.UpdateOrCreateProfile(profile, isCreation ? UpdateSource.Creation : UpdateSource.LibraryUpdate);

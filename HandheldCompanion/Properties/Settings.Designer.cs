@@ -1644,66 +1644,6 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool GoBackToSleep {
-            get {
-                return ((bool)(this["GoBackToSleep"]));
-            }
-            set {
-                this["GoBackToSleep"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool GoBackToSleepOnPowerButton {
-            get {
-                return ((bool)(this["GoBackToSleepOnPowerButton"]));
-            }
-            set {
-                this["GoBackToSleepOnPowerButton"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool GoBackToSleepOnFingerprintReader {
-            get {
-                return ((bool)(this["GoBackToSleepOnFingerprintReader"]));
-            }
-            set {
-                this["GoBackToSleepOnFingerprintReader"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool GoBackToSleepOnJoystick {
-            get {
-                return ((bool)(this["GoBackToSleepOnJoystick"]));
-            }
-            set {
-                this["GoBackToSleepOnJoystick"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool GoBackToSleepOnChargerConnected {
-            get {
-                return ((bool)(this["GoBackToSleepOnChargerConnected"]));
-            }
-            set {
-                this["GoBackToSleepOnChargerConnected"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int MasterInterval {
             get {
@@ -1783,6 +1723,18 @@ namespace HandheldCompanion.Properties
             }
             set {
                 this["LibraryPageEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LibraryBigArtMode {
+            get {
+                return ((bool)(this["LibraryBigArtMode"]));
+            }
+            set {
+                this["LibraryBigArtMode"] = value;
             }
         }
         

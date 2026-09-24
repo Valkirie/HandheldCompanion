@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Commands.Functions.HC;
 using HandheldCompanion.Devices.ASUS;
-using HandheldCompanion.Extensions;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;

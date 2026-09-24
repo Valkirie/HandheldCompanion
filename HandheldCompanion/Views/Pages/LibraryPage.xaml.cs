@@ -1,4 +1,5 @@
 using HandheldCompanion.Platforms;
+using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Pages.Library;
 using iNKORE.UI.WPF.Modern.Controls;
@@ -7,18 +8,23 @@ using System.Windows;
 using System.Windows.Navigation;
 
 using Page = System.Windows.Controls.Page;
+using ScrollViewer = System.Windows.Controls.ScrollViewer;
 
 namespace HandheldCompanion.Views.Pages;
 
 public partial class LibraryPage : Page
 {
     private LibraryPageViewModel? ViewModel => DataContext as LibraryPageViewModel;
+    private ScrollViewer? hostScrollViewer;
 
     public LibraryPage()
     {
         Tag = "about";
         DataContext = new LibraryPageViewModel();
         InitializeComponent();
+
+        Loaded += LibraryPage_Loaded;
+        Unloaded += LibraryPage_Unloaded;
 
         if (ViewModel is { } vm)
         {
@@ -39,13 +45,51 @@ public partial class LibraryPage : Page
 
     public void Dispose()
     {
+        DetachHostScrollViewer();
+
         if (ViewModel is { } vm)
         {
             vm.BackAvailabilityChanged -= LibraryPageViewModel_BackAvailabilityChanged;
+            vm.ClearFocusedProfile();
 
             if (vm is INotifyPropertyChanged inpc)
                 inpc.PropertyChanged -= LibraryPageViewModel_PropertyChanged;
         }
+    }
+
+    private void LibraryPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        DetachHostScrollViewer();
+        hostScrollViewer = WPFUtils.FindParent<ScrollViewer>(this);
+
+        if (hostScrollViewer is null)
+            return;
+
+        hostScrollViewer.SizeChanged += HostScrollViewer_SizeChanged;
+        UpdateViewportHeight();
+    }
+
+    private void LibraryPage_Unloaded(object sender, RoutedEventArgs e)
+    {
+        DetachHostScrollViewer();
+    }
+
+    private void HostScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        UpdateViewportHeight();
+    }
+
+    private void UpdateViewportHeight()
+    {
+        if (ViewModel is { } vm && hostScrollViewer is not null)
+            vm.ViewportHeight = hostScrollViewer.ActualHeight;
+    }
+
+    private void DetachHostScrollViewer()
+    {
+        hostScrollViewer?.SizeChanged -= HostScrollViewer_SizeChanged;
+
+        hostScrollViewer = null;
     }
 
     private void LibraryPageViewModel_BackAvailabilityChanged(bool canGoBack)
@@ -91,6 +135,11 @@ public partial class LibraryPage : Page
             return;
 
         ViewModel?.SelectNavigationItemByKey(key);
+    }
+
+    public void UpdateFocusedProfile(ProfileViewModel profile)
+    {
+        ViewModel?.UpdateFocusedProfile(profile);
     }
 
     private void navView_Loaded(object sender, RoutedEventArgs e)

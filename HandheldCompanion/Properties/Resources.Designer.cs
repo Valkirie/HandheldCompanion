@@ -1582,60 +1582,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Go back to sleep.
-        /// </summary>
-        public static string DevicePage_GoBackToSleep {
-            get {
-                return ResourceManager.GetString("DevicePage_GoBackToSleep", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Automatically send the device back to sleep if awakened from Modern Standby by selected wake reasons..
-        /// </summary>
-        public static string DevicePage_GoBackToSleepDesc {
-            get {
-                return ResourceManager.GetString("DevicePage_GoBackToSleepDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Go back to sleep if awakened by a charger being connected..
-        /// </summary>
-        public static string DevicePage_GoBackToSleepOnChargerConnectedDesc {
-            get {
-                return ResourceManager.GetString("DevicePage_GoBackToSleepOnChargerConnectedDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Go back to sleep if awakened by the fingerprint reader..
-        /// </summary>
-        public static string DevicePage_GoBackToSleepOnFingerprintReaderDesc {
-            get {
-                return ResourceManager.GetString("DevicePage_GoBackToSleepOnFingerprintReaderDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Go back to sleep if awakened by a joystick or controller input..
-        /// </summary>
-        public static string DevicePage_GoBackToSleepOnJoystickDesc {
-            get {
-                return ResourceManager.GetString("DevicePage_GoBackToSleepOnJoystickDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Go back to sleep if awakened by the power button..
-        /// </summary>
-        public static string DevicePage_GoBackToSleepOnPowerButtonDesc {
-            get {
-                return ResourceManager.GetString("DevicePage_GoBackToSleepOnPowerButtonDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to GPU options.
         /// </summary>
         public static string DevicePage_GPUOptions {

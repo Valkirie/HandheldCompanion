@@ -49,6 +49,10 @@ namespace HandheldCompanion.ViewModels
             // Yield to message pump to process Loaded and visibility-tracking events
             Application.Current.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Background);
 
+            // If no profile is focused, focus the first recent game if available
+            if (_focusedProfile is null && RecentGames.FirstOrDefault() is { } firstRecentGame)
+                UpdateFocusedProfile(firstRecentGame);
+
             // Hide the spinner once every card has been dispatched to the UI
             IsInitializing = false;
 
@@ -364,6 +368,7 @@ namespace HandheldCompanion.ViewModels
                 ManagerFactory.profileManager.CollectionAdded -= ProfileCollectionHelper_CollectionAdded;
                 ManagerFactory.profileManager.CollectionRemoved -= ProfileCollectionHelper_CollectionRemoved;
                 ManagerFactory.profileManager.CollectionUpdated -= ProfileCollectionHelper_CollectionUpdated;
+                ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
             }
 
             base.Dispose(disposing);
@@ -385,16 +390,7 @@ namespace HandheldCompanion.ViewModels
 
         private bool MatchesFilters(ProfileViewModel profile)
         {
-            return MatchesSearchFilter(profile) && MatchesNavigationFilter(profile);
-        }
-
-        private bool MatchesSearchFilter(ProfileViewModel profile)
-        {
-            if (string.IsNullOrWhiteSpace(SearchText))
-                return true;
-
-            return profile.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                   profile.Profile.Executable.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
+            return MatchesNavigationFilter(profile);
         }
 
         private bool MatchesNavigationFilter(ProfileViewModel profile)

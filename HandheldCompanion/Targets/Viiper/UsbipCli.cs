@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Shared;
+using HandheldCompanion.Shared;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -29,22 +29,22 @@ namespace HandheldCompanion.Targets.Viiper
     /// </summary>
     internal static class UsbipCli
     {
-        // Must match ViiperService.Initialize's listen address.
-        private const string Host = "127.0.0.1";
-        private const int Port = 3241;
-
         private static readonly string[] ExePaths =
         {
             @"C:\Program Files\USBip\usbip.exe",
             @"C:\Program Files (x86)\USBip\usbip.exe",
         };
+        private static string Host = "127.0.0.1";
+        private static int Port = 3241;
 
-        private static string ResolveExe()
+        private static string? ResolveExe()
         {
-            foreach (var p in ExePaths)
+            foreach (string path in ExePaths)
             {
-                if (File.Exists(p)) return p;
+                if (File.Exists(path))
+                    return path;
             }
+
             return null;
         }
 
@@ -65,18 +65,27 @@ namespace HandheldCompanion.Targets.Viiper
         private static bool _staleSweepPending;
         public static void NoteServerStarted() { lock (AttachSync) { _staleSweepPending = true; } }
 
+        public static void Configure(string host, int port)
+        {
+            lock (AttachSync)
+            {
+                Host = host;
+                Port = port;
+            }
+        }
+
         /// <summary>
         /// Attaches every device libviiper is exporting on its loopback USBIP server that
         /// isn't already imported into the local UDE bus. Best-effort: logs and returns
         /// quietly if usbip.exe is missing or the CLI misbehaves.
         /// </summary>
-        public static void AttachExportedDevices()
+        public static bool AttachExportedDevices(ushort vendorId, ushort productId)
         {
-            string exe = ResolveExe();
-            if (exe == null)
+            string? exe = ResolveExe();
+            if (string.IsNullOrEmpty(exe))
             {
                 LogManager.LogWarning("usbip.exe not found; cannot attach VIIPER device to the UDE bus.");
-                return;
+                return false;
             }
 
             lock (AttachSync)
@@ -120,14 +129,37 @@ namespace HandheldCompanion.Targets.Viiper
                         if (Attach(exe, busId))
                         {
                             attachedNow++;
-                            WaitForPortListing(exe, busId);
+                            if (!WaitForPortListing(exe, busId))
+                                return false;
+                        }
+                        else
+                        {
+                            return false;
                         }
                     }
                     LogManager.LogInformation("usbip: exported={0}, newly attached={1}.", exported.Count, attachedNow);
-                    return;
+                    if (vendorId == 0 || productId == 0)
+                        return true;
+
+                    return WaitForPnpDevice(vendorId, productId);
                 }
                 LogManager.LogWarning("usbip: libviiper exported no devices after add (attach skipped).");
+                return false;
             }
+        }
+
+        private static bool WaitForPnpDevice(ushort vendorId, ushort productId)
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                if (ViiperPnpCleanup.HasConnectedVirtualDevice(vendorId, productId))
+                    return true;
+
+                System.Threading.Thread.Sleep(300);
+            }
+
+            LogManager.LogWarning("usbip: {0:X4}:{1:X4} was imported but no connected VIIPER PnP device appeared (3s).", vendorId, productId);
+            return false;
         }
 
         /// <summary>
@@ -135,15 +167,16 @@ namespace HandheldCompanion.Targets.Viiper
         /// subsequent attach pass can't mistake the enumeration window for "not attached"
         /// and import the same busid a second time.
         /// </summary>
-        private static void WaitForPortListing(string exe, string busId)
+        private static bool WaitForPortListing(string exe, string busId)
         {
             for (int i = 0; i < 10; i++)
             {
                 var ports = ListAttachedPortsByBusId(exe);
-                if (ports.TryGetValue(busId, out var list) && list.Count > 0) return;
+                if (ports.TryGetValue(busId, out var list) && list.Count > 0) return true;
                 System.Threading.Thread.Sleep(300);
             }
             LogManager.LogWarning("usbip: {0} attach succeeded but never appeared in the port listing (3s).", busId);
+            return false;
         }
 
         private static void DetachDuplicatePorts(string exe, string busId, List<string> ports)
@@ -192,8 +225,8 @@ namespace HandheldCompanion.Targets.Viiper
         /// loopback spelling), including duplicates. Best-effort.</summary>
         public static void DetachAll()
         {
-            string exe = ResolveExe();
-            if (exe == null) return;
+            string? exe = ResolveExe();
+            if (string.IsNullOrEmpty(exe)) return;
 
             string output = Run(exe, $"-t {Port} port");
             if (string.IsNullOrEmpty(output)) return;

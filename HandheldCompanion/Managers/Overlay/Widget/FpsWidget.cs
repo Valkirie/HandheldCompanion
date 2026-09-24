@@ -1,5 +1,4 @@
 using RTSSSharedMemoryNET;
-using HandheldCompanion.Managers.Overlay;
 
 namespace HandheldCompanion.Managers.Overlay.Widget;
 

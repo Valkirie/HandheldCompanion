@@ -11,7 +11,7 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Title="Emulator settings"
-    Margin="0,20,0,0"
+    Margin="20"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:EmulatorSettingsPageViewModel}"
     d:DesignHeight="4000"
@@ -194,14 +194,6 @@
                                     IsEnabled="{Binding IsFileManagementEnabled, Mode=OneWay}">
                                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe738;" />
                                 </Button>
-
-                                <Button
-                                    Grid.Column="3"
-                                    Margin="6,0,0,0"
-                                    Command="{Binding SaveCommand}"
-                                    Style="{DynamicResource AccentButtonStyle}">
-                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe738;" />
-                                </Button>
                             </Grid>
                         </Grid>
                     </Border>
@@ -351,13 +343,6 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe710;" />
                         </Button>
                     </ui:SettingsExpander>
-
-                    <DockPanel Grid.Row="2" Margin="0,12,0,0">
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                            Text="{Binding StatusText}" />
-                    </DockPanel>
                 </ikw:SimpleStackPanel>
             </ikw:SimpleStackPanel>
         </StackPanel>

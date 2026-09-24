@@ -20,15 +20,34 @@ public static class EmulatorDefinitions
     public static GamePlatform AllPlatforms => All.Aggregate(GamePlatform.Generic, (platform, definition) => platform | definition.PlatformType);
 
     public static EmulatorDefinition[] All = Array.Empty<EmulatorDefinition>();
+    public static event Action<EmulatorDefinition>? DefinitionAdded;
+    public static event Action<EmulatorDefinition>? DefinitionRemoved;
+    public static event Action<EmulatorDefinition>? DefinitionUpdated;
 
     static EmulatorDefinitions()
     {
-        All = LoadDefinitions();
+        Reload();
     }
 
     public static void Reload()
     {
+        EmulatorDefinition[] previous = All;
         All = LoadDefinitions();
+
+        foreach (EmulatorDefinition definition in previous)
+        {
+            if (!All.Any(current => current.Id == definition.Id))
+                DefinitionRemoved?.Invoke(definition);
+        }
+
+        foreach (EmulatorDefinition definition in All)
+        {
+            EmulatorDefinition? previousDefinition = previous.FirstOrDefault(current => current.Id == definition.Id);
+            if (previousDefinition is null)
+                DefinitionAdded?.Invoke(definition);
+            else
+                DefinitionUpdated?.Invoke(definition);
+        }
     }
 
     private static EmulatorDefinition[] LoadDefinitions()

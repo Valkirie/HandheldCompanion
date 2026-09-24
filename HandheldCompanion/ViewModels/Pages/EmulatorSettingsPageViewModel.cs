@@ -1,12 +1,13 @@
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Platforms.Discovery;
+using HandheldCompanion.Shared;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -140,11 +141,23 @@ public sealed class EmulatorDefinitionViewModel : BaseViewModel
 
     public EmulatorDefinition ToModel() => new()
     {
-        Id = Id.Trim(), Name = Name.Trim(), PlatformType = PlatformType, PlatformColor = PlatformColor.Trim(), PlatformGlyph = PlatformGlyph,
-        PlatformFont = PlatformFont, PlatformFontSize = PlatformFontSize, Executables = Executables.Values, ProductNames = ProductNames.Values,
-        Configurations = Configurations.Select(x => x.ToModel()).ToArray(), PortableLocations = PortableLocations.Select(x => x.ToModel()).ToArray(),
-        RomExtensions = RomExtensions.Values, ArgumentPrefix = ArgumentPrefix, LaunchArgumentMode = LaunchArgumentMode,
-        ArgumentTemplate = ArgumentTemplate, RomMetadata = RomMetadata.FirstOrDefault()?.ToModel(), DirectoryRoms = DirectoryRoms
+        Id = Id.Trim(),
+        Name = Name.Trim(),
+        PlatformType = PlatformType,
+        PlatformColor = PlatformColor.Trim(),
+        PlatformGlyph = PlatformGlyph,
+        PlatformFont = PlatformFont,
+        PlatformFontSize = PlatformFontSize,
+        Executables = Executables.Values,
+        ProductNames = ProductNames.Values,
+        Configurations = Configurations.Select(x => x.ToModel()).ToArray(),
+        PortableLocations = PortableLocations.Select(x => x.ToModel()).ToArray(),
+        RomExtensions = RomExtensions.Values,
+        ArgumentPrefix = ArgumentPrefix,
+        LaunchArgumentMode = LaunchArgumentMode,
+        ArgumentTemplate = ArgumentTemplate,
+        RomMetadata = RomMetadata.FirstOrDefault()?.ToModel(),
+        DirectoryRoms = DirectoryRoms
     };
 
     public static EmulatorDefinitionViewModel FromModel(EmulatorDefinition model)
@@ -193,9 +206,9 @@ public sealed class EmulatorSettingsPageViewModel : BaseViewModel
         }
     }
     public bool IsFileManagementEnabled => SelectedFile is not null;
-    public string StatusText { get => _statusText; private set => SetProperty(ref _statusText, value); }
     public DelegateCommand NewCommand { get; }
     public DelegateCommand DeleteCommand { get; }
+    public DelegateCommand SaveCommand { get; }
     public DelegateCommand AddConfigurationCommand { get; }
     public DelegateCommand<ConfigLocationViewModel> RemoveConfigurationCommand { get; }
     public DelegateCommand AddPortableLocationCommand { get; }
@@ -208,19 +221,25 @@ public sealed class EmulatorSettingsPageViewModel : BaseViewModel
     /// </summary>
     public EmulatorSettingsPageViewModel()
     {
-        NewCommand = new DelegateCommand(NewFile); DeleteCommand = new DelegateCommand(DeleteFile);
+        NewCommand = new DelegateCommand(NewFile);
+        DeleteCommand = new DelegateCommand(DeleteFile);
+        SaveCommand = new DelegateCommand(SaveFile);
+
         AddConfigurationCommand = new DelegateCommand(() => Definition?.Configurations.Add(new ConfigLocationViewModel()));
         RemoveConfigurationCommand = new DelegateCommand<ConfigLocationViewModel>(item => Definition?.Configurations.Remove(item));
         AddPortableLocationCommand = new DelegateCommand(() => Definition?.PortableLocations.Add(new PortableLocationViewModel()));
         RemovePortableLocationCommand = new DelegateCommand<PortableLocationViewModel>(item => Definition?.PortableLocations.Remove(item));
         AddRomMetadataCommand = new DelegateCommand(() => { if (Definition is not null && Definition.RomMetadata.Count == 0) Definition.RomMetadata.Add(new RomMetadataViewModel()); });
         RemoveRomMetadataCommand = new DelegateCommand<RomMetadataViewModel>(item => Definition?.RomMetadata.Remove(item));
+
         LoadFiles();
     }
 
     private void LoadFiles()
     {
-        Files.Clear(); Directory.CreateDirectory(_directory);
+        Files.Clear();
+        Directory.CreateDirectory(_directory);
+
         foreach (string filePath in Directory.EnumerateFiles(_directory, "*.json").OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase))
         {
             string name = Path.GetFileNameWithoutExtension(filePath);
@@ -233,6 +252,7 @@ public sealed class EmulatorSettingsPageViewModel : BaseViewModel
             catch (JsonException) { }
             Files.Add(new(filePath, name));
         }
+
         SelectedFile = Files.FirstOrDefault();
     }
 
@@ -243,13 +263,11 @@ public sealed class EmulatorSettingsPageViewModel : BaseViewModel
             UnsubscribeDefinition();
             Definition = EmulatorDefinitionViewModel.FromModel(JsonSerializer.Deserialize<EmulatorDefinition>(File.ReadAllText(filePath), SerializerOptions) ?? throw new JsonException("The file is empty."));
             SubscribeDefinition();
-            StatusText = string.Empty;
         }
         catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
         {
             UnsubscribeDefinition();
             Definition = null;
-            StatusText = $"Could not load: {ex.Message}";
         }
     }
 
@@ -348,31 +366,56 @@ public sealed class EmulatorSettingsPageViewModel : BaseViewModel
 
     private void NewFile()
     {
-        string filePath = Path.Combine(_directory, "new-emulator.json"); int suffix = 1;
-        while (File.Exists(filePath)) filePath = Path.Combine(_directory, $"new-emulator-{suffix++}.json");
+        string filePath = Path.Combine(_directory, "new-emulator.json");
+        int suffix = 1;
+
+        while (File.Exists(filePath))
+            filePath = Path.Combine(_directory, $"new-emulator-{suffix++}.json");
+
         File.WriteAllText(filePath, JsonSerializer.Serialize(new EmulatorDefinition { Id = "new-emulator", Name = "New Emulator", PlatformType = GamePlatform.Generic }, SerializerOptions));
-        EmulatorDefinitions.Reload(); LoadFiles(); SelectedFile = Files.FirstOrDefault(x => x.FilePath == filePath); StatusText = "New emulator definition created.";
+        EmulatorDefinitions.Reload(); LoadFiles(); SelectedFile = Files.FirstOrDefault(x => x.FilePath == filePath);
     }
 
     private void SaveFile()
     {
-        if (SelectedFile is null || Definition is null) return;
+        if (SelectedFile is null || Definition is null)
+            return;
+
         try
         {
             EmulatorDefinition model = Definition.ToModel();
-            if (string.IsNullOrWhiteSpace(model.Id) || string.IsNullOrWhiteSpace(model.Name)) throw new JsonException("Id and Name are required.");
+            if (string.IsNullOrWhiteSpace(model.Id) || string.IsNullOrWhiteSpace(model.Name))
+            {
+                // Id and Name are required
+                return;
+            }
+
             string temporaryPath = SelectedFile.FilePath + ".tmp";
-            File.WriteAllText(temporaryPath, JsonSerializer.Serialize(model, SerializerOptions)); File.Move(temporaryPath, SelectedFile.FilePath, true);
-            EmulatorDefinitions.Reload(); StatusText = "Saved.";
+            File.WriteAllText(temporaryPath, JsonSerializer.Serialize(model, SerializerOptions));
+            File.Move(temporaryPath, SelectedFile.FilePath, true);
+
+            EmulatorDefinitions.Reload();
         }
-        catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException or NotSupportedException) { StatusText = $"Could not save: {ex.Message}"; }
+        catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException or NotSupportedException)
+        {
+            LogManager.LogError("Could not save: {0}", ex.Message);
+        }
     }
 
     private void DeleteFile()
     {
-        if (SelectedFile is null) return;
-        if (Files.Count == 1) { StatusText = "At least one emulator definition must remain."; return; }
-        try { File.Delete(SelectedFile.FilePath); EmulatorDefinitions.Reload(); LoadFiles(); StatusText = "Deleted."; }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { StatusText = $"Could not delete: {ex.Message}"; }
+        if (SelectedFile is null)
+            return;
+
+        try
+        {
+            File.Delete(SelectedFile.FilePath);
+            EmulatorDefinitions.Reload();
+            LoadFiles();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            LogManager.LogError("Could not delete: {0}", ex.Message);
+        }
     }
 }

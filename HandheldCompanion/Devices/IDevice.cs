@@ -169,14 +169,6 @@ public abstract class IDevice
             return device.Write(report);
     }
 
-    protected bool WriteReport(HidDevice device, byte[] report, int offset, int length)
-    {
-        byte[] payload = new byte[length];
-        Buffer.BlockCopy(report, offset, payload, 0, length);
-        lock (HidWriteLock)
-            return device.Write(payload);
-    }
-
     protected bool WriteReport(HidDevice device, byte[] report, int length)
     {
         if (length < 0 || report.Length > length)
@@ -196,8 +188,11 @@ public abstract class IDevice
 
     protected bool WriteFeatureReport(HidDevice device, byte[] report, int length)
     {
+        if (length < 0 || report.Length > length)
+            return false;
+
         byte[] payload = new byte[length];
-        Buffer.BlockCopy(report, 0, payload, 0, length);
+        Buffer.BlockCopy(report, 0, payload, 0, report.Length);
         lock (HidWriteLock)
             return device.WriteFeatureData(payload);
     }
@@ -664,8 +659,21 @@ public abstract class IDevice
             hidDevices.Clear();
         }
 
-        foreach (HidDevice hidDevice in devices)
-            hidDevice.Dispose();
+        Task[] disposeTasks = devices.Select(hidDevice => Task.Run(() =>
+        {
+            try
+            {
+                hidDevice.Dispose();
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to dispose HID device {0}: {1}", hidDevice.DevicePath, ex.Message);
+            }
+        })).ToArray();
+
+        // ponytail: A stalled native HID close cannot be canceled; isolate it until HidLibrary supports bounded disposal.
+        if (!Task.WaitAll(disposeTasks, TimeSpan.FromSeconds(2)))
+            LogManager.LogWarning("Timed out disposing {0} HID device(s); continuing shutdown", disposeTasks.Count(task => !task.IsCompleted));
     }
 
     public virtual void Close()
@@ -1485,7 +1493,7 @@ public abstract class IDevice
         Task.Run(async () =>
         {
             KeyPress(button);
-            await Task.Delay(delay).ConfigureAwait(false); // Avoid blocking the synchronization context
+            await Task.Delay(delay);
             KeyRelease(button);
         });
     }

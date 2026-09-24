@@ -12,7 +12,7 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Title="Action Settings"
-    Margin="0,20,0,0"
+    Margin="20"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:ButtonMappingViewModel}"
     d:DesignHeight="4300"

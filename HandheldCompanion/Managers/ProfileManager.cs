@@ -29,6 +29,10 @@ namespace HandheldCompanion.Managers;
 public class ProfileManager : IManager
 {
     public const string DefaultName = "Default";
+    private static readonly Version AxisLayoutMigrationVersion = new("0.22.1.5");
+    private static readonly Version DictionaryMigrationVersion = new("0.27.0.7");
+    private static readonly Version ButtonFlagsMigrationVersion = new("0.27.0.13");
+    private static readonly Version PowerProfileMigrationVersion = new("0.21.5.4");
     private readonly ProfileCollectionHelper collectionHelper = new();
 
     public event Action<GameCollection>? CollectionAdded;
@@ -774,22 +778,21 @@ public class ProfileManager : IManager
                 return;
             }
 
-            string json = File.ReadAllText(fileName);
-            JObject jObject = JObject.Parse(json);
-
-            // latest pre-versionning release
-            Version version = new();
-            if (jObject.TryGetValue("Version", out var value))
-                version = new Version(value.ToString());
+            string? json = null;
+            Version version = GetProfileVersion(fileName);
+            JObject? jObject = null;
 
             // pre-parse manipulations
-            if (version == Version.Parse("0.0.0.0"))
+            if (version == new Version())
             {
                 // too old
                 throw new Exception("Profile is outdated.");
             }
-            else if (version <= Version.Parse("0.22.1.5"))
+            else if (version <= AxisLayoutMigrationVersion)
             {
+                json = File.ReadAllText(fileName);
+                jObject = JObject.Parse(json, new JsonLoadSettings { LineInfoHandling = LineInfoHandling.Ignore });
+
                 // Navigate to the Layout object.
                 JObject? layout = jObject["Layout"] as JObject;
                 if (layout != null)
@@ -844,26 +847,35 @@ public class ProfileManager : IManager
                     }
                 }
             }
-            if (version <= Version.Parse("0.26.0.2"))
+            if (version <= DictionaryMigrationVersion)
             {
-                // get previous path, if any
-                string path = jObject.GetValue("Path")?.ToString() ?? string.Empty;
-            }
-            if (version <= Version.Parse("0.27.0.7"))
-            {
+                json ??= File.ReadAllText(fileName);
+
                 // let's make sure we get a Dictionary
                 json = json.Replace(
                     "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"",
                     "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"");
             }
-            if (version <= Version.Parse("0.27.0.13"))
+            if (version <= ButtonFlagsMigrationVersion)
             {
+                json ??= File.ReadAllText(fileName);
+
                 // Clean legacy/unknown ButtonFlags
                 json = HotkeysManager.StripUnknownButtonFlags(json, out var removed);
             }
 
             // parse profile
-            profile = JsonConvert.DeserializeObject<Profile>(json, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+            JsonSerializerSettings serializerSettings = new() { TypeNameHandling = TypeNameHandling.All };
+            if (json is null)
+            {
+                using StreamReader streamReader = File.OpenText(fileName);
+                using JsonTextReader jsonReader = new(streamReader);
+                profile = JsonSerializer.Create(serializerSettings).Deserialize<Profile>(jsonReader);
+            }
+            else
+            {
+                profile = JsonConvert.DeserializeObject<Profile>(json, serializerSettings);
+            }
             if (profile is null)
                 return;
 
@@ -871,10 +883,10 @@ public class ProfileManager : IManager
             profile.FileName = Path.GetFileName(fileName);
 
             // post-parse manipulations
-            if (version <= Version.Parse("0.21.5.4"))
+            if (version <= PowerProfileMigrationVersion)
             {
                 // Access the PowerProfile value
-                string? oldPowerProfile = jObject["PowerProfile"]?.ToString();
+                string? oldPowerProfile = jObject?["PowerProfile"]?.ToString();
                 if (!string.IsNullOrEmpty(oldPowerProfile))
                 {
                     for (int idx = 0; idx < 2; idx++)
@@ -1019,6 +1031,26 @@ public class ProfileManager : IManager
         // default specific
         if (profile.Default)
             ApplyProfile(profile, updateSource);
+    }
+
+    private static Version GetProfileVersion(string fileName)
+    {
+        using StreamReader streamReader = File.OpenText(fileName);
+        using JsonTextReader jsonReader = new(streamReader);
+
+        while (jsonReader.Read())
+        {
+            if (jsonReader.Depth != 1 || jsonReader.TokenType != JsonToken.PropertyName ||
+                !string.Equals(jsonReader.Value?.ToString(), "Version", StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            if (jsonReader.Read() && Version.TryParse(jsonReader.Value?.ToString(), out Version? version))
+                return version;
+
+            break;
+        }
+
+        return new Version();
     }
 
     private readonly ConcurrentDictionary<string, byte> pendingCreation = new(StringComparer.InvariantCultureIgnoreCase);

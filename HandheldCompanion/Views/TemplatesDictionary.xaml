@@ -13,6 +13,8 @@
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:platforms="clr-namespace:HandheldCompanion.Platforms"
+    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+    xmlns:primitives="clr-namespace:iNKORE.UI.WPF.Modern.Controls.Primitives;assembly=iNKORE.UI.WPF.Modern.Controls"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
@@ -35,6 +37,7 @@
     <converters:ActionTypeIndexToNameConverter x:Key="ActionTypeIndexToNameConverter" />
     <converters:ActionDisplayConverter x:Key="ActionDisplayConverter" />
     <converters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+    <effects:BloomEffect x:Key="ActiveLibraryBloomEffect" BloomIntensity="0.6" BloomSaturation="0.2" po:Freeze="True" />
 
     <Style x:Key="LibraryImageFadeStyle" TargetType="Image">
         <Setter Property="Opacity" Value="1" />
@@ -81,7 +84,8 @@
     <ContextMenu
         x:Key="LibraryActionContextMenu"
         x:Shared="False"
-        DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+        DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
+        Placement="Center">
         <MenuItem
             Command="{Binding ToggleProcessCommand}"
             IsEnabled="{Binding CanToggleProcess}"
@@ -132,6 +136,61 @@
             <MenuItem Command="{Binding DeleteProfileCommand}" Header="Delete profile" />
         </MenuItem>
     </ContextMenu>
+
+    <ui:MenuFlyout
+        x:Key="LibraryActionMenuFlyout"
+        x:Shared="False"
+        Placement="Bottom">
+        <MenuItem
+            Command="{Binding ToggleProcessCommand}"
+            IsEnabled="{Binding CanToggleProcess}"
+            Style="{StaticResource LibraryPrimaryActionMenuItemStyle}">
+            <MenuItem.Icon>
+                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}">
+                    <ui:FontIcon.Style>
+                        <Style TargetType="{x:Type ui:FontIcon}">
+                            <Setter Property="Glyph" Value="&#xE102;" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                    <Setter Property="Glyph" Value="&#xE15B;" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ui:FontIcon.Style>
+                </ui:FontIcon>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Collection" ItemsSource="{Binding CollectionMenuItems}">
+            <MenuItem.ItemContainerStyle>
+                <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="MenuItem">
+                    <Setter Property="Header" Value="{Binding Name}" />
+                    <Setter Property="IsCheckable" Value="{Binding IsCheckable}" />
+                    <Setter Property="IsChecked" Value="{Binding IsChecked, Mode=OneWay}" />
+                    <Setter Property="Command" Value="{Binding ToggleCommand}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSeparator}" Value="True">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="MenuItem">
+                                        <Separator Style="{StaticResource {x:Static MenuItem.SeparatorStyleKey}}" />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </MenuItem.ItemContainerStyle>
+        </MenuItem>
+        <MenuItem Header="Manage">
+            <MenuItem Command="{Binding OpenLayout}" Header="Edit controller layout" />
+            <MenuItem Command="{Binding DownloadMetadataAndArtworks}" Header="Download metadata and artworks" />
+            <MenuItem
+                Command="{Binding OpenExecutableLocation}"
+                Header="Open executable location"
+                IsEnabled="{Binding CanOpenExecutableLocation}" />
+            <MenuItem Command="{Binding DeleteProfileCommand}" Header="Delete profile" />
+        </MenuItem>
+    </ui:MenuFlyout>
 
     <DataTemplate x:Key="HotkeyTemplate" DataType="{x:Type viewmodels:HotkeyViewModel}">
         <ui:SettingsCard
@@ -287,6 +346,7 @@
             Padding="0"
             behaviors:LibraryItemVisibilityBehavior.TrackVisibility="True"
             behaviors:RoundedClipBehavior.CornerRadius="{DynamicResource ControlCornerRadius}"
+            primitives:FlyoutBase.AttachedFlyout="{StaticResource LibraryActionMenuFlyout}"
             BorderThickness="0"
             Command="{Binding Navigate}"
             ContextMenu="{StaticResource LibraryActionContextMenu}"
@@ -342,9 +402,6 @@
                                 <Image.RenderTransform>
                                     <ScaleTransform ScaleX="1" ScaleY="1" />
                                 </Image.RenderTransform>
-                                <Image.Effect>
-                                    <effects:BloomEffect BloomIntensity="0" BloomSaturation="0.2" />
-                                </Image.Effect>
                             </Image>
 
                             <Image
@@ -357,6 +414,24 @@
                                 Style="{StaticResource LibraryImageFadeStyle}" />
                         </Grid>
 
+                        <!--  Favorite  -->
+                        <Border
+                            Height="28"
+                            Margin="6"
+                            Padding="10,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Background="{DynamicResource AccentAAFillColorDefaultBrush}"
+                            CornerRadius="{DynamicResource ControlCornerRadius}"
+                            Visibility="{Binding IsLiked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <ui:FontIcon
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource SystemControlForegroundHighMediumBrush}"
+                                Glyph="&#xE735;" />
+                        </Border>
+
+                        <!--  Platform  -->
                         <Border
                             Height="28"
                             Margin="6"
@@ -390,11 +465,6 @@
                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                             To="1.0"
                                             Duration="0:0:0.1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                            To="0"
-                                            Duration="0:0:0.1" />
                                     </Storyboard>
                                 </VisualState>
 
@@ -409,11 +479,6 @@
                                             Storyboard.TargetName="MainImage"
                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                             To="1.05"
-                                            Duration="0:0:0.1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                            To="0.6"
                                             Duration="0:0:0.1" />
                                     </Storyboard>
                                 </VisualState>
@@ -430,16 +495,19 @@
                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                             To="1.05"
                                             Duration="0:0:0.1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                            To="0.6"
-                                            Duration="0:0:0.1" />
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                     </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="MainImage" Property="Effect" Value="{StaticResource ActiveLibraryBloomEffect}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="MainImage" Property="Effect" Value="{StaticResource ActiveLibraryBloomEffect}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Button.Template>
         </Button>
@@ -451,6 +519,7 @@
             Padding="0"
             behaviors:LibraryItemVisibilityBehavior.TrackVisibility="True"
             behaviors:RoundedClipBehavior.CornerRadius="{DynamicResource ControlCornerRadius}"
+            primitives:FlyoutBase.AttachedFlyout="{StaticResource LibraryActionMenuFlyout}"
             BorderThickness="0"
             Command="{Binding Navigate}"
             ContextMenu="{StaticResource LibraryActionContextMenu}"
@@ -506,11 +575,26 @@
                             <Image.RenderTransform>
                                 <ScaleTransform ScaleX="1" ScaleY="1" />
                             </Image.RenderTransform>
-                            <Image.Effect>
-                                <effects:BloomEffect BloomIntensity="0" BloomSaturation="0.2" />
-                            </Image.Effect>
                         </Image>
 
+                        <!--  Favorite  -->
+                        <Border
+                            Height="28"
+                            Margin="6"
+                            Padding="10,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Background="{DynamicResource AccentAAFillColorDefaultBrush}"
+                            CornerRadius="{DynamicResource ControlCornerRadius}"
+                            Visibility="{Binding IsLiked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <ui:FontIcon
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource SystemControlForegroundHighMediumBrush}"
+                                Glyph="&#xE735;" />
+                        </Border>
+
+                        <!--  Platform  -->
                         <Border
                             Height="28"
                             Margin="6"
@@ -543,11 +627,6 @@
                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                             To="1.0"
                                             Duration="0:0:0.1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                            To="0"
-                                            Duration="0:0:0.1" />
                                     </Storyboard>
                                 </VisualState>
 
@@ -562,11 +641,6 @@
                                             Storyboard.TargetName="MainImage"
                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                             To="1.05"
-                                            Duration="0:0:0.1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                            To="0.6"
                                             Duration="0:0:0.1" />
                                     </Storyboard>
                                 </VisualState>
@@ -583,16 +657,19 @@
                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                             To="1.05"
                                             Duration="0:0:0.1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="MainImage"
-                                            Storyboard.TargetProperty="(UIElement.Effect).(effects:BloomEffect.BloomIntensity)"
-                                            To="0.6"
-                                            Duration="0:0:0.1" />
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                     </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="MainImage" Property="Effect" Value="{StaticResource ActiveLibraryBloomEffect}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="MainImage" Property="Effect" Value="{StaticResource ActiveLibraryBloomEffect}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Button.Template>
         </Button>
@@ -604,6 +681,7 @@
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
             behaviors:LibraryItemVisibilityBehavior.TrackVisibility="True"
+            primitives:FlyoutBase.AttachedFlyout="{StaticResource LibraryActionMenuFlyout}"
             Command="{Binding Navigate}"
             ContextMenu="{StaticResource LibraryActionContextMenu}"
             Description="{Binding Description}"
@@ -842,7 +920,7 @@
                 </ui:SettingsCard.HeaderIcon>
 
                 <ui:SettingsCard.Description>
-                    <Grid>
+                    <Grid Margin="0,2,0,0">
                         <!--  UserIndex  -->
                         <ikw:SimpleStackPanel
                             HorizontalAlignment="Left"

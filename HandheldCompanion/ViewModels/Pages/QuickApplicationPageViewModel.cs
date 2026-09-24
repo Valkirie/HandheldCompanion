@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.ViewModels.Commands;
 using System;
 using System.Collections.Generic;

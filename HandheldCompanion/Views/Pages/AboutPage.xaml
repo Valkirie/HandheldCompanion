@@ -12,7 +12,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="About"
     Title="{l:Static resx:Resources.AboutPage_About}"
-    Margin="0,20,0,0"
+    Margin="20"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:AboutPageViewModel}"
     d:DesignHeight="1000"

@@ -202,7 +202,8 @@ public class HotkeysManager : IManager
         var root = JObject.Parse(json, new JsonLoadSettings
         {
             // If a file already had duplicate keys, keep last while loading.
-            DuplicatePropertyNameHandling = DuplicatePropertyNameHandling.Replace
+            DuplicatePropertyNameHandling = DuplicatePropertyNameHandling.Replace,
+            LineInfoHandling = LineInfoHandling.Ignore
         });
 
         removedCount = 0;

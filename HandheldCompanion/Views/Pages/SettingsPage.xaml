@@ -14,7 +14,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Settings"
     Title="{l:Static resx:Resources.SettingsPage_Settings}"
-    Margin="0,20,0,0"
+    Margin="20"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:SettingsPageViewModel}"
     d:DesignHeight="2400"
@@ -251,6 +251,14 @@
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_ThemeLight}" />
                         <ComboBoxItem Content="{l:Static resx:Resources.SettingsPage_ThemeDark}" />
                     </ComboBox>
+                </ui:SettingsCard>
+
+                <!--  Library artwork size  -->
+                <ui:SettingsCard Description="Scale library artwork to the available window height" Header="Big art mode">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Library}" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch Name="Toggle_LibraryBigArtMode" Toggled="Toggle_LibraryBigArtMode_Toggled" />
                 </ui:SettingsCard>
 
                 <!--  Application backdrop  -->

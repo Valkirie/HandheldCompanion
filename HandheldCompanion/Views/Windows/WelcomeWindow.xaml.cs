@@ -53,7 +53,7 @@ public partial class WelcomeWindow : GamepadWindow
         };
 
         ContentFrame.Navigated += ContentFrame_Navigated;
-        gamepadFocusManager = new(this, (Frame)ContentFrame);
+        gamepadFocusManager = new(this, (Frame)ContentFrame, navView);
     }
 
     protected override void OnSourceInitialized(EventArgs e)

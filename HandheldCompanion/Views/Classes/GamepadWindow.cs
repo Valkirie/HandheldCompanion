@@ -241,23 +241,27 @@ namespace HandheldCompanion.Views.Classes
             return IntPtr.Zero;
         }
 
-        public void SetFocusedElement(Control focusedControl)
+        public bool SetFocusedElement(Control focusedControl)
         {
-            // store current focused control
-            this.focusedControl = focusedControl;
+            if (ReferenceEquals(this.focusedControl, focusedControl))
+                return false;
 
             // UI thread
-            UIHelper.TryInvoke(() =>
+            return UIHelper.TryInvoke(() =>
             {
+                // Top navigation items provide their own focus visuals; expandable panes use the gamepad adorner.
+                if (focusedControl is NavigationViewItem navigationViewItem)
+                    if (WPFUtils.FindParent<NavigationView>(navigationViewItem)?.PaneDisplayMode == NavigationViewPaneDisplayMode.Top)
+                        return false;
+
+                // store current focused control
+                this.focusedControl = focusedControl;
+
                 if (_highlightAdorner != null)
                 {
                     _adornerLayer?.Remove(_highlightAdorner);
                     _highlightAdorner = null;
                 }
-
-                // skip navigation view items, they have their own focus visual logic
-                if (focusedControl is NavigationViewItem)
-                    return;
 
                 _adornerLayer = AdornerLayer.GetAdornerLayer(focusedControl);
                 if (_adornerLayer != null)
@@ -265,7 +269,9 @@ namespace HandheldCompanion.Views.Classes
                     _highlightAdorner = new HighlightAdorner(focusedControl);
                     _adornerLayer.Add(_highlightAdorner);
                 }
-            });
+
+                return true;
+            }, false);
         }
 
         private Control focusedControl = null!;

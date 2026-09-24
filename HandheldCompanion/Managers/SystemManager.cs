@@ -2,11 +2,8 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Xml.Linq;
 using Windows.System.Power;
 
 namespace HandheldCompanion.Managers;
@@ -44,25 +41,6 @@ public static class SystemManager
     public static event SessionLockChangedEventHandler? SessionLockChanged;
     public delegate void SessionLockChangedEventHandler(bool isLocked);
 
-    public static event PowerModeChangedEventHandler? PowerModeChanged;
-    public delegate void PowerModeChangedEventHandler(PowerMode mode, WakeReason wakeReason);
-
-    public enum PowerMode
-    {
-        Suspend = 0,
-        Resume = 1
-    }
-
-    public enum WakeReason
-    {
-        Unknown = 0,
-        PowerButton = 1,
-        FingerprintReader = 4,
-        Joystick = 7,
-        ChargerConnected = 28,
-        Other = 999
-    }
-
     #endregion
 
     public const uint ES_CONTINUOUS = 0x80000000;
@@ -83,10 +61,6 @@ public static class SystemManager
     public static SystemStatus currentSystemStatus = SystemStatus.SystemBooting;
     private static SystemStatus previousSystemStatus = SystemStatus.SystemBooting;
     private static PowerLineStatus prevPowerLineStatus = PowerLineStatus.Unknown;
-
-    // EventLogWatcher for power mode detection
-    private static EventLogWatcher? _powerModeWatcher;
-    private static readonly XNamespace _ns = "http://schemas.microsoft.com/win/2004/08/events/event";
 
     public static bool IsInitialized;
 
@@ -133,24 +107,6 @@ public static class SystemManager
 
     private static void SubscribeToSystemEvents()
     {
-        try
-        {
-            // Initialize EventLogWatcher for power mode detection
-            // Query for Kernel-Power events: 506 (sleep entry) and 507 (wake)
-            string xpath = "*[System[(EventID=506 or EventID=507) and Provider[@Name='Microsoft-Windows-Kernel-Power']]]";
-            var query = new EventLogQuery("System", PathType.LogName, xpath);
-
-            _powerModeWatcher = new EventLogWatcher(query);
-            _powerModeWatcher.EventRecordWritten += OnEventRecordWritten;
-            _powerModeWatcher.Enabled = true;
-
-            LogManager.LogInformation("[SystemManager] Power mode watcher initialized");
-        }
-        catch (Exception ex)
-        {
-            LogManager.LogError("[SystemManager] Failed to initialize power mode watcher: {0}", ex.Message);
-        }
-
         // manage events
         SystemEvents.PowerModeChanged += OnPowerChange;
         SystemEvents.SessionSwitch += OnSessionSwitch;
@@ -164,25 +120,6 @@ public static class SystemManager
 
     private static void UnsubscribeFromSystemEvents()
     {
-        // Clean up EventLogWatcher
-        if (_powerModeWatcher != null)
-        {
-            try
-            {
-                _powerModeWatcher.Enabled = false;
-                _powerModeWatcher.EventRecordWritten -= OnEventRecordWritten;
-                _powerModeWatcher.Dispose();
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogError("[SystemManager] Error disposing power mode watcher: {0}", ex.Message);
-            }
-            finally
-            {
-                _powerModeWatcher = null;
-            }
-        }
-
         // manage events
         SystemEvents.PowerModeChanged -= OnPowerChange;
         SystemEvents.SessionSwitch -= OnSessionSwitch;
@@ -203,7 +140,6 @@ public static class SystemManager
                 {
                     isPowerSuspended = true;
                     LogManager.LogDebug("Device entering sleep/hibernate (PowerModes.Suspend from SystemEvents)");
-                    PowerModeChanged?.Invoke(PowerMode.Suspend, WakeReason.Unknown);
                     PerformSystemRoutine();
                 }
                 return;
@@ -212,8 +148,7 @@ public static class SystemManager
                 if (isPowerSuspended)
                 {
                     isPowerSuspended = false;
-                    LogManager.LogDebug("Device waking from sleep/hibernate (PowerModes.Resume from SystemEvents). Actual WakeReason will come from Kernel-Power 507 event.");
-                    PowerModeChanged?.Invoke(PowerMode.Resume, WakeReason.Unknown);
+                    LogManager.LogDebug("Device waking from sleep/hibernate (PowerModes.Resume from SystemEvents)");
                     PerformSystemRoutine();
                 }
                 return;
@@ -288,76 +223,6 @@ public static class SystemManager
         IsInitialized = false;
 
         LogManager.LogInformation("{0} has stopped", "PowerManager");
-    }
-
-    private static void OnEventRecordWritten(object? sender, EventRecordWrittenEventArgs e)
-    {
-        if (e.EventRecord == null)
-            return;
-
-        int eventId = e.EventRecord.Id;
-        WakeReason wakeReason = ParseWakeReason(e.EventRecord);
-
-        try
-        {
-            if (eventId == 506 && !isPowerSuspended) // Modern Standby sleep entry
-            {
-                isPowerSuspended = true;
-                LogManager.LogDebug("Device entering sleep (Kernel-Power 506)");
-                PowerModeChanged?.Invoke(PowerMode.Suspend, wakeReason);
-                PerformSystemRoutine();
-            }
-            else if (eventId == 507) // Modern Standby wake
-            {
-                // Always emit the wake reason from Kernel-Power, even if isPowerSuspended is already false.
-                // This handles the race where PowerModes.Resume clears isPowerSuspended before this event arrives.
-                LogManager.LogDebug("Device waking from sleep (Kernel-Power 507), reason: {0}", wakeReason);
-                PowerModeChanged?.Invoke(PowerMode.Resume, wakeReason);
-
-                // Only perform state transition if we're still marked as suspended
-                if (isPowerSuspended)
-                {
-                    isPowerSuspended = false;
-                    PerformSystemRoutine();
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            LogManager.LogError("Exception in OnEventRecordWritten: {0}", ex.Message);
-        }
-    }
-
-    private static WakeReason ParseWakeReason(EventRecord evt)
-    {
-        try
-        {
-            var xml = evt.ToXml();
-            var doc = XDocument.Parse(xml);
-
-            var reasonVal = doc
-                .Descendants(_ns + "Data")
-                .FirstOrDefault(x => x.Attribute("Name")?.Value == "Reason")
-                ?.Value;
-
-            if (!int.TryParse(reasonVal, out int code))
-                return WakeReason.Unknown;
-
-            return code switch
-            {
-                1 => WakeReason.PowerButton,
-                4 => WakeReason.FingerprintReader,
-                7 => WakeReason.Joystick,
-                28 => WakeReason.ChargerConnected,
-                44 => WakeReason.FingerprintReader,
-                0 => WakeReason.Unknown,
-                _ => WakeReason.Other
-            };
-        }
-        catch
-        {
-            return WakeReason.Unknown;
-        }
     }
 
     private static void OnSessionSwitch(object sender, SessionSwitchEventArgs e)

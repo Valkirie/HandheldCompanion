@@ -2,7 +2,6 @@ using HandheldCompanion.Devices;
 using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels.Misc;

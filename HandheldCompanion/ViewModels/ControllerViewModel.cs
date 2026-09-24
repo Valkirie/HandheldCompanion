@@ -160,9 +160,8 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(UserIndex));
         }
 
-        private async void Controller_VisibilityChanged(bool status)
+        private void Controller_VisibilityChanged(bool status)
         {
-            await Task.Delay(1000).ConfigureAwait(false);
             OnPropertyChanged(nameof(IsHidden));
         }
 

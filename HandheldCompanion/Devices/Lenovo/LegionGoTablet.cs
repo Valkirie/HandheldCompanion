@@ -331,7 +331,7 @@ namespace HandheldCompanion.Devices.Lenovo
                 // write RGB
                 lock (HidWriteLock)
                     foreach (byte[] cmd in RgbMultiLoadSettings((RgbMode)lightProfileL.effect, 0x03, (byte)lightProfileL.r, (byte)lightProfileL.g, (byte)lightProfileL.b, lightProfileL.brightness, lightProfileL.speed, false))
-                    WriteReport(device, cmd);
+                        WriteReport(device, cmd);
             }
 #endif
             return true;

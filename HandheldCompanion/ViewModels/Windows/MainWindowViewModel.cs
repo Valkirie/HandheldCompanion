@@ -4,6 +4,8 @@ using HandheldCompanion.Notifications;
 using HandheldCompanion.Views;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -21,9 +23,38 @@ namespace HandheldCompanion.ViewModels
 
         private Guid _currentNotification;
         private CancellationTokenSource? _closeCts;
+        private readonly ObservableCollection<Profile> profileSearchProfiles = [];
+
+        public ObservableCollection<Profile> ProfileSearchResults { get; } = [];
+
+        private string _profileSearchText = string.Empty;
+        public string ProfileSearchText
+        {
+            get => _profileSearchText;
+            set
+            {
+                if (_profileSearchText.Equals(value))
+                    return;
+
+                _profileSearchText = value;
+                OnPropertyChanged(nameof(ProfileSearchText));
+                UpdateProfileSearchResults();
+            }
+        }
 
         public MainWindowViewModel()
         {
+            switch (ManagerFactory.profileManager.Status)
+            {
+                default:
+                case ManagerStatus.Initializing:
+                    ManagerFactory.profileManager.Initialized += ProfileManager_Initialized;
+                    break;
+                case ManagerStatus.Initialized:
+                    QueryProfiles();
+                    break;
+            }
+
             // raise events
             switch (ManagerFactory.notificationManager.Status)
             {
@@ -55,6 +86,66 @@ namespace HandheldCompanion.ViewModels
             {
                 IsInfoBarOpen = false;
             });
+        }
+
+        private void ProfileManager_Initialized()
+        {
+            QueryProfiles();
+        }
+
+        private void QueryProfiles()
+        {
+            ManagerFactory.profileManager.Updated += ProfileManager_Updated;
+            ManagerFactory.profileManager.Deleted += ProfileManager_Deleted;
+            ManagerFactory.profileManager.Applied += ProfileManager_Applied;
+            RefreshProfileSearchProfiles();
+        }
+
+        private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
+        {
+            RefreshProfileSearchProfiles();
+        }
+
+        private void ProfileManager_Deleted(Profile profile)
+        {
+            RefreshProfileSearchProfiles();
+        }
+
+        private void ProfileManager_Applied(Profile profile, UpdateSource source)
+        {
+            RefreshProfileSearchProfiles();
+        }
+
+        private void RefreshProfileSearchProfiles()
+        {
+            UIHelper.TryBeginInvoke(() =>
+            {
+                profileSearchProfiles.Clear();
+
+                foreach (Profile profile in ManagerFactory.profileManager.GetProfiles())
+                {
+                    profileSearchProfiles.Add(profile);
+
+                    foreach (Profile subProfile in ManagerFactory.profileManager.GetSubProfilesFromProfile(profile))
+                        profileSearchProfiles.Add(subProfile);
+                }
+            });
+        }
+
+        private void UpdateProfileSearchResults()
+        {
+            string searchText = ProfileSearchText.Trim();
+            ProfileSearchResults.Clear();
+
+            if (string.IsNullOrWhiteSpace(searchText))
+                return;
+
+            foreach (Profile profile in profileSearchProfiles.Where(profile =>
+            profile.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+            profile.Executable.Contains(searchText, StringComparison.OrdinalIgnoreCase)))
+            {
+                ProfileSearchResults.Add(profile);
+            }
         }
 
         private void QueryNotifications()
@@ -143,7 +234,12 @@ namespace HandheldCompanion.ViewModels
 
         public ICommand DismissInfoBarCommand { get; }
 
-        private async void NotificationManager_Added(Notification notification)
+        private void NotificationManager_Added(Notification notification)
+        {
+            UIHelper.TryBeginInvoke(() => _ = ShowNotificationAsync(notification));
+        }
+
+        private async Task ShowNotificationAsync(Notification notification)
         {
             if (!notification.IsInternal)
                 return;
@@ -163,7 +259,7 @@ namespace HandheldCompanion.ViewModels
             if (IsInfoBarOpen)
             {
                 IsInfoBarOpen = false;
-                await Task.Delay(1000).ConfigureAwait(false);
+                await Task.Delay(1000);
             }
 
             // Set up the InfoBar
@@ -177,7 +273,12 @@ namespace HandheldCompanion.ViewModels
                 _ = AutoCloseAfterDelayAsync(_closeCts.Token);
         }
 
-        private async void NotificationManager_Discarded(Notification notification)
+        private void NotificationManager_Discarded(Notification notification)
+        {
+            UIHelper.TryBeginInvoke(() => DiscardNotification(notification));
+        }
+
+        private void DiscardNotification(Notification notification)
         {
             if (!notification.IsInternal)
                 return;

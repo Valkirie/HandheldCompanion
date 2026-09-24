@@ -129,7 +129,7 @@ public static class XInputPlus
                 if (attempt == 10)
                     return;
 
-                await Task.Delay(500).ConfigureAwait(false); // Avoid blocking the synchronization context
+                await Task.Delay(500).ConfigureAwait(false); // Avoid capturing the synchronization context
             }
 
             bool x64bit = Is64bitProcess(processEx.Process);

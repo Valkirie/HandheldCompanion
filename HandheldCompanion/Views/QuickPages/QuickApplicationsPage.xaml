@@ -185,13 +185,13 @@
                         ItemsSource="{Binding PagedProfiles}"
                         VirtualizingPanel.IsVirtualizing="True"
                         VirtualizingPanel.VirtualizationMode="Recycling">
+
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <controls:JustifiedWrapPanel
-                                    HorizontalSpacing="3"
-                                    ItemAspectRatio="0.3"
-                                    TargetRowHeight="110"
-                                    VerticalSpacing="3" />
+                                <WrapPanel
+                                    ItemHeight="140"
+                                    ItemWidth="100"
+                                    Orientation="Horizontal" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
 
@@ -199,7 +199,7 @@
                             <!--  your existing profile-button template  -->
                             <DataTemplate>
                                 <Button
-                                    Padding="3"
+                                    Margin="3"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch"
                                     HorizontalContentAlignment="Stretch"
@@ -209,15 +209,15 @@
 
                                     <Grid>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="5*" />
-                                            <RowDefinition Height="5*" />
+                                            <RowDefinition Height="4*" />
+                                            <RowDefinition Height="6*" />
                                         </Grid.RowDefinitions>
 
                                         <Image
                                             Width="32"
                                             Height="32"
                                             HorizontalAlignment="Center"
-                                            VerticalAlignment="Bottom"
+                                            VerticalAlignment="Center"
                                             Source="{Binding Icon, UpdateSourceTrigger=PropertyChanged}">
                                             <Image.Style>
                                                 <Style TargetType="Image">
@@ -236,6 +236,7 @@
                                             VerticalAlignment="Center"
                                             Style="{StaticResource CaptionTextBlockStyle}"
                                             Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                            TextAlignment="Center"
                                             TextWrapping="Wrap" />
                                     </Grid>
                                 </Button>

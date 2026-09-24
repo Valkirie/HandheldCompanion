@@ -1,5 +1,6 @@
-﻿using System;
-using System.Diagnostics;
+﻿using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Simulators;
+using System;
 
 namespace HandheldCompanion.Commands.Functions.Multitasking
 {
@@ -16,16 +17,7 @@ namespace HandheldCompanion.Commands.Functions.Multitasking
 
         public override void Execute(bool IsKeyDown, bool IsKeyUp, bool IsBackground)
         {
-            try
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = "explorer.exe",
-                    Arguments = "shell:::{3080F90E-D7AD-11D9-BD98-0000947B0257}",
-                    UseShellExecute = true
-                });
-            }
-            catch { /* ignore */ }
+            KeyboardSimulator.KeyPress(new[] { VirtualKeyCode.LWIN, VirtualKeyCode.TAB });
 
             base.Execute(IsKeyDown, IsKeyUp, false);
         }

@@ -696,7 +696,7 @@ namespace HandheldCompanion.ViewModels
             {
                 // todo: improve me
                 // we need to make sure the key that was pressed to trigger the listening event isn't recorded
-                await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
+                await Task.Delay(100);
                 InputsManager.StartListening(hotkey.ButtonFlags, InputsChordTarget.Input);
             });
 
@@ -732,7 +732,7 @@ namespace HandheldCompanion.ViewModels
             {
                 // todo: improve me
                 // we need to make sure the key that was pressed to trigger the listening event isn't recorded
-                await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
+                await Task.Delay(100);
                 InputsManager.StartListening(hotkey.ButtonFlags, InputsChordTarget.Output);
             });
 

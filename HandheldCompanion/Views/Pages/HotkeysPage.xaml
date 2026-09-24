@@ -17,7 +17,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Hotkeys"
     Title="{l:Static resx:Resources.HotkeysPage_Hotkeys}"
-    Margin="0,20,0,0"
+    Margin="20"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:HotkeyPageViewModel}"
     d:DesignHeight="1500"

@@ -65,14 +65,8 @@ namespace HandheldCompanion.Controllers.Lenovo
             Y2 = 2,
         }
 
-        public override void Tick(long ticks, float delta, bool commit)
+        protected override void ParseHidState(float delta)
         {
-            if (IsBusy || !IsPlugged || _disposing || _disposed)
-                return;
-
-            if (!UpdateState())
-                return;
-
             // Front buttons (byte 0)
             FrontButtons frontButtons = (FrontButtons)data[0];
             Inputs.ButtonState[ButtonFlags.OEM1] = frontButtons.HasFlag(FrontButtons.LegionR);
@@ -125,8 +119,6 @@ namespace HandheldCompanion.Controllers.Lenovo
                     Inputs.AxisState[AxisFlags.RightPadY] = 0;
                 }
             }
-
-            base.Tick(ticks, delta, true);
         }
     }
 }

@@ -140,12 +140,12 @@ namespace HandheldCompanion.Controllers.Lenovo
         }
 
         public bool IsWired() =>
-            Controller?.GetStatus(LCONTROLLER_STATE_IDX) == (byte)ControllerState.Wired ||
-            Controller?.GetStatus(RCONTROLLER_STATE_IDX) == (byte)ControllerState.Wired;
+            GetStatus(LCONTROLLER_STATE_IDX) == (byte)ControllerState.Wired ||
+            GetStatus(RCONTROLLER_STATE_IDX) == (byte)ControllerState.Wired;
 
         public override bool IsWireless() =>
-            Controller?.GetStatus(LCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless ||
-            Controller?.GetStatus(RCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless || base.IsWireless();
+            GetStatus(LCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless ||
+            GetStatus(RCONTROLLER_STATE_IDX) == (byte)ControllerState.Wireless || base.IsWireless();
 
         /// <summary>
         /// Detects if the HID report is misaligned (borked state).
@@ -208,6 +208,12 @@ namespace HandheldCompanion.Controllers.Lenovo
             if (!UpdateState())
                 return;
 
+            ParseHidState(delta);
+            TickInputs(ticks, delta, commit);
+        }
+
+        protected virtual void ParseHidState(float delta)
+        {
             FrontEnum frontButton = (FrontEnum)data[FRONT_IDX];
             Inputs.ButtonState[ButtonFlags.OEM1] = frontButton.HasFlag(FrontEnum.LegionR);
             Inputs.ButtonState[ButtonFlags.OEM2] = frontButton.HasFlag(FrontEnum.LegionL);
@@ -285,8 +291,6 @@ namespace HandheldCompanion.Controllers.Lenovo
                 if (gamepadMotions.TryGetValue(idx, out GamepadMotion? gamepadMotion))
                     gamepadMotion.ProcessMotion(gX, gY, gZ, aX, aY, aZ, delta);
             }
-
-            base.Tick(ticks, delta, true);
         }
 
         public void HandleTouchpadInput(bool touched, ushort TouchpadX, ushort TouchpadY)

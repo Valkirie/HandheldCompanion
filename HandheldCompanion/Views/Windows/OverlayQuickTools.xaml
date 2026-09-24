@@ -219,6 +219,15 @@
                                         </MenuItem>
                                         <MenuItem
                                             Command="{Binding PowerDropCommand}"
+                                            CommandParameter="Hibernate"
+                                            Header="Hibernate"
+                                            Visibility="{Binding HibernateVisibility, Mode=OneWay}">
+                                            <MenuItem.Icon>
+                                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.MobQuietHours}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem
+                                            Command="{Binding PowerDropCommand}"
                                             CommandParameter="Shutdown"
                                             Header="Shutdown">
                                             <MenuItem.Icon>

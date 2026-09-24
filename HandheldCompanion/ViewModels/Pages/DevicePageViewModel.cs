@@ -424,21 +424,6 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool GoBackToSleep
-        {
-            get
-            {
-                return ManagerFactory.settingsManager.GetBoolean("GoBackToSleep");
-            }
-            set
-            {
-                if (value != GoBackToSleep)
-                {
-                    ManagerFactory.settingsManager.SetProperty("GoBackToSleep", value);
-                    OnPropertyChanged(nameof(GoBackToSleep));
-                }
-            }
-        }
         public int ConfigurableTDPMethod
         {
             get
@@ -1050,7 +1035,6 @@ namespace HandheldCompanion.ViewModels
             // raise events
             SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false, true);
             SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetDouble("BatteryChargeLimitPercent"), false, true);
-            SettingsManager_SettingValueChanged("GoBackToSleep", ManagerFactory.settingsManager.GetBoolean("GoBackToSleep"), false, true);
             SettingsManager_SettingValueChanged("LEDSettingsUseAccentColor", ManagerFactory.settingsManager.GetBoolean("LEDSettingsUseAccentColor"), false, true);
             SettingsManager_SettingValueChanged("LegionControllerPassthrough", ManagerFactory.settingsManager.GetBoolean("LegionControllerPassthrough"), false, true);
             SettingsManager_SettingValueChanged("LegionControllerPhysicalXInput", ManagerFactory.settingsManager.GetBoolean("LegionControllerPhysicalXInput"), false, true);
@@ -1110,9 +1094,6 @@ namespace HandheldCompanion.ViewModels
                     break;
                 case "BatteryChargeLimitPercent":
                     BatteryChargeLimitPercent = Convert.ToDouble(value);
-                    break;
-                case "GoBackToSleep":
-                    GoBackToSleep = Convert.ToBoolean(value);
                     break;
                 case "LEDSettingsUseAccentColor":
                     UpdateAccentColorState(Convert.ToBoolean(value));

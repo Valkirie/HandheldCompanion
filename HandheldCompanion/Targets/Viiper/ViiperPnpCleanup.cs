@@ -1,7 +1,9 @@
+using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -58,7 +60,7 @@ internal static class ViiperPnpCleanup
             foreach (var (vid, pid) in KnownVidPids)
                 prefixes.Add($"VID_{vid:X4}&PID_{pid:X4}");
 
-            var instanceIdRegex = new Regex(@"Instance ID:\s+(\S+)", RegexOptions.IgnoreCase);
+            var instanceIdRegex = new Regex(@"\b(USB\\\S+)", RegexOptions.IgnoreCase);
             var candidates = new List<string>();
             foreach (var block in raw.Split(new[] { "\r\n\r\n", "\n\n" }, StringSplitOptions.RemoveEmptyEntries))
             {
@@ -93,6 +95,13 @@ internal static class ViiperPnpCleanup
         }
     }
 
+    public static bool HasConnectedVirtualDevice(ushort vendorId, ushort productId) =>
+        ManagerFactory.deviceManager.PnPDevices.Values.Any(device =>
+            device.VendorID == vendorId
+            && device.ProductID == productId
+            && device.isGaming
+            && device.isVirtual);
+
     private static void RunCleanup(IEnumerable<(ushort Vid, ushort Pid)> vidPids)
     {
         try
@@ -105,7 +114,7 @@ internal static class ViiperPnpCleanup
             foreach (var (vid, pid) in vidPids)
                 prefixes.Add($"VID_{vid:X4}&PID_{pid:X4}");
 
-            var instanceIdRegex = new Regex(@"Instance ID:\s+(\S+)", RegexOptions.IgnoreCase);
+            var instanceIdRegex = new Regex(@"\b(USB\\\S+)", RegexOptions.IgnoreCase);
             var candidates = new List<string>();
             foreach (Match match in instanceIdRegex.Matches(raw))
             {

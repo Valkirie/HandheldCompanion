@@ -244,7 +244,7 @@ namespace HandheldCompanion.ViewModels
                     BitmapImage? artwork = ManagerFactory.libraryManager.GetGameArt(requestKey.Id, artworkType, requestKey.ArtworkId, requestKey.ArtworkExtension);
                     BitmapImage? logo = ManagerFactory.libraryManager.GetGameArt(requestKey.Id, logoType, requestKey.LogoId, requestKey.LogoExtension);
                     return (cover, artwork, logo);
-                }, cancellationToken).ConfigureAwait(false);
+                }, cancellationToken);
 
                 if (cancellationToken.IsCancellationRequested ||
                     !ReferenceEquals(visualsLoadCancellationTokenSource, cancellationTokenSource) ||
@@ -636,22 +636,22 @@ namespace HandheldCompanion.ViewModels
 
                             Task timeout = Task.Delay(TimeSpan.FromSeconds(60));
                             while (!timeout.IsCompleted && !ProcessManager.GetProcesses().Any(p => execs.Contains(p.Path)))
-                                await Task.Delay(300).ConfigureAwait(false);
+                                await Task.Delay(300);
 
                             if (ProcessManager.GetProcesses().Any(p => execs.Contains(p.Path)))
-                                MainWindow.GetCurrent().SetState(WindowState.Minimized);
+                                syncContext?.Post(_ => MainWindow.GetCurrent().SetState(WindowState.Minimized), null);
 
                             // hide the dialog
                             syncContext?.Post(_ => dialog.Hide(), null);
 
                             // Wait until none of the known executables are running
                             while (ProcessManager.GetProcesses().Any(p => execs.Contains(p.Path)))
-                                await Task.Delay(1000).ConfigureAwait(false);
+                                await Task.Delay(1000);
 
                             if (IsMainPage)
-                                MainWindow.GetCurrent().SetState(WindowState.Normal);
+                                syncContext?.Post(_ => MainWindow.GetCurrent().SetState(WindowState.Normal), null);
                         }
-                    }).ConfigureAwait(false);
+                    });
                 }
                 catch { }
                 finally

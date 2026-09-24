@@ -26,6 +26,17 @@ namespace HandheldCompanion.ViewModels
         public Guid? CollectionId { get; }
         public string? IconGlyph { get; private set; }
 
+        private string _platformColor;
+        public string PlatformColor
+        {
+            get => _platformColor;
+            set
+            {
+                if (SetProperty(ref _platformColor, value))
+                    PlatformColor = value;
+            }
+        }
+
         private int _gameCount;
         public int GameCount
         {
@@ -136,6 +147,7 @@ namespace HandheldCompanion.ViewModels
                 return;
 
             IconGlyph = PlatformManager.GetPlatformGlyph(Platform);
+            PlatformColor = PlatformManager.GetPlatformColor(Platform);
             Icon = new FontIcon()
             {
                 Glyph = IconGlyph,

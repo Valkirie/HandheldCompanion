@@ -155,7 +155,7 @@ public class SerialUSBIMU
                 tentative++;
                 LogManager.LogError("{0} could not connect. Attempt: {1} out of {2}", serial.ToString(), tentative,
                     maxTentative);
-                await Task.Delay(500).ConfigureAwait(false); // Avoid blocking the synchronization context
+                await Task.Delay(500).ConfigureAwait(false); // Avoid capturing the synchronization context
             }
     }
 
@@ -244,7 +244,7 @@ public class SerialUSBIMU
                     return;
                 }
 
-                await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
+                await Task.Delay(100);
 
                 // Address write function code register = 0xA4, 0x03
                 // Register to read/write save settings 0x05

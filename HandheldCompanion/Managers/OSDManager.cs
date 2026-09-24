@@ -1,8 +1,6 @@
-﻿using HandheldCompanion.Shared;
-using HandheldCompanion.Managers.Overlay;
-
+﻿using HandheldCompanion.Managers.Overlay;
+using HandheldCompanion.Shared;
 using RTSSSharedMemoryNET;
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

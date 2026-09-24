@@ -6,12 +6,15 @@
     xmlns:controls="clr-namespace:HandheldCompanion.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:managers="clr-namespace:HandheldCompanion.Managers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     d:DataContext="{d:DesignInstance Type=viewmodels:LibraryPageViewModel}"
     d:DesignHeight="1080"
     d:DesignWidth="1920"
+    managers:UIGamepad.VerticalScrollAlignment="Top"
+    managers:UIGamepad.VerticalScrollMargin="64"
     mc:Ignorable="d">
 
     <ikw:SimpleStackPanel Spacing="8">
@@ -37,9 +40,11 @@
                         <DataTrigger Binding="{Binding DataContext.IsListView, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
                             <Setter Property="Margin" Value="0,0,0,6" />
                         </DataTrigger>
+                        <!--
                         <DataTrigger Binding="{Binding IsLiked}" Value="True">
                             <Setter Property="controls:JustifiedWrapPanel.ItemSpan" Value="3" />
                         </DataTrigger>
+                        -->
                         <DataTrigger Binding="{Binding DataContext.IsWideView, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
                             <Setter Property="controls:JustifiedWrapPanel.ItemSpan" Value="3" />
                         </DataTrigger>
@@ -61,7 +66,7 @@
                                             <Condition Binding="{Binding IsLiked}" Value="True" />
                                             <Condition Binding="{Binding DataContext.IsGridView, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True" />
                                         </MultiDataTrigger.Conditions>
-                                        <Setter Property="ContentTemplate" Value="{StaticResource LibraryTemplateWide}" />
+                                        <Setter Property="ContentTemplate" Value="{StaticResource LibraryTemplate}" />
                                     </MultiDataTrigger>
                                     <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>

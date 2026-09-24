@@ -468,7 +468,7 @@ namespace HandheldCompanion.Controllers
                     try
                     {
                         SetVibration(LargeMotor, SmallMotor);
-                        await Task.Delay(delay, token).ConfigureAwait(false);
+                        await Task.Delay(delay, token);
                     }
                     catch (OperationCanceledException) { }
                     finally
@@ -525,7 +525,9 @@ namespace HandheldCompanion.Controllers
         }
 
         public virtual void Unplug()
-        { }
+        {
+            ClearInputState();
+        }
 
         public virtual bool IsHidden()
         {

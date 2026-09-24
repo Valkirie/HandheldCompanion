@@ -1,6 +1,5 @@
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels.Misc;

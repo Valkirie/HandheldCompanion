@@ -142,6 +142,134 @@ namespace HandheldCompanion.Managers
             return GetGameArt(gameId, libraryType, imageId.ToString(), extension);
         }
 
+        /// <summary>
+        /// Removes cached artwork that is not referenced by the supplied library entry.
+        /// </summary>
+        public (int DeletedFiles, int DeletedFolders, int FailedDeletes) CleanUnusedCache(LibraryEntry entry)
+        {
+            string entryDirectory = Path.Combine(ManagerPath, entry.Id.ToString());
+            if (!Directory.Exists(entryDirectory))
+                return (0, 0, 0);
+
+            HashSet<string> retainedFiles = GetRetainedArtPaths(entry).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            return CleanUnusedCacheDirectory(entryDirectory, retainedFiles);
+        }
+
+        /// <summary>
+        /// Cleans each supplied library entry and removes cache directories without a matching entry.
+        /// Unknown nonnumeric cache directories are left untouched.
+        /// </summary>
+        public (int DeletedFiles, int DeletedFolders, int FailedDeletes) CleanUnusedCaches()
+        {
+            LibraryEntry[] libraryEntries = ManagerFactory.profileManager.GetProfiles(addSub: true)
+                .Select(profile => profile.LibraryEntry)
+                .OfType<LibraryEntry>()
+                .Where(entry => entry is not null)
+                .ToArray();
+
+            HashSet<long> activeEntryIds = libraryEntries.Select(entry => entry.Id).ToHashSet();
+
+            int deletedFiles = 0;
+            int deletedFolders = 0;
+            int failedDeletes = 0;
+
+            foreach (LibraryEntry entry in libraryEntries)
+            {
+                (int files, int folders, int failures) = CleanUnusedCache(entry);
+                deletedFiles += files;
+                deletedFolders += folders;
+                failedDeletes += failures;
+            }
+
+            foreach (string entryDirectory in Directory.EnumerateDirectories(ManagerPath))
+            {
+                // Library-owned directories are named after their numeric entry ID.
+                if (!long.TryParse(Path.GetFileName(entryDirectory), out long entryId) || activeEntryIds.Contains(entryId))
+                    continue;
+
+                (int files, int folders, int failures) = CleanUnusedCacheDirectory(entryDirectory, []);
+                deletedFiles += files;
+                deletedFolders += folders;
+                failedDeletes += failures;
+            }
+
+            return (deletedFiles, deletedFolders, failedDeletes);
+        }
+
+        private (int DeletedFiles, int DeletedFolders, int FailedDeletes) CleanUnusedCacheDirectory(string entryDirectory, HashSet<string> retainedFiles)
+        {
+            int deletedFiles = 0;
+            int deletedFolders = 0;
+            int failedDeletes = 0;
+
+            foreach (string filePath in Directory.EnumerateFiles(entryDirectory, "*", SearchOption.AllDirectories))
+            {
+                if (retainedFiles.Contains(filePath))
+                    continue;
+
+                try
+                {
+                    File.Delete(filePath);
+                    _imageCache.TryRemove(filePath, out _);
+                    deletedFiles++;
+                }
+                catch
+                {
+                    failedDeletes++;
+                }
+            }
+
+            // Delete children before parents so empty directory trees can be removed in one pass.
+            foreach (string directoryPath in Directory.EnumerateDirectories(entryDirectory, "*", SearchOption.AllDirectories).Append(entryDirectory).OrderByDescending(path => path.Length))
+            {
+                if (Directory.EnumerateFileSystemEntries(directoryPath).Any())
+                    continue;
+
+                try
+                {
+                    Directory.Delete(directoryPath);
+                    deletedFolders++;
+                }
+                catch
+                {
+                    failedDeletes++;
+                }
+            }
+
+            return (deletedFiles, deletedFolders, failedDeletes);
+        }
+
+        private IEnumerable<string> GetRetainedArtPaths(LibraryEntry entry)
+        {
+            foreach ((LibraryType type, long imageId, string fullExtension, string thumbnailExtension) in new[]
+            {
+                (LibraryType.cover, entry.GetCoverId(), entry.GetCoverExtension(false), GetThumbnailExtension(entry, LibraryType.cover)),
+                (LibraryType.artwork, entry.GetArtworkId(), entry.GetArtworkExtension(false), GetThumbnailExtension(entry, LibraryType.artwork)),
+                (LibraryType.logo, entry.GetLogoId(), entry.GetLogoExtension(false), GetThumbnailExtension(entry, LibraryType.logo))
+            })
+            {
+                if (imageId == 0)
+                    continue;
+
+                if (!string.IsNullOrEmpty(fullExtension))
+                    yield return GetGameArtPath(entry.Id, type, imageId, fullExtension);
+                if (!string.IsNullOrEmpty(thumbnailExtension))
+                    yield return GetGameArtPath(entry.Id, type | LibraryType.thumbnails, imageId, thumbnailExtension);
+            }
+        }
+
+        private static string GetThumbnailExtension(LibraryEntry entry, LibraryType libraryType)
+        {
+            // Manually selected images are always converted to PNG thumbnails.
+            if (entry is ManualEntry)
+                return ".png";
+            if (libraryType == LibraryType.cover)
+                return entry.GetCoverExtension(true);
+            if (libraryType == LibraryType.artwork)
+                return entry.GetArtworkExtension(true);
+            return entry.GetLogoExtension(true);
+        }
+
         public async Task<IEnumerable<LibraryEntry>> GetGames(LibraryFamily libraryFamily, string name)
         {
             // prepare list

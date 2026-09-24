@@ -79,6 +79,7 @@ namespace HandheldCompanion.ViewModels
             _isPageLoaded = true;
             if (IsQuickTools)
             {
+                SubscribeHardwareEvents();
                 updateTimer.Start();
                 framerateTimer.Start();
             }
@@ -89,6 +90,7 @@ namespace HandheldCompanion.ViewModels
             _isPageLoaded = false;
             if (IsQuickTools)
             {
+                UnsubscribeHardwareEvents();
                 updateTimer.Stop();
                 framerateTimer.Stop();
             }
@@ -469,6 +471,7 @@ namespace HandheldCompanion.ViewModels
 
         private Timer framerateTimer;
         private int framerateInterval = 1000;
+        private bool hardwareEventsSubscribed;
 
         public OverlayPageViewModel(bool isQuickTools)
         {
@@ -536,23 +539,48 @@ namespace HandheldCompanion.ViewModels
             // manage events
             PlatformManager.RTSS.Updated += RTSS_Updated;
 
-            if (IsQuickTools && IDevice.GetCurrent().CpuMonitor)
+            if (_isPageLoaded)
+                SubscribeHardwareEvents();
+
+            RTSS_Updated(PlatformManager.RTSS.Status);
+
+            OnPropertyChanged(nameof(IsRunningLHM));
+        }
+
+        private void SubscribeHardwareEvents()
+        {
+            if (!IsQuickTools || hardwareEventsSubscribed || !ManagerFactory.platformManager.IsReady)
+                return;
+
+            if (IDevice.GetCurrent().CpuMonitor)
             {
                 PlatformManager.LibreHardware.CPUPowerChanged += LibreHardwareMonitor_CPUPowerChanged;
                 PlatformManager.LibreHardware.CPUTemperatureChanged += LibreHardwareMonitor_CPUTemperatureChanged;
                 PlatformManager.LibreHardware.CPULoadChanged += LibreHardwareMonitor_CPULoadChanged;
             }
 
-            if (IsQuickTools && IDevice.GetCurrent().GpuMonitor)
+            if (IDevice.GetCurrent().GpuMonitor)
             {
                 PlatformManager.LibreHardware.GPUPowerChanged += LibreHardwareMonitor_GPUPowerChanged;
                 PlatformManager.LibreHardware.GPUTemperatureChanged += LibreHardwareMonitor_GPUTemperatureChanged;
                 PlatformManager.LibreHardware.GPULoadChanged += LibreHardwareMonitor_GPULoadChanged;
             }
 
-            RTSS_Updated(PlatformManager.RTSS.Status);
+            hardwareEventsSubscribed = true;
+        }
 
-            OnPropertyChanged(nameof(IsRunningLHM));
+        private void UnsubscribeHardwareEvents()
+        {
+            if (!hardwareEventsSubscribed)
+                return;
+
+            PlatformManager.LibreHardware.CPUPowerChanged -= LibreHardwareMonitor_CPUPowerChanged;
+            PlatformManager.LibreHardware.CPUTemperatureChanged -= LibreHardwareMonitor_CPUTemperatureChanged;
+            PlatformManager.LibreHardware.CPULoadChanged -= LibreHardwareMonitor_CPULoadChanged;
+            PlatformManager.LibreHardware.GPUPowerChanged -= LibreHardwareMonitor_GPUPowerChanged;
+            PlatformManager.LibreHardware.GPUTemperatureChanged -= LibreHardwareMonitor_GPUTemperatureChanged;
+            PlatformManager.LibreHardware.GPULoadChanged -= LibreHardwareMonitor_GPULoadChanged;
+            hardwareEventsSubscribed = false;
         }
 
         private void PlatformManager_Initialized()
@@ -786,13 +814,7 @@ namespace HandheldCompanion.ViewModels
                     ManagerFactory.gpuManager.Initialized -= GpuManager_Initialized;
                     ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
                     ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
-
-                    PlatformManager.LibreHardware.CPUPowerChanged -= LibreHardwareMonitor_CPUPowerChanged;
-                    PlatformManager.LibreHardware.CPUTemperatureChanged -= LibreHardwareMonitor_CPUTemperatureChanged;
-                    PlatformManager.LibreHardware.CPULoadChanged -= LibreHardwareMonitor_CPULoadChanged;
-                    PlatformManager.LibreHardware.GPUPowerChanged -= LibreHardwareMonitor_GPUPowerChanged;
-                    PlatformManager.LibreHardware.GPUTemperatureChanged -= LibreHardwareMonitor_GPUTemperatureChanged;
-                    PlatformManager.LibreHardware.GPULoadChanged -= LibreHardwareMonitor_GPULoadChanged;
+                    UnsubscribeHardwareEvents();
                 }
                 ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
                 ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;

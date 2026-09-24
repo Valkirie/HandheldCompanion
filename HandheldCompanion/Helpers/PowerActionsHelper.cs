@@ -14,6 +14,11 @@ namespace HandheldCompanion.Helpers
                 ThrowLastError("LockWorkStation failed");
         }
 
+        public static bool IsHibernateAvailable()
+        {
+            return IsPwrHibernateAllowed();
+        }
+
         /// <summary>
         /// Put the system to sleep. If hybrid sleep is enabled by policy, Windows may hibernate instead.
         /// </summary>
@@ -109,6 +114,9 @@ namespace HandheldCompanion.Helpers
 
         [DllImport("powrprof.dll", SetLastError = true)]
         private static extern bool SetSuspendState(bool hibernate, bool forceCritical, bool disableWakeEvent);
+
+        [DllImport("powrprof.dll")]
+        private static extern bool IsPwrHibernateAllowed();
 
         [DllImport("advapi32.dll", SetLastError = true)]
         private static extern bool OpenProcessToken(IntPtr ProcessHandle, uint DesiredAccess, out IntPtr TokenHandle);

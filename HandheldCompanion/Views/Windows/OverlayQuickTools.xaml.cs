@@ -135,7 +135,7 @@ public partial class OverlayQuickTools : GamepadWindow
             SystemManager_Initialized();
 
         // load gamepad navigation manager
-        gamepadFocusManager = new(this, ContentFrame);
+        gamepadFocusManager = new(this, ContentFrame, navView);
     }
 
     public ContentDialog LaunchProfileContentDialog => FindName("LaunchProfileDialog") as ContentDialog

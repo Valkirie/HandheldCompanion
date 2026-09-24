@@ -54,7 +54,7 @@ namespace HandheldCompanion.Commands.Functions.Windows
                         IsLoading = false;
                     }
 
-                    await Task.Delay(200).ConfigureAwait(false);
+                    await Task.Delay(200);
                 }
 
                 // window was located

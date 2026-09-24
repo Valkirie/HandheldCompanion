@@ -2,14 +2,16 @@
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Helpers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Notifications;
 using HandheldCompanion.Platforms;
+using HandheldCompanion.Platforms.Discovery;
 using HandheldCompanion.Views;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,7 +31,7 @@ namespace HandheldCompanion.ViewModels
         private const string FavoritesNavigationKey = "favorites";
         private const string CollectionsNavigationKey = "collections";
         private const int CollectionPreviewImageCount = 4;
-        private const int RecentGamesCount = 10;
+        private const int RecentGamesCount = 20;
 
         private readonly LibraryNavigationItemViewModel _navL2 = new("nav-l2", "\u21B2");
         private readonly LibraryNavigationItemViewModel _navR2 = new("nav-r2", "\u21B3");
@@ -123,21 +125,6 @@ namespace HandheldCompanion.ViewModels
         public bool IsSingleCollectionSelection => SelectedNavigationItem?.Kind == LibraryNavigationItemKind.Collection;
         private bool ShouldShowCollectionGroups => ShowCollectionsOverview || ShowGroupedProfilesList;
 
-        private string _searchText = string.Empty;
-        public string SearchText
-        {
-            get => _searchText;
-            set
-            {
-                if (_searchText != value)
-                {
-                    _searchText = value;
-                    OnPropertyChanged(nameof(SearchText));
-                    UpdateFiltering();
-                }
-            }
-        }
-
         public bool HasLiked => Profiles.Any(p => p.IsLiked);
         public IReadOnlyCollection<GamePlatform> AvailablePlatforms => Profiles
             .Select(profile => profile.PlatformType)
@@ -150,6 +137,7 @@ namespace HandheldCompanion.ViewModels
         public ICommand RefreshMetadataCommand { get; }
         public ICommand ScanLibraryCommand { get; }
         public ICommand OpenEmulatorSettingsCommand { get; }
+        public ICommand ClearUnusedLibraryCacheCommand { get; }
 
         private Color _highlightColor = Colors.Red;
         public Color HighlightColor
@@ -179,6 +167,88 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
+        private ProfileViewModel? _focusedProfile;
+        private int _focusedArtworkRequestVersion;
+
+        public void UpdateFocusedProfile(ProfileViewModel profile)
+        {
+            if (ReferenceEquals(_focusedProfile, profile))
+                return;
+
+            _focusedProfile?.PropertyChanged -= FocusedProfile_PropertyChanged;
+
+            _focusedProfile = profile;
+            _focusedProfile.PropertyChanged += FocusedProfile_PropertyChanged;
+            RefreshFocusedArtwork(profile);
+        }
+
+        public void ClearFocusedProfile()
+        {
+            _focusedProfile?.PropertyChanged -= FocusedProfile_PropertyChanged;
+
+            _focusedProfile = null;
+            Interlocked.Increment(ref _focusedArtworkRequestVersion);
+            Artwork = LibraryResources.MissingArtwork;
+        }
+
+        private void FocusedProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if ((e.PropertyName == nameof(ProfileViewModel.Artwork) || string.IsNullOrEmpty(e.PropertyName)) &&
+                _focusedProfile is { } profile)
+            {
+                RefreshFocusedArtwork(profile);
+            }
+        }
+
+        private void RefreshFocusedArtwork(ProfileViewModel profile)
+        {
+            Artwork = profile.Artwork ?? LibraryResources.MissingArtwork;
+
+            if (profile.Profile.LibraryEntry is not { } libraryEntry)
+                return;
+
+            int requestVersion = Interlocked.Increment(ref _focusedArtworkRequestVersion);
+            _ = LoadFocusedArtworkAsync(profile, libraryEntry, requestVersion);
+        }
+
+        private async Task LoadFocusedArtworkAsync(ProfileViewModel profile, Libraries.LibraryEntry libraryEntry, int requestVersion)
+        {
+            BitmapImage? artwork;
+            try
+            {
+                artwork = await Task.Run(() => ManagerFactory.libraryManager.GetGameArt(
+                    libraryEntry.Id,
+                    LibraryManager.LibraryType.artwork,
+                    libraryEntry.GetArtworkId(),
+                    libraryEntry.GetArtworkExtension(false)));
+            }
+            catch
+            {
+                return;
+            }
+
+            if (requestVersion != Volatile.Read(ref _focusedArtworkRequestVersion) ||
+                !ReferenceEquals(_focusedProfile, profile) ||
+                artwork is null ||
+                artwork == LibraryResources.MissingArtwork)
+            {
+                return;
+            }
+
+            Artwork = artwork;
+        }
+
+        private double _viewportHeight;
+        public double ViewportHeight
+        {
+            get => _viewportHeight;
+            set => SetProperty(ref _viewportHeight, value, () => OnPropertyChanged(nameof(HeroHeight)));
+        }
+
+        public double HeroHeight => ManagerFactory.settingsManager.GetBoolean("LibraryBigArtMode")
+            ? Math.Max(250.0, ViewportHeight - 144.0)
+            : 350.0;
+
         public bool IsLibraryConnected => ManagerFactory.libraryManager.IsConnected;
 
         private bool _isInitializing = true;
@@ -202,6 +272,15 @@ namespace HandheldCompanion.ViewModels
         public LibraryPageViewModel()
         {
             _uiContext = SynchronizationContext.Current!;
+
+            EmulatorDefinitions.DefinitionAdded += AddEmulatorScanTarget;
+            EmulatorDefinitions.DefinitionRemoved += RemoveEmulatorScanTarget;
+            EmulatorDefinitions.DefinitionUpdated += UpdateEmulatorScanTarget;
+            ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            EmulatorScanTargets.Add(new("Emulators", Properties.Resources.Library_ScanAll));
+            foreach (EmulatorDefinition definition in EmulatorDefinitions.All)
+                AddEmulatorScanTarget(definition);
 
             // Enable thread-safe access to the collection
             BindingOperations.EnableCollectionSynchronization(Profiles, _collectionLock);
@@ -261,6 +340,36 @@ namespace HandheldCompanion.ViewModels
                     default:
                         break;
                 }
+            });
+
+            ClearUnusedLibraryCacheCommand = new DelegateCommand(async () =>
+            {
+                ContentDialogResult confirmation = await new Dialog(MainWindow.GetCurrent())
+                {
+                    Title = "Clear unused library cache?",
+                    Content = "Cached artwork that is not used by any current library profile will be permanently deleted.",
+                    CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
+                    PrimaryButtonText = Properties.Resources.ProfilesPage_Yes
+                }.ShowAsync();
+
+                if (confirmation != ContentDialogResult.Primary)
+                    return;
+
+                // Perform the cleanup operation in a background thread to avoid blocking the UI
+                (int deletedFiles, int deletedFolders, int failedDeletes) = await Task.Run(() => ManagerFactory.libraryManager.CleanUnusedCaches());
+
+                string result = $"Removed {deletedFiles} unused files and {deletedFolders} empty folders.";
+                if (failedDeletes > 0)
+                    result += $" {failedDeletes} items could not be deleted.";
+
+                Notification notification = new(
+                    "Library cache cleanup complete",
+                    result,
+                    severity: failedDeletes > 0 ? InfoBarSeverity.Warning : InfoBarSeverity.Success)
+                {
+                    IsInternal = true
+                };
+                ManagerFactory.notificationManager.Add(notification);
             });
 
             ScanLibraryCommand = CreateScanLibraryCommand();
@@ -325,6 +434,12 @@ namespace HandheldCompanion.ViewModels
                 foreach (LibraryNavigationItemViewModel item in NavigationItems)
                     item.RefreshPlatformGlyph();
             });
+        }
+
+        private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
+        {
+            if (name == "LibraryBigArtMode")
+                OnPropertyChanged(nameof(HeroHeight));
         }
 
         private void QueryLibrary()
