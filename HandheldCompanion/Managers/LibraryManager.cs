@@ -879,6 +879,14 @@ namespace HandheldCompanion.Managers
             if (string.IsNullOrEmpty(input))
                 return input;
 
+            int metadataStart = input.IndexOfAny(['[', '(', '{']);
+            int suffixStart = input.IndexOf(" -", StringComparison.Ordinal);
+            if (metadataStart < 0 || (suffixStart >= 0 && suffixStart < metadataStart))
+                metadataStart = suffixStart;
+
+            if (metadataStart >= 0)
+                input = input[..metadataStart].TrimEnd();
+
             // Define a set of allowed characters (letters, digits, '.', '_', and space)
             var allowedCharacters = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._ ");
             var sanitizedString = new StringBuilder(input.Length);
