@@ -18,7 +18,7 @@
 #define InstallerVersion        "0.3"
 #define MyAppSetupName         "Handheld Companion"
 #define MyBuildId              "HandheldCompanion"
-#define MyAppVersion           "1.3.1.6"
+#define MyAppVersion           "1.3.2.0"
 #define MyAppPublisher         "BenjaminLSR"
 #define MyAppCopyright         "Copyright © BenjaminLSR"
 #define MyAppURL               "https://github.com/Valkirie/HandheldCompanion"
@@ -33,7 +33,7 @@
 #define MsiAfterburnerExe      "MSIAfterburner.exe"
 #define MsiAfterburnerService  "MSIAfterburnerService.exe"
 #define USBipService           "usbipd"
-#define USBipProcess            "usbip*.exe"
+#define USBipProcess           "usbip*.exe"
 
 #define DotNetName             ".NET Desktop Runtime"
 #define DirectXName            "DirectX Runtime"
@@ -91,7 +91,9 @@ SetupArchitecture=x64
 MinVersion={#WindowsVersion}
 OutputDir={#SourcePath}\install 
 PrivilegesRequired=admin
+ChangesEnvironment=yes
 SolidCompression=yes
+LZMAUseSeparateProcess=yes
 LZMANumBlockThreads=6
 VersionInfoVersion={#MyAppVersion}
 VersionInfoCompany={#MyAppPublisher}
@@ -178,6 +180,7 @@ var
   Dependency_Memo: String;
   Dependency_List: array of TDependency_Entry;
   Dependency_NeedRestart, Dependency_ForceX86: Boolean;
+  USBipUpdatePending: Boolean;
   Dependency_DownloadPage: TDownloadWizardPage;
   SettingsPage: TInputOptionWizardPage;
   CoreIsolationPromptNeeded: Boolean;
@@ -197,13 +200,12 @@ procedure Dependency_AddRTSS; forward;
 procedure Dependency_AddPawnIO; forward;
 procedure Dependency_AddUSBip; forward;
 function BoolToStr(Value: Boolean): String; forward;
-procedure TeardownUSBip; forward;
 
-#include "./utils/CompareVersions.iss"
-#include "./utils/ApiUtils.iss"
-#include "./utils/RegUtils.iss"
-#include "./utils/UpdateUninstallWizard.iss"
-#include "./utils/Utils.iss"
+#include "./InnoSetup/CompareVersions.iss"
+#include "./InnoSetup/ApiUtils.iss"
+#include "./InnoSetup/RegUtils.iss"
+#include "./InnoSetup/UpdateUninstallWizard.iss"
+#include "./InnoSetup/Utils.iss"
 
 function NextButtonClick(CurPageID: Integer): Boolean; forward;
 procedure DisableCoreIsolation; forward;
@@ -317,12 +319,29 @@ begin
   Log('Add-MpPreference exit=' + IntToStr(ExitCode));
 end;
 
+procedure UninstallExistingPawnIO;
+var
+  ResultCode: Integer;
+begin
+  if not FileExists(ExpandConstant('{tmp}\') + 'PawnIO_setup.exe') then
+    ExtractTemporaryFile('PawnIO_setup.exe');
+
+  if Exec(ExpandConstant('{tmp}\PawnIO_setup.exe'), '-uninstall -silent', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
+    Log('Previous PawnIO uninstalled. ExitCode=' + IntToStr(ResultCode))
+  else
+    Log('Failed to launch PawnIO uninstall.');
+end;
+
 procedure CurStepChanged(CurStep: TSetupStep);
 var
   DestFile: String;
 begin
   if CurStep = ssPostInstall then
   begin
+#ifdef UseUSBip
+    EnsureUSBipSystemPath;
+#endif
+
     DestFile := ExpandConstant('{app}\gamecontrollerdb.txt');
     Dependency_DownloadPage.Clear;
     Dependency_DownloadPage.Add('{#GameControllerDBDownloadLink}', 'gamecontrollerdb.txt', '');
@@ -330,7 +349,7 @@ begin
     Dependency_DownloadPage.Show;
     try
       Dependency_DownloadPage.Download;
-      CopyFile(ExpandConstant('{tmp}\gamecontrollerdb.txt'), DestFile, False);
+      FileCopy(ExpandConstant('{tmp}\gamecontrollerdb.txt'), DestFile, False);
       Log('gamecontrollerdb.txt downloaded and placed at: ' + DestFile);
     except
       Log('Failed to download gamecontrollerdb.txt: ' + GetExceptionMessage);
@@ -460,6 +479,9 @@ begin
     Dependency_DownloadPage.Hide;
   end;
 
+  if USBipUpdatePending then
+    TeardownUSBip;
+
   Log('Restart needed: ' + BoolToStr(NeedsRestart));
   PrepareToInstallResult := Dependency_PrepareToInstall(NeedsRestart);
   Log('Result: ' + PrepareToInstallResult);
@@ -506,7 +528,6 @@ end;
 function InitializeSetup: Boolean;
 var
   installedVersion: String;
-  resultCode: Integer;
 begin
 #ifdef UseDotNet10
   if not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App {#NewDotNetVersion}') then
@@ -571,19 +592,7 @@ begin
     if compareVersions('{#NewPawnIOVersion}', installedVersion, '.', '-') > 0 then
     begin
       Log('{#PawnIOName} update required. Installed: ' + installedVersion + ' New: {#NewPawnIOVersion}');
-      
-      if not FileExists(ExpandConstant('{tmp}\') + 'PawnIO_setup.exe') then
-        ExtractTemporaryFile('PawnIO_setup.exe');
-      
-      // Uninstall existing PawnIO
-      if Exec(ExpandConstant('{tmp}\PawnIO_setup.exe'), '-uninstall -silent', '', SW_SHOW, ewWaitUntilTerminated, resultCode) then
-      begin
-        Log('Previous PawnIO uninstalled. ExitCode=' + IntToStr(ResultCode));
-      end
-      else
-      begin
-        Log('Failed to launch PawnIO uninstall.');
-      end;
+      UninstallExistingPawnIO;
 
       // Install new version
       Dependency_AddPawnIO;
@@ -600,7 +609,7 @@ begin
     if compareVersions('{#NewUSBipVersion}', installedVersion, '.', '-') > 0 then
     begin
       Log('{#USBipName} update required. Installed: ' + installedVersion + ' New: {#NewUSBipVersion}');
-      TeardownUSBip;
+      USBipUpdatePending := True;
       Dependency_AddUSBip;
     end;
   end;
@@ -710,10 +719,9 @@ begin
         begin
           if Dependency_List[DependencyIndex].UninstallBeforeInstall then
           begin
-            if Dependency_List[DependencyIndex].UninstallDisplayName = '{#USBipName}' then
-              UninstallUSBip
-            else
-              UninstallMsiByDisplayName(Dependency_List[DependencyIndex].UninstallDisplayName);
+            UninstallMsiByDisplayName(Dependency_List[DependencyIndex].UninstallDisplayName);
+
+            Dependency_List[DependencyIndex].UninstallBeforeInstall := False;
           end;
 
           ResultCode := 0;
@@ -899,7 +907,7 @@ begin
     '/VERYSILENT /COMPONENTS=main,client /SUPPRESSMSGBOXES /NORESTART /SP-',
     '{#USBipName}',
     '{#USBipDownloadLink}',
-    '', True, True, True, '{#USBipName}');
+    '', True, True, False, '');
 end;
 
 function BoolToStr(Value: Boolean): String;

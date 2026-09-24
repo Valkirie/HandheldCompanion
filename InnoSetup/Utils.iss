@@ -239,47 +239,6 @@ begin
 end;
 
 
-function UninstallUSBip(): Boolean;
-var
-  PowerShellPath, ScriptBody, ScriptPath: string;
-begin
-  ScriptPath := ExpandConstant('{tmp}\HC_ExecWithTimeout.ps1');
-  ScriptBody :=
-    'param([string]$Executable, [string]$Arguments, [int]$TimeoutSeconds)' + #13#10 +
-    '$ErrorActionPreference = ''Stop''' + #13#10 +
-    'try {' + #13#10 +
-    '  $process = Start-Process -FilePath $Executable -ArgumentList $Arguments -WindowStyle Hidden -PassThru' + #13#10 +
-    '  if (-not $process.WaitForExit($TimeoutSeconds * 1000)) {' + #13#10 +
-    '    $killer = Start-Process -FilePath "$env:SystemRoot\System32\taskkill.exe" -ArgumentList "/PID $($process.Id) /T /F" -WindowStyle Hidden -PassThru' + #13#10 +
-    '    if (-not $killer.WaitForExit(5000)) { $killer.Kill() }' + #13#10 +
-    '    if (-not $process.HasExited) { $process.Kill() }' + #13#10 +
-    '    exit 1460' + #13#10 +
-    '  }' + #13#10 +
-    '  exit $process.ExitCode' + #13#10 +
-    '} catch {' + #13#10 +
-    '  Write-Error $_' + #13#10 +
-    '  exit 1' + #13#10 +
-    '}' + #13#10;
-
-  if not SaveStringToFile(ScriptPath, ScriptBody, False) then
-  begin
-    Log('Unable to create the process timeout helper.');
-    ResultCode := 1;
-    Result := False;
-    Exit;
-  end;
-
-  PowerShellPath := ExpandConstant('{sys}\WindowsPowerShell\v1.0\powershell.exe');
-  Result := Exec(
-    PowerShellPath,
-    '-NoProfile -NonInteractive -ExecutionPolicy Bypass -File "' + ScriptPath +
-      '" -Executable "' + Filename + '" -Arguments "' + Parameters +
-      '" -TimeoutSeconds ' + IntToStr(TimeoutSeconds),
-    '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-  Result := Result and (ResultCode = 0);
-end;
-
-
 function isHidHideInstalled():boolean;
 begin
   result:= false;
