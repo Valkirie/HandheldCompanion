@@ -94,7 +94,7 @@ public class AYANEONEXT2 : AYANEODeviceCEc
 
     protected override void Device_Removed()
     {
-        if (!superJoy.IsOpen)
+        if (superJoy.IsOpen)
             superJoy.Close();
     }
 
