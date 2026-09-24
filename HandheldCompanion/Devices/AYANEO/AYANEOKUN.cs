@@ -37,18 +37,17 @@ public class AYANEOKUN : AYANEO.AYANEODeviceCEc
         this.OEMChords.Add(new KeyboardChord("T", [KeyCode.F18], [KeyCode.F18], false, ButtonFlags.OEM5));
     }
 
+    // AYASpace CEcRgb::KunSwapRgbOrder: zones 1/3 write G,R,B; zones 2/4 write G,B,R.
     protected override byte[] MapColorValues(int zone, Color color)
     {
         switch (zone)
         {
             case 1:
+            case 3:
                 return [color.G, color.R, color.B];
             case 2:
-                return [color.G, color.B, color.R];
-            case 3:
-                return [color.B, color.R, color.G];
             case 4:
-                return [color.B, color.G, color.R];
+                return [color.G, color.B, color.R];
             default:
                 return [color.R, color.G, color.B];
         }
