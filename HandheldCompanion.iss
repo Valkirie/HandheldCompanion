@@ -47,7 +47,7 @@
 #define NewHidHideVersion      "1.5.230"
 #define NewRtssVersion         "7.3.5.28314"
 #define NewPawnIOVersion       "2.1.0.0"
-#define NewUSBipVersion        "0.9.8.0"
+#define NewUSBipVersion        "0.9.8.1"
 
 #define DirectXDownloadLink    "https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe"
 #define HidHideDownloadLink    "https://github.com/nefarius/HidHide/releases/download/v1.5.230.0/HidHide_1.5.230_x64.exe"
@@ -93,7 +93,6 @@ OutputDir={#SourcePath}\install
 PrivilegesRequired=admin
 ChangesEnvironment=yes
 SolidCompression=yes
-LZMAUseSeparateProcess=yes
 LZMANumBlockThreads=6
 VersionInfoVersion={#MyAppVersion}
 VersionInfoCompany={#MyAppPublisher}
@@ -180,7 +179,7 @@ var
   Dependency_Memo: String;
   Dependency_List: array of TDependency_Entry;
   Dependency_NeedRestart, Dependency_ForceX86: Boolean;
-  USBipUpdatePending: Boolean;
+  USBipUpdatePending, USBipUpdateRequiresRestart: Boolean;
   Dependency_DownloadPage: TDownloadWizardPage;
   SettingsPage: TInputOptionWizardPage;
   CoreIsolationPromptNeeded: Boolean;
@@ -206,6 +205,7 @@ function BoolToStr(Value: Boolean): String; forward;
 #include "./InnoSetup/RegUtils.iss"
 #include "./InnoSetup/UpdateUninstallWizard.iss"
 #include "./InnoSetup/Utils.iss"
+#include "./InnoSetup/TaskScheduler.iss"
 
 function NextButtonClick(CurPageID: Integer): Boolean; forward;
 procedure DisableCoreIsolation; forward;
@@ -349,7 +349,7 @@ begin
     Dependency_DownloadPage.Show;
     try
       Dependency_DownloadPage.Download;
-      FileCopy(ExpandConstant('{tmp}\gamecontrollerdb.txt'), DestFile, False);
+      CopyFile(ExpandConstant('{tmp}\gamecontrollerdb.txt'), DestFile, False);
       Log('gamecontrollerdb.txt downloaded and placed at: ' + DestFile);
     except
       Log('Failed to download gamecontrollerdb.txt: ' + GetExceptionMessage);
@@ -363,7 +363,12 @@ begin
   if CurPageID = wpFinished then
   begin  
     if Dependency_NeedRestart then 
+    begin
       WizardForm.RunList.Visible := False;
+      if USBipUpdateRequiresRestart then
+        WizardForm.FinishedLabel.Caption := 'The USBip update requires a restart before Handheld Companion can finish installing.' +
+          Chr(13) + Chr(10) + 'Please restart your computer when prompted; the installation will continue automatically at startup.';
+    end;
   end;
 end;
 
@@ -481,6 +486,9 @@ begin
 
   if USBipUpdatePending then
     TeardownUSBip;
+
+  if USBipUpdateRequiresRestart then
+    NeedsRestart := True;
 
   Log('Restart needed: ' + BoolToStr(NeedsRestart));
   PrepareToInstallResult := Dependency_PrepareToInstall(NeedsRestart);
@@ -610,6 +618,11 @@ begin
     begin
       Log('{#USBipName} update required. Installed: ' + installedVersion + ' New: {#NewUSBipVersion}');
       USBipUpdatePending := True;
+      if (installedVersion <> '') and (compareVersions(installedVersion, '0.9.8.0', '.', '-') <= 0) then
+      begin
+        USBipUpdateRequiresRestart := True;
+        DisableHandheldCompanionTask;
+      end;
       Dependency_AddUSBip;
     end;
   end;

@@ -30,9 +30,7 @@ namespace HandheldCompanion.ViewModels
 
         public LibraryNavigationItemViewModel? NavigationViewSelectedItem
         {
-            get => SelectedNavigationItem?.CollectionId.HasValue == true
-                ? FindNavigationItemByKey(CollectionsNavigationKey)
-                : SelectedNavigationItem;
+            get => SelectedNavigationItem;
             set
             {
                 // Prevent auto-selection of disabled trigger glyphs by the NavigationView

@@ -1656,6 +1656,9 @@ namespace HandheldCompanion.Managers
             if (control is null || IsTransientContainerControl(control) || !HasFocus())
                 return false;
 
+            if (control.IsFocused)
+                return true;
+
             // prevent keyboard focus from overlapping with our own tooltip logic
             ToolTipService.SetShowsToolTipOnKeyboardFocus(control, false);
 
