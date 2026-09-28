@@ -179,7 +179,7 @@ var
   Dependency_Memo: String;
   Dependency_List: array of TDependency_Entry;
   Dependency_NeedRestart, Dependency_ForceX86: Boolean;
-  USBipUpdatePending, USBipUpdateRequiresRestart: Boolean;
+  USBipUpdatePending, USBipUpdateRequiresRestart, USBipUpdateResumed: Boolean;
   Dependency_DownloadPage: TDownloadWizardPage;
   SettingsPage: TInputOptionWizardPage;
   CoreIsolationPromptNeeded: Boolean;
@@ -377,6 +377,9 @@ begin
   Result := True;  // allow wizard to proceed
   if CurPageID = SettingsPage.ID then
   begin
+    if USBipUpdateRequiresRestart then
+      Exit;
+
     if SettingsPage.Values[0] then
       CreateRestorePoint();
     if CoreIsolationPromptNeeded and SettingsPage.Values[1] then
@@ -445,11 +448,59 @@ begin
   Log('!!!Leave NeedRestart()!!!');
 end;
 
+function ScheduleUSBipUpdateAfterRestart: Boolean;
+var
+  CommandLine: String;
+begin
+  CommandLine := '"' + ExpandConstant('{srcexe}') +
+    '" /USBIPRESUME=1 /LANG="' + ExpandConstant('{language}') +
+    '" /DIR="' + WizardDirValue +
+    '" /GROUP="' + WizardGroupValue +
+    '" /TYPE="' + WizardSetupType(False) +
+    '" /COMPONENTS="' + WizardSelectedComponents(False) +
+    '" /TASKS="' + WizardSelectedTasks(False) + '"';
+  if WizardNoIcons then
+    CommandLine := CommandLine + ' /NOICONS';
+
+  Result := RegWriteStringValue(
+    HKA,
+    'SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce',
+    '!{#SetupSetting("AppName")} USBIP Update',
+    CommandLine
+  );
+
+  if Result then
+    Log('Scheduled Handheld Companion installation to resume after restart.')
+  else
+    Log('Failed to schedule Handheld Companion installation after restart.');
+end;
+
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 var
   PrepareToInstallResult: String;
 begin
   Log('***Enter PrepareToInstall()***');
+
+  if USBipUpdateRequiresRestart then
+  begin
+    if not DisableHandheldCompanionTask then
+    begin
+      Result := 'The HandheldCompanion scheduled task could not be disabled. The USBIP update was not started.';
+      Exit;
+    end;
+
+    if not ScheduleUSBipUpdateAfterRestart then
+    begin
+      Result := 'Handheld Companion could not be scheduled to continue after restart. The USBIP update was not started.';
+      Exit;
+    end;
+
+    Log('Legacy USBIP update deferred until after restart. No dependencies or application files were changed.');
+    Dependency_NeedRestart := True;
+    NeedsRestart := True;
+    Result := '';
+    Exit;
+  end;
 
   // Stop Handheld Companion before replacing dependencies and application files.
   if IsProcessRunning('{#MyAppExeName}') then
@@ -486,9 +537,6 @@ begin
 
   if USBipUpdatePending then
     TeardownUSBip;
-
-  if USBipUpdateRequiresRestart then
-    NeedsRestart := True;
 
   Log('Restart needed: ' + BoolToStr(NeedsRestart));
   PrepareToInstallResult := Dependency_PrepareToInstall(NeedsRestart);
@@ -537,6 +585,27 @@ function InitializeSetup: Boolean;
 var
   installedVersion: String;
 begin
+  USBipUpdateResumed := ExpandConstant('{param:USBIPRESUME|0}') = '1';
+  if USBipUpdateResumed then
+    Log('USBIP update resumed after restart.');
+
+#ifdef UseUSBip
+  if IsUSBipInstalled() and not USBipUpdateResumed then
+  begin
+    installedVersion := GetInstalledUSBipVersion();
+    if (installedVersion <> '') and
+       (compareVersions('{#NewUSBipVersion}', installedVersion, '.', '-') > 0) and
+       (compareVersions(installedVersion, '0.9.8.0', '.', '-') <= 0) then
+    begin
+      Log('{#USBipName} update requires a restart before installation. Installed: ' + installedVersion + ' New: {#NewUSBipVersion}');
+      USBipUpdatePending := True;
+      USBipUpdateRequiresRestart := True;
+      Result := True;
+      Exit;
+    end;
+  end;
+#endif
+
 #ifdef UseDotNet10
   if not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App {#NewDotNetVersion}') then
   begin
@@ -618,11 +687,6 @@ begin
     begin
       Log('{#USBipName} update required. Installed: ' + installedVersion + ' New: {#NewUSBipVersion}');
       USBipUpdatePending := True;
-      if (installedVersion <> '') and (compareVersions(installedVersion, '0.9.8.0', '.', '-') <= 0) then
-      begin
-        USBipUpdateRequiresRestart := True;
-        DisableHandheldCompanionTask;
-      end;
       Dependency_AddUSBip;
     end;
   end;
