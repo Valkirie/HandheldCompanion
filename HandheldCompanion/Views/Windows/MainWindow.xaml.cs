@@ -247,7 +247,7 @@ public partial class MainWindow : GamepadWindow
 
         // prepare toast manager
         ToastManager.Start();
-        ToastManager.SendToast(Title, "is starting");
+        ToastManager.SendToast($"{Title} is starting", "Please wait a moment");
 
         shutdownTimer = new(10000) { AutoReset = false };
         shutdownTimer.Elapsed += ShutdownTimer_Elapsed;
@@ -1220,6 +1220,8 @@ public partial class MainWindow : GamepadWindow
 
     private async void Window_Closed(object sender, EventArgs e)
     {
+        ToastManager.SendToast($"{Title} is closing", "Please wait a moment");
+
         // start shutdown watchdog
         shutdownTimer?.Start();
 
@@ -1545,7 +1547,7 @@ public partial class MainWindow : GamepadWindow
 
         if (!NotifyInTaskbar)
         {
-            if (ToastManager.SendToast(Title, "is running in the background"))
+            if (ToastManager.SendToast($"{Title} is running in the background"))
                 NotifyInTaskbar = true;
         }
     }
