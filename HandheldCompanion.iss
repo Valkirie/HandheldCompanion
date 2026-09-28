@@ -18,7 +18,7 @@
 #define InstallerVersion        "0.3"
 #define MyAppSetupName         "Handheld Companion"
 #define MyBuildId              "HandheldCompanion"
-#define MyAppVersion           "1.3.3.0"
+#define MyAppVersion           "1.3.3.1"
 #define MyAppPublisher         "BenjaminLSR"
 #define MyAppCopyright         "Copyright © BenjaminLSR"
 #define MyAppURL               "https://github.com/Valkirie/HandheldCompanion"
@@ -498,7 +498,7 @@ begin
     Log('Legacy USBIP update deferred until after restart. No dependencies or application files were changed.');
     Dependency_NeedRestart := True;
     NeedsRestart := True;
-    Result := '';
+    Result := 'The installed USBip version must be updated after restarting Windows before Handheld Companion can be installed.';
     Exit;
   end;
 
