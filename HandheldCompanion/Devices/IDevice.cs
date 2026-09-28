@@ -264,7 +264,7 @@ public abstract class IDevice
     public string InternalSensorName = string.Empty;
 
     public string ProductIllustration = "device_generic";
-    public string ProductModel = "default";
+    public string ProductModel = string.Empty;
 
     // key press delay to use for certain scenarios
     public short KeyPressDelay = 200;
