@@ -252,14 +252,15 @@ namespace HandheldCompanion.Views.Classes
 
         public bool SetFocusedElement(Control focusedControl)
         {
-            if (ReferenceEquals(this.focusedControl, focusedControl))
-                return false;
-
             // UI thread
             return UIHelper.TryInvoke(() =>
             {
-                // before the early return below, so top navigation items (QuickTools tabs) are announced too
+                // before both early returns: top navigation items (QuickTools tabs) are never stored, so returning
+                // from one to the stored control must still be announced (the announcer skips repeats itself)
                 screenReaderAnnouncer.FocusChanged(focusedControl);
+
+                if (ReferenceEquals(this.focusedControl, focusedControl))
+                    return false;
 
                 // Top navigation items provide their own focus visuals; expandable panes use the gamepad adorner.
                 if (focusedControl is NavigationViewItem navigationViewItem)
