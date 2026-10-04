@@ -28,6 +28,8 @@ public class Steam : IPlatform
     // GameLib
     private SteamLauncher steamLauncher = new(new LauncherOptions());
     public override string Name => steamLauncher.Name;
+    public override string PlatformColor => "#1B2838";
+    public override string PlatformGlyph => "\uF523";
     public override string InstallPath => steamLauncher.InstallDir;
     public override string ExecutablePath => steamLauncher.Executable;
     public override string ExecutableName => Path.GetFileName(ExecutablePath);

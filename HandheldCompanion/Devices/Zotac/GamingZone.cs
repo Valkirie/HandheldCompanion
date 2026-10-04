@@ -215,15 +215,19 @@ namespace HandheldCompanion.Devices.Zotac
                 device.OpenDevice();
 
                 // device.Write(RestoreProfileSet());
-                device.Write(RemapM1_CtrlWinF11());
-                device.Write(RemapM2_CtrlWinF12());
+                lock (HidWriteLock)
+                {
+                    WriteReport(device, RemapM1_CtrlWinF11());
+                    WriteReport(device, RemapM2_CtrlWinF12());
+                }
             }
         }
 
         public bool CycleController()
         {
             if (hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice? device))
-                return device.Write(RestoreProfileSet());
+                lock (HidWriteLock)
+                    return WriteReport(device, RestoreProfileSet());
 
             return false;
         }
@@ -564,7 +568,8 @@ namespace HandheldCompanion.Devices.Zotac
                 if (!hidDevice.IsConnected)
                     return false;
 
-                return hidDevice.Write(SendLedCmd(LEDSettings.Brightness, value));
+                lock (HidWriteLock)
+                    return WriteReport(hidDevice, SendLedCmd(LEDSettings.Brightness, value));
             }
 
             return false;
@@ -598,15 +603,18 @@ namespace HandheldCompanion.Devices.Zotac
                 if (!hidDevice.IsConnected)
                     return false;
 
-                hidDevice.Write(SendLedCmd(LEDSettings.Effect, (byte)lightEffect));
-                hidDevice.Write(SendLedCmd(LEDSettings.Speed, speedValue));
+                lock (HidWriteLock)
+                {
+                    WriteReport(hidDevice, SendLedCmd(LEDSettings.Effect, (byte)lightEffect));
+                    WriteReport(hidDevice, SendLedCmd(LEDSettings.Speed, speedValue));
 
-                // Use official Spectra color packing
-                uint mainRGB = ToSpectraRGB(MainColor);
-                uint secondaryRGB = ToSpectraRGB(SecondaryColor);
+                    // Use official Spectra color packing
+                    uint mainRGB = ToSpectraRGB(MainColor);
+                    uint secondaryRGB = ToSpectraRGB(SecondaryColor);
 
-                hidDevice.Write(SendLedRGB(0, mainRGB));
-                hidDevice.Write(SendLedRGB(1, secondaryRGB));
+                    WriteReport(hidDevice, SendLedRGB(0, mainRGB));
+                    WriteReport(hidDevice, SendLedRGB(1, secondaryRGB));
+                }
 
                 int LEDBrightness = ManagerFactory.settingsManager.GetInt("LEDBrightness");
                 SetLedBrightness(LEDBrightness);
@@ -635,7 +643,8 @@ namespace HandheldCompanion.Devices.Zotac
 
                 data[5] = (byte)HIDCommand.SaveConfigData;
 
-                return hidDevice.Write(data);
+                lock (HidWriteLock)
+                    return WriteReport(hidDevice, data);
             }
 
             return false;

@@ -166,6 +166,48 @@ public static class ProcessUtils
         return sb.ToString();
     }
 
+    public static string? GetCommandLine(int processId)
+    {
+        try
+        {
+            using ManagementObjectSearcher searcher = new($"select CommandLine from win32_process where processid = {processId}");
+            return searcher.Get()
+                .Cast<ManagementObject>()
+                .Select(process => Convert.ToString(process["CommandLine"]))
+                .FirstOrDefault(commandLine => !string.IsNullOrWhiteSpace(commandLine));
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public static string? GetCommandLineArguments(int processId)
+    {
+        string? commandLine = GetCommandLine(processId);
+        if (string.IsNullOrWhiteSpace(commandLine))
+            return null;
+
+        int index = 0;
+        while (index < commandLine.Length && char.IsWhiteSpace(commandLine[index]))
+            index++;
+
+        if (index < commandLine.Length && commandLine[index] == '"')
+        {
+            index = commandLine.IndexOf('"', index + 1);
+            if (index < 0)
+                return null;
+            index++;
+        }
+        else
+        {
+            while (index < commandLine.Length && !char.IsWhiteSpace(commandLine[index]))
+                index++;
+        }
+
+        return index < commandLine.Length ? commandLine[index..].Trim() : string.Empty;
+    }
+
     // A function that takes an executable name as a parameter and returns an array of Process objects
     public static Process[] GetProcessesByExecutable(string executableName)
     {

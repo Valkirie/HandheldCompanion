@@ -1,0 +1,66 @@
+{
+  "Id": "dolphin",
+  "Name": "Dolphin",
+  "PlatformType": "Dolphin",
+  "PlatformColor": "#0074BD",
+  "PlatformGlyph": "\uF785",
+  "Executables": [
+    "Dolphin.exe"
+  ],
+  "ProductNames": [
+    "Dolphin Emulator"
+  ],
+  "Configurations": [
+    {
+      "Root": "AppData",
+      "RelativePath": "Dolphin Emulator",
+      "Files": [
+        "Dolphin.ini"
+      ],
+      "ContentKeys": [
+        "ISOPath"
+      ]
+    },
+    {
+      "Root": "Documents",
+      "RelativePath": "Dolphin Emulator",
+      "Files": [
+        "Dolphin.ini"
+      ],
+      "ContentKeys": [
+        "ISOPath"
+      ]
+    },
+    {
+      "Root": "ExecutableDirectory",
+      "RelativePath": "User\\Config",
+      "Files": [
+        "Dolphin.ini"
+      ],
+      "ContentKeys": [
+        "ISOPath"
+      ]
+    }
+  ],
+  "PortableLocations": [
+    {
+      "Marker": "User",
+      "ConfigPath": "User\\Config",
+      "Files": [
+        "Dolphin.ini"
+      ]
+    }
+  ],
+  "RomExtensions": [
+    ".gcm",
+    ".gcz",
+    ".iso",
+    ".wbfs",
+    ".rvz"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "Template",
+  "ArgumentTemplate": "-e {rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

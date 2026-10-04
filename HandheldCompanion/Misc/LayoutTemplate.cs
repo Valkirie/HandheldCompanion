@@ -103,7 +103,8 @@ namespace HandheldCompanion.Misc
                 new TouchpadActions(AxisLayoutFlags.RightPad)
                 {
                     AxisDeadZoneInner = 5,
-                    HapticMode = HapticMode.Both
+                    HapticMode = HapticMode.Down,
+                    HapticStrength = HapticStrength.Low
                 }
             ];
 
@@ -120,7 +121,7 @@ namespace HandheldCompanion.Misc
             };
         }
 
-        private static KeyboardActions CreateKeyboardAction(VirtualKeyCode key, ModifierSet modifiers = ModifierSet.None, Utils.DeflectionDirection motionDirection = Utils.DeflectionDirection.None, float motionThreshold = 4000)
+        private static KeyboardActions CreateKeyboardAction(VirtualKeyCode key, ModifierSet modifiers = ModifierSet.None, Utils.DeflectionDirection motionDirection = Utils.DeflectionDirection.None, float motionThreshold = 4000, HapticMode hapticMode = HapticMode.Off, HapticStrength hapticStrength = HapticStrength.Low)
         {
             return new KeyboardActions
             {
@@ -128,6 +129,8 @@ namespace HandheldCompanion.Misc
                 Modifiers = modifiers,
                 motionDirection = motionDirection,
                 motionThreshold = motionThreshold,
+                HapticMode = hapticMode,
+                HapticStrength = hapticStrength,
             };
         }
 
@@ -144,13 +147,15 @@ namespace HandheldCompanion.Misc
             };
         }
 
-        private static AxisActions CreateAxisAction(AxisLayoutFlags axis, short x = 0, short y = 0)
+        private static AxisActions CreateAxisAction(AxisLayoutFlags axis, short x = 0, short y = 0, HapticMode hapticMode = HapticMode.Off, HapticStrength hapticStrength = HapticStrength.Low)
         {
             return new AxisActions
             {
                 Axis = axis,
                 ButtonX = x,
                 ButtonY = y,
+                HapticMode = hapticMode,
+                HapticStrength = hapticStrength,
             };
         }
 
@@ -201,8 +206,8 @@ namespace HandheldCompanion.Misc
                         {
                             { AxisLayoutFlags.LeftStick, new List<IActions>() { CreateMouseAction(MouseActionsType.Scroll) } },
                             { AxisLayoutFlags.RightStick, new List<IActions>() { CreateMouseAction(MouseActionsType.Move) } },
-                            { AxisLayoutFlags.LeftPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Scroll, hapticMode: HapticMode.Both) } },
-                            { AxisLayoutFlags.RightPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Move, hapticMode: HapticMode.Down) } },
+                            { AxisLayoutFlags.LeftPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Scroll, hapticMode: HapticMode.Down, hapticStrength: HapticStrength.Low) } },
+                            { AxisLayoutFlags.RightPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Move, hapticMode: HapticMode.Down, hapticStrength: HapticStrength.Low) } },
                             {
                                 AxisLayoutFlags.L2, new List<IActions>()
                                 {
@@ -235,8 +240,8 @@ namespace HandheldCompanion.Misc
                             { ButtonFlags.DPadLeft, new List<IActions>() { CreateKeyboardAction(VirtualKeyCode.LEFT) } },
                             { ButtonFlags.DPadRight, new List<IActions>() { CreateKeyboardAction(VirtualKeyCode.RIGHT) } },
 
-                            { ButtonFlags.LeftPadClick, new List<IActions>() { CreateMouseAction(MouseActionsType.RightButton, hapticMode: HapticMode.Both, hapticStrength: HapticStrength.Medium) } },
-                            { ButtonFlags.RightPadClick, new List<IActions>() { CreateMouseAction(MouseActionsType.LeftButton, hapticMode: HapticMode.Both, hapticStrength: HapticStrength.Medium) } }
+                            { ButtonFlags.LeftPadClick, new List<IActions>() { CreateMouseAction(MouseActionsType.RightButton, hapticMode: HapticMode.Both, hapticStrength: HapticStrength.High) } },
+                            { ButtonFlags.RightPadClick, new List<IActions>() { CreateMouseAction(MouseActionsType.LeftButton, hapticMode: HapticMode.Both, hapticStrength: HapticStrength.High) } }
                         };
                     }
                     break;
@@ -255,7 +260,7 @@ namespace HandheldCompanion.Misc
                         Layout.AxisLayout = new()
                         {
                             { AxisLayoutFlags.RightStick, new List<IActions>() { CreateMouseAction(MouseActionsType.Move) } },
-                            { AxisLayoutFlags.RightPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Move, hapticMode: HapticMode.Down) } },
+                            { AxisLayoutFlags.RightPad, new List<IActions>() { CreateMouseAction(MouseActionsType.Move, hapticMode: HapticMode.Down, hapticStrength: HapticStrength.Low) } },
                             {
                                 AxisLayoutFlags.LeftStick, new List<IActions>()
                                 {
@@ -300,25 +305,25 @@ namespace HandheldCompanion.Misc
                             { ButtonFlags.LeftStickClick, new List<IActions>() { CreateKeyboardAction(VirtualKeyCode.LSHIFT) } },
                             { ButtonFlags.RightStickClick, new List<IActions>() { CreateMouseAction(MouseActionsType.LeftButton) } },
 
-                            { ButtonFlags.LeftPadClickUp, new List<IActions>() { CreateKeyboardAction(VirtualKeyCode.VK_1) } },
-                            { ButtonFlags.LeftPadClickDown, new List<IActions>() { CreateKeyboardAction(VirtualKeyCode.VK_3) } },
-                            { ButtonFlags.LeftPadClickLeft, new List<IActions>() { CreateKeyboardAction(VirtualKeyCode.VK_4) } },
-                            { ButtonFlags.LeftPadClickRight, new List<IActions>() { CreateKeyboardAction(VirtualKeyCode.VK_2) } },
+                            { ButtonFlags.LeftPadClickUp, new List<IActions>() { CreateKeyboardAction(VirtualKeyCode.VK_1, hapticMode: HapticMode.Both, hapticStrength: HapticStrength.High) } },
+                            { ButtonFlags.LeftPadClickDown, new List<IActions>() { CreateKeyboardAction(VirtualKeyCode.VK_3, hapticMode: HapticMode.Both, hapticStrength: HapticStrength.High) } },
+                            { ButtonFlags.LeftPadClickLeft, new List<IActions>() { CreateKeyboardAction(VirtualKeyCode.VK_4, hapticMode: HapticMode.Both, hapticStrength: HapticStrength.High) } },
+                            { ButtonFlags.LeftPadClickRight, new List<IActions>() { CreateKeyboardAction(VirtualKeyCode.VK_2, hapticMode: HapticMode.Both, hapticStrength: HapticStrength.High) } },
 
-                            { ButtonFlags.RightPadClick, new List<IActions>() { CreateMouseAction(MouseActionsType.LeftButton) } }
+                            { ButtonFlags.RightPadClick, new List<IActions>() { CreateMouseAction(MouseActionsType.LeftButton, hapticMode: HapticMode.Both, hapticStrength: HapticStrength.High) } }
                         };
                     }
                     break;
 
                 case "GamepadMouse":
                     {
-                        Layout.AxisLayout[AxisLayoutFlags.RightPad] = new List<IActions>() { CreateMouseAction(MouseActionsType.Move, hapticMode: HapticMode.Down) };
+                        Layout.AxisLayout[AxisLayoutFlags.RightPad] = new List<IActions>() { CreateMouseAction(MouseActionsType.Move, hapticMode: HapticMode.Down, hapticStrength: HapticStrength.Low) };
                     }
                     break;
 
                 case "GamepadJoystick":
                     {
-                        Layout.AxisLayout[AxisLayoutFlags.RightPad] = new List<IActions>() { CreateAxisAction(AxisLayoutFlags.RightStick) };
+                        Layout.AxisLayout[AxisLayoutFlags.RightPad] = new List<IActions>() { CreateAxisAction(AxisLayoutFlags.RightStick, hapticMode: HapticMode.Down, hapticStrength: HapticStrength.Low) };
                     }
                     break;
             }

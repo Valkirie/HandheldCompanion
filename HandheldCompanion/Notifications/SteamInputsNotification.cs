@@ -24,7 +24,7 @@ namespace HandheldCompanion.Notifications
                 // halt steam and wait
                 PlatformManager.Steam.StopProcess();
                 while (PlatformManager.Steam.IsRunning)
-                    await Task.Delay(1000).ConfigureAwait(false); // Avoid blocking the synchronization context;
+                    await Task.Delay(1000);
 
                 // overwrite desktop layout
                 PlatformManager.Steam.SetUseSteamControllerConfigValue(0);

@@ -21,6 +21,8 @@ namespace HandheldCompanion.ViewModels
 {
     public class AxisMappingViewModel : MappingViewModel
     {
+        public override bool IsContinuousHaptics => Action is AxisActions || base.IsContinuousHaptics;
+
         public override ActionType[] SupportedActionTypes =>
         [
             ActionType.Disabled,
@@ -731,20 +733,6 @@ namespace HandheldCompanion.ViewModels
             _responseCurveGraph.CaptureMouse();
         }
 
-        private void PushResponseCurveToViewIfNeeded()
-        {
-            if (_responseCurveLineSeries is null || Action is not GyroActions)
-                return;
-
-            if (_responseCurveLineSeries.ActualValues.Count == 0)
-                return;
-
-            if (_updatingResponseCurveUI)
-                return;
-
-            PushResponseCurveToView();
-        }
-
         protected override void ActionTypeChanged(ActionType? newActionType = null)
         {
             var actionType = newActionType ?? (ActionType)ActionTypeIndex;
@@ -793,8 +781,6 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 ReplaceTargets(targets, matchingTargetVm);
-
-                PushResponseCurveToViewIfNeeded();
             }
             else if (actionType == ActionType.Button)
             {

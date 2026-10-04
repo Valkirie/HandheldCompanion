@@ -117,7 +117,7 @@ public partial class Profile : ICloneable, IComparable, INotifyPropertyChanged
         {
             if (_name != value)
             {
-                _name = value;
+                _name = value.ReplaceLineEndings(" ").Trim();
                 OnPropertyChanged();
             }
         }

@@ -1,0 +1,25 @@
+{
+  "Id": "project64",
+  "Name": "Project64",
+  "PlatformType": "Project64",
+  "PlatformColor": "#666666",
+  "PlatformGlyph": "\uF712",
+  "Executables": [
+    "Project64.exe"
+  ],
+  "ProductNames": [
+    "Project64"
+  ],
+  "Configurations": [],
+  "PortableLocations": [],
+  "RomExtensions": [
+    ".n64",
+    ".z64",
+    ".v64"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

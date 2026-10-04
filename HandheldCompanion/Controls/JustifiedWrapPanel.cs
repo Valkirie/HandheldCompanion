@@ -215,6 +215,37 @@ namespace HandheldCompanion.Controls
                 RefreshViewportRealization();
         }
 
+        public UIElement? BringItemIntoView(int itemIndex)
+        {
+            if (itemIndex < 0)
+                return null;
+
+            AttachScrollViewer();
+            UpdateLayout();
+
+            ItemsControl? itemsOwner = ItemsControl.GetItemsOwner(this);
+            if (observedScrollViewer is null || itemsOwner is null || !currentLayout.TryGetItemLayout(itemIndex, out ItemLayout? itemLayout))
+                return null;
+
+            try
+            {
+                Point panelOrigin = TranslatePoint(new Point(), observedScrollViewer);
+                double targetOffset = observedScrollViewer.VerticalOffset + panelOrigin.Y + itemLayout.Bounds.Top;
+                observedScrollViewer.ScrollToVerticalOffset(Math.Clamp(targetOffset, 0.0, observedScrollViewer.ScrollableHeight));
+
+                RefreshViewportRealization();
+                UpdateLayout();
+
+                UIElement? realizedContainer = itemsOwner.ItemContainerGenerator.ContainerFromIndex(itemIndex) as UIElement;
+                System.Diagnostics.Debug.Assert(realizedContainer is null || InternalChildren.Contains(realizedContainer));
+                return realizedContainer;
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+        }
+
         private double ResolveAvailableWidth(Size availableSize)
         {
             if (!double.IsInfinity(availableSize.Width) && availableSize.Width > 0.0)
@@ -386,6 +417,7 @@ namespace HandheldCompanion.Controls
             {
                 double previousRowScale = previousRow.Height / Math.Max(1.0, targetHeight);
                 scale = Math.Min(scale, previousRowScale);
+                baseItemWidth = Math.Max(1.0, targetWidth * scale);
             }
             else if (!justify && previousRow is null && referenceScale.HasValue)
             {
@@ -495,9 +527,6 @@ namespace HandheldCompanion.Controls
                     int tagSpan = ReadSpanFromTag(frameworkElement.Tag);
                     if (tagSpan > 1)
                         return tagSpan;
-
-                    if (TryGetBooleanProperty(frameworkElement.DataContext, "IsLiked", out bool isLiked) && isLiked)
-                        return 3;
                 }
             }
 
@@ -508,9 +537,6 @@ namespace HandheldCompanion.Controls
 
             if (TryGetIntProperty(item, "ItemSpan", out int reflectedSpan) && reflectedSpan > 0)
                 return reflectedSpan;
-
-            if (TryGetBooleanProperty(item, "IsLiked", out bool isFavorite) && isFavorite)
-                return 3;
 
             return 1;
         }
@@ -675,13 +701,13 @@ namespace HandheldCompanion.Controls
                 double rawViewportTop = -origin.Y;
                 double rawViewportBottom = rawViewportTop + viewportHeight;
 
-                if (rawViewportBottom <= 0.0 || rawViewportTop >= extentHeight)
-                    return false;
+                double overscan = Math.Max(MinimumOverscan, TargetRowHeight * OverscanViewportMultiplier);
+                viewportTop = Math.Clamp(rawViewportTop - overscan, 0.0, extentHeight);
+                viewportBottom = Math.Clamp(rawViewportBottom + overscan, 0.0, extentHeight);
 
-                double overscan = TargetRowHeight * OverscanViewportMultiplier;
-                viewportTop = Math.Max(0.0, rawViewportTop - overscan);
-                viewportBottom = Math.Min(extentHeight, rawViewportBottom + overscan);
-                return viewportBottom > viewportTop;
+                // A collapsed edge range keeps the nearest row realized when the panel is off-screen.
+                System.Diagnostics.Debug.Assert(viewportBottom >= viewportTop);
+                return true;
             }
             catch (InvalidOperationException)
             {

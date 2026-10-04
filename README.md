@@ -6,12 +6,12 @@
 
 # Handheld Companion
 
-A touch optimized GUI to increase your handheld gaming computer experience. Features include:
-- Motion control a.k.a. gyro control through a device's inertial measurement unit (IMU, Gyroscope and Accelerometer) or external sensor. Settings availible for racing, 1st and 3rd person gaming and emulator support.
-- Quicktools overlay, with easy access to various settings and informatio such as TDP, Auto TDP, GPU, Screen Hz, Framelimiter, Resolution, Brightness, Volume, Powermode control and battery level.
-- Virtual controller simulation of [Microsoft Xbox 360 Controller](https://en.wikipedia.org/wiki/Xbox_360_controller) and [Sony DualShock 4 Controller](https://en.wikipedia.org/wiki/DualShock#DualShock_4).
-- Profile settings system, automatic detection of active game and applying of settings.
-- Gamepad remapping to mouse and keyboard, gamepad joystick and trigger deadzone adjustements.
+A touch-optimized GUI to improve your handheld gaming computer experience. Features include:
+- Motion control, also known as gyro control, through a device's inertial measurement unit (IMU, gyroscope and accelerometer) or an external sensor. Settings are available for racing, first- and third-person gaming, and emulators.
+- QuickTools overlay, with easy access to settings and information such as TDP, Auto TDP, GPU, screen refresh rate, frame limiter, resolution, brightness, volume, power mode, and battery level.
+- Virtual controller simulation through VIIPER of the [Microsoft Xbox 360 Controller](https://en.wikipedia.org/wiki/Xbox_360_controller), [Sony DualShock 4 Controller](https://en.wikipedia.org/wiki/DualShock#DualShock_4), [Sony DualSense Controller](https://en.wikipedia.org/wiki/DualSense), Steam Controller, Steam Deck Controller, and Nintendo Switch Pro Controller.
+- Profile settings system with automatic detection of the active game and application of settings.
+- Gamepad remapping to mouse and keyboard, with joystick and trigger dead-zone adjustment.
 - PS Remote Play support with DS4 controller, including motion and touchpad.
 - 3D Controller overlay for stream recordings.
 - Hotkeys for various conveniences.
@@ -23,45 +23,56 @@ Handheld Companion is funded entirely by community support. [Through our Patreon
 A few examples of the most common use cases are:
 - You want to add universal motion controls (UMC) to any game.
 - You want to add high-precision motion controls to your Windows game library through [Steam](https://store.steampowered.com/controller/update/dec15).
-- You want to play your Sony Playstation 4 library through [PlayStation Now](https://www.playstation.com/en-us/ps-now/) or [PS4 Remote Play](<https://remoteplay.dl.playstation.net/remoteplay/>).
+- You want to play your Sony PlayStation 4 library through [PS4 Remote Play](<https://remoteplay.dl.playstation.net/remoteplay/>).
 - You want to enjoy all your [Wii](https://dolphin-emu.org/), [WiiU](https://cemu.info/) and [Switch](https://ryujinx.org/) games with full motion controls through UDP motion control protocol.
 
 [Youtube Channel](https://www.youtube.com/channel/UCFLra6QVYJYeaWp2mGaq3Og)
 
 ## Supported Systems
-The software is built for Windows 10/Windows 11 (x86 and amd64).
+The software is built for 64-bit Windows 10 and Windows 11.
+
+## Virtual controller backend
+
+Virtual Xbox 360, DualShock 4, DualSense, Steam Controller, Steam Deck, and Nintendo Switch Pro controllers are provided by VIIPER. VIIPER is included with Handheld Companion and can be configured in the controller settings. The all-in-one installer also installs the [HidHide](https://github.com/nefarius/HidHide) filter driver used to hide physical controllers when required.
 
 ## Supported Devices
 
-- ASUS ROG Ally, ROG Ally X
+- ASUS ROG Ally, ROG Ally X, XBOX ROG Ally, XBOX ROG Ally X
 - ASUS ROG Z13
-- Lenovo Legion Go
-- Legion Go S
-- MSI Claw A1M (1st Gen), MSI Claw A2VM (7/8 AI+), MSI Claw BZ2EM (A8)
-- AOKZOE A1 and A1 Pro
-- AOKZOE A2
+- Lenovo Legion Go, Legion Go S, Legion Go 2
+- MSI Claw A1M (1st Gen), MSI Claw A2VM (7/8 AI+), MSI Claw BZ2EM (A8), and MSI Claw CG3EM
+- AOKZOE A1, A1 Pro, A1X, and A2
 - Steam Deck (all models)
-- AYA Neo (all models)
+- Steam Machine
+- AYA Neo 2021 (all models)
 - AYA Neo Next (all models)
 - AYA Neo Air (all models)
 - AYA Neo 2, Geek, 2S Geek 1S
 - AYA Neo KUN
 - AYA Neo Flip DS and Flip KB
 - AYA Neo Slide
+- Minisforum V3
 - ONEXPLAYER X1, X1 Pro, X1 Mini
+- ONEXPLAYER X2 and X2 Mini Pro
 - ONEXPLAYER OneXFly
+- ONEXPLAYER APEX and G1
 - ONEXPLAYER 2 and 2 Pro
 - ONEXPLAYER MINI (all models)
 - GPD WIN Max 2 (all models)
 - GPD Win 2
 - GPD Win 3
 - GPD Win 4 (all models)
+- GPD Win 5
 - GPD Win Mini (all models)
 - Ayn Loki (all models)
+- SuiPlay 0X1
 - ZOTAC Gaming Zone
 
 ## Supported Sensors
 - Bosch BMI160 (and similar)
+- Bosch BMI260 (and similar)
+- Bosch BMI270 (and similar)
+- Bosch BMI323 (and similar)
 - USB IMU (GY-USB002)
 
 ## Supported Languages
@@ -95,7 +106,7 @@ The software has multiple built-in performance metric overlay options.
 
 ### QuickTools
 
-On the fly adjustment of TDP (global and profile), brightness, screen resolution and frequency, hotkeys and motion control profile settings. Summonable with a user defined button combination (including certaind supported devices mapped special keys). Window can be aligned how the user sees fit (left, right, floating).
+On-the-fly adjustment of TDP (global and profile), brightness, screen resolution and frequency, hotkeys, and motion control profile settings. Summonable with a user-defined button combination, including special keys mapped on certain supported devices. The window can be aligned as the user sees fit (left, right, or floating).
 
 ![image](https://github.com/user-attachments/assets/60037201-8067-4bc3-a838-6cbb2b18d736)
 ![image](https://github.com/user-attachments/assets/404b9830-c319-4e03-a161-a20f73da457b)
@@ -104,7 +115,7 @@ On the fly adjustment of TDP (global and profile), brightness, screen resolution
 
 ### Virtual touchpad
 
-Virtual touchpad on top of your gaming sessions. The virtual touchpad is used to mimic the DualShock 4 physical touchpad and grants maximum compatibility with PS Now, PS Remote software suites and games that make specific use of the Steampad touchpads.
+Virtual touchpad on top of your gaming sessions. The virtual touchpad mimics the DualShock 4 physical touchpad and provides compatibility with PS Remote Play and games that make use of Steam Input touchpads.
 
 ![Touchpad](https://thumbs.gfycat.com/DiscreteJollyBluemorphobutterfly-size_restricted.gif)
 
@@ -112,11 +123,11 @@ Virtual Touchpad input demonstration with [PS Remote Play](https://remoteplay.dl
 
 ![Example02](https://user-images.githubusercontent.com/14330834/184550793-d81e2ec9-0271-4aae-bc44-7aeb393631ea.png)
 
-PS Remote Play, The Last of Us Part 2
+PS Remote Play, The Last of Us Part II
 
 ### 3D Controller
 
-Display a 3D virtual controller, showcasing the motion of the device and all button interaction, individual button presses, joystick and trigger positions. The following 3D models are availible.
+Display a 3D virtual controller, showcasing the motion of the device and all button interaction, individual button presses, joystick and trigger positions. The following 3D models are available.
   - Emulated controller (DualShock 4, Xbox 360)
   - Xbox One controller
   - Fisher-Price controller
@@ -141,14 +152,14 @@ Please respect that the GitHub issue tracker isn't a helpdesk. We offer a [Disco
 ### Donation
 If you would like to support this project, please consider making a donation to `BenjaminLSR` via [PayPal](https://www.paypal.com/paypalme/BenjaminLSR).
 
-Handheld Companion relies on `ViGEmBus` driver and `ViGEmClient` libraries as well as `HidHide` kernel-mode filter driver. Therefore, we strongly encourage you in donating to `Nefarius` via [PayPal](https://paypal.me/NefariusMaximus) for continued maintenance and development.
+Handheld Companion relies on the `HidHide` kernel-mode filter driver. Therefore, we strongly encourage you in donating to `Nefarius` via [PayPal](https://paypal.me/NefariusMaximus) for continued maintenance and development.
 
 ## Installation
 Installers are [available as an all-in-one setup](../../releases/latest).
 Run the `install.exe` as administrator and you'll be set!
 
 ## Credits & Libraries
-Handheld Companion (HC) is the result of countless hours of work by enthusiasts and the community, who have provided feedback and shared access to their devices. HC reliers on the drivers and libraries of [Nefarius](https://github.com/ViGEm/ViGEmBus), [https://github.com/sharpdx/SharpDX](SharpDX), [https://github.com/libsdl-org/SDL](SDL) but also the reverse engineering efforts of Handheld Daemon, GHelper, SteamDeckTools. Finally, HC was made possible thanks to the support from a few OEM partners like AYANEO, ASUS and MSI who've been providing samples to support the development.
+Handheld Companion (HC) is the result of countless hours of work by enthusiasts and the community, who have provided feedback and shared access to their devices. HC relies on the drivers and libraries of [Nefarius](https://github.com/nefarius/HidHide), [https://github.com/sharpdx/SharpDX](SharpDX), [https://github.com/libsdl-org/SDL](SDL) but also the reverse engineering efforts of Handheld Daemon, GHelper, SteamDeckTools. Finally, HC was made possible thanks to the support from a few OEM partners like AYANEO, ASUS and MSI who've been providing samples to support the development.
 
 ## Licensing
 

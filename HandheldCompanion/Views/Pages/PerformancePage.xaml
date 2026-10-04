@@ -13,7 +13,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Performance"
     Title="{l:Static resx:Resources.PerformancePage_Device}"
-    Margin="0,20,0,0"
+    Margin="20"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:PerformancePageViewModel}"
     d:DesignHeight="2000"

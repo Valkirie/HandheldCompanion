@@ -39,6 +39,8 @@ namespace HandheldCompanion.Managers
             if (IsInitialized)
                 return;
 
+            IDevice.GetCurrent().CapabilitiesChanged += Device_CapabilitiesChanged;
+
             // raise events
             switch (ManagerFactory.settingsManager.Status)
             {
@@ -139,6 +141,7 @@ namespace HandheldCompanion.Managers
 
             ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+            IDevice.GetCurrent().CapabilitiesChanged -= Device_CapabilitiesChanged;
 
             IsInitialized = false;
 
@@ -240,6 +243,25 @@ namespace HandheldCompanion.Managers
                 ActivateSensor(SensorFamily.SerialUSBIMU);
         }
 
+        private static void Device_CapabilitiesChanged(IDevice sender, DeviceCapabilities capabilities)
+        {
+            bool hasInternalSensor = capabilities.HasFlag(DeviceCapabilities.InternalSensor);
+
+            if (sensorSelection == SensorFamily.Auto)
+            {
+                PickNextSensor();
+                return;
+            }
+
+            if (sensorSelection != SensorFamily.Windows)
+                return;
+
+            if (hasInternalSensor && sensorFamily != SensorFamily.Windows)
+                ActivateSensor(SensorFamily.Windows);
+            else if (!hasInternalSensor && sensorFamily == SensorFamily.Windows)
+                ActivateSensor(SensorFamily.None);
+        }
+
         private static void PickNextSensor(SensorFamily preferred = SensorFamily.None)
         {
             if (sensorSelection != SensorFamily.Auto)
@@ -260,6 +282,8 @@ namespace HandheldCompanion.Managers
                 ActivateSensor(SensorFamily.Windows);
             else if (hasExternalSensor)
                 ActivateSensor(SensorFamily.SerialUSBIMU);
+            else
+                ActivateSensor(SensorFamily.None);
         }
 
         private static void ActivateSensor(SensorFamily selectedFamily)

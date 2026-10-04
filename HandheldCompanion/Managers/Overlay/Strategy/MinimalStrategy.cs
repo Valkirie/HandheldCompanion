@@ -6,7 +6,7 @@ public class MinimalStrategy : IOverlayStrategy
     {
         OverlayRow row1 = new();
 
-        OverlayEntry fpsEntry = new("<APP>", "FF0000");
+        OverlayEntry fpsEntry = new("<APP>", OverlayColors.Color("FPS"));
         WidgetFactory.CreateWidget("FPS", fpsEntry, WidgetLevel.MINIMAL);
         row1.entries.Add(fpsEntry);
 

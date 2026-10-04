@@ -1,0 +1,25 @@
+{
+  "Id": "redream",
+  "Name": "Redream",
+  "PlatformType": "Redream",
+  "PlatformColor": "#666666",
+  "PlatformGlyph": "\uED2F",
+  "Executables": [
+    "redream.exe"
+  ],
+  "ProductNames": [
+    "redream"
+  ],
+  "Configurations": [],
+  "PortableLocations": [],
+  "RomExtensions": [
+    ".gdi",
+    ".cdi",
+    ".chd"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

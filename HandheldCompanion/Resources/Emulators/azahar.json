@@ -1,0 +1,36 @@
+{
+  "Id": "azahar",
+  "Name": "Azahar",
+  "PlatformType": "Azahar",
+  "PlatformColor": "#D32F2F",
+  "PlatformGlyph": "\uF784",
+  "Executables": [
+    "azahar.exe",
+    "azahar-qt.exe"
+  ],
+  "ProductNames": [
+    "Azahar"
+  ],
+  "Configurations": [
+    {
+      "Root": "AppData",
+      "RelativePath": "Azahar\\config",
+      "Files": [
+        "qt-config.ini"
+      ],
+      "ContentKeys": []
+    }
+  ],
+  "PortableLocations": [],
+  "RomExtensions": [
+    ".3ds",
+    ".3dsx",
+    ".cia",
+    ".cci"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

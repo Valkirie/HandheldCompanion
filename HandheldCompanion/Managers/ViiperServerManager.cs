@@ -178,9 +178,15 @@ public static class ViiperServerManager
             if (!_isRunning || _service is null)
                 return false;
 
+            // Prevent usbip2_ude from auto-reattaching the old export while
+            // libviiper removes it as part of the device type switch.
+            UsbipCli.DetachAll();
             var switchedDevice = _service.SwitchDeviceType(handle.BusId, handle.DeviceId, typeName, vendorId, productId);
             if (!switchedDevice.Success)
+            {
+                UsbipCli.AttachExportedDevices(0, 0);
                 return false;
+            }
 
             switchedHandle = new ViiperDeviceHandle(handle.BusId, switchedDevice.DeviceId, vendorId, productId);
             return true;
@@ -191,14 +197,18 @@ public static class ViiperServerManager
     {
         lock (_lock)
         {
-            // Detach while libviiper is still exporting the device. Once the native
-            // device is removed, `usbip port` can no longer identify the import and
-            // the UDE controller remains mounted.
-            if (_activeDeviceCount == 1)
-                UsbipCli.DetachAll();
-
-            if (_service is null || !_service.RemoveDevice(handle.BusId, handle.DeviceId))
+            if (_service is null)
                 return false;
+
+            // Detach while libviiper still exports every device. Once a native device
+            // is removed, `usbip port` can no longer reliably identify its import.
+            UsbipCli.DetachAll();
+
+            if (!_service.RemoveDevice(handle.BusId, handle.DeviceId))
+            {
+                UsbipCli.AttachExportedDevices(0, 0);
+                return false;
+            }
 
             if (_activeDeviceCount > 0)
                 _activeDeviceCount--;
@@ -209,6 +219,10 @@ public static class ViiperServerManager
                 if (!_service.RemoveBus(handle.BusId))
                     LogManager.LogWarning("VIIPER bus {0} could not be removed after its last device", handle.BusId);
                 _busId = null;
+            }
+            else if (!UsbipCli.AttachExportedDevices(0, 0))
+            {
+                LogManager.LogWarning("VIIPER could not reattach the devices remaining after removing device {0}", handle.DeviceId);
             }
 
             return true;

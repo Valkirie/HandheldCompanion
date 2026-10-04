@@ -1,0 +1,40 @@
+{
+  "Id": "citron",
+  "Name": "Citron",
+  "PlatformType": "Citron",
+  "PlatformColor": "#E60012",
+  "PlatformGlyph": "\uF787",
+  "Executables": [
+    "citron.exe"
+  ],
+  "ProductNames": [
+    "Citron"
+  ],
+  "Configurations": [
+    {
+      "Root": "AppData",
+      "RelativePath": "Citron\\config",
+      "Files": [
+        "qt-config.ini",
+        "config.json"
+      ],
+      "ContentKeys": [
+        "Paths\\gamedirs\\1\\path",
+        "Paths\\gamedirs\\2\\path",
+        "Paths\\gamedirs\\3\\path",
+        "Paths\\gamedirs\\4\\path"
+      ]
+    }
+  ],
+  "PortableLocations": [],
+  "RomExtensions": [
+    ".nsp",
+    ".xci",
+    ".nca"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

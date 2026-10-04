@@ -10,7 +10,6 @@
 #endif
 
 #define UseDirectX
-#define UseViGem
 #define UseHideHide
 #define UseRTSS
 #define UsePawnIO
@@ -19,7 +18,7 @@
 #define InstallerVersion        "0.3"
 #define MyAppSetupName         "Handheld Companion"
 #define MyBuildId              "HandheldCompanion"
-#define MyAppVersion           "1.2.1.3"
+#define MyAppVersion           "1.3.3.1"
 #define MyAppPublisher         "BenjaminLSR"
 #define MyAppCopyright         "Copyright © BenjaminLSR"
 #define MyAppURL               "https://github.com/Valkirie/HandheldCompanion"
@@ -34,11 +33,10 @@
 #define MsiAfterburnerExe      "MSIAfterburner.exe"
 #define MsiAfterburnerService  "MSIAfterburnerService.exe"
 #define USBipService           "usbipd"
-#define USBipProcess            "usbip*.exe"
+#define USBipProcess           "usbip*.exe"
 
 #define DotNetName             ".NET Desktop Runtime"
 #define DirectXName            "DirectX Runtime"
-#define ViGemName              "ViGEmBus Setup"
 #define HidHideName            "HidHide Drivers"
 #define RtssName               "RTSS Setup"
 #define PawnIOName             "PawnIO"
@@ -46,17 +44,14 @@
 
 #define NewDotNetVersion       "10.0.9"
 #define NewDirectXVersion      "9.29.1974"
-#define NewViGemVersion        "1.22.0.0"
 #define NewHidHideVersion      "1.5.230"
 #define NewRtssVersion         "7.3.5.28314"
 #define NewPawnIOVersion       "2.1.0.0"
-#define NewUSBipVersion        "0.9.8.0"
+#define NewUSBipVersion        "0.9.8.1"
 
 #define DirectXDownloadLink    "https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe"
-#define ViGemDownloadLink      "https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe"
 #define HidHideDownloadLink    "https://github.com/nefarius/HidHide/releases/download/v1.5.230.0/HidHide_1.5.230_x64.exe"
 #define RtssDownloadLink       "https://github.com/Valkirie/HandheldCompanion/raw/main/redist/RTSSSetup737.exe"
-#define PawnIODownloadLink     "https://github.com/namazso/PawnIO.Setup/releases/latest/download/PawnIO_setup.exe"
 #define USBipDownloadLink      "https://github.com/vadimgrn/usbip-win2/releases/download/v." + NewUSBipVersion + "/USBip-" + NewUSBipVersion + "-x64.exe"
 #define GameControllerDBDownloadLink "https://raw.githubusercontent.com/mdqinc/SDL_GameControllerDB/refs/heads/master/gamecontrollerdb.txt"
 
@@ -96,8 +91,8 @@ SetupArchitecture=x64
 MinVersion={#WindowsVersion}
 OutputDir={#SourcePath}\install 
 PrivilegesRequired=admin
+ChangesEnvironment=yes
 SolidCompression=yes
-LZMAUseSeparateProcess=yes
 LZMANumBlockThreads=6
 VersionInfoVersion={#MyAppVersion}
 VersionInfoCompany={#MyAppPublisher}
@@ -121,11 +116,12 @@ Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows{#Win
 Source: "{#SourcePath}\Certificate.pfx"; DestDir: "{tmp}"; Flags: deleteafterinstall
 Source: "{#SourcePath}\Certificate.ps1"; DestDir: "{tmp}"; Flags: deleteafterinstall
 Source: "{#SourcePath}\redist\PromptFont.otf"; DestDir: "{autofonts}"; FontInstall: "PromptFont"; Flags: uninsneveruninstall
+Source: "{#SourcePath}\redist\SimpleIcons-Gaming-Restored.ttf"; DestDir: "{autofonts}"; FontInstall: "Simple Icons Fit"; Flags: uninsneveruninstall
 
 [Icons]
 Name: "{group}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppSetupName}}"; Filename: "{uninstallexe}"
-Name: "{userdesktop}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{commondesktop}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
@@ -142,7 +138,6 @@ Type: files; Name: "{app}\*.json"
 Type: files; Name: "{app}\*.pdb"
 Type: files; Name: "{app}\*.runtimeconfig.json"
 ; Remove old desktop shortcuts
-Type: files; Name: "{userdesktop}\HidHide Configuration Client.lnk"
 Type: files; Name: "{commondesktop}\HidHide Configuration Client.lnk"
 
 [UninstallRun]
@@ -184,6 +179,7 @@ var
   Dependency_Memo: String;
   Dependency_List: array of TDependency_Entry;
   Dependency_NeedRestart, Dependency_ForceX86: Boolean;
+  USBipUpdatePending, USBipUpdateRequiresRestart, USBipUpdateResumed: Boolean;
   Dependency_DownloadPage: TDownloadWizardPage;
   SettingsPage: TInputOptionWizardPage;
   CoreIsolationPromptNeeded: Boolean;
@@ -198,19 +194,18 @@ function Dependency_IsNetCoreInstalled(const Version: String): Boolean; forward;
 function Dependency_IsDirectXInstalled: Boolean; forward;
 procedure Dependency_AddDotNet10Desktop; forward;
 procedure Dependency_AddDirectX; forward;
-procedure Dependency_AddViGem; forward;
 procedure Dependency_AddHideHide; forward;
 procedure Dependency_AddRTSS; forward;
 procedure Dependency_AddPawnIO; forward;
 procedure Dependency_AddUSBip; forward;
 function BoolToStr(Value: Boolean): String; forward;
-procedure TeardownUSBip; forward;
 
-#include "./utils/CompareVersions.iss"
-#include "./utils/ApiUtils.iss"
-#include "./utils/RegUtils.iss"
-#include "./utils/UpdateUninstallWizard.iss"
-#include "./utils/Utils.iss"
+#include "./InnoSetup/CompareVersions.iss"
+#include "./InnoSetup/ApiUtils.iss"
+#include "./InnoSetup/RegUtils.iss"
+#include "./InnoSetup/UpdateUninstallWizard.iss"
+#include "./InnoSetup/Utils.iss"
+#include "./InnoSetup/TaskScheduler.iss"
 
 function NextButtonClick(CurPageID: Integer): Boolean; forward;
 procedure DisableCoreIsolation; forward;
@@ -324,12 +319,29 @@ begin
   Log('Add-MpPreference exit=' + IntToStr(ExitCode));
 end;
 
+procedure UninstallExistingPawnIO;
+var
+  ResultCode: Integer;
+begin
+  if not FileExists(ExpandConstant('{tmp}\') + 'PawnIO_setup.exe') then
+    ExtractTemporaryFile('PawnIO_setup.exe');
+
+  if Exec(ExpandConstant('{tmp}\PawnIO_setup.exe'), '-uninstall -silent', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
+    Log('Previous PawnIO uninstalled. ExitCode=' + IntToStr(ResultCode))
+  else
+    Log('Failed to launch PawnIO uninstall.');
+end;
+
 procedure CurStepChanged(CurStep: TSetupStep);
 var
   DestFile: String;
 begin
   if CurStep = ssPostInstall then
   begin
+#ifdef UseUSBip
+    EnsureUSBipSystemPath;
+#endif
+
     DestFile := ExpandConstant('{app}\gamecontrollerdb.txt');
     Dependency_DownloadPage.Clear;
     Dependency_DownloadPage.Add('{#GameControllerDBDownloadLink}', 'gamecontrollerdb.txt', '');
@@ -337,7 +349,7 @@ begin
     Dependency_DownloadPage.Show;
     try
       Dependency_DownloadPage.Download;
-      FileCopy(ExpandConstant('{tmp}\gamecontrollerdb.txt'), DestFile, False);
+      CopyFile(ExpandConstant('{tmp}\gamecontrollerdb.txt'), DestFile, False);
       Log('gamecontrollerdb.txt downloaded and placed at: ' + DestFile);
     except
       Log('Failed to download gamecontrollerdb.txt: ' + GetExceptionMessage);
@@ -351,7 +363,12 @@ begin
   if CurPageID = wpFinished then
   begin  
     if Dependency_NeedRestart then 
+    begin
       WizardForm.RunList.Visible := False;
+      if USBipUpdateRequiresRestart then
+        WizardForm.FinishedLabel.Caption := 'The USBip update requires a restart before Handheld Companion can finish installing.' +
+          Chr(13) + Chr(10) + 'Please restart your computer when prompted; the installation will continue automatically at startup.';
+    end;
   end;
 end;
 
@@ -360,6 +377,9 @@ begin
   Result := True;  // allow wizard to proceed
   if CurPageID = SettingsPage.ID then
   begin
+    if USBipUpdateRequiresRestart then
+      Exit;
+
     if SettingsPage.Values[0] then
       CreateRestorePoint();
     if CoreIsolationPromptNeeded and SettingsPage.Values[1] then
@@ -428,13 +448,59 @@ begin
   Log('!!!Leave NeedRestart()!!!');
 end;
 
+function ScheduleUSBipUpdateAfterRestart: Boolean;
+var
+  CommandLine: String;
+begin
+  CommandLine := '"' + ExpandConstant('{srcexe}') +
+    '" /USBIPRESUME=1 /LANG="' + ExpandConstant('{language}') +
+    '" /DIR="' + WizardDirValue +
+    '" /GROUP="' + WizardGroupValue +
+    '" /TYPE="' + WizardSetupType(False) +
+    '" /COMPONENTS="' + WizardSelectedComponents(False) +
+    '" /TASKS="' + WizardSelectedTasks(False) + '"';
+  if WizardNoIcons then
+    CommandLine := CommandLine + ' /NOICONS';
+
+  Result := RegWriteStringValue(
+    HKA,
+    'SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce',
+    '!{#SetupSetting("AppName")} USBIP Update',
+    CommandLine
+  );
+
+  if Result then
+    Log('Scheduled Handheld Companion installation to resume after restart.')
+  else
+    Log('Failed to schedule Handheld Companion installation after restart.');
+end;
+
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 var
   PrepareToInstallResult: String;
-  USBipExecutable: String;
-  ResultCode: Integer;
 begin
   Log('***Enter PrepareToInstall()***');
+
+  if USBipUpdateRequiresRestart then
+  begin
+    if not DisableHandheldCompanionTask then
+    begin
+      Result := 'The HandheldCompanion scheduled task could not be disabled. The USBIP update was not started.';
+      Exit;
+    end;
+
+    if not ScheduleUSBipUpdateAfterRestart then
+    begin
+      Result := 'Handheld Companion could not be scheduled to continue after restart. The USBIP update was not started.';
+      Exit;
+    end;
+
+    Log('Legacy USBIP update deferred until after restart. No dependencies or application files were changed.');
+    Dependency_NeedRestart := True;
+    NeedsRestart := True;
+    Result := 'The installed USBip version must be updated after restarting Windows before Handheld Companion can be installed.';
+    Exit;
+  end;
 
   // Stop Handheld Companion before replacing dependencies and application files.
   if IsProcessRunning('{#MyAppExeName}') then
@@ -469,21 +535,8 @@ begin
     Dependency_DownloadPage.Hide;
   end;
 
-  // Stop USBip before its uninstaller replaces kernel drivers and services.
-  USBipExecutable := GetUSBipExecutablePath();
-  if USBipExecutable = '' then
-    Log('usbip.exe was not found in USBip InstallLocation or PATH; skipping detach')
-  else if Exec(USBipExecutable, 'detach -p 0', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
-    Log('usbip detach exit=' + IntToStr(ResultCode))
-  else
-    Log('Failed to launch usbip detach command from ' + USBipExecutable);
-
-  if Exec(ExpandConstant('{sys}\net.exe'), 'stop {#USBipService}', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
-    Log('usbipd stop exit=' + IntToStr(ResultCode))
-  else
-    Log('Failed to launch usbipd stop command');
-  Sleep(1000);
-  StopProcess('{#USBipProcess}');
+  if USBipUpdatePending then
+    TeardownUSBip;
 
   Log('Restart needed: ' + BoolToStr(NeedsRestart));
   PrepareToInstallResult := Dependency_PrepareToInstall(NeedsRestart);
@@ -522,20 +575,6 @@ begin
     if not(keepHidhideCheckbox.Checked) then
       uninstallHidHide();
 
-    if not(keepVigemCheckbox.Checked) then
-    begin
-      if ShellExec('', 'msiexec.exe', '/X{966606F3-2745-49E9-BF15-5C3EAA4E9077}', '', SW_SHOW, ewWaitUntilTerminated, resultCode) then
-      begin
-        Log('Successfully executed Vigem uninstaller');
-        if resultCode = 0 then
-          Log('Vigem uninstaller finished successfully')
-        else
-          Log('Vigem uninstaller failed with exit code ' + IntToStr(resultCode));
-      end
-      else
-        Log('Failed to execute Vigem uninstaller');
-    end;
-
     if deleteSettingsCheckbox.Checked then
       if DirExists(ExpandConstant('{localappdata}\{#MyBuildId}')) then
         DelTree(ExpandConstant('{localappdata}\{#MyBuildId}'), True, True, True);
@@ -545,8 +584,28 @@ end;
 function InitializeSetup: Boolean;
 var
   installedVersion: String;
-  resultCode: Integer;
 begin
+  USBipUpdateResumed := ExpandConstant('{param:USBIPRESUME|0}') = '1';
+  if USBipUpdateResumed then
+    Log('USBIP update resumed after restart.');
+
+#ifdef UseUSBip
+  if IsUSBipInstalled() and not USBipUpdateResumed then
+  begin
+    installedVersion := GetInstalledUSBipVersion();
+    if (installedVersion <> '') and
+       (compareVersions('{#NewUSBipVersion}', installedVersion, '.', '-') > 0) and
+       (compareVersions(installedVersion, '0.9.8.0', '.', '-') <= 0) then
+    begin
+      Log('{#USBipName} update requires a restart before installation. Installed: ' + installedVersion + ' New: {#NewUSBipVersion}');
+      USBipUpdatePending := True;
+      USBipUpdateRequiresRestart := True;
+      Result := True;
+      Exit;
+    end;
+  end;
+#endif
+
 #ifdef UseDotNet10
   if not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App {#NewDotNetVersion}') then
   begin
@@ -568,22 +627,6 @@ begin
   else
   begin
     Log('{#DirectXName} runtime already detected.');
-  end;
-#endif
-
-#ifdef UseViGem
-  if not IsViGemInstalled() then
-  begin
-    Dependency_AddViGem;
-  end
-  else
-  begin
-    installedVersion := RegGetInstalledVersion('{#ViGemName}');
-    if compareVersions('{#NewViGemVersion}', installedVersion, '.', '-') > 0 then
-    begin
-      Log('{#ViGemName} {#NewViGemVersion} needs update.');
-      Dependency_AddViGem;
-    end;
   end;
 #endif
 
@@ -626,19 +669,7 @@ begin
     if compareVersions('{#NewPawnIOVersion}', installedVersion, '.', '-') > 0 then
     begin
       Log('{#PawnIOName} update required. Installed: ' + installedVersion + ' New: {#NewPawnIOVersion}');
-      
-      if not FileExists(ExpandConstant('{tmp}\') + 'PawnIO_setup.exe') then
-        ExtractTemporaryFile('PawnIO_setup.exe');
-      
-      // Uninstall existing PawnIO
-      if Exec(ExpandConstant('{tmp}\PawnIO_setup.exe'), '-uninstall -silent', '', SW_SHOW, ewWaitUntilTerminated, resultCode) then
-      begin
-        Log('Previous PawnIO uninstalled. ExitCode=' + IntToStr(ResultCode));
-      end
-      else
-      begin
-        Log('Failed to launch PawnIO uninstall.');
-      end;
+      UninstallExistingPawnIO;
 
       // Install new version
       Dependency_AddPawnIO;
@@ -655,7 +686,7 @@ begin
     if compareVersions('{#NewUSBipVersion}', installedVersion, '.', '-') > 0 then
     begin
       Log('{#USBipName} update required. Installed: ' + installedVersion + ' New: {#NewUSBipVersion}');
-      TeardownUSBip;
+      USBipUpdatePending := True;
       Dependency_AddUSBip;
     end;
   end;
@@ -765,10 +796,9 @@ begin
         begin
           if Dependency_List[DependencyIndex].UninstallBeforeInstall then
           begin
-            if Dependency_List[DependencyIndex].UninstallDisplayName = '{#USBipName}' then
-              UninstallUSBip
-            else
-              UninstallMsiByDisplayName(Dependency_List[DependencyIndex].UninstallDisplayName);
+            UninstallMsiByDisplayName(Dependency_List[DependencyIndex].UninstallDisplayName);
+
+            Dependency_List[DependencyIndex].UninstallBeforeInstall := False;
           end;
 
           ResultCode := 0;
@@ -917,16 +947,6 @@ begin
     '', True, False, False, '');
 end;
 
-procedure Dependency_AddViGem;
-begin
-  Dependency_Add_With_Version('ViGEmBus_1.22.0_x64_x86_arm64.exe', '{#NewViGemVersion}', RegGetInstalledVersion('{#ViGemName}'),
-    '/quiet /norestart',
-    '{#ViGemName}',
-    '{#ViGemDownloadLink}',
-    '',
-    True, False, False, '');
-end;
-
 procedure Dependency_AddHideHide;
 begin
   Dependency_Add_With_Version('HidHide_1.5.230_' + Dependency_ArchSuffix + '.exe', '{#NewHidHideVersion}', RegGetInstalledVersion('{#HidHideName}'),
@@ -948,10 +968,13 @@ end;
 
 procedure Dependency_AddPawnIO;
 begin
+  if not FileExists(ExpandConstant('{tmp}\PawnIO_setup.exe')) then
+    ExtractTemporaryFile('PawnIO_setup.exe');
+
   Dependency_Add_With_Version('PawnIO_setup.exe', '{#NewPawnIOVersion}', RegGetInstalledVersion('{#PawnIOName}'),
     '-install -silent',
     '{#PawnIOName}',
-    '{#PawnIODownloadLink}',
+    '',
     '', True, True, False, '');
 end;
 
@@ -961,7 +984,7 @@ begin
     '/VERYSILENT /COMPONENTS=main,client /SUPPRESSMSGBOXES /NORESTART /SP-',
     '{#USBipName}',
     '{#USBipDownloadLink}',
-    '', True, True, True, '{#USBipName}');
+    '', True, True, False, '');
 end;
 
 function BoolToStr(Value: Boolean): String;

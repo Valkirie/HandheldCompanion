@@ -10,7 +10,7 @@ public class FPSWidget : IWidget
     private const int GraphMargin = 1;
     private const float GraphMinMs = 0f;
     private const float GraphMaxMs = 50f;
-    private const string GraphColor = "00FFFF";
+    private static string GraphColor => OverlayColors.ScaleColor("00FFFF");
 
     public void Build(OverlayEntry entry, short? level = null)
     {

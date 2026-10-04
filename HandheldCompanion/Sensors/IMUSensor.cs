@@ -52,11 +52,16 @@ public abstract class IMUSensor : IDisposable
             {
                 WindowsSensorHandle windowsSensor => windowsSensor.FriendlyName,
                 SerialUSBIMU serialSensor => serialSensor.USBDevice.Name,
-                Gyrometer gyrometer => GetUSBDevice(GetDeviceId(gyrometer.DeviceId))?.Name ?? string.Empty,
-                Accelerometer accelerometer => GetUSBDevice(GetDeviceId(accelerometer.DeviceId))?.Name ?? string.Empty,
+                Gyrometer gyrometer => GetDeviceName(gyrometer.DeviceId),
+                Accelerometer accelerometer => GetDeviceName(accelerometer.DeviceId),
                 _ => string.Empty
             };
         }
+    }
+
+    public static string GetDeviceName(string deviceId)
+    {
+        return GetUSBDevice(GetDeviceId(deviceId))?.Name ?? string.Empty;
     }
 
     public event ReadingUpdatedEventHandler? ReadingUpdated;

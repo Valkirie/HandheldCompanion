@@ -21,8 +21,8 @@ public class AYANEONEXT : IDevice
         // IMU matrices loaded from AYANEONEXT.json
 
         this.OEMChords.Add(new KeyboardChord("Custom key BIG",
-            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12],
-            [KeyCode.F12, KeyCode.LWin, KeyCode.RControlKey],
+            [KeyCode.RControl, KeyCode.LWin, KeyCode.F12],
+            [KeyCode.F12, KeyCode.LWin, KeyCode.RControl],
             false, ButtonFlags.OEM1
         ));
 

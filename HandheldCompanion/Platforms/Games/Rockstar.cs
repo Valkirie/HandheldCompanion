@@ -12,6 +12,8 @@ public class Rockstar : IPlatform
     // GameLib
     private RiotGamesLauncher rockstartLauncher = new(new LauncherOptions());
     public override string Name => rockstartLauncher.Name;
+    public override string PlatformColor => "#FCB131";
+    public override string PlatformGlyph => "\uF405";
     public override string InstallPath => rockstartLauncher.InstallDir;
     public override string ExecutablePath => rockstartLauncher.Executable;
     public override string ExecutableName => Path.GetFileName(ExecutablePath);

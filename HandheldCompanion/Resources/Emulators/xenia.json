@@ -1,0 +1,42 @@
+{
+  "Id": "xenia",
+  "Name": "Xenia",
+  "PlatformType": "Xenia",
+  "PlatformColor": "#107C10",
+  "PlatformGlyph": "\uF712",
+  "Executables": [
+    "xenia.exe",
+    "xenia-canary.exe"
+  ],
+  "ProductNames": [
+    "Xenia"
+  ],
+  "Configurations": [
+    {
+      "Root": "Documents",
+      "RelativePath": "Xenia",
+      "Files": [
+        "xenia.config.toml"
+      ],
+      "ContentKeys": []
+    }
+  ],
+  "PortableLocations": [
+    {
+      "Marker": "portable.txt",
+      "ConfigPath": "",
+      "Files": [
+        "xenia.config.toml"
+      ]
+    }
+  ],
+  "RomExtensions": [
+    ".iso",
+    ".xex"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

@@ -71,8 +71,8 @@ public class AOKZOEA1 : OneXAOKZOE
 
         // Keyboard
         OEMChords.Add(new KeyboardChord("Keyboard",
-            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.O],
-            [KeyCode.O, KeyCode.LWin, KeyCode.RControlKey],
+            [KeyCode.RControl, KeyCode.LWin, KeyCode.O],
+            [KeyCode.O, KeyCode.LWin, KeyCode.RControl],
             false, ButtonFlags.OEM2
         ));
 
@@ -85,8 +85,8 @@ public class AOKZOEA1 : OneXAOKZOE
 
         // Home + Keyboard
         OEMChords.Add(new KeyboardChord("Home + Keyboard",
-            [KeyCode.RAlt, KeyCode.RControlKey, KeyCode.Delete],
-            [KeyCode.Delete, KeyCode.RControlKey, KeyCode.RAlt],
+            [KeyCode.RAlt, KeyCode.RControl, KeyCode.Delete],
+            [KeyCode.Delete, KeyCode.RControl, KeyCode.RAlt],
             false, ButtonFlags.OEM4
         ));
 

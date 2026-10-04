@@ -12,7 +12,9 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
 
@@ -36,6 +38,7 @@ public class LayoutManager : IManager
     private Layout profileLayout = new();
     private Layout? defaultLayout = null;
     private Layout? desktopLayout = null;
+    private int layoutMode;
 
     private readonly ControllerState outputState = new();
     private const string desktopLayoutFile = "desktop";
@@ -210,17 +213,21 @@ public class LayoutManager : IManager
     {
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
+        layoutMode = ManagerFactory.settingsManager.GetInt("LayoutMode");
         bool desktopLayoutOnStart = ManagerFactory.settingsManager.GetBoolean("DesktopLayoutOnStart");
         if (desktopLayoutOnStart)
             ManagerFactory.settingsManager.SetProperty("LayoutMode", (int)LayoutModes.Desktop);
-        else if ((LayoutModes)ManagerFactory.settingsManager.GetInt("LayoutMode") == LayoutModes.Desktop)
+        else if ((LayoutModes)layoutMode == LayoutModes.Desktop)
             ManagerFactory.settingsManager.SetProperty("LayoutMode", (int)LayoutModes.Auto);
     }
 
     private void SettingsManager_SettingValueChanged(string? name, object? value, bool temporary, bool initializing)
     {
         if (name == "LayoutMode")
+        {
+            Volatile.Write(ref layoutMode, Convert.ToInt32(value));
             CheckProfileLayout();
+        }
     }
 
     private void DesktopLayout_Updated(Layout? layout)
@@ -249,7 +256,7 @@ public class LayoutManager : IManager
 
     private void LayoutTimer_Elapsed(object? sender, ElapsedEventArgs e)
     {
-        LayoutModes layoutMode = (LayoutModes)ManagerFactory.settingsManager.GetInt("LayoutMode");
+        LayoutModes layoutMode = (LayoutModes)Volatile.Read(ref this.layoutMode);
 
         Layout? target = layoutMode switch
         {
@@ -337,11 +344,11 @@ public class LayoutManager : IManager
     // Called from a non-UI thread by FileSystemWatcher
     private void LayoutWatcher_Template(object sender, FileSystemEventArgs e) => ProcessLayoutTemplate(e.FullPath);
 
-    private Layout? ProcessLayout(string fileName)
+    private Layout? ProcessLayout(string filePath)
     {
         try
         {
-            string json = File.ReadAllText(fileName);
+            string json = File.ReadAllText(filePath);
             return JsonConvert.DeserializeObject<Layout>(json, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
@@ -349,18 +356,18 @@ public class LayoutManager : IManager
         }
         catch (Exception ex)
         {
-            LogManager.LogError("Could not parse Layout {0}. {1}", fileName, ex.Message);
+            LogManager.LogError("Could not parse Layout {0}. {1}", filePath, ex.Message);
             return null;
         }
     }
 
-    private void ProcessLayoutTemplate(string fileName)
+    private void ProcessLayoutTemplate(string filePath)
     {
         LayoutTemplate? layoutTemplate = null;
 
         try
         {
-            string json = File.ReadAllText(fileName);
+            string json = File.ReadAllText(filePath);
             layoutTemplate = JsonConvert.DeserializeObject<LayoutTemplate>(json, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
@@ -368,12 +375,12 @@ public class LayoutManager : IManager
         }
         catch (Exception ex)
         {
-            LogManager.LogError("Could not parse LayoutTemplate {0}. {1}", fileName, ex.Message);
+            LogManager.LogError("Could not parse LayoutTemplate {0}. {1}", filePath, ex.Message);
         }
 
         if (layoutTemplate?.Layout is null)
         {
-            LogManager.LogError("Could not parse LayoutTemplate {0}", fileName);
+            LogManager.LogError("Could not parse LayoutTemplate {0}", filePath);
             return;
         }
 
@@ -680,7 +687,8 @@ public class LayoutManager : IManager
                         }
                 }
 
-                ApplyActionStateSideEffects(actions, i);
+                if (actions.Length > 1)
+                    ApplyActionStateSideEffects(actions, i);
             }
         }
     }
@@ -750,7 +758,8 @@ public class LayoutManager : IManager
                         break;
                 }
 
-                ApplyActionStateSideEffects(actions, i);
+                if (actions.Length > 1)
+                    ApplyActionStateSideEffects(actions, i);
             }
         }
     }
@@ -823,9 +832,6 @@ public class LayoutManager : IManager
     /// </summary>
     private static void ApplyActionStateSideEffects(IActions[] actions, int currentIndex)
     {
-        // No siblings — nothing to propagate (common case: one action per button)
-        if (actions.Length == 1) return;
-
         var current = actions[currentIndex];
         ActionState state = current.actionState;
 
@@ -894,7 +900,7 @@ public class LayoutManager : IManager
 
     public LayoutModes GetCurrentMode()
     {
-        LayoutModes layoutMode = (LayoutModes)ManagerFactory.settingsManager.GetInt("LayoutMode");
+        LayoutModes layoutMode = (LayoutModes)Volatile.Read(ref this.layoutMode);
         if (layoutMode != LayoutModes.Auto)
             return layoutMode;
 

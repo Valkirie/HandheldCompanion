@@ -1,0 +1,34 @@
+{
+  "Id": "flycast",
+  "Name": "Flycast",
+  "PlatformType": "Flycast",
+  "PlatformColor": "#455A64",
+  "PlatformGlyph": "\uED2F",
+  "Executables": [
+    "flycast.exe"
+  ],
+  "ProductNames": [
+    "Flycast"
+  ],
+  "Configurations": [
+    {
+      "Root": "AppData",
+      "RelativePath": "flycast",
+      "Files": [
+        "emu.cfg"
+      ],
+      "ContentKeys": []
+    }
+  ],
+  "PortableLocations": [],
+  "RomExtensions": [
+    ".gdi",
+    ".cdi",
+    ".chd"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

@@ -12,6 +12,8 @@ public class Epic : IPlatform
     // GameLib
     private EpicLauncher epicLauncher = new(new LauncherOptions());
     public override string Name => epicLauncher.Name;
+    public override string PlatformColor => "#2F2F2F";
+    public override string PlatformGlyph => "\uED80";
     public override string InstallPath => epicLauncher.InstallDir;
     public override string ExecutablePath => epicLauncher.Executable;
     public override string ExecutableName => Path.GetFileName(ExecutablePath);

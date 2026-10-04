@@ -29,21 +29,22 @@ namespace HandheldCompanion.Targets.Viiper
     /// </summary>
     internal static class UsbipCli
     {
-        private static string Host = "127.0.0.1";
-        private static int Port = 3241;
-
         private static readonly string[] ExePaths =
         {
             @"C:\Program Files\USBip\usbip.exe",
             @"C:\Program Files (x86)\USBip\usbip.exe",
         };
+        private static string Host = "127.0.0.1";
+        private static int Port = 3241;
 
-        private static string ResolveExe()
+        private static string? ResolveExe()
         {
-            foreach (var p in ExePaths)
+            foreach (string path in ExePaths)
             {
-                if (File.Exists(p)) return p;
+                if (File.Exists(path))
+                    return path;
             }
+
             return null;
         }
 
@@ -80,8 +81,8 @@ namespace HandheldCompanion.Targets.Viiper
         /// </summary>
         public static bool AttachExportedDevices(ushort vendorId, ushort productId)
         {
-            string exe = ResolveExe();
-            if (exe == null)
+            string? exe = ResolveExe();
+            if (string.IsNullOrEmpty(exe))
             {
                 LogManager.LogWarning("usbip.exe not found; cannot attach VIIPER device to the UDE bus.");
                 return false;
@@ -137,6 +138,9 @@ namespace HandheldCompanion.Targets.Viiper
                         }
                     }
                     LogManager.LogInformation("usbip: exported={0}, newly attached={1}.", exported.Count, attachedNow);
+                    if (vendorId == 0 || productId == 0)
+                        return true;
+
                     return WaitForPnpDevice(vendorId, productId);
                 }
                 LogManager.LogWarning("usbip: libviiper exported no devices after add (attach skipped).");
@@ -221,8 +225,8 @@ namespace HandheldCompanion.Targets.Viiper
         /// loopback spelling), including duplicates. Best-effort.</summary>
         public static void DetachAll()
         {
-            string exe = ResolveExe();
-            if (exe == null) return;
+            string? exe = ResolveExe();
+            if (string.IsNullOrEmpty(exe)) return;
 
             string output = Run(exe, $"-t {Port} port");
             if (string.IsNullOrEmpty(output)) return;

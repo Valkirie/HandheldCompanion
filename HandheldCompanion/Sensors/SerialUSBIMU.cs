@@ -25,11 +25,11 @@ public class SerialUSBIMU
 
     private static readonly SerialUSBIMU serial = new();
 
-    public static Dictionary<KeyValuePair<string, string>, SerialPortEx> vendors = new()
+    private static readonly Dictionary<(int VendorId, int ProductId), SerialPortEx> supportedDevices = new()
     {
         // USB Gyro v2
         {
-            new KeyValuePair<string, string>("1A86", "7523"),
+            (0x1A86, 0x7523),
             new SerialPortEx
             {
                 BaudRate = 115200, DataBits = 8, Parity = Parity.None, StopBits = StopBits.One,
@@ -56,6 +56,11 @@ public class SerialUSBIMU
 
     public event ReadingChangedEventHandler? ReadingChanged;
 
+    internal static bool IsSupportedDevice(int vendorId, int productId)
+    {
+        return supportedDevices.ContainsKey((vendorId, productId));
+    }
+
     public static SerialUSBIMU? GetCurrent()
     {
         if (serial.port.IsOpen)
@@ -68,16 +73,19 @@ public class SerialUSBIMU
         List<USBDeviceInfo> devices = GetSerialDevices();
 
         // Iterate through each sensor vendor
-        foreach (KeyValuePair<KeyValuePair<string, string>, SerialPortEx> sensor in vendors)
+        foreach (var sensor in supportedDevices)
         {
             // Skip the serial port name if it matches a COM port already in use
             if (SerialPortNamesInUse.Contains(sensor.Value.PortName))
                 continue;
 
-            string VendorID = sensor.Key.Key;
-            string ProductID = sensor.Key.Value;
+            int vendorId = sensor.Key.VendorId;
+            int productId = sensor.Key.ProductId;
 
-            deviceInfo = devices.FirstOrDefault(a => a.VID == VendorID && a.PID == ProductID);
+            deviceInfo = devices.FirstOrDefault(a =>
+                int.TryParse(a.VID, System.Globalization.NumberStyles.HexNumber, null, out int deviceVendorId) &&
+                int.TryParse(a.PID, System.Globalization.NumberStyles.HexNumber, null, out int deviceProductId) &&
+                deviceVendorId == vendorId && deviceProductId == productId);
             if (deviceInfo is not null)
             {
                 serial.USBDevice = deviceInfo;
@@ -147,7 +155,7 @@ public class SerialUSBIMU
                 tentative++;
                 LogManager.LogError("{0} could not connect. Attempt: {1} out of {2}", serial.ToString(), tentative,
                     maxTentative);
-                await Task.Delay(500).ConfigureAwait(false); // Avoid blocking the synchronization context
+                await Task.Delay(500).ConfigureAwait(false); // Avoid capturing the synchronization context
             }
     }
 
@@ -236,7 +244,7 @@ public class SerialUSBIMU
                     return;
                 }
 
-                await Task.Delay(100).ConfigureAwait(false); // Avoid blocking the synchronization context
+                await Task.Delay(100);
 
                 // Address write function code register = 0xA4, 0x03
                 // Register to read/write save settings 0x05

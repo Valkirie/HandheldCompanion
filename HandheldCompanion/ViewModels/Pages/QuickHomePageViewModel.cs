@@ -1,5 +1,6 @@
 ﻿using GongSolutions.Wpf.DragDrop;
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using System;
 using System.Collections.ObjectModel;
@@ -136,57 +137,65 @@ namespace HandheldCompanion.ViewModels
 
         private void HotkeysManager_Updated(Hotkey hotkey)
         {
-            if (hotkey.IsInternal)
-                return;
-
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
+            UIHelper.TryBeginInvoke(() =>
             {
-                HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
-                if (foundHotkey is null)
+                if (hotkey.IsInternal)
+                    return;
+
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
                 {
-                    if (hotkey.IsPinned)
+                    HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
+                    if (foundHotkey is null)
                     {
-                        int index = hotkey.PinIndex;
-                        if (index > HotkeysList.Count || index < 0)
-                            index = HotkeysList.Count;
-                        HotkeysList.Insert(index, new HotkeyViewModel(hotkey, true));
+                        if (hotkey.IsPinned)
+                        {
+                            int index = hotkey.PinIndex;
+                            if (index > HotkeysList.Count || index < 0)
+                                index = HotkeysList.Count;
+                            HotkeysList.Insert(index, new HotkeyViewModel(hotkey, true));
+                        }
+                    }
+                    else if (hotkey.IsPinned)
+                    {
+                        foundHotkey.Hotkey = hotkey;
+                    }
+                    else
+                    {
+                        HotkeysList.Remove(foundHotkey);
+                        foundHotkey.Dispose();
                     }
                 }
-                else
+                finally
                 {
-                    if (hotkey.IsPinned)
-                        foundHotkey.Hotkey = hotkey;
-                    else
-                        HotkeysManager_Deleted(hotkey);
+                    Monitor.Exit(_collectionLock);
                 }
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
+            });
         }
 
         private void HotkeysManager_Deleted(Hotkey hotkey)
         {
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
+            UIHelper.TryBeginInvoke(() =>
+            {
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
 
-            try
-            {
-                HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
-                if (foundHotkey is not null)
+                try
                 {
-                    HotkeysList.Remove(foundHotkey);
-                    foundHotkey.Dispose();
+                    HotkeyViewModel? foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
+                    if (foundHotkey is not null)
+                    {
+                        HotkeysList.Remove(foundHotkey);
+                        foundHotkey.Dispose();
+                    }
                 }
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
+                }
+            });
         }
 
         public override void Dispose()

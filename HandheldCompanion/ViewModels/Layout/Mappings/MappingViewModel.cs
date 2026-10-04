@@ -609,6 +609,28 @@ namespace HandheldCompanion.ViewModels
 
         #region Haptic properties
 
+        public virtual bool IsContinuousHaptics => Action switch
+        {
+            MouseActions mouse => mouse.MouseType is MouseActionsType.Move or MouseActionsType.Scroll or MouseActionsType.ScrollUp or MouseActionsType.ScrollDown,
+            TouchpadActions touchpad => touchpad.TargetType == TouchpadTargetType.Axis,
+            _ => false,
+        };
+
+        public bool IsButtonHaptics => !IsContinuousHaptics;
+
+        public virtual int ContinuousHapticsIndex
+        {
+            get => Action is ContinuousActions continuousAction && continuousAction.ContinuousHaptics ? 1 : 0;
+            set
+            {
+                if (Action is ContinuousActions continuousAction && value != ContinuousHapticsIndex)
+                {
+                    continuousAction.ContinuousHaptics = value != 0;
+                    OnPropertyChanged(nameof(ContinuousHapticsIndex));
+                }
+            }
+        }
+
         // Haptic properties - default to 0
         public virtual int HapticModeIndex
         {
@@ -835,6 +857,8 @@ namespace HandheldCompanion.ViewModels
                     base.OnPropertyChanged(nameof(TouchpadAxisActionTypeVisibility));
                     base.OnPropertyChanged(nameof(Axis2ButtonVisibility));
                     base.OnPropertyChanged(nameof(Trigger2ButtonVisibility));
+                    base.OnPropertyChanged(nameof(IsContinuousHaptics));
+                    base.OnPropertyChanged(nameof(IsButtonHaptics));
                     break;
             }
 

@@ -1,11 +1,14 @@
 ﻿using HandheldCompanion.Managers;
+using System.ComponentModel;
 using System.Windows.Media.Imaging;
 using static HandheldCompanion.Managers.LibraryManager;
 
 namespace HandheldCompanion.ViewModels.Misc
 {
-    public class LibraryVisualViewModel
+    public class LibraryVisualViewModel : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         private LibraryEntryViewModel LibraryEntry { get; set; }
         public long Id { get; set; }
         public string Extension { get; set; }
@@ -18,6 +21,11 @@ namespace HandheldCompanion.ViewModels.Misc
                 long entryId = LibraryEntry.Id;
                 return ManagerFactory.libraryManager.GetGameArt(entryId, LibraryType.thumbnails, Id, ExtensionThumbnail);
             }
+        }
+
+        public void RefreshImage()
+        {
+            PropertyChanged?.Invoke(this, new(nameof(Image)));
         }
 
         public LibraryVisualViewModel(LibraryEntryViewModel libraryEntry, long id, string extFull, string extThumb = "")

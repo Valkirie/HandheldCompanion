@@ -14,6 +14,11 @@ namespace HandheldCompanion.Platforms.Games;
 
 public class MicrosoftStore : IPlatform
 {
+    public override string PlatformColor => "#107C10";
+    public override string PlatformGlyph => "\uE008";
+    public override string PlatformFont => "PromptFont";
+    public override double PlatformFontSize => 22;
+
     private static readonly string WindowsStorePackageName = "Microsoft.WindowsStore_";
     private static readonly string[] IgnoredGameNameKeywords =
     [

@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
+    xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
@@ -18,6 +19,8 @@
     d:DesignWidth="640"
     IsEnabled="{Binding PerformanceManagerEnabled}"
     KeepAlive="True"
+    Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded"
     mc:Ignorable="d">
 
     <ikw:SimpleStackPanel Spacing="8">
@@ -408,7 +411,12 @@
             </ui:SettingsCard>
         </ikw:SimpleStackPanel>
 
-        <ikw:SimpleStackPanel IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Spacing="3">
+        <!--  GPU settings (Intel)  -->
+        <ikw:SimpleStackPanel
+            d:Visibility="Visible"
+            IsEnabled="{Binding CanChangePreset, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+            Spacing="8"
+            Visibility="{Binding IsIntelCPU, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="GPU settings" />
 
             <!--  Intel Endurance Gaming  -->
@@ -437,6 +445,128 @@
                     </ui:SettingsCard>
                 </ui:SettingsExpander.Items>
             </ui:SettingsExpander>
+        </ikw:SimpleStackPanel>
+
+        <!--  Fan settings  -->
+        <ikw:SimpleStackPanel Spacing="8">
+            <DockPanel>
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="{l:Static resx:Resources.ProfilesPage_FanSettings}" />
+                <TextBlock
+                    Margin="4,0,0,0"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                    Text="Fan mode, speed and custom curve" />
+            </DockPanel>
+
+            <ikw:SimpleStackPanel Spacing="3">
+                <!--  Fan mode  -->
+                <ui:SettingsCard Description="{l:Static resx:Resources.PerformancePage_FanMode_Desc}" Header="{l:Static resx:Resources.PerformancePage_FanMode_Title}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xecad;" />
+                    </ui:SettingsCard.HeaderIcon>
+
+                    <ComboBox
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        SelectedIndex="{Binding FanMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBoxItem Content="{l:Static resx:Resources.PerformancePage_FanMode_Hardware}" />
+                        <ComboBoxItem Content="{l:Static resx:Resources.PerformancePage_FanMode_Software}" IsEnabled="{Binding SupportsSoftwareFanMode}" />
+                    </ComboBox>
+                </ui:SettingsCard>
+
+                <!--  Graph and presets for custom fan curves  -->
+                <Border
+                    Padding="15,12,12,12"
+                    d:Visibility="Visible"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="{Binding FanMode, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1}">
+                    <ikw:SimpleStackPanel Spacing="12">
+                        <lvc:CartesianChart
+                            Name="lvc"
+                            Height="400"
+                            DataTooltip="{x:Null}"
+                            DisableAnimations="True"
+                            Zoom="None">
+                            <lvc:CartesianChart.Series>
+                                <lvc:LineSeries
+                                    Name="lvLineSeries"
+                                    Fill="{DynamicResource ExpanderHeaderBackground}"
+                                    LineSmoothness="0"
+                                    PointGeometry="{x:Static lvc:DefaultGeometries.Circle}"
+                                    PointGeometrySize="30"
+                                    Stroke="{DynamicResource AccentAAFillColorDefaultBrush}"
+                                    StrokeThickness="4"
+                                    Values="20,20,20,30,40,50,70,80,90,100,100" />
+                            </lvc:CartesianChart.Series>
+                            <lvc:CartesianChart.AxisY>
+                                <lvc:Axis
+                                    Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+                                    LabelFormatter="{Binding Formatter}"
+                                    MaxValue="100"
+                                    MinValue="0">
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Step="10" Stroke="{DynamicResource ExpanderHeaderBackground}" />
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
+                            </lvc:CartesianChart.AxisY>
+                            <lvc:CartesianChart.AxisX>
+                                <lvc:Axis
+                                    Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+                                    LabelFormatter="{Binding TempTickFormatter}"
+                                    MaxValue="10"
+                                    MinValue="0">
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Step="1" Stroke="{DynamicResource ExpanderHeaderBackground}" />
+                                    </lvc:Axis.Separator>
+                                    <lvc:Axis.Sections>
+                                        <lvc:AxisSection
+                                            DataLabel="True"
+                                            DataLabelForeground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+                                            Stroke="{DynamicResource SystemControlForegroundAccentBrush}"
+                                            StrokeDashArray="2,2"
+                                            StrokeThickness="2"
+                                            Value="{Binding CpuTempX}" />
+                                    </lvc:Axis.Sections>
+                                </lvc:Axis>
+                                <lvc:Axis
+                                    Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+                                    LabelFormatter="{Binding CpuXAxisFormatter}"
+                                    ShowLabels="True">
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Step="0.01" StrokeThickness="0" />
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
+                            </lvc:CartesianChart.AxisX>
+                        </lvc:CartesianChart>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3.33*" />
+                                <ColumnDefinition Width="3.33*" />
+                                <ColumnDefinition Width="3.33*" />
+                            </Grid.ColumnDefinitions>
+                            <Button
+                                HorizontalAlignment="Center"
+                                Command="{Binding FanPresetSilentCommand}"
+                                Content="{l:Static resx:Resources.PerformancePage_FanMode_Preset_Quiet}" />
+                            <Button
+                                Grid.Column="1"
+                                HorizontalAlignment="Center"
+                                Command="{Binding FanPresetPerformanceCommand}"
+                                Content="{l:Static resx:Resources.PerformancePage_FanMode_Preset_Default}" />
+                            <Button
+                                Grid.Column="2"
+                                HorizontalAlignment="Center"
+                                Command="{Binding FanPresetTurboCommand}"
+                                Content="{l:Static resx:Resources.PerformancePage_FanMode_Preset_Aggressive}" />
+                        </Grid>
+                    </ikw:SimpleStackPanel>
+                </Border>
+            </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
 
         <!--  Delete power profile  -->

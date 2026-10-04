@@ -25,12 +25,12 @@ namespace HandheldCompanion.Helpers
                 try
                 {
                     var json = File.ReadAllText(filePath);
-                    var config = JsonSerializer.Deserialize<DeviceConfiguration>(json);
-                    if (config != null)
+                    var configuration = JsonSerializer.Deserialize<DeviceConfiguration>(json);
+                    if (configuration != null)
                     {
-                        config.DeviceClass = originalDeviceClassName;
+                        configuration.DeviceClass = originalDeviceClassName;
                         LogManager.LogDebug($"Device configuration loaded: {originalDeviceClassName}");
-                        return config;
+                        return configuration;
                     }
                 }
                 catch (Exception ex)
@@ -58,22 +58,22 @@ namespace HandheldCompanion.Helpers
             return new DeviceConfiguration { DeviceClass = originalDeviceClassName };
         }
 
-        public static void SaveConfiguration(DeviceConfiguration config)
+        public static void SaveConfiguration(DeviceConfiguration configuration)
         {
-            var filePath = Path.Combine(ConfigsDirectory, $"{config.DeviceClass}.json");
+            var filePath = Path.Combine(ConfigsDirectory, $"{configuration.DeviceClass}.json");
 
             try
             {
                 Directory.CreateDirectory(ConfigsDirectory);
                 var options = new JsonSerializerOptions { WriteIndented = true };
-                var json = JsonSerializer.Serialize(config, options);
+                var json = JsonSerializer.Serialize(configuration, options);
                 File.WriteAllText(filePath, json);
 
-                LogManager.LogDebug($"Device configuration saved: {config.DeviceClass}");
+                LogManager.LogDebug($"Device configuration saved: {configuration.DeviceClass}");
             }
             catch (Exception ex)
             {
-                LogManager.LogError($"Failed to save device config {config.DeviceClass}: {ex.Message}");
+                LogManager.LogError($"Failed to save device config {configuration.DeviceClass}: {ex.Message}");
             }
         }
     }

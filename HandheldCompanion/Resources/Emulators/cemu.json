@@ -1,0 +1,50 @@
+{
+  "Id": "cemu",
+  "Name": "Cemu",
+  "PlatformType": "Cemu",
+  "PlatformColor": "#00A3E0",
+  "PlatformGlyph": "\uF789",
+  "Executables": [
+    "Cemu.exe"
+  ],
+  "ProductNames": [
+    "Cemu"
+  ],
+  "Configurations": [
+    {
+      "Root": "AppData",
+      "RelativePath": "Cemu",
+      "Files": [
+        "settings.xml"
+      ],
+      "ContentKeys": [
+        "GamePaths"
+      ]
+    }
+  ],
+  "PortableLocations": [
+    {
+      "Marker": "portable",
+      "ConfigPath": "portable",
+      "Files": [
+        "settings.xml"
+      ]
+    }
+  ],
+  "RomExtensions": [
+    ".wud",
+    ".wux",
+    ".wua",
+    ".rpx"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "Template",
+  "ArgumentTemplate": "-g {rom}",
+  "RomMetadata": {
+    "RelativePath": "..\\meta\\meta.xml",
+    "ElementName": "longname_en",
+    "RelativePaths": [],
+    "SearchParentDirectories": true
+  },
+  "DirectoryRoms": false
+}

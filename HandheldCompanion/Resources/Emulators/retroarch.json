@@ -1,0 +1,70 @@
+{
+  "Id": "retroarch",
+  "Name": "RetroArch",
+  "PlatformType": "RetroArch",
+  "PlatformColor": "#6A1B9A",
+  "PlatformGlyph": "\uF3E7",
+  "Executables": [
+    "retroarch.exe"
+  ],
+  "ProductNames": [
+    "RetroArch"
+  ],
+  "Configurations": [
+    {
+      "Root": "ExecutableDirectory",
+      "RelativePath": "",
+      "Files": [
+        "retroarch.cfg"
+      ],
+      "ContentKeys": [
+        "content_directory",
+        "system_directory",
+        "playlist_directory",
+        "savefile_directory"
+      ]
+    },
+    {
+      "Root": "AppData",
+      "RelativePath": "",
+      "Files": [
+        "retroarch.cfg"
+      ],
+      "ContentKeys": [
+        "content_directory",
+        "system_directory",
+        "playlist_directory",
+        "savefile_directory"
+      ]
+    },
+    {
+      "Root": "AppData",
+      "RelativePath": "RetroArch",
+      "Files": [
+        "retroarch.cfg"
+      ],
+      "ContentKeys": [
+        "content_directory",
+        "system_directory",
+        "playlist_directory",
+        "savefile_directory"
+      ]
+    }
+  ],
+  "PortableLocations": [],
+  "RomExtensions": [
+    ".zip",
+    ".7z",
+    ".nes",
+    ".sfc",
+    ".gb",
+    ".gbc",
+    ".gba",
+    ".iso"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "Unsupported",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

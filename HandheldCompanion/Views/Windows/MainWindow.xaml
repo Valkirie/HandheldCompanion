@@ -19,7 +19,7 @@
     Width="1280"
     Height="720"
     MinWidth="640"
-    MinHeight="480"
+    MinHeight="560"
     d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
     d:Visibility="Visible"
     ui:ThemeManager.IsThemeAware="True"
@@ -38,6 +38,27 @@
     WindowStartupLocation="CenterScreen"
     WindowState="Minimized"
     mc:Ignorable="d">
+
+    <common:GamepadWindow.Resources>
+        <Style
+            x:Key="TransparentButtonStyle"
+            BasedOn="{StaticResource {x:Type Button}}"
+            TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </common:GamepadWindow.Resources>
 
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo x:Name="TaskbarItem" />
@@ -185,19 +206,23 @@
             </Border>
         </ui:ContentDialog>
 
-        <controls:AdaptiveNavigationView
+        <ui:NavigationView
             x:Name="navView"
             BackRequested="navView_BackRequested"
             IsBackButtonVisible="Collapsed"
             IsBackEnabled="{Binding ElementName=ContentFrame, Path=CanGoBack, Mode=OneWay}"
+            IsFooterSeparatorVisible="True"
+            IsPaneOpen="True"
+            IsPaneToggleButtonVisible="True"
             IsSettingsVisible="False"
+            IsTitleBarAutoPaddingEnabled="False"
             ItemInvoked="navView_ItemInvoked"
             Loaded="navView_Loaded"
-            PaneDisplayMode="Top"
-            SelectionFollowsFocus="Enabled"
-            TopNavItemsAlignment="Left">
+            OpenPaneLength="250"
+            PaneDisplayMode="Left"
+            SelectionFollowsFocus="Disabled">
 
-            <controls:AdaptiveNavigationView.Resources>
+            <ui:NavigationView.Resources>
                 <StaticResource x:Key="TopNavigationViewItemBackgroundPointerOver" ResourceKey="NavigationViewItemBackgroundPointerOver" />
                 <StaticResource x:Key="TopNavigationViewItemBackgroundPressed" ResourceKey="NavigationViewItemBackgroundPressed" />
                 <StaticResource x:Key="TopNavigationViewItemBackgroundSelected" ResourceKey="NavigationViewItemBackgroundSelected" />
@@ -208,15 +233,15 @@
                 <StaticResource x:Key="TopNavigationViewItemForegroundSelected" ResourceKey="NavigationViewSelectionIndicatorForeground" />
                 <StaticResource x:Key="TopNavigationViewItemForegroundSelectedPointerOver" ResourceKey="NavigationViewSelectionIndicatorForeground" />
                 <StaticResource x:Key="TopNavigationViewItemForegroundSelectedPressed" ResourceKey="NavigationViewSelectionIndicatorForeground" />
-            </controls:AdaptiveNavigationView.Resources>
+            </ui:NavigationView.Resources>
 
-            <controls:AdaptiveNavigationView.MenuItemContainerStyle>
+            <ui:NavigationView.MenuItemContainerStyle>
                 <Style TargetType="ui:NavigationViewItem">
                     <Setter Property="Background" Value="{DynamicResource NavigationViewItemBackground}" />
                     <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
                     <Setter Property="IsTabStop" Value="True" />
                 </Style>
-            </controls:AdaptiveNavigationView.MenuItemContainerStyle>
+            </ui:NavigationView.MenuItemContainerStyle>
 
             <ui:NavigationView.HeaderTemplate>
                 <DataTemplate />
@@ -320,11 +345,26 @@
                 </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>
 
+            <ui:NavigationView.AutoSuggestBox>
+                <ui:AutoSuggestBox
+                    x:Name="ProfileSearchBox"
+                    AutomationProperties.Name="Search"
+                    ItemsSource="{Binding ProfileSearchResults}"
+                    PlaceholderText="Search profiles..."
+                    SuggestionChosen="ProfileSearchBox_SuggestionChosen"
+                    Text="{Binding ProfileSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    TextMemberPath="Name">
+                    <ui:AutoSuggestBox.QueryIcon>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Search}" />
+                    </ui:AutoSuggestBox.QueryIcon>
+                </ui:AutoSuggestBox>
+            </ui:NavigationView.AutoSuggestBox>
+
             <ui:NavigationView.FooterMenuItems>
                 <!--  Notifications icon  -->
                 <ui:NavigationViewItem
                     Name="navNotifications"
-                    AutomationProperties.Name="{l:Static resx:Resources.MainWindow_navNotifications}"
+                    Content="{l:Static resx:Resources.MainWindow_navNotifications}"
                     Tag="NotificationsPage">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xea8f;" />
@@ -340,7 +380,7 @@
                 <!--  Settings  -->
                 <ui:NavigationViewItem
                     Name="navSettings"
-                    AutomationProperties.Name="{l:Static resx:Resources.MainWindow_Settings}"
+                    Content="{l:Static resx:Resources.Settings}"
                     Tag="SettingsPage">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Settings}" />
@@ -350,7 +390,7 @@
                 <!--  About icon  -->
                 <ui:NavigationViewItem
                     Name="navAbout"
-                    AutomationProperties.Name="{l:Static resx:Resources.MainWindow_navAbout}"
+                    Content="{l:Static resx:Resources.MainWindow_navAbout}"
                     Tag="AboutPage">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
@@ -366,24 +406,93 @@
                     <ui:Frame
                         Name="ContentFrame"
                         Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
-                        MaxWidth="1900"
-                        Padding="26,0,26,26"
                         HorizontalAlignment="Center" />
                 </ui:ScrollViewerEx>
             </ui:NavigationView.Content>
-        </controls:AdaptiveNavigationView>
+        </ui:NavigationView>
 
+        <!--  Bottom bar  -->
         <Border
             Grid.Row="1"
-            Background="{DynamicResource NavigationViewContentBackground}"
+            Background="{DynamicResource NavigationViewTopPaneBackground}"
             BorderBrush="{DynamicResource NavigationViewContentGridBorderBrush}"
             BorderThickness="{DynamicResource NavigationViewContentGridBorderThickness}">
-            <Grid Margin="24,0">
-                <ikw:SimpleStackPanel
+
+            <Grid>
+                <StackPanel
+                    Margin="0,0,24,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+                    <!--  Navigation pane  -->
+                    <Button
+                        Name="GamepadUINavigation"
+                        Height="42"
+                        d:Visibility="Visible"
+                        Click="GamepadUINavigation_Click"
+                        Focusable="False"
+                        Style="{StaticResource TransparentButtonStyle}"
+                        Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal">
+                            <Grid>
+                                <ui:FontIcon
+                                    VerticalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontSize="18"
+                                    Foreground="{DynamicResource NavigationViewDefaultPaneBackground}"
+                                    Glyph="&#xe91f;" />
+                                <ui:FontIcon
+                                    Name="GamepadUINavigationIcon"
+                                    VerticalAlignment="Center"
+                                    FontFamily="PromptFont"
+                                    FontSize="28" />
+                            </Grid>
+                            <TextBlock
+                                Name="GamepadUINavigationDesc"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource BaseTextBlockStyle}"
+                                Text="Menu" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <StackPanel
+                    Margin="24,0,12,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
-                    Orientation="Horizontal"
-                    Spacing="8">
+                    Orientation="Horizontal">
+                    <!--  Options  -->
+                    <Button
+                        x:Name="GamepadUIOptions"
+                        Height="42"
+                        d:Visibility="Visible"
+                        Click="GamepadUIOptions_Click"
+                        Focusable="False"
+                        Style="{StaticResource TransparentButtonStyle}"
+                        Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal">
+                            <Grid>
+                                <ui:FontIcon
+                                    VerticalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontSize="18"
+                                    Foreground="{DynamicResource NavigationViewDefaultPaneBackground}"
+                                    Glyph="&#xe91f;" />
+                                <ui:FontIcon
+                                    x:Name="GamepadUIOptionsIcon"
+                                    VerticalAlignment="Center"
+                                    FontFamily="PromptFont"
+                                    FontSize="28" />
+                            </Grid>
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource BaseTextBlockStyle}"
+                                Text="Options" />
+                        </StackPanel>
+                    </Button>
+
                     <!--  Select  -->
                     <Button
                         Name="GamepadUISelect"
@@ -391,6 +500,7 @@
                         d:Visibility="Visible"
                         Click="GamepadUISelect_Click"
                         Focusable="False"
+                        Style="{StaticResource TransparentButtonStyle}"
                         Visibility="Collapsed">
                         <StackPanel Orientation="Horizontal">
                             <Grid>
@@ -423,6 +533,7 @@
                         d:Visibility="Visible"
                         Click="GamepadUIBack_Click"
                         Focusable="False"
+                        Style="{StaticResource TransparentButtonStyle}"
                         Visibility="Collapsed">
                         <StackPanel Orientation="Horizontal">
                             <Grid>
@@ -455,6 +566,7 @@
                         d:Visibility="Visible"
                         Click="GamepadUIToggle_Click"
                         Focusable="False"
+                        Style="{StaticResource TransparentButtonStyle}"
                         Visibility="Collapsed">
                         <StackPanel Orientation="Horizontal">
                             <Grid>
@@ -485,6 +597,7 @@
                         d:Visibility="Visible"
                         Click="GamepadUIMore_Click"
                         Focusable="False"
+                        Style="{StaticResource TransparentButtonStyle}"
                         Visibility="Collapsed">
                         <StackPanel Orientation="Horizontal">
                             <Grid>
@@ -507,37 +620,7 @@
                                 Style="{StaticResource BaseTextBlockStyle}" />
                         </StackPanel>
                     </Button>
-
-                    <!--  Like (Back button for Toggle Like)  -->
-                    <Button
-                        Name="GamepadUILike"
-                        Height="42"
-                        d:Visibility="Visible"
-                        Click="GamepadUILike_Click"
-                        Focusable="False"
-                        Visibility="Collapsed">
-                        <StackPanel Orientation="Horizontal">
-                            <Grid>
-                                <ui:FontIcon
-                                    VerticalAlignment="Center"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    FontSize="18"
-                                    Foreground="{DynamicResource NavigationViewDefaultPaneBackground}"
-                                    Glyph="&#xe91f;" />
-                                <ui:FontIcon
-                                    Name="GamepadUILikeIcon"
-                                    VerticalAlignment="Center"
-                                    FontFamily="PromptFont"
-                                    FontSize="28" />
-                            </Grid>
-                            <TextBlock
-                                Name="GamepadUILikeDesc"
-                                VerticalAlignment="Center"
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource BaseTextBlockStyle}" />
-                        </StackPanel>
-                    </Button>
-                </ikw:SimpleStackPanel>
+                </StackPanel>
             </Grid>
         </Border>
     </Grid>

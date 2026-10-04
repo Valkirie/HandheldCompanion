@@ -1,0 +1,814 @@
+using HandheldCompanion.Managers;
+using IWshRuntimeLibrary;
+using Microsoft.Win32;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
+using File = System.IO.File;
+
+namespace HandheldCompanion.Platforms.Discovery;
+
+public static class EmulatorDiscoveryService
+{
+    // Discovers installations and ROMs for all definitions belonging to the requested platform.
+    public static IEnumerable<DiscoveredGame> Discover(GamePlatform platform = GamePlatform.All)
+    {
+        return Discover(EmulatorDefinitions.All.Where(definition => platform.HasFlag(definition.PlatformType)));
+    }
+
+    // Discovers only the installation and ROMs described by one emulator definition.
+    public static IEnumerable<DiscoveredGame> DiscoverByDefinition(string id)
+    {
+        return Discover(EmulatorDefinitions.All.Where(definition =>
+            string.Equals(definition.Id, id, StringComparison.OrdinalIgnoreCase)));
+    }
+
+    // Converts discovered emulator installations and their content folders into library games.
+    private static IEnumerable<DiscoveredGame> Discover(IEnumerable<EmulatorDefinition> definitions)
+    {
+        foreach (EmulatorDefinition definition in definitions)
+        {
+            foreach (EmulatorInstallation installation in DiscoverInstallations(definition))
+            {
+                yield return new DiscoveredGame(definition.Name, installation.ExecutablePath, installation.ExecutablePath, string.Empty, definition.PlatformType, true, installation.ExecutablePaths);
+
+                foreach (string contentPath in installation.ContentPaths)
+                    foreach (string rom in EnumerateRoms(contentPath, definition))
+                    {
+                        string? arguments = BuildArguments(definition, rom);
+                        if (arguments is not null)
+                        {
+                            string fallbackName = Path.GetFileNameWithoutExtension(rom);
+                            yield return new DiscoveredGame(ReadRomName(definition, rom) ?? fallbackName, rom, installation.ExecutablePath, arguments, definition.PlatformType);
+                        }
+                    }
+            }
+        }
+    }
+
+    // Finds executable instances, then resolves their configuration files and ROM content paths.
+    private static IEnumerable<EmulatorInstallation> DiscoverInstallations(EmulatorDefinition definition)
+    {
+        HashSet<string> executablePaths = new(StringComparer.OrdinalIgnoreCase);
+        List<string> discoveredExecutables = [];
+
+        foreach (string executable in definition.Executables)
+        {
+            // Existing non-default profiles are useful candidates because the user may have launched the emulator from a custom location.
+            foreach (string candidate in ManagerFactory.profileManager.GetProfiles()
+                .Where(profile => !profile.Default && string.Equals(Path.GetFileName(profile.Path), executable, StringComparison.OrdinalIgnoreCase))
+                .Select(profile => profile.Path)
+                .Concat(FindExecutableCandidates(definition, executable)))
+            {
+                if (File.Exists(candidate) && executablePaths.Add(candidate))
+                    discoveredExecutables.Add(candidate);
+            }
+        }
+
+        if (discoveredExecutables.Count == 0)
+            yield break;
+
+        IEnumerable<string> configFiles = discoveredExecutables.SelectMany(candidate => FindConfigurationFiles(definition, candidate)).Distinct(StringComparer.OrdinalIgnoreCase);
+        IEnumerable<string> contentPaths = configFiles.SelectMany(file => ReadContentPaths(file, definition)).Distinct(StringComparer.OrdinalIgnoreCase);
+
+        yield return new EmulatorInstallation
+        {
+            Definition = definition,
+            ExecutablePath = discoveredExecutables[0],
+            ExecutablePaths = discoveredExecutables,
+            ConfigFiles = configFiles,
+            ContentPaths = contentPaths
+        };
+    }
+
+    // Searches Windows activity data, PATH, registry entries, known roots, and shortcuts for an executable.
+    private static IEnumerable<string> FindExecutableCandidates(EmulatorDefinition definition, string executable)
+    {
+        foreach (string candidate in FindUserAssistCandidates(executable))
+            yield return candidate;
+
+        foreach (string candidate in FindRecentAppCandidates(executable))
+            yield return candidate;
+
+        string path = Environment.GetEnvironmentVariable("PATH") ?? string.Empty;
+        foreach (string directory in path.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
+            yield return Path.Combine(directory.Trim(), executable);
+
+        foreach (RegistryHive hive in new[] { RegistryHive.CurrentUser, RegistryHive.LocalMachine })
+            foreach (RegistryView view in new[] { RegistryView.Default, RegistryView.Registry32, RegistryView.Registry64 }.Distinct())
+            {
+                List<string> registryCandidates = [];
+                RegistryKey? baseKey = null;
+                try
+                {
+                    baseKey = RegistryKey.OpenBaseKey(hive, view);
+                    using RegistryKey? appPath = baseKey.OpenSubKey($@"Software\Microsoft\Windows\CurrentVersion\App Paths\{executable}");
+                    // App Paths provides a direct executable path and is more reliable than scanning an install directory.
+                    string? appPathValue = appPath?.GetValue(null) as string;
+                    if (!string.IsNullOrWhiteSpace(appPathValue))
+                        registryCandidates.Add(UnquoteExecutable(appPathValue));
+
+                    using RegistryKey? uninstall = baseKey.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall");
+                    if (uninstall is not null)
+                        // Uninstall entries can expose an install directory, icon, or uninstall command containing the executable.
+                        foreach (string name in uninstall.GetSubKeyNames())
+                        {
+                            using RegistryKey? entry = uninstall.OpenSubKey(name);
+                            if (!MatchesProduct(entry, definition))
+                                continue;
+                            foreach (string valueName in new[] { "InstallLocation", "DisplayIcon", "UninstallString" })
+                            {
+                                string? registryValue = entry?.GetValue(valueName) as string;
+                                if (!string.IsNullOrWhiteSpace(registryValue))
+                                    registryCandidates.AddRange(CandidatesFromValue(registryValue, executable));
+                            }
+                        }
+                }
+                catch (System.Security.SecurityException) { }
+                catch (UnauthorizedAccessException) { }
+                finally { baseKey?.Dispose(); }
+                foreach (string candidate in registryCandidates)
+                    yield return candidate;
+            }
+
+        foreach (string root in GetKnownRoots(definition))
+        {
+            // Check the root itself and its immediate child directories without recursively scanning the whole profile.
+            yield return Path.Combine(root, executable);
+            IEnumerable<string> directories;
+            try { directories = Directory.EnumerateDirectories(root); }
+            catch (IOException) { continue; }
+            catch (UnauthorizedAccessException) { continue; }
+            foreach (string directory in directories)
+                yield return Path.Combine(directory, executable);
+        }
+
+        foreach (string root in GetShortcutRoots())
+        {
+            // Shortcuts are searched recursively because installed emulators are often exposed through nested Start Menu folders.
+            EnumerationOptions options = new()
+            {
+                RecurseSubdirectories = true,
+                IgnoreInaccessible = true,
+                ReturnSpecialDirectories = false
+            };
+
+            IEnumerable<string> shortcuts;
+            try { shortcuts = Directory.EnumerateFiles(root, "*.lnk", options); }
+            catch (IOException) { continue; }
+            catch (UnauthorizedAccessException) { continue; }
+
+            foreach (string shortcut in shortcuts)
+            {
+                string? target = null;
+                try
+                {
+                    IWshShortcut link = (IWshShortcut)new WshShell().CreateShortcut(shortcut);
+                    if (string.Equals(Path.GetFileName(link.TargetPath), executable, StringComparison.OrdinalIgnoreCase))
+                        target = link.TargetPath;
+                }
+                catch { }
+                if (target is not null)
+                    yield return target;
+            }
+        }
+    }
+
+    // Reads executable paths recorded by Windows UserAssist, whose value names are ROT13-encoded.
+    private static IEnumerable<string> FindUserAssistCandidates(string executable)
+    {
+        using RegistryKey? userAssist = Registry.CurrentUser.OpenSubKey(
+            @"Software\Microsoft\Windows\CurrentVersion\Explorer\UserAssist");
+        if (userAssist is null)
+            yield break;
+
+        foreach (string identifier in userAssist.GetSubKeyNames())
+        {
+            using RegistryKey? count = userAssist.OpenSubKey($@"{identifier}\Count");
+            if (count is null)
+                continue;
+
+            foreach (string valueName in count.GetValueNames())
+            {
+                string decoded = DecodeRot13(valueName);
+                if (string.Equals(Path.GetFileName(decoded), executable, StringComparison.OrdinalIgnoreCase))
+                    yield return decoded;
+            }
+        }
+    }
+
+    // Reads executable paths from Windows' RecentApps registry data.
+    private static IEnumerable<string> FindRecentAppCandidates(string executable)
+    {
+        using RegistryKey? recentApps = Registry.CurrentUser.OpenSubKey(
+            @"Software\Microsoft\Windows\CurrentVersion\Search\RecentApps");
+        if (recentApps is null)
+            yield break;
+
+        foreach (string app in recentApps.GetSubKeyNames())
+        {
+            using RegistryKey? appKey = recentApps.OpenSubKey(app);
+            if (appKey is null)
+                continue;
+
+            foreach (string valueName in appKey.GetValueNames())
+            {
+                if (appKey.GetValue(valueName) is not string value)
+                    continue;
+
+                if (string.Equals(Path.GetFileName(value), executable, StringComparison.OrdinalIgnoreCase))
+                    yield return value;
+            }
+
+            if (string.Equals(Path.GetFileName(app), executable, StringComparison.OrdinalIgnoreCase))
+                yield return app;
+        }
+    }
+
+    // Decodes the ROT13 value-name encoding used by UserAssist.
+    private static string DecodeRot13(string value)
+    {
+        return string.Create(value.Length, value, static (buffer, source) =>
+        {
+            for (int i = 0; i < source.Length; i++)
+            {
+                char character = source[i];
+                buffer[i] = character switch
+                {
+                    >= 'A' and <= 'Z' => (char)('A' + (character - 'A' + 13) % 26),
+                    >= 'a' and <= 'z' => (char)('a' + (character - 'a' + 13) % 26),
+                    _ => character
+                };
+            }
+        });
+    }
+
+    // Locates configured files in standard roots and portable installations.
+    private static IEnumerable<string> FindConfigurationFiles(EmulatorDefinition definition, string executable)
+    {
+        string executableDirectory = Path.GetDirectoryName(executable) ?? string.Empty;
+        foreach (ConfigLocation location in definition.Configurations)
+        {
+            string root = ResolveRoot(location.Root, executableDirectory);
+            string directory = Path.Combine(root, location.RelativePath);
+            foreach (string file in location.Files)
+            {
+                if (file.Contains('*'))
+                {
+                    IEnumerable<string> matches;
+                    try { matches = Directory.EnumerateFiles(directory, file, SearchOption.TopDirectoryOnly); }
+                    catch { continue; }
+                    foreach (string match in matches) yield return match;
+                }
+                else
+                {
+                    string candidate = Path.Combine(directory, file);
+                    if (File.Exists(candidate)) yield return candidate;
+                }
+            }
+        }
+
+        foreach (PortableLocation location in definition.PortableLocations)
+        {
+            // A marker distinguishes a portable configuration from the regular per-user configuration.
+            string marker = Path.Combine(executableDirectory, location.Marker);
+            if (!File.Exists(marker) && !Directory.Exists(marker)) continue;
+            string directory = Path.Combine(executableDirectory, location.ConfigPath);
+            foreach (string file in location.Files)
+            {
+                string candidate = Path.Combine(directory, file);
+                if (File.Exists(candidate)) yield return candidate;
+            }
+        }
+    }
+
+    // Reads a configuration file using a parser selected by its extension and returns existing directories.
+    private static IEnumerable<string> ReadContentPaths(string file, EmulatorDefinition definition)
+    {
+        string content;
+        try { content = File.ReadAllText(file); }
+        catch { yield break; }
+
+        IEnumerable<string> configuredPaths;
+
+        // Configuration formats are intentionally handled without assuming every file is structured text.
+        string extension = Path.GetExtension(file).ToLowerInvariant();
+        switch (extension)
+        {
+            case ".json":
+                configuredPaths = ReadJsonContentPaths(content, definition);
+                break;
+            case ".xml":
+                configuredPaths = ReadXmlContentPaths(content, definition);
+                break;
+            case ".toml":
+                configuredPaths = ReadTomlContentPaths(content, definition);
+                break;
+            case ".ini":
+                configuredPaths = ReadIniContentPaths(content, definition);
+                break;
+            default:
+                configuredPaths = ReadTextContentPaths(content, definition);
+                break;
+        }
+
+        foreach (string path in configuredPaths)
+            if (Directory.Exists(path))
+                yield return path;
+    }
+
+    // Extracts configured directory paths from generic text or from all absolute paths when no keys are configured.
+    private static IEnumerable<string> ReadTextContentPaths(string content, EmulatorDefinition definition)
+    {
+        string[] keys = definition.Configurations
+            .SelectMany(configuration => configuration.ContentKeys)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        if (keys.Length > 0)
+        {
+            // When keys are known, restrict matches to values associated with those keys to avoid unrelated paths.
+            foreach (string key in keys)
+            {
+                string pattern = "(?im)(?:^[\"'<>]|\\s|[=:])"
+                    + Regex.Escape(key)
+                    + "(?:\"|'|\\s|=|>)*[:=]?\\s*[\"']?(?<value>[A-Za-z]:[^\"'<>\\r\\n,;]*|\\\\\\\\[^\"'<>\\r\\n,;]+)";
+                foreach (Match match in Regex.Matches(content, pattern, RegexOptions.CultureInvariant))
+                {
+                    yield return match.Groups["value"].Value
+                        .Trim()
+                        .Trim('"', '\'')
+                        .TrimEnd('>', ']', '}', ';')
+                        .Replace("\\\\", "\\", StringComparison.Ordinal);
+                }
+            }
+        }
+        else
+        {
+            // Some definitions have no keys, so fall back to collecting absolute Windows and UNC paths.
+            const string pathPattern = "(?<value>[A-Za-z]:[\\\\/][^\\\"'<>\\r\\n,;]+|\\\\\\\\[^\\\"'<>\\r\\n,;]+)";
+            foreach (Match match in Regex.Matches(content, pathPattern, RegexOptions.CultureInvariant))
+            {
+                yield return match.Groups["value"].Value
+                    .Trim()
+                    .Trim('"', '\'')
+                    .TrimEnd('>', ']', '}', ';')
+                    .Replace("\\\\", "\\", StringComparison.Ordinal);
+            }
+        }
+    }
+
+    // Extracts values from XML elements whose names match configured content keys.
+    private static IEnumerable<string> ReadXmlContentPaths(string content, EmulatorDefinition definition)
+    {
+        XDocument document;
+        try { document = XDocument.Parse(content, LoadOptions.None); }
+        catch { yield break; }
+
+        string[] keys = definition.Configurations.SelectMany(configuration => configuration.ContentKeys)
+            .Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+        foreach (XElement element in EnumerateXmlElements(document.Root))
+            if (keys.Contains(element.Name.LocalName, StringComparer.OrdinalIgnoreCase))
+                foreach (string value in EnumerateXmlText(element))
+                    if (!string.IsNullOrWhiteSpace(value))
+                        yield return value.Trim();
+    }
+
+    // Recursively yields text from an XML element's leaf nodes.
+    private static IEnumerable<string> EnumerateXmlText(XElement element)
+    {
+        if (!element.Elements().Any())
+        {
+            yield return element.Value;
+            yield break;
+        }
+
+        foreach (XElement child in element.Elements())
+            foreach (string value in EnumerateXmlText(child))
+                yield return value;
+    }
+
+    // Recursively yields an XML element and all of its descendants.
+    private static IEnumerable<XElement> EnumerateXmlElements(XElement? element)
+    {
+        if (element is null)
+            yield break;
+
+        yield return element;
+        foreach (XElement child in element.Elements())
+            foreach (XElement descendant in EnumerateXmlElements(child))
+                yield return descendant;
+    }
+
+    // Extracts values from matching INI keys, supporting semicolon- and comma-separated paths.
+    private static IEnumerable<string> ReadIniContentPaths(string content, EmulatorDefinition definition)
+    {
+        HashSet<string> keys = definition.Configurations.SelectMany(configuration => configuration.ContentKeys)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        foreach (string line in content.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries))
+        {
+            string entry = line.Trim();
+            if (entry.StartsWith(';') || entry.StartsWith('#'))
+                continue;
+
+            int separator = entry.IndexOf('=');
+            if (separator <= 0 || !keys.Contains(entry[..separator].Trim()))
+                continue;
+
+            string value = entry[(separator + 1)..].Trim().Trim('"', '\'');
+            foreach (string path in value.Split([';', ','], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                yield return path.Trim().Trim('"', '\'');
+        }
+    }
+
+    // Extracts string-array values from matching TOML keys while ignoring comments.
+    private static IEnumerable<string> ReadTomlContentPaths(string content, EmulatorDefinition definition)
+    {
+        string uncommentedContent = RemoveTomlComments(content);
+        foreach (string key in definition.Configurations.SelectMany(configuration => configuration.ContentKeys).Distinct(StringComparer.OrdinalIgnoreCase))
+        {
+            string pattern = $@"(?im)^\s*{Regex.Escape(key)}\s*=\s*";
+            foreach (Match match in Regex.Matches(uncommentedContent, pattern, RegexOptions.CultureInvariant))
+            {
+                int valueStart = match.Index + match.Length;
+                int arrayStart = uncommentedContent.IndexOf('[', valueStart);
+                if (arrayStart < 0 || uncommentedContent[valueStart..arrayStart].Contains('\n'))
+                    continue;
+
+                int arrayEnd = FindTomlArrayEnd(uncommentedContent, arrayStart);
+                if (arrayEnd < 0)
+                    continue;
+
+                foreach (string value in ReadTomlStrings(uncommentedContent, arrayStart + 1, arrayEnd))
+                    if (!string.IsNullOrWhiteSpace(value))
+                        yield return value;
+            }
+        }
+    }
+
+    // Finds the closing bracket for a TOML array while ignoring brackets inside quoted strings.
+    private static int FindTomlArrayEnd(string content, int start)
+    {
+        int depth = 0;
+        char quote = '\0';
+        bool escaped = false;
+        for (int i = start; i < content.Length; i++)
+        {
+            char character = content[i];
+            if (quote != '\0')
+            {
+                if (quote == '"' && character == '\\' && !escaped)
+                {
+                    escaped = true;
+                    continue;
+                }
+
+                if (character == quote && !escaped)
+                    quote = '\0';
+                escaped = false;
+                continue;
+            }
+
+            if (character is '"' or '\'')
+                quote = character;
+            else if (character == '[')
+                depth++;
+            else if (character == ']' && --depth == 0)
+                return i;
+        }
+
+        return -1;
+    }
+
+    // Reads quoted strings from a TOML array and handles common escape sequences.
+    private static IEnumerable<string> ReadTomlStrings(string content, int start, int end)
+    {
+        for (int i = start; i < end; i++)
+        {
+            if (content[i] is not ('"' or '\''))
+                continue;
+
+            char quote = content[i++];
+            StringBuilder value = new();
+            bool escaped = false;
+            for (; i < end; i++)
+            {
+                char character = content[i];
+                if (quote == '"' && character == '\\' && !escaped)
+                {
+                    escaped = true;
+                    continue;
+                }
+
+                if (character == quote && !escaped)
+                    break;
+
+                if (escaped)
+                {
+                    value.Append(character switch
+                    {
+                        'b' => '\b',
+                        't' => '\t',
+                        'n' => '\n',
+                        'f' => '\f',
+                        'r' => '\r',
+                        '"' => '"',
+                        '\\' => '\\',
+                        _ => character
+                    });
+                    escaped = false;
+                }
+                else
+                {
+                    value.Append(character);
+                }
+            }
+
+            if (i < end && content[i] == quote)
+                yield return value.ToString();
+        }
+    }
+
+    // Removes TOML comments without changing quoted text or line positions.
+    private static string RemoveTomlComments(string content)
+    {
+        StringBuilder result = new(content.Length);
+        char quote = '\0';
+        bool escaped = false;
+        bool comment = false;
+        foreach (char character in content)
+        {
+            if (comment)
+            {
+                if (character is '\r' or '\n')
+                {
+                    comment = false;
+                    result.Append(character);
+                }
+                else
+                {
+                    result.Append(' ');
+                }
+                continue;
+            }
+
+            if (quote != '\0')
+            {
+                result.Append(character);
+                if (quote == '"' && character == '\\' && !escaped)
+                {
+                    escaped = true;
+                    continue;
+                }
+
+                if (character == quote && !escaped)
+                    quote = '\0';
+                escaped = false;
+                continue;
+            }
+
+            if (character is '"' or '\'')
+                quote = character;
+            else if (character == '#')
+            {
+                comment = true;
+                result.Append(' ');
+                continue;
+            }
+
+            result.Append(character);
+        }
+
+        return result.ToString();
+    }
+
+    // Extracts string values from JSON properties matching configured content keys at any nesting level.
+    private static IEnumerable<string> ReadJsonContentPaths(string content, EmulatorDefinition definition)
+    {
+        JObject document;
+        try { document = JObject.Parse(content); }
+        catch { yield break; }
+
+        foreach (string key in definition.Configurations.SelectMany(configuration => configuration.ContentKeys).Distinct(StringComparer.OrdinalIgnoreCase))
+            foreach (JProperty property in EnumerateJsonProperties(document)
+                .Where(property => string.Equals(property.Name, key, StringComparison.OrdinalIgnoreCase)))
+                foreach (JValue value in EnumerateJsonValues(property.Value))
+                    if (value.Type == JTokenType.String && !string.IsNullOrWhiteSpace(value.Value<string>()))
+                        yield return value.Value<string>()!;
+    }
+
+    // Recursively yields all JSON leaf values below a token.
+    private static IEnumerable<JValue> EnumerateJsonValues(JToken token)
+    {
+        if (token is JValue value)
+        {
+            yield return value;
+            yield break;
+        }
+
+        foreach (JToken child in token.Children())
+            foreach (JValue childValue in EnumerateJsonValues(child))
+                yield return childValue;
+    }
+
+    // Recursively yields all properties in a JSON object tree.
+    private static IEnumerable<JProperty> EnumerateJsonProperties(JToken token)
+    {
+        if (token is not JObject objectToken)
+            yield break;
+
+        foreach (JProperty property in objectToken.Properties())
+        {
+            yield return property;
+
+            foreach (JProperty child in EnumerateJsonProperties(property.Value))
+                yield return child;
+        }
+    }
+
+    // Enumerates ROM files or directories according to the emulator definition.
+    private static IEnumerable<string> EnumerateRoms(string root, EmulatorDefinition definition)
+    {
+        if (definition.DirectoryRoms)
+        {
+            IEnumerable<string> directories;
+            try { directories = Directory.EnumerateDirectories(root, "*", SearchOption.AllDirectories); }
+            catch { yield break; }
+
+            foreach (string directory in directories)
+                if (HasRomMetadata(directory, definition.RomMetadata))
+                    yield return directory;
+            yield break;
+        }
+
+        IEnumerable<string> files;
+        try { files = Directory.EnumerateFiles(root, "*", SearchOption.AllDirectories); }
+        catch { yield break; }
+        foreach (string file in files)
+            if (definition.RomExtensions.Contains(Path.GetExtension(file), StringComparer.OrdinalIgnoreCase)) yield return file;
+    }
+
+    // Checks whether a directory contains one of the metadata files required for directory-based ROM discovery.
+    private static bool HasRomMetadata(string directory, RomMetadataRule? rule)
+    {
+        if (rule is null)
+            return false;
+
+        string[] relativePaths = rule.RelativePaths.Length > 0 ? rule.RelativePaths : [rule.RelativePath];
+        // RelativePaths supports definitions that use different metadata layouts across emulator versions.
+        return relativePaths.Any(path => File.Exists(Path.Combine(directory, path)));
+    }
+
+    // Resolves a schema root to an absolute Windows folder.
+    private static string ResolveRoot(ConfigRoot root, string executableDirectory) => root switch
+    {
+        ConfigRoot.ExecutableDirectory => executableDirectory,
+        ConfigRoot.AppData => Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        ConfigRoot.LocalAppData => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        ConfigRoot.Documents => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+        ConfigRoot.UserProfile => Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+        _ => string.Empty
+    };
+
+    // Returns existing standard roots used when searching for installed executables.
+    private static IEnumerable<string> GetKnownRoots(EmulatorDefinition definition) => definition.Configurations.Select(configuration => ResolveRoot(configuration.Root, string.Empty)).Where(Directory.Exists).Distinct(StringComparer.OrdinalIgnoreCase);
+
+    // Returns existing Windows locations that may contain emulator shortcuts.
+    private static IEnumerable<string> GetShortcutRoots() => new[] { Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu), Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory) }.Where(Directory.Exists);
+
+    // Accepts every uninstall entry when no product names are configured; otherwise matches DisplayName substrings.
+    private static bool MatchesProduct(RegistryKey? key, EmulatorDefinition definition) => definition.ProductNames.Length == 0 || definition.ProductNames.Any(name => (key?.GetValue("DisplayName") as string)?.Contains(name, StringComparison.OrdinalIgnoreCase) == true);
+
+    // Converts an App Paths or uninstall value into a candidate executable path.
+    private static IEnumerable<string> CandidatesFromValue(string value, string executable) { string candidate = UnquoteExecutable(value); if (File.Exists(candidate) && Path.GetFileName(candidate).Equals(executable, StringComparison.OrdinalIgnoreCase)) yield return candidate; if (Directory.Exists(candidate)) yield return Path.Combine(candidate, executable); }
+
+    // Removes command-line quoting and arguments from a registry-provided executable value.
+    private static string UnquoteExecutable(string value) { value = value.Trim(); if (value.StartsWith('"')) { int end = value.IndexOf('"', 1); return end > 0 ? value[1..end] : value.Trim('"'); } int space = value.IndexOf(' '); return space > 0 ? value[..space] : value; }
+
+    // Quotes a ROM path and prepends the configured argument prefix when needed.
+    private static string Quote(string path, string prefix) => string.IsNullOrEmpty(prefix) ? $"\"{path}\"" : $"{prefix} \"{path}\"";
+
+    // Builds the emulator launch arguments, or suppresses ROM entries for unsupported launch modes.
+    private static string? BuildArguments(EmulatorDefinition definition, string rom) => definition.LaunchArgumentMode switch
+    {
+        LaunchArgumentMode.Template => definition.ArgumentTemplate.Replace("{rom}", Quote(rom, string.Empty), StringComparison.Ordinal),
+        LaunchArgumentMode.Unsupported => null,
+        _ => Quote(rom, definition.ArgumentPrefix)
+    };
+
+    // Reads a configured display name from XML or Param.SFO metadata files near the ROM.
+    private static string? ReadRomName(EmulatorDefinition definition, string rom)
+    {
+        RomMetadataRule? rule = definition.RomMetadata;
+        if (rule is null)
+            return null;
+
+        string? romDirectory = Directory.Exists(rom) ? rom : Path.GetDirectoryName(rom);
+        if (string.IsNullOrWhiteSpace(romDirectory) || !Directory.Exists(romDirectory))
+            return null;
+
+        string[] relativePaths = rule.RelativePaths.Length > 0 ? rule.RelativePaths : [rule.RelativePath];
+        IEnumerable<string> roots = rule.SearchParentDirectories ? EnumerateParentDirectories(romDirectory) : [romDirectory];
+
+        IEnumerable<string> metadataPaths = roots.SelectMany(root => relativePaths.Select(path => Path.Combine(root, path)));
+        foreach (string metadataPath in metadataPaths)
+        {
+            string extension = Path.GetExtension(metadataPath).ToLowerInvariant();
+            switch (extension)
+            {
+                case ".sfo":
+                    return ReadParamSfoName(metadataPath);
+                case ".xml":
+                    return ReadXmlElementName(metadataPath, rule.ElementName);
+            }
+        }
+
+        return null;
+    }
+
+    // Yields a directory and each of its parents for metadata lookup.
+    private static IEnumerable<string> EnumerateParentDirectories(string directory)
+    {
+        DirectoryInfo? current = new(directory);
+        while (current is not null)
+        {
+            yield return current.FullName;
+            current = current.Parent;
+        }
+    }
+
+    // Reads the first matching XML element value from a metadata file.
+    private static string? ReadXmlElementName(string path, string elementName)
+    {
+        try
+        {
+            return XDocument.Load(path, LoadOptions.None).Descendants(elementName).FirstOrDefault()?.Value.Trim();
+        }
+        catch { return null; }
+    }
+
+    // Reads the TITLE entry from a PlayStation Param.SFO metadata file.
+    private static string? ReadParamSfoName(string path)
+    {
+        try
+        {
+            using FileStream stream = File.OpenRead(path);
+            using BinaryReader reader = new(stream, Encoding.UTF8, leaveOpen: false);
+            if (reader.ReadUInt32() != 0x46535000 || reader.ReadUInt32() != 0x00000101)
+                return null;
+
+            uint keyOffset = reader.ReadUInt32();
+            uint valueOffset = reader.ReadUInt32();
+            ushort entryCount = reader.ReadUInt16();
+            stream.Position = 20;
+            for (int i = 0; i < entryCount; i++)
+            {
+                // Each Param.SFO index entry is 16 bytes and points into separate key and value tables.
+                stream.Position = 20 + i * 16;
+                uint keyIndex = reader.ReadUInt16();
+                reader.ReadByte();
+                reader.ReadByte();
+                uint valueLength = reader.ReadUInt32();
+                reader.ReadUInt32();
+                uint dataOffset = reader.ReadUInt32();
+                long keyPosition = keyOffset + keyIndex;
+                if (keyPosition < 0 || keyPosition >= stream.Length)
+                    continue;
+                stream.Position = keyPosition;
+                string key = ReadNullTerminated(reader, 256);
+                if (!string.Equals(key, "TITLE", StringComparison.OrdinalIgnoreCase))
+                    continue;
+                long valuePosition = valueOffset + dataOffset;
+                // Reject malformed offsets before converting the declared byte length to an array size.
+                if (valuePosition < 0 || valuePosition >= stream.Length || valueLength > stream.Length - valuePosition)
+                    return null;
+                stream.Position = valuePosition;
+                string value = Encoding.UTF8.GetString(reader.ReadBytes((int)valueLength)).TrimEnd('\0', ' ', '\r', '\n');
+                return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+            }
+        }
+        catch { }
+
+        return null;
+    }
+
+    // Reads a bounded null-terminated string from a binary stream.
+    private static string ReadNullTerminated(BinaryReader reader, int maxLength)
+    {
+        StringBuilder value = new();
+        for (int i = 0; i < maxLength && reader.BaseStream.Position < reader.BaseStream.Length; i++)
+        {
+            byte character = reader.ReadByte();
+            if (character == 0)
+                break;
+            value.Append((char)character);
+        }
+        return value.ToString();
+    }
+
+}

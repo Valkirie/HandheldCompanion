@@ -29,7 +29,7 @@ namespace HandheldCompanion.Controllers
         #endregion
 
         // Buttons and axes we should be able to map to.
-        // When we have target controllers with different buttons (e.g. in VigEm) this will have to be moved elsewhere.
+        // When target controllers have different buttons, this will have to be moved elsewhere.
         protected readonly List<ButtonFlags> TargetButtons =
         [
             ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
@@ -468,7 +468,7 @@ namespace HandheldCompanion.Controllers
                     try
                     {
                         SetVibration(LargeMotor, SmallMotor);
-                        await Task.Delay(delay, token).ConfigureAwait(false);
+                        await Task.Delay(delay, token);
                     }
                     catch (OperationCanceledException) { }
                     finally
@@ -525,7 +525,9 @@ namespace HandheldCompanion.Controllers
         }
 
         public virtual void Unplug()
-        { }
+        {
+            ClearInputState();
+        }
 
         public virtual bool IsHidden()
         {
@@ -592,7 +594,8 @@ namespace HandheldCompanion.Controllers
 
             if (!success)
             {
-                // (re)set status
+                // A failed cycle may not raise device events, so the controller
+                // must clear its state here instead of waiting for the manager.
                 IsBusy = false;
                 ControllerManager.PowerCyclers[GetContainerInstanceId()] = false;
             }

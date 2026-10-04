@@ -17,10 +17,10 @@ namespace HandheldCompanion.Devices.AYANEO
         protected int[] rgbZones = { 1, 2, 3, 4 };
         protected bool rgbConfirmation = true;
 
-        private bool? ledStatus;
-        private int? ledBrightness;
-        private Color? ledColorSticksLeft;
-        private Color? ledColorStickRight;
+        protected bool? ledStatus;
+        protected int? ledBrightness;
+        protected Color? ledColorSticksLeft;
+        protected Color? ledColorStickRight;
         private LEDLevel? ledLevel;
 
         public AYANEODeviceCEc()
@@ -49,8 +49,8 @@ namespace HandheldCompanion.Devices.AYANEO
             // IMU matrices loaded from AYANEODeviceCEc.json
 
             this.OEMChords.Add(new KeyboardChord("Custom Key Big",
-                [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F17],
-                [KeyCode.F17, KeyCode.LWin, KeyCode.RControlKey],
+                [KeyCode.RControl, KeyCode.LWin, KeyCode.F17],
+                [KeyCode.F17, KeyCode.LWin, KeyCode.RControl],
                 false, ButtonFlags.OEM1
             ));
             this.OEMChords.Add(new KeyboardChord("Custom Key Small",
@@ -59,13 +59,13 @@ namespace HandheldCompanion.Devices.AYANEO
                 false, ButtonFlags.OEM2
             ));
             this.OEMChords.Add(new KeyboardChord("Custom Key Top Left",
-                [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F15],
-                [KeyCode.F15, KeyCode.LWin, KeyCode.RControlKey],
+                [KeyCode.RControl, KeyCode.LWin, KeyCode.F15],
+                [KeyCode.F15, KeyCode.LWin, KeyCode.RControl],
                 false, ButtonFlags.OEM3
             ));
             this.OEMChords.Add(new KeyboardChord("Custom Key Top Right",
-                [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F16],
-                [KeyCode.F16, KeyCode.LWin, KeyCode.RControlKey],
+                [KeyCode.RControl, KeyCode.LWin, KeyCode.F16],
+                [KeyCode.F16, KeyCode.LWin, KeyCode.RControl],
                 false, ButtonFlags.OEM4
             ));
 
@@ -240,17 +240,17 @@ namespace HandheldCompanion.Devices.AYANEO
             }
         }
 
-        private void CEcRgb_GlobalOn(LEDGroup group, byte speed = 0x00)
+        protected virtual void CEcRgb_GlobalOn(LEDGroup group, byte speed = 0x00)
         {
             this.CEcRgb_I2cWrite(group, 0x02, (byte)(0x80 + speed));
         }
 
-        private void CEcRgb_GlobalOff(LEDGroup group)
+        protected virtual void CEcRgb_GlobalOff(LEDGroup group)
         {
             this.CEcRgb_I2cWrite(group, 0x02, 0xc0);
         }
 
-        private void CEcRgb_SetColorAll(LEDGroup group, Color color)
+        protected virtual void CEcRgb_SetColorAll(LEDGroup group, Color color)
         {
             foreach (int zone in this.rgbZones)
             {

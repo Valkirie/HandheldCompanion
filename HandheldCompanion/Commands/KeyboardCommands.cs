@@ -65,7 +65,7 @@ namespace HandheldCompanion.Commands
                     foreach (InputsKey key in outputChord.KeyState.Where(key => key.IsKeyDown).OrderBy(key => key.Timestamp))
                         KeyboardSimulator.KeyDown((VirtualKeyCode)key.KeyValue);
 
-                    await Task.Delay(KeyPressDelay).ConfigureAwait(false);
+                    await Task.Delay(KeyPressDelay);
 
                     foreach (InputsKey key in outputChord.KeyState.Where(key => key.IsKeyUp).OrderBy(key => key.Timestamp))
                         KeyboardSimulator.KeyUp((VirtualKeyCode)key.KeyValue);

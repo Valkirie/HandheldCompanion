@@ -1,0 +1,24 @@
+{
+  "Id": "sameboy",
+  "Name": "SameBoy",
+  "PlatformType": "SameBoy",
+  "PlatformColor": "#666666",
+  "PlatformGlyph": "\uF712",
+  "Executables": [
+    "sameboy.exe"
+  ],
+  "ProductNames": [
+    "SameBoy"
+  ],
+  "Configurations": [],
+  "PortableLocations": [],
+  "RomExtensions": [
+    ".gb",
+    ".gbc"
+  ],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "RomPath",
+  "ArgumentTemplate": "{rom}",
+  "RomMetadata": null,
+  "DirectoryRoms": false
+}

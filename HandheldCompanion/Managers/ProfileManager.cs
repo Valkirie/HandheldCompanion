@@ -3,6 +3,7 @@ using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Platforms;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Shared;
 using HandheldCompanion.Utils;
@@ -28,6 +29,10 @@ namespace HandheldCompanion.Managers;
 public class ProfileManager : IManager
 {
     public const string DefaultName = "Default";
+    private static readonly Version AxisLayoutMigrationVersion = new("0.22.1.5");
+    private static readonly Version DictionaryMigrationVersion = new("0.27.0.7");
+    private static readonly Version ButtonFlagsMigrationVersion = new("0.27.0.13");
+    private static readonly Version PowerProfileMigrationVersion = new("0.21.5.4");
     private readonly ProfileCollectionHelper collectionHelper = new();
 
     public event Action<GameCollection>? CollectionAdded;
@@ -257,6 +262,30 @@ public class ProfileManager : IManager
         return profile;
     }
 
+    private Profile GetProfileFromProcess(ProcessEx processEx, bool ignoreStatus = true)
+    {
+        Profile selectedProfile = GetProfileFromPath(processEx.Path, ignoreStatus);
+        Profile parentProfile = GetProfileFromPath(processEx.Path, ignoreStatus, true);
+
+        if (parentProfile.Default || processEx.ProcessId == 0)
+            return selectedProfile;
+
+        string? arguments = ProcessUtils.GetCommandLineArguments(processEx.ProcessId);
+        if (string.IsNullOrWhiteSpace(arguments))
+            return selectedProfile;
+
+        IEnumerable<Profile> matches = GetSubProfilesFromProfile(parentProfile)
+            .Where(subProfile => !string.IsNullOrWhiteSpace(subProfile.Arguments))
+            .Where(subProfile => CommandLineContainsArguments(arguments, subProfile.Arguments));
+
+        return matches.Any() ? matches.First() : selectedProfile;
+    }
+
+    private static bool CommandLineContainsArguments(string commandLine, string arguments)
+    {
+        return commandLine.Contains(arguments, StringComparison.InvariantCultureIgnoreCase) || arguments.Contains(commandLine, StringComparison.InvariantCultureIgnoreCase);
+    }
+
     public Profile GetProfileFromGuid(Guid Guid, bool ignoreStatus = true, bool isSubProfile = false)
     {
         Profile? profile = null;
@@ -382,6 +411,8 @@ public class ProfileManager : IManager
         if (previousProfile is not null)
         {
             if (previousProfile.Guid == profile.Guid)
+                announce = false;
+            if (profile.Default)
                 announce = false;
         }
         else if (Status == ManagerStatus.Initializing)
@@ -525,7 +556,7 @@ public class ProfileManager : IManager
     {
         try
         {
-            Profile profile = GetProfileFromPath(processEx.Path, true);
+            Profile profile = GetProfileFromProcess(processEx, true);
             if (profile.Default)
                 return;
 
@@ -552,13 +583,16 @@ public class ProfileManager : IManager
     {
         try
         {
-            Profile profile = GetProfileFromPath(processEx.Path, true);
+            Profile profile = GetProfileFromProcess(processEx, true);
             var process = processEx.Process;
             if (process is null)
                 return;
 
             if (profile.Default)
                 return;
+
+            if (profile.IsSubProfile && !profile.IsFavoriteSubProfile)
+                SetFavorite(profile);
 
             // update vars
             if (profile.LastUsed != process.StartTime || !string.Equals(profile.Path, processEx.Path, StringComparison.OrdinalIgnoreCase))
@@ -586,10 +620,13 @@ public class ProfileManager : IManager
             if (processEx is null)
                 return;
 
-            Profile? profile = GetProfileFromPath(processEx.Path, false);
+            Profile? profile = GetProfileFromProcess(processEx, false);
 
             if (profile is null)
                 return;
+
+            if (profile.IsSubProfile && !profile.IsFavoriteSubProfile)
+                SetFavorite(profile);
 
             // skip if current
             if (!Monitor.TryEnter(profileLock, TimeSpan.FromSeconds(2)))
@@ -741,22 +778,21 @@ public class ProfileManager : IManager
                 return;
             }
 
-            string outputraw = File.ReadAllText(fileName);
-            JObject jObject = JObject.Parse(outputraw);
-
-            // latest pre-versionning release
-            Version version = new();
-            if (jObject.TryGetValue("Version", out var value))
-                version = new Version(value.ToString());
+            string? json = null;
+            Version version = GetProfileVersion(fileName);
+            JObject? jObject = null;
 
             // pre-parse manipulations
-            if (version == Version.Parse("0.0.0.0"))
+            if (version == new Version())
             {
                 // too old
                 throw new Exception("Profile is outdated.");
             }
-            else if (version <= Version.Parse("0.22.1.5"))
+            else if (version <= AxisLayoutMigrationVersion)
             {
+                json = File.ReadAllText(fileName);
+                jObject = JObject.Parse(json, new JsonLoadSettings { LineInfoHandling = LineInfoHandling.Ignore });
+
                 // Navigate to the Layout object.
                 JObject? layout = jObject["Layout"] as JObject;
                 if (layout != null)
@@ -807,30 +843,39 @@ public class ProfileManager : IManager
                         }
 
                         // Convert the modified JObject back to a JSON string.
-                        outputraw = jObject.ToString();
+                        json = jObject.ToString();
                     }
                 }
             }
-            if (version <= Version.Parse("0.26.0.2"))
+            if (version <= DictionaryMigrationVersion)
             {
-                // get previous path, if any
-                string path = jObject.GetValue("Path")?.ToString() ?? string.Empty;
-            }
-            if (version <= Version.Parse("0.27.0.7"))
-            {
+                json ??= File.ReadAllText(fileName);
+
                 // let's make sure we get a Dictionary
-                outputraw = outputraw.Replace(
+                json = json.Replace(
                     "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"",
                     "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"");
             }
-            if (version <= Version.Parse("0.27.0.13"))
+            if (version <= ButtonFlagsMigrationVersion)
             {
+                json ??= File.ReadAllText(fileName);
+
                 // Clean legacy/unknown ButtonFlags
-                outputraw = HotkeysManager.StripUnknownButtonFlags(outputraw, out var removed);
+                json = HotkeysManager.StripUnknownButtonFlags(json, out var removed);
             }
 
             // parse profile
-            profile = JsonConvert.DeserializeObject<Profile>(outputraw, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+            JsonSerializerSettings serializerSettings = new() { TypeNameHandling = TypeNameHandling.All };
+            if (json is null)
+            {
+                using StreamReader streamReader = File.OpenText(fileName);
+                using JsonTextReader jsonReader = new(streamReader);
+                profile = JsonSerializer.Create(serializerSettings).Deserialize<Profile>(jsonReader);
+            }
+            else
+            {
+                profile = JsonConvert.DeserializeObject<Profile>(json, serializerSettings);
+            }
             if (profile is null)
                 return;
 
@@ -838,10 +883,10 @@ public class ProfileManager : IManager
             profile.FileName = Path.GetFileName(fileName);
 
             // post-parse manipulations
-            if (version <= Version.Parse("0.21.5.4"))
+            if (version <= PowerProfileMigrationVersion)
             {
                 // Access the PowerProfile value
-                string? oldPowerProfile = jObject["PowerProfile"]?.ToString();
+                string? oldPowerProfile = jObject?["PowerProfile"]?.ToString();
                 if (!string.IsNullOrEmpty(oldPowerProfile))
                 {
                     for (int idx = 0; idx < 2; idx++)
@@ -988,6 +1033,26 @@ public class ProfileManager : IManager
             ApplyProfile(profile, updateSource);
     }
 
+    private static Version GetProfileVersion(string fileName)
+    {
+        using StreamReader streamReader = File.OpenText(fileName);
+        using JsonTextReader jsonReader = new(streamReader);
+
+        while (jsonReader.Read())
+        {
+            if (jsonReader.Depth != 1 || jsonReader.TokenType != JsonToken.PropertyName ||
+                !string.Equals(jsonReader.Value?.ToString(), "Version", StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            if (jsonReader.Read() && Version.TryParse(jsonReader.Value?.ToString(), out Version? version))
+                return version;
+
+            break;
+        }
+
+        return new Version();
+    }
+
     private readonly ConcurrentDictionary<string, byte> pendingCreation = new(StringComparer.InvariantCultureIgnoreCase);
     private readonly ConcurrentDictionary<string, byte> pendingDeletion = new(StringComparer.InvariantCultureIgnoreCase);
 
@@ -998,11 +1063,14 @@ public class ProfileManager : IManager
 
         if (profiles.ContainsKey(profile.Guid))
         {
-            // delete associated subprofiles
-            foreach (Profile subprofile in GetSubProfilesFromProfile(profile))
-                DeleteProfile(subprofile);
+            if (!profile.IsSubProfile)
+            {
+                // delete associated subprofiles
+                foreach (Profile subprofile in GetSubProfilesFromProfile(profile).ToList())
+                    DeleteProfile(subprofile);
 
-            LogManager.LogInformation("Deleted subprofiles for profile: {0}", profile);
+                LogManager.LogInformation("Deleted subprofiles for profile: {0}", profile);
+            }
 
             // Unregister application from HidHide
             HidHide.UnregisterApplication(profile.Path);
@@ -1200,8 +1268,6 @@ public class ProfileManager : IManager
         {
             // update vars
             profile.DateModified = profile.DateCreated = DateTime.Now;
-            if (source is UpdateSource.QuickProfilesCreation)
-                profile.LastUsed = profile.DateModified;
 
             // download arts
             switch (profile.Executable)
@@ -1227,6 +1293,14 @@ public class ProfileManager : IManager
                 PowerProfile? bestPeformanceProfile = IDevice.GetCurrent().DevicePowerProfiles.FirstOrDefault(p => p.Guid == IDevice.BestPerformanceGuid);
                 profile.PowerProfiles[(int)PowerLineStatus.Online] = bestPeformanceProfile?.Guid ?? Guid.Empty;
             }
+        }
+
+        // if profile is not default and platform is generic, try to get the platform type from the executable
+        if (!profile.Default && (source is UpdateSource.LibraryUpdate or UpdateSource.Creation or UpdateSource.QuickProfilesCreation))
+        {
+            GamePlatform platform = PlatformManager.GetPlatform(profile);
+            if (platform != GamePlatform.Generic)
+                profile.PlatformType = platform;
         }
 
         // used to get and store a few previous values

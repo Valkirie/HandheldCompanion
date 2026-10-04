@@ -5,31 +5,19 @@ using HandheldCompanion.Shared;
 using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
 using iNKORE.UI.WPF.Modern.Controls;
-using Nefarius.ViGEm.Client;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
-using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
 using static HandheldCompanion.Managers.ControllerManager;
 
 namespace HandheldCompanion.Managers
 {
-    public enum HIDBackend
-    {
-        ViGEM,
-        VIIPER
-    }
-
     public static class VirtualManager
     {
         // controllers vars
-        public static ViGEmClient? vClient;
         public static VTarget? vTarget;
-
-        // drivers vars
-        private const string driverName = "ViGEmBus";
 
         // settings vars
         public static HIDmode HIDmode = HIDmode.NoController;
@@ -37,7 +25,6 @@ namespace HandheldCompanion.Managers
         private static HIDmode prevHIDmode = HIDmode.NoController;
 
         public static HIDstatus HIDstatus = HIDstatus.Disconnected;
-        public static HIDBackend HIDBackend = HIDBackend.ViGEM;
 
         private static readonly SemaphoreSlim controllerLock = new SemaphoreSlim(1, 1);
         private static int controllerOperationCount;
@@ -92,91 +79,6 @@ namespace HandheldCompanion.Managers
         static VirtualManager()
         { }
 
-        /// <summary>
-        /// Initializes the ViGEm backend by ensuring the service is running and creating the client.
-        /// </summary>
-        /// <returns>True if ViGEm was successfully initialized, false otherwise.</returns>
-        private static bool InitializeViGEm()
-        {
-            try
-            {
-                // Ensure the ViGEmBus service is running
-                if (!EnsureViGEmServiceRunning())
-                {
-                    LogManager.LogWarning("Failed to start ViGEmBus service");
-                    return false;
-                }
-
-                // Create the ViGEm client if not already created
-                if (vClient is null)
-                    vClient = new ViGEmClient();
-
-                LogManager.LogInformation("ViGEm backend initialized successfully");
-                return true;
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogWarning("Failed to initialize ViGEm backend: {0}", ex.Message);
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Uninitializes the ViGEm backend by disposing the client.
-        /// </summary>
-        private static void UninitializeViGEm()
-        {
-            try
-            {
-                // Dispose the ViGEm client
-                if (vClient is not null)
-                {
-                    vClient.Dispose();
-                    vClient = null;
-                    LogManager.LogInformation("ViGEm client disposed");
-                }
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogWarning("Error during ViGEm uninitialization: {0}", ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Ensures the ViGEmBus service is running, starting it if necessary.
-        /// </summary>
-        /// <returns>True if the service is running after this call, false otherwise.</returns>
-        private static bool EnsureViGEmServiceRunning()
-        {
-            try
-            {
-                using (ServiceController sc = new ServiceController(driverName))
-                {
-                    // Check if service exists
-                    if (sc.ServiceName != driverName)
-                    {
-                        LogManager.LogWarning("ViGEmBus service not found");
-                        return false;
-                    }
-
-                    // If service is not running, try to start it
-                    if (sc.Status != ServiceControllerStatus.Running)
-                    {
-                        LogManager.LogInformation("Starting ViGEmBus service...");
-                        sc.Start();
-                        sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(5));
-                    }
-
-                    return sc.Status == ServiceControllerStatus.Running;
-                }
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogWarning("Failed to ensure ViGEmBus service is running: {0}", ex.Message);
-                return false;
-            }
-        }
-
         public static int? GetMasterIntervalOverrideHz()
         {
             return vTarget?.MasterIntervalOverrideHz;
@@ -191,13 +93,6 @@ namespace HandheldCompanion.Managers
         {
             if (IsInitialized)
                 return;
-
-            // Initialize ViGEm backend if selected
-            if (!InitializeViGEm())
-            {
-                LogManager.LogWarning("Failed to initialize ViGEm backend");
-                HIDBackend = HIDBackend.VIIPER;
-            }
 
             // manage events
             ManagerFactory.profileManager.Applied += ProfileManager_Applied;
@@ -274,24 +169,6 @@ namespace HandheldCompanion.Managers
 
         public static async Task Resume(bool OS)
         {
-            if (!controllerLock.Wait(3000))
-                return;
-
-            try
-            {
-                // Re-initialize ViGEm if we're using that backend
-                if (!InitializeViGEm())
-                    LogManager.LogWarning("Failed to re-initialize ViGEm backend");
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogWarning("Error during ViGEm resume: {0}", ex.Message);
-            }
-            finally
-            {
-                controllerLock.Release();
-            }
-
             if (OS)
             {
                 // Update DSU status
@@ -314,19 +191,7 @@ namespace HandheldCompanion.Managers
             if (!controllerLock.Wait(3000))
                 return;
 
-            try
-            {
-                // Uninitialize ViGEm
-                UninitializeViGEm();
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogWarning("Error during ViGEm suspend: {0}", ex.Message);
-            }
-            finally
-            {
-                controllerLock.Release();
-            }
+            controllerLock.Release();
 
             if (OS)
             {
@@ -485,9 +350,7 @@ namespace HandheldCompanion.Managers
                 if (temporaryProductIdSeed == 0)
                     temporaryProductIdSeed = 1;
 
-                return HIDBackend == HIDBackend.ViGEM
-                    ? new ViXbox360Target(VendorId, temporaryProductIdSeed)
-                    : new Xbox360Target(VendorId, temporaryProductIdSeed);
+                return new Xbox360Target(VendorId, temporaryProductIdSeed);
             }
         }
 
@@ -537,8 +400,8 @@ namespace HandheldCompanion.Managers
 
             try
             {
-                await controllerLock.WaitAsync();
-                await SetControllerModeCore(mode);
+                await controllerLock.WaitAsync().ConfigureAwait(false);
+                await SetControllerModeCore(mode).ConfigureAwait(false);
             }
             catch { }
             finally
@@ -597,7 +460,7 @@ namespace HandheldCompanion.Managers
                 vTarget = null;
 
                 // Wait for a short delay to ensure the controller is fully disconnected before proceeding
-                await Task.Delay(2000);
+                await Task.Delay(2000).ConfigureAwait(false);
 
                 NotifyMasterIntervalOverrideChanged();
             }
@@ -647,12 +510,12 @@ namespace HandheldCompanion.Managers
         {
             return mode switch
             {
-                HIDmode.DualShock4Controller => HIDBackend == HIDBackend.ViGEM ? new ViDualShock4Target(0x054C, 0x05C4) : new DualShock4Target(0x054C, 0x05C4),
+                HIDmode.DualShock4Controller => new DualShock4Target(0x054C, 0x05C4),
                 HIDmode.DualSenseController => new DualSenseTarget(0x054C, 0x0CE6),
                 HIDmode.SteamDeckController => new SteamDeckTarget(0x28DE, 0x1205),
                 HIDmode.SteamController => new SteamControllerTarget(0x28DE, 0x1102),
                 HIDmode.SwitchProController => new SwitchProTarget(0x057E, 0x2069),
-                HIDmode.Xbox360Controller => HIDBackend == HIDBackend.ViGEM ? new ViXbox360Target(VendorId, ProductId) : new Xbox360Target(VendorId, ProductId),
+                HIDmode.Xbox360Controller => new Xbox360Target(VendorId, ProductId),
                 _ => null
             };
         }

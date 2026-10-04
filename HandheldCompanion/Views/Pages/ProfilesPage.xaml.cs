@@ -82,6 +82,16 @@ public partial class ProfilesPage : Page
         e.Handled = true;
     }
 
+    private void LibrarySearchField_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter)
+            return;
+
+        e.Handled = true;
+        if (viewModel.RefreshLibrary.CanExecute(null))
+            viewModel.RefreshLibrary.Execute(null);
+    }
+
     // Navigation and dialog events that cannot be bound
     public async void b_CreateProfile_Click(object? sender, RoutedEventArgs? e)
     {

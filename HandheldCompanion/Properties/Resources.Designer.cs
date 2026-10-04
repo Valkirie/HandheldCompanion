@@ -70,7 +70,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A combination of a Windows service and a touch interface optimized GUI to increase your handheld gaming computer experience. Features include: motion control a.k.a. gyro control, virtual controller simulation, quick tools overlay, virtual touchpads, 3D controller model, per application based profile settings system. Handheld Companion relies on ViGEmBus driver and ViGEmClient libraries as well as HidHide kernel-mode filter driver. Motion control algorithms are based on work by Jibbsmart and availible inform [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to A touch-optimized GUI to improve your handheld gaming computer experience. Features include motion control through an IMU or external sensor, the QuickTools overlay, VIIPER virtual controller simulation for Xbox 360, DualShock 4, DualSense, Steam Controller, Steam Deck, and Nintendo Switch Pro controllers, application profiles, gamepad remapping, PS Remote Play support, a 3D controller overlay, and hotkeys. The all-in-one installer also installs the HidHide filter driver used to hide physical controllers wh [rest of string was truncated]&quot;;.
         /// </summary>
         public static string AboutPage_AboutDescription {
             get {
@@ -466,7 +466,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Define the behavior when an external controller is detected.
+        ///   Looks up a localized string similar to Define whether an external controller should be connected when detected.
         /// </summary>
         public static string ControllerPage_ConnectWhenPluggedDesc {
             get {
@@ -1051,7 +1051,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The ViGEm driver is not ready yet. Attempt {0} of {1}, retrying....
+        ///   Looks up a localized string similar to The virtual controller is not ready yet. Attempt {0} of {1}, retrying....
         /// </summary>
         public static string ControllerPage_VirtualConnectRetryDesc {
             get {
@@ -1582,60 +1582,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Go back to sleep.
-        /// </summary>
-        public static string DevicePage_GoBackToSleep {
-            get {
-                return ResourceManager.GetString("DevicePage_GoBackToSleep", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Automatically send the device back to sleep if awakened from Modern Standby by selected wake reasons..
-        /// </summary>
-        public static string DevicePage_GoBackToSleepDesc {
-            get {
-                return ResourceManager.GetString("DevicePage_GoBackToSleepDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Go back to sleep if awakened by a charger being connected..
-        /// </summary>
-        public static string DevicePage_GoBackToSleepOnChargerConnectedDesc {
-            get {
-                return ResourceManager.GetString("DevicePage_GoBackToSleepOnChargerConnectedDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Go back to sleep if awakened by the fingerprint reader..
-        /// </summary>
-        public static string DevicePage_GoBackToSleepOnFingerprintReaderDesc {
-            get {
-                return ResourceManager.GetString("DevicePage_GoBackToSleepOnFingerprintReaderDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Go back to sleep if awakened by a joystick or controller input..
-        /// </summary>
-        public static string DevicePage_GoBackToSleepOnJoystickDesc {
-            get {
-                return ResourceManager.GetString("DevicePage_GoBackToSleepOnJoystickDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Go back to sleep if awakened by the power button..
-        /// </summary>
-        public static string DevicePage_GoBackToSleepOnPowerButtonDesc {
-            get {
-                return ResourceManager.GetString("DevicePage_GoBackToSleepOnPowerButtonDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to GPU options.
         /// </summary>
         public static string DevicePage_GPUOptions {
@@ -1926,6 +1872,87 @@ namespace HandheldCompanion.Properties {
         /// <summary>
         ///   Looks up a localized string similar to AYA.
         /// </summary>
+        public static string Enum_AYANEO3_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ≈.
+        /// </summary>
+        public static string Enum_AYANEO3_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LC.
+        /// </summary>
+        public static string Enum_AYANEO3_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RC.
+        /// </summary>
+        public static string Enum_AYANEO3_ButtonFlags_OEM4 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to T.
+        /// </summary>
+        public static string Enum_AYANEO3_ButtonFlags_OEM5 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LC1.
+        /// </summary>
+        public static string Enum_AYANEO3_ButtonFlags_OEM6 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LC2.
+        /// </summary>
+        public static string Enum_AYANEO3_ButtonFlags_OEM7 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RC1.
+        /// </summary>
+        public static string Enum_AYANEO3_ButtonFlags_OEM8 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RC2.
+        /// </summary>
+        public static string Enum_AYANEO3_ButtonFlags_OEM9 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEO3_ButtonFlags_OEM9", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to AYA.
+        /// </summary>
         public static string Enum_AYANEOAIR_ButtonFlags_OEM1 {
             get {
                 return ResourceManager.GetString("Enum_AYANEOAIR_ButtonFlags_OEM1", resourceCulture);
@@ -1956,6 +1983,42 @@ namespace HandheldCompanion.Properties {
         public static string Enum_AYANEOAIR_ButtonFlags_OEM4 {
             get {
                 return ResourceManager.GetString("Enum_AYANEOAIR_ButtonFlags_OEM4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to AYA.
+        /// </summary>
+        public static string Enum_AYANEOAIR2_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEOAIR2_ButtonFlags_OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ≈.
+        /// </summary>
+        public static string Enum_AYANEOAIR2_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEOAIR2_ButtonFlags_OEM2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RC.
+        /// </summary>
+        public static string Enum_AYANEOAIR2_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEOAIR2_ButtonFlags_OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LC.
+        /// </summary>
+        public static string Enum_AYANEOAIR2_ButtonFlags_OEM4 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEOAIR2_ButtonFlags_OEM4", resourceCulture);
             }
         }
         
@@ -2028,6 +2091,87 @@ namespace HandheldCompanion.Properties {
         public static string Enum_AYANEOAIRPro_ButtonFlags_OEM4 {
             get {
                 return ResourceManager.GetString("Enum_AYANEOAIRPro_ButtonFlags_OEM4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to AYA.
+        /// </summary>
+        public static string Enum_AYANEONEXT2_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ≈.
+        /// </summary>
+        public static string Enum_AYANEONEXT2_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LC.
+        /// </summary>
+        public static string Enum_AYANEONEXT2_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RC.
+        /// </summary>
+        public static string Enum_AYANEONEXT2_ButtonFlags_OEM4 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to T.
+        /// </summary>
+        public static string Enum_AYANEONEXT2_ButtonFlags_OEM5 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LC1.
+        /// </summary>
+        public static string Enum_AYANEONEXT2_ButtonFlags_OEM6 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LC2.
+        /// </summary>
+        public static string Enum_AYANEONEXT2_ButtonFlags_OEM7 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RC1.
+        /// </summary>
+        public static string Enum_AYANEONEXT2_ButtonFlags_OEM8 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RC2.
+        /// </summary>
+        public static string Enum_AYANEONEXT2_ButtonFlags_OEM9 {
+            get {
+                return ResourceManager.GetString("Enum_AYANEONEXT2_ButtonFlags_OEM9", resourceCulture);
             }
         }
         
@@ -4705,6 +4849,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AYANEO NEXT 2 DInput controller detected.
+        /// </summary>
+        public static string Hint_AYANEONext2DInput {
+            get {
+                return ResourceManager.GetString("Hint_AYANEONext2DInput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press LC and RC simultaneously to switch to XInput mode for proper controller compatibility.
+        /// </summary>
+        public static string Hint_AYANEONext2DInputDesc {
+            get {
+                return ResourceManager.GetString("Hint_AYANEONext2DInputDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Core isolation features are turned on.
         /// </summary>
         public static string Hint_CoreIsolationCheck {
@@ -6884,6 +7046,726 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AetherSX2.
+        /// </summary>
+        public static string Library_ScanAetherSX2 {
+            get {
+                return ResourceManager.GetString("Library_ScanAetherSX2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All.
+        /// </summary>
+        public static string Library_ScanAll {
+            get {
+                return ResourceManager.GetString("Library_ScanAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to all emulators.
+        /// </summary>
+        public static string Library_ScanAllEmulators {
+            get {
+                return ResourceManager.GetString("Library_ScanAllEmulators", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to all launchers.
+        /// </summary>
+        public static string Library_ScanAllLaunchers {
+            get {
+                return ResourceManager.GetString("Library_ScanAllLaunchers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to all platforms and emulators.
+        /// </summary>
+        public static string Library_ScanAllPlatformsAndEmulators {
+            get {
+                return ResourceManager.GetString("Library_ScanAllPlatformsAndEmulators", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Arcade.
+        /// </summary>
+        public static string Library_ScanArcade {
+            get {
+                return ResourceManager.GetString("Library_ScanArcade", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Atomiswave.
+        /// </summary>
+        public static string Library_ScanAtomiswave {
+            get {
+                return ResourceManager.GetString("Library_ScanAtomiswave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Azahar.
+        /// </summary>
+        public static string Library_ScanAzahar {
+            get {
+                return ResourceManager.GetString("Library_ScanAzahar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Battle.net.
+        /// </summary>
+        public static string Library_ScanBattleNet {
+            get {
+                return ResourceManager.GetString("Library_ScanBattleNet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cemu.
+        /// </summary>
+        public static string Library_ScanCemu {
+            get {
+                return ResourceManager.GetString("Library_ScanCemu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Citra.
+        /// </summary>
+        public static string Library_ScanCitra {
+            get {
+                return ResourceManager.GetString("Library_ScanCitra", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Citron.
+        /// </summary>
+        public static string Library_ScanCitron {
+            get {
+                return ResourceManager.GetString("Library_ScanCitron", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DeSmuME.
+        /// </summary>
+        public static string Library_ScanDeSmuME {
+            get {
+                return ResourceManager.GetString("Library_ScanDeSmuME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Discovering games for {0}....
+        /// </summary>
+        public static string Library_ScanDiscoveringGames {
+            get {
+                return ResourceManager.GetString("Library_ScanDiscoveringGames", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dolphin.
+        /// </summary>
+        public static string Library_ScanDolphin {
+            get {
+                return ResourceManager.GetString("Library_ScanDolphin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DOS.
+        /// </summary>
+        public static string Library_ScanDOS {
+            get {
+                return ResourceManager.GetString("Library_ScanDOS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DOSBox.
+        /// </summary>
+        public static string Library_ScanDOSBox {
+            get {
+                return ResourceManager.GetString("Library_ScanDOSBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DOSBox-X.
+        /// </summary>
+        public static string Library_ScanDOSBoxX {
+            get {
+                return ResourceManager.GetString("Library_ScanDOSBoxX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Download metadata and artworks.
+        /// </summary>
+        public static string Library_ScanDownloadMetadata {
+            get {
+                return ResourceManager.GetString("Library_ScanDownloadMetadata", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dreamcast.
+        /// </summary>
+        public static string Library_ScanDreamcast {
+            get {
+                return ResourceManager.GetString("Library_ScanDreamcast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DuckStation.
+        /// </summary>
+        public static string Library_ScanDuckStation {
+            get {
+                return ResourceManager.GetString("Library_ScanDuckStation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to EA Desktop.
+        /// </summary>
+        public static string Library_ScanEADesktop {
+            get {
+                return ResourceManager.GetString("Library_ScanEADesktop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Eden.
+        /// </summary>
+        public static string Library_ScanEden {
+            get {
+                return ResourceManager.GetString("Library_ScanEden", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Emulators.
+        /// </summary>
+        public static string Library_ScanEmulators {
+            get {
+                return ResourceManager.GetString("Library_ScanEmulators", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Epic.
+        /// </summary>
+        public static string Library_ScanEpic {
+            get {
+                return ResourceManager.GetString("Library_ScanEpic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flycast.
+        /// </summary>
+        public static string Library_ScanFlycast {
+            get {
+                return ResourceManager.GetString("Library_ScanFlycast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Game Boy.
+        /// </summary>
+        public static string Library_ScanGameBoy {
+            get {
+                return ResourceManager.GetString("Library_ScanGameBoy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Game Boy Advance.
+        /// </summary>
+        public static string Library_ScanGameBoyAdvance {
+            get {
+                return ResourceManager.GetString("Library_ScanGameBoyAdvance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Game Boy Color.
+        /// </summary>
+        public static string Library_ScanGameBoyColor {
+            get {
+                return ResourceManager.GetString("Library_ScanGameBoyColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GameCube.
+        /// </summary>
+        public static string Library_ScanGameCube {
+            get {
+                return ResourceManager.GetString("Library_ScanGameCube", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GOG GALAXY.
+        /// </summary>
+        public static string Library_ScanGOG {
+            get {
+                return ResourceManager.GetString("Library_ScanGOG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Launchers.
+        /// </summary>
+        public static string Library_ScanLaunchers {
+            get {
+                return ResourceManager.GetString("Library_ScanLaunchers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MAME.
+        /// </summary>
+        public static string Library_ScanMAME {
+            get {
+                return ResourceManager.GetString("Library_ScanMAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mednafen.
+        /// </summary>
+        public static string Library_ScanMednafen {
+            get {
+                return ResourceManager.GetString("Library_ScanMednafen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to melonDS.
+        /// </summary>
+        public static string Library_ScanMelonDS {
+            get {
+                return ResourceManager.GetString("Library_ScanMelonDS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Microsoft Store.
+        /// </summary>
+        public static string Library_ScanMicrosoftStore {
+            get {
+                return ResourceManager.GetString("Library_ScanMicrosoftStore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multi-system.
+        /// </summary>
+        public static string Library_ScanMultiSystem {
+            get {
+                return ResourceManager.GetString("Library_ScanMultiSystem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mupen64Plus.
+        /// </summary>
+        public static string Library_ScanMupen64Plus {
+            get {
+                return ResourceManager.GetString("Library_ScanMupen64Plus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Naomi.
+        /// </summary>
+        public static string Library_ScanNaomi {
+            get {
+                return ResourceManager.GetString("Library_ScanNaomi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nintendo 3DS.
+        /// </summary>
+        public static string Library_ScanNintendo3DS {
+            get {
+                return ResourceManager.GetString("Library_ScanNintendo3DS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nintendo 64.
+        /// </summary>
+        public static string Library_ScanNintendo64 {
+            get {
+                return ResourceManager.GetString("Library_ScanNintendo64", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nintendo DS.
+        /// </summary>
+        public static string Library_ScanNintendoDS {
+            get {
+                return ResourceManager.GetString("Library_ScanNintendoDS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nintendo Switch.
+        /// </summary>
+        public static string Library_ScanNintendoSwitch {
+            get {
+                return ResourceManager.GetString("Library_ScanNintendoSwitch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No games found.
+        /// </summary>
+        public static string Library_ScanNoGamesFound {
+            get {
+                return ResourceManager.GetString("Library_ScanNoGamesFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Origin.
+        /// </summary>
+        public static string Library_ScanOrigin {
+            get {
+                return ResourceManager.GetString("Library_ScanOrigin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PC Adventure.
+        /// </summary>
+        public static string Library_ScanPCAdventure {
+            get {
+                return ResourceManager.GetString("Library_ScanPCAdventure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PCSX2.
+        /// </summary>
+        public static string Library_ScanPCSX2 {
+            get {
+                return ResourceManager.GetString("Library_ScanPCSX2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PlayStation.
+        /// </summary>
+        public static string Library_ScanPlayStation {
+            get {
+                return ResourceManager.GetString("Library_ScanPlayStation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PlayStation 2.
+        /// </summary>
+        public static string Library_ScanPlayStation2 {
+            get {
+                return ResourceManager.GetString("Library_ScanPlayStation2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PlayStation 3.
+        /// </summary>
+        public static string Library_ScanPlayStation3 {
+            get {
+                return ResourceManager.GetString("Library_ScanPlayStation3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PlayStation 4.
+        /// </summary>
+        public static string Library_ScanPlayStation4 {
+            get {
+                return ResourceManager.GetString("Library_ScanPlayStation4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PlayStation Portable.
+        /// </summary>
+        public static string Library_ScanPlayStationPortable {
+            get {
+                return ResourceManager.GetString("Library_ScanPlayStationPortable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PlayStation Vita.
+        /// </summary>
+        public static string Library_ScanPlayStationVita {
+            get {
+                return ResourceManager.GetString("Library_ScanPlayStationVita", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PPSSPP.
+        /// </summary>
+        public static string Library_ScanPPSSPP {
+            get {
+                return ResourceManager.GetString("Library_ScanPPSSPP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} of {1} games.
+        /// </summary>
+        public static string Library_ScanProgress {
+            get {
+                return ResourceManager.GetString("Library_ScanProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Project64.
+        /// </summary>
+        public static string Library_ScanProject64 {
+            get {
+                return ResourceManager.GetString("Library_ScanProject64", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redream.
+        /// </summary>
+        public static string Library_ScanRedream {
+            get {
+                return ResourceManager.GetString("Library_ScanRedream", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RetroArch.
+        /// </summary>
+        public static string Library_ScanRetroArch {
+            get {
+                return ResourceManager.GetString("Library_ScanRetroArch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Riot Games.
+        /// </summary>
+        public static string Library_ScanRiotGames {
+            get {
+                return ResourceManager.GetString("Library_ScanRiotGames", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rockstar.
+        /// </summary>
+        public static string Library_ScanRockstar {
+            get {
+                return ResourceManager.GetString("Library_ScanRockstar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RPCS3.
+        /// </summary>
+        public static string Library_ScanRPCS3 {
+            get {
+                return ResourceManager.GetString("Library_ScanRPCS3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ryujinx.
+        /// </summary>
+        public static string Library_ScanRyujinx {
+            get {
+                return ResourceManager.GetString("Library_ScanRyujinx", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SameBoy.
+        /// </summary>
+        public static string Library_ScanSameBoy {
+            get {
+                return ResourceManager.GetString("Library_ScanSameBoy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scanning {0}....
+        /// </summary>
+        public static string Library_ScanScanning {
+            get {
+                return ResourceManager.GetString("Library_ScanScanning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ScummVM.
+        /// </summary>
+        public static string Library_ScanScummVM {
+            get {
+                return ResourceManager.GetString("Library_ScanScummVM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ShadPS4.
+        /// </summary>
+        public static string Library_ScanShadPS4 {
+            get {
+                return ResourceManager.GetString("Library_ScanShadPS4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Snes9x.
+        /// </summary>
+        public static string Library_ScanSnes9x {
+            get {
+                return ResourceManager.GetString("Library_ScanSnes9x", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Steam.
+        /// </summary>
+        public static string Library_ScanSteam {
+            get {
+                return ResourceManager.GetString("Library_ScanSteam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Super Nintendo.
+        /// </summary>
+        public static string Library_ScanSuperNintendo {
+            get {
+                return ResourceManager.GetString("Library_ScanSuperNintendo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ubisoft Connect.
+        /// </summary>
+        public static string Library_ScanUbisoftConnect {
+            get {
+                return ResourceManager.GetString("Library_ScanUbisoftConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update game library.
+        /// </summary>
+        public static string Library_ScanUpdateGameLibrary {
+            get {
+                return ResourceManager.GetString("Library_ScanUpdateGameLibrary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to VisualBoyAdvance-M.
+        /// </summary>
+        public static string Library_ScanVisualBoyAdvance {
+            get {
+                return ResourceManager.GetString("Library_ScanVisualBoyAdvance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vita3K.
+        /// </summary>
+        public static string Library_ScanVita3K {
+            get {
+                return ResourceManager.GetString("Library_ScanVita3K", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wii.
+        /// </summary>
+        public static string Library_ScanWii {
+            get {
+                return ResourceManager.GetString("Library_ScanWii", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wii U.
+        /// </summary>
+        public static string Library_ScanWiiU {
+            get {
+                return ResourceManager.GetString("Library_ScanWiiU", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Xbox.
+        /// </summary>
+        public static string Library_ScanXbox {
+            get {
+                return ResourceManager.GetString("Library_ScanXbox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Xbox 360.
+        /// </summary>
+        public static string Library_ScanXbox360 {
+            get {
+                return ResourceManager.GetString("Library_ScanXbox360", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to xemu.
+        /// </summary>
+        public static string Library_ScanXemu {
+            get {
+                return ResourceManager.GetString("Library_ScanXemu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Xenia.
+        /// </summary>
+        public static string Library_ScanXenia {
+            get {
+                return ResourceManager.GetString("Library_ScanXenia", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yuzu.
+        /// </summary>
+        public static string Library_ScanYuzu {
+            get {
+                return ResourceManager.GetString("Library_ScanYuzu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This will scan your entire library to load or refresh metadata and cover art for every title. It may take several seconds to a few minutes based on your internet connection. Do you want to proceed?.
         /// </summary>
         public static string LibraryDiscoverContent {
@@ -6898,6 +7780,78 @@ namespace HandheldCompanion.Properties {
         public static string LibraryDiscoverTitle {
             get {
                 return ResourceManager.GetString("LibraryDiscoverTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Oops, we&apos;re offline! We will let you know when we are back..
+        /// </summary>
+        public static string LibraryManager_ConnectivityDown {
+            get {
+                return ResourceManager.GetString("LibraryManager_ConnectivityDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to We are back online. All features are available..
+        /// </summary>
+        public static string LibraryManager_ConnectivityUp {
+            get {
+                return ResourceManager.GetString("LibraryManager_ConnectivityUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloading artworks and metadatas..
+        /// </summary>
+        public static string LibraryManager_DownloadingArtworks {
+            get {
+                return ResourceManager.GetString("LibraryManager_DownloadingArtworks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exception raised: {0}.
+        /// </summary>
+        public static string LibraryManager_ExceptionRaised {
+            get {
+                return ResourceManager.GetString("LibraryManager_ExceptionRaised", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No artworks found..
+        /// </summary>
+        public static string LibraryManager_NoArtworksFound {
+            get {
+                return ResourceManager.GetString("LibraryManager_NoArtworksFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Library Manager.
+        /// </summary>
+        public static string LibraryManager_Title {
+            get {
+                return ResourceManager.GetString("LibraryManager_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown error..
+        /// </summary>
+        public static string LibraryManager_UnknownError {
+            get {
+                return ResourceManager.GetString("LibraryManager_UnknownError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown exception..
+        /// </summary>
+        public static string LibraryManager_UnknownException {
+            get {
+                return ResourceManager.GetString("LibraryManager_UnknownException", resourceCulture);
             }
         }
         

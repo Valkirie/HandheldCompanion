@@ -54,6 +54,19 @@ namespace HandheldCompanion.Controls
         {
         }
 
+        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (e.Property == PaneDisplayModeProperty)
+            {
+                _cachedExpandedTopNavWidth = 0.0;
+                _isTopNavIconOnly = false;
+                _lastAppliedIconOnly = null;
+                InvalidateMeasure();
+            }
+        }
+
         private static void OnTopNavItemsAlignmentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is AdaptiveNavigationView navigationView)
@@ -69,6 +82,9 @@ namespace HandheldCompanion.Controls
 
         public override void OnApplyTemplate()
         {
+            DetachTopNavRepeaterHandlers();
+            DetachTrackedTopNavItemHandlers();
+
             base.OnApplyTemplate();
 
             _topNavArea = GetTemplateChild(TopNavAreaPartName) as FrameworkElement;
@@ -153,8 +169,6 @@ namespace HandheldCompanion.Controls
                 UpdateTopNavigationPresentation(availableSize);
 
             Size desiredSize = base.MeasureOverride(availableSize);
-            if (desiredSize.Width == availableSize.Width)
-                return desiredSize;
 
             // If we just switched into icon-only mode, base.MeasureOverride may have called
             // OnApplyTemplate on presenters for the first time, resetting them to "IconOnLeft"
@@ -231,13 +245,33 @@ namespace HandheldCompanion.Controls
             }
             else
             {
-                _topNavGrid.ColumnDefinitions[4].Width = new GridLength(0, GridUnitType.Pixel);
-                _topNavGrid.ColumnDefinitions[5].Width = new GridLength(0, GridUnitType.Pixel);
-                _topNavGrid.ColumnDefinitions[6].Width = new GridLength(0, GridUnitType.Pixel);
+                GridLength[]? previousWidths = null;
+                try
+                {
+                    previousWidths = new GridLength[3]
+                    {
+                        _topNavGrid.ColumnDefinitions[4].Width,
+                        _topNavGrid.ColumnDefinitions[5].Width,
+                        _topNavGrid.ColumnDefinitions[6].Width,
+                    };
 
-                SuppressOverflowButton();
-                _topNavGrid.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-                return _topNavGrid.DesiredSize.Width;
+                    _topNavGrid.ColumnDefinitions[4].Width = new GridLength(0, GridUnitType.Pixel);
+                    _topNavGrid.ColumnDefinitions[5].Width = new GridLength(0, GridUnitType.Pixel);
+                    _topNavGrid.ColumnDefinitions[6].Width = new GridLength(0, GridUnitType.Pixel);
+
+                    SuppressOverflowButton();
+                    _topNavGrid.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                    return _topNavGrid.DesiredSize.Width;
+                }
+                finally
+                {
+                    if (previousWidths is not null)
+                    {
+                        _topNavGrid.ColumnDefinitions[4].Width = previousWidths[0];
+                        _topNavGrid.ColumnDefinitions[5].Width = previousWidths[1];
+                        _topNavGrid.ColumnDefinitions[6].Width = previousWidths[2];
+                    }
+                }
             }
         }
 
@@ -326,6 +360,39 @@ namespace HandheldCompanion.Controls
             }
 
             _lastAppliedIconOnly = isIconOnly;
+        }
+
+        private void DetachTopNavRepeaterHandlers()
+        {
+            if (m_topNavRepeater is null)
+                return;
+
+            m_topNavRepeater.ElementPrepared -= TopNavRepeater_ElementPrepared;
+            m_topNavRepeater.ElementClearing -= TopNavRepeater_ElementClearing;
+        }
+
+        private void DetachTrackedTopNavItemHandlers()
+        {
+            foreach (NavigationViewItem item in _realizedTopNavItems)
+            {
+                IconPropertyDescriptor.RemoveValueChanged(item, NavItem_IconChanged);
+
+                item.MouseEnter -= NavItem_ReapplyIconOnlyState;
+                item.MouseLeave -= NavItem_ReapplyIconOnlyState;
+                item.GotKeyboardFocus -= NavItem_ReapplyIconOnlyState;
+                item.LostKeyboardFocus -= NavItem_ReapplyIconOnlyState;
+                item.PreviewMouseLeftButtonDown -= NavItem_ReapplyIconOnlyState;
+                item.PreviewMouseLeftButtonUp -= NavItem_ReapplyIconOnlyState;
+            }
+
+            foreach (NavigationViewItem item in _pendingPresenterItems)
+            {
+                IconPropertyDescriptor.RemoveValueChanged(item, NavItem_IconChanged);
+            }
+
+            _realizedTopNavItems.Clear();
+            _realizedTopNavPresenters.Clear();
+            _pendingPresenterItems.Clear();
         }
 
         private void NavItem_ReapplyIconOnlyState(object sender, RoutedEventArgs e)

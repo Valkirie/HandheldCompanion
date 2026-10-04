@@ -16,20 +16,20 @@ public class AYANEOAIR1S : AYANEOAIR
         this.OEMChords.Clear();
 
         this.OEMChords.Add(new KeyboardChord("Custom Key Top Right",
-            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F16],
-            [KeyCode.F16, KeyCode.LWin, KeyCode.RControlKey],
+            [KeyCode.RControl, KeyCode.LWin, KeyCode.F16],
+            [KeyCode.F16, KeyCode.LWin, KeyCode.RControl],
             false, ButtonFlags.OEM4
         ));
 
         this.OEMChords.Add(new KeyboardChord("Custom Key Top Left",
-            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F15],
-            [KeyCode.F15, KeyCode.LWin, KeyCode.RControlKey],
+            [KeyCode.RControl, KeyCode.LWin, KeyCode.F15],
+            [KeyCode.F15, KeyCode.LWin, KeyCode.RControl],
             false, ButtonFlags.OEM3
         ));
 
         this.OEMChords.Add(new KeyboardChord("Custom Key Big",
-            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F17],
-            [KeyCode.F17, KeyCode.LWin, KeyCode.RControlKey],
+            [KeyCode.RControl, KeyCode.LWin, KeyCode.F17],
+            [KeyCode.F17, KeyCode.LWin, KeyCode.RControl],
             false, ButtonFlags.OEM1
         ));
 

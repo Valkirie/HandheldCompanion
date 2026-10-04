@@ -246,7 +246,13 @@ public static class PerformanceManager
         {
             case "PerformanceManagerEnabled":
                 {
+                    bool previousEnabled = _performanceManagerEnabled;
                     _performanceManagerEnabled = Convert.ToBoolean(value);
+
+                    // skip if no change
+                    if (previousEnabled == _performanceManagerEnabled)
+                        return;
+
                     if (!_performanceManagerEnabled)
                     {
                         // stop all watchdogs and restore defaults
@@ -348,7 +354,10 @@ public static class PerformanceManager
     private static void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
         if (!_performanceManagerEnabled)
+        {
+            currentProfile = profile;
             return;
+        }
 
         bool previousProfileIsDefault = currentProfile?.IsDefault() == true;
         bool previousAutoTDPEnabled = !previousProfileIsDefault && currentProfile?.AutoTDPEnabled == true;
@@ -494,6 +503,12 @@ public static class PerformanceManager
 
     private static void PowerProfileManager_Discarded(PowerProfile profile, bool swapped)
     {
+        if (!_performanceManagerEnabled)
+        {
+            currentProfile = null;
+            return;
+        }
+
         // don't bother discarding settings, new one will be enforce shortly
         if (swapped)
             return;
@@ -1050,7 +1065,7 @@ public static class PerformanceManager
         for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
         {
             RequestTDP((PowerType)idx, values[idx], immediate);
-            await Task.Delay(200).ConfigureAwait(false); // Avoid blocking the synchronization context
+            await Task.Delay(200).ConfigureAwait(false); // Avoid capturing the synchronization context
         }
     }
 

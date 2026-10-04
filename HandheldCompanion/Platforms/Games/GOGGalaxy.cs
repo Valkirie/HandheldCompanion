@@ -12,6 +12,8 @@ public class GOGGalaxy : IPlatform
     // GameLib
     private GogLauncher gogLauncher = new(new LauncherOptions());
     public override string Name => gogLauncher.Name;
+    public override string PlatformColor => "#86328A";
+    public override string PlatformGlyph => "\uEE84";
     public override string InstallPath => gogLauncher.InstallDir;
     public override string ExecutablePath => gogLauncher.Executable;
     public override string ExecutableName => Path.GetFileName(ExecutablePath);

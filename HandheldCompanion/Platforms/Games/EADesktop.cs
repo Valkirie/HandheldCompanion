@@ -12,6 +12,8 @@ public class EADesktop : IPlatform
     // GameLib
     private EALauncher eaLauncher = new(new LauncherOptions());
     public override string Name => eaLauncher.Name;
+    public override string PlatformColor => "#FF4747";
+    public override string PlatformGlyph => "\uED45";
     public override string InstallPath => eaLauncher.InstallDir;
     public override string ExecutablePath => eaLauncher.Executable;
     public override string ExecutableName => Path.GetFileName(ExecutablePath);

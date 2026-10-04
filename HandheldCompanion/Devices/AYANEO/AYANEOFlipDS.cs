@@ -26,8 +26,8 @@ public class AYANEOFlipDS : AYANEOFlipKB
 
         // TODO: Add OEMChords for "Dual-Screen Keys" key here
         this.OEMChords.Add(new KeyboardChord("Custom Key Screen",
-            [KeyCode.RControlKey, KeyCode.LWin, KeyCode.F18],
-            [KeyCode.F18, KeyCode.LWin, KeyCode.RControlKey],
+            [KeyCode.RControl, KeyCode.LWin, KeyCode.F18],
+            [KeyCode.F18, KeyCode.LWin, KeyCode.RControl],
             false, ButtonFlags.OEM5
         ));
     }
@@ -145,7 +145,7 @@ public class AYANEOFlipDS : AYANEOFlipKB
         int clamped = Math.Clamp(brightness, (short)0, (short)100);
         byte scaled = (byte)((clamped * 0xFF) / 100);
 
-        this.EcWriteByte(0x4F, 0x00);    // reset/latch at 0x4F
+        this.EcWriteByte(0xFF, 0x00);    // reset/latch at 0xFF
         this.EcWriteByte(0x4E, scaled);  // write brightness at 0x4E
     }
 

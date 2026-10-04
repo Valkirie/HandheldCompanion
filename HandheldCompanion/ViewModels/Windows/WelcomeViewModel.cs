@@ -450,10 +450,9 @@ public class WelcomeViewModel : BaseViewModel
         if (!string.IsNullOrWhiteSpace(device.ManufacturerName))
             yield return device.ManufacturerName;
 
-        if (!string.IsNullOrWhiteSpace(device.ProductName))
+        if (!string.IsNullOrWhiteSpace(device.ProductModel))
+            yield return device.ProductModel;
+        else if (!string.IsNullOrWhiteSpace(device.ProductName))
             yield return device.ProductName;
-
-        if (!string.IsNullOrWhiteSpace(device.SystemModel))
-            yield return device.SystemModel;
     }
 }

@@ -264,7 +264,7 @@ public abstract class IDevice
     public string InternalSensorName = string.Empty;
 
     public string ProductIllustration = "device_generic";
-    public string ProductModel = "default";
+    public string ProductModel = string.Empty;
 
     // key press delay to use for certain scenarios
     public short KeyPressDelay = 200;
@@ -749,6 +749,7 @@ public abstract class IDevice
         var ProductName = MotherboardInfo.Product;
         var SystemName = MotherboardInfo.SystemName;
         var SystemModel = MotherboardInfo.SystemModel;
+        var SystemSKU = MotherboardInfo.SystemSKU;
         var Version = MotherboardInfo.Version;
         var Processor = MotherboardInfo.ProcessorName;
         var NumberOfCores = MotherboardInfo.NumberOfCores;
@@ -820,6 +821,16 @@ public abstract class IDevice
                         case "AIR":
                             device = new AYANEOAIR();
                             break;
+                        case "AIR Pro 1S":
+                        case "AYANEO AIR Pro 1S":
+                            device = new AYANEOAIRPro1S();
+                            break;
+                        case "AIR 2":
+                        case "AIR2":
+                        case "AYANEO AIR 2":
+                        case "AB10":
+                            device = new AYANEOAIR2();
+                            break;
                         case "AIR Pro":
                             device = new AYANEOAIRPro();
                             break;
@@ -854,6 +865,13 @@ public abstract class IDevice
                                 ? new AYANEONEXTLite4500U()
                                 : new AYANEONEXTLite();
                             break;
+                        case "NEXT II":
+                        case "NEXT 2":
+                        case "AYANEO NEXT II":
+                        case "AYANEO NEXT 2":
+                        case "AB09":
+                            device = new AYANEONEXT2();
+                            break;
                         case "AYANEO 2":
                         case "GEEK":
                             device = new AYANEO2();
@@ -866,6 +884,15 @@ public abstract class IDevice
                             break;
                         case "AB05-Intel":
                             device = new AYANEOAIRPlusIntel();
+                            break;
+                        case "AYANEO 3":
+                        case "AB07":
+                            device = new AYANEO3();
+                            break;
+                        case "AB05N":
+                        case "AB05NXX":
+                        case "AIR Plus Nxx":
+                            device = new AYANEOAIRPlusNxx();
                             break;
                         case "AYANEO 2S":
                         case "GEEK 1S":
@@ -882,6 +909,10 @@ public abstract class IDevice
                             break;
                         case "FLIP 1S KB":
                             device = new AYANEOFlip1SKB();
+                            break;
+                        case "FLIP 11":
+                        case "AYANEO FLIP 11":
+                            device = new AYANEOFlip11();
                             break;
                     }
                 }
@@ -1051,6 +1082,10 @@ public abstract class IDevice
                         case "ONEXPLAYER 2 PRO ARP23P EVA-01":
                             device = new OneXPlayer2Pro();
                             break;
+                        case "ONEXPLAYER 3":
+                        case "ONEXPLAYER-3":
+                            device = new OneXPlayer3();
+                            break;
                     }
                 }
                 break;
@@ -1200,14 +1235,20 @@ public abstract class IDevice
     {
         Gyrometer? gyrometer = IMUGyrometer.GetAvailableSensor();
         Accelerometer? accelerometer = IMUAccelerometer.GetAvailableSensor();
-        bool hasLegacyGyrometer = gyrometer is null && IMUGyrometer.HasLegacySensor();
-        bool hasLegacyAccelerometer = accelerometer is null && IMUAccelerometer.HasLegacySensor();
+        string legacyGyrometerName = string.Empty;
+        string legacyAccelerometerName = string.Empty;
+        bool hasLegacyGyrometer = gyrometer is null && IMUGyrometer.TryGetLegacySensorName(out legacyGyrometerName);
+        bool hasLegacyAccelerometer = accelerometer is null && IMUAccelerometer.TryGetLegacySensorName(out legacyAccelerometerName);
 
         if (gyrometer != null || accelerometer != null || hasLegacyGyrometer || hasLegacyAccelerometer)
         {
-            InternalSensorName = SensorsManager.Gyrometer?.Name
-                ?? SensorsManager.Accelerometer?.Name
-                ?? string.Empty;
+            InternalSensorName = gyrometer is not null ? IMUSensor.GetDeviceName(gyrometer.DeviceId) : legacyGyrometerName;
+
+            if (string.IsNullOrWhiteSpace(InternalSensorName) && accelerometer is not null)
+                InternalSensorName = IMUSensor.GetDeviceName(accelerometer.DeviceId);
+
+            if (string.IsNullOrWhiteSpace(InternalSensorName))
+                InternalSensorName = legacyAccelerometerName;
 
             Capabilities |= DeviceCapabilities.InternalSensor;
         }

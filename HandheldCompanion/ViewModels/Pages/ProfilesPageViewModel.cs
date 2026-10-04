@@ -2556,16 +2556,19 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.powerProfileManager.Updated += PowerProfileManager_Updated;
             ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
 
-            foreach (PowerProfile powerProfile in ManagerFactory.powerProfileManager.profiles.Values)
-                PowerProfileManager_Updated(powerProfile, UpdateSource.Creation);
-
-            // If a profile was already selected before power profiles were loaded,
-            // the initial UpdatePowerProfileSelections() found ProfilePicker empty.
-            // Re-apply now that it's populated.
-            if (SelectedProfile != null)
+            using (new LoadingScope(this))
             {
-                UpdatePowerProfileSelections();
-                UpdateSelectedPowerProfileName();
+                foreach (PowerProfile powerProfile in ManagerFactory.powerProfileManager.profiles.Values)
+                    PowerProfileManager_Updated(powerProfile, UpdateSource.Creation);
+
+                // If a profile was already selected before power profiles were loaded,
+                // the initial UpdatePowerProfileSelections() found ProfilePicker empty.
+                // Re-apply now that it's populated.
+                if (SelectedProfile != null)
+                {
+                    UpdatePowerProfileSelections();
+                    UpdateSelectedPowerProfileName();
+                }
             }
         }
 
@@ -3432,9 +3435,22 @@ namespace HandheldCompanion.ViewModels
 
         private void SelectedLibraryChanged()
         {
+            // These collections depend on SelectedLibraryIndex. Refresh the
+            // FlipView item sources before synchronizing their selected indices.
+            OnPropertyChanged(nameof(LibraryCovers));
+            OnPropertyChanged(nameof(LibraryArtworks));
+            OnPropertyChanged(nameof(LibraryLogos));
+
             LibraryArtworksIndex = GetLibraryVisualIndex(LibraryArtworks, SelectedLibraryEntry?.GetArtworkId() ?? 0);
             LibraryCoversIndex = GetLibraryVisualIndex(LibraryCovers, SelectedLibraryEntry?.GetCoverId() ?? 0);
             LibraryLogosIndex = GetLibraryVisualIndex(LibraryLogos, SelectedLibraryEntry?.GetLogoId() ?? 0);
+
+            // An index can have the same numeric value for two different item
+            // sources, in which case its setter does not raise a notification.
+            OnPropertyChanged(nameof(LibraryCoversIndex));
+            OnPropertyChanged(nameof(LibraryArtworksIndex));
+            OnPropertyChanged(nameof(LibraryLogosIndex));
+
             OnPropertyChanged(nameof(LibraryCoversPageCount));
             OnPropertyChanged(nameof(LibraryArtworksPageCount));
             OnPropertyChanged(nameof(LibraryLogosPageCount));
@@ -3470,6 +3486,9 @@ namespace HandheldCompanion.ViewModels
         {
             try
             {
+                if (index >= 0 && index < LibraryCovers.Count)
+                    LibraryCovers[index].RefreshImage();
+
                 OnPropertyChanged(nameof(LibraryCovers));
                 OnPropertyChanged(nameof(LibraryCoversPageCount));
                 SetLibraryCoversIndex(index);
@@ -3481,6 +3500,9 @@ namespace HandheldCompanion.ViewModels
         {
             try
             {
+                if (index >= 0 && index < LibraryArtworks.Count)
+                    LibraryArtworks[index].RefreshImage();
+
                 OnPropertyChanged(nameof(LibraryArtworks));
                 OnPropertyChanged(nameof(LibraryArtworksPageCount));
                 SetLibraryArtworksIndex(index);
@@ -3492,6 +3514,9 @@ namespace HandheldCompanion.ViewModels
         {
             try
             {
+                if (index >= 0 && index < LibraryLogos.Count)
+                    LibraryLogos[index].RefreshImage();
+
                 OnPropertyChanged(nameof(LibraryLogos));
                 OnPropertyChanged(nameof(LibraryLogosPageCount));
                 SetLibraryLogosIndex(index);

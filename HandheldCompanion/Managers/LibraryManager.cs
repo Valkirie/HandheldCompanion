@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -39,6 +40,8 @@ namespace HandheldCompanion.Managers
 
     public class LibraryManager : IManager
     {
+        private const int MaxConcurrentProfileArtRefreshes = 4;
+
         [Flags]
         public enum LibraryType
         {
@@ -72,6 +75,7 @@ namespace HandheldCompanion.Managers
         private SteamGridDb? steamGridDb;
 
         private readonly ConcurrentDictionary<string, WeakReference<BitmapImage>> _imageCache = new();
+        private readonly SemaphoreSlim profileArtsSemaphore = new(MaxConcurrentProfileArtRefreshes);
 
         public bool HasIGDBClient => IGDBClient is not null;
         public bool HasSteamGridDb => steamGridDb is not null;
@@ -137,6 +141,134 @@ namespace HandheldCompanion.Managers
         public BitmapImage? GetGameArt(long gameId, LibraryType libraryType, long imageId, string extension)
         {
             return GetGameArt(gameId, libraryType, imageId.ToString(), extension);
+        }
+
+        /// <summary>
+        /// Removes cached artwork that is not referenced by the supplied library entry.
+        /// </summary>
+        public (int DeletedFiles, int DeletedFolders, int FailedDeletes) CleanUnusedCache(LibraryEntry entry)
+        {
+            string entryDirectory = Path.Combine(ManagerPath, entry.Id.ToString());
+            if (!Directory.Exists(entryDirectory))
+                return (0, 0, 0);
+
+            HashSet<string> retainedFiles = GetRetainedArtPaths(entry).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            return CleanUnusedCacheDirectory(entryDirectory, retainedFiles);
+        }
+
+        /// <summary>
+        /// Cleans each supplied library entry and removes cache directories without a matching entry.
+        /// Unknown nonnumeric cache directories are left untouched.
+        /// </summary>
+        public (int DeletedFiles, int DeletedFolders, int FailedDeletes) CleanUnusedCaches()
+        {
+            LibraryEntry[] libraryEntries = ManagerFactory.profileManager.GetProfiles(addSub: true)
+                .Select(profile => profile.LibraryEntry)
+                .OfType<LibraryEntry>()
+                .Where(entry => entry is not null)
+                .ToArray();
+
+            HashSet<long> activeEntryIds = libraryEntries.Select(entry => entry.Id).ToHashSet();
+
+            int deletedFiles = 0;
+            int deletedFolders = 0;
+            int failedDeletes = 0;
+
+            foreach (LibraryEntry entry in libraryEntries)
+            {
+                (int files, int folders, int failures) = CleanUnusedCache(entry);
+                deletedFiles += files;
+                deletedFolders += folders;
+                failedDeletes += failures;
+            }
+
+            foreach (string entryDirectory in Directory.EnumerateDirectories(ManagerPath))
+            {
+                // Library-owned directories are named after their numeric entry ID.
+                if (!long.TryParse(Path.GetFileName(entryDirectory), out long entryId) || activeEntryIds.Contains(entryId))
+                    continue;
+
+                (int files, int folders, int failures) = CleanUnusedCacheDirectory(entryDirectory, []);
+                deletedFiles += files;
+                deletedFolders += folders;
+                failedDeletes += failures;
+            }
+
+            return (deletedFiles, deletedFolders, failedDeletes);
+        }
+
+        private (int DeletedFiles, int DeletedFolders, int FailedDeletes) CleanUnusedCacheDirectory(string entryDirectory, HashSet<string> retainedFiles)
+        {
+            int deletedFiles = 0;
+            int deletedFolders = 0;
+            int failedDeletes = 0;
+
+            foreach (string filePath in Directory.EnumerateFiles(entryDirectory, "*", SearchOption.AllDirectories))
+            {
+                if (retainedFiles.Contains(filePath))
+                    continue;
+
+                try
+                {
+                    File.Delete(filePath);
+                    _imageCache.TryRemove(filePath, out _);
+                    deletedFiles++;
+                }
+                catch
+                {
+                    failedDeletes++;
+                }
+            }
+
+            // Delete children before parents so empty directory trees can be removed in one pass.
+            foreach (string directoryPath in Directory.EnumerateDirectories(entryDirectory, "*", SearchOption.AllDirectories).Append(entryDirectory).OrderByDescending(path => path.Length))
+            {
+                if (Directory.EnumerateFileSystemEntries(directoryPath).Any())
+                    continue;
+
+                try
+                {
+                    Directory.Delete(directoryPath);
+                    deletedFolders++;
+                }
+                catch
+                {
+                    failedDeletes++;
+                }
+            }
+
+            return (deletedFiles, deletedFolders, failedDeletes);
+        }
+
+        private IEnumerable<string> GetRetainedArtPaths(LibraryEntry entry)
+        {
+            foreach ((LibraryType type, long imageId, string fullExtension, string thumbnailExtension) in new[]
+            {
+                (LibraryType.cover, entry.GetCoverId(), entry.GetCoverExtension(false), GetThumbnailExtension(entry, LibraryType.cover)),
+                (LibraryType.artwork, entry.GetArtworkId(), entry.GetArtworkExtension(false), GetThumbnailExtension(entry, LibraryType.artwork)),
+                (LibraryType.logo, entry.GetLogoId(), entry.GetLogoExtension(false), GetThumbnailExtension(entry, LibraryType.logo))
+            })
+            {
+                if (imageId == 0)
+                    continue;
+
+                if (!string.IsNullOrEmpty(fullExtension))
+                    yield return GetGameArtPath(entry.Id, type, imageId, fullExtension);
+                if (!string.IsNullOrEmpty(thumbnailExtension))
+                    yield return GetGameArtPath(entry.Id, type | LibraryType.thumbnails, imageId, thumbnailExtension);
+            }
+        }
+
+        private static string GetThumbnailExtension(LibraryEntry entry, LibraryType libraryType)
+        {
+            // Manually selected images are always converted to PNG thumbnails.
+            if (entry is ManualEntry)
+                return ".png";
+            if (libraryType == LibraryType.cover)
+                return entry.GetCoverExtension(true);
+            if (libraryType == LibraryType.artwork)
+                return entry.GetArtworkExtension(true);
+            return entry.GetLogoExtension(true);
         }
 
         public async Task<IEnumerable<LibraryEntry>> GetGames(LibraryFamily libraryFamily, string name)
@@ -748,6 +880,18 @@ namespace HandheldCompanion.Managers
             if (string.IsNullOrEmpty(input))
                 return input;
 
+            // Remove any metadata or suffixes that may be present in the string (e.g., "[Metadata]", "(Metadata)", "{Metadata}", " - Suffix")
+            int metadataStart = input.IndexOfAny(['[', '(', '{']);
+            int suffixStart = input.IndexOf(" -", StringComparison.Ordinal);
+            if (metadataStart < 0 || (suffixStart >= 0 && suffixStart < metadataStart))
+                metadataStart = suffixStart;
+
+            if (metadataStart >= 0)
+                input = input[..metadataStart].TrimEnd();
+
+            // Remove version numbers (e.g., "v1.2.3") from the string using a regular expression
+            input = Regex.Replace(input, @"\s+\bv\d+(?:\.\d+)+\b", string.Empty, RegexOptions.IgnoreCase);
+
             // Define a set of allowed characters (letters, digits, '.', '_', and space)
             var allowedCharacters = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._ ");
             var sanitizedString = new StringBuilder(input.Length);
@@ -801,10 +945,7 @@ namespace HandheldCompanion.Managers
 
         public async Task RefreshProfilesArts()
         {
-            await Parallel.ForEachAsync(ManagerFactory.profileManager.GetProfiles(true), new ParallelOptions { MaxDegreeOfParallelism = 4 }, async (profile, cancellationToken) =>
-            {
-                await RefreshProfileArtsAsync(profile, UpdateSource.LibraryUpdate, includeFullResAssets: true);
-            });
+            await Task.WhenAll(ManagerFactory.profileManager.GetProfiles(true).Select(async profile => await RefreshProfileArtsAsync(profile, UpdateSource.LibraryUpdate, includeFullResAssets: true)));
         }
 
         public async void RefreshProfileArts(Profile profile, UpdateSource source = UpdateSource.LibraryUpdate, bool includeFullResAssets = false)
@@ -818,47 +959,56 @@ namespace HandheldCompanion.Managers
             if (profile.Default)
                 return;
 
-            // update status
-            ProfileStatusChanged?.Invoke(profile, ManagerStatus.Busy);
+            await profileArtsSemaphore.WaitAsync();
 
-            // update variables
-            LibraryEntry? entry = profile.LibraryEntry ?? null;
-            long entryId = entry?.Id ?? 0;
-            long coverId = entry?.GetCoverId() ?? 0;
-            long artworkId = entry?.GetArtworkId() ?? 0;
-            long logoId = entry?.GetLogoId() ?? 0;
-
-            // retrieve library entry
-            IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid, profile.Name);
-
-            if (entryId == 0)
+            try
             {
-                // pick most relevant entry
-                entry = ManagerFactory.libraryManager.GetGame(entries, profile.Name);
+                // update status
+                ProfileStatusChanged?.Invoke(profile, ManagerStatus.Busy);
 
                 // update variables
-                coverId = entry?.GetCoverId() ?? 0;
-                artworkId = entry?.GetArtworkId() ?? 0;
-                logoId = entry?.GetLogoId() ?? 0;
+                LibraryEntry? entry = profile.LibraryEntry ?? null;
+                long entryId = entry?.Id ?? 0;
+                long coverId = entry?.GetCoverId() ?? 0;
+                long artworkId = entry?.GetArtworkId() ?? 0;
+                long logoId = entry?.GetLogoId() ?? 0;
+
+                // retrieve library entry
+                IEnumerable<LibraryEntry> entries = await ManagerFactory.libraryManager.GetGames(LibraryFamily.SteamGrid, profile.Name);
+
+                if (entryId == 0)
+                {
+                    // pick most relevant entry
+                    entry = ManagerFactory.libraryManager.GetGame(entries, profile.Name);
+
+                    // update variables
+                    coverId = entry?.GetCoverId() ?? 0;
+                    artworkId = entry?.GetArtworkId() ?? 0;
+                    logoId = entry?.GetLogoId() ?? 0;
+                }
+                else
+                {
+                    // update entry
+                    entry = entries.FirstOrDefault(e => e.Id == entryId);
+                }
+
+                // update status
+                ProfileStatusChanged?.Invoke(profile, ManagerStatus.None);
+
+                // failed to retrieve a library entry
+                if (entry is null)
+                    return;
+
+                // download arts
+                await UpdateProfileArts(profile, entry, (int)coverId, (int)artworkId, (int)logoId, includeFullResAssets);
+
+                // update profile (always use LibraryUpdate to avoid re-entering creation logic)
+                ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.LibraryUpdate);
             }
-            else
+            finally
             {
-                // update entry
-                entry = entries.FirstOrDefault(e => e.Id == entryId);
+                profileArtsSemaphore.Release();
             }
-
-            // update status
-            ProfileStatusChanged?.Invoke(profile, ManagerStatus.None);
-
-            // failed to retrieve a library entry
-            if (entry is null)
-                return;
-
-            // download arts
-            await UpdateProfileArts(profile, entry, (int)coverId, (int)artworkId, (int)logoId, includeFullResAssets);
-
-            // update profile (always use LibraryUpdate to avoid re-entering creation logic)
-            ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.LibraryUpdate);
         }
 
         public async Task UpdateProfileArts(Profile profile, LibraryEntry entry, int coverId = 0, int artworkId = 0, int logoId = 0, bool includeFullResAssets = true)
@@ -966,8 +1116,8 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static Notification Notification_IsBusy = new("Library Manager", "Downloading artworks and metadatas.") { IsInternal = true, IsIndeterminate = false };
-        private static Notification Notification_Failed = new("Library Manager", "Unknown error.") { IsInternal = true, IsIndeterminate = true };
+        private static Notification Notification_IsBusy = new(Properties.Resources.LibraryManager_Title, Properties.Resources.LibraryManager_DownloadingArtworks) { IsInternal = true, IsIndeterminate = false };
+        private static Notification Notification_Failed = new(Properties.Resources.LibraryManager_Title, Properties.Resources.LibraryManager_UnknownError) { IsInternal = true, IsIndeterminate = true };
 
         protected override void AddStatus(ManagerStatus status, params object[] args)
         {
@@ -986,17 +1136,17 @@ namespace HandheldCompanion.Managers
                         switch (errorType)
                         {
                             case ErrorType.None:
-                                Notification_Failed.Message = "Unknown error.";
+                                Notification_Failed.Message = Properties.Resources.LibraryManager_UnknownError;
                                 break;
                             case ErrorType.NoResults:
-                                Notification_Failed.Message = "No artworks found.";
+                                Notification_Failed.Message = Properties.Resources.LibraryManager_NoArtworksFound;
                                 break;
                             case ErrorType.Exception:
                                 {
                                     if (args.Length != 0 && args[0] is string messageError)
-                                        Notification_Failed.Message = string.Format("Exception raised: {0}", messageError);
+                                        Notification_Failed.Message = string.Format(Properties.Resources.LibraryManager_ExceptionRaised, messageError);
                                     else
-                                        Notification_Failed.Message = "Unknown exception.";
+                                        Notification_Failed.Message = Properties.Resources.LibraryManager_UnknownException;
                                 }
                                 break;
                         }
@@ -1020,8 +1170,8 @@ namespace HandheldCompanion.Managers
             base.RemoveStatus(status, args);
         }
 
-        private static Notification Notification_ConnectivityDown = new("Library Manager", "Oops, we're offline! We will let you know when we are back.") { IsInternal = true, IsIndeterminate = true };
-        private static Notification Notification_ConnectivityUp = new("Library Manager", "We are back online. All features are available.") { IsInternal = true, IsIndeterminate = true };
+        private static Notification Notification_ConnectivityDown = new(Properties.Resources.LibraryManager_Title, Properties.Resources.LibraryManager_ConnectivityDown) { IsInternal = true, IsIndeterminate = true };
+        private static Notification Notification_ConnectivityUp = new(Properties.Resources.LibraryManager_Title, Properties.Resources.LibraryManager_ConnectivityUp) { IsInternal = true, IsIndeterminate = true };
 
         private void NetworkChange_NetworkAddressChanged(bool startup)
         {

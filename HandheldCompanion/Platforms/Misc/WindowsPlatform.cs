@@ -4,21 +4,17 @@ using HandheldCompanion.Shared;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.Json;
-using static HandheldCompanion.Managers.SystemManager;
 
 namespace HandheldCompanion.Platforms.Misc;
 
 public sealed class WindowsPlatform : IPlatform
 {
+    public override string PlatformColor => "#0078D4";
     public override string Name { get; set; } = "Windows";
     public bool EnhancedSleepEnabled { get; private set; }
-    public bool GoBackToSleepEnabled { get; private set; }
 
     private readonly EnhancedSleepPolicy _enhancedSleep = new();
-    private ModernStandbyResleepMonitor? _monitor;
 
     public WindowsPlatform()
     {
@@ -47,9 +43,6 @@ public sealed class WindowsPlatform : IPlatform
         ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
 
-        try { _monitor?.Stop(); } catch { }
-        _monitor = null;
-
         return base.Stop(kill);
     }
 
@@ -71,7 +64,6 @@ public sealed class WindowsPlatform : IPlatform
 
         // raise events
         SettingsManager_SettingValueChanged("EnhancedSleep", ManagerFactory.settingsManager.GetString("EnhancedSleep"), false, true);
-        SettingsManager_SettingValueChanged("GoBackToSleep", ManagerFactory.settingsManager.GetString("GoBackToSleep"), false, true);
     }
 
     private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
@@ -80,9 +72,6 @@ public sealed class WindowsPlatform : IPlatform
         {
             case "EnhancedSleep":
                 SetEnhancedSleep(Convert.ToBoolean(value));
-                break;
-            case "GoBackToSleep":
-                SetGoBackToSleep(Convert.ToBoolean(value));
                 break;
         }
     }
@@ -110,56 +99,6 @@ public sealed class WindowsPlatform : IPlatform
                 return false;
             }
         }
-    }
-
-    public bool SetGoBackToSleep(bool enabled)
-    {
-        lock (updateLock)
-        {
-            if (GoBackToSleepEnabled == enabled)
-                return true;
-
-            try
-            {
-                if (enabled)
-                {
-                    _monitor ??= new ModernStandbyResleepMonitor(ShouldResleepOnWakeReason);
-                    _monitor.Start();
-                }
-                else
-                {
-                    _monitor?.Stop();
-                }
-
-                GoBackToSleepEnabled = enabled;
-                return true;
-            }
-            catch (Exception)
-            {
-                LogManager.LogError("Failed to set GoBackToSleep = {0}", enabled);
-                return false;
-            }
-        }
-    }
-
-    private bool ShouldResleepOnWakeReason(WakeReason reason)
-    {
-        string? settingKey = reason switch
-        {
-            WakeReason.PowerButton => "GoBackToSleepOnPowerButton",
-            WakeReason.FingerprintReader => "GoBackToSleepOnFingerprintReader",
-            WakeReason.Joystick => "GoBackToSleepOnJoystick",
-            WakeReason.ChargerConnected => "GoBackToSleepOnChargerConnected",
-            WakeReason.Unknown => null, // On S4-only devices (no Modern Standby), only Unknown is available; don't resleep
-            _ => null,
-        };
-
-        // If no setting key, don't resleep (safer default for unknown/unsupported reasons)
-        if (string.IsNullOrEmpty(settingKey))
-            return false;
-
-        // For recognized reasons, check if user configured resleep for that reason
-        return ManagerFactory.settingsManager.GetBoolean(settingKey);
     }
 
     private sealed class EnhancedSleepPolicy
@@ -314,181 +253,6 @@ public sealed class WindowsPlatform : IPlatform
             {
                 LogManager.LogWarning("[EnhancedSleep] Failed to persist snapshot to disk.");
             }
-        }
-    }
-
-    // =====================================================================
-    // Re-sleep (Modern Standby wake monitor)
-    // =====================================================================
-
-    private sealed class ModernStandbyResleepMonitor
-    {
-        [DllImport("user32.dll")]
-        private static extern int SendMessage(int hWnd, int Msg, int wParam, int lParam);
-
-        [DllImport("user32.dll")]
-        private static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
-
-        private const byte VK_NONAME = 0xFC;
-        private const uint KEYEVENTF_KEYUP = 0x0002;
-
-        private const int HWND_BROADCAST = 0xffff;
-        private const int WM_SYSCOMMAND = 0x0112;
-        private const int SC_SUSPEND = 0xF170;
-
-        private readonly Func<WakeReason, bool> _shouldResleep;
-
-        private System.Timers.Timer? _batchTimer;
-        private readonly HashSet<WakeReason> _batchedReasons = new();
-        private const int BATCH_WINDOW_MS = 750;
-
-        // Resleep attempt limiting
-        private int _consecutiveResleepAttempts;
-        private const int MAX_CONSECUTIVE_RESLEEP_ATTEMPTS = 3;
-        private long _lastResleepAttemptTicks;
-        private const long RESLEEP_ATTEMPT_RESET_TICKS = 30_000_000; // 3 seconds in 100-nanosecond intervals (30 million ticks = 3 seconds)
-
-        public ModernStandbyResleepMonitor(Func<WakeReason, bool> shouldResleep)
-        {
-            if (shouldResleep == null)
-                throw new ArgumentNullException(nameof(shouldResleep));
-
-            _shouldResleep = shouldResleep;
-        }
-
-        public void Start()
-        {
-            // Subscribe to SystemManager's power mode change events
-            PowerModeChanged += OnSystemPowerModeChanged;
-
-            // Create the batch timer (will be started when wake event arrives)
-            _batchTimer = new(BATCH_WINDOW_MS) { AutoReset = false };
-            _batchTimer.Elapsed += (_, _) => OnBatchTimerElapsed();
-
-            LogManager.LogInformation("[GoBackToSleep] Started. Using SystemManager's power detection.");
-        }
-
-        public void Stop()
-        {
-            PowerModeChanged -= OnSystemPowerModeChanged;
-
-            _batchTimer?.Stop();
-            _batchTimer?.Dispose();
-            _batchTimer = null;
-
-            lock (_batchedReasons)
-            {
-                _batchedReasons.Clear();
-            }
-
-            _consecutiveResleepAttempts = 0;
-        }
-
-        private bool HasResleepLimitExceeded()
-        {
-            // Check if we've exceeded the attempt limit
-            if (_consecutiveResleepAttempts >= MAX_CONSECUTIVE_RESLEEP_ATTEMPTS)
-                return true;
-
-            // Auto-reset counter if enough time has passed since last attempt
-            long timeSinceLastAttempt = DateTime.UtcNow.Ticks - _lastResleepAttemptTicks;
-            if (timeSinceLastAttempt > RESLEEP_ATTEMPT_RESET_TICKS)
-            {
-                LogManager.LogDebug("[GoBackToSleep] Auto-resetting resleep attempt counter after timeout");
-                _consecutiveResleepAttempts = 0;
-                _lastResleepAttemptTicks = 0;
-            }
-
-            return false;
-        }
-
-        private void ResetResleepAttemptCounter(string reason)
-        {
-            if (_consecutiveResleepAttempts > 0)
-            {
-                LogManager.LogDebug("[GoBackToSleep] Resetting resleep attempt counter ({0} attempts). Reason: {1}",
-                    _consecutiveResleepAttempts, reason);
-                _consecutiveResleepAttempts = 0;
-                _lastResleepAttemptTicks = 0;
-            }
-        }
-
-        private void OnSystemPowerModeChanged(PowerMode mode, WakeReason wakeReason)
-        {
-            if (mode == PowerMode.Resume)
-            {
-                LogManager.LogInformation("[GoBackToSleep] Woke from Modern Standby. Reason: {0}", wakeReason);
-
-                lock (_batchedReasons)
-                {
-                    // Add this reason to the batch; returns true if it's new, false if duplicate
-                    bool isNewReason = _batchedReasons.Add(wakeReason);
-
-                    // Reset the timer only if this is a new reason (not a duplicate)
-                    if (isNewReason)
-                    {
-                        _batchTimer?.Stop();
-                        _batchTimer?.Start();
-                    }
-                }
-            }
-        }
-
-        private void OnBatchTimerElapsed()
-        {
-            WakeReason[] reasons;
-
-            lock (_batchedReasons)
-            {
-                // Capture and clear the batched reasons
-                reasons = _batchedReasons.ToArray();
-                _batchedReasons.Clear();
-            }
-
-            if (reasons.Length == 0)
-                return;
-
-            LogManager.LogDebug("[GoBackToSleep] Batch window closed. Collected reasons: {0}", string.Join(", ", reasons));
-
-            // Check if ANY reason should keep the system awake
-            bool shouldWakeUp = false;
-            foreach (var reason in reasons)
-            {
-                if (!_shouldResleep(reason))
-                {
-                    shouldWakeUp = true;
-                    LogManager.LogInformation("[GoBackToSleep] Reason {0} is intentional. Keeping system awake.", reason);
-                    ResetResleepAttemptCounter("legitimate wake reason");
-                    break;
-                }
-            }
-
-            if (shouldWakeUp)
-                return;
-
-            // Check if we've exceeded the resleep attempt limit
-            if (HasResleepLimitExceeded())
-            {
-                LogManager.LogWarning("[GoBackToSleep] Resleep attempt limit exceeded ({0}/{1}). Giving up and letting device stay awake.",
-                    _consecutiveResleepAttempts, MAX_CONSECUTIVE_RESLEEP_ATTEMPTS);
-                return;
-            }
-
-            // All reasons are unintentional; send system back to sleep
-            LogManager.LogInformation("[GoBackToSleep] All collected reasons are unintentional. Sending system back to sleep (attempt {0}/{1})...",
-                _consecutiveResleepAttempts + 1, MAX_CONSECUTIVE_RESLEEP_ATTEMPTS);
-
-            SuspendSystem();
-        }
-
-        private void SuspendSystem()
-        {
-            // Same approach as SuspendedNTime (broadcast SC_SUSPEND). :contentReference[oaicite:7]{index=7}
-            SendMessage(HWND_BROADCAST, WM_SYSCOMMAND, SC_SUSPEND, 2);
-
-            // Track this resleep attempt for the safety limit
-            _consecutiveResleepAttempts++;
-            _lastResleepAttemptTicks = DateTime.UtcNow.Ticks;
         }
     }
 }

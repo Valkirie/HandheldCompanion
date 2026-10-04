@@ -12,12 +12,14 @@ namespace HandheldCompanion.Platforms.Misc
 {
     public class LibreHardwarePlatform : IPlatform
     {
+        public override string PlatformColor => "#4CAF50";
         private Computer computer;
         private bool computerOpened;
 
         private Timer updateTimer;
         private int updateInterval = 1000;
         private GPU? hookedGPU;
+        private long gpuMonitoringRequestedUntil;
 
         // CPU
         private float? CPULoad;
@@ -220,6 +222,8 @@ namespace HandheldCompanion.Platforms.Misc
                     bool isGpu = hardware.HardwareType is HardwareType.GpuNvidia or HardwareType.GpuAmd or HardwareType.GpuIntel;
                     if (isGpu && !ReferenceEquals(hardware, hookedHardware))
                         continue;
+                    if (isGpu && !IsGpuMonitoringRequested())
+                        continue;
 
                     try { hardware.Update(); } catch { /* keep going */ }
 
@@ -279,23 +283,39 @@ namespace HandheldCompanion.Platforms.Misc
         }
 
         #region gpu updates
-        public float? GetGPULoad() => computer?.IsGpuEnabled ?? false ? GPULoad : null;
-        public float? GetGPUClock() => computer?.IsGpuEnabled ?? false ? GPUClock : null;
-        public float? GetGPUPower() => computer?.IsGpuEnabled ?? false ? GPUPower : null;
-        public float? GetGPUCorePower() => computer?.IsGpuEnabled ?? false ? GPUCorePower : null;
-        public float? GetGPUSoCPower() => computer?.IsGpuEnabled ?? false ? GPUSoCPower : null;
-        public float? GetGPUVoltage() => computer?.IsGpuEnabled ?? false ? GPUVoltage : null;
-        public float? GetGPUCoreVoltage() => computer?.IsGpuEnabled ?? false ? GPUCoreVoltage : null;
-        public float? GetGPUSoCVoltage() => computer?.IsGpuEnabled ?? false ? GPUSoCVoltage : null;
-        public float? GetGPUTemperature() => computer?.IsGpuEnabled ?? false ? GPUTemperature : null;
+        private bool IsGpuMonitoringRequested()
+        {
+            return GPULoadChanged is not null || GPUPowerChanged is not null || GPUClockChanged is not null ||
+                GPUTemperatureChanged is not null || GPUCorePowerChanged is not null || GPUSoCPowerChanged is not null ||
+                GPUVoltageChanged is not null || GPUCoreVoltageChanged is not null || GPUSoCVoltageChanged is not null ||
+                GPUMemoryChanged is not null || GPUMemoryDedicatedChanged is not null || GPUMemorySharedChanged is not null ||
+                Environment.TickCount64 <= Interlocked.Read(ref gpuMonitoringRequestedUntil);
+        }
 
-        public float? GetGPUMemory() => computer?.IsGpuEnabled ?? false ? GPUMemory : null;
-        public float? GetGPUMemoryDedicated() => computer?.IsGpuEnabled ?? false ? GPUMemoryDedicated : null;
-        public float? GetGPUMemoryShared() => computer?.IsGpuEnabled ?? false ? GPUMemoryShared : null;
+        private float? GetGPUValue(float? value)
+        {
+            Interlocked.Exchange(ref gpuMonitoringRequestedUntil,
+                Environment.TickCount64 + Math.Max(updateInterval * 2L, 2000L));
+            return computer?.IsGpuEnabled ?? false ? value : null;
+        }
 
-        public float? GetGPUMemoryTotal() => computer?.IsGpuEnabled ?? false ? GPUMemoryTotal : null;
-        public float? GetGPUMemoryDedicatedTotal() => computer?.IsGpuEnabled ?? false ? GPUMemoryDedicatedTotal : null;
-        public float? GetGPUMemorySharedTotal() => computer?.IsGpuEnabled ?? false ? GPUMemorySharedTotal : null;
+        public float? GetGPULoad() => GetGPUValue(GPULoad);
+        public float? GetGPUClock() => GetGPUValue(GPUClock);
+        public float? GetGPUPower() => GetGPUValue(GPUPower);
+        public float? GetGPUCorePower() => GetGPUValue(GPUCorePower);
+        public float? GetGPUSoCPower() => GetGPUValue(GPUSoCPower);
+        public float? GetGPUVoltage() => GetGPUValue(GPUVoltage);
+        public float? GetGPUCoreVoltage() => GetGPUValue(GPUCoreVoltage);
+        public float? GetGPUSoCVoltage() => GetGPUValue(GPUSoCVoltage);
+        public float? GetGPUTemperature() => GetGPUValue(GPUTemperature);
+
+        public float? GetGPUMemory() => GetGPUValue(GPUMemory);
+        public float? GetGPUMemoryDedicated() => GetGPUValue(GPUMemoryDedicated);
+        public float? GetGPUMemoryShared() => GetGPUValue(GPUMemoryShared);
+
+        public float? GetGPUMemoryTotal() => GetGPUValue(GPUMemoryTotal);
+        public float? GetGPUMemoryDedicatedTotal() => GetGPUValue(GPUMemoryDedicatedTotal);
+        public float? GetGPUMemorySharedTotal() => GetGPUValue(GPUMemorySharedTotal);
 
         private void HandleGPU(IHardware gpu)
         {

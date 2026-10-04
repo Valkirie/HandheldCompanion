@@ -7,7 +7,7 @@ using WindowsInput.Events;
 namespace HandheldCompanion.Devices.AYANEO
 {
     // Base class implementing FAN/RGB control for all AYANEO device using the CEii protocol
-    // AIR Plus AMD, AIR Plus Mendocino, AIR Plus Intel, Slide
+    // AIR Plus AMD, AIR Plus Mendocino, AIR Plus Intel, AIR Plus Nxx, Slide
     public class AYANEODeviceCEii : AYANEODeviceCEc
     {
         public AYANEODeviceCEii()

@@ -16,6 +16,7 @@
 - No boilerplate nobody asked for.
 - Deletion over addition. Boring over clever. Fewest files possible.
 - Question complex requests: "Do you actually need X, or does Y cover it?"
+- Prefer readable if/else control flow over dense ternary or single-line expressions; add concise comments where they clarify non-obvious logic.
 - Pick the edge-case-correct option when two stdlib approaches are the same size; lazy means less code, not the flimsier algorithm.
 - Mark intentional simplifications with a `ponytail:` comment. If the shortcut has a known ceiling (global lock, O(n²) scan, naive heuristic), the comment names the ceiling and the upgrade path.
 

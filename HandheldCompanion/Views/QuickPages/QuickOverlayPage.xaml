@@ -335,6 +335,57 @@
                     </Grid>
                 </Border>
 
+                <!--  On-screen display brightness  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="100" />
+                            <ColumnDefinition Width="5*" MinWidth="100" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE706;" />
+                            <ikw:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Overlay brightness" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Adjusts the on-screen display color intensity"
+                                    TextWrapping="Wrap" />
+                            </ikw:SimpleStackPanel>
+                        </DockPanel>
+
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                            <TextBox
+                                Height="31"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding OnScreenDisplayBrightness, StringFormat={}{0:N0}%, Mode=OneWay}" />
+                            <Slider
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="100"
+                                Minimum="0"
+                                SmallChange="1"
+                                TickFrequency="10"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding OnScreenDisplayBrightness, StringFormat={}{0:N0}%, Mode=OneWay}"
+                                Value="{Binding OnScreenDisplayBrightness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </Grid>
+                </Border>
+
                 <!--  Custom Settings  -->
                 <ikw:SimpleStackPanel Name="StackCustomSettings" Spacing="3">
                     <ikw:SimpleStackPanel.Style>

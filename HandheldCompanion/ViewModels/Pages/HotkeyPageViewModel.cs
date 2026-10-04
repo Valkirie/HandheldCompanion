@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using System;
@@ -87,22 +88,25 @@ namespace HandheldCompanion.ViewModels
 
         private void ControllerManager_ControllerSelected(Controllers.IController Controller)
         {
-            // (re)draw chords on controller update
-            List<HotkeyViewModel> hotkeyViewModels;
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
+            UIHelper.TryBeginInvoke(() =>
             {
-                hotkeyViewModels = HotkeysList.ToList();
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
+                // (re)draw chords on controller update
+                List<HotkeyViewModel> hotkeyViewModels;
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
 
-            foreach (HotkeyViewModel hotkeyViewModel in hotkeyViewModels)
-                hotkeyViewModel.DrawChords();
+                try
+                {
+                    hotkeyViewModels = HotkeysList.ToList();
+                }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
+                }
+
+                foreach (HotkeyViewModel hotkeyViewModel in hotkeyViewModels)
+                    hotkeyViewModel.DrawChords();
+            });
         }
 
         private void InputsManager_Initialized()
@@ -129,86 +133,98 @@ namespace HandheldCompanion.ViewModels
 
         private void HotkeysManager_Updated(Hotkey hotkey)
         {
-            if (hotkey.IsInternal)
-                return;
-
-            HotkeyViewModel? foundHotkey;
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
+            UIHelper.TryBeginInvoke(() =>
             {
-                foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
-                if (foundHotkey is null)
-                    HotkeysList.Add(new HotkeyViewModel(hotkey));
-                else
-                    foundHotkey.Hotkey = hotkey;
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
+                if (hotkey.IsInternal)
+                    return;
 
-            OnPropertyChanged(nameof(HotkeysList));
+                HotkeyViewModel? foundHotkey;
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
+                {
+                    foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
+                    if (foundHotkey is null)
+                        HotkeysList.Add(new HotkeyViewModel(hotkey));
+                    else
+                        foundHotkey.Hotkey = hotkey;
+                }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
+                }
+
+                OnPropertyChanged(nameof(HotkeysList));
+            });
         }
 
         private void HotkeysManager_Deleted(Hotkey hotkey)
         {
-            HotkeyViewModel? foundHotkey;
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
+            UIHelper.TryBeginInvoke(() =>
             {
-                foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
-                if (foundHotkey is not null)
+                HotkeyViewModel? foundHotkey;
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
                 {
-                    HotkeysList.Remove(foundHotkey);
-                    foundHotkey.Dispose();
+                    foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
+                    if (foundHotkey is not null)
+                    {
+                        HotkeysList.Remove(foundHotkey);
+                        foundHotkey.Dispose();
+                    }
                 }
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
+                }
 
-            OnPropertyChanged(nameof(HotkeysList));
+                OnPropertyChanged(nameof(HotkeysList));
+            });
         }
 
         private void InputsManager_StartedListening(ButtonFlags buttonFlags, InputsChordTarget chordTarget)
         {
-            HotkeyViewModel? foundHotkey;
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
+            UIHelper.TryBeginInvoke(() =>
             {
-                foundHotkey = HotkeysList.FirstOrDefault(h => h.Hotkey.ButtonFlags == buttonFlags);
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
+                HotkeyViewModel? foundHotkey;
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
 
-            foundHotkey?.SetListening(true, chordTarget);
+                try
+                {
+                    foundHotkey = HotkeysList.FirstOrDefault(h => h.Hotkey.ButtonFlags == buttonFlags);
+                }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
+                }
+
+                foundHotkey?.SetListening(true, chordTarget);
+            });
         }
 
         private void InputsManager_StoppedListening(ButtonFlags buttonFlags, InputsChord storedChord)
         {
-            HotkeyViewModel? foundHotkey;
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
+            UIHelper.TryBeginInvoke(() =>
             {
-                foundHotkey = HotkeysList.FirstOrDefault(h => h.Hotkey.ButtonFlags == buttonFlags);
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
+                HotkeyViewModel? foundHotkey;
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
 
-            foundHotkey?.SetListening(false, storedChord.chordTarget);
+                try
+                {
+                    foundHotkey = HotkeysList.FirstOrDefault(h => h.Hotkey.ButtonFlags == buttonFlags);
+                }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
+                }
+
+                foundHotkey?.SetListening(false, storedChord.chordTarget);
+            });
         }
 
         public override void Dispose()

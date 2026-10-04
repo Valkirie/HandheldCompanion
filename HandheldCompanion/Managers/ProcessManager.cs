@@ -706,6 +706,12 @@ public class ProcessManager : IManager
             case "shellhost.exe":
             case "pickerhost.exe":
             case "gamingservicesui.exe":
+
+            // Synergy
+            case "synergy-tray.exe":
+            case "synergy-core.exe":
+            case "synergy-daemon.exe":
+            case "synergy-service.exe":
                 return ProcessFilter.Restricted;
 
             // Desktop
@@ -764,7 +770,7 @@ public class ProcessManager : IManager
         if (restoreWindow && windowsCache.ContainsKey(processEx.ProcessId))
         {
             // wait a bit
-            await Task.Delay(500).ConfigureAwait(false); // Avoid blocking the synchronization context
+            await Task.Delay(500).ConfigureAwait(false); // Avoid capturing the synchronization context
 
             // restore process windows
             foreach (int hwnd in windowsCache[processEx.ProcessId])
@@ -821,7 +827,7 @@ public class ProcessManager : IManager
                 ProcessUtils.ShowWindow(hwnd, (int)ProcessUtils.ShowWindowCommands.Hide);
 
             // wait a bit
-            await Task.Delay(500).ConfigureAwait(false); // Avoid blocking the synchronization context
+            await Task.Delay(500).ConfigureAwait(false); // Avoid capturing the synchronization context
         }
 
         // refresh processes handles and suspend

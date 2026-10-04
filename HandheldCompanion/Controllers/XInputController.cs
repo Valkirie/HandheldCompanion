@@ -84,17 +84,15 @@ public class XInputController : IController, IXInputController
     {
         ButtonState.Overwrite(InjectedButtons, Inputs.ButtonState);
 
-        if (!IsConnected())
+        if (Controller is null)
             return false;
 
         try
         {
-            XInputGetStateSecret14(UserIndex, out State);
-
-            if (Controller is null)
-                return false;
-
             Gamepad = Controller.GetState().Gamepad;
+
+            if (SourceButtons.Contains(ButtonFlags.Special))
+                XInputGetStateSecret14(UserIndex, out State);
 
             Inputs.ButtonState[ButtonFlags.B1] |= Gamepad.Buttons.HasFlag(GamepadButtonFlags.A);
             Inputs.ButtonState[ButtonFlags.B2] |= Gamepad.Buttons.HasFlag(GamepadButtonFlags.B);

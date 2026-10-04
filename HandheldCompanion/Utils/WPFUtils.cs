@@ -9,6 +9,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using static HandheldCompanion.WinAPI;
 using Control = System.Windows.Controls.Control;
 using ProgressBar = iNKORE.UI.WPF.Modern.Controls.ProgressBar;
@@ -391,6 +392,12 @@ public static class WPFUtils
             if (control == source || control is not T || !CanTarget(control))
                 continue;
 
+            if (IsWithinNavigationViewPane(control) && !IsWithinNavigationViewPane(source))
+                continue;
+
+            if (IsWithinNavigationViewPane(source) && !IsWithinNavigationViewPane(control))
+                continue;
+
             if (typesToIgnore is not null && typesToIgnore.Contains(control.GetType()))
                 continue;
 
@@ -461,6 +468,22 @@ public static class WPFUtils
                 return true;
 
             child = VisualTreeHelper.GetParent(child);
+        }
+
+        return false;
+    }
+
+    private static bool IsWithinNavigationViewPane(DependencyObject element)
+    {
+        while (element is not null)
+        {
+            if (element is FrameworkElement { Name: "PaneContentGrid" or "TopNavGrid" })
+                return true;
+
+            if (element is NavigationView)
+                return false;
+
+            element = VisualTreeHelper.GetParent(element);
         }
 
         return false;
@@ -720,7 +743,7 @@ public static class WPFUtils
         {
             return parent;
         }
-        DependencyObject CurrentParent = VisualTreeHelper.GetParent(child);
+        DependencyObject? CurrentParent = GetParent(child);
         while (CurrentParent is not null)
         {
             if (CurrentParent is T)
@@ -728,9 +751,23 @@ public static class WPFUtils
                 parent = (T)CurrentParent;
                 break;
             }
-            CurrentParent = VisualTreeHelper.GetParent(CurrentParent);
+            CurrentParent = GetParent(CurrentParent);
         }
         return parent;
+    }
+
+    private static DependencyObject? GetParent(DependencyObject child)
+    {
+        if (child is Visual || child is Visual3D)
+            return VisualTreeHelper.GetParent(child);
+
+        if (child is FrameworkContentElement frameworkContentElement)
+            return frameworkContentElement.Parent ?? ContentOperations.GetParent(frameworkContentElement);
+
+        if (child is ContentElement contentElement)
+            return ContentOperations.GetParent(contentElement);
+
+        return null;
     }
 
     public static List<MenuItem> GetDirectMenuItems(MenuFlyout menuFlyout)

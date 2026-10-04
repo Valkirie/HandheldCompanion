@@ -326,7 +326,7 @@ namespace HandheldCompanion.Managers
 
         public void UpdateOrCreateProfile(PowerProfile profile, UpdateSource source)
         {
-            if (string.IsNullOrEmpty(profile.Name))
+            if (string.IsNullOrWhiteSpace(profile.Name))
                 return;
 
             switch (source)

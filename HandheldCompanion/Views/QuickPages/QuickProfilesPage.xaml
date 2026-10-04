@@ -127,6 +127,7 @@
 
                         <ComboBox
                             Name="SelectSubProfileComboBox"
+                            MaxWidth="{Binding ActualWidth, ConverterParameter=x/2.4, Converter={StaticResource Math}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
                             DisplayMemberPath="Name"
@@ -168,6 +169,7 @@
                         </ui:SettingsExpander.HeaderIcon>
 
                         <TextBlock
+                            MaxWidth="{Binding ActualWidth, ConverterParameter=x/2.4, Converter={StaticResource Math}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsExpander}}"
                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                             Style="{StaticResource BodyTextBlockStyle}"
                             Text="{Binding SelectedPowerProfileName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -180,6 +182,7 @@
                                 Tag="Navigation">
                                 <ComboBox
                                     Name="PowerProfileOnBattery"
+                                    MaxWidth="{Binding ActualWidth, ConverterParameter=x/2, Converter={StaticResource Math}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}"
                                     DisplayMemberPath="Text"
                                     ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
                                     ItemsSource="{Binding ProfilePickerCollectionViewDC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -207,6 +210,7 @@
                                 Tag="Navigation">
                                 <ComboBox
                                     Name="PowerProfilePlugged"
+                                    MaxWidth="{Binding ActualWidth, ConverterParameter=x/2, Converter={StaticResource Math}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}"
                                     DisplayMemberPath="Text"
                                     ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
                                     ItemsSource="{Binding ProfilePickerCollectionViewAC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"

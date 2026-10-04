@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Overlay;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using LiveCharts;
@@ -40,26 +41,6 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public void OnPageLoaded()
-        {
-            _isPageLoaded = true;
-            if (IsQuickTools)
-            {
-                updateTimer.Start();
-                framerateTimer.Start();
-            }
-        }
-
-        public void OnPageUnloaded()
-        {
-            _isPageLoaded = false;
-            if (IsQuickTools)
-            {
-                updateTimer.Stop();
-                framerateTimer.Stop();
-            }
-        }
-
         private double _OverlayRenderInterval;
         public double OverlayRenderInterval
         {
@@ -73,6 +54,45 @@ namespace HandheldCompanion.ViewModels
 
                     ManagerFactory.settingsManager.SetProperty("OverlayRenderInterval", value);
                 }
+            }
+        }
+
+        private double _onScreenDisplayBrightness;
+        public double OnScreenDisplayBrightness
+        {
+            get => _onScreenDisplayBrightness;
+            set
+            {
+                value = Math.Clamp(value, 0, 100);
+                if (value != OnScreenDisplayBrightness)
+                {
+                    _onScreenDisplayBrightness = value;
+                    OnPropertyChanged(nameof(OnScreenDisplayBrightness));
+                    OverlayColors.Brightness = value / 100;
+                    ManagerFactory.settingsManager.SetProperty(Settings.OnScreenDisplayBrightness, value);
+                }
+            }
+        }
+
+        public void OnPageLoaded()
+        {
+            _isPageLoaded = true;
+            if (IsQuickTools)
+            {
+                SubscribeHardwareEvents();
+                updateTimer.Start();
+                framerateTimer.Start();
+            }
+        }
+
+        public void OnPageUnloaded()
+        {
+            _isPageLoaded = false;
+            if (IsQuickTools)
+            {
+                UnsubscribeHardwareEvents();
+                updateTimer.Stop();
+                framerateTimer.Stop();
             }
         }
 
@@ -451,6 +471,7 @@ namespace HandheldCompanion.ViewModels
 
         private Timer framerateTimer;
         private int framerateInterval = 1000;
+        private bool hardwareEventsSubscribed;
 
         public OverlayPageViewModel(bool isQuickTools)
         {
@@ -518,23 +539,48 @@ namespace HandheldCompanion.ViewModels
             // manage events
             PlatformManager.RTSS.Updated += RTSS_Updated;
 
-            if (IsQuickTools && IDevice.GetCurrent().CpuMonitor)
+            if (_isPageLoaded)
+                SubscribeHardwareEvents();
+
+            RTSS_Updated(PlatformManager.RTSS.Status);
+
+            OnPropertyChanged(nameof(IsRunningLHM));
+        }
+
+        private void SubscribeHardwareEvents()
+        {
+            if (!IsQuickTools || hardwareEventsSubscribed || !ManagerFactory.platformManager.IsReady)
+                return;
+
+            if (IDevice.GetCurrent().CpuMonitor)
             {
                 PlatformManager.LibreHardware.CPUPowerChanged += LibreHardwareMonitor_CPUPowerChanged;
                 PlatformManager.LibreHardware.CPUTemperatureChanged += LibreHardwareMonitor_CPUTemperatureChanged;
                 PlatformManager.LibreHardware.CPULoadChanged += LibreHardwareMonitor_CPULoadChanged;
             }
 
-            if (IsQuickTools && IDevice.GetCurrent().GpuMonitor)
+            if (IDevice.GetCurrent().GpuMonitor)
             {
                 PlatformManager.LibreHardware.GPUPowerChanged += LibreHardwareMonitor_GPUPowerChanged;
                 PlatformManager.LibreHardware.GPUTemperatureChanged += LibreHardwareMonitor_GPUTemperatureChanged;
                 PlatformManager.LibreHardware.GPULoadChanged += LibreHardwareMonitor_GPULoadChanged;
             }
 
-            RTSS_Updated(PlatformManager.RTSS.Status);
+            hardwareEventsSubscribed = true;
+        }
 
-            OnPropertyChanged(nameof(IsRunningLHM));
+        private void UnsubscribeHardwareEvents()
+        {
+            if (!hardwareEventsSubscribed)
+                return;
+
+            PlatformManager.LibreHardware.CPUPowerChanged -= LibreHardwareMonitor_CPUPowerChanged;
+            PlatformManager.LibreHardware.CPUTemperatureChanged -= LibreHardwareMonitor_CPUTemperatureChanged;
+            PlatformManager.LibreHardware.CPULoadChanged -= LibreHardwareMonitor_CPULoadChanged;
+            PlatformManager.LibreHardware.GPUPowerChanged -= LibreHardwareMonitor_GPUPowerChanged;
+            PlatformManager.LibreHardware.GPUTemperatureChanged -= LibreHardwareMonitor_GPUTemperatureChanged;
+            PlatformManager.LibreHardware.GPULoadChanged -= LibreHardwareMonitor_GPULoadChanged;
+            hardwareEventsSubscribed = false;
         }
 
         private void PlatformManager_Initialized()
@@ -554,6 +600,7 @@ namespace HandheldCompanion.ViewModels
 
             // raise events
             SettingsManager_SettingValueChanged(Settings.OnScreenDisplayRefreshRate, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayRefreshRate), false, true);
+            SettingsManager_SettingValueChanged(Settings.OnScreenDisplayBrightness, ManagerFactory.settingsManager.GetDouble(Settings.OnScreenDisplayBrightness), false, true);
             SettingsManager_SettingValueChanged("OverlayRenderInterval", ManagerFactory.settingsManager.GetDouble("OverlayRenderInterval"), false, true);
             SettingsManager_SettingValueChanged(Settings.OnScreenDisplayLevel, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayLevel), false, true);
             SettingsManager_SettingValueChanged(Settings.OnScreenDisplayCustomOrientation, ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayCustomOrientation), false, true);
@@ -767,13 +814,7 @@ namespace HandheldCompanion.ViewModels
                     ManagerFactory.gpuManager.Initialized -= GpuManager_Initialized;
                     ManagerFactory.processManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
                     ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
-
-                    PlatformManager.LibreHardware.CPUPowerChanged -= LibreHardwareMonitor_CPUPowerChanged;
-                    PlatformManager.LibreHardware.CPUTemperatureChanged -= LibreHardwareMonitor_CPUTemperatureChanged;
-                    PlatformManager.LibreHardware.CPULoadChanged -= LibreHardwareMonitor_CPULoadChanged;
-                    PlatformManager.LibreHardware.GPUPowerChanged -= LibreHardwareMonitor_GPUPowerChanged;
-                    PlatformManager.LibreHardware.GPUTemperatureChanged -= LibreHardwareMonitor_GPUTemperatureChanged;
-                    PlatformManager.LibreHardware.GPULoadChanged -= LibreHardwareMonitor_GPULoadChanged;
+                    UnsubscribeHardwareEvents();
                 }
                 ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
                 ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
@@ -792,6 +833,11 @@ namespace HandheldCompanion.ViewModels
 
                 framerateInterval = Convert.ToInt32(value);
                 framerateTimer.Interval = framerateInterval;
+            }
+            else if (name == Settings.OnScreenDisplayBrightness)
+            {
+                _onScreenDisplayBrightness = Math.Clamp(Convert.ToDouble(value), 0, 100);
+                OverlayColors.Brightness = _onScreenDisplayBrightness / 100;
             }
             else if (name == "OverlayRenderInterval")
                 _OverlayRenderInterval = Convert.ToDouble(value);

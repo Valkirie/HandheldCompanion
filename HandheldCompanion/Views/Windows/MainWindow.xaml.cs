@@ -13,6 +13,7 @@ using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Pages;
 using iNKORE.UI.WPF.Modern;
 using iNKORE.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls.Primitives;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,7 @@ using static HandheldCompanion.Managers.SystemManager;
 using Control = System.Windows.Controls.Control;
 using Page = System.Windows.Controls.Page;
 using RadioButton = System.Windows.Controls.RadioButton;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Views;
 
@@ -81,6 +83,9 @@ public partial class MainWindow : GamepadWindow
     private bool startupWindowReady;
     private bool applyingStartupWindowState;
     private WindowState deferredStartupWindowState = WindowState.Minimized;
+
+    private Timer? shutdownTimer;
+    private bool shutdownCompleted = false;
 
     // Track tray menu items for liked profiles
     private readonly Dictionary<Guid, ToolStripMenuItem> profileMenuItems = new();
@@ -138,6 +143,12 @@ public partial class MainWindow : GamepadWindow
         Width = (int)Math.Max(MinWidth, ManagerFactory.settingsManager.GetDouble("MainWindowWidth"));
         Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, ManagerFactory.settingsManager.GetDouble("MainWindowLeft"));
         Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, ManagerFactory.settingsManager.GetDouble("MainWindowTop"));
+
+        Visibility sideNavigationVisibility = navView.PaneDisplayMode == NavigationViewPaneDisplayMode.Top ? Visibility.Visible : Visibility.Collapsed;
+        GamepadUINavigation.Visibility = navView.PaneDisplayMode != NavigationViewPaneDisplayMode.Top ? Visibility.Visible : Visibility.Collapsed;
+        GamepadUILB.Visibility = sideNavigationVisibility;
+        GamepadUIRB.Visibility = sideNavigationVisibility;
+        navView.IsPaneOpen = false;
 
         ContentDialog.Closed += ContentDialog_Closed;
         ContentDialog.Opened += ContentDialog_Opened;
@@ -236,10 +247,13 @@ public partial class MainWindow : GamepadWindow
 
         // prepare toast manager
         ToastManager.Start();
-        ToastManager.SendToast(Title, "is starting");
+        ToastManager.SendToast($"{Title} is starting", "Please wait a moment");
+
+        shutdownTimer = new(10000) { AutoReset = false };
+        shutdownTimer.Elapsed += ShutdownTimer_Elapsed;
 
         // load gamepad navigation manager
-        gamepadFocusManager = new(this, ContentFrame);
+        gamepadFocusManager = new(this, ContentFrame, navView);
     }
 
     private void ControllerManager_Initialized()
@@ -345,7 +359,8 @@ public partial class MainWindow : GamepadWindow
             GamepadUIBackIcon.Glyph = Controller.GetGlyph(ButtonFlags.B2);
             GamepadUIToggleIcon.Glyph = Controller.GetGlyph(ButtonFlags.B4);
             GamepadUIMoreIcon.Glyph = Controller.GetGlyph(ButtonFlags.B3);
-            GamepadUILikeIcon.Glyph = Controller.GetGlyph(ButtonFlags.Back);
+            GamepadUINavigationIcon.Glyph = Controller.GetGlyph(ButtonFlags.Start);
+            GamepadUIOptionsIcon.Glyph = Controller.GetGlyph(ButtonFlags.Back);
 
             GamepadUILB.Glyph = Controller.GetGlyph(ButtonFlags.L1);
             GamepadUIRB.Glyph = Controller.GetGlyph(ButtonFlags.R1);
@@ -375,11 +390,17 @@ public partial class MainWindow : GamepadWindow
             else
                 GamepadUIToggleIcon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseHighBrush");
 
+            Color? colorStart = Controller.GetGlyphColor(ButtonFlags.Start);
+            if (colorStart.HasValue)
+                GamepadUINavigationIcon.Foreground = new SolidColorBrush(colorStart.Value);
+            else
+                GamepadUINavigationIcon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+
             Color? colorBack = Controller.GetGlyphColor(ButtonFlags.Back);
             if (colorBack.HasValue)
-                GamepadUILikeIcon.Foreground = new SolidColorBrush(colorBack.Value);
+                GamepadUIOptionsIcon.Foreground = new SolidColorBrush(colorBack.Value);
             else
-                GamepadUILikeIcon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+                GamepadUIOptionsIcon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseHighBrush");
         });
     }
 
@@ -403,7 +424,7 @@ public partial class MainWindow : GamepadWindow
                         GamepadUISelect.Visibility = Visibility.Visible;
                         GamepadUIToggle.Visibility = Visibility.Collapsed;
                         GamepadUIMore.Visibility = Visibility.Collapsed;
-                        GamepadUILike.Visibility = Visibility.Collapsed;
+                        GamepadUIOptions.Visibility = Visibility.Collapsed;
                     }
                     break;
 
@@ -412,7 +433,7 @@ public partial class MainWindow : GamepadWindow
                         GamepadUISelect.Visibility = Visibility.Visible;
                         GamepadUIToggle.Visibility = Visibility.Collapsed;
                         GamepadUIMore.Visibility = Visibility.Collapsed;
-                        GamepadUILike.Visibility = Visibility.Collapsed;
+                        GamepadUIOptions.Visibility = Visibility.Collapsed;
 
                         // To get the first RadioButton in the list, if any
                         RadioButton? firstRadioButton = WPFUtils.FindChildren(control).FirstOrDefault(c => c is RadioButton) as RadioButton;
@@ -424,6 +445,7 @@ public partial class MainWindow : GamepadWindow
 
                         if (control.Tag is ProfileViewModel profileViewModel)
                         {
+                            GamepadUIOptions.Visibility = Visibility.Visible;
                             Profile profile = profileViewModel.Profile;
                             if (!profile.ErrorCode.HasFlag(ProfileErrorCode.MissingExecutable))
                             {
@@ -435,10 +457,6 @@ public partial class MainWindow : GamepadWindow
                                 GamepadUIMore.Visibility = Visibility.Visible;
                                 GamepadUIMoreDesc.Text = Properties.Resources.MainWindow_Layout;
 
-                                GamepadUILike.Visibility = Visibility.Visible;
-                                GamepadUILikeDesc.Text = profile.IsLiked
-                                    ? "Remove from favorites"
-                                    : "Add to favorites";
                             }
                         }
                     }
@@ -461,6 +479,16 @@ public partial class MainWindow : GamepadWindow
                         GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Navigate;
                     }
                     break;
+            }
+
+            ProfileViewModel? focusedProfileViewModel = control.Tag as ProfileViewModel ?? control.DataContext as ProfileViewModel;
+            if (focusedProfileViewModel is not null)
+            {
+                GamepadUIOptions.Visibility = Visibility.Visible;
+                SetLibraryOptionsTarget(focusedProfileViewModel, control);
+
+                if (ContentFrame.Content is LibraryPage currentLibraryPage)
+                    currentLibraryPage.UpdateFocusedProfile(focusedProfileViewModel);
             }
         });
     }
@@ -591,6 +619,33 @@ public partial class MainWindow : GamepadWindow
     public static MainWindow GetCurrent()
     {
         return CurrentWindow;
+    }
+
+    private ProfileViewModel? libraryOptionsTarget;
+    private FrameworkElement? libraryOptionsTargetControl;
+
+    public void SetLibraryOptionsTarget(ProfileViewModel profileViewModel, FrameworkElement control)
+    {
+        libraryOptionsTarget = profileViewModel;
+        libraryOptionsTargetControl = control;
+    }
+
+    public void ShowLibraryOptions(FrameworkElement? control = null)
+    {
+        ProfileViewModel? profileViewModel = control?.Tag as ProfileViewModel ?? control?.DataContext as ProfileViewModel ?? libraryOptionsTarget;
+        if (profileViewModel is null)
+            return;
+
+        FrameworkElement? target = control ?? libraryOptionsTargetControl;
+        if (target is not Control targetControl || FlyoutBase.GetAttachedFlyout(target) is not MenuFlyout menuFlyout)
+            return;
+
+        menuFlyout.SetValue(DataContextProperty, profileViewModel);
+        foreach (FrameworkElement menuItem in menuFlyout.Items.OfType<FrameworkElement>())
+            menuItem.DataContext = profileViewModel;
+
+        gamepadFocusManager.TrackFlyout(menuFlyout, targetControl);
+        menuFlyout.ShowAt(target);
     }
 
     public void UpdateTaskbarState(TaskbarItemProgressState state)
@@ -903,26 +958,34 @@ public partial class MainWindow : GamepadWindow
                         // resume platform(s)
                         PlatformManager.LibreHardware.Start();
 
-                        VirtualManager.SetSystemSleepState(false);
+                        await VirtualManager.SetSystemSleepState(false);
                         ControllerManager.Resume(true);
                         SensorsManager.Resume(true);
+                        ManagerFactory.deviceManager.Resume();
                     }
 
                     // open device, when ready
-                    new Task(async () =>
+                    _ = Task.Run(async () =>
                     {
-                        // wait for the current device to be ready (for 10 seconds)
-                        Task timeout = Task.Delay(TimeSpan.FromSeconds(10));
-                        while (!timeout.IsCompleted && !CurrentDevice.IsReady())
-                            await Task.Delay(250).ConfigureAwait(false);
+                        try
+                        {
+                            // wait for the current device to be ready (for 10 seconds)
+                            Task timeout = Task.Delay(TimeSpan.FromSeconds(10));
+                            while (!timeout.IsCompleted && !CurrentDevice.IsReady())
+                                await Task.Delay(250);
 
-                        if (!CurrentDevice.IsReady())
-                            LogManager.LogCritical("Failed to initialize {0} from {1}", CurrentDevice.ProductName, CurrentDevice.ManufacturerName);
+                            if (!CurrentDevice.IsReady())
+                                LogManager.LogCritical("Failed to initialize {0} from {1}", CurrentDevice.ProductName, CurrentDevice.ManufacturerName);
 
-                        // open current device (threaded to avoid device to hang)
-                        if (CurrentDevice.Open())
-                            CurrentDevice.OpenEvents();
-                    }).Start();
+                            // open current device (threaded to avoid device to hang)
+                            if (CurrentDevice.Open())
+                                CurrentDevice.OpenEvents();
+                        }
+                        catch (Exception ex)
+                        {
+                            LogManager.LogError("Failed to open current device: {0}", ex.Message);
+                        }
+                    });
                 }
                 break;
 
@@ -941,10 +1004,12 @@ public partial class MainWindow : GamepadWindow
                         App.overlayTrackpad.SetVisibility(Visibility.Collapsed);
                         App.overlayquickTools.SetVisibility(Visibility.Collapsed);
 
+                        ManagerFactory.deviceManager.Suspend();
+
                         // suspend manager(s)
                         ManagerFactory.Suspend();
 
-                        VirtualManager.SetSystemSleepState(true);
+                        await VirtualManager.SetSystemSleepState(true);
                         ControllerManager.Suspend(true);
                         TimerManager.Stop();
                         SensorsManager.Suspend(true);
@@ -1147,88 +1212,114 @@ public partial class MainWindow : GamepadWindow
         });
     }
 
+    private void ShutdownTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        LogManager.LogWarning("Application shutdown exceeded 10 seconds; forcing process exit");
+        Environment.Exit(0);
+    }
 
     private async void Window_Closed(object sender, EventArgs e)
     {
-        // wait until all managers have initialized
-        if (ManagerFactory.Managers.Any(manager => manager.Status.HasFlag(ManagerStatus.Initializing)))
-        {
-            LogManager.LogWarning("Waiting for all managers to be fully initialized before halting them");
+        ToastManager.SendToast($"{Title} is closing", "Please wait a moment");
 
-            while (ManagerFactory.Managers.Any(manager => manager.Status.HasFlag(ManagerStatus.Initializing)))
-                await Task.Delay(250).ConfigureAwait(false);
+        // start shutdown watchdog
+        shutdownTimer?.Start();
+
+        try
+        {
+            // wait until all managers have initialized
+            if (ManagerFactory.Managers.Any(manager => manager.Status.HasFlag(ManagerStatus.Initializing)))
+            {
+                LogManager.LogWarning("Waiting for all managers to be fully initialized before halting them");
+
+                while (ManagerFactory.Managers.Any(manager => manager.Status.HasFlag(ManagerStatus.Initializing)))
+                    await Task.Delay(250).ConfigureAwait(false);
+            }
+
+            // suspend platform(s)
+            ManagerFactory.platformManager.Stop();
+
+            CurrentDevice.Close();
+
+            // Clean up tray menu items - must be done on UI thread
+            UIHelper.TryInvoke(() =>
+            {
+                foreach (var menuItem in profileMenuItems.Values)
+                    menuItem.Dispose();
+                profileMenuItems.Clear();
+
+                trayContextMenu.Dispose();
+                notifyIcon.Visible = false;
+                notifyIcon.Dispose();
+            });
+
+            // manage events
+            SystemManager.Initialized -= SystemManager_Initialized;
+            SystemManager.SystemStatusChanged -= SystemManager_SystemStatusChanged;
+            SystemManager.SessionLockChanged -= SystemManager_SessionLockChanged;
+            ToastManager.CommandReceived -= ToastManager_CommandReceived;
+
+            ManagerFactory.notificationManager.Initialized -= NotificationManager_Initialized;
+            ManagerFactory.notificationManager.Added -= NotificationManagerUpdated;
+            ManagerFactory.notificationManager.Discarded -= NotificationManagerUpdated;
+
+            ControllerManager.Initialized -= ControllerManager_Initialized;
+            ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
+
+            ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
+            ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
+            // UI thread
+            UIHelper.TryInvoke(() =>
+            {
+                // stop windows
+                App.overlayModel.Close(true);
+                App.overlayTrackpad.Close();
+                App.overlayquickTools.Close(true);
+
+                // stop pages
+                controllerPage.Dispose();
+                profilesPage.Dispose();
+                settingsPage.Dispose();
+                overlayPage.Dispose();
+                performancePage?.Dispose();
+                hotkeysPage.Dispose();
+                layoutPage.Dispose();
+                notificationsPage.Dispose();
+                libraryPage?.Dispose();
+            });
+
+            // remove all automation event handlers
+            ProcessUtils.TaskWithTimeout(() => Automation.RemoveAllEventHandlers(), TimeSpan.FromSeconds(3));
+
+            // stop managers
+            await VirtualManager.Stop().ConfigureAwait(false);
+            MotionManager.Stop();
+            SensorsManager.Stop();
+            ControllerManager.Stop();
+            InputsManager.Stop(true);
+            TimerManager.Stop();
+            OSDManager.Stop();
+            SystemManager.Stop();
+            DynamicLightingManager.Stop();
+            ToastManager.Stop();
+            TaskManager.Stop();
+            PerformanceManager.Stop();
+            UpdateManager.Stop();
+
+            // mark shutdown as completed
+            shutdownCompleted = true;
+
+            Environment.Exit(0);
         }
-
-        CurrentDevice.Close();
-
-        // Clean up tray menu items - must be done on UI thread
-        UIHelper.TryInvoke(() =>
+        finally
         {
-            foreach (var menuItem in profileMenuItems.Values)
-                menuItem.Dispose();
-            profileMenuItems.Clear();
-
-            trayContextMenu.Dispose();
-            notifyIcon.Visible = false;
-            notifyIcon.Dispose();
-        });
-
-        // manage events
-        SystemManager.Initialized -= SystemManager_Initialized;
-        SystemManager.SystemStatusChanged -= SystemManager_SystemStatusChanged;
-        SystemManager.SessionLockChanged -= SystemManager_SessionLockChanged;
-        ToastManager.CommandReceived -= ToastManager_CommandReceived;
-
-        ManagerFactory.notificationManager.Initialized -= NotificationManager_Initialized;
-        ManagerFactory.notificationManager.Added -= NotificationManagerUpdated;
-        ManagerFactory.notificationManager.Discarded -= NotificationManagerUpdated;
-
-        ControllerManager.Initialized -= ControllerManager_Initialized;
-        ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
-
-        ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
-        ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-
-        // UI thread
-        UIHelper.TryInvoke(() =>
-        {
-            // stop windows
-            App.overlayModel.Close(true);
-            App.overlayTrackpad.Close();
-            App.overlayquickTools.Close(true);
-
-            // stop pages
-            controllerPage.Dispose();
-            profilesPage.Dispose();
-            settingsPage.Dispose();
-            overlayPage.Dispose();
-            performancePage.Dispose();
-            hotkeysPage.Dispose();
-            layoutPage.Dispose();
-            notificationsPage.Dispose();
-            libraryPage?.Dispose();
-        });
-
-        // remove all automation event handlers
-        ProcessUtils.TaskWithTimeout(() => Automation.RemoveAllEventHandlers(), TimeSpan.FromSeconds(3));
-
-        foreach (IManager manager in ManagerFactory.Managers)
-            manager.Stop();
-
-        // stop managers
-        await VirtualManager.Stop().ConfigureAwait(false);
-        MotionManager.Stop();
-        SensorsManager.Stop();
-        ControllerManager.Stop();
-        InputsManager.Stop(true);
-        TimerManager.Stop();
-        OSDManager.Stop();
-        SystemManager.Stop();
-        DynamicLightingManager.Stop();
-        ToastManager.Stop();
-        TaskManager.Stop();
-        PerformanceManager.Stop();
-        UpdateManager.Stop();
+            if (shutdownCompleted)
+            {
+                shutdownTimer?.Dispose();
+                shutdownTimer = null;
+            }
+        }
     }
 
     private async void Window_Closing(object sender, CancelEventArgs e)
@@ -1456,7 +1547,7 @@ public partial class MainWindow : GamepadWindow
 
         if (!NotifyInTaskbar)
         {
-            if (ToastManager.SendToast(Title, "is running in the background"))
+            if (ToastManager.SendToast($"{Title} is running in the background"))
                 NotifyInTaskbar = true;
         }
     }
@@ -1646,9 +1737,20 @@ public partial class MainWindow : GamepadWindow
         UIHelper.TryInvoke(() => gamepadFocusManager.TryMore());
     }
 
-    private void GamepadUILike_Click(object sender, RoutedEventArgs e)
+    private void ProfileSearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
     {
-        UIHelper.TryInvoke(() => gamepadFocusManager.TryLike());
+        if (args.SelectedItem is not Profile profile)
+            return;
+
+        profilesPage.viewModel.SelectProfileFromToast(profile);
+        NavigateToPage("ProfilesPage");
+        sender.Text = profile.Name;
+        sender.IsSuggestionListOpen = false;
+    }
+
+    private void GamepadUINavigation_Click(object sender, RoutedEventArgs e)
+    {
+        navView.IsPaneOpen = !navView.IsPaneOpen;
     }
 
     private void GamepadUISelect_Click(object sender, RoutedEventArgs e)
@@ -1664,6 +1766,11 @@ public partial class MainWindow : GamepadWindow
     private void GamepadUIToggle_Click(object sender, RoutedEventArgs e)
     {
         UIHelper.TryInvoke(() => gamepadFocusManager.TryToggle());
+    }
+
+    private void GamepadUIOptions_Click(object sender, RoutedEventArgs e)
+    {
+        ShowLibraryOptions();
     }
 
     private void On_Navigated(object sender, NavigationEventArgs e)

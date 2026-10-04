@@ -1,0 +1,49 @@
+{
+  "Id": "shadps4",
+  "Name": "ShadPS4",
+  "PlatformType": "ShadPS4",
+  "PlatformColor": "#212894",
+  "PlatformGlyph": "\uF2F3",
+  "PlatformFontSize": 4,
+  "Executables": [
+    "shadPS4.exe",
+    "shadPS4QtLauncher.exe"
+  ],
+  "ProductNames": [
+    "ShadPS4"
+  ],
+  "Configurations": [
+    {
+      "Root": "AppData",
+      "RelativePath": "shadPS4",
+      "Files": [
+        "config.json"
+      ],
+      "ContentKeys": [
+        "install_dirs"
+      ]
+    },
+    {
+      "Root": "AppData",
+      "RelativePath": "shadPS4",
+      "Files": [
+        "config.toml"
+      ],
+      "ContentKeys": [
+        "installDirs"
+      ]
+    }
+  ],
+  "PortableLocations": [],
+  "RomExtensions": [],
+  "ArgumentPrefix": "",
+  "LaunchArgumentMode": "Template",
+  "ArgumentTemplate": "-g {rom}",
+  "RomMetadata": {
+    "RelativePath": "sce_sys\\param.sfo",
+    "ElementName": "",
+    "RelativePaths": [],
+    "SearchParentDirectories": false
+  },
+  "DirectoryRoms": true
+}

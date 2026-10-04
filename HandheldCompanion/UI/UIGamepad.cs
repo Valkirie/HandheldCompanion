@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Controls;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Shared;
@@ -34,8 +35,48 @@ using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers
 {
+    public enum GamepadScrollAlignment
+    {
+        Auto,
+        Top,
+        Center,
+        Bottom
+    }
+
     public class UIGamepad
     {
+        public static readonly DependencyProperty VerticalScrollAlignmentProperty = DependencyProperty.RegisterAttached(
+            "VerticalScrollAlignment",
+            typeof(GamepadScrollAlignment),
+            typeof(UIGamepad),
+            new FrameworkPropertyMetadata(GamepadScrollAlignment.Auto, FrameworkPropertyMetadataOptions.Inherits));
+
+        public static void SetVerticalScrollAlignment(DependencyObject element, GamepadScrollAlignment value)
+        {
+            element.SetValue(VerticalScrollAlignmentProperty, value);
+        }
+
+        public static GamepadScrollAlignment GetVerticalScrollAlignment(DependencyObject element)
+        {
+            return (GamepadScrollAlignment)element.GetValue(VerticalScrollAlignmentProperty);
+        }
+
+        public static readonly DependencyProperty VerticalScrollMarginProperty = DependencyProperty.RegisterAttached(
+            "VerticalScrollMargin",
+            typeof(double),
+            typeof(UIGamepad),
+            new FrameworkPropertyMetadata(24.0, FrameworkPropertyMetadataOptions.Inherits));
+
+        public static void SetVerticalScrollMargin(DependencyObject element, double value)
+        {
+            element.SetValue(VerticalScrollMarginProperty, value);
+        }
+
+        public static double GetVerticalScrollMargin(DependencyObject element)
+        {
+            return (double)element.GetValue(VerticalScrollMarginProperty);
+        }
+
         #region events
         public static event GotFocusEventHandler? GotFocus;
         public delegate void GotFocusEventHandler(string Name);
@@ -58,7 +99,6 @@ namespace HandheldCompanion.Managers
         private Frame gamepadFrame;
         private Page? gamepadPage;
         private Timer gamepadTimer;
-        private Timer embeddedNavTimer;
 
         // tooltip
         private static Timer tooltipTimer = null!;
@@ -77,14 +117,24 @@ namespace HandheldCompanion.Managers
         // Ensures ShouldKeepFocusOnWindowNavigation() never suppresses the first-focus pass.
         private bool _justNavigatedToNewPage;
         // The iNKORE Frame sitting inside pageNavigationView (e.g. LayoutPage's ContentFrame).
-        // Tracked so we can subscribe to its ContentRendered when the outer page renders before
-        // the inner sub-page has finished loading.
+        // Tracked so embedded navigation can restore focus after the new content loads.
         private Frame? _embeddedNavFrame;
 
         private readonly ButtonState prevButtonState = new();
         private volatile bool _suppressNextInput;
         private Control? _lastWindowNavigationItem;
         private readonly Dictionary<Page, PageFocusState> _pageFocusStates = [];
+        private readonly Dictionary<ScrollViewer, ScrollAnimationState> _scrollAnimations = [];
+        private bool _isScrollAnimationRenderingSubscribed;
+
+        private sealed class ScrollAnimationState
+        {
+            public required double StartHorizontalOffset { get; init; }
+            public required double TargetHorizontalOffset { get; init; }
+            public required double StartVerticalOffset { get; init; }
+            public required double TargetVerticalOffset { get; init; }
+            public required long StartTimestamp { get; init; }
+        }
 
         // key: Window, store which window has focus
         private static readonly ConcurrentDictionary<string, bool> _focused = new();
@@ -92,9 +142,6 @@ namespace HandheldCompanion.Managers
         private bool IsQuicktools => this.windowName.Equals("QuickTools");
         private bool IsMainWindow => !IsQuicktools;
         private bool IsDesktopLayout => ManagerFactory.layoutManager.GetCurrentMode() == LayoutModes.Desktop;
-
-        // Store profile Guid when toggling like, to restore focus after ProfileManager updates
-        private Guid? pendingFocusRestoreProfileGuid = null;
 
         public static bool HasFocus()
         {
@@ -136,6 +183,7 @@ namespace HandheldCompanion.Managers
             public Control? LastContentControl { get; set; }
             public Guid? LastContentProfileGuid { get; set; }
             public Dictionary<string, Control> LastContentControlsByView { get; } = [];
+            public Dictionary<string, Guid> LastContentProfileGuidsByView { get; } = [];
         }
 
         private enum FocusSource
@@ -145,7 +193,13 @@ namespace HandheldCompanion.Managers
             Focus
         }
 
-        public UIGamepad(GamepadWindow gamepadWindow, Frame contentFrame)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UIGamepad"/> class.
+        /// </summary>
+        /// <param name="gamepadWindow">The gamepad window associated with this instance.</param>
+        /// <param name="contentFrame">The content frame for navigation.</param>
+        /// <param name="navigationView">The navigation view for the window.</param>
+        public UIGamepad(GamepadWindow gamepadWindow, Frame contentFrame, NavigationView navigationView)
         {
             // set current window
             this.gamepadWindow = gamepadWindow;
@@ -184,42 +238,17 @@ namespace HandheldCompanion.Managers
 
             gamepadFrame = contentFrame;
             gamepadFrame.Navigated += ContentNavigated;
+            windowNavigationView = navigationView;
+            windowNavigationView.PaneOpening += (_, _) => WindowNavigationView_PaneOpened();
+            windowNavigationView.PaneClosing += (_, _) => WindowNavigationView_PaneClosed();
 
             gamepadTimer = new Timer(250) { AutoReset = false };
             gamepadTimer.Elapsed += ContentRendered;
 
-            embeddedNavTimer = new Timer(250) { AutoReset = false };
-            embeddedNavTimer.Elapsed += EmbeddedContentRendered;
-
             tooltipTimer = new Timer(2000) { AutoReset = false };
             tooltipTimer.Elapsed += TooltipTimer_Elapsed;
 
-            // raise events
-            switch (ManagerFactory.profileManager.Status)
-            {
-                default:
-                case ManagerStatus.Initializing:
-                    ManagerFactory.profileManager.Initialized += ProfileManager_Initialized;
-                    break;
-                case ManagerStatus.Initialized:
-                    QueryProfile();
-                    break;
-            }
-
             ControllerManager.InputsUpdated += InputsUpdated;
-        }
-
-        private void QueryProfile()
-        {
-            // manage events
-            ManagerFactory.profileManager.Updated += ProfileManager_Updated;
-
-            ProfileManager_Updated(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background, true);
-        }
-
-        private void ProfileManager_Initialized()
-        {
-            QueryProfile();
         }
 
         private void GamepadWindow_GotFocus(object sender, RoutedEventArgs e)
@@ -259,6 +288,19 @@ namespace HandheldCompanion.Managers
                     SubscribeToFlyoutEvents(flyout, dropDownButton);
                 }
             }
+
+            foreach (Control control in WPFUtils.FindVisualChildren<Control>(gamepadWindow))
+            {
+                FlyoutBase? flyout = FlyoutBase.GetAttachedFlyout(control);
+                if (flyout is not null && !_subscribedFlyouts.Contains(flyout))
+                    SubscribeToFlyoutEvents(flyout, control);
+            }
+        }
+
+        public void TrackFlyout(FlyoutBase flyout, Control control)
+        {
+            if (!_subscribedFlyouts.Contains(flyout))
+                SubscribeToFlyoutEvents(flyout, control);
         }
 
         private void SubscribeToFlyoutEvents(FlyoutBase flyout, Control button)
@@ -291,8 +333,7 @@ namespace HandheldCompanion.Managers
                 gamepadWindow.currentFlyoutButton = button as DropDownButton;
                 UIHelper.TryInvoke(() =>
                 {
-                    // For MenuFlyout (typically on DropDownButton), populate flyoutMenuItems
-                    if (button is DropDownButton dropDownButton && dropDownButton.Flyout is MenuFlyout menuFlyout)
+                    if (flyout is MenuFlyout menuFlyout)
                     {
                         flyoutMenuItems.Clear();
                         flyoutMenuItems = WPFUtils.GetDirectMenuItems(menuFlyout);
@@ -311,13 +352,12 @@ namespace HandheldCompanion.Managers
             };
         }
 
+        /// <summary>
+        /// Loads the gamepad UI components and subscribes to necessary events.
+        /// </summary>
         public void Loaded()
         {
             this.scrollViewer = WPFUtils.FindVisualChild<ScrollViewer>(gamepadWindow);
-            this.windowNavigationView = FindWindowNavigationView();
-
-            // will be resolved once the first Page is rendered
-            this.pageNavigationView = null;
 
             // Subscribe to all flyout open/close events to track currentFlyout
             // This ensures currentFlyout is updated whether the flyout is opened by gamepad, mouse, or code
@@ -361,6 +401,8 @@ namespace HandheldCompanion.Managers
 
         private static string? GetLibraryCollectionKey(Control? control)
         {
+            // Collection cards are identified by collection ID rather than their display name,
+            // because names can change while focus is being restored.
             if (control is not Button button || button.DataContext is not CollectionGroupViewModel group)
                 return null;
 
@@ -375,6 +417,7 @@ namespace HandheldCompanion.Managers
             if (string.IsNullOrWhiteSpace(collectionKey))
                 return null;
 
+            // Search the rendered page because collection cards are regenerated when the collection changes.
             return WPFUtils.FindVisualChildren<Button>(page).FirstOrDefault(button => WPFUtils.CanTarget(button, gamepadWindow, includeContentRules: true) && string.Equals(GetLibraryCollectionKey(button), collectionKey, StringComparison.Ordinal));
         }
 
@@ -516,7 +559,54 @@ namespace HandheldCompanion.Managers
             return currentItem is not null && items.Contains(currentItem) ? currentItem : items.FirstOrDefault();
         }
 
-        private bool FocusNextNavigationViewItem(NavigationView? navigationView, bool moveLeft)
+        private NavigationViewItem? GetCurrentPageNavigationViewItem()
+        {
+            string? pageKey = gamepadPage?.GetType().Name;
+            if (!string.IsNullOrWhiteSpace(pageKey))
+            {
+                NavigationViewItem? pageItem = GetNavigableNavigationViewItems(windowNavigationView)
+                    .FirstOrDefault(item => string.Equals(GetPageFromNavigationViewItemTag(item), pageKey, StringComparison.Ordinal));
+                if (pageItem is not null)
+                    return pageItem;
+            }
+
+            return ResolveNavigationViewItemContainer(windowNavigationView, windowNavigationView?.SelectedItem)
+                ?? GetCurrentNavigationViewItem(windowNavigationView);
+        }
+
+        private void WindowNavigationView_PaneOpened()
+        {
+            LogManager.LogTrace("WindowNavigationView PaneOpened");
+
+            if (windowNavigationView?.PaneDisplayMode == NavigationViewPaneDisplayMode.Top)
+                return;
+
+            Control? focusedControl = NormalizeNavigationViewFocus(GetFocusedElement());
+            if (gamepadPage is not null && focusedControl is not NavigationViewItem && WPFUtils.CanTarget(focusedControl))
+                StoreFocusedControl(gamepadPage, focusedControl);
+
+            NavigationViewItem? navigationViewItem = GetCurrentPageNavigationViewItem();
+            if (navigationViewItem is null)
+                return;
+
+            _lastWindowNavigationItem = navigationViewItem;
+            FocusWindowNavigationItemWithoutNavigation(navigationViewItem);
+        }
+
+        private void WindowNavigationView_PaneClosed()
+        {
+            LogManager.LogTrace("WindowNavigationView PaneClosed");
+
+            if (windowNavigationView?.PaneDisplayMode == NavigationViewPaneDisplayMode.Top)
+                return;
+
+            if (_isNavigationViewFocusNavigationInProgress || _justNavigatedToNewPage)
+                return;
+
+            TryFocusPageContent(gamepadPage);
+        }
+
+        private bool FocusNextNavigationViewItem(NavigationView navigationView, bool moveLeft)
         {
             List<NavigationViewItem> items = GetNavigableNavigationViewItems(navigationView);
             if (items.Count == 0)
@@ -535,11 +625,16 @@ namespace HandheldCompanion.Managers
 
             NavigationViewItem nextItem = items[nextIndex];
 
-            if (navigationView == windowNavigationView)
-                _lastWindowNavigationItem = nextItem;
-
-            Focus(nextItem);
-            return true;
+            if (navigationView == windowNavigationView && navigationView.IsPaneOpen
+                && navigationView.PaneDisplayMode != NavigationViewPaneDisplayMode.Top)
+            {
+                FocusWindowNavigationItemWithoutNavigation(nextItem);
+                return true;
+            }
+            else
+            {
+                return NavigateFromFocusedNavigationViewItem(nextItem);
+            }
         }
 
         private static void SetSelectedNavigationViewItem(NavigationView navigationView, NavigationViewItem navigationViewItem)
@@ -573,7 +668,8 @@ namespace HandheldCompanion.Managers
 
         private DependencyObject? GetNavigationViewContentRoot(NavigationView? navigationView, Page? page)
         {
-            // Resolve the content root for the embedded NavigationView (pageNavigationView).
+            // An embedded NavigationView owns its own focus universe. Resolve its frame content
+            // instead of returning the host page, otherwise restoration can target host-page controls.
             if (navigationView == pageNavigationView)
             {
                 Frame? embeddedFrame = FindEmbeddedNavFrame(navigationView);
@@ -598,12 +694,6 @@ namespace HandheldCompanion.Managers
             return page;
         }
 
-        private static Page? GetNavigationViewPage(NavigationView? navigationView)
-        {
-            Frame? embeddedFrame = FindEmbeddedNavFrame(navigationView);
-            return embeddedFrame?.Content as Page;
-        }
-
         // Returns the iNKORE Frame that sits inside the given NavigationView's content area.
         // For LayoutPage the XAML places an <ui:Frame Name="ContentFrame"/> as the NavigationView content.
         private static Frame? FindEmbeddedNavFrame(NavigationView? navigationView)
@@ -616,6 +706,39 @@ namespace HandheldCompanion.Managers
 
             // Fallback: first Frame anywhere inside the NavigationView
             return WPFUtils.FindVisualChild<Frame>(navigationView);
+        }
+
+        private static bool IsWithinFocusScope(Control? control, DependencyObject? scopeRoot)
+        {
+            if (control is null)
+                return false;
+
+            return scopeRoot is null || ReferenceEquals(control, scopeRoot) || control.IsDescendantOf(scopeRoot);
+        }
+
+        private static bool IsNavigationViewItemOrDescendant(Control? control)
+        {
+            return control is NavigationViewItem
+                || (control is not null && WPFUtils.FindParent<NavigationViewItem>(control) is not null);
+        }
+
+        private static bool IsRecentGameControl(Page page, Control control)
+        {
+            if (page is not LibraryPage)
+                return false;
+
+            // Recent Games and the embedded library view can expose the same ProfileViewModel.
+            // The visual ancestor is therefore the only reliable way to preserve which card was focused.
+            DependencyObject? current = control;
+            while (current is not null && !ReferenceEquals(current, page))
+            {
+                if (current is FrameworkElement element && element.Name == "RecentGamesItems")
+                    return true;
+
+                current = VisualTreeHelper.GetParent(current);
+            }
+
+            return false;
         }
 
         private Control? GetTopLeftFocusableContentControl(DependencyObject? scopeRoot, bool includeNavigationViewItems = false)
@@ -647,10 +770,32 @@ namespace HandheldCompanion.Managers
             DependencyObject? contentRoot = GetNavigationViewContentRoot(navigationView, page);
             string? viewKey = GetActivePageViewKey(page, navigationView);
 
-            // Library pages need a small special-case for the collections view.
+            // A Recent Games card lives on LibraryPage, outside the embedded frame. Restore it
+            // before view-specific recovery, which may otherwise resolve the same profile in a collection.
+            if (state.LastContentControl is not null
+                && IsRecentGameControl(page, state.LastContentControl)
+                && WPFUtils.CanTarget(state.LastContentControl, gamepadWindow, includeContentRules: true))
+            {
+                return state.LastContentControl;
+            }
+
+            if (page is LibraryPage
+                && state.LastContentControl is null
+                && state.LastContentControlsByView.Count == 0
+                && !state.LastContentProfileGuid.HasValue)
+            {
+                Control? firstRecentGame = GetTopLeftFocusableContentControl(page.FindName("RecentGamesItems") as DependencyObject);
+                if (firstRecentGame is not null)
+                {
+                    state.LastContentControl = firstRecentGame;
+                    return firstRecentGame;
+                }
+            }
+
+            // The collections overview has its own remembered item and must win when that view is active.
             if (page is LibraryPage)
             {
-                DependencyObject? embeddedContentRoot = GetNavigationViewContentRoot(pageNavigationView ?? FindActivePageNavigationView(page), page);
+                DependencyObject? embeddedContentRoot = GetNavigationViewContentRoot(pageNavigationView, page);
                 if (embeddedContentRoot is LibraryCollectionsOverviewPage && page.DataContext is LibraryPageViewModel libraryPageViewModel)
                 {
                     Control? collectionsControl = ResolveLibraryCollectionsOverviewControl(page, libraryPageViewModel, contentRoot);
@@ -665,7 +810,27 @@ namespace HandheldCompanion.Managers
                 }
             }
 
-            // Restore the last control used for this specific view.
+            if (!string.IsNullOrWhiteSpace(viewKey) && state.LastContentProfileGuidsByView.TryGetValue(viewKey, out Guid viewProfileGuid))
+            {
+                Control? profileControl = FindOrRealizeProfileControl(viewProfileGuid, contentRoot);
+                if (profileControl is not null)
+                {
+                    state.LastContentControlsByView[viewKey] = profileControl;
+                    state.LastContentControl = profileControl;
+                    return profileControl;
+                }
+
+                if (state.LastContentControlsByView.TryGetValue(viewKey, out Control? staleViewControl))
+                {
+                    state.LastContentControlsByView.Remove(viewKey);
+                    if (ReferenceEquals(state.LastContentControl, staleViewControl))
+                        state.LastContentControl = null;
+                }
+
+                state.LastContentProfileGuidsByView.Remove(viewKey);
+            }
+
+            // Restore the last control used for this specific embedded view.
             if (!string.IsNullOrWhiteSpace(viewKey) && state.LastContentControlsByView.TryGetValue(viewKey, out Control? storedViewControl))
             {
                 Control? recoveredViewControl = RecoverStoredContentControl(page, storedViewControl, contentRoot);
@@ -676,13 +841,13 @@ namespace HandheldCompanion.Managers
                     return recoveredViewControl;
                 }
 
-                if (WPFUtils.CanTarget(storedViewControl, gamepadWindow, includeContentRules: true))
+                if (IsWithinFocusScope(storedViewControl, contentRoot) && WPFUtils.CanTarget(storedViewControl, gamepadWindow, includeContentRules: true))
                     return storedViewControl;
 
                 state.LastContentControlsByView.Remove(viewKey);
             }
 
-            // Fall back to the page-wide last focused control.
+            // Fall back to the page-wide control only after the active view-specific state was checked.
             if (state.LastContentControl is not null)
             {
                 Control? recoveredControl = RecoverStoredContentControl(page, state.LastContentControl, contentRoot);
@@ -695,15 +860,15 @@ namespace HandheldCompanion.Managers
                     return recoveredControl;
                 }
 
-                if (WPFUtils.CanTarget(state.LastContentControl, gamepadWindow, includeContentRules: true))
+                if (IsWithinFocusScope(state.LastContentControl, contentRoot) && WPFUtils.CanTarget(state.LastContentControl, gamepadWindow, includeContentRules: true))
                     return state.LastContentControl;
             }
 
-            // Last known profile, if we have one.
+            // A profile ID is only a last resort: the same profile can appear in Recent Games and a collection.
             if (state.LastContentProfileGuid.HasValue)
             {
-                Control? resolvedControl = FindProfileControl(state.LastContentProfileGuid.Value, page);
-                if (WPFUtils.CanTarget(resolvedControl, gamepadWindow, includeContentRules: true))
+                Control? resolvedControl = FindOrRealizeProfileControl(state.LastContentProfileGuid.Value, contentRoot);
+                if (IsWithinFocusScope(resolvedControl, contentRoot) && WPFUtils.CanTarget(resolvedControl, gamepadWindow, includeContentRules: true))
                 {
                     state.LastContentControl = resolvedControl;
                     return resolvedControl;
@@ -713,7 +878,7 @@ namespace HandheldCompanion.Managers
             // Final fallback for library content.
             if (page is LibraryPage)
             {
-                DependencyObject? embeddedContentRoot = GetNavigationViewContentRoot(pageNavigationView ?? FindActivePageNavigationView(page), page);
+                DependencyObject? embeddedContentRoot = GetNavigationViewContentRoot(pageNavigationView, page);
                 Control? embeddedFallback = FindFirstLibraryProfileControl(embeddedContentRoot);
 
                 if (embeddedFallback is null && embeddedContentRoot is not null)
@@ -756,7 +921,8 @@ namespace HandheldCompanion.Managers
 
         private Control? RecoverStoredContentControl(Page page, Control storedControl, DependencyObject? contentRoot)
         {
-            if (WPFUtils.CanTarget(storedControl, gamepadWindow, includeContentRules: true))
+            // Never recover a control from the host page when the active view is embedded.
+            if (IsWithinFocusScope(storedControl, contentRoot) && WPFUtils.CanTarget(storedControl, gamepadWindow, includeContentRules: true))
                 return storedControl;
 
             if (storedControl is Button button && button.DataContext is CollectionGroupViewModel group)
@@ -768,8 +934,10 @@ namespace HandheldCompanion.Managers
 
             if (TryGetProfileGuid(storedControl, out Guid profileGuid))
             {
-                Control? profileControl = FindProfileControl(profileGuid, page);
-                if (profileControl is not null)
+                // Profile identity can locate a replacement after re-rendering, but the content root
+                // check below prevents it from crossing from an embedded view into its host page.
+                Control? profileControl = FindOrRealizeProfileControl(profileGuid, contentRoot);
+                if (IsWithinFocusScope(profileControl, contentRoot))
                     return profileControl;
             }
 
@@ -784,6 +952,7 @@ namespace HandheldCompanion.Managers
 
             return WPFUtils.FindVisualChildren<Control>(contentRoot)
                 .FirstOrDefault(control => WPFUtils.CanTarget(control, gamepadWindow, includeContentRules: true)
+                && IsWithinFocusScope(control, contentRoot)
                 && !ReferenceEquals(control, storedControl)
                 && (ReferenceEquals(control.DataContext, storedDataContext) || ReferenceEquals(control.Tag, storedTag)));
         }
@@ -894,6 +1063,9 @@ namespace HandheldCompanion.Managers
                         return true;
                     }
 
+                    if (navigationView.IsPaneOpen && navigationView.PaneDisplayMode != NavigationViewPaneDisplayMode.Top)
+                        return true;
+
                     return RestoreOrFocusTopLeftElementInNavigationViewContent(windowNavigationView);
                 }
 
@@ -929,6 +1101,11 @@ namespace HandheldCompanion.Managers
             }
         }
 
+        /// <summary>
+        /// Tries to enter content from the focused navigation item.
+        /// </summary>
+        /// <param name="navigationViewItem">The focused navigation view item.</param>
+        /// <returns>True if successful, otherwise false.</returns>
         private bool TryEnterContentFromNavigationItem(NavigationViewItem navigationViewItem)
         {
             return NavigateFromFocusedNavigationViewItem(navigationViewItem);
@@ -936,6 +1113,10 @@ namespace HandheldCompanion.Managers
 
         private bool TryFocusWindowNavigationAnchor()
         {
+            // Non-top panes manage focus through PaneOpened/PaneClosed; B2 must not jump to their hidden navigation anchor.
+            if (windowNavigationView?.PaneDisplayMode != NavigationViewPaneDisplayMode.Top)
+                return false;
+
             Control? anchor = _lastWindowNavigationItem
                 ?? GetSelectedNavigationViewItem(windowNavigationView)
                 ?? GetFirstNavigationViewItem(windowNavigationView);
@@ -957,8 +1138,7 @@ namespace HandheldCompanion.Managers
             if (control is null)
                 return false;
 
-            Focus(control);
-            return true;
+            return Focus(control);
         }
 
         private bool TryFocusPageContent(Page? page)
@@ -966,15 +1146,17 @@ namespace HandheldCompanion.Managers
             if (page is null)
                 return false;
 
-            NavigationView? activeNavView = page is LibraryPage ? pageNavigationView ?? FindActivePageNavigationView(page) : windowNavigationView;
-            Page focusPage = GetNavigationViewPage(activeNavView) ?? page;
+            NavigationView? activeNavView = pageNavigationView ?? windowNavigationView;
 
-            Control? control = ResolveStoredContentControl(focusPage, activeNavView) ?? GetTopLeftFocusableContentControl(GetNavigationViewContentRoot(activeNavView, focusPage));
-            if (control is null)
-                return false;
+            Control? control = ResolveStoredContentControl(page, activeNavView);
+            if (control is not null)
+                return Focus(control);
 
-            Focus(control);
-            return true;
+            control = GetTopLeftFocusableContentControl(GetNavigationViewContentRoot(activeNavView, page));
+            if (control is not null)
+                return Focus(control);
+
+            return false;
         }
 
         private static bool IsLibraryPage(Page page)
@@ -1059,6 +1241,7 @@ namespace HandheldCompanion.Managers
         private static bool IsUsableFlyoutMenuItem(MenuItem? menuItem)
         {
             return menuItem is not null
+                && menuItem.DataContext is not CollectionMenuItemViewModel { IsSeparator: true }
                 && menuItem.IsEnabled
                 && menuItem.Focusable;
         }
@@ -1067,7 +1250,7 @@ namespace HandheldCompanion.Managers
         {
             List<MenuItem> siblingMenuItems = WPFUtils.GetSiblingMenuItems(menuItem);
 
-            if (siblingMenuItems.Count == 0 && gamepadWindow.currentFlyoutButton?.Flyout is MenuFlyout menuFlyout)
+            if (siblingMenuItems.Count == 0 && gamepadWindow.currentFlyout is MenuFlyout menuFlyout)
                 siblingMenuItems = WPFUtils.GetDirectMenuItems(menuFlyout);
 
             flyoutMenuItems = siblingMenuItems;
@@ -1080,14 +1263,14 @@ namespace HandheldCompanion.Managers
             if (!menuItem.HasItems)
                 return false;
 
-            MenuItem? firstChild = WPFUtils.GetDirectMenuItems(menuItem)
-                .FirstOrDefault(m => IsUsableFlyoutMenuItem(m));
-
-            if (firstChild is null)
-                return false;
-
             menuItem.IsSubmenuOpen = true;
-            menuItem.Dispatcher.BeginInvoke(() => FocusFlyoutMenuItem(firstChild), DispatcherPriority.Loaded);
+            menuItem.Dispatcher.BeginInvoke(() =>
+            {
+                MenuItem? firstChild = WPFUtils.GetDirectMenuItems(menuItem).FirstOrDefault(IsUsableFlyoutMenuItem);
+                if (firstChild is not null)
+                    FocusFlyoutMenuItem(firstChild);
+            }, DispatcherPriority.Loaded);
+
             return true;
         }
 
@@ -1107,6 +1290,15 @@ namespace HandheldCompanion.Managers
 
             parentMenuItem.IsSubmenuOpen = false;
             FocusFlyoutMenuItem(parentMenuItem);
+            return true;
+        }
+
+        private bool TryCloseMenuFlyout()
+        {
+            if (!HasFlyoutOpen || gamepadWindow.currentFlyout is not MenuFlyout menuFlyout)
+                return false;
+
+            menuFlyout.Hide();
             return true;
         }
 
@@ -1189,7 +1381,7 @@ namespace HandheldCompanion.Managers
             // raise event
             if (_focused[windowName])
             {
-                LogManager.LogTrace("GotFocus: {0}", windowName);
+                LogManager.LogTrace("Window {0} GotFocus", windowName);
                 GotFocus?.Invoke(windowName);
 
                 foreach (string window in _focused.Keys)
@@ -1228,6 +1420,9 @@ namespace HandheldCompanion.Managers
                     return;
             }
 
+            // close navigation pane
+            windowNavigationView?.IsPaneOpen = false;
+
             // unset focus
             _focused[windowName] = false;
 
@@ -1235,7 +1430,7 @@ namespace HandheldCompanion.Managers
             gamepadTimer.Stop();
 
             // raise event
-            LogManager.LogTrace("LostFocus: {0}", windowName);
+            LogManager.LogTrace("Window {0} LostFocus", windowName);
             LostFocus?.Invoke(windowName);
 
             foreach (string window in _focused.Keys)
@@ -1347,15 +1542,7 @@ namespace HandheldCompanion.Managers
             if (gamepadPage is null)
                 return;
 
-            Page pageRef = gamepadPage;
-            gamepadWindow.Dispatcher.BeginInvoke(() =>
-            {
-                pageRef.UpdateLayout();
-                if (pageRef is LibraryPage)
-                    UpdateEmbeddedNavigationFrame();
-
-                TryFocusPageContent(pageRef);
-            }, DispatcherPriority.Loaded);
+            TryFocusPageContent(gamepadPage);
         }
 
         private void ContentRendering(object? sender, EventArgs e)
@@ -1394,46 +1581,33 @@ namespace HandheldCompanion.Managers
             });
         }
 
-        private void EmbeddedContentRendering(object? sender, EventArgs e)
-        {
-            if (gamepadPage is null || !HasFocus())
-                return;
-
-            embeddedNavTimer.Stop();
-            embeddedNavTimer.Start();
-        }
-
-        private void EmbeddedContentRendered(object? sender, System.Timers.ElapsedEventArgs? e)
-        {
-            UIHelper.TryInvoke(() =>
-            {
-                if (gamepadPage is null)
-                    return;
-
-                if (pageNavigationView is null || _embeddedNavFrame is null)
-                    UpdateEmbeddedNavigationFrame();
-
-                RestoreFocusForCurrentPage(pageNavigationView, gamepadPage, justNavigated: false);
-            });
-        }
-
         private void UpdateEmbeddedNavigationFrame()
         {
+            // find page's embedded navigation view, if any
             pageNavigationView = FindActivePageNavigationView(gamepadPage);
 
             Frame? nextEmbeddedNavFrame = FindEmbeddedNavFrame(pageNavigationView);
             if (ReferenceEquals(_embeddedNavFrame, nextEmbeddedNavFrame))
                 return;
 
-            _embeddedNavFrame?.ContentRendered -= EmbeddedContentRendering;
+            // unsubscribe from previous frame events
+            _embeddedNavFrame?.Navigated -= EmbeddedContentNavigated;
 
+            // update embedded frame reference
             _embeddedNavFrame = nextEmbeddedNavFrame;
 
-            _embeddedNavFrame?.ContentRendered += EmbeddedContentRendering;
+            // subscribe to new frame events
+            _embeddedNavFrame?.Navigated += EmbeddedContentNavigated;
+        }
 
-            // already loaded ?
-            if (_embeddedNavFrame is not null && _embeddedNavFrame.IsLoaded)
-                EmbeddedContentRendered(null, null);
+        private void EmbeddedContentNavigated(object sender, NavigationEventArgs e)
+        {
+            Page? page = gamepadPage;
+            gamepadWindow.Dispatcher.BeginInvoke(() =>
+            {
+                if (ReferenceEquals(sender, _embeddedNavFrame) && page is not null)
+                    RestoreFocusForCurrentPage(pageNavigationView, page, justNavigated: false);
+            }, DispatcherPriority.Loaded);
         }
 
         private void RestoreFocusForCurrentPage(NavigationView? activeNavView, Page page, bool justNavigated = false)
@@ -1470,10 +1644,20 @@ namespace HandheldCompanion.Managers
             });
         }
 
-        public void Focus(Control? control, Control? parent = null, bool force = false)
+        /// <summary>
+        /// Sets the keyboard focus to the specified control.
+        /// </summary>
+        /// <param name="control">The control to focus.</param>
+        /// <param name="parent">The parent control, if any.</param>
+        /// <param name="force">Whether to force the focus.</param>
+        /// <param name="direction">The direction used to reach the control.</param>
+        public bool Focus(Control? control, Control? parent = null, bool force = false, WPFUtils.Direction direction = WPFUtils.Direction.None)
         {
             if (control is null || IsTransientContainerControl(control) || !HasFocus())
-                return;
+                return false;
+
+            if (control.IsFocused)
+                return true;
 
             // prevent keyboard focus from overlapping with our own tooltip logic
             ToolTipService.SetShowsToolTipOnKeyboardFocus(control, false);
@@ -1503,7 +1687,7 @@ namespace HandheldCompanion.Managers
             switch (controlType)
             {
                 case "ContentDialog":
-                    return;
+                    return false;
             }
 
             if (force)
@@ -1517,12 +1701,155 @@ namespace HandheldCompanion.Managers
                 parentFocus = null;
             }
 
+            LogManager.LogTrace("Control {0} Focused, with DataContext: {1}, {2}", control.Name, control.DataContext.GetType(), control.DataContext.ToString());
+
             // set focus to control
+            if (gamepadWindow.SetFocusedElement(control))
+                SmoothBringIntoView(control, direction);
+
             control.Focus();
-            control.BringIntoView();
             Keyboard.Focus(control);
             FocusManager.SetFocusedElement(gamepadWindow, control);
-            gamepadWindow.SetFocusedElement(control);
+
+            return true;
+        }
+
+        private void SmoothBringIntoView(Control control, WPFUtils.Direction direction)
+        {
+            bool foundScrollableAncestor = false;
+
+            for (DependencyObject? ancestor = VisualTreeHelper.GetParent(control);
+                 ancestor is not null;
+                 ancestor = VisualTreeHelper.GetParent(ancestor))
+            {
+                if (ancestor is not ScrollViewer scrollViewer || !scrollViewer.IsLoaded)
+                    continue;
+
+                if (scrollViewer.CanContentScroll)
+                {
+                    control.BringIntoView();
+                    return;
+                }
+
+                foundScrollableAncestor = true;
+                AnimateControlIntoView(control, scrollViewer, direction);
+            }
+
+            if (!foundScrollableAncestor)
+                control.BringIntoView();
+        }
+
+        private void AnimateControlIntoView(Control control, ScrollViewer scrollViewer, WPFUtils.Direction direction)
+        {
+            Rect bounds;
+            try
+            {
+                bounds = control.TransformToAncestor(scrollViewer).TransformBounds(new Rect(control.RenderSize));
+            }
+            catch (InvalidOperationException)
+            {
+                return;
+            }
+
+            const double margin = 24.0;
+            double verticalMargin = GetVerticalScrollMargin(control);
+            double viewportWidth = scrollViewer.ViewportWidth > 0.0 ? scrollViewer.ViewportWidth : scrollViewer.ActualWidth;
+            double viewportHeight = scrollViewer.ViewportHeight > 0.0 ? scrollViewer.ViewportHeight : scrollViewer.ActualHeight;
+            double targetHorizontalOffset = scrollViewer.HorizontalOffset;
+            double targetVerticalOffset = scrollViewer.VerticalOffset;
+
+            if (scrollViewer.ScrollableWidth > 0.0 && viewportWidth > 0.0)
+            {
+                bool outsideStart = bounds.Left < margin;
+                bool outsideEnd = bounds.Right > viewportWidth - margin;
+                if (outsideStart || outsideEnd)
+                {
+                    if (direction == WPFUtils.Direction.Right)
+                        targetHorizontalOffset += bounds.Right - viewportWidth + margin;
+                    else if (direction == WPFUtils.Direction.Left)
+                        targetHorizontalOffset += bounds.Left - margin;
+                    else
+                        targetHorizontalOffset += outsideStart ? bounds.Left - margin : bounds.Right - viewportWidth + margin;
+                }
+            }
+
+            if (scrollViewer.ScrollableHeight > 0.0 && viewportHeight > 0.0)
+            {
+                GamepadScrollAlignment alignment = GetVerticalScrollAlignment(control);
+                if (alignment == GamepadScrollAlignment.Top)
+                    targetVerticalOffset += bounds.Top - verticalMargin;
+                else if (alignment == GamepadScrollAlignment.Center)
+                    targetVerticalOffset += bounds.Top + bounds.Height / 2.0 - viewportHeight / 2.0;
+                else if (alignment == GamepadScrollAlignment.Bottom)
+                    targetVerticalOffset += bounds.Bottom - viewportHeight + verticalMargin;
+                else
+                {
+                    bool outsideStart = bounds.Top < verticalMargin;
+                    bool outsideEnd = bounds.Bottom > viewportHeight - verticalMargin;
+                    if (outsideStart || outsideEnd)
+                    {
+                        if (direction == WPFUtils.Direction.Down)
+                            targetVerticalOffset += bounds.Bottom - viewportHeight + verticalMargin;
+                        else if (direction == WPFUtils.Direction.Up)
+                            targetVerticalOffset += bounds.Top - verticalMargin;
+                        else
+                            targetVerticalOffset += outsideStart ? bounds.Top - verticalMargin : bounds.Bottom - viewportHeight + verticalMargin;
+                    }
+                }
+            }
+
+            targetHorizontalOffset = Math.Clamp(targetHorizontalOffset, 0.0, scrollViewer.ScrollableWidth);
+            targetVerticalOffset = Math.Clamp(targetVerticalOffset, 0.0, scrollViewer.ScrollableHeight);
+
+            if (Math.Abs(targetHorizontalOffset - scrollViewer.HorizontalOffset) < 0.5 &&
+                Math.Abs(targetVerticalOffset - scrollViewer.VerticalOffset) < 0.5)
+            {
+                return;
+            }
+
+            _scrollAnimations[scrollViewer] = new ScrollAnimationState
+            {
+                StartHorizontalOffset = scrollViewer.HorizontalOffset,
+                TargetHorizontalOffset = targetHorizontalOffset,
+                StartVerticalOffset = scrollViewer.VerticalOffset,
+                TargetVerticalOffset = targetVerticalOffset,
+                StartTimestamp = Stopwatch.GetTimestamp()
+            };
+
+            if (_isScrollAnimationRenderingSubscribed)
+                return;
+
+            CompositionTarget.Rendering += ScrollAnimation_Rendering;
+            _isScrollAnimationRenderingSubscribed = true;
+        }
+
+        private void ScrollAnimation_Rendering(object? sender, EventArgs e)
+        {
+            const double durationSeconds = 0.18;
+            long currentTimestamp = Stopwatch.GetTimestamp();
+
+            foreach ((ScrollViewer scrollViewer, ScrollAnimationState animation) in _scrollAnimations.ToArray())
+            {
+                double progress = Math.Clamp(
+                    (currentTimestamp - animation.StartTimestamp) / (Stopwatch.Frequency * durationSeconds),
+                    0.0,
+                    1.0);
+                double easedProgress = 1.0 - Math.Pow(1.0 - progress, 3.0);
+
+                scrollViewer.ScrollToHorizontalOffset(animation.StartHorizontalOffset +
+                    (animation.TargetHorizontalOffset - animation.StartHorizontalOffset) * easedProgress);
+                scrollViewer.ScrollToVerticalOffset(animation.StartVerticalOffset +
+                    (animation.TargetVerticalOffset - animation.StartVerticalOffset) * easedProgress);
+
+                if (progress >= 1.0)
+                    _scrollAnimations.Remove(scrollViewer);
+            }
+
+            if (_scrollAnimations.Count != 0)
+                return;
+
+            CompositionTarget.Rendering -= ScrollAnimation_Rendering;
+            _isScrollAnimationRenderingSubscribed = false;
         }
 
         public Control? GetFocusedElement()
@@ -1622,7 +1949,7 @@ namespace HandheldCompanion.Managers
                 return;
             }
 
-            if (control is NavigationViewItem)
+            if (IsNavigationViewItemOrDescendant(control))
             {
                 return;
             }
@@ -1643,15 +1970,30 @@ namespace HandheldCompanion.Managers
             PageFocusState state = GetPageFocusState(page);
             state.LastContentControl = control;
 
+
             string? viewKey = GetActivePageViewKey(page) ?? page.GetType().Name;
+            LogManager.LogTrace("StoreFocusedControl {0} with viewKey {1}", control.Name, viewKey);
+
+            bool hasProfileGuid = TryGetProfileGuid(control, out Guid profileGuid);
+
             if (!string.IsNullOrWhiteSpace(viewKey))
+            {
                 state.LastContentControlsByView[viewKey] = control;
 
+                if (hasProfileGuid)
+                    state.LastContentProfileGuidsByView[viewKey] = profileGuid;
+                else
+                    state.LastContentProfileGuidsByView.Remove(viewKey);
+            }
+
             if (page.DataContext is LibraryPageViewModel libraryPageViewModel && control.DataContext is CollectionGroupViewModel collectionGroup)
+                // Keep the last item for the collections overview independently of profile focus.
                 libraryPageViewModel.RememberCollectionsOverviewItem(collectionGroup);
 
-            if (TryGetProfileGuid(control, out Guid profileGuid))
+            if (hasProfileGuid)
             {
+                // This ID supports recovery after a profile card is recreated; it is intentionally
+                // only a fallback because one profile may be rendered in multiple Library regions.
                 state.LastContentProfileGuid = profileGuid;
             }
 
@@ -1751,6 +2093,45 @@ namespace HandheldCompanion.Managers
                 .FirstOrDefault(button => WPFUtils.CanTarget(button, gamepadWindow, includeContentRules: true) && TryGetProfileGuid(button, out Guid guid) && guid == profileGuid);
         }
 
+        private Control? FindOrRealizeProfileControl(Guid profileGuid, DependencyObject? searchRoot)
+        {
+            Control? profileControl = FindProfileControl(profileGuid, searchRoot);
+            if (profileControl is not null || searchRoot is null)
+                return profileControl;
+
+            foreach (ItemsControl itemsControl in WPFUtils.FindVisualChildren<ItemsControl>(searchRoot))
+            {
+                int itemIndex = -1;
+                for (int index = 0; index < itemsControl.Items.Count; index++)
+                {
+                    if (itemsControl.Items[index] is ProfileViewModel profileViewModel && profileViewModel.Profile?.Guid == profileGuid)
+                    {
+                        itemIndex = index;
+                        break;
+                    }
+                }
+
+                if (itemIndex < 0)
+                    continue;
+
+                JustifiedWrapPanel? panel = WPFUtils.FindVisualChild<JustifiedWrapPanel>(itemsControl);
+                if (panel?.BringItemIntoView(itemIndex) is not ContentPresenter contentPresenter)
+                    continue;
+
+                contentPresenter.ApplyTemplate();
+                itemsControl.UpdateLayout();
+
+                profileControl = WPFUtils.FindVisualChildren<Control>(contentPresenter)
+                    .FirstOrDefault(control => control is Button && TryGetProfileGuid(control, out Guid guid)
+                        && guid == profileGuid);
+
+                if (profileControl is not null)
+                    return profileControl;
+            }
+
+            return FindProfileControl(profileGuid, searchRoot);
+        }
+
         public bool TryGoBack()
         {
             return TryNavigateBackInHistory();
@@ -1786,17 +2167,6 @@ namespace HandheldCompanion.Managers
                 if (!WPFUtils.CanTarget(focusedElement))
                     return;
                 ExecuteToggle(focusedElement);
-            });
-        }
-
-        public void TryLike()
-        {
-            UIHelper.TryInvoke(() =>
-            {
-                Control? focusedElement = NormalizeNavigationViewFocus(GetFocusedElement());
-                if (!WPFUtils.CanTarget(focusedElement))
-                    return;
-                ExecuteLike(focusedElement);
             });
         }
 
@@ -1974,17 +2344,6 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private void ExecuteLike(Control focusedElement)
-        {
-            if (focusedElement is Button && focusedElement.Tag is ProfileViewModel profileViewModelLike)
-            {
-                Profile profile = profileViewModelLike.Profile;
-                pendingFocusRestoreProfileGuid = profile.Guid;
-                profile.IsLiked = !profile.IsLiked;
-                ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.Background);
-            }
-        }
-
         private bool TryNavigateBackInHistory()
         {
             if (gamepadWindow is MainWindow mainWindow && mainWindow.TryGoBack())
@@ -2003,6 +2362,19 @@ namespace HandheldCompanion.Managers
                 return;
 
             Focus(control);
+        }
+
+        private void FocusWindowNavigationItemWithoutNavigation(NavigationViewItem navigationViewItem)
+        {
+            try
+            {
+                _isNavigationViewFocusNavigationInProgress = true;
+                FocusWindowNavigationAnchor(navigationViewItem);
+            }
+            finally
+            {
+                _isNavigationViewFocusNavigationInProgress = false;
+            }
         }
 
         private bool IsWindowNavigationItem(Control? control)
@@ -2085,6 +2457,49 @@ namespace HandheldCompanion.Managers
             return WPFUtils.FindVisualChildren<NavigationViewItem>(navView).FirstOrDefault(i => i.IsSelected);
         }
 
+        private bool HandleOpenWindowNavigationPaneInput(ControllerState controllerState, Control? focusedElement)
+        {
+            if (windowNavigationView is null
+                || windowNavigationView.PaneDisplayMode == NavigationViewPaneDisplayMode.Top
+                || !windowNavigationView.IsPaneOpen
+                || gamepadWindow.currentDialog is not null
+                || HasFlyoutOpen)
+            {
+                return false;
+            }
+
+            NavigationViewItem? navigationViewItem = focusedElement as NavigationViewItem;
+            if (navigationViewItem is null || !IsWindowNavigationItem(navigationViewItem))
+                return true;
+
+            ButtonState buttons = controllerState.ButtonState;
+            if ((buttons.Buttons.Contains(ButtonFlags.B2) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.B2)) || (buttons.Buttons.Contains(ButtonFlags.Start) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.Start)))
+            {
+                windowNavigationView.IsPaneOpen = false;
+                return true;
+            }
+
+            if (buttons.Buttons.Contains(ButtonFlags.B1) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.B1))
+            {
+                if (NavigateFromFocusedNavigationViewItem(navigationViewItem))
+                    windowNavigationView.IsPaneOpen = false;
+                return true;
+            }
+
+            bool movePrevious = (buttons.Buttons.Contains(ButtonFlags.DPadUp) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.DPadUp))
+                || (buttons.Buttons.Contains(ButtonFlags.LeftStickUp) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftStick))
+                || (buttons.Buttons.Contains(ButtonFlags.LeftPadClickUp) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftPad));
+
+            bool moveNext = (buttons.Buttons.Contains(ButtonFlags.DPadDown) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.DPadDown))
+                || (buttons.Buttons.Contains(ButtonFlags.LeftStickDown) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftStick))
+                || (buttons.Buttons.Contains(ButtonFlags.LeftPadClickDown) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftPad));
+
+            if (movePrevious || moveNext)
+                FocusNextNavigationViewItem(windowNavigationView, movePrevious);
+
+            return true;
+        }
+
         // declare a DateTime variable to store the last time the function was called
         private DateTime lastCallTime;
 
@@ -2101,24 +2516,28 @@ namespace HandheldCompanion.Managers
             if (IsMapped)
                 return;
 
+            // skip if page doesn't have focus
+            if (!_focused.TryGetValue(windowName, out bool isFocused) || !isFocused)
+                return;
+
             // Fast-path: the built-in Desktop layout maps every navigational button to a
             // keyboard/mouse action — bail out entirely rather than checking each input.
             if (IsDesktopLayout)
-                return;
-
-            // skip if page doesn't have focus
-            if (!_focused.TryGetValue(windowName, out bool isFocused) || !isFocused)
                 return;
 
             // stop gamepad navigation when InputsManager is listening
             if (InputsManager.IsListening)
                 return;
 
+            ButtonFlags[] pressedButtons = controllerState.ButtonState.Buttons.ToArray();
+            bool IsExclusiveButton(ButtonFlags button) => pressedButtons.Length == 1 && pressedButtons[0] == button;
+
             // get the current time
             DateTime currentTime = DateTime.Now;
+            bool isNewButtonState = !controllerState.ButtonState.Equals(prevButtonState);
 
             // check if the button state is equal to the previous button state
-            if (controllerState.ButtonState.Equals(prevButtonState))
+            if (!isNewButtonState)
             {
                 if (!controllerState.ButtonState.IsEmpty())
                 {
@@ -2163,7 +2582,7 @@ namespace HandheldCompanion.Managers
             }
 
             // UI thread (non-blocking to avoid deadlocks on high-frequency input events)
-            UIHelper.TryBeginInvoke(() =>
+            UIHelper.TryInvoke(() =>
             {
                 try
                 {
@@ -2172,6 +2591,9 @@ namespace HandheldCompanion.Managers
 
                     // get current focused element
                     Control? focusedElement = NormalizeNavigationViewFocus(GetFocusedElement());
+
+                    if (HandleOpenWindowNavigationPaneInput(controllerState, focusedElement))
+                        return;
 
                     // If the focused control is gone (null), hidden/collapsed, or disabled,
                     // redirect focus to the nearest available control so gamepad navigation
@@ -2189,13 +2611,11 @@ namespace HandheldCompanion.Managers
                     // set direction
                     WPFUtils.Direction direction = WPFUtils.Direction.None;
 
-                    if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B1)
-                        && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.B1))
+                    if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B1) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.B1))
                     {
                         ExecuteSelect(focusedElement);
                     }
-                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B2)
-                             && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.B2))
+                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B2) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.B2))
                     {
                         if (HasFlyoutOpen && focusedElement is MenuItem focusedMenuItem && TryCloseFlyoutSubmenu(focusedMenuItem))
                             return;
@@ -2253,11 +2673,11 @@ namespace HandheldCompanion.Managers
                                     if (gamepadWindow.currentDialog is not null && gamepadPage is not null)
                                     {
                                         Control? control = ResolveStoredContentControl(gamepadPage, pageNavigationView ?? windowNavigationView) ?? ResolveStoredContentControl(gamepadPage, windowNavigationView);
-                                        if (control is null)
-                                            break;
-
-                                        Focus(control);
-                                        return;
+                                        if (control is not null)
+                                        {
+                                            Focus(control);
+                                            return;
+                                        }
                                     }
                                 }
                                 break;
@@ -2279,9 +2699,9 @@ namespace HandheldCompanion.Managers
 
                             case "ComboBoxItem":
                                 {
-                                    if (ItemsControl.ItemsControlFromItemContainer(focusedElement) is ComboBox comboBox)
+                                    if (ItemsControl.ItemsControlFromItemContainer(focusedElement) is ComboBox parentComboBox)
                                     {
-                                        comboBox.IsDropDownOpen = false;
+                                        parentComboBox.IsDropDownOpen = false;
                                         return;
                                     }
                                 }
@@ -2304,25 +2724,31 @@ namespace HandheldCompanion.Managers
 
                         TryFocusWindowNavigationAnchor();
                     }
-                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B3)
-                             && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.B3))
+                    else if (IsExclusiveButton(ButtonFlags.B3) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.B3))
                     {
                         ExecuteMore(focusedElement);
                     }
-                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B4)
-                             && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.B4))
+                    else if (IsExclusiveButton(ButtonFlags.B4) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.B4))
                     {
                         ExecuteToggle(focusedElement);
                     }
-                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.Back)
-                             && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.Back))
+                    else if (isNewButtonState && IsExclusiveButton(ButtonFlags.Back) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.Back))
                     {
-                        ExecuteLike(focusedElement);
+                        if (TryCloseMenuFlyout())
+                            return;
+
+                        // open flyout
+                        if (gamepadWindow is MainWindow optionsWindow && focusedElement?.Tag is ProfileViewModel)
+                        {
+                            optionsWindow.ShowLibraryOptions(focusedElement);
+                            return;
+                        }
                     }
                     else if ((controllerState.ButtonState.Buttons.Contains(ButtonFlags.L1) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.L1))
                           || (controllerState.ButtonState.Buttons.Contains(ButtonFlags.R1) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.R1))
                           || (controllerState.ButtonState.Buttons.Contains(ButtonFlags.L2Full) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.L2))
-                          || (controllerState.ButtonState.Buttons.Contains(ButtonFlags.R2Full) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.R2)))
+                          || (controllerState.ButtonState.Buttons.Contains(ButtonFlags.R2Full) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.R2))
+                          )
                     {
                         if (gamepadWindow.currentDialog is not null)
                             return;
@@ -2331,9 +2757,12 @@ namespace HandheldCompanion.Managers
                                           || (controllerState.ButtonState.Buttons.Contains(ButtonFlags.R1) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.R1));
                         bool isLeft = (controllerState.ButtonState.Buttons.Contains(ButtonFlags.L1) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.L1))
                                    || (controllerState.ButtonState.Buttons.Contains(ButtonFlags.L2Full) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.L2));
-                        NavigationView? targetNavView = isWindowScope ? FindWindowNavigationView() : FindActivePageNavigationView();
+                        NavigationView? targetNavView = isWindowScope ? windowNavigationView : pageNavigationView;
 
                         if (targetNavView is null)
+                            return;
+
+                        if (isWindowScope && targetNavView.PaneDisplayMode != NavigationViewPaneDisplayMode.Top)
                             return;
 
                         if (GetNavigableNavigationViewItems(targetNavView).Count == 0)
@@ -2342,71 +2771,48 @@ namespace HandheldCompanion.Managers
                         if (FocusNextNavigationViewItem(targetNavView, isLeft))
                             return;
                     }
-                    else if ((controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadUp) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.DPadUp))
-                          || (controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickUp) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftStick))
-                          || (controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickUp) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftPad)))
+                    else if ((IsExclusiveButton(ButtonFlags.DPadUp) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.DPadUp))
+                          || (IsExclusiveButton(ButtonFlags.LeftStickUp) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftStick))
+                          || (IsExclusiveButton(ButtonFlags.LeftPadClickUp) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftPad)))
                     {
                         direction = WPFUtils.Direction.Up;
                     }
-                    else if ((controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadDown) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.DPadDown))
-                          || (controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickDown) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftStick))
-                          || (controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickDown) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftPad)))
+                    else if ((IsExclusiveButton(ButtonFlags.DPadDown) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.DPadDown))
+                          || (IsExclusiveButton(ButtonFlags.LeftStickDown) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftStick))
+                          || (IsExclusiveButton(ButtonFlags.LeftPadClickDown) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftPad)))
                     {
                         direction = WPFUtils.Direction.Down;
                     }
-                    else if ((controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadLeft) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.DPadLeft))
-                          || (controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickLeft) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftStick))
-                          || (controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickLeft) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftPad)))
+                    else if ((IsExclusiveButton(ButtonFlags.DPadLeft) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.DPadLeft))
+                          || (IsExclusiveButton(ButtonFlags.LeftStickLeft) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftStick))
+                          || (IsExclusiveButton(ButtonFlags.LeftPadClickLeft) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftPad)))
                     {
                         direction = WPFUtils.Direction.Left;
                     }
-                    else if ((controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadRight) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.DPadRight))
-                          || (controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickRight) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftStick))
-                          || (controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickRight) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftPad)))
+                    else if ((IsExclusiveButton(ButtonFlags.DPadRight) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.DPadRight))
+                          || (IsExclusiveButton(ButtonFlags.LeftStickRight) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftStick))
+                          || (IsExclusiveButton(ButtonFlags.LeftPadClickRight) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.LeftPad)))
                     {
                         direction = WPFUtils.Direction.Right;
                     }
-                    else if ((controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightStickUp) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.RightStick))
-                          || (controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightPadClickUp) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.RightPad)))
+                    else if ((IsExclusiveButton(ButtonFlags.RightStickUp) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.RightStick))
+                          || (IsExclusiveButton(ButtonFlags.RightPadClickUp) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.RightPad)))
                     {
                         scrollViewer?.ScrollToVerticalOffset(scrollViewer.VerticalOffset - 50);
                     }
-                    else if ((controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightStickDown) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.RightStick))
-                          || (controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightPadClickDown) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.RightPad)))
+                    else if ((IsExclusiveButton(ButtonFlags.RightStickDown) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.RightStick))
+                          || (IsExclusiveButton(ButtonFlags.RightPadClickDown) && !ManagerFactory.layoutManager.IsAxisMappedToMouseKeyboard(AxisLayoutFlags.RightPad)))
                     {
                         scrollViewer?.ScrollToVerticalOffset(scrollViewer.VerticalOffset + 50);
                     }
-                    else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.Start)
-                             && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.Start))
+                    else if (isNewButtonState && IsExclusiveButton(ButtonFlags.Start) && !ManagerFactory.layoutManager.IsButtonMappedToMouseKeyboard(ButtonFlags.Start))
                     {
+                        if (TryCloseMenuFlyout())
+                            return;
+
                         if (gamepadWindow is MainWindow mainWindow)
                         {
-                            // skip on top display mode
-                            if (mainWindow.navView.PaneDisplayMode == NavigationViewPaneDisplayMode.Top)
-                                return;
-
-                            switch (mainWindow.navView.IsPaneOpen)
-                            {
-                                case false:
-                                    TryFocusWindowNavigationAnchor();
-                                    break;
-                                case true:
-                                    {
-                                        Control? control = ResolveStoredContentControl(gamepadPage, pageNavigationView ?? windowNavigationView) ?? ResolveStoredContentControl(gamepadPage, windowNavigationView);
-                                        if (control is not null && control is not NavigationViewItem)
-                                            Focus(control);
-                                        else
-                                        {
-                                            // get the nearest non-navigation control
-                                            focusedElement = WPFUtils.GetTopLeftControl<Control>(gamepadWindow.controlElements);
-                                            if (focusedElement is not null)
-                                                Focus(focusedElement);
-                                        }
-                                    }
-                                    break;
-                            }
-
-                            mainWindow.navView.IsPaneOpen = !mainWindow.navView.IsPaneOpen;
+                            mainWindow.navView.IsPaneOpen = true;
                             return;
                         }
                     }
@@ -2416,32 +2822,6 @@ namespace HandheldCompanion.Managers
                     {
                         switch (elementType)
                         {
-                            case "NavigationViewItem":
-                                {
-                                    if (focusedElement is not null)
-                                    {
-                                        NavigationView? scope = FindOwningNavigationView(focusedElement) ?? windowNavigationView;
-
-                                        if ((direction == WPFUtils.Direction.Left || direction == WPFUtils.Direction.Right)
-                                            && FocusNextNavigationViewItem(scope, direction == WPFUtils.Direction.Left))
-                                        {
-                                            return;
-                                        }
-
-                                        List<Control> scopeItems = scope is not null
-                                            ? GetNavigableNavigationViewItems(scope).Cast<Control>().ToList()
-                                            : gamepadWindow.controlElements;
-
-                                        Control? target = WPFUtils.GetClosestControl<NavigationViewItem>(focusedElement, scopeItems, direction);
-                                        if (target is NavigationViewItem targetNavigationItem && TryEnterContentFromNavigationItem(targetNavigationItem))
-                                            return;
-
-                                        if (target is not null)
-                                            Focus(target);
-                                    }
-                                }
-                                return;
-
                             case "ListView":
                                 {
                                     ListView listView = (ListView)focusedElement;
@@ -2450,7 +2830,7 @@ namespace HandheldCompanion.Managers
                                     if (idx != -1)
                                     {
                                         focusedElement = (ListViewItem)listView.ItemContainerGenerator.ContainerFromIndex(idx);
-                                        Focus(focusedElement, listView, true);
+                                        Focus(focusedElement, listView, true, direction);
                                         return;
                                     }
                                 }
@@ -2483,7 +2863,7 @@ namespace HandheldCompanion.Managers
                                                 if (idx < 0 || idx >= listView.Items.Count)
                                                 {
                                                     focusedElement = WPFUtils.GetClosestControl<Control>(listView, gamepadWindow.controlElements, direction, [typeof(Control)]);
-                                                    Focus(focusedElement);
+                                                    Focus(focusedElement, direction: direction);
                                                     return;
                                                 }
 
@@ -2494,7 +2874,7 @@ namespace HandheldCompanion.Managers
                                                 if (WPFUtils.CanTarget(focusedElement))
                                                 {
                                                     // If the element is enabled, focus it and break out of the loop
-                                                    Focus(focusedElement, listView, true);
+                                                    Focus(focusedElement, listView, true, direction);
                                                     break;
                                                 }
 
@@ -2516,7 +2896,7 @@ namespace HandheldCompanion.Managers
                                         if (idx != -1)
                                         {
                                             focusedElement = (ComboBoxItem)comboBox.ItemContainerGenerator.ContainerFromIndex(idx);
-                                            Focus(focusedElement, comboBox, true);
+                                            Focus(focusedElement, comboBox, true, direction);
                                         }
                                         else
                                         {
@@ -2552,13 +2932,11 @@ namespace HandheldCompanion.Managers
                                                 {
                                                     switch (direction)
                                                     {
-                                                        case WPFUtils.Direction.Up:
-                                                            idx--;
-                                                            break;
-
-                                                        case WPFUtils.Direction.Down:
-                                                            idx++;
-                                                            break;
+                                                        case WPFUtils.Direction.Up: idx--; break;
+                                                        case WPFUtils.Direction.Down: idx++; break;
+                                                        default:
+                                                            // Left/Right: stay on current item
+                                                            return;
                                                     }
 
                                                     // Ensure index is within bounds
@@ -2575,7 +2953,7 @@ namespace HandheldCompanion.Managers
                                                     if (WPFUtils.CanTarget(focusedElement))
                                                     {
                                                         // If the element is enabled, focus it and break out of the loop
-                                                        Focus(focusedElement, comboBox, true);
+                                                        Focus(focusedElement, comboBox, true, direction);
                                                         break;
                                                     }
 
@@ -2603,7 +2981,7 @@ namespace HandheldCompanion.Managers
                                         }
 
                                         flyoutMenuItems = WPFUtils.GetSiblingMenuItems(currentMenuItem);
-                                        if (flyoutMenuItems.Count == 0 && gamepadWindow.currentFlyoutButton?.Flyout is MenuFlyout menuFlyout)
+                                        if (flyoutMenuItems.Count == 0 && gamepadWindow.currentFlyout is MenuFlyout menuFlyout)
                                             flyoutMenuItems = WPFUtils.GetDirectMenuItems(menuFlyout);
 
                                         if (flyoutMenuItems.Count == 0)
@@ -2631,7 +3009,7 @@ namespace HandheldCompanion.Managers
                                             }
 
                                             idx = nextIdx;
-                                            var candidate = flyoutMenuItems[idx];
+                                            MenuItem candidate = flyoutMenuItems[idx];
                                             // Keep helper-based usability check aligned with the flyout-open branch.
                                             if (IsUsableFlyoutMenuItem(candidate))
                                             {
@@ -2650,11 +3028,11 @@ namespace HandheldCompanion.Managers
                                     {
                                         case WPFUtils.Direction.Left:
                                             ((Slider)focusedElement).Value -= ((Slider)focusedElement).TickFrequency;
-                                            Focus(focusedElement);
+                                            Focus(focusedElement, direction: direction);
                                             return;
                                         case WPFUtils.Direction.Right:
                                             ((Slider)focusedElement).Value += ((Slider)focusedElement).TickFrequency;
-                                            Focus(focusedElement);
+                                            Focus(focusedElement, direction: direction);
                                             return;
                                     }
                                 }
@@ -2675,40 +3053,12 @@ namespace HandheldCompanion.Managers
                                     focusedElement = (ListViewItem)listView.ItemContainerGenerator.ContainerFromIndex(idx);
                             }
 
-                            Focus(focusedElement);
+                            Focus(focusedElement, direction: direction);
                         }
                     }
                 }
                 catch { }
             }, DispatcherPriority.Normal);
-        }
-
-        private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
-        {
-            // Check if we have a pending profile to restore focus to
-            if (!pendingFocusRestoreProfileGuid.HasValue)
-                return;
-
-            // Only handle the profile we're waiting for
-            if (profile.Guid != pendingFocusRestoreProfileGuid.Value)
-                return;
-
-            // Clear the pending Guid
-            Guid guidToRestore = pendingFocusRestoreProfileGuid.Value;
-            pendingFocusRestoreProfileGuid = null;
-
-            // Use Dispatcher to ensure UI has updated after the profile change
-            gamepadWindow.Dispatcher.BeginInvoke(() =>
-            {
-                Control? control = FindProfileControl(guidToRestore);
-                if (control is not null)
-                {
-                    if (gamepadPage is not null)
-                        StoreFocusedControl(gamepadPage, control);
-
-                    Focus(control);
-                }
-            }, DispatcherPriority.Loaded);
         }
     }
 }

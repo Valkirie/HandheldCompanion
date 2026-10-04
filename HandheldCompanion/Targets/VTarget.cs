@@ -6,7 +6,7 @@ using System;
 namespace HandheldCompanion.Targets
 {
     /// <summary>
-    /// Abstract base class for virtual controller targets, supporting both VIIPER and ViGEM backends.
+    /// Abstract base class for virtual controller targets.
     /// </summary>
     public abstract class VTarget : IDisposable
     {

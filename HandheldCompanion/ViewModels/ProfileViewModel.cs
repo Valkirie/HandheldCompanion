@@ -32,6 +32,7 @@ namespace HandheldCompanion.ViewModels
         public ICommand? OpenLayout { get; private set; }
         public ICommand? OpenExecutableLocation { get; private set; }
         public ICommand? DownloadMetadataAndArtworks { get; private set; }
+        public ICommand? DeleteProfileCommand { get; private set; }
 
         public readonly bool IsQuickTools;
         public bool IsMainPage => !IsQuickTools;
@@ -84,6 +85,7 @@ namespace HandheldCompanion.ViewModels
                 // refresh all properties
                 OnPropertyChanged(string.Empty);
                 OnPropertyChanged(nameof(Name));
+                OnPropertyChanged(nameof(LastUsed));
                 OnPropertyChanged(nameof(CanOpenExecutableLocation));
 
                 if (IsLibrary)
@@ -242,7 +244,7 @@ namespace HandheldCompanion.ViewModels
                     BitmapImage? artwork = ManagerFactory.libraryManager.GetGameArt(requestKey.Id, artworkType, requestKey.ArtworkId, requestKey.ArtworkExtension);
                     BitmapImage? logo = ManagerFactory.libraryManager.GetGameArt(requestKey.Id, logoType, requestKey.LogoId, requestKey.LogoExtension);
                     return (cover, artwork, logo);
-                }, cancellationToken).ConfigureAwait(false);
+                }, cancellationToken);
 
                 if (cancellationToken.IsCancellationRequested ||
                     !ReferenceEquals(visualsLoadCancellationTokenSource, cancellationTokenSource) ||
@@ -462,6 +464,10 @@ namespace HandheldCompanion.ViewModels
         }
 
         public GamePlatform PlatformType => _Profile.PlatformType;
+        public string PlatformColor => PlatformManager.GetPlatformColor(PlatformType);
+        public string PlatformName => PlatformManager.GetPlatformName(PlatformType);
+        public bool HasPlatform => PlatformType != GamePlatform.Generic;
+        public bool HasError => _Profile.ErrorCode != ProfileErrorCode.None;
 
         public bool IsRunning => ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
         public bool IsAvailable => _Profile.CanExecute && !ProcessManager.GetProcesses().Any(p => p.Path.Equals(Profile.Path));
@@ -498,20 +504,7 @@ namespace HandheldCompanion.ViewModels
                 if (_platformIconCache.TryGetValue(PlatformType, out BitmapSource? cached))
                     return cached;
 
-                Image? img = PlatformType switch
-                {
-                    GamePlatform.Steam => PlatformManager.Steam?.GetLogo(),
-                    GamePlatform.Origin => PlatformManager.Origin?.GetLogo(),
-                    GamePlatform.EADesktop => PlatformManager.EADesktop?.GetLogo(),
-                    GamePlatform.UbisoftConnect => PlatformManager.UbisoftConnect?.GetLogo(),
-                    GamePlatform.GOG => PlatformManager.GOGGalaxy?.GetLogo(),
-                    GamePlatform.BattleNet => PlatformManager.BattleNet?.GetLogo(),
-                    GamePlatform.Epic => PlatformManager.Epic?.GetLogo(),
-                    GamePlatform.RiotGames => PlatformManager.RiotGames?.GetLogo(),
-                    GamePlatform.Rockstar => PlatformManager.Rockstar?.GetLogo(),
-                    GamePlatform.MicrosoftStore => PlatformManager.MicrosoftStore?.GetLogo(),
-                    _ => null
-                };
+                Image? img = PlatformManager.GetPlatformLogo(PlatformType);
 
                 BitmapSource? result = null;
                 if (img is Bitmap bmp)
@@ -643,22 +636,22 @@ namespace HandheldCompanion.ViewModels
 
                             Task timeout = Task.Delay(TimeSpan.FromSeconds(60));
                             while (!timeout.IsCompleted && !ProcessManager.GetProcesses().Any(p => execs.Contains(p.Path)))
-                                await Task.Delay(300).ConfigureAwait(false);
+                                await Task.Delay(300);
 
                             if (ProcessManager.GetProcesses().Any(p => execs.Contains(p.Path)))
-                                MainWindow.GetCurrent().SetState(WindowState.Minimized);
+                                syncContext?.Post(_ => MainWindow.GetCurrent().SetState(WindowState.Minimized), null);
 
                             // hide the dialog
                             syncContext?.Post(_ => dialog.Hide(), null);
 
                             // Wait until none of the known executables are running
                             while (ProcessManager.GetProcesses().Any(p => execs.Contains(p.Path)))
-                                await Task.Delay(1000).ConfigureAwait(false);
+                                await Task.Delay(1000);
 
                             if (IsMainPage)
-                                MainWindow.GetCurrent().SetState(WindowState.Normal);
+                                syncContext?.Post(_ => MainWindow.GetCurrent().SetState(WindowState.Normal), null);
                         }
-                    }).ConfigureAwait(false);
+                    });
                 }
                 catch { }
                 finally
@@ -714,8 +707,7 @@ namespace HandheldCompanion.ViewModels
                 page.viewModel.SelectedMainProfile = target;
 
                 // Set selected sub-profile
-                if (Profile.IsSubProfile)
-                    page.viewModel.SelectedProfile = Profile;
+                page.viewModel.SelectedProfile = Profile;
 
                 MainWindow.GetCurrent().NavigateToPage("ProfilesPage");
             });
@@ -771,6 +763,20 @@ namespace HandheldCompanion.ViewModels
             {
                 ManagerFactory.libraryManager.RefreshProfileArts(Profile, UpdateSource.LibraryUpdate, includeFullResAssets: true);
             });
+
+            DeleteProfileCommand = new AsyncDelegateCommand(async () =>
+            {
+                ContentDialogResult result = await new Dialog(MainWindow.GetCurrent())
+                {
+                    Title = string.Format(Properties.Resources.ProfilesPage_AreYouSureDelete1, Profile.Name),
+                    Content = Properties.Resources.ProfilesPage_AreYouSureDelete2,
+                    CloseButtonText = Properties.Resources.ProfilesPage_Cancel,
+                    PrimaryButtonText = Properties.Resources.ProfilesPage_Delete
+                }.ShowAsync();
+
+                if (result == ContentDialogResult.Primary)
+                    ManagerFactory.profileManager.DeleteProfile(Profile);
+            });
         }
 
         private void ProcessManager_ProcessStarted(ProcessEx processEx, bool OnStartup)
@@ -796,6 +802,7 @@ namespace HandheldCompanion.ViewModels
             OpenLayout = null;
             OpenExecutableLocation = null;
             DownloadMetadataAndArtworks = null;
+            DeleteProfileCommand = null;
 
             base.Dispose();
         }

@@ -13,6 +13,7 @@ namespace HandheldCompanion.ViewModels
 
         public Visibility QuickKeyboardVisibility => ManagerFactory.settingsManager.GetBoolean("QuickKeyboardVisibility") ? Visibility.Visible : Visibility.Collapsed;
         public Visibility QuickTrackpadVisibility => ManagerFactory.settingsManager.GetBoolean("QuickTrackpadVisibility") ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility HibernateVisibility => PowerActionsHelper.IsHibernateAvailable() ? Visibility.Visible : Visibility.Collapsed;
         public bool QuickToolsApplyNoise => ManagerFactory.settingsManager.GetBoolean("QuickToolsApplyNoise");
 
         public ICommand PowerDropCommand { get; private set; }
@@ -39,6 +40,10 @@ namespace HandheldCompanion.ViewModels
                 switch (action)
                 {
                     case "Sleep": PowerActionsHelper.Sleep(force: false); break;
+                    case "Hibernate":
+                        if (PowerActionsHelper.IsHibernateAvailable())
+                            PowerActionsHelper.Hibernate(force: false);
+                        break;
                     case "Shutdown": PowerActionsHelper.Shutdown(force: false, powerOff: true); break;
                     case "Restart": PowerActionsHelper.Restart(force: false); break;
                     case "Lock": PowerActionsHelper.Lock(); break;

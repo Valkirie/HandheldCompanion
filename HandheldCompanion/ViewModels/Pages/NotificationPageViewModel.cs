@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Notifications;
 using System;
 using System.Collections.ObjectModel;
@@ -48,51 +49,57 @@ namespace HandheldCompanion.ViewModels.Pages
 
         public void NotificationManager_Discarded(Notification notification)
         {
-            if (notification.IsInternal)
-                return;
-
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
+            UIHelper.TryBeginInvoke(() =>
             {
-                NotificationViewModel? foundNotification = Notifications.FirstOrDefault(n => n.Notification == notification || n.Notification.Guid == notification.Guid);
-                if (foundNotification is not null)
+                if (notification.IsInternal)
+                    return;
+
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
                 {
-                    Notifications.Remove(foundNotification);
-                    foundNotification.Dispose();
+                    NotificationViewModel? foundNotification = Notifications.FirstOrDefault(n => n.Notification == notification || n.Notification.Guid == notification.Guid);
+                    if (foundNotification is not null)
+                    {
+                        Notifications.Remove(foundNotification);
+                        foundNotification.Dispose();
+                    }
                 }
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
+                }
 
-            OnPropertyChanged(nameof(HasNotifications));
+                OnPropertyChanged(nameof(HasNotifications));
+            });
         }
 
         public void NotificationManager_Added(Notification notification)
         {
-            if (notification.IsInternal)
-                return;
-
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
+            UIHelper.TryBeginInvoke(() =>
             {
-                NotificationViewModel? foundNotification = Notifications.FirstOrDefault(n => n.Notification == notification || n.Notification.Guid == notification.Guid);
-                if (foundNotification is null)
-                    Notifications.Add(new NotificationViewModel(notification));
-                else
-                    foundNotification.Notification = notification;
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
+                if (notification.IsInternal)
+                    return;
 
-            OnPropertyChanged(nameof(HasNotifications));
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
+
+                try
+                {
+                    NotificationViewModel? foundNotification = Notifications.FirstOrDefault(n => n.Notification == notification || n.Notification.Guid == notification.Guid);
+                    if (foundNotification is null)
+                        Notifications.Add(new NotificationViewModel(notification));
+                    else
+                        foundNotification.Notification = notification;
+                }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
+                }
+
+                OnPropertyChanged(nameof(HasNotifications));
+            });
         }
 
         public override void Dispose()

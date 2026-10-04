@@ -1,9 +1,9 @@
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers.Hid;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Shared;
-using HandheldCompanion.Utils;
 using Microsoft.Win32.SafeHandles;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
@@ -11,6 +11,7 @@ using SharpDX.Direct3D9;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -24,9 +25,11 @@ namespace HandheldCompanion.Managers;
 public class DeviceManager : IManager
 {
     public Guid HidDevice;
+    private static readonly Guid SensorDevice = new("BA1BB692-9B7A-4833-9A1E-525ED134E7E2");
     private readonly DeviceNotificationListener UsbDeviceListener = new();
     private readonly DeviceNotificationListener XUsbDeviceListener = new();
     private readonly DeviceNotificationListener HidDeviceListener = new();
+    private readonly DeviceNotificationListener SensorDeviceListener = new();
 
     public readonly ConcurrentDictionary<string, PnPDetails> PnPDevices = new();
 
@@ -84,6 +87,13 @@ public class DeviceManager : IManager
 
         base.PrepareStart();
 
+        Resume();
+
+        base.Start();
+    }
+
+    public override void Resume()
+    {
         // manage events
         UsbDeviceListener.DeviceArrived += UsbDevice_DeviceArrived;
         UsbDeviceListener.DeviceRemoved += UsbDevice_DeviceRemoved;
@@ -91,17 +101,18 @@ public class DeviceManager : IManager
         XUsbDeviceListener.DeviceRemoved += XUsbDevice_DeviceRemoved;
         HidDeviceListener.DeviceArrived += HidDevice_DeviceArrived;
         HidDeviceListener.DeviceRemoved += HidDevice_DeviceRemoved;
+        SensorDeviceListener.DeviceArrived += SensorDevice_Changed;
+        SensorDeviceListener.DeviceRemoved += SensorDevice_Changed;
 
         UsbDeviceListener.StartListen(DeviceInterfaceIds.UsbDevice);
         XUsbDeviceListener.StartListen(DeviceInterfaceIds.XUsbDevice);
         HidDeviceListener.StartListen(DeviceInterfaceIds.HidDevice);
+        SensorDeviceListener.StartListen(SensorDevice);
 
         RefreshDrivers();
         RefreshDInput();
         RefreshXInput();
         RefreshDisplayAdapters(true);
-
-        base.Start();
     }
 
     private void RefreshDrivers()
@@ -124,6 +135,13 @@ public class DeviceManager : IManager
 
         base.PrepareStop();
 
+        Suspend();
+
+        base.Stop();
+    }
+
+    public override void Suspend()
+    {
         // manage events
         UsbDeviceListener.DeviceArrived -= UsbDevice_DeviceArrived;
         UsbDeviceListener.DeviceRemoved -= UsbDevice_DeviceRemoved;
@@ -131,14 +149,15 @@ public class DeviceManager : IManager
         XUsbDeviceListener.DeviceRemoved -= XUsbDevice_DeviceRemoved;
         HidDeviceListener.DeviceArrived -= HidDevice_DeviceArrived;
         HidDeviceListener.DeviceRemoved -= HidDevice_DeviceRemoved;
+        SensorDeviceListener.DeviceArrived -= SensorDevice_Changed;
+        SensorDeviceListener.DeviceRemoved -= SensorDevice_Changed;
 
         UsbDeviceListener.StopListen(DeviceInterfaceIds.UsbDevice);
         XUsbDeviceListener.StopListen(DeviceInterfaceIds.XUsbDevice);
         HidDeviceListener.StopListen(DeviceInterfaceIds.HidDevice);
+        SensorDeviceListener.StopListen(SensorDevice);
 
         adaptersTimer.Stop();
-
-        base.Stop();
     }
 
     public void RefreshXInput()
@@ -572,8 +591,10 @@ public class DeviceManager : IManager
         return Regex.Replace(devicePath, pattern, string.Empty);
     }
 
-    private readonly ConcurrentDictionary<string, Task> arrivalInProgress = new();
-    private readonly ConcurrentDictionary<string, Task> removalInProgress = new();
+    private readonly ConcurrentDictionary<string, Task> xusbArrivalInProgress = new();
+    private readonly ConcurrentDictionary<string, Task> xusbRemovalInProgress = new();
+    private readonly ConcurrentDictionary<string, Task> usbArrivalInProgress = new();
+    private readonly ConcurrentDictionary<string, Task> usbRemovalInProgress = new();
     private readonly ConcurrentDictionary<string, Task> hidArrivalInProgress = new();
     private readonly ConcurrentDictionary<string, Task> hidRemovalInProgress = new();
 
@@ -584,27 +605,43 @@ public class DeviceManager : IManager
     /// </summary>
     private static readonly TimeSpan CrossWaitTimeout = TimeSpan.FromSeconds(5);
 
+    private static void SensorDevice_Changed(DeviceEventArgs obj)
+    {
+        IDevice.GetCurrent().PullSensors();
+    }
+
     private void XUsbDevice_DeviceArrived(DeviceEventArgs obj)
     {
         var instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+        LogManager.LogTrace("DeviceManager XUSB arrival received: instance={0}, interface={1}", instanceId, obj.InterfaceGuid);
 
         // Ignore duplicate arrival notifications while the same device is already being processed.
         var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        if (!arrivalInProgress.TryAdd(instanceId, tcs.Task))
+        if (!xusbArrivalInProgress.TryAdd(instanceId, tcs.Task))
+        {
+            LogManager.LogTrace("DeviceManager XUSB arrival suppressed: instance={0}, reason=arrival-in-progress", instanceId);
             return;
+        }
 
-        // Register a placeholder before Task.Run so RefreshXInputAsync can find it
-        // immediately, even if the task body completes before the caller polls.
-        var arrivalTask = Task.Run(async () =>
+        _ = Task.Run(async () =>
         {
             // If a removal is running for this device, wait it out first (with timeout to avoid deadlock).
-            if (removalInProgress.TryGetValue(instanceId, out var pendingRemoval))
+            if (xusbRemovalInProgress.TryGetValue(instanceId, out var pendingRemoval))
                 try { await pendingRemoval.WaitAsync(CrossWaitTimeout).ConfigureAwait(false); } catch { }
 
             try
             {
                 var deviceEx = await WaitUntilAsync(() => FindDevice(instanceId)).ConfigureAwait(false);
-                if (deviceEx is null || !deviceEx.isGaming) return;
+                if (deviceEx is null)
+                {
+                    LogManager.LogWarning("DeviceManager XUSB arrival unresolved: instance={0}", instanceId);
+                    return;
+                }
+                if (!deviceEx.isGaming)
+                {
+                    LogManager.LogTrace("DeviceManager XUSB arrival ignored: instance={0}, reason=not-gaming", instanceId);
+                    return;
+                }
 
                 deviceEx.isXInput = true;
                 deviceEx.baseContainerDevicePath = obj.SymLink;
@@ -615,65 +652,79 @@ public class DeviceManager : IManager
                     deviceEx.Name, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId,
                     deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
 
+                LogManager.LogTrace("DeviceManager XUSB arrival emitting: instance={0}, container={1}, device={2}, virtual={3}",
+                    instanceId, deviceEx.baseContainerDeviceInstanceId, deviceEx.deviceInstanceId, deviceEx.isVirtual);
                 XUsbDeviceArrived?.Invoke(deviceEx, obj.InterfaceGuid);
             }
             finally
             {
-                arrivalInProgress.TryRemove(instanceId, out _);
+                xusbArrivalInProgress.TryRemove(instanceId, out _);
                 tcs.TrySetResult();
             }
         });
-
-        // Also store the real task so waiters can await it directly.
-        arrivalInProgress[instanceId] = arrivalTask;
     }
 
     private void XUsbDevice_DeviceRemoved(DeviceEventArgs obj)
     {
         var instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+        LogManager.LogTrace("DeviceManager XUSB removal received: instance={0}, interface={1}", instanceId, obj.InterfaceGuid);
 
-        // Ignore duplicate removal notifications while the same device is already being processed.
-        if (!removalInProgress.TryAdd(instanceId, Task.CompletedTask))
+        var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        if (!xusbRemovalInProgress.TryAdd(instanceId, tcs.Task))
+        {
+            LogManager.LogTrace("DeviceManager XUSB removal suppressed: instance={0}, reason=removal-in-progress", instanceId);
             return;
+        }
 
-        var removalTask = Task.Run(async () =>
+        _ = Task.Run(async () =>
         {
             // If an arrival is still running for this device, wait it out first (with timeout to avoid deadlock).
-            if (arrivalInProgress.TryGetValue(instanceId, out var pending))
+            if (xusbArrivalInProgress.TryGetValue(instanceId, out var pending))
                 try { await pending.WaitAsync(CrossWaitTimeout).ConfigureAwait(false); } catch { }
 
             try
             {
                 var deviceEx = await WaitUntilAsync(() => FindDevice(instanceId)).ConfigureAwait(false);
-                if (deviceEx is null) return;
+                if (deviceEx is null)
+                {
+                    LogManager.LogWarning("DeviceManager XUSB removal unresolved: instance={0}", instanceId);
+                    return;
+                }
 
                 LogManager.LogDebug("XUsbDevice {1} removed from slot {2}: {0}",
                     deviceEx.Name, deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
 
                 // Notify consumers before removing from dict, so that a concurrent
                 // arrival for the same device (power-cycle) does not find stale state.
+                LogManager.LogTrace("DeviceManager XUSB removal emitting: instance={0}, container={1}, device={2}, virtual={3}",
+                    instanceId, deviceEx.baseContainerDeviceInstanceId, deviceEx.deviceInstanceId, deviceEx.isVirtual);
                 XUsbDeviceRemoved?.Invoke(deviceEx, obj.InterfaceGuid);
 
-                PnPDevices.TryRemove(deviceEx.SymLink, out _);
+                bool removed = PnPDevices.TryRemove(deviceEx.SymLink, out _);
+                LogManager.LogTrace("DeviceManager XUSB cache removal: instance={0}, removed={1}, remaining={2}",
+                    instanceId, removed, PnPDevices.Count);
             }
             finally
             {
-                removalInProgress.TryRemove(instanceId, out _);
+                xusbRemovalInProgress.TryRemove(instanceId, out _);
+                tcs.TrySetResult();
             }
         });
-
-        removalInProgress[instanceId] = removalTask;
     }
 
     private void HidDevice_DeviceArrived(DeviceEventArgs obj)
     {
         var instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+        LogManager.LogTrace("DeviceManager HID arrival received: instance={0}, interface={1}", instanceId, obj.InterfaceGuid);
 
-        // Register a placeholder before Task.Run (mirrors XUsb fix).
         var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        hidArrivalInProgress[instanceId] = tcs.Task;
+        if (!hidArrivalInProgress.TryAdd(instanceId, tcs.Task))
+        {
+            LogManager.LogTrace("DeviceManager HID arrival suppressed: instance={0}, reason=arrival-in-progress", instanceId);
+            return;
+        }
 
-        var arrivalTask = Task.Run(async () =>
+        _ = Task.Run(async () =>
         {
             // If a removal is running for this device, wait it out first (with timeout to avoid deadlock).
             if (hidRemovalInProgress.TryGetValue(instanceId, out var pendingRemoval))
@@ -684,12 +735,23 @@ public class DeviceManager : IManager
                 var deviceEx = await WaitUntilAsync(() => GetDetails(obj.SymLink)).ConfigureAwait(false);
 
                 // skip if XInput (handled by XUSB logic)
-                if (deviceEx is null || deviceEx.isXInput) return;
+                if (deviceEx is null)
+                {
+                    LogManager.LogWarning("DeviceManager HID arrival unresolved: instance={0}", instanceId);
+                    return;
+                }
+                if (deviceEx.isXInput)
+                {
+                    LogManager.LogTrace("DeviceManager HID arrival ignored: instance={0}, reason=xinput", instanceId);
+                    return;
+                }
 
                 deviceEx.InterfaceGuid = obj.InterfaceGuid;
                 LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}",
                     deviceEx.Name, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId);
 
+                LogManager.LogTrace("DeviceManager HID arrival emitting: instance={0}, container={1}, device={2}, gaming={3}",
+                    instanceId, deviceEx.baseContainerDeviceInstanceId, deviceEx.deviceInstanceId, deviceEx.isGaming);
                 HidDeviceArrived?.Invoke(deviceEx, obj.InterfaceGuid);
             }
             finally
@@ -698,15 +760,21 @@ public class DeviceManager : IManager
                 tcs.TrySetResult();
             }
         });
-
-        hidArrivalInProgress[instanceId] = arrivalTask;
     }
 
     private void HidDevice_DeviceRemoved(DeviceEventArgs obj)
     {
         var instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+        LogManager.LogTrace("DeviceManager HID removal received: instance={0}, interface={1}", instanceId, obj.InterfaceGuid);
 
-        var removalTask = Task.Run(async () =>
+        var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        if (!hidRemovalInProgress.TryAdd(instanceId, tcs.Task))
+        {
+            LogManager.LogTrace("DeviceManager HID removal suppressed: instance={0}, reason=removal-in-progress", instanceId);
+            return;
+        }
+
+        _ = Task.Run(async () =>
         {
             // If an arrival is still running for this device, wait it out first (with timeout to avoid deadlock).
             if (hidArrivalInProgress.TryGetValue(instanceId, out var pending))
@@ -715,22 +783,34 @@ public class DeviceManager : IManager
             try
             {
                 var deviceEx = await WaitUntilAsync(() => FindDevice(instanceId)).ConfigureAwait(false);
-                if (deviceEx is null || deviceEx.isXInput) return;
+                if (deviceEx is null)
+                {
+                    LogManager.LogWarning("DeviceManager HID removal unresolved: instance={0}", instanceId);
+                    return;
+                }
+                if (deviceEx.isXInput)
+                {
+                    LogManager.LogTrace("DeviceManager HID removal ignored: instance={0}, reason=xinput", instanceId);
+                    return;
+                }
 
                 LogManager.LogDebug("HidDevice removed: {0}", deviceEx.Name);
 
                 // Notify consumers before removing from dict (mirrors XUsb fix).
+                LogManager.LogTrace("DeviceManager HID removal emitting: instance={0}, container={1}, device={2}, gaming={3}",
+                    instanceId, deviceEx.baseContainerDeviceInstanceId, deviceEx.deviceInstanceId, deviceEx.isGaming);
                 HidDeviceRemoved?.Invoke(deviceEx, obj.InterfaceGuid);
 
-                PnPDevices.TryRemove(deviceEx.SymLink, out _);
+                bool removed = PnPDevices.TryRemove(deviceEx.SymLink, out _);
+                LogManager.LogTrace("DeviceManager HID cache removal: instance={0}, removed={1}, remaining={2}",
+                    instanceId, removed, PnPDevices.Count);
             }
             finally
             {
                 hidRemovalInProgress.TryRemove(instanceId, out _);
+                tcs.TrySetResult();
             }
         });
-
-        hidRemovalInProgress[instanceId] = removalTask;
     }
 
     private static async Task<T?> WaitUntilAsync<T>(Func<T?> probe, int timeoutMs = 4000, int pollMs = 100) where T : class
@@ -744,46 +824,70 @@ public class DeviceManager : IManager
         return null;
     }
 
+    private static bool TryGetUsbIds(string symLink, out int vendorId, out int productId)
+    {
+        vendorId = 0;
+        productId = 0;
+        Match match = Regex.Match(symLink, @"VID_(?<vid>[0-9A-F]{4}).*PID_(?<pid>[0-9A-F]{4})", RegexOptions.IgnoreCase);
+        return match.Success &&
+            int.TryParse(match.Groups["vid"].Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out vendorId) &&
+            int.TryParse(match.Groups["pid"].Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out productId);
+    }
+
     private void UsbDevice_DeviceRemoved(DeviceEventArgs obj)
     {
-        try
+        string instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+        bool isSerialSensor = TryGetUsbIds(obj.SymLink, out int vendorId, out int productId) && SerialUSBIMU.IsSupportedDevice(vendorId, productId);
+        if (!isSerialSensor)
+            return;
+
+        var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        if (!usbRemovalInProgress.TryAdd(instanceId, tcs.Task))
+            return;
+
+        _ = Task.Run(async () =>
         {
-            string? symLink = CommonUtils.Between(obj.SymLink, "#", "#");
-            if (string.IsNullOrEmpty(symLink))
-                return;
+            if (usbArrivalInProgress.TryGetValue(instanceId, out Task? pendingArrival))
+                try { await pendingArrival.WaitAsync(CrossWaitTimeout).ConfigureAwait(false); } catch { }
 
-            symLink += "&";
-            string? VendorID = CommonUtils.Between(symLink, "VID_", "&");
-            string? ProductID = CommonUtils.Between(symLink, "PID_", "&");
-
-            if (string.IsNullOrEmpty(VendorID) || string.IsNullOrEmpty(ProductID))
-                return;
-
-            if (SerialUSBIMU.vendors.ContainsKey(new KeyValuePair<string, string>(VendorID, ProductID)))
+            try
+            {
                 UsbDeviceRemoved?.Invoke(null, obj.InterfaceGuid);
-        }
-        catch { }
+            }
+            finally
+            {
+                usbRemovalInProgress.TryRemove(instanceId, out _);
+                tcs.TrySetResult();
+            }
+        });
     }
 
     private void UsbDevice_DeviceArrived(DeviceEventArgs obj)
     {
-        try
+        string instanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+        bool isSerialSensor = TryGetUsbIds(obj.SymLink, out int vendorId, out int productId) && SerialUSBIMU.IsSupportedDevice(vendorId, productId);
+        if (!isSerialSensor)
+            return;
+
+        var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        if (!usbArrivalInProgress.TryAdd(instanceId, tcs.Task))
+            return;
+
+        _ = Task.Run(async () =>
         {
-            string? symLink = CommonUtils.Between(obj.SymLink, "#", "#");
-            if (string.IsNullOrEmpty(symLink))
-                return;
+            if (usbRemovalInProgress.TryGetValue(instanceId, out Task? pendingRemoval))
+                try { await pendingRemoval.WaitAsync(CrossWaitTimeout).ConfigureAwait(false); } catch { }
 
-            symLink += "&";
-            string? VendorID = CommonUtils.Between(symLink, "VID_", "&");
-            string? ProductID = CommonUtils.Between(symLink, "PID_", "&");
-
-            if (string.IsNullOrEmpty(VendorID) || string.IsNullOrEmpty(ProductID))
-                return;
-
-            if (SerialUSBIMU.vendors.ContainsKey(new KeyValuePair<string, string>(VendorID, ProductID)))
+            try
+            {
                 UsbDeviceArrived?.Invoke(null, obj.InterfaceGuid);
-        }
-        catch { }
+            }
+            finally
+            {
+                usbArrivalInProgress.TryRemove(instanceId, out _);
+                tcs.TrySetResult();
+            }
+        });
     }
 
     public static async Task<PnPDetails?> GetDeviceFromInstanceIdAsync(string instanceId)
@@ -795,9 +899,16 @@ public class DeviceManager : IManager
         {
             foreach (PnPDetails pnPDetails in ManagerFactory.deviceManager.PnPDevices.Values)
             {
+                if (instanceId.Equals(pnPDetails.deviceInstanceId, StringComparison.OrdinalIgnoreCase) ||
+                    instanceId.Equals(pnPDetails.baseContainerDeviceInstanceId, StringComparison.OrdinalIgnoreCase))
+                {
+                    details = pnPDetails;
+                    break;
+                }
+
                 // devicePath
                 string devicePath = SymLinkToInstanceId(pnPDetails.devicePath);
-                if (instanceId.Equals(devicePath))
+                if (instanceId.Equals(devicePath, StringComparison.OrdinalIgnoreCase))
                 {
                     details = pnPDetails;
                     break;
@@ -805,12 +916,14 @@ public class DeviceManager : IManager
 
                 // container devicePath
                 string basePath = SymLinkToInstanceId(pnPDetails.baseContainerDevicePath);
-                if (instanceId.Equals(basePath))
+                if (instanceId.Equals(basePath, StringComparison.OrdinalIgnoreCase))
                 {
                     details = pnPDetails;
                     break;
                 }
             }
+
+            details ??= ManagerFactory.deviceManager.FindDevice(instanceId);
 
             if (details is null)
                 await Task.Delay(250).ConfigureAwait(false);

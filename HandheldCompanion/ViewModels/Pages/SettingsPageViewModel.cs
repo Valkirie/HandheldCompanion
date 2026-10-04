@@ -1,3 +1,4 @@
+using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
@@ -170,121 +171,124 @@ namespace HandheldCompanion.ViewModels
 
         private void UpdateManager_Updated(UpdateStatus status, UpdateFile? updateFile, object? value)
         {
-            GithubUpdateViewModel? vm = null;
-            if (updateFile is not null && !TryFindVm(updateFile, out vm))
-                return;
-
-            switch (status)
+            UIHelper.TryBeginInvoke(() =>
             {
-                case UpdateStatus.Initialized:
-                case UpdateStatus.Updated:
-                    UpdateStatusText = Properties.Resources.SettingsPage_UpToDate;
-                    UpdateDateText = Properties.Resources.SettingsPage_LastChecked + CommonUtils.GetTime(UpdateManager.GetTime());
-                    UpdateDateVisibility = Visibility.Visible;
-                    UpdateSymbolVisibility = Visibility.Visible;
-                    ProgressBarVisibility = Visibility.Collapsed;
-                    CheckUpdateEnabled = true;
-                    vm?.ResetToAvailable();
-                    break;
+                GithubUpdateViewModel? vm = null;
+                if (updateFile is not null && !TryFindVm(updateFile, out vm))
+                    return;
 
-                case UpdateStatus.Failed:
-                    UpdateDateVisibility = Visibility.Visible;
-                    UpdateSymbolVisibility = Visibility.Visible;
-                    ProgressBarVisibility = Visibility.Collapsed;
-                    CheckUpdateEnabled = true;
-                    vm?.OnFailed();
-                    break;
-
-                case UpdateStatus.Checking:
-                    if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                        return;
-
-                    try { UpdateFiles.Clear(); }
-                    finally { Monitor.Exit(_collectionLock); }
-
-                    if (value is bool background && background)
+                switch (status)
+                {
+                    case UpdateStatus.Initialized:
+                    case UpdateStatus.Updated:
+                        UpdateStatusText = Properties.Resources.SettingsPage_UpToDate;
+                        UpdateDateText = Properties.Resources.SettingsPage_LastChecked + CommonUtils.GetTime(UpdateManager.GetTime());
+                        UpdateDateVisibility = Visibility.Visible;
+                        UpdateSymbolVisibility = Visibility.Visible;
+                        ProgressBarVisibility = Visibility.Collapsed;
+                        CheckUpdateEnabled = true;
+                        vm?.ResetToAvailable();
                         break;
 
-                    UpdateStatusText = Properties.Resources.SettingsPage_UpdateCheck;
-                    ChangelogVisibility = Visibility.Collapsed;
-                    ChangelogText = string.Empty;
-                    UpdateDateVisibility = Visibility.Collapsed;
-                    UpdateSymbolVisibility = Visibility.Collapsed;
-                    ProgressBarVisibility = Visibility.Visible;
-                    CheckUpdateEnabled = false;
-                    break;
+                    case UpdateStatus.Failed:
+                        UpdateDateVisibility = Visibility.Visible;
+                        UpdateSymbolVisibility = Visibility.Visible;
+                        ProgressBarVisibility = Visibility.Collapsed;
+                        CheckUpdateEnabled = true;
+                        vm?.OnFailed();
+                        break;
 
-                case UpdateStatus.Changelog:
-                    ChangelogVisibility = Visibility.Visible;
-                    UpdateDateVisibility = Visibility.Visible;
-                    ChangelogText = value as string ?? string.Empty;
-                    CheckUpdateEnabled = true;
-                    break;
-
-                case UpdateStatus.Ready:
-                    ProgressBarVisibility = Visibility.Collapsed;
-                    UpdateStatusText = Properties.Resources.SettingsPage_UpdateAvailable;
-                    if (value is Dictionary<string, UpdateFile> files)
-                    {
+                    case UpdateStatus.Checking:
                         if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
                             return;
 
-                        try
+                        try { UpdateFiles.Clear(); }
+                        finally { Monitor.Exit(_collectionLock); }
+
+                        if (value is bool background && background)
+                            break;
+
+                        UpdateStatusText = Properties.Resources.SettingsPage_UpdateCheck;
+                        ChangelogVisibility = Visibility.Collapsed;
+                        ChangelogText = string.Empty;
+                        UpdateDateVisibility = Visibility.Collapsed;
+                        UpdateSymbolVisibility = Visibility.Collapsed;
+                        ProgressBarVisibility = Visibility.Visible;
+                        CheckUpdateEnabled = false;
+                        break;
+
+                    case UpdateStatus.Changelog:
+                        ChangelogVisibility = Visibility.Visible;
+                        UpdateDateVisibility = Visibility.Visible;
+                        ChangelogText = value as string ?? string.Empty;
+                        CheckUpdateEnabled = true;
+                        break;
+
+                    case UpdateStatus.Ready:
+                        ProgressBarVisibility = Visibility.Collapsed;
+                        UpdateStatusText = Properties.Resources.SettingsPage_UpdateAvailable;
+                        if (value is Dictionary<string, UpdateFile> files)
                         {
-                            UpdateFiles.Clear();
-                            foreach (var file in files.Values)
+                            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                                return;
+
+                            try
                             {
-                                var fileVm = new GithubUpdateViewModel(file);
-                                fileVm.OnInstallFailed += OnInstallFailed;
-                                UpdateFiles.Add(fileVm);
+                                UpdateFiles.Clear();
+                                foreach (var file in files.Values)
+                                {
+                                    var fileVm = new GithubUpdateViewModel(file);
+                                    fileVm.OnInstallFailed += OnInstallFailed;
+                                    UpdateFiles.Add(fileVm);
+                                }
+                            }
+                            finally
+                            {
+                                Monitor.Exit(_collectionLock);
                             }
                         }
-                        finally
-                        {
-                            Monitor.Exit(_collectionLock);
-                        }
-                    }
-                    break;
+                        break;
 
-                case UpdateStatus.ControllerDbReady:
-                    GithubUpdateViewModel? existingVm = null;
-                    if (updateFile is not null && !TryFindVm(updateFile, out existingVm))
-                        return;
-
-                    if (updateFile is not null && existingVm is null)
-                    {
-                        UpdateSymbolVisibility = Visibility.Visible;
-                        if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    case UpdateStatus.ControllerDbReady:
+                        GithubUpdateViewModel? existingVm = null;
+                        if (updateFile is not null && !TryFindVm(updateFile, out existingVm))
                             return;
 
-                        try
+                        if (updateFile is not null && existingVm is null)
                         {
-                            var fileVm = new GithubUpdateViewModel(updateFile);
-                            fileVm.OnInstallFailed += OnInstallFailed;
-                            fileVm.OnInstalled += OnInstalled;
-                            UpdateFiles.Add(fileVm);
+                            UpdateSymbolVisibility = Visibility.Visible;
+                            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                                return;
+
+                            try
+                            {
+                                var fileVm = new GithubUpdateViewModel(updateFile);
+                                fileVm.OnInstallFailed += OnInstallFailed;
+                                fileVm.OnInstalled += OnInstalled;
+                                UpdateFiles.Add(fileVm);
+                            }
+                            finally
+                            {
+                                Monitor.Exit(_collectionLock);
+                            }
                         }
-                        finally
-                        {
-                            Monitor.Exit(_collectionLock);
-                        }
-                    }
-                    break;
+                        break;
 
-                case UpdateStatus.Download:
-                    vm?.OnDownloadStarted();
-                    break;
+                    case UpdateStatus.Download:
+                        vm?.OnDownloadStarted();
+                        break;
 
-                case UpdateStatus.Downloading:
-                    if (value is int percent)
-                        vm?.OnProgressChanged(percent);
-                    break;
+                    case UpdateStatus.Downloading:
+                        if (value is int percent)
+                            vm?.OnProgressChanged(percent);
+                        break;
 
-                case UpdateStatus.Downloaded:
-                    vm?.OnDownloadCompleted();
-                    CheckUpdateEnabled = true;
-                    break;
-            }
+                    case UpdateStatus.Downloaded:
+                        vm?.OnDownloadCompleted();
+                        CheckUpdateEnabled = true;
+                        break;
+                }
+            });
         }
 
         private bool TryFindVm(UpdateFile updateFile, out GithubUpdateViewModel? viewModel)
@@ -323,17 +327,20 @@ namespace HandheldCompanion.ViewModels
 
         private void OnInstalled(GithubUpdateViewModel vm)
         {
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
+            UIHelper.TryBeginInvoke(() =>
+            {
+                if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
+                    return;
 
-            try
-            {
-                UpdateFiles.Remove(vm);
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
+                try
+                {
+                    UpdateFiles.Remove(vm);
+                }
+                finally
+                {
+                    Monitor.Exit(_collectionLock);
+                }
+            });
         }
 
         #endregion

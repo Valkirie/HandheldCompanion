@@ -142,6 +142,7 @@ public static class MotherboardInfo
     public static bool HostingBoard => Convert.ToBoolean(queryCacheValue("baseboard", "HostingBoard"));
     public static string Model => Convert.ToString(queryCacheValue("baseboard", "Model")) ?? string.Empty;
     public static string SystemModel => Convert.ToString(queryCacheValue("computer", "Model")) ?? string.Empty;
+    public static string SystemSKU => Convert.ToString(queryCacheValue("computer", "SystemSKUNumber")) ?? string.Empty;
     public static string PartNumber => Convert.ToString(queryCacheValue("baseboard", "PartNumber")) ?? string.Empty;
     public static string PNPDeviceID => Convert.ToString(queryCacheValue("motherboard", "PNPDeviceID")) ?? string.Empty;
     public static string PrimaryBusType => Convert.ToString(queryCacheValue("motherboard", "PrimaryBusType")) ?? string.Empty;

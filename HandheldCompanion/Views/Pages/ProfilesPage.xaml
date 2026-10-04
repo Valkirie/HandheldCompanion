@@ -17,7 +17,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Profiles"
     Title="{l:Static resx:Resources.ProfilesPage_Profiles}"
-    Margin="0,20,0,0"
+    Margin="20"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:ProfilesPageViewModel}"
     d:DesignHeight="4000"
@@ -58,6 +58,7 @@
                                 <TextBox
                                     HorizontalAlignment="Stretch"
                                     ui:ControlHelper.PlaceholderText="Search"
+                                    PreviewKeyDown="LibrarySearchField_PreviewKeyDown"
                                     Text="{Binding LibrarySearchField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                 <Button
@@ -301,14 +302,12 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
-                            <DockPanel>
-                                <ui:FontIcon
-                                    Name="ProfileIcon"
-                                    HorizontalAlignment="Left"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                    Glyph="&#xE7EE;" />
-                            </DockPanel>
+                            <ui:FontIcon
+                                Name="ProfileIcon"
+                                HorizontalAlignment="Left"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                Glyph="&#xE7EE;" />
 
                             <Grid Grid.Column="1" Margin="12,0,0,0">
                                 <Grid.ColumnDefinitions>
@@ -887,6 +886,7 @@
                                     Tag="Navigation">
                                     <ComboBox
                                         Name="PowerProfileOnBattery"
+                                        MaxWidth="{Binding ActualWidth, ConverterParameter=x/2.4, Converter={StaticResource Math}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}"
                                         DisplayMemberPath="Text"
                                         ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
                                         ItemsSource="{Binding ProfilePickerCollectionViewDC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -914,6 +914,7 @@
                                     Tag="Navigation">
                                     <ComboBox
                                         Name="PowerProfilePlugged"
+                                        MaxWidth="{Binding ActualWidth, ConverterParameter=x/2.4, Converter={StaticResource Math}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}"
                                         DisplayMemberPath="Text"
                                         ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
                                         ItemsSource="{Binding ProfilePickerCollectionViewAC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
