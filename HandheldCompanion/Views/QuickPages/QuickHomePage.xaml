@@ -207,7 +207,7 @@
                 <Slider
                     x:Name="SliderBrightness"
                     Margin="6,0,6,0"
-                    AutomationProperties.Name="Brightness"
+                    AutomationProperties.Name="{l:Static resx:Resources.DevicePage_DynamicLighting_Brightness}"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
                     IsEnabled="False"
