@@ -2556,16 +2556,19 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.powerProfileManager.Updated += PowerProfileManager_Updated;
             ManagerFactory.powerProfileManager.Deleted += PowerProfileManager_Deleted;
 
-            foreach (PowerProfile powerProfile in ManagerFactory.powerProfileManager.profiles.Values)
-                PowerProfileManager_Updated(powerProfile, UpdateSource.Creation);
-
-            // If a profile was already selected before power profiles were loaded,
-            // the initial UpdatePowerProfileSelections() found ProfilePicker empty.
-            // Re-apply now that it's populated.
-            if (SelectedProfile != null)
+            using (new LoadingScope(this))
             {
-                UpdatePowerProfileSelections();
-                UpdateSelectedPowerProfileName();
+                foreach (PowerProfile powerProfile in ManagerFactory.powerProfileManager.profiles.Values)
+                    PowerProfileManager_Updated(powerProfile, UpdateSource.Creation);
+
+                // If a profile was already selected before power profiles were loaded,
+                // the initial UpdatePowerProfileSelections() found ProfilePicker empty.
+                // Re-apply now that it's populated.
+                if (SelectedProfile != null)
+                {
+                    UpdatePowerProfileSelections();
+                    UpdateSelectedPowerProfileName();
+                }
             }
         }
 
