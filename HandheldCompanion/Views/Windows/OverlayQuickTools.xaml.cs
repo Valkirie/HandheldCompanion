@@ -614,6 +614,9 @@ public partial class OverlayQuickTools : GamepadWindow
 
                 InvokeLostGamepadWindowFocus();
                 clockUpdateTimer.Stop();
+
+                if (!isClosing)
+                    screenReaderAnnouncer.AnnounceNow("Quick tools closed");
                 break;
 
             case Visibility.Visible:
@@ -630,6 +633,11 @@ public partial class OverlayQuickTools : GamepadWindow
 
                 InvokeGotGamepadWindowFocus();
                 clockUpdateTimer.Start();
+
+                AccessibilityHelper.LabelTreeDeferred(this);
+
+                // quick tools never takes keyboard focus, so screen readers need to be told it opened
+                screenReaderAnnouncer.Announce(string.Join(", ", new[] { "Quick tools", string.IsNullOrEmpty(BatteryIndicatorPercentage.Text) ? string.Empty : $"battery {BatteryIndicatorPercentage.Text}", Time.Text }.Where(s => !string.IsNullOrEmpty(s))));
                 break;
         }
 

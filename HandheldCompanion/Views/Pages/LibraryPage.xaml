@@ -248,7 +248,10 @@
                                 </Button>
 
                                 <!--  Metadata & scan  -->
-                                <ui:DropDownButton HorizontalAlignment="Left" VerticalAlignment="Stretch">
+                                <ui:DropDownButton
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Stretch"
+                                    AutomationProperties.Name="Library options">
                                     <ui:DropDownButton.Content>
                                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe712;" />
                                     </ui:DropDownButton.Content>

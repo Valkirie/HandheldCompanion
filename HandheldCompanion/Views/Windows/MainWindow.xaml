@@ -248,7 +248,7 @@
             </ui:NavigationView.HeaderTemplate>
 
             <ui:NavigationView.MenuItems>
-                <ui:NavigationViewItem IsEnabled="False">
+                <ui:NavigationViewItem AutomationProperties.Name="Previous section (left bumper)" IsEnabled="False">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon
                             Name="GamepadUILB"
@@ -333,7 +333,7 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
 
-                <ui:NavigationViewItem IsEnabled="False">
+                <ui:NavigationViewItem AutomationProperties.Name="Next section (right bumper)" IsEnabled="False">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon
                             Name="GamepadUIRB"

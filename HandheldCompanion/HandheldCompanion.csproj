@@ -255,6 +255,7 @@
 		<PackageReference Include="protobuf-net" Version="3.4.30" />
 		<PackageReference Include="protobuf-net.Core" Version="3.4.30" />
 		<PackageReference Include="RAMSPDToolkit-NDD" Version="1.6.1" />
+		<PackageReference Include="Refractor" Version="0.1.0-preview.1" />
 		<PackageReference Include="SDL3-CS" Version="3.4.16.1" />
 		<PackageReference Include="Sentry" Version="6.11.1" />
 		<PackageReference Include="SharpDX" Version="4.2.0" />
