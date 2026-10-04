@@ -64,8 +64,15 @@ namespace HandheldCompanion.Views.Classes
 
         public void FocusChanged(Control control)
         {
-            if (ReferenceEquals(control, current) || !ShouldSpeak)
+            if (ReferenceEquals(control, current))
                 return;
+
+            if (!ShouldSpeak)
+            {
+                // forget the old control, so moving back to it later is still announced
+                Detach();
+                return;
+            }
 
             Attach(control);
 

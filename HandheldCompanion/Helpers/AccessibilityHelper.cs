@@ -197,10 +197,8 @@ namespace HandheldCompanion.Helpers
                 if (string.IsNullOrEmpty(description) && string.IsNullOrEmpty(header) && control is not ListBoxItem)
                     description = NearbyLabel(control).Help;
 
-                if (!string.IsNullOrEmpty(description) && !Equals(Text(control.ToolTip), description))
-                    SetHelp(control, description);
-                else if (control.ToolTip is not null)
-                    SetHelp(control, Text(control.ToolTip));
+                // always called, so a refreshed (recycled) control with no help source drops its old generated help
+                SetHelp(control, !string.IsNullOrEmpty(description) ? description : Text(control.ToolTip));
             }
             catch
             {
@@ -305,17 +303,26 @@ namespace HandheldCompanion.Helpers
 
         private static void SetHelp(Control control, string help)
         {
+            // explicit help text wins
             bool auto = control.ReadLocalValue(IsAutoHelpProperty) is true;
-            if (string.IsNullOrEmpty(help) || (!auto && !string.IsNullOrEmpty(AutomationProperties.GetHelpText(control))))
+            if (!auto && !string.IsNullOrEmpty(AutomationProperties.GetHelpText(control)))
                 return;
 
-            // value tooltips (sliders) are not a description
-            if (!help.Any(char.IsLetter))
-                return;
+            // value tooltips (sliders) are not a description, and don't repeat the name
+            bool usable = !string.IsNullOrEmpty(help)
+                && help.Any(char.IsLetter)
+                && !string.Equals(help, AutomationProperties.GetName(control), StringComparison.CurrentCultureIgnoreCase);
 
-            // don't repeat the name
-            if (string.Equals(help, AutomationProperties.GetName(control), StringComparison.CurrentCultureIgnoreCase))
+            if (!usable)
+            {
+                // only clear what we generated ourselves
+                if (auto)
+                {
+                    control.ClearValue(AutomationProperties.HelpTextProperty);
+                    control.ClearValue(IsAutoHelpProperty);
+                }
                 return;
+            }
 
             if (AutomationProperties.GetHelpText(control) != help)
                 AutomationProperties.SetHelpText(control, help);

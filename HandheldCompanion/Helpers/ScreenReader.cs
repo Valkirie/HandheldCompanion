@@ -42,7 +42,8 @@ namespace HandheldCompanion.Helpers
         private static Prism? prism;
         private static Backend? backend;
         private static DateTime nextAttempt = DateTime.MinValue;
-        private static bool unavailable;
+        // set by the worker thread, read by IsActive on the UI thread
+        private static volatile bool unavailable;
 
         /// <summary>
         /// True when Windows reports a running screen reader (NVDA, JAWS and Narrator set this flag).
