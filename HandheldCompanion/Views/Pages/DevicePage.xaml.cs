@@ -646,13 +646,20 @@ namespace HandheldCompanion.Views.Pages
                 ManagerFactory.settingsManager.SetProperty("SensorPlacement", Tag);
         }
 
+        private static readonly string[] SensorPlacementNames = ["Top", "Left", "Right", "Bottom"];
+
         private void UpdateUI_SensorPlacement(int? SensorPlacement)
         {
             foreach (Button button in Grid_SensorPlacementVisualisation.Children.OfType<Button>())
-                if (int.Parse((string)button.Tag) == SensorPlacement)
+            {
+                int tag = int.Parse((string)button.Tag);
+                if (tag == SensorPlacement)
                     button.SetResourceReference(BackgroundProperty, "SystemControlForegroundAccentBrush");
                 else
                     button.SetResourceReference(BackgroundProperty, "SystemControlHighlightAltBaseLowBrush");
+
+                AccessibilityHelper.SetChoiceName(button, SensorPlacementNames[tag], tag == SensorPlacement);
+            }
         }
 
         private void Toggle_SensorPlacementUpsideDown_Toggled(object? sender, RoutedEventArgs? e)

@@ -497,6 +497,7 @@
                                 <ui:DropDownButton
                                     Name="ButtonProfileSettings"
                                     Height="48"
+                                    AutomationProperties.Name="Profile options"
                                     Tag="Navigation">
                                     <ui:DropDownButton.Flyout>
                                         <ui:MenuFlyout Placement="Bottom">
@@ -511,6 +512,7 @@
                                     Name="ToggleFavoriteButton"
                                     Width="48"
                                     Height="48"
+                                    AutomationProperties.Name="Favorite"
                                     IsChecked="{Binding IsLiked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     IsEnabled="{Binding IsProfileDetailsExpanderEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                     <ui:FontIcon>
