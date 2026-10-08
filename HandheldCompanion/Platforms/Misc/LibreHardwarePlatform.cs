@@ -344,7 +344,6 @@ namespace HandheldCompanion.Platforms.Misc
                         HandleGPU_Temperature(sensor);
                         break;
                     case SensorType.Data:
-                    case SensorType.SmallData:
                         HandleGPU_Data(sensor);
                         break;
                 }
@@ -690,7 +689,6 @@ namespace HandheldCompanion.Platforms.Misc
                 switch (sensor.SensorType)
                 {
                     case SensorType.Data:
-                    case SensorType.SmallData:
                         HandleMemory_Data(sensor);
                         break;
                 }
