@@ -37,7 +37,11 @@
     <converters:ActionTypeIndexToNameConverter x:Key="ActionTypeIndexToNameConverter" />
     <converters:ActionDisplayConverter x:Key="ActionDisplayConverter" />
     <converters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
-    <effects:BloomEffect x:Key="ActiveLibraryBloomEffect" BloomIntensity="0.6" BloomSaturation="0.2" po:Freeze="True" />
+    <effects:BloomEffect
+        x:Key="ActiveLibraryBloomEffect"
+        po:Freeze="True"
+        BloomIntensity="0.6"
+        BloomSaturation="0.2" />
 
     <Style x:Key="LibraryImageFadeStyle" TargetType="Image">
         <Setter Property="Opacity" Value="1" />
