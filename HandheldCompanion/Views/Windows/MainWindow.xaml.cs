@@ -91,6 +91,10 @@ public partial class MainWindow : GamepadWindow
     private readonly Dictionary<Guid, ToolStripMenuItem> profileMenuItems = new();
     private ToolStripSeparator profileSeparator = null!;
 
+    // Track tray menu items for pinned hotkeys
+    private readonly Dictionary<ButtonFlags, ToolStripMenuItem> hotkeyMenuItems = new();
+    private ToolStripSeparator hotkeySeparator = null!;
+
     private WindowState prevWindowState
     {
         get
@@ -223,6 +227,18 @@ public partial class MainWindow : GamepadWindow
         }
 
         // raise events
+        switch (ManagerFactory.hotkeysManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.hotkeysManager.Initialized += HotkeysManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QueryHotkeys();
+                break;
+        }
+
+        // raise events
         switch (ManagerFactory.notificationManager.Status)
         {
             default:
@@ -326,6 +342,15 @@ public partial class MainWindow : GamepadWindow
             AddProfileToTrayMenu(profile);
     }
 
+    private void QueryHotkeys()
+    {
+        ManagerFactory.hotkeysManager.Updated += OnHotkeyUpdated;
+        ManagerFactory.hotkeysManager.Deleted += RemoveHotkeyFromTrayMenu;
+
+        foreach (Hotkey hotkey in ManagerFactory.hotkeysManager.GetHotkeys().Where(hotkey => hotkey.IsPinned && !hotkey.IsInternal))
+            AddHotkeyToTrayMenu(hotkey);
+    }
+
     private static void UpdateSplashStatus(string status)
     {
         SplashScreen?.SetStatus(status);
@@ -334,6 +359,11 @@ public partial class MainWindow : GamepadWindow
     private void ProfileManager_Initialized()
     {
         QueryProfile();
+    }
+
+    private void HotkeysManager_Initialized()
+    {
+        QueryHotkeys();
     }
 
     protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -525,6 +555,11 @@ public partial class MainWindow : GamepadWindow
             profileSeparator.Visible = false;
             trayContextMenu.Items.Add(profileSeparator);
 
+            // Add separator placeholder (will be shown/hidden based on pinned hotkeys)
+            hotkeySeparator = new ToolStripSeparator();
+            hotkeySeparator.Visible = false;
+            trayContextMenu.Items.Add(hotkeySeparator);
+
             // Add standard menu items
             AddNotifyIconItem(Properties.Resources.MainWindow_MainWindow, "MainWindow");
             AddNotifyIconItem(Properties.Resources.MainWindow_QuickTools, "QuickTools");
@@ -614,6 +649,82 @@ public partial class MainWindow : GamepadWindow
             AddProfileToTrayMenu(profile);
         else
             RemoveProfileFromTrayMenu(profile);
+    }
+
+    private void AddHotkeyToTrayMenu(Hotkey hotkey)
+    {
+        if (hotkey is null || !hotkey.IsPinned || hotkey.IsInternal)
+            return;
+
+        UIHelper.TryBeginInvoke(() =>
+        {
+            if (!ManagerFactory.hotkeysManager.hotkeys.TryGetValue(hotkey.ButtonFlags, out Hotkey? currentHotkey) ||
+                !currentHotkey.IsPinned || currentHotkey.IsInternal)
+                return;
+
+            hotkey = currentHotkey;
+
+            if (!hotkeyMenuItems.TryGetValue(hotkey.ButtonFlags, out ToolStripMenuItem? menuItem))
+            {
+                menuItem = new ToolStripMenuItem();
+                menuItem.Click += MenuItem_Click;
+                hotkeyMenuItems[hotkey.ButtonFlags] = menuItem;
+            }
+            else
+            {
+                trayContextMenu.Items.Remove(menuItem);
+            }
+
+            menuItem.Text = hotkey.Name;
+            menuItem.Tag = $"ExecuteHotkey:{(int)hotkey.ButtonFlags}";
+            UpdateHotkeyTrayItemState(menuItem, hotkey);
+
+            int insertIndex = trayContextMenu.Items.IndexOf(profileSeparator) + 1;
+            foreach (ButtonFlags existingButton in hotkeyMenuItems.Keys)
+            {
+                if (existingButton == hotkey.ButtonFlags || !ManagerFactory.hotkeysManager.hotkeys.TryGetValue(existingButton, out Hotkey? existingHotkey))
+                    continue;
+
+                if (existingHotkey.PinIndex < hotkey.PinIndex ||
+                    existingHotkey.PinIndex == hotkey.PinIndex && (int)existingHotkey.ButtonFlags < (int)hotkey.ButtonFlags)
+                    insertIndex++;
+            }
+
+            trayContextMenu.Items.Insert(insertIndex, menuItem);
+            hotkeySeparator.Visible = true;
+        });
+    }
+
+    private void RemoveHotkeyFromTrayMenu(Hotkey hotkey)
+    {
+        if (hotkey is null)
+            return;
+
+        UIHelper.TryBeginInvoke(() =>
+        {
+            if (hotkeyMenuItems.TryGetValue(hotkey.ButtonFlags, out ToolStripMenuItem? menuItem))
+            {
+                trayContextMenu.Items.Remove(menuItem);
+                hotkeyMenuItems.Remove(hotkey.ButtonFlags);
+                menuItem.Dispose();
+            }
+
+            hotkeySeparator.Visible = hotkeyMenuItems.Any();
+        });
+    }
+
+    private void OnHotkeyUpdated(Hotkey hotkey)
+    {
+        if (hotkey.IsPinned && !hotkey.IsInternal)
+            AddHotkeyToTrayMenu(hotkey);
+        else
+            RemoveHotkeyFromTrayMenu(hotkey);
+    }
+
+    private static void UpdateHotkeyTrayItemState(ToolStripMenuItem menuItem, Hotkey hotkey)
+    {
+        menuItem.Enabled = hotkey.command.IsEnabled;
+        menuItem.Checked = hotkey.command.IsToggled;
     }
 
     public static MainWindow GetCurrent()
@@ -777,6 +888,26 @@ public partial class MainWindow : GamepadWindow
                 return;
             }
 
+            // Handle hotkey execution commands
+            if (tag.StartsWith("ExecuteHotkey:"))
+            {
+                string buttonFlagString = tag.Substring("ExecuteHotkey:".Length);
+                if (int.TryParse(buttonFlagString, out int buttonFlagValue) &&
+                    ManagerFactory.hotkeysManager.hotkeys.TryGetValue((ButtonFlags)buttonFlagValue, out Hotkey? hotkey))
+                {
+                    try
+                    {
+                        hotkey.Execute(hotkey.command.OnKeyDown, hotkey.command.OnKeyUp, false);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogManager.LogError("Failed to execute hotkey {0}: {1}", hotkey.Name, ex.Message);
+                    }
+                }
+
+                return;
+            }
+
             // Handle standard menu items
             switch (tag)
             {
@@ -814,6 +945,12 @@ public partial class MainWindow : GamepadWindow
     {
         UIHelper.TryBeginInvoke(() =>
         {
+            foreach ((ButtonFlags buttonFlags, ToolStripMenuItem menuItem) in hotkeyMenuItems)
+            {
+                if (ManagerFactory.hotkeysManager.hotkeys.TryGetValue(buttonFlags, out Hotkey? hotkey))
+                    UpdateHotkeyTrayItemState(menuItem, hotkey);
+            }
+
             if (!trayContextMenu.Items.OfType<ToolStripItem>().Any(item => item.Available))
                 return;
 
@@ -1248,6 +1385,10 @@ public partial class MainWindow : GamepadWindow
                     menuItem.Dispose();
                 profileMenuItems.Clear();
 
+                foreach (var menuItem in hotkeyMenuItems.Values)
+                    menuItem.Dispose();
+                hotkeyMenuItems.Clear();
+
                 trayContextMenu.Dispose();
                 notifyIcon.Visible = false;
                 notifyIcon.Dispose();
@@ -1268,6 +1409,10 @@ public partial class MainWindow : GamepadWindow
 
             ManagerFactory.settingsManager.Initialized -= SettingsManager_Initialized;
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
+            ManagerFactory.hotkeysManager.Initialized -= HotkeysManager_Initialized;
+            ManagerFactory.hotkeysManager.Updated -= OnHotkeyUpdated;
+            ManagerFactory.hotkeysManager.Deleted -= RemoveHotkeyFromTrayMenu;
 
             // UI thread
             UIHelper.TryInvoke(() =>
