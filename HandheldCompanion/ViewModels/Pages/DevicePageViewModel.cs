@@ -396,10 +396,16 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
+                if (!CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimitPercent))
+                    return CurrentDevice.BatteryBypassMax;
+
                 return ManagerFactory.settingsManager.GetDouble("BatteryChargeLimitPercent");
             }
             set
             {
+                if (!CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimitPercent))
+                    return;
+
                 if (value != BatteryChargeLimitPercent)
                 {
                     ManagerFactory.settingsManager.SetProperty("BatteryChargeLimitPercent", value);
