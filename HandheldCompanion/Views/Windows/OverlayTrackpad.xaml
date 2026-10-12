@@ -37,7 +37,8 @@
                 Margin="12"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
-                PreviewTouchDown="LeftTrackpadClick_PreviewTouchDown">
+                PreviewTouchDown="LeftTrackpadClick_PreviewTouchDown"
+                PreviewTouchUp="LeftTrackpadClick_PreviewTouchUp">
                 <ui:FontIcon FontSize="20" Glyph="&#xe815;" />
             </Button>
         </Border>
@@ -63,7 +64,8 @@
                 Margin="12"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
-                PreviewTouchDown="RightTrackpadClick_PreviewTouchDown">
+                PreviewTouchDown="RightTrackpadClick_PreviewTouchDown"
+                PreviewTouchUp="RightTrackpadClick_PreviewTouchUp">
                 <ui:FontIcon FontSize="20" Glyph="&#xe815;" />
             </Button>
         </Border>
