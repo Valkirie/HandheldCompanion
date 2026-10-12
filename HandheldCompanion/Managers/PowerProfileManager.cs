@@ -106,6 +106,7 @@ namespace HandheldCompanion.Managers
         {
             // manage events
             PlatformManager.LibreHardware.CPUTemperatureChanged += LibreHardwareMonitor_CpuTemperatureChanged;
+            PlatformManager.LibreHardware.GPUTemperatureChanged += LibreHardwareMonitor_GpuTemperatureChanged;
         }
 
         private void PlatformManager_Initialized()
@@ -151,6 +152,7 @@ namespace HandheldCompanion.Managers
 
             // manage events
             PlatformManager.LibreHardware.CPUTemperatureChanged -= LibreHardwareMonitor_CpuTemperatureChanged;
+            PlatformManager.LibreHardware.GPUTemperatureChanged -= LibreHardwareMonitor_GpuTemperatureChanged;
             ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
             ManagerFactory.profileManager.Discarded -= ProfileManager_Discarded;
             ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
@@ -207,13 +209,32 @@ namespace HandheldCompanion.Managers
 
         private void LibreHardwareMonitor_CpuTemperatureChanged(float? value)
         {
+            UpdateSoftwareFan();
+        }
+
+        private void LibreHardwareMonitor_GpuTemperatureChanged(float? value)
+        {
+            if (GPUManager.GetCurrent()?.IsEmbedded() ?? false)
+                UpdateSoftwareFan();
+        }
+
+        private void UpdateSoftwareFan()
+        {
+            float? temperature = PlatformManager.LibreHardware.GetCPUTemperature();
+            if (GPUManager.GetCurrent()?.IsEmbedded() ?? false)
+            {
+                float? gpuTemperature = PlatformManager.LibreHardware.GetGPUTemperature();
+                if (gpuTemperature.HasValue && (!temperature.HasValue || gpuTemperature > temperature))
+                    temperature = gpuTemperature;
+            }
+
             lock (profileLock)
             {
-                if (currentProfile is null || currentProfile.FanProfile is null || value is null)
+                if (currentProfile is null || currentProfile.FanProfile is null || !temperature.HasValue)
                     return;
 
                 // update fan profile
-                currentProfile.FanProfile.SetTemperature((float)value);
+                currentProfile.FanProfile.SetTemperature(temperature.Value);
 
                 switch (currentProfile.FanProfile.fanMode)
                 {

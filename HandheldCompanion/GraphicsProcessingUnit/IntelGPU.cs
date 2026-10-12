@@ -23,6 +23,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         private bool prevEnduranceGamingSupport;
         private ctl_3d_endurance_gaming_control_t prevEGControl = new();
         private ctl_3d_endurance_gaming_mode_t prevEGMode = new();
+        private bool isEmbedded;
+
+        public override bool IsEmbedded() => isEmbedded;
 
         public override bool HasIntegerScalingSupport()
         {
@@ -227,6 +230,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (deviceIdx == -1)
                 return;
 
+            isEmbedded = IGCLBackend.IsIntegrated(deviceIdx);
             IsInitialized = true;
 
             UpdateTimer = new Timer(UpdateInterval)

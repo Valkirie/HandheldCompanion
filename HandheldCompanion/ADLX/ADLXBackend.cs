@@ -27,6 +27,13 @@ namespace HandheldCompanion.ADLX
             ADLX_GPU_INACTIVE               /**< @ENG_START_DOX This result indicates that the GPU is inactive. @ENG_END_DOX */
         }
 
+        public enum ADLX_GPU_TYPE
+        {
+            GPUTYPE_UNDEFINED = 0,
+            GPUTYPE_INTEGRATED,
+            GPUTYPE_DISCRETE,
+        }
+
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)] public static extern bool IntializeAdlx(StringBuilder dispName, int nameLength);
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool InitializeAdlxWithIncompatibleDriver();
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool CloseAdlx();
@@ -38,6 +45,7 @@ namespace HandheldCompanion.ADLX
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern ADLX_RESULT GetDisplayGPU(int idx, ref int UniqueId);
 
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern ADLX_RESULT GetGPUIndex(int UniqueId, ref int idx);
+        [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern ADLX_RESULT GetGPUType(uint index, ref ADLX_GPU_TYPE gpuType);
 
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool HasRSRSupport();
         [DllImport(ADLX_Wrapper, CallingConvention = CallingConvention.Cdecl)] public static extern bool GetRSR();

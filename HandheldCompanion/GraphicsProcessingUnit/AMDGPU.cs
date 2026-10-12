@@ -37,6 +37,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         private int prevAFMFSearchMode = -1;
         private int prevAFMFPerformanceMode = -1;
         private int prevAFMFFastMotionResponse = -1;
+        private bool isEmbedded;
 
         public bool HasRSRSupport()
         {
@@ -320,6 +321,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             ProcessTargets = new HashSet<string> { "RadeonSoftware", "cncmd" };
         }
 
+        public override bool IsEmbedded() => isEmbedded;
+
         public AMDGPU(AdapterInformation adapterInformation) : base(adapterInformation)
         {
             ADLX_RESULT result = ADLX_RESULT.ADLX_FAIL;
@@ -366,7 +369,13 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 {
                     result = GetGPUIndex(UniqueId, ref deviceIdx);
                     if (result == ADLX_RESULT.ADLX_OK)
+                    {
+                        ADLX_GPU_TYPE gpuType = ADLX_GPU_TYPE.GPUTYPE_UNDEFINED;
+                        if (GetGPUType((uint)deviceIdx, ref gpuType) == ADLX_RESULT.ADLX_OK)
+                            isEmbedded = gpuType == ADLX_GPU_TYPE.GPUTYPE_INTEGRATED;
+
                         IsInitialized = true;
+                    }
                 }
             }
 
