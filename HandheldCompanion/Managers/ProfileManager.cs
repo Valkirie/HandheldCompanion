@@ -43,6 +43,7 @@ public class ProfileManager : IManager
     // public List<Profile> subProfiles = [];
 
     private object profileLock = new();
+    private readonly object profileTransitionLock = new();
     private Profile? currentProfile;
 
     public FileSystemWatcher profileWatcher { get; set; }
@@ -399,29 +400,32 @@ public class ProfileManager : IManager
         // might not be the same anymore if disabled
         profile = GetProfileFromGuid(profile.Guid, false, profile.IsSubProfile);
 
-        Profile? previousProfile;
-        lock (profileLock)
+        lock (profileTransitionLock)
         {
-            previousProfile = currentProfile;
-            currentProfile = profile;
-        }
+            Profile? previousProfile;
+            lock (profileLock)
+            {
+                previousProfile = currentProfile;
+                currentProfile = profile;
+            }
 
-        // we've already announced this profile
-        if (previousProfile is not null)
-        {
-            if (previousProfile.Guid == profile.Guid)
+            // we've already announced this profile
+            if (previousProfile is not null)
+            {
+                if (previousProfile.Guid == profile.Guid)
+                    announce = false;
+                if (profile.Default)
+                    announce = false;
+            }
+            else if (Status == ManagerStatus.Initializing)
                 announce = false;
-            if (profile.Default)
-                announce = false;
+
+            // refresh error code
+            SanitizeProfile(profile);
+
+            // raise event
+            Applied?.Invoke(profile, source);
         }
-        else if (Status == ManagerStatus.Initializing)
-            announce = false;
-
-        // refresh error code
-        SanitizeProfile(profile);
-
-        // raise event
-        Applied?.Invoke(profile, source);
 
         if (announce)
         {
@@ -561,15 +565,24 @@ public class ProfileManager : IManager
 
             bool isCurrent = profile.ErrorCode.HasFlag(ProfileErrorCode.Running);
 
-            // raise event
-            Discarded?.Invoke(profile, isCurrent, GetDefault());
+            if (!isCurrent)
+                return;
 
-            if (isCurrent)
+            // update profile
+            UpdateOrCreateProfile(profile);
+
+            lock (profileTransitionLock)
             {
-                // update profile
-                UpdateOrCreateProfile(profile);
+                // check if the profile is still the current one, if not, don't discard it
+                if (!IsCurrentProfile(profile))
+                    return;
 
-                // restore default profile
+                // check if the foreground process is the same as the stopped process, if not, don't discard the profile
+                ProcessEx? foregroundProcess = ProcessManager.GetCurrent();
+                if (foregroundProcess is not null && foregroundProcess.ProcessId != processEx.ProcessId)
+                    return;
+
+                Discarded?.Invoke(profile, true, GetDefault());
                 ApplyProfile(GetDefault());
             }
         }
@@ -658,15 +671,31 @@ public class ProfileManager : IManager
                 }
             }
 
-            // raise event
-            if (backgroundEx is not null)
+            lock (profileTransitionLock)
             {
-                Profile backProfile = GetProfileFromPath(backgroundEx.Path, false);
-                if (!backProfile.Guid.Equals(profile.Guid))
-                    Discarded?.Invoke(backProfile, true, profile);
-            }
+                if (!Monitor.TryEnter(profileLock, TimeSpan.FromSeconds(2)))
+                    return;
 
-            ApplyProfile(profile);
+                try
+                {
+                    if (profile.Guid == currentProfile?.Guid)
+                        return;
+                }
+                finally
+                {
+                    Monitor.Exit(profileLock);
+                }
+
+                // raise event
+                if (backgroundEx is not null)
+                {
+                    Profile backProfile = GetProfileFromPath(backgroundEx.Path, false);
+                    if (!backProfile.Guid.Equals(profile.Guid))
+                        Discarded?.Invoke(backProfile, true, profile);
+                }
+
+                ApplyProfile(profile);
+            }
         }
         catch { }
     }
@@ -993,8 +1022,11 @@ public class ProfileManager : IManager
                 Monitor.Exit(profileLock);
             }
 
-            // raise event
-            Discarded?.Invoke(profile, isCurrent, GetDefault());
+            lock (profileTransitionLock)
+            {
+                // raise event
+                Discarded?.Invoke(profile, isCurrent, GetDefault());
+            }
 
             // raise event(s)
             Deleted?.Invoke(profile);
