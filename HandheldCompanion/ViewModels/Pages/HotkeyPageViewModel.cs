@@ -16,6 +16,7 @@ namespace HandheldCompanion.ViewModels
     {
         public ObservableCollection<HotkeyViewModel> HotkeysList { get; set; } = [];
         public ICommand CreateHotkeyCommand { get; private set; }
+        private Hotkey? hotkeyToOpen;
 
         public bool Rumble
         {
@@ -72,7 +73,9 @@ namespace HandheldCompanion.ViewModels
 
             CreateHotkeyCommand = new DelegateCommand(async () =>
             {
-                ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(new Hotkey());
+                Hotkey hotkey = new();
+                hotkeyToOpen = hotkey;
+                ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(hotkey);
             });
         }
 
@@ -146,7 +149,10 @@ namespace HandheldCompanion.ViewModels
                 {
                     foundHotkey = HotkeysList.FirstOrDefault(p => p.Hotkey.ButtonFlags == hotkey.ButtonFlags);
                     if (foundHotkey is null)
-                        HotkeysList.Add(new HotkeyViewModel(hotkey));
+                    {
+                        foundHotkey = new HotkeyViewModel(hotkey);
+                        HotkeysList.Add(foundHotkey);
+                    }
                     else
                         foundHotkey.Hotkey = hotkey;
                 }
@@ -156,6 +162,12 @@ namespace HandheldCompanion.ViewModels
                 }
 
                 OnPropertyChanged(nameof(HotkeysList));
+
+                if (ReferenceEquals(hotkey, hotkeyToOpen))
+                {
+                    hotkeyToOpen = null;
+                    foundHotkey.OpenSettingsCommand.Execute(null);
+                }
             });
         }
 
