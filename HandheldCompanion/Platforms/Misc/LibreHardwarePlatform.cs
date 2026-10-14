@@ -358,7 +358,7 @@ namespace HandheldCompanion.Platforms.Misc
 
             if (sensor.Name == "GPU Memory Used")
             {
-                float value = sensorValue.Value / 1024.0f; // MB to GB
+                float value = sensorValue.Value / (1024.0f * 1024.0f * 1024.0f); // bytes to GB
                 if (GPUMemory != value)
                 {
                     GPUMemory = value;
@@ -367,7 +367,7 @@ namespace HandheldCompanion.Platforms.Misc
             }
             else if (sensor.Name == "D3D Dedicated Memory Used")
             {
-                float value = sensorValue.Value / 1024.0f; // MB to GB
+                float value = sensorValue.Value / (1024.0f * 1024.0f * 1024.0f); // bytes to GB
                 if (GPUMemoryDedicated != value)
                 {
                     GPUMemoryDedicated = value;
@@ -376,7 +376,7 @@ namespace HandheldCompanion.Platforms.Misc
             }
             else if (sensor.Name == "D3D Shared Memory Used")
             {
-                float value = sensorValue.Value / 1024.0f; // MB to GB
+                float value = sensorValue.Value / (1024.0f * 1024.0f * 1024.0f); // bytes to GB
                 if (GPUMemoryShared != value)
                 {
                     GPUMemoryShared = value;
@@ -385,19 +385,19 @@ namespace HandheldCompanion.Platforms.Misc
             }
             else if (sensor.Name == "GPU Memory Total")
             {
-                float value = sensorValue.Value / 1024.0f; // MB to GB
+                float value = sensorValue.Value / (1024.0f * 1024.0f * 1024.0f); // bytes to GB
                 if (GPUMemoryTotal != value)
                     GPUMemoryTotal = value;
             }
             else if (sensor.Name == "D3D Dedicated Memory Total")
             {
-                float value = sensorValue.Value / 1024.0f; // MB to GB
+                float value = sensorValue.Value / (1024.0f * 1024.0f * 1024.0f); // bytes to GB
                 if (GPUMemoryDedicatedTotal != value)
                     GPUMemoryDedicatedTotal = value;
             }
             else if (sensor.Name == "D3D Shared Memory Total")
             {
-                float value = sensorValue.Value / 1024.0f; // MB to GB
+                float value = sensorValue.Value / (1024.0f * 1024.0f * 1024.0f); // bytes to GB
                 if (GPUMemorySharedTotal != value)
                     GPUMemorySharedTotal = value;
             }
@@ -703,7 +703,7 @@ namespace HandheldCompanion.Platforms.Misc
 
             if (sensor.Name == "Memory Used")
             {
-                float value = sensorValue.Value;
+                float value = sensorValue.Value / (1024.0f * 1024.0f * 1024.0f); // bytes to GB
                 if (MemoryUsage != value)
                 {
                     MemoryUsage = value;
@@ -712,7 +712,7 @@ namespace HandheldCompanion.Platforms.Misc
             }
             else if (sensor.Name == "Memory Available")
             {
-                float value = sensorValue.Value;
+                float value = sensorValue.Value / (1024.0f * 1024.0f * 1024.0f); // bytes to GB
                 if (MemoryAvailable != value)
                 {
                     MemoryAvailable = value;
