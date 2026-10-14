@@ -569,7 +569,7 @@ public class ProfileManager : IManager
                 return;
 
             // update profile
-            UpdateOrCreateProfile(profile);
+            UpdateOrCreateProfile(profile, apply: false);
 
             lock (profileTransitionLock)
             {
@@ -1174,7 +1174,7 @@ public class ProfileManager : IManager
         }
     }
 
-    public void UpdateOrCreateProfile(Profile profile, UpdateSource source = UpdateSource.Background)
+    public void UpdateOrCreateProfile(Profile profile, UpdateSource source = UpdateSource.Background, bool apply = true)
     {
         if (!HasValidProfileName(profile))
         {
@@ -1271,7 +1271,7 @@ public class ProfileManager : IManager
         }
 
         // apply profile (silently)
-        if (isCurrent)
+        if (isCurrent && apply)
         {
             SetFavorite(profile); // if sub profile, set it as favorite for main profile
             ApplyProfile(profile, source);
