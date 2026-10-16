@@ -33,6 +33,11 @@ namespace HandheldCompanion.Managers
 
         static MotionManager()
         {
+#if DEBUG
+            Vector2 testDisplacement = new(50000.0f, -50000.0f);
+            ConsumeVelocityOutput(ref testDisplacement, short.MaxValue, short.MinValue, 1.0f, 1.0f);
+            System.Diagnostics.Debug.Assert(testDisplacement == new Vector2(17233.0f, -17232.0f));
+#endif
         }
 
         public static void Start()
@@ -327,23 +332,17 @@ namespace HandheldCompanion.Managers
 
             // Consume what we successfully output from the accumulator (before sensitivity was applied)
             if (velocityModeEnabled)
-            {
-                // Calculate how much raw displacement was consumed (reverse the sensitivity multiplication)
-                float consumedX = outputX / sensitivityX;
-                float consumedY = outputY / sensitivityY;
-
-                accumulatedDisplacement.X -= consumedX;
-                accumulatedDisplacement.Y -= consumedY;
-
-                // Apply decay AFTER consumption to prevent draining useful displacement
-                // This naturally dissipates small residual values while preserving large flicks
-                const float decayFactor = 0.90f; // 10% decay per frame
-                accumulatedDisplacement *= decayFactor;
-            }
+                ConsumeVelocityOutput(ref accumulatedDisplacement, outputX, outputY, sensitivityX, sensitivityY);
 
             // fill the final calculated state for further use in the remapper
             controllerState.AxisState[AxisFlags.GyroX] = outputX;
             controllerState.AxisState[AxisFlags.GyroY] = outputY;
+        }
+
+        private static void ConsumeVelocityOutput(ref Vector2 displacement, short outputX, short outputY, float sensitivityX, float sensitivityY)
+        {
+            displacement.X = sensitivityX == 0.0f ? 0.0f : displacement.X - outputX / sensitivityX;
+            displacement.Y = sensitivityY == 0.0f ? 0.0f : displacement.Y - outputY / sensitivityY;
         }
     }
 }

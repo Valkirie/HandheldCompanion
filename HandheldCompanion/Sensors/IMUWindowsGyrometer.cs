@@ -49,10 +49,9 @@ public sealed class IMUWindowsGyrometer : IMUSensor
             Vector3 axis = device.GyroMatrix.Axis;
             int[] remapIndices = device.GyroMatrix.AxisRemapIndices;
 
-            // Get raw readings with threshold check
-            double rawX = Math.Abs(x) >= threshold ? 0 : x;
-            double rawY = Math.Abs(y) >= threshold ? 0 : y;
-            double rawZ = Math.Abs(z) >= threshold ? 0 : z;
+            double rawX = ClampToThreshold(x, threshold);
+            double rawY = ClampToThreshold(y, threshold);
+            double rawZ = ClampToThreshold(z, threshold);
 
             readingAxis[remapIndices[0]] = rawX;
             readingAxis[remapIndices[1]] = rawY;
