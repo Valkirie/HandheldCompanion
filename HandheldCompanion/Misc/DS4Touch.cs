@@ -45,8 +45,10 @@ public static class DS4Touch
 
     static DS4Touch()
     {
+#if DEBUG
         Debug.Assert(CoordinateToAxis(0, TOUCHPAD_WIDTH) == short.MinValue);
         Debug.Assert(CoordinateToAxis(TOUCHPAD_WIDTH - 1, TOUCHPAD_WIDTH) == short.MaxValue);
+#endif
     }
 
     public static bool OutputClickButton

@@ -237,7 +237,9 @@ namespace HandheldCompanion.Controls
                 UpdateLayout();
 
                 UIElement? realizedContainer = itemsOwner.ItemContainerGenerator.ContainerFromIndex(itemIndex) as UIElement;
+#if DEBUG
                 System.Diagnostics.Debug.Assert(realizedContainer is null || InternalChildren.Contains(realizedContainer));
+#endif
                 return realizedContainer;
             }
             catch (InvalidOperationException)
@@ -706,7 +708,9 @@ namespace HandheldCompanion.Controls
                 viewportBottom = Math.Clamp(rawViewportBottom + overscan, 0.0, extentHeight);
 
                 // A collapsed edge range keeps the nearest row realized when the panel is off-screen.
+#if DEBUG
                 System.Diagnostics.Debug.Assert(viewportBottom >= viewportTop);
+#endif
                 return true;
             }
             catch (InvalidOperationException)

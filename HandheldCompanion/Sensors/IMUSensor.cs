@@ -35,8 +35,10 @@ public abstract class IMUSensor : IDisposable
 {
     static IMUSensor()
     {
+#if DEBUG
         System.Diagnostics.Debug.Assert(ClampToThreshold(2500.0, 2000.0f) == 2000.0);
         System.Diagnostics.Debug.Assert(ClampToThreshold(-2500.0, 2000.0f) == -2000.0);
+#endif
     }
 
     protected SensorReading reading = new();

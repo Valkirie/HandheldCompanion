@@ -16,8 +16,10 @@ public class IMUGyrometer : IMUSensor
 
     static IMUGyrometer()
     {
+#if DEBUG
         System.Diagnostics.Debug.Assert(GetAverageReading(new Vector3(3000.0f), 2, Vector3.Zero).X == 1500.0f);
         System.Diagnostics.Debug.Assert(GetAverageReading(Vector3.Zero, 0, new Vector3(750.0f)).X == 750.0f);
+#endif
     }
 
     public static IMUSensor Create(SensorFamily sensorFamily, int updateInterval, float threshold)
