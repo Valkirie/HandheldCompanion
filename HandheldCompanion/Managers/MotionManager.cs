@@ -285,8 +285,8 @@ namespace HandheldCompanion.Managers
             // apply sensivity curve
             // todo: we should only apply this to gyro based output, maybe only to local space ?
             float gyroThreshold = gamepadMotion.GetCalibration().GetGyroThreshold();
-            output.X *= InputUtils.ApplyCustomSensitivity(output.X, gyroThreshold, currentProfile.MotionSensivityArray);
-            output.Y *= InputUtils.ApplyCustomSensitivity(output.Y, gyroThreshold, currentProfile.MotionSensivityArray);
+            output.X *= InputUtils.ApplyCustomSensitivity(output.X, gyroThreshold, currentProfile.MotionSensitivityArray);
+            output.Y *= InputUtils.ApplyCustomSensitivity(output.Y, gyroThreshold, currentProfile.MotionSensitivityArray);
 
             // apply aiming down scopes multiplier if activated
             if (controllerState.ButtonState.Contains(currentProfile.AimingSightsTrigger))
