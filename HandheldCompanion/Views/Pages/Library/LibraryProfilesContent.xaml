@@ -90,6 +90,23 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
+        <ItemsControl ItemsSource="{Binding ProfilesView}" Visibility="{Binding ShowProfilesList, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="ContentPresenter">
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="Margin" Value="0,0,0,3" />
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ContentControl
+                        HorizontalAlignment="Stretch"
+                        Content="{Binding}"
+                        ContentTemplate="{StaticResource LibraryTemplateList}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
         <ItemsControl ItemsSource="{Binding CollectionGroups}" Visibility="{Binding ShowGroupedProfilesList, Converter={StaticResource BooleanToVisibilityConverter}}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>

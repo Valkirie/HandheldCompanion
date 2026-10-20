@@ -194,6 +194,8 @@ public partial class Profile : ICloneable, IComparable, INotifyPropertyChanged
     // Getter-only so Newtonsoft.Json adds items to the existing instance instead
     // of replacing it, which guarantees the IsLiked migration always wins even
     // when "IsLiked" appears before "Collections" in old JSON files.
+    // Reuse also overrides the Replace setting used when cloning for persistence.
+    [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Reuse)]
     public HashSet<Guid> Collections { get; } = [];
     public bool SuspendOnSleep { get; set; }
     public bool SuspendOnQT { get; set; }

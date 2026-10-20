@@ -440,6 +440,7 @@ public partial class MainWindow : GamepadWindow
         UIHelper.TryBeginInvoke(() =>
         {
             GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
+            GamepadUIOptions.Visibility = Visibility.Collapsed;
 
             bool canGoBack = gamepadFocusManager.CanGoBack;
             GamepadUIBack.Visibility = canGoBack ? Visibility.Visible : Visibility.Collapsed;
@@ -454,7 +455,6 @@ public partial class MainWindow : GamepadWindow
                         GamepadUISelect.Visibility = Visibility.Visible;
                         GamepadUIToggle.Visibility = Visibility.Collapsed;
                         GamepadUIMore.Visibility = Visibility.Collapsed;
-                        GamepadUIOptions.Visibility = Visibility.Collapsed;
                     }
                     break;
 
@@ -463,7 +463,6 @@ public partial class MainWindow : GamepadWindow
                         GamepadUISelect.Visibility = Visibility.Visible;
                         GamepadUIToggle.Visibility = Visibility.Collapsed;
                         GamepadUIMore.Visibility = Visibility.Collapsed;
-                        GamepadUIOptions.Visibility = Visibility.Collapsed;
 
                         // To get the first RadioButton in the list, if any
                         RadioButton? firstRadioButton = WPFUtils.FindChildren(control).FirstOrDefault(c => c is RadioButton) as RadioButton;
@@ -475,7 +474,6 @@ public partial class MainWindow : GamepadWindow
 
                         if (control.Tag is ProfileViewModel profileViewModel)
                         {
-                            GamepadUIOptions.Visibility = Visibility.Visible;
                             Profile profile = profileViewModel.Profile;
                             if (!profile.ErrorCode.HasFlag(ProfileErrorCode.MissingExecutable))
                             {
@@ -519,6 +517,11 @@ public partial class MainWindow : GamepadWindow
 
                 if (ContentFrame.Content is LibraryPage currentLibraryPage)
                     currentLibraryPage.UpdateFocusedProfile(focusedProfileViewModel);
+            }
+            else if (control.Tag is CollectionGroupViewModel { CanDelete: true } collectionGroup)
+            {
+                GamepadUIOptions.Visibility = Visibility.Visible;
+                SetLibraryOptionsTarget(collectionGroup, control);
             }
         });
     }
@@ -732,28 +735,32 @@ public partial class MainWindow : GamepadWindow
         return CurrentWindow;
     }
 
-    private ProfileViewModel? libraryOptionsTarget;
+    private BaseViewModel? libraryOptionsTarget;
     private FrameworkElement? libraryOptionsTargetControl;
 
-    public void SetLibraryOptionsTarget(ProfileViewModel profileViewModel, FrameworkElement control)
+    public void SetLibraryOptionsTarget(BaseViewModel viewModel, FrameworkElement control)
     {
-        libraryOptionsTarget = profileViewModel;
+        libraryOptionsTarget = viewModel;
         libraryOptionsTargetControl = control;
     }
 
     public void ShowLibraryOptions(FrameworkElement? control = null)
     {
-        ProfileViewModel? profileViewModel = control?.Tag as ProfileViewModel ?? control?.DataContext as ProfileViewModel ?? libraryOptionsTarget;
-        if (profileViewModel is null)
+        object? viewModel = control?.Tag;
+        if (viewModel is not ProfileViewModel && viewModel is not CollectionGroupViewModel)
+            viewModel = control?.DataContext;
+        viewModel ??= libraryOptionsTarget;
+
+        if (viewModel is not ProfileViewModel && viewModel is not CollectionGroupViewModel { CanDelete: true })
             return;
 
         FrameworkElement? target = control ?? libraryOptionsTargetControl;
         if (target is not Control targetControl || FlyoutBase.GetAttachedFlyout(target) is not MenuFlyout menuFlyout)
             return;
 
-        menuFlyout.SetValue(DataContextProperty, profileViewModel);
+        menuFlyout.SetValue(DataContextProperty, viewModel);
         foreach (FrameworkElement menuItem in menuFlyout.Items.OfType<FrameworkElement>())
-            menuItem.DataContext = profileViewModel;
+            menuItem.DataContext = viewModel;
 
         gamepadFocusManager.TrackFlyout(menuFlyout, targetControl);
         menuFlyout.ShowAt(target);
