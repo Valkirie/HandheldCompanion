@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Models;
 using System.Linq;
 using System.Threading;
 using System.Windows.Media;
@@ -30,7 +31,27 @@ namespace HandheldCompanion.Devices
 
             // OXP3 exposes its lighting through the Gen2 HID interface.
             EnableSerialPort = false;
-            DynamicLightingCapabilities |= LEDLevel.Breathing;
+            // G-Key and logo are a second LED set: their own color in solid and preset modes,
+            // with a breathing toggle (the sticks can't do pure breathing, so no Breathing level)
+            Capabilities |= DeviceCapabilities.DynamicLightingSecondLEDSet;
+
+            // OneXConsole has no speed setting and the firmware breathing/effect speed is fixed
+            Capabilities |= DeviceCapabilities.DynamicLightingFixedSpeed;
+
+            // OneXConsole firmware effects for the stick zones (OXP theme ids)
+            LEDPresets =
+            [
+                new ("LEDPreset_OneXPlayerX1_Preset01", "onexplayer/preset01.png", 0x0D), // Monster Woke
+                new ("LEDPreset_OneXPlayerX1_Preset02", "onexplayer/preset02.png", 0x03), // Flowing Light
+                new ("LEDPreset_OneXPlayerX1_Preset03", "onexplayer/preset03.png", 0x0B), // Sunset Afterglow
+                new ("LEDPreset_OneXPlayerX1_Preset04", "onexplayer/preset04.png", 0x05), // Colorful Neon
+                new ("LEDPreset_OneXPlayerX1_Preset05", "onexplayer/preset05.png", 0x07), // Dreamy
+                new ("LEDPreset_OneXPlayerX1_Preset06", "onexplayer/preset06.png", 0x09), // Cyberpunk
+                new ("LEDPreset_OneXPlayerX1_Preset07", "onexplayer/preset07.png", 0x0C), // Colourful
+                new ("LEDPreset_OneXPlayerX1_Preset09", "onexplayer/preset09.png", OXPClassicPreset), // OXP classic
+                new ("LEDPreset_OneXPlayerX1_Preset10", "onexplayer/preset10.png", 0x02), // Aurora
+                new ("LEDPreset_OneXPlayerX1_Preset11", "onexplayer/preset11.png", 0x08), // Warm Sun
+            ];
 
             // The OXP3 uses the X2 CommonHid controller interface:
             // VID 0x1A86, PID 0xFE00, vendor collection FF00:0001.
@@ -43,20 +64,36 @@ namespace HandheldCompanion.Devices
             OEMChords.Add(new KeyboardChord("G-Key", null, null, false, ButtonFlags.OEM4));
         }
 
+        // OneXConsole RGB partition table for OXP3 (shared with X2 Mini / X2 Mini Pro), command 0xB8:
+        //   0x01 left stick, 0x02 right stick: solid color or firmware effect, no pure breathing (OXC also lists 0x07 "connector", not present on OXP3)
+        //   0x05 G-Key, 0x06 logo: solid color or pure breathing (0xF0), no firmware effects
+        private const byte LeftStickZone = 0x01, RightStickZone = 0x02, GKeyZone = 0x05, LogoZone = 0x06;
+
+        // the MCU drops a zone command that arrives too soon after the previous one
+        // (every other one at OneXConsole's 20 ms); 150 ms is the minimum, 300 ms is safe
+        private const int ZoneDelay = 150;
+        private const int SafeDelay = ZoneDelay * 2;
+        private const int StickDelay = ZoneDelay * 4;
+
+        // OneXConsole "OXP classic" is not a firmware effect, it is rendered as this solid color
+        private const int OXPClassicPreset = 1000;
+        private static readonly Color OXPClassicColor = Color.FromRgb(183, 48, 0);
+
+        // requested LED state; HC sets brightness first, then the color or preset, and every
+        // change is sent to the device by ApplyLeds() with one fixed sequence
+        private readonly object LedLock = new();
+        private int CurrentBrightness = 100;
+        private bool CurrentIsPreset;
+        private bool CurrentBreathing;
+        private Color CurrentMainColor = Colors.Black;
+        private Color CurrentSecondColor = Colors.Black;
+        private int CurrentPreset;
+
         public override bool SetLedBrightness(int brightness)
         {
-            // HHD's x2 rgb_sides = (0x01, 0x02, 0x07) and secondary_sides = (0x05, 0x06).
-            hidDevices.TryGetValue(VendorHidId, out HidLibrary.HidDevice? device);
-            if (device is null)
-                return false;
-
-            bool result = true;
-            foreach (byte side in new byte[] { 0x01, 0x02, 0x07, 0x05, 0x06 })
-            {
-                result &= SendV1Brightness(device, brightness, side);
-                Thread.Sleep(200);
-            }
-            return result;
+            // only stored: DynamicLightingManager always follows with SetLedColor/SetLEDPreset
+            CurrentBrightness = brightness;
+            return true;
         }
 
         public override bool SetLedColor(Color mainColor, Color secondaryColor, LEDLevel level, int speed = 100)
@@ -64,23 +101,89 @@ namespace HandheldCompanion.Devices
             if (level is not (LEDLevel.SolidColor or LEDLevel.Breathing))
                 return false;
 
-            hidDevices.TryGetValue(VendorHidId, out HidLibrary.HidDevice? device);
-            if (device is null)
+            lock (LedLock)
+            {
+                CurrentIsPreset = false;
+                // Breathing level only from settings saved before the second set breathing toggle
+                CurrentBreathing = level == LEDLevel.Breathing || ManagerFactory.settingsManager.GetBoolean("LEDSecondSetBreathing");
+                CurrentMainColor = mainColor;
+                CurrentSecondColor = secondaryColor;
+                return ApplyLeds();
+            }
+        }
+
+        public override bool SetLEDPreset(LEDPreset? preset)
+        {
+            if (preset is null)
                 return false;
 
-            bool breathing = level == LEDLevel.Breathing;
-            bool result = true;
-            // HHD sends the primary color to the two joystick zones and center zone.
-            foreach (byte side in new byte[] { 0x01, 0x02, 0x07 })
+            lock (LedLock)
             {
-                result &= SendV1SolidColor(device, mainColor, side, breathing);
-                Thread.Sleep(200);
+                CurrentIsPreset = true;
+                CurrentBreathing = ManagerFactory.settingsManager.GetBoolean("LEDSecondSetBreathing");
+                CurrentPreset = preset.Value;
+                // G-Key and logo have no effects, they use the second color (solid or breathing)
+                // (the UI always shows the second color picker on the presets page for this device)
+                CurrentSecondColor = ManagerFactory.settingsManager.GetColor("LEDSecondColor");
+                return ApplyLeds();
             }
-            // There is intentionally no side 0 aggregate zone on the X2 Mini Pro.
-            foreach (byte side in new byte[] { 0x05, 0x06 })
+        }
+
+        // Sends the whole LED state, always in the same order and spacing:
+        //  - logo: color, then on/level (it only starts breathing once it receives the on/level)
+        //  - G-Key: on/level first (it switches on its color command alone), its color lands
+        //    right after the logo's on/level so both breathe in sync
+        //  - sticks last (the G-Key command got dropped right after the stick ones): solid main color
+        //    (no pure breathing on sticks) or the firmware effect, then on/level
+        // Brightness 0 only sends "off": a color or effect command would turn the zone back on.
+        private bool ApplyLeds()
+        {
+            hidDevices.TryGetValue(VendorHidId, out HidLibrary.HidDevice? device);
+            if (device is null || !device.IsConnected)
+                return false;
+
+            bool on = CurrentBrightness > 0;
+            bool result = true;
+
+            // leave a gap after whatever was sent before
+            Thread.Sleep(SafeDelay);
+
+            if (on)
             {
-                result &= SendV1SolidColor(device, secondaryColor, side, breathing);
-                Thread.Sleep(200);
+                result &= SendV1Brightness(device, CurrentBrightness, GKeyZone); Thread.Sleep(SafeDelay);
+                result &= SendV1SolidColor(device, CurrentSecondColor, LogoZone, CurrentBreathing); Thread.Sleep(SafeDelay);
+                result &= SendV1Brightness(device, CurrentBrightness, LogoZone); Thread.Sleep(ZoneDelay);
+                result &= SendV1SolidColor(device, CurrentSecondColor, GKeyZone, CurrentBreathing); Thread.Sleep(SafeDelay);
+            }
+            else
+            {
+                result &= SendV1Brightness(device, 0, LogoZone); Thread.Sleep(SafeDelay);
+                result &= SendV1Brightness(device, 0, GKeyZone); Thread.Sleep(SafeDelay);
+            }
+
+            // extra gap before the sticks: the left stick sometimes missed its command
+            Thread.Sleep(SafeDelay);
+
+            // sticks: colors/effects first, then on/level, 600 ms apart; with less, or with
+            // on/level before the effect, the right stick randomly missed brightness changes
+            if (on)
+            {
+                foreach (byte zone in new[] { LeftStickZone, RightStickZone })
+                {
+                    if (!CurrentIsPreset)
+                        result &= SendV1SolidColor(device, CurrentMainColor, zone, false);
+                    else if (CurrentPreset == OXPClassicPreset)
+                        result &= SendV1SolidColor(device, OXPClassicColor, zone, false);
+                    else
+                        result &= WriteReport(device, WithReportID(BuildV1Command(0xB8, 0x01, new byte[] { (byte)CurrentPreset, zone, 0x02 })));
+                    Thread.Sleep(StickDelay);
+                }
+            }
+
+            foreach (byte zone in new[] { LeftStickZone, RightStickZone })
+            {
+                result &= SendV1Brightness(device, CurrentBrightness, zone);
+                Thread.Sleep(StickDelay);
             }
             return result;
         }

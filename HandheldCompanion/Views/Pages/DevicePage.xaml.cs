@@ -31,6 +31,9 @@ namespace HandheldCompanion.Views.Pages
         {
             DataContext = new DevicePageViewModel();
             InitializeComponent();
+
+            // settings may be applied before the cards exist; place/show the LED cards again once loaded
+            Loaded += (_, _) => UpdateSecondColorVisibility();
         }
 
         public DevicePage(string? Tag) : this()
@@ -77,6 +80,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager_SettingValueChanged("LEDSecondColor", ManagerFactory.settingsManager.GetString("LEDSecondColor"), false, true);
             SettingsManager_SettingValueChanged("LEDAmbilightVerticalBlackBarDetection", ManagerFactory.settingsManager.GetString("LEDAmbilightVerticalBlackBarDetection"), false, true);
             SettingsManager_SettingValueChanged("LEDUseSecondColor", ManagerFactory.settingsManager.GetString("LEDUseSecondColor"), false, true);
+            SettingsManager_SettingValueChanged("LEDSecondSetBreathing", ManagerFactory.settingsManager.GetString("LEDSecondSetBreathing"), false, true);
             SettingsManager_SettingValueChanged("LEDPresetIndex", ManagerFactory.settingsManager.GetString("LEDPresetIndex"), false, true);
             SettingsManager_SettingValueChanged("LegionControllerPassthrough", ManagerFactory.settingsManager.GetString("LegionControllerPassthrough"), false, true);
             SettingsManager_SettingValueChanged("LegionControllerSwap", ManagerFactory.settingsManager.GetString("LegionControllerSwap"), false, true);
@@ -132,6 +136,16 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "LEDSettingsLevel":
                         {
+                            // devices with a second LED set have no Breathing level: move an old
+                            // Breathing setting to solid color + second set breathing
+                            if (Convert.ToInt32(value) == (int)LEDLevel.Breathing &&
+                                IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDSet))
+                            {
+                                ManagerFactory.settingsManager.SetProperty("LEDSecondSetBreathing", true);
+                                ManagerFactory.settingsManager.SetProperty("LEDSettingsLevel", (int)LEDLevel.SolidColor);
+                                break;
+                            }
+
                             foreach (Control control in LEDSettingsLevel.Items)
                             {
                                 if (control is not ComboBoxItem)
@@ -144,6 +158,7 @@ namespace HandheldCompanion.Views.Pages
                                     break;
                                 }
                             }
+                            UpdateSecondColorVisibility();
                         }
                         break;
                     case "LEDBrightness":
@@ -166,6 +181,13 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "LEDUseSecondColor":
                         Toggle_UseSecondColor.IsOn = Convert.ToBoolean(value);
+                        UpdateSecondColorSource();
+                        break;
+                    case "LEDSecondUseAccentColor":
+                        UpdateSecondColorSource();
+                        break;
+                    case "LEDSecondSetBreathing":
+                        Toggle_SecondSetBreathing.IsOn = Convert.ToBoolean(value);
                         break;
                     case "LEDPresetIndex":
                         int presetIndex = Convert.ToInt32(value);
@@ -227,6 +249,9 @@ namespace HandheldCompanion.Views.Pages
             {
                 if (MatchAccentColor.IsOn)
                     SetAccentColor();
+
+                if (HasSecondLEDSet && ManagerFactory.settingsManager.GetBoolean("LEDSecondUseAccentColor"))
+                    ApplyAccentColor(false);
             });
         }
 
@@ -307,21 +332,27 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
-            // keep the user's colors so they come back when accent color is turned off
+            // keep the user's colors so they come back when accent color is turned off;
+            // devices with a second LED set pick its accent color separately
+            bool both = !HasSecondLEDSet;
             if (MatchAccentColor.IsOn)
             {
                 SaveColor(true);
-                SaveColor(false);
+                if (both)
+                    SaveColor(false);
                 SetAccentColor();
             }
             else
             {
                 RestoreColor(true);
-                RestoreColor(false);
+                if (both)
+                    RestoreColor(false);
             }
 
             ManagerFactory.settingsManager.SetProperty("LEDSettingsUseAccentColor", MatchAccentColor.IsOn);
         }
+
+        private static bool HasSecondLEDSet => IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDSet);
 
         private void SaveColor(bool main)
         {
@@ -350,7 +381,8 @@ namespace HandheldCompanion.Views.Pages
         private void SetAccentColor()
         {
             ApplyAccentColor(true);
-            ApplyAccentColor(false);
+            if (!HasSecondLEDSet)
+                ApplyAccentColor(false);
         }
 
         private void LEDSettingsLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -362,8 +394,76 @@ namespace HandheldCompanion.Views.Pages
             int level = Convert.ToInt32(comboBoxItem.Tag);
 
             ManagerFactory.settingsManager.SetProperty("LEDSettingsLevel", level);
+            UpdateSecondColorVisibility();
         }
 
+        // Second color cards: shown for solid color and breathing. Devices with a second LED set show a color source selector,
+        // the second color picker and a breathing toggle in solid and preset modes.
+        private bool secondLEDSetLayoutDone;
+
+        private void UpdateSecondColorVisibility()
+        {
+            IDevice device = IDevice.GetCurrent();
+            int index = LEDSettingsLevel.SelectedIndex;
+            var items = DynamicLightingEffects.Items;
+
+            // devices with a fixed effect speed: hide the speed slider
+            if (device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingFixedSpeed))
+                LEDSpeedCard.Visibility = Visibility.Collapsed;
+
+            if (!device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDSet))
+            {
+                // second color picker follows the "use second color" toggle (solid color and breathing)
+                Visibility visibility = index is 0 or 1 ? Visibility.Visible : Visibility.Collapsed;
+                SecondColorToggleCard.Visibility = visibility;
+                SecondColorPickerCard.Visibility = visibility;
+                return;
+            }
+
+            // second LED set: arrange two groups once. Main color cards (solid) and the
+            // presets list (preset) hide themselves, so one fixed order covers both modes:
+            // first set header, accent, main color, presets, second set header, source, color, breathing
+            if (!secondLEDSetLayoutDone)
+            {
+                secondLEDSetLayoutDone = true;
+
+                FrameworkElement[] firstSet = { MatchAccentColorCard, MainColorPickerCard, LEDPresetsCard };
+                FrameworkElement[] secondSet = { SecondColorSourceCard, SecondColorPickerCard, SecondSetBreathingCard };
+
+                int at = items.IndexOf(MatchAccentColorCard);
+                foreach (FrameworkElement element in new FrameworkElement[] { LEDFirstSetHeader, LEDSecondSetHeader }.Concat(firstSet).Concat(secondSet))
+                    items.Remove(element);
+
+                foreach (FrameworkElement element in new[] { LEDFirstSetHeader }.Concat(firstSet).Append(LEDSecondSetHeader).Concat(secondSet).Reverse())
+                    items.Insert(at, element);
+
+                // indent each group under its header
+                foreach (FrameworkElement element in firstSet.Concat(secondSet))
+                    element.Margin = new Thickness(24, 0, 0, 0);
+            }
+
+            bool shown = index is 0 or 1 or 7;
+            Visibility groups = shown ? Visibility.Visible : Visibility.Collapsed;
+
+            SecondColorToggleCard.Visibility = Visibility.Collapsed;
+            LEDFirstSetHeader.Visibility = groups;
+            LEDSecondSetHeader.Visibility = groups;
+            SecondColorSourceCard.Visibility = groups;
+            SecondColorPickerCard.Visibility = groups;
+            SecondSetBreathingCard.Visibility = groups;
+
+            // presets have no main color: offer custom or accent only (presets always use the second color)
+            bool preset = index == 7;
+            ((ComboBoxItem)SecondColorSource.Items[1]).Visibility = preset ? Visibility.Collapsed : Visibility.Visible;
+            updatingSecondColorSource = true;
+            SecondColorSource.SelectedIndex = ManagerFactory.settingsManager.GetBoolean("LEDSecondUseAccentColor") ? 2
+                : !ManagerFactory.settingsManager.GetBoolean("LEDUseSecondColor") && !preset ? 1 : 0;
+            updatingSecondColorSource = false;
+
+            // the picker is only editable for a custom color (not main or accent)
+            SecondColorPickerCard.IsEnabled = SecondColorSource.SelectedIndex == 0;
+            SecondColorPicker.IsEnabled = true;
+        }
         private void LEDOEMPreset_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!IsLoaded)
@@ -423,6 +523,47 @@ namespace HandheldCompanion.Views.Pages
             ManagerFactory.settingsManager.SetProperty("LEDAmbilightVerticalBlackBarDetection", Toggle_AmbilightVerticalBlackBarDetection.IsOn);
         }
 
+        // second LED set color source: 0 custom, 1 main color, 2 Windows accent color
+        private bool updatingSecondColorSource;
+
+        private void UpdateSecondColorSource()
+        {
+            UpdateSecondColorVisibility();
+        }
+
+        private void SecondColorSource_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded || updatingSecondColorSource)
+                return;
+
+            SettingsManager sm = ManagerFactory.settingsManager;
+            bool wasAccent = sm.GetBoolean("LEDSecondUseAccentColor");
+            int index = SecondColorSource.SelectedIndex;
+
+            if (index == 2)
+            {
+                if (!wasAccent)
+                    SaveColor(false);
+                sm.SetProperty("LEDSecondUseAccentColor", true);
+                ApplyAccentColor(false);
+            }
+            else if (wasAccent)
+            {
+                sm.SetProperty("LEDSecondUseAccentColor", false);
+                RestoreColor(false);
+            }
+
+            sm.SetProperty("LEDUseSecondColor", index != 1);
+            UpdateSecondColorVisibility();
+        }
+
+        private void Toggle_SecondSetBreathing_Toggled(object? sender, RoutedEventArgs? e)
+        {
+            if (!IsLoaded)
+                return;
+
+            ManagerFactory.settingsManager.SetProperty("LEDSecondSetBreathing", Toggle_SecondSetBreathing.IsOn);
+        }
         private async void Toggle_UseSecondColor_Toggled(object? sender, RoutedEventArgs? e)
         {
             if (!IsLoaded)

@@ -1762,6 +1762,60 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Color source.
+        /// </summary>
+        public static string DevicePage_SecondColorSource {
+            get {
+                return ResourceManager.GetString("DevicePage_SecondColorSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom color.
+        /// </summary>
+        public static string DevicePage_SecondColorSource_Custom {
+            get {
+                return ResourceManager.GetString("DevicePage_SecondColorSource_Custom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Main color.
+        /// </summary>
+        public static string DevicePage_SecondColorSource_Main {
+            get {
+                return ResourceManager.GetString("DevicePage_SecondColorSource_Main", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Windows accent color.
+        /// </summary>
+        public static string DevicePage_SecondColorSource_Accent {
+            get {
+                return ResourceManager.GetString("DevicePage_SecondColorSource_Accent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sticks.
+        /// </summary>
+        public static string DevicePage_LEDFirstSet {
+            get {
+                return ResourceManager.GetString("DevicePage_LEDFirstSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to G-Key and logo.
+        /// </summary>
+        public static string DevicePage_LEDSecondSet {
+            get {
+                return ResourceManager.GetString("DevicePage_LEDSecondSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your device must be restarted in order for the changes to take effect. Would you like to restart now?.
         /// </summary>
         public static string Dialog_ForceRestartDesc {

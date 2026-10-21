@@ -2724,6 +2724,24 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="DevicePage_UseSecondColor" xml:space="preserve">
     <value>Use second color</value>
   </data>
+  <data name="DevicePage_SecondColorSource" xml:space="preserve">
+    <value>Color source</value>
+  </data>
+  <data name="DevicePage_SecondColorSource_Custom" xml:space="preserve">
+    <value>Custom color</value>
+  </data>
+  <data name="DevicePage_SecondColorSource_Main" xml:space="preserve">
+    <value>Main color</value>
+  </data>
+  <data name="DevicePage_SecondColorSource_Accent" xml:space="preserve">
+    <value>Windows accent color</value>
+  </data>
+  <data name="DevicePage_LEDFirstSet" xml:space="preserve">
+    <value>Sticks</value>
+  </data>
+  <data name="DevicePage_LEDSecondSet" xml:space="preserve">
+    <value>G-Key and logo</value>
+  </data>
   <data name="ProfilesPage_GraphicsSettings" xml:space="preserve">
     <value>Graphics settings</value>
   </data>

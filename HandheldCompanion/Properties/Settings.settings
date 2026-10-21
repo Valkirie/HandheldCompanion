@@ -221,6 +221,12 @@
     <Setting Name="LEDUseSecondColor" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="LEDSecondSetBreathing" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="LEDSecondUseAccentColor" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
     <Setting Name="LEDSettingsLevel" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>

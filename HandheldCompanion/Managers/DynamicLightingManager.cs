@@ -281,6 +281,7 @@ public static class DynamicLightingManager
             case "LEDSettingsLevel":
             case "LEDSpeed":
             case "LEDUseSecondColor":
+            case "LEDSecondSetBreathing":
             case "LEDPresetIndex":
                 RequestUpdate();
                 break;

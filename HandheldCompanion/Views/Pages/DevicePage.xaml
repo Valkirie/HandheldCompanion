@@ -638,8 +638,27 @@
                                 Visibility="{Binding IsPresetSupported, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         </ComboBox>
                         <ui:SettingsExpander.Items>
+
+                            <!--  Second LED set: group headers  -->
+                            <TextBlock
+                                Name="LEDFirstSetHeader"
+                                Margin="16,16,0,6"
+                                FontSize="15"
+                                FontWeight="SemiBold"
+                                Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+                                Text="{l:Static resx:Resources.DevicePage_LEDFirstSet}"
+                                Visibility="Collapsed" />
+                            <TextBlock
+                                Name="LEDSecondSetHeader"
+                                Margin="16,20,0,6"
+                                FontSize="15"
+                                FontWeight="SemiBold"
+                                Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+                                Text="{l:Static resx:Resources.DevicePage_LEDSecondSet}"
+                                Visibility="Collapsed" />
                             <!--  Effect speed  -->
                             <ui:SettingsCard
+                                Name="LEDSpeedCard"
                                 d:Visibility="Visible"
                                 Header="{l:Static resx:Resources.DevicePage_DynamicLighting_EffectSpeed}"
                                 Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6}">
@@ -688,6 +707,7 @@
                             <!--  Main color  -->
                             <!--  Match my Windows accent color  -->
                             <ui:SettingsCard
+                                Name="MatchAccentColorCard"
                                 d:Visibility="Visible"
                                 Header="{l:Static resx:Resources.DevicePage_DynamicLighting_MatchAccentColor}"
                                 Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0|1|3|5}">
@@ -696,6 +716,7 @@
 
                             <!--  Main color picker  -->
                             <ui:SettingsCard
+                                Name="MainColorPickerCard"
                                 d:Visibility="Visible"
                                 Header="{l:Static resx:Resources.DevicePage_DynamicLighting_MainColorSelection}"
                                 Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0|1|3|5}">
@@ -713,8 +734,7 @@
                                 Name="SecondColorToggleCard"
                                 d:Visibility="Visible"
                                 Header="{l:Static resx:Resources.DevicePage_UseSecondColor}"
-                                IsEnabled="{Binding IsSecondColorSupported}"
-                                Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0|1}">
+                                IsEnabled="{Binding IsSecondColorSupported}">
                                 <ui:ToggleSwitch Name="Toggle_UseSecondColor" Toggled="Toggle_UseSecondColor_Toggled" />
                             </ui:SettingsCard>
 
@@ -723,8 +743,7 @@
                                 Name="SecondColorPickerCard"
                                 d:Visibility="Visible"
                                 Header="{l:Static resx:Resources.DevicePage_DynamicLighting_SecondColorSelection}"
-                                IsEnabled="{Binding Source={x:Reference Toggle_UseSecondColor}, Path=IsOn}"
-                                Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0|1}">
+                                IsEnabled="{Binding Source={x:Reference Toggle_UseSecondColor}, Path=IsOn}">
                                 <colorpicker:PortableColorPicker
                                     Name="SecondColorPicker"
                                     Width="32"
@@ -732,6 +751,26 @@
                                     ColorChanged="SecondColorPicker_ColorChanged"
                                     IsEnabled="{Binding IsColorPickerEnabled}"
                                     Style="{StaticResource DefaultColorPickerStyle}" />
+                            </ui:SettingsCard>
+
+                            <!--  Second LED set: color source  -->
+                            <ui:SettingsCard
+                                Name="SecondColorSourceCard"
+                                Header="{l:Static resx:Resources.DevicePage_SecondColorSource}"
+                                Visibility="Collapsed">
+                                <ComboBox Name="SecondColorSource" SelectionChanged="SecondColorSource_SelectionChanged">
+                                    <ComboBoxItem Content="{l:Static resx:Resources.DevicePage_SecondColorSource_Custom}" />
+                                    <ComboBoxItem Content="{l:Static resx:Resources.DevicePage_SecondColorSource_Main}" />
+                                    <ComboBoxItem Content="{l:Static resx:Resources.DevicePage_SecondColorSource_Accent}" />
+                                </ComboBox>
+                            </ui:SettingsCard>
+
+                            <!--  Second LED set: breathing  -->
+                            <ui:SettingsCard
+                                Name="SecondSetBreathingCard"
+                                Header="{l:Static resx:Resources.DevicePage_DynamicLighting_Breathing}"
+                                Visibility="Collapsed">
+                                <ui:ToggleSwitch Name="Toggle_SecondSetBreathing" Toggled="Toggle_SecondSetBreathing_Toggled" />
                             </ui:SettingsCard>
 
                             <!--  Vertical blackbar detection  -->
@@ -744,6 +783,7 @@
 
                             <!--  OEM Presets  -->
                             <ui:SettingsCard
+                                Name="LEDPresetsCard"
                                 d:Visibility="Visible"
                                 Header="{l:Static resx:Resources.DevicePage_DynamicLighting_PresetsSelection}"
                                 Visibility="{Binding Source={x:Reference LEDSettingsLevel}, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=7}">
