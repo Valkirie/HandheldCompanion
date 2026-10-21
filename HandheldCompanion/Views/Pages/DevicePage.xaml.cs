@@ -346,11 +346,9 @@ namespace HandheldCompanion.Views.Pages
         {
             // workaround: NotifyableColor is raising ColorChanged event infinitely
             ColorRoutedEventArgs colorArgs = (ColorRoutedEventArgs)e;
+            // same color again; resetting here turned the preview black
             if (prevMainColor == colorArgs.Color)
-            {
-                MainColorPicker.Color = new NotifyableColor(new PickerControlBase());
                 return;
-            }
             prevMainColor = colorArgs.Color;
 
             if (!IsLoaded)
@@ -363,11 +361,9 @@ namespace HandheldCompanion.Views.Pages
         {
             // workaround: NotifyableColor is raising ColorChanged event infinitely
             ColorRoutedEventArgs colorArgs = (ColorRoutedEventArgs)e;
+            // same color again; resetting here turned the preview black
             if (prevSecondColor == colorArgs.Color)
-            {
-                SecondColorPicker.Color = new NotifyableColor(new PickerControlBase());
                 return;
-            }
             prevSecondColor = colorArgs.Color;
 
             if (!IsLoaded)
