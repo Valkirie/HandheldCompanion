@@ -4975,6 +4975,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to OneXConsole is running.
+        /// </summary>
+        public static string Hint_OneXConsoleCheck {
+            get {
+                return ResourceManager.GetString("Hint_OneXConsoleCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disable OneXConsole.
+        /// </summary>
+        public static string Hint_OneXConsoleCheckAction {
+            get {
+                return ResourceManager.GetString("Hint_OneXConsoleCheckAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OneXConsole is running on your device. This may interfere with the application
+        /// </summary>
+        public static string Hint_OneXConsoleCheckDesc {
+            get {
+                return ResourceManager.GetString("Hint_OneXConsoleCheckDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You should disable OneXConsole, so that the application can run smoothly and without any conflicts
+        /// </summary>
+        public static string Hint_OneXConsoleCheckReadme {
+            get {
+                return ResourceManager.GetString("Hint_OneXConsoleCheckReadme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MSI Center is running on your device. This may interfere with the application.
         /// </summary>
         public static string Hint_MSIClawCenterCheckDesc {

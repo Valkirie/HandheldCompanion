@@ -78,6 +78,7 @@ namespace HandheldCompanion.Watchers
                 LegionGo => new LegionSpaceWatcher(),
                 ROGAlly or ROGAllyX => new RogAllySpaceWatcher(),
                 GamingZone => new ZotacLauncherWatcher(),
+                OneXPlayer3 => new OneXConsoleWatcher(),
                 _ => null
             };
         }
