@@ -53,9 +53,9 @@ namespace HandheldCompanion.Targets
 
             byte buttons9 = 0;
             if (inputs.ButtonState[ButtonFlags.L5]) buttons9 |= 0x80;
-            if (inputs.ButtonState[ButtonFlags.Back]) buttons9 |= 0x40;
+            if (inputs.ButtonState[ButtonFlags.Back]) buttons9 |= 0x10; // View
             if (inputs.ButtonState[ButtonFlags.Special]) buttons9 |= 0x20;
-            if (inputs.ButtonState[ButtonFlags.Start]) buttons9 |= 0x10;
+            if (inputs.ButtonState[ButtonFlags.Start]) buttons9 |= 0x40; // Menu
             if (inputs.ButtonState[ButtonFlags.DPadDown]) buttons9 |= 0x08;
             if (inputs.ButtonState[ButtonFlags.DPadLeft]) buttons9 |= 0x04;
             if (inputs.ButtonState[ButtonFlags.DPadRight]) buttons9 |= 0x02;
