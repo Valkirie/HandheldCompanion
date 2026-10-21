@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
 using System.Linq;
 using System.Threading;
 using System.Windows.Media;
@@ -125,14 +126,43 @@ namespace HandheldCompanion.Devices
             };
         }
 
-        public override bool IsBatteryProtectionSupported(int majorVersion, int minorVersion)
+        // Battery protection (OneXConsole BatteryService defaults: charge limit 0x4A3, bypass 0x4A4).
+        // Verified on OXP3: 0x4A3 reads back the charge limit set in OneXConsole.
+        public override bool IsBatteryProtectionSupported(int majorVersion, int minorVersion) => true;
+
+        protected override void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
         {
-            // No OXP3-specific battery-protection register implementation
-            // has been established by the supplied OneXConsole/HC sources.
-            //
-            // Do not inherit the X1 battery-protection implementation merely
-            // because OneXPlayerX1 exposes it.
-            return false;
+            if (name == "BatteryChargeLimit")
+            {
+                // re-apply: limit is only enforced while the toggle is on
+                SetBatteryChargeLimit(ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPercent"));
+                return;
+            }
+
+            base.SettingsManager_SettingValueChanged(name, value, temporary, initializing);
+        }
+
+        public override void SetBatteryChargeLimit(int chargeLimit)
+        {
+            if (!ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"))
+                chargeLimit = 100;
+
+            if (chargeLimit < 0 || chargeLimit > 100)
+                return;
+
+            TryWriteEcByte(ECBatteryLimitAddress, (byte)chargeLimit);
+        }
+
+        public override void SetBatteryBypassChargingMode(int modeIndex)
+        {
+            byte modeValue = modeIndex switch
+            {
+                1 => 0x01, // bypass on, charges during sleep/shutdown
+                2 => 0x0B, // bypass always on (OneXConsole EC_VALUE_BYPASS_POWER_MODE2)
+                _ => 0x00, // bypass off
+            };
+
+            TryWriteEcByte(ECBypassChargingAddress, modeValue);
         }
     }
 }
