@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Inputs;
+using System.Linq;
 using System.Threading;
 using System.Windows.Media;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -35,6 +36,10 @@ namespace HandheldCompanion.Devices
             // The usage collection identifies the relevant HID interface (MI_02).
             vendorId = 0x1A86;
             productIds = [PID_VENDOR];
+            // The button opposite Turbo is delivered over vendor HID as 0x25 (see BuildRemapPage3)
+            // instead of the X2 mouse chord, so expose it as a visible OEM4 button for layouts.
+            OEMChords.RemoveAll(c => c.state.Buttons.Contains(ButtonFlags.OEM4));
+            OEMChords.Add(new KeyboardChord("G-Key", null, null, false, ButtonFlags.OEM4));
         }
 
         public override bool SetLedBrightness(int brightness)
@@ -79,6 +84,35 @@ namespace HandheldCompanion.Devices
             return result;
         }
 
+        // The X2 page 3 maps 0x25 to XBOX/HOME (01 21), which the firmware routes to the
+        // gamepad Guide button and never reports over vendor HID. Map it as a keyboard-type
+        // key (02 01 68) like the M1/M2 paddles so it produces proper press (01) / release (02)
+        // reports with buttonId 0x25 on the vendor interface.
+        protected override byte[] BuildRemapPage3(byte preset) =>
+        [
+            0x02, 0x38, 0x20, 0x03, preset,
+            0x24, 0x02, 0x02, 0x05, 0x00, 0x00,
+            0x25, 0x02, 0x01, 0x68, 0x00, 0x00,
+        ];
+
+        // OXP3 reports HOME (0x24) and G-Key (0x25) over vendor HID with real press (01) and
+        // release (02) states, so forward them as-is to support holding, instead of the X2
+        // fixed 100 ms tap.
+        protected override void HandleEvent(byte buttonId, bool pressed)
+        {
+            ButtonFlags button = MapVendorButton(buttonId);
+            if (button is ButtonFlags.OEM3 or ButtonFlags.OEM4)
+            {
+                if (pressed)
+                    KeyPress(button);
+                else
+                    KeyRelease(button);
+                return;
+            }
+
+            base.HandleEvent(buttonId, pressed);
+        }
+
         protected override ButtonFlags MapVendorButton(byte buttonId)
         {
             return buttonId switch
@@ -86,6 +120,7 @@ namespace HandheldCompanion.Devices
                 0x22 => ButtonFlags.L4,   // M1 (left back paddle)
                 0x23 => ButtonFlags.R4,   // M2 (right back paddle)
                 0x24 => ButtonFlags.OEM3, // HOME
+                0x25 => ButtonFlags.OEM4, // G-Key (button opposite Turbo)
                 _ => base.MapVendorButton(buttonId),
             };
         }
