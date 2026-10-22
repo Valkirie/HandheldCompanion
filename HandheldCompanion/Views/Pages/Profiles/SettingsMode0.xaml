@@ -11,7 +11,7 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Title="{l:Static resx:Resources.SettingsMode0_AdditionalSettings}"
-    Margin="20"
+    Margin="20,48,20,20"
     d:DataContext="{d:DesignInstance Type=viewmodels:SettingsMode0ViewModel}"
     d:DesignHeight="1000"
     d:DesignWidth="1000"
