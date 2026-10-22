@@ -135,6 +135,21 @@ namespace HandheldCompanion.ViewModels
                                 CollectionGroups.Remove(group);
                         }
 
+                        // The banner follows the focused game: hand it to the first remaining game, or clear it when none is left
+                        if (ReferenceEquals(_focusedProfile, foundProfile))
+                        {
+                            if (ProfilesView.Cast<ProfileViewModel>().FirstOrDefault() is { } nextProfile)
+                            {
+                                UpdateFocusedProfile(nextProfile);
+                                FocusedProfileReplaced?.Invoke(nextProfile);
+                            }
+                            else
+                            {
+                                ClearFocusedProfile();
+                                FocusedProfileReplaced?.Invoke(null);
+                            }
+                        }
+
                         foundProfile.Dispose();
                         OnPropertyChanged(nameof(GameCount));
                         OnPropertyChanged(nameof(HasLibraryItems));

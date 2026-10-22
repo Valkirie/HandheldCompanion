@@ -4,9 +4,12 @@ using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Pages.Library;
 using iNKORE.UI.WPF.Modern.Controls;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 
+using Control = System.Windows.Controls.Control;
 using Page = System.Windows.Controls.Page;
 using ScrollViewer = System.Windows.Controls.ScrollViewer;
 
@@ -29,6 +32,7 @@ public partial class LibraryPage : Page
         if (ViewModel is { } vm)
         {
             vm.BackAvailabilityChanged += LibraryPageViewModel_BackAvailabilityChanged;
+            vm.FocusedProfileReplaced += LibraryPageViewModel_FocusedProfileReplaced;
 
             if (vm is INotifyPropertyChanged inpc)
                 inpc.PropertyChanged += LibraryPageViewModel_PropertyChanged;
@@ -50,6 +54,7 @@ public partial class LibraryPage : Page
         if (ViewModel is { } vm)
         {
             vm.BackAvailabilityChanged -= LibraryPageViewModel_BackAvailabilityChanged;
+            vm.FocusedProfileReplaced -= LibraryPageViewModel_FocusedProfileReplaced;
             vm.ClearFocusedProfile();
 
             if (vm is INotifyPropertyChanged inpc)
@@ -90,6 +95,30 @@ public partial class LibraryPage : Page
         hostScrollViewer?.SizeChanged -= HostScrollViewer_SizeChanged;
 
         hostScrollViewer = null;
+    }
+
+    private void LibraryPageViewModel_FocusedProfileReplaced(ProfileViewModel? profile)
+    {
+        // The deleted card took keyboard focus with it: focus the replacement's card once layout and any dialog have settled,
+        // or the first toolbar control when the library is now empty
+        Dispatcher.InvokeAsync(() =>
+        {
+            if (!IsLoaded)
+                return;
+
+            if (profile is null)
+            {
+                SortComboBox.Focus();
+                return;
+            }
+
+            Control? card = WPFUtils.FindVisualChildren<Control>(ContentFrame)
+                .Where(control => control.Focusable && control.IsVisible && control.IsEnabled)
+                .FirstOrDefault(control => ReferenceEquals(control.Tag, profile)
+                    || (control.Tag is null && ReferenceEquals(control.DataContext, profile)));
+
+            card?.Focus();
+        }, DispatcherPriority.ApplicationIdle);
     }
 
     private void LibraryPageViewModel_BackAvailabilityChanged(bool canGoBack)

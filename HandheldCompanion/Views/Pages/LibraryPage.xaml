@@ -176,6 +176,7 @@
 
                             <!--  Sort by type  -->
                             <ComboBox
+                                x:Name="SortComboBox"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 SelectedIndex="{Binding SortTarget}">
