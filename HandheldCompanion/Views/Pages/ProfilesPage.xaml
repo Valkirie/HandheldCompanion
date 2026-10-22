@@ -1195,12 +1195,13 @@
                             Name="LibrarySettings"
                             HorizontalAlignment="Stretch"
                             Command="{Binding DisplayLibrary}"
+                            Description="{l:Static resx:Resources.ProfilesPage_LibraryDownloadDesc}"
                             Header="{l:Static resx:Resources.ProfilesPage_LibraryDownload}"
                             IsClickEnabled="True"
                             IsEnabled="{Binding IsLibrarySettingsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             Tag="Navigation">
                             <ui:SettingsCard.HeaderIcon>
-                                <ui:FontIcon Glyph="&#xE8F1;" />
+                                <ui:FontIcon Glyph="&#xE8B9;" />
                             </ui:SettingsCard.HeaderIcon>
                         </ui:SettingsCard>
 

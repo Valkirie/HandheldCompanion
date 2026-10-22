@@ -10650,11 +10650,20 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Browse library.
+        ///   Looks up a localized string similar to Game artwork.
         /// </summary>
         public static string ProfilesPage_LibraryDownload {
             get {
                 return ResourceManager.GetString("ProfilesPage_LibraryDownload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search SteamGridDB and IGDB for this game's artwork.
+        /// </summary>
+        public static string ProfilesPage_LibraryDownloadDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_LibraryDownloadDesc", resourceCulture);
             }
         }
         
