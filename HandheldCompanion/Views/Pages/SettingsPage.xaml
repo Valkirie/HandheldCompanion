@@ -14,7 +14,7 @@
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Settings"
     Title="{l:Static resx:Resources.SettingsPage_Settings}"
-    Margin="20,48,20,20"
+    Margin="20"
     d:Background="White"
     d:DataContext="{d:DesignInstance Type=viewmodels:SettingsPageViewModel}"
     d:DesignHeight="2400"
@@ -25,6 +25,13 @@
     <Page.Resources>
         <converters:MarkdownToFlowDocumentConverter x:Key="MarkdownToFlowDocumentConverter" />
     </Page.Resources>
+
+    <StackPanel>
+        <TextBlock
+            Margin="0,0,0,8"
+            behaviors:TextBlockUpperCase.IsUpperCase="True"
+            Style="{StaticResource CapitalAccentTextBlockStyle}"
+            Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Page}}" />
 
     <ikw:SimpleStackPanel Spacing="28">
 
@@ -572,4 +579,5 @@
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
     </ikw:SimpleStackPanel>
+    </StackPanel>
 </Page>
