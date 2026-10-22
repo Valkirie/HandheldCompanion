@@ -43,6 +43,7 @@ namespace HandheldCompanion.ViewModels
         public ItemsPanelTemplate ProfilesCardsItemsPanel { get; } = CreateProfilesCardsItemsPanel();
 
         public int GameCount => Profiles.Count;
+        public bool HasLibraryItems => Profiles.Count > 0;
 
         public string LastLibraryCheckText => GetLastLibraryCheckText();
 
@@ -168,6 +169,7 @@ namespace HandheldCompanion.ViewModels
         }
 
         private ProfileViewModel? _focusedProfile;
+
         private int _focusedArtworkRequestVersion;
 
         public void UpdateFocusedProfile(ProfileViewModel profile)

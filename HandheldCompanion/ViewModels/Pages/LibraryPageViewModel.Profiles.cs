@@ -137,6 +137,7 @@ namespace HandheldCompanion.ViewModels
 
                         foundProfile.Dispose();
                         OnPropertyChanged(nameof(GameCount));
+                        OnPropertyChanged(nameof(HasLibraryItems));
                     }
                 }
                 finally
@@ -205,6 +206,7 @@ namespace HandheldCompanion.ViewModels
             ProfileViewModel addedViewModel = new(profile, false, true);
             Profiles.Add(addedViewModel);
             OnPropertyChanged(nameof(GameCount));
+            OnPropertyChanged(nameof(HasLibraryItems));
             return addedViewModel;
         }
 
@@ -217,6 +219,7 @@ namespace HandheldCompanion.ViewModels
 
             OnPropertyChanged(nameof(HasRecentGames));
             OnPropertyChanged(nameof(GameCount));
+            OnPropertyChanged(nameof(HasLibraryItems));
         }
 
         private void UpdateRecentGames(ProfileViewModel profileViewModel)
