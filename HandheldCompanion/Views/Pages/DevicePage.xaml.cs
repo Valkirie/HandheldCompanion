@@ -307,19 +307,50 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
+            // keep the user's colors so they come back when accent color is turned off
             if (MatchAccentColor.IsOn)
+            {
+                SaveColor(true);
+                SaveColor(false);
                 SetAccentColor();
+            }
+            else
+            {
+                RestoreColor(true);
+                RestoreColor(false);
+            }
 
             ManagerFactory.settingsManager.SetProperty("LEDSettingsUseAccentColor", MatchAccentColor.IsOn);
         }
 
+        private void SaveColor(bool main)
+        {
+            string name = main ? "LEDMainColor" : "LEDSecondColor";
+            ManagerFactory.settingsManager.SetProperty(name + "Saved", ManagerFactory.settingsManager.GetString(name));
+        }
+
+        private void RestoreColor(bool main)
+        {
+            string name = main ? "LEDMainColor" : "LEDSecondColor";
+            string saved = ManagerFactory.settingsManager.GetString(name + "Saved");
+            if (string.IsNullOrEmpty(saved))
+                return;
+
+            ManagerFactory.settingsManager.SetProperty(name, saved);
+            (main ? MainColorPicker : SecondColorPicker).SelectedColor = ManagerFactory.settingsManager.GetColor(name);
+        }
+
+        private void ApplyAccentColor(bool main)
+        {
+            Color accent = (Color)ColorConverter.ConvertFromString(Convert.ToString(App.uiSettings.GetColorValue(UIColorType.Accent).ToString()));
+            (main ? MainColorPicker : SecondColorPicker).SelectedColor = accent;
+            ManagerFactory.settingsManager.SetProperty(main ? "LEDMainColor" : "LEDSecondColor", accent);
+        }
+
         private void SetAccentColor()
         {
-            MainColorPicker.SelectedColor = (Color)ColorConverter.ConvertFromString(Convert.ToString(App.uiSettings.GetColorValue(UIColorType.Accent).ToString()));
-            SecondColorPicker.SelectedColor = (Color)ColorConverter.ConvertFromString(Convert.ToString(App.uiSettings.GetColorValue(UIColorType.Accent).ToString()));
-
-            ManagerFactory.settingsManager.SetProperty("LEDMainColor", MainColorPicker.SelectedColor);
-            ManagerFactory.settingsManager.SetProperty("LEDSecondColor", MainColorPicker.SelectedColor);
+            ApplyAccentColor(true);
+            ApplyAccentColor(false);
         }
 
         private void LEDSettingsLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -346,11 +377,9 @@ namespace HandheldCompanion.Views.Pages
         {
             // workaround: NotifyableColor is raising ColorChanged event infinitely
             ColorRoutedEventArgs colorArgs = (ColorRoutedEventArgs)e;
+            // same color again; resetting here turned the preview black
             if (prevMainColor == colorArgs.Color)
-            {
-                MainColorPicker.Color = new NotifyableColor(new PickerControlBase());
                 return;
-            }
             prevMainColor = colorArgs.Color;
 
             if (!IsLoaded)
@@ -363,11 +392,9 @@ namespace HandheldCompanion.Views.Pages
         {
             // workaround: NotifyableColor is raising ColorChanged event infinitely
             ColorRoutedEventArgs colorArgs = (ColorRoutedEventArgs)e;
+            // same color again; resetting here turned the preview black
             if (prevSecondColor == colorArgs.Color)
-            {
-                SecondColorPicker.Color = new NotifyableColor(new PickerControlBase());
                 return;
-            }
             prevSecondColor = colorArgs.Color;
 
             if (!IsLoaded)
