@@ -90,7 +90,7 @@
             </ui:NavigationView.Resources>
 
             <ui:NavigationView.MenuItems>
-                <ui:NavigationViewItem IsEnabled="False">
+                <ui:NavigationViewItem AutomationProperties.Name="Previous section (left bumper)" IsEnabled="False">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon
                             Name="QTLB"
@@ -156,7 +156,7 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
 
-                <ui:NavigationViewItem IsEnabled="False">
+                <ui:NavigationViewItem AutomationProperties.Name="Next section (right bumper)" IsEnabled="False">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon
                             Name="QTRB"
@@ -196,6 +196,7 @@
                             <ui:DropDownButton
                                 Margin="0,6,0,6"
                                 VerticalAlignment="Stretch"
+                                AutomationProperties.Name="Power"
                                 Background="Transparent"
                                 BorderBrush="Transparent">
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.PowerButton}" />
@@ -258,7 +259,7 @@
 
                         <ui:AppBarSeparator />
 
-                        <ui:AppBarButton Click="QuicKeyboard_Click">
+                        <ui:AppBarButton AutomationProperties.Name="On-screen keyboard" Click="QuicKeyboard_Click">
                             <ui:AppBarButton.Icon>
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KeyboardClassic}" />
                             </ui:AppBarButton.Icon>
@@ -266,7 +267,7 @@
 
                         <ui:AppBarSeparator />
 
-                        <ui:AppBarButton Click="QuickGoBack_Click">
+                        <ui:AppBarButton AutomationProperties.Name="Back" Click="QuickGoBack_Click">
                             <ui:AppBarButton.Icon>
                                 <ui:FontIcon FontSize="10" Icon="{x:Static ui:SegoeFluentIcons.Back}" />
                             </ui:AppBarButton.Icon>

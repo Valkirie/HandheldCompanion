@@ -214,23 +214,36 @@ public partial class OverlayPage : Page
         PlatformManager.RTSS.Updated -= RTSS_Updated;
     }
 
+    private static readonly string[] TrackpadsPositionNames = ["Top", "Center", "Bottom"];
+    private static readonly string[] ControllerPositionNames = ["Top left", "Top center", "Top right", "Middle left", "Center", "Middle right", "Bottom left", "Bottom center", "Bottom right"];
+
     private void UpdateUI_TrackpadsPosition(int trackpadsAlignment)
     {
         foreach (Button button in OverlayTrackpadsAlignment.Children)
-            if (int.Parse((string)button.Tag) == trackpadsAlignment)
+        {
+            int tag = int.Parse((string)button.Tag);
+            if (tag == trackpadsAlignment)
                 button.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
             else
                 button.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+
+            AccessibilityHelper.SetChoiceName(button, TrackpadsPositionNames[tag], tag == trackpadsAlignment);
+        }
     }
 
     private void UpdateUI_ControllerPosition(int controllerAlignment)
     {
         foreach (SimpleStackPanel panel in OverlayControllerAlignment.Children)
             foreach (Button button in panel.Children)
-                if (int.Parse((string)button.Tag) == controllerAlignment)
+            {
+                int tag = int.Parse((string)button.Tag);
+                if (tag == controllerAlignment)
                     button.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
                 else
                     button.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+
+                AccessibilityHelper.SetChoiceName(button, ControllerPositionNames[tag], tag == controllerAlignment);
+            }
     }
 
     private void SliderControllerSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

@@ -75,6 +75,9 @@ namespace HandheldCompanion.Views.Classes
 
         protected UIGamepad gamepadFocusManager = null!;
 
+        // speaks gamepad navigation when the screen reader can't follow this window's focus
+        protected readonly ScreenReaderAnnouncer screenReaderAnnouncer;
+
         /// <summary>
         /// Suppresses the next button-state change on this window's focus manager.
         /// Call this on the destination window just before it gains focus mid-press,
@@ -107,6 +110,8 @@ namespace HandheldCompanion.Views.Classes
 
             _navDebounceTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
             _navDebounceTimer.Tick += NavDebounceTimer_Tick;
+
+            screenReaderAnnouncer = new ScreenReaderAnnouncer(this);
         }
 
         private void NavDebounceTimer_Tick(object? sender, EventArgs e)
@@ -178,12 +183,16 @@ namespace HandheldCompanion.Views.Classes
 
             if (_contentFrame?.Content is not null)
                 RegisterModalControls(_contentFrame.Content);
+
+            AccessibilityHelper.LabelTreeDeferred(this);
         }
 
         private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
             if (e.Content is not null)
                 RegisterModalControls(e.Content);
+
+            AccessibilityHelper.LabelTreeDeferred(e.Content as DependencyObject);
         }
 
         private void RegisterModalControls(object root)
@@ -243,12 +252,16 @@ namespace HandheldCompanion.Views.Classes
 
         public bool SetFocusedElement(Control focusedControl)
         {
-            if (ReferenceEquals(this.focusedControl, focusedControl))
-                return false;
-
             // UI thread
             return UIHelper.TryInvoke(() =>
             {
+                // before both early returns: top navigation items (QuickTools tabs) are never stored, so returning
+                // from one to the stored control must still be announced (the announcer skips repeats itself)
+                screenReaderAnnouncer.FocusChanged(focusedControl);
+
+                if (ReferenceEquals(this.focusedControl, focusedControl))
+                    return false;
+
                 // Top navigation items provide their own focus visuals; expandable panes use the gamepad adorner.
                 if (focusedControl is NavigationViewItem navigationViewItem)
                     if (WPFUtils.FindParent<NavigationView>(navigationViewItem)?.PaneDisplayMode == NavigationViewPaneDisplayMode.Top)
