@@ -56,6 +56,7 @@ public class SettingsManager : IManager
     public event SettingValueChangedEventHandler? SettingValueChanged;
 
     private readonly Dictionary<string, object?> Settings = [];
+    private static readonly object settingsLock = new();
 
     public SettingsManager()
     {
@@ -88,45 +89,54 @@ public class SettingsManager : IManager
 
     public void SetProperty(string name, object? value, bool force = false, bool temporary = false)
     {
-        var prevValue = GetProperty(name, temporary);
-
-        if (prevValue is not null)
+        // settings are set from several threads: keep the saved value and the Settings dictionary in sync
+        // (the provider lock only covers the file write)
+        lock (settingsLock)
         {
-            switch (prevValue.GetType().Name)
+            var prevValue = GetProperty(name, temporary);
+
+            if (prevValue is not null)
             {
-                case "StringCollection":
-                    if (prevValue.Equals(value) && !force)
-                        return;
-                    break;
-                default:
-                    if (prevValue.ToString() == value?.ToString() && !force)
-                        return;
+                switch (prevValue.GetType().Name)
+                {
+                    case "StringCollection":
+                        if (prevValue.Equals(value) && !force)
+                            return;
+                        break;
+                    default:
+                        if (prevValue.ToString() == value?.ToString() && !force)
+                            return;
+                        break;
+                }
+            }
+
+            // specific cases
+            switch (name)
+            {
+                case "OverlayControllerBackgroundColor":
+                case "LEDMainColor":
+                case "LEDSecondColor":
+                    value = Convert.ToString(value);
                     break;
             }
-        }
 
-        // specific cases
-        switch (name)
-        {
-            case "OverlayControllerBackgroundColor":
-            case "LEDMainColor":
-            case "LEDSecondColor":
-                value = Convert.ToString(value);
-                break;
+            try
+            {
+                if (!temporary)
+                {
+                    Properties.Settings.Default[name] = value;
+                    Properties.Settings.Default.Save();
+                }
+
+                // update internal settings dictionary (used for temporary settings)
+                Settings[name] = value;
+            }
+            catch (Exception) { return; }
         }
 
         try
         {
-            if (!temporary)
-            {
-                Properties.Settings.Default[name] = value;
-                Properties.Settings.Default.Save();
-            }
-
-            // update internal settings dictionary (used for temporary settings)
-            Settings[name] = value;
-
-            // raise event
+            // raise event outside the lock, handlers may set settings or wait on another thread
             if (Status.HasFlag(ManagerStatus.Initialized) || force)
                 SettingValueChanged?.Invoke(name, value, temporary, false);
 
@@ -209,8 +219,11 @@ public class SettingsManager : IManager
 
             default:
                 {
-                    if (temporary && Settings.TryGetValue(name, out var property))
-                        return property ?? false;
+                    lock (settingsLock)
+                    {
+                        if (temporary && Settings.TryGetValue(name, out var property))
+                            return property ?? false;
+                    }
                     if (PropertyExists(name))
                         return Properties.Settings.Default[name] ?? false;
 
