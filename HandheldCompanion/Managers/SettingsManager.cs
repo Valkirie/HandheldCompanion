@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Shared;
 using System;
@@ -56,6 +56,11 @@ public class SettingsManager : IManager
     public event SettingValueChangedEventHandler? SettingValueChanged;
 
     private readonly Dictionary<string, object?> Settings = [];
+    // ponytail: serialize settings-file I/O with one lock; batch persistence if write contention becomes significant.
+    private static readonly object settingsLock = new();
+    // FIFO covers event callbacks, not asynchronous work scheduled by subscribers.
+    private readonly Queue<Action> notifications = new();
+    private bool notifying;
 
     public SettingsManager()
     {
@@ -71,10 +76,14 @@ public class SettingsManager : IManager
         base.PrepareStart();
 
         IOrderedEnumerable<SettingsProperty> properties = Properties.Settings.Default.Properties.Cast<SettingsProperty>().OrderBy(s => s.Name);
-        foreach (var property in properties)
-            SettingValueChanged?.Invoke(property.Name, GetProperty(property.Name), false, Status.HasFlag(ManagerStatus.Initializing));
+        lock (settingsLock)
+        {
+            foreach (var property in properties)
+                notifications.Enqueue(() => SettingValueChanged?.Invoke(property.Name, GetProperty(property.Name), false, true));
 
-        base.Start();
+            notifications.Enqueue(() => base.Start());
+        }
+        DispatchNotifications();
     }
 
     public override void Stop()
@@ -88,51 +97,87 @@ public class SettingsManager : IManager
 
     public void SetProperty(string name, object? value, bool force = false, bool temporary = false)
     {
-        var prevValue = GetProperty(name, temporary);
-
-        if (prevValue is not null)
+        lock (settingsLock)
         {
-            switch (prevValue.GetType().Name)
+            var prevValue = GetProperty(name, temporary);
+
+            if (prevValue is not null)
             {
-                case "StringCollection":
-                    if (prevValue.Equals(value) && !force)
-                        return;
-                    break;
-                default:
-                    if (prevValue.ToString() == value?.ToString() && !force)
-                        return;
+                switch (prevValue.GetType().Name)
+                {
+                    case "StringCollection":
+                        if (prevValue.Equals(value) && !force)
+                            return;
+                        break;
+                    default:
+                        if (prevValue.ToString() == value?.ToString() && !force)
+                            return;
+                        break;
+                }
+            }
+
+            // specific cases
+            switch (name)
+            {
+                case "OverlayControllerBackgroundColor":
+                case "LEDMainColor":
+                case "LEDSecondColor":
+                    value = Convert.ToString(value);
                     break;
             }
-        }
 
-        // specific cases
-        switch (name)
-        {
-            case "OverlayControllerBackgroundColor":
-            case "LEDMainColor":
-            case "LEDSecondColor":
-                value = Convert.ToString(value);
-                break;
+            try
+            {
+                if (!temporary)
+                {
+                    Properties.Settings.Default[name] = value;
+                    Properties.Settings.Default.Save();
+                }
+
+                // update internal settings dictionary (used for temporary settings)
+                Settings[name] = value;
+
+                if (Status.HasFlag(ManagerStatus.Initialized) || force)
+                    notifications.Enqueue(() => SettingValueChanged?.Invoke(name, value, temporary, false));
+            }
+            catch (Exception) { return; }
         }
 
         try
         {
-            if (!temporary)
-            {
-                Properties.Settings.Default[name] = value;
-                Properties.Settings.Default.Save();
-            }
-
-            // update internal settings dictionary (used for temporary settings)
-            Settings[name] = value;
-
-            // raise event
-            if (Status.HasFlag(ManagerStatus.Initialized) || force)
-                SettingValueChanged?.Invoke(name, value, temporary, false);
-
             LogManager.LogDebug("Settings {0} set to {1}", name, value ?? "null");
         }
         catch (Exception) { }
+
+        DispatchNotifications();
+    }
+
+    private void DispatchNotifications()
+    {
+        lock (settingsLock)
+        {
+            // Concurrent and reentrant writers must not wait for an active handler.
+            if (notifying)
+                return;
+            notifying = true;
+        }
+
+        while (true)
+        {
+            Action notification;
+            lock (settingsLock)
+            {
+                if (notifications.Count == 0)
+                {
+                    notifying = false;
+                    return;
+                }
+                notification = notifications.Dequeue();
+            }
+
+            try { notification(); }
+            catch (Exception ex) { LogManager.LogError("Settings notification failed: {0}", ex); }
+        }
     }
 
     private bool PropertyExists(string name)
@@ -209,10 +254,13 @@ public class SettingsManager : IManager
 
             default:
                 {
-                    if (temporary && Settings.TryGetValue(name, out var property))
-                        return property ?? false;
-                    if (PropertyExists(name))
-                        return Properties.Settings.Default[name] ?? false;
+                    lock (settingsLock)
+                    {
+                        if (temporary && Settings.TryGetValue(name, out var property))
+                            return property ?? false;
+                        if (PropertyExists(name))
+                            return Properties.Settings.Default[name] ?? false;
+                    }
 
                     return false;
                 }
