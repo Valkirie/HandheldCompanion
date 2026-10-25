@@ -230,6 +230,12 @@
     <Setting Name="LEDSecondColor" Type="System.String" Scope="User">
       <Value Profile="(Default)">#FFFFFF00</Value>
     </Setting>
+    <Setting Name="LEDMainColorSaved" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="LEDSecondColorSaved" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
     <Setting Name="LEDSettingsUseAccentColor" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
