@@ -533,6 +533,8 @@ namespace HandheldCompanion.ViewModels
                 {
                     SelectedPreset.FramerateValue = value.FrameLimit.limit;
                     OnPropertyChanged(nameof(SelectedFrameLimit));
+                    // the disabled custom slider shows this value too, refresh it
+                    OnPropertyChanged(nameof(CustomFrameLimitValue));
                     SubmitSelectedPreset();
                 }
                 else if (selectionChanged)
