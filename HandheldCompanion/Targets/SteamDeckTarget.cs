@@ -91,7 +91,8 @@ namespace HandheldCompanion.Targets
             Vector3 accel;
             if (gamepadMotion is not null)
             {
-                gamepadMotion.GetRawGyro(out gyro.X, out gyro.Y, out gyro.Z);
+                // steam leaves deck gyro calibration to the device, so remove the bias here
+                gamepadMotion.GetCalibratedGyro(out gyro.X, out gyro.Y, out gyro.Z);
                 gamepadMotion.GetRawAcceleration(out accel.X, out accel.Y, out accel.Z);
             }
             else
