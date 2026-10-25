@@ -402,7 +402,7 @@ namespace HandheldCompanion.ViewModels
             {
                 if (value != BatteryChargeLimitPercent)
                 {
-                    ManagerFactory.settingsManager.SetProperty("BatteryChargeLimitPercent", value);
+                    ManagerFactory.settingsManager.SetProperty("BatteryChargeLimitPercent", (int)Math.Round(value)); // setting is Int32; a double is rejected and the slider snaps back
                     OnPropertyChanged(nameof(BatteryChargeLimitPercent));
                 }
             }
@@ -1090,10 +1090,11 @@ namespace HandheldCompanion.ViewModels
             switch (name)
             {
                 case "BatteryChargeLimit":
-                    BatteryChargeLimit = Convert.ToBoolean(value);
+                    // setting is already updated, so the setter's equality check would skip the notification
+                    OnPropertyChanged(nameof(BatteryChargeLimit));
                     break;
                 case "BatteryChargeLimitPercent":
-                    BatteryChargeLimitPercent = Convert.ToDouble(value);
+                    OnPropertyChanged(nameof(BatteryChargeLimitPercent));
                     break;
                 case "LEDSettingsUseAccentColor":
                     UpdateAccentColorState(Convert.ToBoolean(value));
