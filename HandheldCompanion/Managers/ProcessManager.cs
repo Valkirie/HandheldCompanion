@@ -500,9 +500,10 @@ public class ProcessManager : IManager
             ProcessEx foregroundProcess = currentProcess;
             Action raiseForeground = () => ForegroundChanged?.Invoke(foregroundProcess, prevProcess, filter);
             ProcessEventQueue? events = null;
-            if (processLocks.TryGetValue(processId, out object? lockObject))
+            object? lockObject = EnterProcessLock(processId, create: false);
+            if (lockObject is not null)
             {
-                lock (lockObject)
+                try
                 {
                     // only queue while listed, so halted cleans the queue up
                     if (Processes.TryGetValue(processId, out ProcessEx? listed) && listed == process)
@@ -510,6 +511,10 @@ public class ProcessManager : IManager
                         events = processEventQueues.GetOrAdd(processId, id => new ProcessEventQueue());
                         events.Events.Enqueue(raiseForeground);
                     }
+                }
+                finally
+                {
+                    System.Threading.Monitor.Exit(lockObject);
                 }
             }
 
@@ -532,8 +537,8 @@ public class ProcessManager : IManager
         int processId = process.Id;
 
         ProcessEventQueue? events = null;
-        object lockObject = processLocks.GetOrAdd(processId, id => new object());
-        lock (lockObject)
+        object lockObject = EnterProcessLock(processId, create: true)!;
+        try
         {
             if (!Processes.TryGetValue(processId, out ProcessEx? processEx))
                 return;
@@ -568,14 +573,40 @@ public class ProcessManager : IManager
             // pid is gone: drop its queue entry, a reused pid gets a fresh queue
             // (the queued events above still drain through the local reference)
             processEventQueues.TryRemove(processId, out _);
+
+            // only the holder removes the lock; late threads see it is gone and retry
+            processLocks.TryRemove(processId, out _);
+        }
+        finally
+        {
+            System.Threading.Monitor.Exit(lockObject);
         }
 
-        processLocks.TryRemove(processId, out _);
         DrainEvents(events);
     }
 
     // Define a thread-safe dictionary to hold lock objects per process id.
     private static readonly ConcurrentDictionary<int, object> processLocks = new ConcurrentDictionary<int, object>();
+
+    // lock the pid's current lock object; retry if it was removed or replaced meanwhile,
+    // so all threads of one pid always share the same lock (create: false never adds one)
+    private static object? EnterProcessLock(int processId, bool create)
+    {
+        while (true)
+        {
+            object? lockObject;
+            if (create)
+                lockObject = processLocks.GetOrAdd(processId, id => new object());
+            else if (!processLocks.TryGetValue(processId, out lockObject))
+                return null;
+
+            System.Threading.Monitor.Enter(lockObject);
+            if (processLocks.TryGetValue(processId, out object? current) && ReferenceEquals(current, lockObject))
+                return lockObject;
+
+            System.Threading.Monitor.Exit(lockObject);
+        }
+    }
 
     // per-pid event queue: handlers run outside the pid lock (no deadlock with the ui thread)
     // but still in order for that pid (started, foreground, stopped, dispose)
@@ -632,8 +663,8 @@ public class ProcessManager : IManager
     private bool CreateOrUpdateProcessLocked(int processID, AutomationElement automationElement, bool OnStartup, out ProcessEventQueue? events)
     {
         events = null;
-        object lockObject = processLocks.GetOrAdd(processID, id => new object());
-        lock (lockObject)
+        object lockObject = EnterProcessLock(processID, create: true)!;
+        try
         {
             try
             {
@@ -735,6 +766,10 @@ public class ProcessManager : IManager
                 // Process has too high elevation or other error occurred
             }
             return false;
+        }
+        finally
+        {
+            System.Threading.Monitor.Exit(lockObject);
         }
     }
 
