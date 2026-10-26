@@ -103,6 +103,7 @@ namespace HandheldCompanion.ViewModels
         public ICommand? KillProcessCommand { get; private set; }
 
         public readonly bool IsQuickTools;
+        private volatile bool _isDisposed;
         public bool IsMainPage => !IsQuickTools;
 
         public ProcessExViewModel(ProcessEx process, bool isQuickTools)
@@ -228,50 +229,39 @@ namespace HandheldCompanion.ViewModels
 
         private void Process_WindowAttached(ProcessWindow processWindow)
         {
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
+            // async: this can be raised under the process manager's pid lock, a sync ui invoke there can deadlock
+            UIHelper.TryBeginInvoke(() =>
             {
-                UIHelper.TryInvoke(() =>
+                // skip if disposed or the window already went away before this ran
+                if (_isDisposed || _process is null || !_process.ProcessWindows.ContainsKey(processWindow.Hwnd))
+                    return;
+
+                lock (_collectionLock)
                 {
                     WindowListItemViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow?.Hwnd == processWindow.Hwnd);
                     if (foundWindow is null)
                         ProcessWindows.Add(new WindowListItemViewModel(processWindow));
                     else
                         foundWindow.ProcessWindow = processWindow;
-                });
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
+                }
+            });
         }
 
         private void Process_WindowDetached(ProcessWindow processWindow)
         {
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            WindowListItemViewModel? detachedWindow = null;
-            bool invoked = false;
-
-            try
+            // async for the same reason as attached; nobody needs the result synchronously
+            UIHelper.TryBeginInvoke(() =>
             {
-                invoked = UIHelper.TryInvoke(() =>
+                WindowListItemViewModel? detachedWindow;
+                lock (_collectionLock)
                 {
                     detachedWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow?.Hwnd == processWindow.Hwnd);
                     if (detachedWindow is not null)
                         ProcessWindows.Remove(detachedWindow);
-                });
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
+                }
 
-            if (invoked)
                 detachedWindow?.Dispose();
+            });
         }
 
         private void UpdateProcess(ProcessEx? oldProcess, ProcessEx? newProcess)
@@ -295,6 +285,8 @@ namespace HandheldCompanion.ViewModels
 
         public override void Dispose()
         {
+            _isDisposed = true;
+
             if (_process is not null)
             {
                 _process.Refreshed -= ProcessRefreshed;

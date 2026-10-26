@@ -496,8 +496,28 @@ public class ProcessManager : IManager
                 return;
             }
 
-            // raise event
-            ForegroundChanged?.Invoke(currentProcess, prevProcess, filter);
+            // raise event behind this pid's started event, outside the pid lock
+            ProcessEx foregroundProcess = currentProcess;
+            Action raiseForeground = () => ForegroundChanged?.Invoke(foregroundProcess, prevProcess, filter);
+            ProcessEventQueue? events = null;
+            if (processLocks.TryGetValue(processId, out object? lockObject))
+            {
+                lock (lockObject)
+                {
+                    // only queue while listed, so halted cleans the queue up
+                    if (Processes.TryGetValue(processId, out ProcessEx? listed) && listed == process)
+                    {
+                        events = processEventQueues.GetOrAdd(processId, id => new ProcessEventQueue());
+                        events.Events.Enqueue(raiseForeground);
+                    }
+                }
+            }
+
+            // already halted: raise directly like before
+            if (events is null)
+                raiseForeground();
+            else
+                DrainEvents(events);
         }
         catch { }
     }
@@ -511,11 +531,15 @@ public class ProcessManager : IManager
 
         int processId = process.Id;
 
+        ProcessEventQueue? events = null;
         object lockObject = processLocks.GetOrAdd(processId, id => new object());
         lock (lockObject)
         {
             if (!Processes.TryGetValue(processId, out ProcessEx? processEx))
                 return;
+
+            // handlers run after the lock is released, in this pid's queue order
+            events = processEventQueues.GetOrAdd(processId, id => new ProcessEventQueue());
 
             // If the halted process had foreground, log and raise event.
             if (currentProcess == processEx)
@@ -525,28 +549,89 @@ public class ProcessManager : IManager
                 currentForegroundFilter = ProcessFilter.Restricted;
 
                 LogManager.LogDebug("{0} process {1} that had foreground has halted", haltedForegroundProcess.Platform, haltedForegroundProcess.Executable);
-                ForegroundChanged?.Invoke(null, haltedForegroundProcess, ProcessFilter.Allowed);
+                events.Events.Enqueue(() => ForegroundChanged?.Invoke(null, haltedForegroundProcess, ProcessFilter.Allowed));
             }
 
             // Remove the process from the dictionary and raise the stopped event.
             if (Processes.TryRemove(processId, out _))
             {
-                ProcessStopped?.Invoke(processEx);
-                LogManager.LogDebug("Process halted: {0}", processEx.Executable);
+                events.Events.Enqueue(() =>
+                {
+                    ProcessStopped?.Invoke(processEx);
+                    LogManager.LogDebug("Process halted: {0}", processEx.Executable);
+                });
             }
 
-            // Dispose the process.
-            processEx.Dispose();
+            // Dispose the process, only after stopped handlers are done with it.
+            events.Events.Enqueue(() => processEx.Dispose());
+
+            // pid is gone: drop its queue entry, a reused pid gets a fresh queue
+            // (the queued events above still drain through the local reference)
+            processEventQueues.TryRemove(processId, out _);
         }
 
         processLocks.TryRemove(processId, out _);
+        DrainEvents(events);
     }
 
     // Define a thread-safe dictionary to hold lock objects per process id.
     private static readonly ConcurrentDictionary<int, object> processLocks = new ConcurrentDictionary<int, object>();
 
+    // per-pid event queue: handlers run outside the pid lock (no deadlock with the ui thread)
+    // but still in order for that pid (started, foreground, stopped, dispose)
+    private sealed class ProcessEventQueue
+    {
+        public readonly ConcurrentQueue<Action> Events = new();
+        public int Draining;
+    }
+
+    private static readonly ConcurrentDictionary<int, ProcessEventQueue> processEventQueues = new();
+
+    private static void DrainEvents(ProcessEventQueue? queue)
+    {
+        if (queue is null)
+            return;
+
+        // single drainer per pid; others just enqueue and leave, so nobody waits on handlers
+        while (System.Threading.Interlocked.CompareExchange(ref queue.Draining, 1, 0) == 0)
+        {
+            try
+            {
+                while (queue.Events.TryDequeue(out Action? raise))
+                {
+                    try
+                    {
+                        raise();
+                    }
+                    catch (Exception ex)
+                    {
+                        LogManager.LogError("Process event handler failed: {0}", ex.Message);
+                    }
+                }
+            }
+            finally
+            {
+                System.Threading.Volatile.Write(ref queue.Draining, 0);
+            }
+
+            // re-check: an event may have been queued after the last dequeue
+            if (queue.Events.IsEmpty)
+                return;
+        }
+    }
+
     private bool CreateOrUpdateProcess(int processID, AutomationElement automationElement, bool OnStartup = false)
     {
+        bool result = CreateOrUpdateProcessLocked(processID, automationElement, OnStartup, out ProcessEventQueue? events);
+
+        // raise events only after the pid lock is released
+        DrainEvents(events);
+        return result;
+    }
+
+    private bool CreateOrUpdateProcessLocked(int processID, AutomationElement automationElement, bool OnStartup, out ProcessEventQueue? events)
+    {
+        events = null;
         object lockObject = processLocks.GetOrAdd(processID, id => new object());
         lock (lockObject)
         {
@@ -629,8 +714,13 @@ public class ProcessManager : IManager
                     if (processEx.Filter != ProcessFilter.Allowed)
                         return true;
 
-                    ProcessStarted?.Invoke(processEx, OnStartup);
-                    LogManager.LogDebug("Process detected: {0}", processEx.Executable);
+                    ProcessEx startedProcess = processEx;
+                    events = processEventQueues.GetOrAdd(processID, id => new ProcessEventQueue());
+                    events.Events.Enqueue(() =>
+                    {
+                        ProcessStarted?.Invoke(startedProcess, OnStartup);
+                        LogManager.LogDebug("Process detected: {0}", startedProcess.Executable);
+                    });
                 }
                 else
                 {
