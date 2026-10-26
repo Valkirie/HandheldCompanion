@@ -642,7 +642,8 @@ public class ProcessManager : IManager
             }
             finally
             {
-                System.Threading.Volatile.Write(ref queue.Draining, 0);
+                // full fence: the re-check below must not be read before this store
+                System.Threading.Interlocked.Exchange(ref queue.Draining, 0);
             }
 
             // re-check: an event may have been queued after the last dequeue

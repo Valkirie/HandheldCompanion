@@ -232,8 +232,10 @@ namespace HandheldCompanion.ViewModels
             // async: this can be raised under the process manager's pid lock, a sync ui invoke there can deadlock
             UIHelper.TryBeginInvoke(() =>
             {
-                // skip if disposed or the window already went away before this ran
-                if (_isDisposed || _process is null || !_process.ProcessWindows.ContainsKey(processWindow.Hwnd))
+                // skip if disposed or this window went away before this ran (match by object, hwnds get reused)
+                if (_isDisposed || _process is null
+                    || !_process.ProcessWindows.TryGetValue(processWindow.Hwnd, out ProcessWindow? currentWindow)
+                    || !ReferenceEquals(currentWindow, processWindow))
                     return;
 
                 lock (_collectionLock)
@@ -255,7 +257,8 @@ namespace HandheldCompanion.ViewModels
                 WindowListItemViewModel? detachedWindow;
                 lock (_collectionLock)
                 {
-                    detachedWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow?.Hwnd == processWindow.Hwnd);
+                    // match by object so a late detach can't remove a new window that reused the hwnd
+                    detachedWindow = ProcessWindows.FirstOrDefault(win => ReferenceEquals(win.ProcessWindow, processWindow));
                     if (detachedWindow is not null)
                         ProcessWindows.Remove(detachedWindow);
                 }
