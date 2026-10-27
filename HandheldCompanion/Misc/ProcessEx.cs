@@ -222,7 +222,8 @@ public class ProcessEx : IDisposable, ICloneable
     public const string HighDPIAwareValue = "HIGHDPIAWARE";
 
     public Process? Process { get; private set; }
-    public int ProcessId => Process?.Id ?? 0;
+    // cached at construction, Process.Id throws once the Process is disposed
+    public int ProcessId { get; }
     public nint Handle => Process?.Handle ?? IntPtr.Zero;
 
     public ProcessFilter Filter { get; set; }
@@ -254,6 +255,7 @@ public class ProcessEx : IDisposable, ICloneable
     public ProcessEx(Process process, string path, string executable, ProcessFilter filter)
     {
         Process = process;
+        ProcessId = process.Id;
         Path = path;
         Executable = executable;
         Filter = filter;
