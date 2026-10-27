@@ -232,14 +232,15 @@ namespace HandheldCompanion.ViewModels
             // async: this can be raised under the process manager's pid lock, a sync ui invoke there can deadlock
             UIHelper.TryBeginInvoke(() =>
             {
-                // skip if disposed or this window went away before this ran (match by object, hwnds get reused)
-                if (_isDisposed || _process is null
-                    || !_process.ProcessWindows.TryGetValue(processWindow.Hwnd, out ProcessWindow? currentWindow)
-                    || !ReferenceEquals(currentWindow, processWindow))
-                    return;
-
                 lock (_collectionLock)
                 {
+                    // checked under the lock so dispose can't take its snapshot in between
+                    // skip if disposed or this window went away before this ran (match by object, hwnds get reused)
+                    if (_isDisposed || _process is null
+                        || !_process.ProcessWindows.TryGetValue(processWindow.Hwnd, out ProcessWindow? currentWindow)
+                        || !ReferenceEquals(currentWindow, processWindow))
+                        return;
+
                     WindowListItemViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow?.Hwnd == processWindow.Hwnd);
                     if (foundWindow is null)
                         ProcessWindows.Add(new WindowListItemViewModel(processWindow));
@@ -297,8 +298,13 @@ namespace HandheldCompanion.ViewModels
                 _process.WindowDetached -= Process_WindowDetached;
             }
 
-            // Dispose each window from a snapshot
-            foreach (WindowListItemViewModel processWindow in ProcessWindows.ToArray())
+            // snapshot under the lock: a late attach sees _isDisposed and can't add after this
+            // dispose and clear outside it, SafeClear is a sync ui call and the ui thread takes this lock
+            WindowListItemViewModel[] windows;
+            lock (_collectionLock)
+                windows = ProcessWindows.ToArray();
+
+            foreach (WindowListItemViewModel processWindow in windows)
                 processWindow.Dispose();
 
             // clear windows
