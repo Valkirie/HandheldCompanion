@@ -258,8 +258,9 @@ namespace HandheldCompanion.ViewModels
                 WindowListItemViewModel? detachedWindow;
                 lock (_collectionLock)
                 {
-                    // match by object so a late detach can't remove a new window that reused the hwnd
-                    detachedWindow = ProcessWindows.FirstOrDefault(win => ReferenceEquals(win.ProcessWindow, processWindow));
+                    // match by object so a late detach can't remove a new window that reused the hwnd;
+                    // LastWindow survives the window's dispose, which nulls ProcessWindow before this runs
+                    detachedWindow = ProcessWindows.FirstOrDefault(win => ReferenceEquals(win.LastWindow, processWindow));
                     if (detachedWindow is not null)
                         ProcessWindows.Remove(detachedWindow);
                 }
