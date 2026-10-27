@@ -1245,6 +1245,22 @@ public class ProfileManager : IManager
         }
     }
 
+    // number the name until no other profile uses the same file
+    private void EnsureUniqueFileName(Profile profile)
+    {
+        string baseName = profile.Name;
+        for (int idx = 2; IsFileNameTaken(profile); idx++)
+            profile.Name = $"{baseName} ({idx})";
+    }
+
+    private bool IsFileNameTaken(Profile profile)
+    {
+        string fileName = profile.GetFileName();
+        return profiles.Values.Any(p => p.Guid != profile.Guid &&
+            (fileName.Equals(p.GetFileName(), StringComparison.InvariantCultureIgnoreCase) ||
+             fileName.Equals(p.FileName, StringComparison.InvariantCultureIgnoreCase)));
+    }
+
     public void UpdateOrCreateProfile(Profile profile, UpdateSource source = UpdateSource.Background)
     {
         if (!HasValidProfileName(profile))
@@ -1309,6 +1325,10 @@ public class ProfileManager : IManager
         {
             prevWrapper = prevProfile.XInputPlus;
         }
+
+        // profile files are named after the profile, so a name already in use would share its file
+        if (source != UpdateSource.Serializer)
+            EnsureUniqueFileName(profile);
 
         // update database
         profiles[profile.Guid] = profile;
