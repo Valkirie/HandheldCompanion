@@ -27,6 +27,8 @@ namespace HandheldCompanion.ViewModels
 
         private bool _isInternalSensorEnabled, _isExternalSensorEnabled, _isControllerSensorEnabled;
         private bool _isDynamicLightingVisible, _isLedBrightnessVisible, _isSecondColorSupported;
+        private bool _hasSecondLEDSet, _hasFixedLEDSpeed, _ledUseSecondColor, _ledSecondUseAccentColor;
+        private LEDLevel _ledSettingsLevel = LEDLevel.SolidColor;
         private bool _isLegionGoVisible, _isLegionGoSensorSelectionVisible, _isLegionGoLeftControllerVisible, _isLegionGoRightControllerVisible;
         private bool _isMsiClawVisible, _isGamingZoneVisible, _isColorPickerEnabled = true;
         private bool _isCalibrationEnabled, _isExternalSensorExpanderEnabled, _isInternalSensorExpanderEnabled;
@@ -49,6 +51,27 @@ namespace HandheldCompanion.ViewModels
         public bool IsDynamicLightingVisible => _isDynamicLightingVisible;
         public bool IsLedBrightnessVisible => _isLedBrightnessVisible;
         public bool IsSecondColorSupported => _isSecondColorSupported;
+        public bool HasSecondLEDSet => _hasSecondLEDSet;
+        public bool IsLEDEffectSpeedVisible => !_hasFixedLEDSpeed && _ledSettingsLevel is
+            LEDLevel.Breathing or LEDLevel.Rainbow or LEDLevel.Wave or LEDLevel.Wheel or LEDLevel.Gradient or LEDLevel.Ambilight;
+        public bool IsSecondLEDSetVisible => HasSecondLEDSet && _ledSettingsLevel is LEDLevel.SolidColor or LEDLevel.Breathing or LEDLevel.LEDPreset;
+        public bool IsSecondColorToggleVisible => !HasSecondLEDSet && _ledSettingsLevel is LEDLevel.SolidColor or LEDLevel.Breathing;
+        public bool IsSecondColorPickerVisible => IsSecondLEDSetVisible || IsSecondColorToggleVisible;
+        public bool IsSecondColorPickerEnabled => HasSecondLEDSet ? SecondColorSourceIndex == 0 : _ledUseSecondColor && IsColorPickerEnabled;
+        public bool IsMainColorSourceVisible => _ledSettingsLevel != LEDLevel.LEDPreset;
+
+        public int SecondColorSourceIndex
+        {
+            get
+            {
+                if (_ledSecondUseAccentColor)
+                    return 2;
+                if (!_ledUseSecondColor && IsMainColorSourceVisible)
+                    return 1;
+                return 0;
+            }
+        }
+
         public bool IsLegionGoVisible => _isLegionGoVisible;
         public bool IsLegionGoSensorSelectionVisible => _isLegionGoSensorSelectionVisible;
         public bool IsLegionGoLeftControllerVisible => _isLegionGoLeftControllerVisible;
@@ -262,18 +285,27 @@ namespace HandheldCompanion.ViewModels
         public List<LEDPreset> DeviceLEDPresets => _deviceLEDPresets;
         public List<BatteryBypassPreset> DeviceBatteryBypassPresets => _deviceBatteryBypassPresets;
 
-        private void SetUiState(string propertyName, bool value, ref bool storage)
-        {
-            SetProperty(ref storage, value, propertyName: propertyName);
-        }
-
         public void UpdateCapabilities(IDevice device)
         {
-            SetUiState(nameof(IsInternalSensorEnabled), device.Capabilities.HasFlag(DeviceCapabilities.InternalSensor), ref _isInternalSensorEnabled);
-            SetUiState(nameof(IsExternalSensorEnabled), device.Capabilities.HasFlag(DeviceCapabilities.ExternalSensor), ref _isExternalSensorEnabled);
-            SetUiState(nameof(IsDynamicLightingVisible), device.Capabilities.HasFlag(DeviceCapabilities.DynamicLighting), ref _isDynamicLightingVisible);
-            SetUiState(nameof(IsLedBrightnessVisible), device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingBrightness), ref _isLedBrightnessVisible);
-            SetUiState(nameof(IsSecondColorSupported), device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor), ref _isSecondColorSupported);
+            SetProperty(ref _isInternalSensorEnabled, device.Capabilities.HasFlag(DeviceCapabilities.InternalSensor), propertyName: nameof(IsInternalSensorEnabled));
+            SetProperty(ref _isExternalSensorEnabled, device.Capabilities.HasFlag(DeviceCapabilities.ExternalSensor), propertyName: nameof(IsExternalSensorEnabled));
+            SetProperty(ref _isDynamicLightingVisible, device.Capabilities.HasFlag(DeviceCapabilities.DynamicLighting), propertyName: nameof(IsDynamicLightingVisible));
+            SetProperty(ref _isLedBrightnessVisible, device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingBrightness), propertyName: nameof(IsLedBrightnessVisible));
+            SetProperty(ref _isSecondColorSupported, device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor), propertyName: nameof(IsSecondColorSupported));
+            SetProperty(ref _hasSecondLEDSet, device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDSet), propertyName: nameof(HasSecondLEDSet));
+            _hasFixedLEDSpeed = device.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingFixedSpeed);
+            NotifyLightingStateChanged();
+        }
+
+        private void NotifyLightingStateChanged()
+        {
+            OnPropertyChanged(nameof(IsLEDEffectSpeedVisible));
+            OnPropertyChanged(nameof(IsSecondLEDSetVisible));
+            OnPropertyChanged(nameof(IsSecondColorToggleVisible));
+            OnPropertyChanged(nameof(IsSecondColorPickerVisible));
+            OnPropertyChanged(nameof(IsMainColorSourceVisible));
+            OnPropertyChanged(nameof(SecondColorSourceIndex));
+            OnPropertyChanged(nameof(IsSecondColorPickerEnabled));
         }
 
         private void OnCapabilitiesChanged(IDevice sender, DeviceCapabilities capabilities) => UpdateCapabilities(sender);
@@ -293,31 +325,32 @@ namespace HandheldCompanion.ViewModels
         {
             UpdateCapabilities(device);
 
-            SetUiState(nameof(IsLegionGoVisible), device is Devices.Lenovo.LegionGoTablet, ref _isLegionGoVisible);
-            SetUiState(nameof(IsLegionGoSensorSelectionVisible), device is Devices.Lenovo.LegionGoTablet, ref _isLegionGoSensorSelectionVisible);
-            SetUiState(nameof(IsLegionGoLeftControllerVisible), device is Devices.Lenovo.LegionGoTablet, ref _isLegionGoLeftControllerVisible);
-            SetUiState(nameof(IsLegionGoRightControllerVisible), device is Devices.Lenovo.LegionGoTablet, ref _isLegionGoRightControllerVisible);
-            SetUiState(nameof(IsMsiClawVisible), device is ClawA1M, ref _isMsiClawVisible);
-            SetUiState(nameof(IsGamingZoneVisible), device is Devices.Zotac.GamingZone, ref _isGamingZoneVisible);
+            SetProperty(ref _isLegionGoVisible, device is Devices.Lenovo.LegionGoTablet, propertyName: nameof(IsLegionGoVisible));
+            SetProperty(ref _isLegionGoSensorSelectionVisible, device is Devices.Lenovo.LegionGoTablet, propertyName: nameof(IsLegionGoSensorSelectionVisible));
+            SetProperty(ref _isLegionGoLeftControllerVisible, device is Devices.Lenovo.LegionGoTablet, propertyName: nameof(IsLegionGoLeftControllerVisible));
+            SetProperty(ref _isLegionGoRightControllerVisible, device is Devices.Lenovo.LegionGoTablet, propertyName: nameof(IsLegionGoRightControllerVisible));
+            SetProperty(ref _isMsiClawVisible, device is ClawA1M, propertyName: nameof(IsMsiClawVisible));
+            SetProperty(ref _isGamingZoneVisible, device is Devices.Zotac.GamingZone, propertyName: nameof(IsGamingZoneVisible));
 
-            SetUiState(nameof(IsSolidColorSupported), device.DynamicLightingCapabilities.HasFlag(LEDLevel.SolidColor), ref _isSolidColorSupported);
-            SetUiState(nameof(IsBreathingSupported), device.DynamicLightingCapabilities.HasFlag(LEDLevel.Breathing), ref _isBreathingSupported);
-            SetUiState(nameof(IsRainbowSupported), device.DynamicLightingCapabilities.HasFlag(LEDLevel.Rainbow), ref _isRainbowSupported);
-            SetUiState(nameof(IsWaveSupported), device.DynamicLightingCapabilities.HasFlag(LEDLevel.Wave), ref _isWaveSupported);
-            SetUiState(nameof(IsWheelSupported), device.DynamicLightingCapabilities.HasFlag(LEDLevel.Wheel), ref _isWheelSupported);
-            SetUiState(nameof(IsGradientSupported), device.DynamicLightingCapabilities.HasFlag(LEDLevel.Gradient), ref _isGradientSupported);
-            SetUiState(nameof(IsAmbilightSupported), device.DynamicLightingCapabilities.HasFlag(LEDLevel.Ambilight), ref _isAmbilightSupported);
-            SetUiState(nameof(IsPresetSupported), device.DynamicLightingCapabilities.HasFlag(LEDLevel.LEDPreset), ref _isPresetSupported);
+            SetProperty(ref _isSolidColorSupported, device.DynamicLightingCapabilities.HasFlag(LEDLevel.SolidColor), propertyName: nameof(IsSolidColorSupported));
+            SetProperty(ref _isBreathingSupported, device.DynamicLightingCapabilities.HasFlag(LEDLevel.Breathing), propertyName: nameof(IsBreathingSupported));
+            SetProperty(ref _isRainbowSupported, device.DynamicLightingCapabilities.HasFlag(LEDLevel.Rainbow), propertyName: nameof(IsRainbowSupported));
+            SetProperty(ref _isWaveSupported, device.DynamicLightingCapabilities.HasFlag(LEDLevel.Wave), propertyName: nameof(IsWaveSupported));
+            SetProperty(ref _isWheelSupported, device.DynamicLightingCapabilities.HasFlag(LEDLevel.Wheel), propertyName: nameof(IsWheelSupported));
+            SetProperty(ref _isGradientSupported, device.DynamicLightingCapabilities.HasFlag(LEDLevel.Gradient), propertyName: nameof(IsGradientSupported));
+            SetProperty(ref _isAmbilightSupported, device.DynamicLightingCapabilities.HasFlag(LEDLevel.Ambilight), propertyName: nameof(IsAmbilightSupported));
+            SetProperty(ref _isPresetSupported, device.DynamicLightingCapabilities.HasFlag(LEDLevel.LEDPreset), propertyName: nameof(IsPresetSupported));
         }
 
         public void UpdateController(IController? controller)
         {
-            SetUiState(nameof(IsControllerSensorEnabled), controller?.Capabilities.HasFlag(ControllerCapabilities.MotionSensor) == true, ref _isControllerSensorEnabled);
+            SetProperty(ref _isControllerSensorEnabled, controller?.Capabilities.HasFlag(ControllerCapabilities.MotionSensor) == true, propertyName: nameof(IsControllerSensorEnabled));
         }
 
         public void UpdateAccentColorState(bool useAccentColor)
         {
-            SetUiState(nameof(IsColorPickerEnabled), !useAccentColor, ref _isColorPickerEnabled);
+            SetProperty(ref _isColorPickerEnabled, !useAccentColor, propertyName: nameof(IsColorPickerEnabled));
+            OnPropertyChanged(nameof(IsSecondColorPickerEnabled));
         }
 
         public void UpdateSensorSelection(SensorFamily sensorFamily)
@@ -328,9 +361,9 @@ namespace HandheldCompanion.ViewModels
             bool isInternal = activeSensorFamily == SensorFamily.Windows;
             bool isController = activeSensorFamily == SensorFamily.Controller;
 
-            SetUiState(nameof(IsCalibrationEnabled), SensorsManager.ActiveCalibrationMode == CalibrationMode.Manual && (isExternal || isInternal || isController), ref _isCalibrationEnabled);
-            SetUiState(nameof(IsExternalSensorExpanderEnabled), isExternal, ref _isExternalSensorExpanderEnabled);
-            SetUiState(nameof(IsInternalSensorExpanderEnabled), isInternal, ref _isInternalSensorExpanderEnabled);
+            SetProperty(ref _isCalibrationEnabled, SensorsManager.ActiveCalibrationMode == CalibrationMode.Manual && (isExternal || isInternal || isController), propertyName: nameof(IsCalibrationEnabled));
+            SetProperty(ref _isExternalSensorExpanderEnabled, isExternal, propertyName: nameof(IsExternalSensorExpanderEnabled));
+            SetProperty(ref _isInternalSensorExpanderEnabled, isInternal, propertyName: nameof(IsInternalSensorExpanderEnabled));
         }
 
         private void Device_Opened(IDevice sender)
@@ -396,13 +429,20 @@ namespace HandheldCompanion.ViewModels
         {
             get
             {
+                if (!CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimitPercent))
+                    return CurrentDevice.BatteryBypassMax;
+
                 return ManagerFactory.settingsManager.GetDouble("BatteryChargeLimitPercent");
             }
             set
             {
+                if (!CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.BatteryChargeLimitPercent))
+                    return;
+
                 if (value != BatteryChargeLimitPercent)
                 {
-                    ManagerFactory.settingsManager.SetProperty("BatteryChargeLimitPercent", (int)Math.Round(value)); // setting is Int32; a double is rejected and the slider snaps back
+                    // The setting is Int32; passing the slider's double value is rejected.
+                    ManagerFactory.settingsManager.SetProperty("BatteryChargeLimitPercent", (int)Math.Round(value));
                     OnPropertyChanged(nameof(BatteryChargeLimitPercent));
                 }
             }
@@ -1036,6 +1076,9 @@ namespace HandheldCompanion.ViewModels
             SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"), false, true);
             SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetDouble("BatteryChargeLimitPercent"), false, true);
             SettingsManager_SettingValueChanged("LEDSettingsUseAccentColor", ManagerFactory.settingsManager.GetBoolean("LEDSettingsUseAccentColor"), false, true);
+            SettingsManager_SettingValueChanged("LEDSettingsLevel", ManagerFactory.settingsManager.GetInt("LEDSettingsLevel"), false, true);
+            SettingsManager_SettingValueChanged("LEDUseSecondColor", ManagerFactory.settingsManager.GetBoolean("LEDUseSecondColor"), false, true);
+            SettingsManager_SettingValueChanged("LEDSecondUseAccentColor", ManagerFactory.settingsManager.GetBoolean("LEDSecondUseAccentColor"), false, true);
             SettingsManager_SettingValueChanged("LegionControllerPassthrough", ManagerFactory.settingsManager.GetBoolean("LegionControllerPassthrough"), false, true);
             SettingsManager_SettingValueChanged("LegionControllerPhysicalXInput", ManagerFactory.settingsManager.GetBoolean("LegionControllerPhysicalXInput"), false, true);
             SettingsManager_SettingValueChanged("LegionControllerSwap", ManagerFactory.settingsManager.GetBoolean("LegionControllerSwap"), false, true);
@@ -1090,7 +1133,7 @@ namespace HandheldCompanion.ViewModels
             switch (name)
             {
                 case "BatteryChargeLimit":
-                    // setting is already updated, so the setter's equality check would skip the notification
+                    // The setting is already updated, so the setter would skip notification.
                     OnPropertyChanged(nameof(BatteryChargeLimit));
                     break;
                 case "BatteryChargeLimitPercent":
@@ -1098,6 +1141,18 @@ namespace HandheldCompanion.ViewModels
                     break;
                 case "LEDSettingsUseAccentColor":
                     UpdateAccentColorState(Convert.ToBoolean(value));
+                    break;
+                case "LEDSettingsLevel":
+                    _ledSettingsLevel = (LEDLevel)Convert.ToInt32(value);
+                    NotifyLightingStateChanged();
+                    break;
+                case "LEDUseSecondColor":
+                    _ledUseSecondColor = Convert.ToBoolean(value);
+                    NotifyLightingStateChanged();
+                    break;
+                case "LEDSecondUseAccentColor":
+                    _ledSecondUseAccentColor = Convert.ToBoolean(value);
+                    NotifyLightingStateChanged();
                     break;
                 case "LegionControllerPassthrough":
                     OnPropertyChanged(nameof(LegionControllerPassthrough));
