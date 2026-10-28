@@ -39,6 +39,9 @@ namespace HandheldCompanion.Watchers
         private static readonly string ExecutablePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "OneXConsole", "OneXConsole.exe");
 
+        // OneXConsole is optional on OneXPlayer devices, only watch it where it is installed
+        public static bool IsInstalled => File.Exists(ExecutablePath);
+
         public override void Enable()
         {
             SetAutoStartup(true);

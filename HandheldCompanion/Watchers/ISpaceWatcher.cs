@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Devices.MSI;
+using HandheldCompanion.Devices.OneXPlayer;
 using HandheldCompanion.Devices.Zotac;
 using HandheldCompanion.Notifications;
 using HandheldCompanion.Utils;
@@ -78,7 +79,8 @@ namespace HandheldCompanion.Watchers
                 LegionGo => new LegionSpaceWatcher(),
                 ROGAlly or ROGAllyX => new RogAllySpaceWatcher(),
                 GamingZone => new ZotacLauncherWatcher(),
-                OneXPlayer3 => new OneXConsoleWatcher(),
+                // OneXPlayer only, AOKZOE devices share the OneXAOKZOE base
+                OneXAOKZOE and not AOKZOEA1 when OneXConsoleWatcher.IsInstalled => new OneXConsoleWatcher(),
                 _ => null
             };
         }
