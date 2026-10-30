@@ -596,7 +596,14 @@ public class ProcessManager : IManager
             });
         }
 
-        QueueProcessEvent(() => process.Dispose());
+        QueueProcessEvent(() =>
+        {
+            // A superseded foreground clear must not leave a disposed instance as "previous".
+            if (ReferenceEquals(notifiedForegroundProcess, process))
+                notifiedForegroundProcess = null;
+                
+            process.Dispose();
+        });
     }
 
     private void ProcessHalted(object? sender, EventArgs e)
