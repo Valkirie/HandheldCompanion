@@ -50,6 +50,8 @@ public enum DeviceCapabilities : ushort
     OEMCPU = 1024,
     OEMGPU = 2048,
     XGMobile = 4096,
+    DynamicLightingSecondLEDSet = 8192, // a second LED set with its own color in solid and preset modes and a breathing toggle
+    DynamicLightingFixedSpeed = 16384, // effect/breathing speed can't be changed
 }
 
 public enum TDPMethod

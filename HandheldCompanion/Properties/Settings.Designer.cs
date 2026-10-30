@@ -925,6 +925,30 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LEDSecondSetBreathing {
+            get {
+                return ((bool)(this["LEDSecondSetBreathing"]));
+            }
+            set {
+                this["LEDSecondSetBreathing"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LEDSecondUseAccentColor {
+            get {
+                return ((bool)(this["LEDSecondUseAccentColor"]));
+            }
+            set {
+                this["LEDSecondUseAccentColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int LEDSettingsLevel {
             get {
