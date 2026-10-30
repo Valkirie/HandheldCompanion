@@ -43,6 +43,8 @@ public class ProfileManager : IManager
     // public List<Profile> subProfiles = [];
 
     private object profileLock = new();
+    // guards file name selection and registration in UpdateOrCreateProfile
+    private readonly object fileNameLock = new();
     private Profile? currentProfile;
 
     public FileSystemWatcher profileWatcher { get; set; }
@@ -1326,12 +1328,16 @@ public class ProfileManager : IManager
             prevWrapper = prevProfile.XInputPlus;
         }
 
-        // profile files are named after the profile, so a name already in use would share its file
-        if (source != UpdateSource.Serializer)
-            EnsureUniqueFileName(profile);
+        // profile files are named after the profile, so a name already in use would share its file;
+        // pick the name and register under one lock so concurrent updates cannot pick the same one
+        lock (fileNameLock)
+        {
+            if (source != UpdateSource.Serializer)
+                EnsureUniqueFileName(profile);
 
-        // update database
-        profiles[profile.Guid] = profile;
+            // update database
+            profiles[profile.Guid] = profile;
+        }
 
         // refresh error code
         SanitizeProfile(profile, source);
@@ -1367,8 +1373,24 @@ public class ProfileManager : IManager
             ApplyProfile(profile, source);
         }
 
+        // sub-profile file names include the parent name, so a renamed parent must move them too
+        bool parentRenamed = !profile.IsSubProfile && !string.IsNullOrEmpty(profile.FileName) &&
+            !profile.FileName.Equals(profile.GetFileName(), StringComparison.InvariantCultureIgnoreCase);
+
         // serialize profile
         SerializeProfile(profile);
+
+        if (parentRenamed)
+        {
+            foreach (Profile subProfile in GetSubProfilesFromProfile(profile).ToList())
+            {
+                lock (fileNameLock)
+                    EnsureUniqueFileName(subProfile);
+
+                // writes the new file and deletes the old one
+                SerializeProfile(subProfile);
+            }
+        }
     }
 
     public bool UpdateProfileCloaking(Profile profile)
