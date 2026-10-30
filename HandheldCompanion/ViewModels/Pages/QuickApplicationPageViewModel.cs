@@ -288,7 +288,7 @@ namespace HandheldCompanion.ViewModels
 
                 try
                 {
-                    ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
+                    ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => ReferenceEquals(p.Process, processEx));
                     if (foundProcess is not null)
                     {
                         Processes.Remove(foundProcess);
@@ -306,7 +306,8 @@ namespace HandheldCompanion.ViewModels
         {
             UIHelper.TryBeginInvoke(() =>
             {
-                if (processEx is null || processEx.Filter == ProcessEx.ProcessFilter.Restricted)
+                if (processEx is null || processEx.Filter == ProcessEx.ProcessFilter.Restricted
+                    || !ReferenceEquals(ProcessManager.GetProcess(processEx.ProcessId), processEx))
                     return;
 
                 if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
@@ -314,11 +315,9 @@ namespace HandheldCompanion.ViewModels
 
                 try
                 {
-                    ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => p.Process == processEx || p.Process.ProcessId == processEx.ProcessId);
+                    ProcessExViewModel? foundProcess = Processes.FirstOrDefault(p => ReferenceEquals(p.Process, processEx));
                     if (foundProcess is null)
                         Processes.Add(new ProcessExViewModel(processEx, true));
-                    else
-                        foundProcess.Process = processEx;
                 }
                 finally
                 {

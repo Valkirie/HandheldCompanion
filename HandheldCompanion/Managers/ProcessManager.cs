@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Automation;
 using Windows.System.Diagnostics;
@@ -63,6 +64,14 @@ public class ProcessManager : IManager
 
     private static ProcessEx? currentProcess;
     private static ProcessFilter currentForegroundFilter = ProcessFilter.Restricted;
+    // Protects foreground state and queue ownership, never subscriber execution.
+    private static readonly object stateLock = new();
+    // ponytail: one notification lane lets a slow subscriber delay all notifications;
+    // use generation-aware lanes if independent lifecycle delivery becomes necessary.
+    private static readonly Queue<Action> processEvents = new();
+    private static bool isDrainingEvents;
+    private static long foregroundVersion;
+    private static ProcessEx? notifiedForegroundProcess;
     private IntPtr currenthWnd;
 
     private AutomationEventHandler _windowOpenedHandler = null!;
@@ -476,30 +485,125 @@ public class ProcessManager : IManager
                     return;
             }
 
-            // skip exact duplicates (same foreground process and same filter)
-            if (currentProcess?.ProcessId == process.ProcessId && currentForegroundFilter == filter)
+            // Refresh can raise Exited or invoke subscribers, so keep it outside both locks.
+            process.Refresh(true);
+
+            object? lockObject = EnterProcessLock(processId, create: false);
+            if (lockObject is null)
                 return;
 
-            // store previous process
-            ProcessEx? prevProcess = currentProcess;
-
-            // update current process
-            currentProcess = process;
-            currentForegroundFilter = filter;
-            currentProcess.Refresh(true);
-
-            if (currentProcess is not null)
-                LogManager.LogDebug("{0} process {1} now has the foreground", currentProcess.Platform, currentProcess.Executable);
-            else
+            try
             {
-                LogManager.LogDebug("No current foreground process or it is ignored");
-                return;
+                if (!Processes.TryGetValue(processId, out ProcessEx? listed) || !ReferenceEquals(listed, process))
+                    return;
+
+                lock (stateLock)
+                {
+                    // A hook task may finish resolving a window after focus has moved elsewhere.
+                    if (hWnd != GetforegroundWindow())
+                        return;
+
+                    if (ReferenceEquals(currentProcess, process) && currentForegroundFilter == filter)
+                        return;
+
+                    currentProcess = process;
+                    currentForegroundFilter = filter;
+                    long version = ++foregroundVersion;
+
+                    QueueForegroundChanged(process, filter, version);
+                }
+            }
+            finally
+            {
+                Monitor.Exit(lockObject);
             }
 
-            // raise event
-            ForegroundChanged?.Invoke(currentProcess, prevProcess, filter);
+            LogManager.LogDebug("{0} process {1} now has the foreground", process.Platform, process.Executable);
+            DrainEvents();
         }
         catch { }
+    }
+
+    /// <summary>
+    /// Queues a foreground notification, discarding it if its version is superseded before delivery.
+    /// </summary>
+    /// <param name="process">The foreground process, or <see langword="null"/> to clear the foreground.</param>
+    /// <param name="filter">The filter reported to foreground subscribers.</param>
+    /// <param name="version">The foreground version assigned to this state transition.</param>
+    /// <remarks>
+    /// Call while holding <see cref="stateLock"/>, after updating foreground state and incrementing
+    /// <see cref="foregroundVersion"/>. The previous process reported to subscribers is the last
+    /// delivered foreground, not a superseded transition. This method only enqueues work;
+    /// call <see cref="DrainEvents"/> after releasing the state and per-PID locks.
+    /// </remarks>
+    private void QueueForegroundChanged(ProcessEx? process, ProcessFilter filter, long version)
+    {
+        // Discard superseded transitions, including delayed foreground clears on exit.
+        QueueProcessEvent(() =>
+        {
+            lock (stateLock)
+            {
+                if (version != foregroundVersion)
+                    return;
+            }
+
+            ProcessEx? previous = notifiedForegroundProcess;
+            notifiedForegroundProcess = process;
+            ForegroundChanged?.Invoke(process, previous, filter);
+        });
+    }
+
+    /// <summary>
+    /// Queues the started notification for a tracked process generation.
+    /// </summary>
+    /// <param name="process">The process instance identifying the generation that started.</param>
+    /// <param name="onStartup">Whether the process was discovered during startup enumeration.</param>
+    /// <remarks>
+    /// Call under the process's per-PID lock so this notification precedes its stop and any
+    /// replacement generation's start. This method does not drain the queue or invoke subscribers
+    /// on the calling thread.
+    /// </remarks>
+    private void QueueProcessStarted(ProcessEx process, bool onStartup)
+    {
+        QueueProcessEvent(() =>
+        {
+            ProcessStarted?.Invoke(process, onStartup);
+            LogManager.LogDebug("Process detected: {0}", process.Executable);
+        });
+    }
+
+    /// <summary>
+    /// Queues an optional stopped notification followed by disposal of the same process generation.
+    /// </summary>
+    /// <param name="process">The process instance to notify about and dispose.</param>
+    /// <param name="removed">
+    /// Whether the instance was removed from the process registry and needs a stopped notification.
+    /// Disposal is queued regardless of this value.
+    /// </param>
+    /// <remarks>
+    /// Call under the process's per-PID lock before allowing a replacement generation to register.
+    /// The shared FIFO keeps disposal behind earlier notifications and the stopped callback.
+    /// This method only enqueues work; call <see cref="DrainEvents"/> after releasing the locks.
+    /// </remarks>
+    private void QueueProcessStopped(ProcessEx process, bool removed)
+    {
+        if (removed)
+        {
+            QueueProcessEvent(() =>
+            {
+                ProcessStopped?.Invoke(process);
+                LogManager.LogDebug("Process halted: {0}", process.Executable);
+            });
+        }
+
+        QueueProcessEvent(() =>
+        {
+            // A superseded foreground clear must not leave a disposed instance as "previous".
+            if (ReferenceEquals(notifiedForegroundProcess, process))
+                notifiedForegroundProcess = null;
+                
+            process.Dispose();
+        });
     }
 
     private void ProcessHalted(object? sender, EventArgs e)
@@ -511,44 +615,150 @@ public class ProcessManager : IManager
 
         int processId = process.Id;
 
-        object lockObject = processLocks.GetOrAdd(processId, id => new object());
-        lock (lockObject)
+        object? lockObject = EnterProcessLock(processId, create: false);
+        if (lockObject is null)
+            return;
+
+        try
         {
-            if (!Processes.TryGetValue(processId, out ProcessEx? processEx))
+            if (!Processes.TryGetValue(processId, out ProcessEx? processEx) || !ReferenceEquals(processEx.Process, process))
                 return;
 
-            // If the halted process had foreground, log and raise event.
-            if (currentProcess == processEx)
+            lock (stateLock)
             {
-                ProcessEx? haltedForegroundProcess = currentProcess;
-                currentProcess = null;
-                currentForegroundFilter = ProcessFilter.Restricted;
+                // If the halted process had foreground, log and queue the clear.
+                if (ReferenceEquals(currentProcess, processEx))
+                {
+                    currentProcess = null;
+                    currentForegroundFilter = ProcessFilter.Restricted;
+                    long version = ++foregroundVersion;
 
-                LogManager.LogDebug("{0} process {1} that had foreground has halted", haltedForegroundProcess.Platform, haltedForegroundProcess.Executable);
-                ForegroundChanged?.Invoke(null, haltedForegroundProcess, ProcessFilter.Allowed);
+                    LogManager.LogDebug("{0} process {1} that had foreground has halted", processEx.Platform, processEx.Executable);
+                    QueueForegroundChanged(null, ProcessFilter.Allowed, version);
+                }
             }
 
-            // Remove the process from the dictionary and raise the stopped event.
-            if (Processes.TryRemove(processId, out _))
-            {
-                ProcessStopped?.Invoke(processEx);
-                LogManager.LogDebug("Process halted: {0}", processEx.Executable);
-            }
+            // Teardown follows both Started and any in-flight foreground notification.
+            bool removed = Processes.TryRemove(processId, out _);
+            QueueProcessStopped(processEx, removed);
 
-            // Dispose the process.
-            processEx.Dispose();
+            // only the holder removes the lock; late threads see it is gone and retry
+            processLocks.TryRemove(processId, out _);
+        }
+        finally
+        {
+            Monitor.Exit(lockObject);
         }
 
-        processLocks.TryRemove(processId, out _);
+        DrainEvents();
     }
 
     // Define a thread-safe dictionary to hold lock objects per process id.
     private static readonly ConcurrentDictionary<int, object> processLocks = new ConcurrentDictionary<int, object>();
 
+    // lock the pid's current lock object; retry if it was removed or replaced meanwhile,
+    // so all threads of one pid always share the same lock (create: false never adds one)
+    private static object? EnterProcessLock(int processId, bool create)
+    {
+        while (true)
+        {
+            object? lockObject;
+            if (create)
+                lockObject = processLocks.GetOrAdd(processId, id => new object());
+            else if (!processLocks.TryGetValue(processId, out lockObject))
+                return null;
+
+            Monitor.Enter(lockObject);
+            if (processLocks.TryGetValue(processId, out object? current) && ReferenceEquals(current, lockObject))
+                return lockObject;
+
+            Monitor.Exit(lockObject);
+        }
+    }
+
+    /// <summary>
+    /// Appends an action to the shared notification FIFO without invoking it or starting a drainer.
+    /// </summary>
+    /// <param name="raise">The notification or cleanup action to execute during draining.</param>
+    /// <remarks>
+    /// Uses <see cref="stateLock"/> only to enqueue. Lifecycle callers must also hold the relevant
+    /// per-PID lock to preserve generation ordering. An already-active drainer may consume the
+    /// action immediately; enqueueing does not wait for its completion.
+    /// </remarks>
+    private static void QueueProcessEvent(Action raise)
+    {
+        lock (stateLock)
+            processEvents.Enqueue(raise);
+    }
+
+    /// <summary>
+    /// Executes queued actions synchronously on the calling thread, with at most one active drainer.
+    /// </summary>
+    /// <remarks>
+    /// Call only after releasing <see cref="stateLock"/> and all per-PID locks. If another drainer
+    /// is active, returns without waiting for it. Queue access and ownership changes use
+    /// <see cref="stateLock"/>, but actions execute outside that lock and may enqueue more work.
+    /// A call may process other threads' notifications and runs for as long as its actions require.
+    /// Action exceptions are logged and draining continues. Unexpected failures, including logging
+    /// failures, propagate after releasing ownership; remaining actions need a subsequent drain.
+    /// </remarks>
+    private static void DrainEvents()
+    {
+        lock (stateLock)
+        {
+            if (isDrainingEvents)
+                return;
+
+            isDrainingEvents = true;
+        }
+
+        try
+        {
+            while (true)
+            {
+                Action? raise;
+                lock (stateLock)
+                {
+                    if (!processEvents.TryDequeue(out raise))
+                    {
+                        // Keep empty detection and releasing ownership atomic with enqueue.
+                        isDrainingEvents = false;
+                        return;
+                    }
+                }
+
+                try
+                {
+                    raise();
+                }
+                catch (Exception ex)
+                {
+                    LogManager.LogError("Process event handler failed: {0}", ex.Message);
+                }
+            }
+        }
+        catch
+        {
+            // A logging failure must not leave the queue permanently busy.
+            lock (stateLock)
+                isDrainingEvents = false;
+            throw;
+        }
+    }
+
     private bool CreateOrUpdateProcess(int processID, AutomationElement automationElement, bool OnStartup = false)
     {
-        object lockObject = processLocks.GetOrAdd(processID, id => new object());
-        lock (lockObject)
+        bool result = CreateOrUpdateProcessLocked(processID, automationElement, OnStartup);
+
+        // raise events only after the pid lock is released
+        DrainEvents();
+        return result;
+    }
+
+    private bool CreateOrUpdateProcessLocked(int processID, AutomationElement automationElement, bool OnStartup)
+    {
+        object lockObject = EnterProcessLock(processID, create: true)!;
+        try
         {
             try
             {
@@ -629,8 +839,7 @@ public class ProcessManager : IManager
                     if (processEx.Filter != ProcessFilter.Allowed)
                         return true;
 
-                    ProcessStarted?.Invoke(processEx, OnStartup);
-                    LogManager.LogDebug("Process detected: {0}", processEx.Executable);
+                    QueueProcessStarted(processEx, OnStartup);
                 }
                 else
                 {
@@ -645,6 +854,10 @@ public class ProcessManager : IManager
                 // Process has too high elevation or other error occurred
             }
             return false;
+        }
+        finally
+        {
+            Monitor.Exit(lockObject);
         }
     }
 

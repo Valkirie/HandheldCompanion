@@ -103,6 +103,7 @@ namespace HandheldCompanion.ViewModels
         public ICommand? KillProcessCommand { get; private set; }
 
         public readonly bool IsQuickTools;
+        private volatile bool _isDisposed;
         public bool IsMainPage => !IsQuickTools;
 
         public ProcessExViewModel(ProcessEx process, bool isQuickTools)
@@ -228,50 +229,44 @@ namespace HandheldCompanion.ViewModels
 
         private void Process_WindowAttached(ProcessWindow processWindow)
         {
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
+            // async: this can be raised under the process manager's pid lock, a sync ui invoke there can deadlock
+            UIHelper.TryBeginInvoke(() =>
             {
-                UIHelper.TryInvoke(() =>
+                lock (_collectionLock)
                 {
+                    // checked under the lock so dispose can't take its snapshot in between
+                    // skip if disposed or this window went away before this ran (match by object, hwnds get reused)
+                    if (_isDisposed || _process is null
+                        || !_process.ProcessWindows.TryGetValue(processWindow.Hwnd, out ProcessWindow? currentWindow)
+                        || !ReferenceEquals(currentWindow, processWindow))
+                        return;
+
                     WindowListItemViewModel? foundWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow?.Hwnd == processWindow.Hwnd);
                     if (foundWindow is null)
                         ProcessWindows.Add(new WindowListItemViewModel(processWindow));
                     else
                         foundWindow.ProcessWindow = processWindow;
-                });
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
+                }
+            });
         }
 
         private void Process_WindowDetached(ProcessWindow processWindow)
         {
-            if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            WindowListItemViewModel? detachedWindow = null;
-            bool invoked = false;
-
-            try
+            // async for the same reason as attached; nobody needs the result synchronously
+            UIHelper.TryBeginInvoke(() =>
             {
-                invoked = UIHelper.TryInvoke(() =>
+                WindowListItemViewModel? detachedWindow;
+                lock (_collectionLock)
                 {
-                    detachedWindow = ProcessWindows.FirstOrDefault(win => win.ProcessWindow?.Hwnd == processWindow.Hwnd);
+                    // match by object so a late detach can't remove a new window that reused the hwnd;
+                    // LastWindow survives the window's dispose, which nulls ProcessWindow before this runs
+                    detachedWindow = ProcessWindows.FirstOrDefault(win => ReferenceEquals(win.LastWindow, processWindow));
                     if (detachedWindow is not null)
                         ProcessWindows.Remove(detachedWindow);
-                });
-            }
-            finally
-            {
-                Monitor.Exit(_collectionLock);
-            }
+                }
 
-            if (invoked)
                 detachedWindow?.Dispose();
+            });
         }
 
         private void UpdateProcess(ProcessEx? oldProcess, ProcessEx? newProcess)
@@ -295,6 +290,8 @@ namespace HandheldCompanion.ViewModels
 
         public override void Dispose()
         {
+            _isDisposed = true;
+
             if (_process is not null)
             {
                 _process.Refreshed -= ProcessRefreshed;
@@ -302,8 +299,13 @@ namespace HandheldCompanion.ViewModels
                 _process.WindowDetached -= Process_WindowDetached;
             }
 
-            // Dispose each window from a snapshot
-            foreach (WindowListItemViewModel processWindow in ProcessWindows.ToArray())
+            // snapshot under the lock: a late attach sees _isDisposed and can't add after this
+            // dispose and clear outside it, SafeClear is a sync ui call and the ui thread takes this lock
+            WindowListItemViewModel[] windows;
+            lock (_collectionLock)
+                windows = ProcessWindows.ToArray();
+
+            foreach (WindowListItemViewModel processWindow in windows)
                 processWindow.Dispose();
 
             // clear windows
