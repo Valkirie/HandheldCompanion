@@ -215,6 +215,9 @@ public partial class App : Application
 
             SetupEnvironment();
 
+            // fill in missing UI Automation names/descriptions for screen readers
+            AccessibilityHelper.Initialize();
+
             // Cache version info early before anything changes it
             LastVersion = Version.Parse(ManagerFactory.settingsManager.GetString("LastVersion"));
             IsFirstStart = LastVersion == Version.Parse("0.0.0.0");

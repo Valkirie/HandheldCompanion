@@ -127,10 +127,10 @@
             <Button Grid.Column="3" Content="F2" />
             <Button Grid.Column="4" Content="F3" />
             <Button Grid.Column="5" Content="F4" />
-            <Button Grid.Column="6">
+            <Button Grid.Column="6" AutomationProperties.Name="Left arrow">
                 <ui:FontIcon Glyph="&#xe76b;" />
             </Button>
-            <Button Grid.Column="7">
+            <Button Grid.Column="7" AutomationProperties.Name="Right arrow">
                 <ui:FontIcon Glyph="&#xe76c;" />
             </Button>
             <Button Grid.Column="8" Content="Del" />
@@ -206,6 +206,7 @@
             <Grid Grid.Column="0">
                 <ToggleButton
                     x:Name="ShiftToggle"
+                    AutomationProperties.Name="Shift"
                     Command="{Binding ShiftToggleClicked}"
                     IsChecked="{Binding ShiftToggleChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     Tag="Shift">
@@ -218,6 +219,7 @@
 
                 <Button
                     x:Name="LayoutSwitch"
+                    AutomationProperties.Name="Switch keyboard layout"
                     d:Visibility="Collapsed"
                     Click="LayoutSwitch_Click">
                     <ui:FontIcon Glyph="&#xe761;" />
@@ -234,7 +236,10 @@
             <Button Grid.Column="7" />
 
             <!--  Backspace  -->
-            <Button x:Name="Backspace" Grid.Column="8">
+            <Button
+                x:Name="Backspace"
+                Grid.Column="8"
+                AutomationProperties.Name="Backspace">
                 <ui:FontIcon Glyph="&#xe750;" />
             </Button>
         </Grid>
@@ -260,13 +265,17 @@
 
             <Button
                 x:Name="SpaceBar"
+                AutomationProperties.Name="Space"
                 Grid.Column="2"
                 Tag=" " />
 
             <Button Grid.Column="3" />
             <Button Grid.Column="4" />
 
-            <Button x:Name="Return" Grid.Column="5">
+            <Button
+                x:Name="Return"
+                Grid.Column="5"
+                AutomationProperties.Name="Enter">
                 <ui:FontIcon Glyph="&#xe751;" />
             </Button>
         </Grid>
