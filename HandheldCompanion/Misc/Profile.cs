@@ -338,18 +338,7 @@ public partial class Profile : ICloneable, IComparable, INotifyPropertyChanged
         return MotionSensivityY * 1000.0f;
     }
 
-    public string GetFileName()
-    {
-        string name = Name;
-
-        if (IsSubProfile)
-        {
-            Profile mainProfile = ManagerFactory.profileManager.GetProfileFromGuid(ParentGuid, true);
-            name = $"{mainProfile.Name} - {name}";
-        }
-
-        return $"{FileUtils.MakeValidFileName(name)}.json";
-    }
+    public string GetFileName() => $"{Guid:D}.json";
 
     public static string RemoveSpecialCharacters(string input)
     {

@@ -17,7 +17,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -43,8 +42,7 @@ public class ProfileManager : IManager
     // public List<Profile> subProfiles = [];
 
     private object profileLock = new();
-    // guards file name selection and registration in UpdateOrCreateProfile
-    private readonly object fileNameLock = new();
+    private readonly object profileFileLock = new();
     private readonly object profileTransitionLock = new();
     private Profile? currentProfile;
 
@@ -67,7 +65,7 @@ public class ProfileManager : IManager
         profileWatcher = new FileSystemWatcher
         {
             Path = ManagerPath,
-            EnableRaisingEvents = true,
+            EnableRaisingEvents = false,
             IncludeSubdirectories = true,
             Filter = "*.json",
             NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size
@@ -84,14 +82,7 @@ public class ProfileManager : IManager
 
     public bool RenameCollection(Guid id, string newName) => collectionHelper.RenameCollection(id, newName);
 
-    // match the standard GUID pattern
-    private Regex guidRegex = new Regex(@"[0-9A-Fa-f]{8}(-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12}");
-
-    private static bool HasValidProfileName(Profile profile)
-    {
-        profile.Name = profile.Name?.Trim() ?? string.Empty;
-        return !string.IsNullOrWhiteSpace(profile.Name);
-    }
+    private static bool HasValidProfileName(Profile profile) => !string.IsNullOrWhiteSpace(profile.Name);
 
     public override void Start()
     {
@@ -102,11 +93,39 @@ public class ProfileManager : IManager
 
         // process existing profiles
         string[] fileEntries = Directory.GetFiles(ManagerPath, "*.json", SearchOption.AllDirectories);
-        string[] sorted = fileEntries.OrderBy(f => guidRegex.IsMatch(Path.GetFileNameWithoutExtension(f)))
-            .ThenBy(f => Path.GetFileNameWithoutExtension(f)).ToArray();
+        List<Profile> loadedProfiles = fileEntries.Select(ReadProfile).OfType<Profile>().ToList();
+        // Prefer completed migrations, then load parents before children regardless of filename order.
+        IEnumerable<Profile> sorted = loadedProfiles
+            .OrderByDescending(p => p.FileName.Equals(p.GetFileName(), StringComparison.OrdinalIgnoreCase))
+            .ThenBy(p => p.FileName, StringComparer.OrdinalIgnoreCase)
+            .GroupBy(p => p.Guid).Select(group => group.First())
+            .OrderByDescending(p => p.Default).ThenBy(p => p.IsSubProfile);
 
-        foreach (string fileName in sorted)
-            ProcessProfile(fileName, false);
+        foreach (Profile profile in sorted)
+            ProcessProfile(profile, Path.Combine(ManagerPath, profile.FileName));
+
+        foreach (Profile profile in profiles.Values)
+            if (!profile.FileName.Equals(profile.GetFileName(), StringComparison.OrdinalIgnoreCase))
+                SerializeProfile(profile);
+
+        // A crash after saving but before cleanup can leave a second copy of the same GUID.
+        foreach (Profile loaded in loadedProfiles)
+        {
+            if (profiles.TryGetValue(loaded.Guid, out Profile? registered) &&
+                registered.FileName.Equals(registered.GetFileName(), StringComparison.OrdinalIgnoreCase) &&
+                !loaded.FileName.Equals(registered.FileName, StringComparison.OrdinalIgnoreCase) &&
+                File.Exists(Path.Combine(ManagerPath, registered.FileName)))
+            {
+                try
+                {
+                    File.Delete(Path.Combine(ManagerPath, loaded.FileName));
+                }
+                catch (Exception ex)
+                {
+                    LogManager.LogError("Could not remove legacy profile: {0}. {1}", loaded.FileName, ex.Message);
+                }
+            }
+        }
 
         // check for default profile
         if (!HasDefault())
@@ -127,8 +146,11 @@ public class ProfileManager : IManager
         }
 
         // profile watcher events
+        pendingCreation.Clear();
+        pendingDeletion.Clear();
         profileWatcher.Created += ProfileCreated;
         profileWatcher.Deleted += ProfileDeleted;
+        profileWatcher.EnableRaisingEvents = true;
 
         // manage events
         ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
@@ -183,6 +205,7 @@ public class ProfileManager : IManager
         base.PrepareStop();
 
         // profile watcher events
+        profileWatcher.EnableRaisingEvents = false;
         profileWatcher.Created -= ProfileCreated;
         profileWatcher.Deleted -= ProfileDeleted;
 
@@ -712,16 +735,19 @@ public class ProfileManager : IManager
 
     private void ProfileDeleted(object sender, FileSystemEventArgs e)
     {
-        if (pendingDeletion.TryRemove(e.FullPath, out _))
-            return;
+        lock (profileFileLock)
+        {
+            // Atomic replacement can report deletion before the new file is in place.
+            if (pendingDeletion.TryRemove(e.FullPath, out _) || File.Exists(e.FullPath))
+                return;
+        }
 
-        string deletedFileName = Path.GetFileName(e.FullPath);
+        string deletedFileName = Path.GetRelativePath(ManagerPath, e.FullPath);
         if (string.IsNullOrEmpty(deletedFileName))
             return;
 
         Profile? profile = profiles.Values.FirstOrDefault(p =>
-            (!string.IsNullOrEmpty(p.FileName) && p.FileName.Equals(deletedFileName, StringComparison.InvariantCultureIgnoreCase))
-            || p.GetFileName().Equals(deletedFileName, StringComparison.InvariantCultureIgnoreCase));
+            p.FileName.Equals(deletedFileName, StringComparison.OrdinalIgnoreCase));
 
         // couldn't find a matching profile
         if (profile is null)
@@ -794,10 +820,9 @@ public class ProfileManager : IManager
         }
     }
 
-    private void ProcessProfile(string fileName, bool imported = false)
+    private Profile? ReadProfile(string fileName)
     {
         Profile? profile;
-        UpdateSource updateSource = UpdateSource.Serializer;
 
         try
         {
@@ -805,7 +830,7 @@ public class ProfileManager : IManager
             if (string.IsNullOrEmpty(rawName))
             {
                 LogManager.LogError("Could not parse profile: {0}. {1}", fileName, "Profile has an incorrect file name.");
-                return;
+                return null;
             }
 
             string? json = null;
@@ -847,30 +872,54 @@ public class ProfileManager : IManager
                 profile = JsonConvert.DeserializeObject<Profile>(json, serializerSettings);
             }
             if (profile is null)
-                return;
+                return null;
 
             // store fileName
-            profile.FileName = Path.GetFileName(fileName);
+            profile.FileName = Path.GetRelativePath(ManagerPath, fileName);
         }
         catch (Exception ex)
         {
             LogManager.LogError("Could not parse profile: {0}. {1}", fileName, ex.Message);
-            return;
+            return null;
         }
 
         // failed to parse, profile has no name
         if (!HasValidProfileName(profile))
         {
             LogManager.LogError("Corrupted profile: {0}. Profile has an empty name.", fileName);
-            return;
+            return null;
+        }
+
+        if (profile.Guid == Guid.Empty)
+        {
+            LogManager.LogError("Corrupted profile: {0}. Profile has an empty GUID.", fileName);
+            return null;
         }
 
         // failed to parse, profile has no path, no launchstring and non generic platform (can't be matched to any process, can't be a subprofile since it has no parent path, and is not default)
         if (!profile.Default && string.IsNullOrWhiteSpace(profile.Path) && string.IsNullOrEmpty(profile.LaunchString) && profile.PlatformType == Platforms.GamePlatform.Generic)
         {
             LogManager.LogError("Corrupted profile: {0}. Profile has an empty path, launchstring and non generic platform.", fileName);
-            return;
+            return null;
         }
+
+        return profile;
+    }
+
+    private void ProcessProfile(string fileName, bool imported = false)
+    {
+        Profile? profile = ReadProfile(fileName);
+        if (profile is not null)
+            ProcessProfile(profile, fileName, imported);
+    }
+
+    private void ProcessProfile(Profile profile, string fileName, bool imported = false)
+    {
+        UpdateSource updateSource = UpdateSource.Serializer;
+
+        if (profiles.TryGetValue(profile.Guid, out Profile? existing) &&
+            (!imported || profile.FileName.Equals(existing.FileName, StringComparison.OrdinalIgnoreCase)))
+            return;
 
         if (imported)
         {
@@ -921,18 +970,19 @@ public class ProfileManager : IManager
             // delete file and exit if user decided to skip this profile
             if (skipImported)
             {
+                pendingDeletion.TryAdd(fileName, 0);
                 File.Delete(fileName);
                 return;
             }
+
+            if (profiles.ContainsKey(profile.Guid))
+                profile.Guid = Guid.NewGuid();
         }
 
         // if a profile for this path exists, make this one a subprofile
         bool alreadyExist = Contains(profile.Path);
         if (alreadyExist && !profile.IsSubProfile)
         {
-            // delete current file
-            File.Delete(fileName);
-
             // skip if identical
             Profile mainProfile = GetProfileFromPath(profile.Path, true, true);
             if (mainProfile.Arguments.Equals(profile.Arguments))
@@ -955,6 +1005,10 @@ public class ProfileManager : IManager
         }
 
         UpdateOrCreateProfile(profile, updateSource);
+
+        if (imported && updateSource == UpdateSource.Serializer &&
+            !profile.FileName.Equals(profile.GetFileName(), StringComparison.OrdinalIgnoreCase))
+            SerializeProfile(profile);
 
         // default specific
         if (profile.Default)
@@ -986,8 +1040,7 @@ public class ProfileManager : IManager
 
     public void DeleteProfile(Profile profile)
     {
-        string profilePath = Path.Combine(ManagerPath, profile.GetFileName());
-        pendingDeletion.TryAdd(profilePath, 0);
+        string profilePath;
 
         if (profiles.ContainsKey(profile.Guid))
         {
@@ -1007,27 +1060,21 @@ public class ProfileManager : IManager
             if (profile.XInputPlus == XInputPlusMethod.Redirection)
                 XInputPlus.UnregisterApplication(profile);
 
-            profiles.TryRemove(profile.Guid, out Profile? removedValue);
-
-            // warn owner
-            bool isCurrent = false;
-
-            if (!Monitor.TryEnter(profileLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
-            {
-                isCurrent = profile.Path.Equals(currentProfile?.Path, StringComparison.InvariantCultureIgnoreCase);
-            }
-            finally
-            {
-                Monitor.Exit(profileLock);
-            }
-
             lock (profileTransitionLock)
             {
-                // raise event
-                Discarded?.Invoke(profile, isCurrent, GetDefault());
+                lock (profileFileLock)
+                {
+                    profilePath = Path.Combine(ManagerPath, string.IsNullOrEmpty(profile.FileName) ? profile.GetFileName() : profile.FileName);
+                    pendingDeletion.TryAdd(profilePath, 0);
+                    FileUtils.FileDelete(profilePath);
+                    profiles.TryRemove(profile.Guid, out Profile? removedValue);
+                }
+
+                if (IsCurrentProfile(profile))
+                {
+                    Discarded?.Invoke(profile, true, GetDefault());
+                    ApplyProfile(GetDefault());
+                }
             }
 
             // raise event(s)
@@ -1044,56 +1091,64 @@ public class ProfileManager : IManager
             });
 
             LogManager.LogInformation("Deleted {0}: {1}", (profile.IsSubProfile ? "subprofile" : "profile"), profilePath);
-
-            // restore default profile
-            if (isCurrent)
-                ApplyProfile(GetDefault());
         }
-
-        FileUtils.FileDelete(profilePath);
     }
 
     public void SerializeProfile(Profile profile)
     {
-        // prepare for writing
-        string profilePath = Path.Combine(ManagerPath, profile.GetFileName());
-        pendingCreation.TryAdd(profilePath, 0);
-
-        Profile snapshot;
-        lock (profile.SyncRoot)
+        // ponytail: serialize file operations globally; use per-profile reservations if disk contention grows.
+        lock (profileFileLock)
         {
-            lock (profile.Layout.SyncRoot)
+            // Delayed artwork saves must not recreate a deleted or superseded profile.
+            if (!profiles.TryGetValue(profile.Guid, out Profile? registered) || !ReferenceEquals(registered, profile))
+                return;
+
+            string fileName = profile.GetFileName();
+            string profilePath = Path.Combine(ManagerPath, fileName);
+            string? oldFileName = profile.FileName;
+            string temporaryPath = Path.Combine(ManagerPath, $"{Guid.NewGuid():N}.tmp");
+
+            try
             {
-                // update profile version to current build
-                profile.Version = App.CurrentVersion;
-                snapshot = (Profile)profile.Clone();
+                Profile snapshot;
+                lock (profile.SyncRoot)
+                {
+                    lock (profile.Layout.SyncRoot)
+                    {
+                        // update profile version to current build
+                        profile.Version = App.CurrentVersion;
+                        snapshot = (Profile)profile.Clone();
+                    }
+                }
+
+                string jsonString = JsonConvert.SerializeObject(snapshot, Formatting.Indented, new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                });
+
+                File.WriteAllText(temporaryPath, jsonString);
+                pendingCreation.TryAdd(profilePath, 0);
+                File.Move(temporaryPath, profilePath, fileName.Equals(oldFileName, StringComparison.OrdinalIgnoreCase));
+                profile.FileName = fileName;
+
+                // Keep the previous file until its replacement has been written successfully.
+                if (!string.IsNullOrEmpty(oldFileName) && !oldFileName.Equals(fileName, StringComparison.OrdinalIgnoreCase))
+                {
+                    string oldPath = Path.Combine(ManagerPath, oldFileName);
+                    pendingDeletion.TryAdd(oldPath, 0);
+                    File.Delete(oldPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                pendingCreation.TryRemove(profilePath, out _);
+                LogManager.LogError("Could not save profile: {0}. {1}", profilePath, ex.Message);
+            }
+            finally
+            {
+                FileUtils.FileDelete(temporaryPath);
             }
         }
-
-        string jsonString = JsonConvert.SerializeObject(snapshot, Formatting.Indented, new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.All
-        });
-
-        try
-        {
-            // delete old file if fileName has changed
-            if (!string.IsNullOrEmpty(profile.FileName) && !profile.FileName.Equals(profile.GetFileName(), StringComparison.InvariantCultureIgnoreCase))
-            {
-                string oldPath = Path.Combine(ManagerPath, profile.FileName);
-                pendingDeletion.TryAdd(oldPath, 0);
-                File.Delete(oldPath);
-            }
-
-            if (FileUtils.IsFileWritable(profilePath))
-            {
-                // update profile filename
-                profile.FileName = profile.GetFileName();
-
-                File.WriteAllText(profilePath, jsonString);
-            }
-        }
-        catch { }
     }
 
     private void SanitizeProfile(Profile profile, UpdateSource source = UpdateSource.Background)
@@ -1176,28 +1231,20 @@ public class ProfileManager : IManager
         }
     }
 
-    // number the name until no other profile uses the same file
-    private void EnsureUniqueFileName(Profile profile)
-    {
-        string baseName = profile.Name;
-        for (int idx = 2; IsFileNameTaken(profile); idx++)
-            profile.Name = $"{baseName} ({idx})";
-    }
-
-    private bool IsFileNameTaken(Profile profile)
-    {
-        string fileName = profile.GetFileName();
-        return profiles.Values.Any(p => p.Guid != profile.Guid &&
-            (fileName.Equals(p.GetFileName(), StringComparison.InvariantCultureIgnoreCase) ||
-             fileName.Equals(p.FileName, StringComparison.InvariantCultureIgnoreCase)));
-    }
-
     public void UpdateOrCreateProfile(Profile profile, UpdateSource source = UpdateSource.Background, bool apply = true)
     {
         if (!HasValidProfileName(profile))
         {
             LogManager.LogWarning("Ignored profile update/create with empty name. Guid: {0}, Source: {1}", profile.Guid, source);
             return;
+        }
+
+        // Reject superseded artwork work before it can perform any update side effects.
+        lock (profileFileLock)
+        {
+            if (source == UpdateSource.LibraryUpdate &&
+                (!profiles.TryGetValue(profile.Guid, out Profile? registered) || !ReferenceEquals(registered, profile)))
+                return;
         }
 
         bool isCurrent = source switch
@@ -1258,14 +1305,13 @@ public class ProfileManager : IManager
             prevWrapper = prevProfile.XInputPlus;
         }
 
-        // profile files are named after the profile, so a name already in use would share its file;
-        // pick the name and register under one lock so concurrent updates cannot pick the same one
-        lock (fileNameLock)
+        lock (profileFileLock)
         {
-            if (source != UpdateSource.Serializer)
-                EnsureUniqueFileName(profile);
+            // Artwork refreshes retain their instance across awaits; an overwrite supersedes it.
+            if (source == UpdateSource.LibraryUpdate &&
+                (!profiles.TryGetValue(profile.Guid, out Profile? registered) || !ReferenceEquals(registered, profile)))
+                return;
 
-            // update database
             profiles[profile.Guid] = profile;
         }
 
@@ -1303,24 +1349,8 @@ public class ProfileManager : IManager
             ApplyProfile(profile, source);
         }
 
-        // sub-profile file names include the parent name, so a renamed parent must move them too
-        bool parentRenamed = !profile.IsSubProfile && !string.IsNullOrEmpty(profile.FileName) &&
-            !profile.FileName.Equals(profile.GetFileName(), StringComparison.InvariantCultureIgnoreCase);
-
         // serialize profile
         SerializeProfile(profile);
-
-        if (parentRenamed)
-        {
-            foreach (Profile subProfile in GetSubProfilesFromProfile(profile).ToList())
-            {
-                lock (fileNameLock)
-                    EnsureUniqueFileName(subProfile);
-
-                // writes the new file and deletes the old one
-                SerializeProfile(subProfile);
-            }
-        }
     }
 
     public bool UpdateProfileCloaking(Profile profile)
