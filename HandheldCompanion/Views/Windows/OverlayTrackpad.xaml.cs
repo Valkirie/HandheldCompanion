@@ -256,11 +256,21 @@ public partial class OverlayTrackpad : OverlayWindow
 
     private void LeftTrackpadClick_PreviewTouchDown(object sender, TouchEventArgs e)
     {
-        DS4Touch.OutputClickButton = true;
+        DS4Touch.SetOverlayClick(CursorButton.TouchLeft, true);
+    }
+
+    private void LeftTrackpadClick_PreviewTouchUp(object sender, TouchEventArgs e)
+    {
+        DS4Touch.SetOverlayClick(CursorButton.TouchLeft, false);
     }
 
     private void RightTrackpadClick_PreviewTouchDown(object sender, TouchEventArgs e)
     {
-        DS4Touch.OutputClickButton = true;
+        DS4Touch.SetOverlayClick(CursorButton.TouchRight, true);
+    }
+
+    private void RightTrackpadClick_PreviewTouchUp(object sender, TouchEventArgs e)
+    {
+        DS4Touch.SetOverlayClick(CursorButton.TouchRight, false);
     }
 }

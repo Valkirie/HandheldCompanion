@@ -72,35 +72,30 @@ namespace HandheldCompanion.ViewModels
             ProfilesView.SortDescriptions.Clear();
             ProfilesView.LiveSortingProperties.Clear();
 
-            // Always sort favorites first (descending IsLiked = favorites on top)
-            ProfilesView.SortDescriptions.Add(new SortDescription(nameof(ProfileViewModel.IsLiked), ListSortDirection.Descending));
-            ProfilesView.LiveSortingProperties.Add(nameof(ProfileViewModel.IsLiked));
-
-            // Then apply secondary sort based on user selection
-            SortDescription secondary;
-            string secondaryProperty;
+            SortDescription sortDescription;
+            string sortProperty;
             switch (SortTarget)
             {
                 default:
                 case 0:
-                    secondary = new SortDescription(nameof(ProfileViewModel.Name), direction);
-                    secondaryProperty = nameof(ProfileViewModel.Name);
+                    sortDescription = new SortDescription(nameof(ProfileViewModel.Name), direction);
+                    sortProperty = nameof(ProfileViewModel.Name);
                     break;
                 case 1:
-                    secondary = new SortDescription(nameof(ProfileViewModel.PlatformType), direction);
-                    secondaryProperty = nameof(ProfileViewModel.PlatformType);
+                    sortDescription = new SortDescription(nameof(ProfileViewModel.PlatformType), direction);
+                    sortProperty = nameof(ProfileViewModel.PlatformType);
                     break;
                 case 2:
-                    secondary = new SortDescription(nameof(ProfileViewModel.DateCreated), direction);
-                    secondaryProperty = nameof(ProfileViewModel.DateCreated);
+                    sortDescription = new SortDescription(nameof(ProfileViewModel.DateCreated), direction);
+                    sortProperty = nameof(ProfileViewModel.DateCreated);
                     break;
                 case 3:
-                    secondary = new SortDescription(nameof(ProfileViewModel.LastUsed), direction);
-                    secondaryProperty = nameof(ProfileViewModel.LastUsed);
+                    sortDescription = new SortDescription(nameof(ProfileViewModel.LastUsed), direction);
+                    sortProperty = nameof(ProfileViewModel.LastUsed);
                     break;
             }
-            ProfilesView.SortDescriptions.Add(secondary);
-            ProfilesView.LiveSortingProperties.Add(secondaryProperty);
+            ProfilesView.SortDescriptions.Add(sortDescription);
+            ProfilesView.LiveSortingProperties.Add(sortProperty);
 
             // Workaround for iNKORE ItemsRepeater not observing ICollectionView changes
             RefreshProfilesCardsItemsSource();

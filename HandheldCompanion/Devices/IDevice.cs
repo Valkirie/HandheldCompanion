@@ -1102,10 +1102,11 @@ public abstract class IDevice
                         case "RC72LA":
                             device = new ROGAllyX();
                             break;
-                        case "RC73YA":
+                        case "RC73YA": // ROG XBOX Ally
                             device = new XboxROGAlly();
                             break;
-                        case "RC73XA":
+                        case "RC73XA": // ROG XBOX Ally X
+                        case "RC74XA": // ROG XBOX Ally X20 (2026)
                             device = new XboxROGAllyX();
                             break;
                         default:

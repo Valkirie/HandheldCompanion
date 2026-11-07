@@ -33,6 +33,14 @@ public class SensorReading
 
 public abstract class IMUSensor : IDisposable
 {
+    static IMUSensor()
+    {
+#if DEBUG
+        System.Diagnostics.Debug.Assert(ClampToThreshold(2500.0, 2000.0f) == 2000.0);
+        System.Diagnostics.Debug.Assert(ClampToThreshold(-2500.0, 2000.0f) == -2000.0);
+#endif
+    }
+
     protected SensorReading reading = new();
 
     // Direct accumulation buffer for axis values (faster than Dictionary<char, double>)
@@ -43,6 +51,11 @@ public abstract class IMUSensor : IDisposable
     protected SensorFamily sensorFamily;
     protected int updateInterval;
     protected float threshold;
+
+    internal static double ClampToThreshold(double value, float threshold)
+    {
+        return threshold > 0.0f ? Math.Clamp(value, -threshold, threshold) : value;
+    }
 
     public string Name
     {

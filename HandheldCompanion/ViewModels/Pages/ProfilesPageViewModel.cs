@@ -1807,8 +1807,8 @@ namespace HandheldCompanion.ViewModels
         public ICommand KillProfileProcessCommand { get; private set; } = null!;
         public ICommand ToggleProfileProcessCommand { get; private set; } = null!;
 
-        private bool isLoadingProfile = false;
-        public bool IsLoadingProfile => isLoadingProfile;
+        private int loadingProfileDepth;
+        private bool isLoadingProfile => Volatile.Read(ref loadingProfileDepth) > 0;
 
         /// <summary>
         /// Helper class to manage isLoadingProfile flag with automatic cleanup.
@@ -1821,12 +1821,12 @@ namespace HandheldCompanion.ViewModels
             public LoadingScope(ProfilesPageViewModel viewModel)
             {
                 _viewModel = viewModel;
-                _viewModel.isLoadingProfile = true;
+                Interlocked.Increment(ref _viewModel.loadingProfileDepth);
             }
 
             public void Dispose()
             {
-                _viewModel.isLoadingProfile = false;
+                Interlocked.Decrement(ref _viewModel.loadingProfileDepth);
             }
         }
 
@@ -2559,7 +2559,7 @@ namespace HandheldCompanion.ViewModels
             using (new LoadingScope(this))
             {
                 foreach (PowerProfile powerProfile in ManagerFactory.powerProfileManager.profiles.Values)
-                    PowerProfileManager_Updated(powerProfile, UpdateSource.Creation);
+                    PowerProfileManager_Updated(powerProfile, UpdateSource.Serializer);
 
                 // If a profile was already selected before power profiles were loaded,
                 // the initial UpdatePowerProfileSelections() found ProfilePicker empty.
@@ -2636,15 +2636,15 @@ namespace HandheldCompanion.ViewModels
             if (isLoadingProfile)
                 return;
 
-            switch (AC)
-            {
-                case false:
-                    SelectedProfile.PowerProfiles[(int)PowerLineStatus.Offline] = powerProfile.Guid;
-                    break;
-                case true:
-                    SelectedProfile.PowerProfiles[(int)PowerLineStatus.Online] = powerProfile.Guid;
-                    break;
-            }
+            int powerLineStatus = AC ? (int)PowerLineStatus.Online : (int)PowerLineStatus.Offline;
+            Guid previousGuid = SelectedProfile.PowerProfiles[powerLineStatus];
+            if (previousGuid == powerProfile.Guid)
+                return;
+
+            LogManager.LogInformation("Profile power selection changed: {0}, state: {1}, old: {2}, new: {3}",
+                SelectedProfile.Name, AC ? "AC" : "DC", previousGuid, powerProfile.Guid);
+
+            SelectedProfile.PowerProfiles[powerLineStatus] = powerProfile.Guid;
             UpdateProfile();
         }
 

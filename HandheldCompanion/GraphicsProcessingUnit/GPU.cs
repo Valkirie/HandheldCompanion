@@ -157,6 +157,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return adapterInformation.Details.Description;
         }
 
+        public virtual bool IsEmbedded() => false;
+
         protected virtual void BusyTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
             busyEventRaised = true;

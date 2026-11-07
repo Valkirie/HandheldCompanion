@@ -45,6 +45,7 @@ public class ProfileManager : IManager
     private object profileLock = new();
     // guards file name selection and registration in UpdateOrCreateProfile
     private readonly object fileNameLock = new();
+    private readonly object profileTransitionLock = new();
     private Profile? currentProfile;
 
     public FileSystemWatcher profileWatcher { get; set; }
@@ -218,15 +219,14 @@ public class ProfileManager : IManager
 
     public bool Contains(Profile profile)
     {
-        foreach (var pr in profiles.Values)
-            if (pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase))
-                return true;
-
-        return false;
+        return Contains(profile.Path);
     }
 
     public bool Contains(string fileName)
     {
+        if (string.IsNullOrWhiteSpace(fileName))
+            return false;
+
         foreach (var pr in profiles.Values)
             if (pr.Path.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
                 return true;
@@ -402,29 +402,32 @@ public class ProfileManager : IManager
         // might not be the same anymore if disabled
         profile = GetProfileFromGuid(profile.Guid, false, profile.IsSubProfile);
 
-        Profile? previousProfile;
-        lock (profileLock)
+        lock (profileTransitionLock)
         {
-            previousProfile = currentProfile;
-            currentProfile = profile;
-        }
+            Profile? previousProfile;
+            lock (profileLock)
+            {
+                previousProfile = currentProfile;
+                currentProfile = profile;
+            }
 
-        // we've already announced this profile
-        if (previousProfile is not null)
-        {
-            if (previousProfile.Guid == profile.Guid)
+            // we've already announced this profile
+            if (previousProfile is not null)
+            {
+                if (previousProfile.Guid == profile.Guid)
+                    announce = false;
+                if (profile.Default)
+                    announce = false;
+            }
+            else if (Status == ManagerStatus.Initializing)
                 announce = false;
-            if (profile.Default)
-                announce = false;
+
+            // refresh error code
+            SanitizeProfile(profile);
+
+            // raise event
+            Applied?.Invoke(profile, source);
         }
-        else if (Status == ManagerStatus.Initializing)
-            announce = false;
-
-        // refresh error code
-        SanitizeProfile(profile);
-
-        // raise event
-        Applied?.Invoke(profile, source);
 
         if (announce)
         {
@@ -564,15 +567,24 @@ public class ProfileManager : IManager
 
             bool isCurrent = profile.ErrorCode.HasFlag(ProfileErrorCode.Running);
 
-            // raise event
-            Discarded?.Invoke(profile, isCurrent, GetDefault());
+            if (!isCurrent)
+                return;
 
-            if (isCurrent)
+            // update profile
+            UpdateOrCreateProfile(profile, apply: false);
+
+            lock (profileTransitionLock)
             {
-                // update profile
-                UpdateOrCreateProfile(profile);
+                // check if the profile is still the current one, if not, don't discard it
+                if (!IsCurrentProfile(profile))
+                    return;
 
-                // restore default profile
+                // check if the foreground process is the same as the stopped process, if not, don't discard the profile
+                ProcessEx? foregroundProcess = ProcessManager.GetCurrent();
+                if (foregroundProcess is not null && foregroundProcess.ProcessId != processEx.ProcessId)
+                    return;
+
+                Discarded?.Invoke(profile, true, GetDefault());
                 ApplyProfile(GetDefault());
             }
         }
@@ -661,15 +673,31 @@ public class ProfileManager : IManager
                 }
             }
 
-            // raise event
-            if (backgroundEx is not null)
+            lock (profileTransitionLock)
             {
-                Profile backProfile = GetProfileFromPath(backgroundEx.Path, false);
-                if (!backProfile.Guid.Equals(profile.Guid))
-                    Discarded?.Invoke(backProfile, true, profile);
-            }
+                if (!Monitor.TryEnter(profileLock, TimeSpan.FromSeconds(2)))
+                    return;
 
-            ApplyProfile(profile);
+                try
+                {
+                    if (profile.Guid == currentProfile?.Guid)
+                        return;
+                }
+                finally
+                {
+                    Monitor.Exit(profileLock);
+                }
+
+                // raise event
+                if (backgroundEx is not null)
+                {
+                    Profile backProfile = GetProfileFromPath(backgroundEx.Path, false);
+                    if (!backProfile.Guid.Equals(profile.Guid))
+                        Discarded?.Invoke(backProfile, true, profile);
+                }
+
+                ApplyProfile(profile);
+            }
         }
         catch { }
     }
@@ -792,78 +820,18 @@ public class ProfileManager : IManager
             }
             else if (version <= AxisLayoutMigrationVersion)
             {
-                json = File.ReadAllText(fileName);
-                jObject = JObject.Parse(json, new JsonLoadSettings { LineInfoHandling = LineInfoHandling.Ignore });
-
-                // Navigate to the Layout object.
-                JObject? layout = jObject["Layout"] as JObject;
-                if (layout != null)
-                {
-                    // Navigate to the AxisLayout section.
-                    JObject? axisLayout = layout["AxisLayout"] as JObject;
-                    if (axisLayout != null && axisLayout.HasValues && axisLayout["$type"] is JToken token)
-                    {
-                        // Replace the overall "$type" if it matches the old type.
-                        string oldAxisLayoutType = "System.Collections.Generic.SortedDictionary`2[[HandheldCompanion.Inputs.AxisLayoutFlags, HandheldCompanion],[HandheldCompanion.Actions.IActions, HandheldCompanion]], System.Collections";
-                        string newAxisLayoutType = "System.Collections.Generic.SortedDictionary`2[[HandheldCompanion.Inputs.AxisLayoutFlags, HandheldCompanion],[System.Collections.Generic.List`1[[HandheldCompanion.Actions.IActions, HandheldCompanion]], System.Private.CoreLib]], System.Collections";
-                        if (axisLayout["$type"] != null && token.Type == JTokenType.String)
-                        {
-                            string currentType = token.ToString();
-                            if (currentType == oldAxisLayoutType)
-                            {
-                                axisLayout["$type"] = newAxisLayoutType;
-                            }
-                        }
-
-                        // Process each property in AxisLayout (skip "$type").
-                        foreach (var property in axisLayout.Properties().Where(p => p.Name != "$type").ToList())
-                        {
-                            // If the value is a JObject, check if it already has a "$values" array.
-                            if (property.Value.Type == JTokenType.Object)
-                            {
-                                JObject valueObj = (JObject)property.Value;
-                                if (valueObj["$values"] == null)
-                                {
-                                    // It is a single IActions object, so wrap it.
-                                    JToken singleValue = valueObj.DeepClone();
-                                    JObject newArrayObj = new JObject();
-                                    newArrayObj["$type"] = "System.Collections.Generic.List`1[[HandheldCompanion.Actions.IActions, HandheldCompanion]], System.Private.CoreLib";
-                                    newArrayObj["$values"] = new JArray(singleValue);
-                                    property.Value = newArrayObj;
-                                }
-                                // If it already has "$values", assume it's in the new format.
-                            }
-                            else
-                            {
-                                // For any other token type, wrap it in the new array format.
-                                JToken singleValue = property.Value.DeepClone();
-                                JObject newArrayObj = new JObject();
-                                newArrayObj["$type"] = "System.Collections.Generic.List`1[[HandheldCompanion.Actions.IActions, HandheldCompanion]], System.Private.CoreLib";
-                                newArrayObj["$values"] = new JArray(singleValue);
-                                property.Value = newArrayObj;
-                            }
-                        }
-
-                        // Convert the modified JObject back to a JSON string.
-                        json = jObject.ToString();
-                    }
-                }
+                // too old
+                throw new Exception("Profile is outdated.");
             }
             if (version <= DictionaryMigrationVersion)
             {
-                json ??= File.ReadAllText(fileName);
-
-                // let's make sure we get a Dictionary
-                json = json.Replace(
-                    "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"",
-                    "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"");
+                // too old
+                throw new Exception("Profile is outdated.");
             }
             if (version <= ButtonFlagsMigrationVersion)
             {
-                json ??= File.ReadAllText(fileName);
-
-                // Clean legacy/unknown ButtonFlags
-                json = HotkeysManager.StripUnknownButtonFlags(json, out var removed);
+                // too old
+                throw new Exception("Profile is outdated.");
             }
 
             // parse profile
@@ -883,48 +851,6 @@ public class ProfileManager : IManager
 
             // store fileName
             profile.FileName = Path.GetFileName(fileName);
-
-            // post-parse manipulations
-            if (version <= PowerProfileMigrationVersion)
-            {
-                // Access the PowerProfile value
-                string? oldPowerProfile = jObject?["PowerProfile"]?.ToString();
-                if (!string.IsNullOrEmpty(oldPowerProfile))
-                {
-                    for (int idx = 0; idx < 2; idx++)
-                    {
-                        Guid powerProfile = profile.PowerProfiles[idx];
-                        if (powerProfile == Guid.Empty)
-                            profile.PowerProfiles[idx] = new Guid(oldPowerProfile);
-                    }
-                }
-            }
-
-            // hacky, fix broken profiles with Turbo and Toggle enabled across all actions
-            // the elements inside (IActions instances) are the same references as the ones stored in profile.Layout.ButtonLayout
-            List<IActions> allActions = profile.Layout.ButtonLayout.Values.SelectMany(list => list).ToList();
-            if (allActions.Any() && allActions.All(a => a.HasTurbo && a.HasToggle))
-            {
-                foreach (IActions action in allActions)
-                {
-                    action.HasTurbo = false;
-                    action.HasToggle = false;
-                }
-            }
-
-            // in case of updated profile naming convention
-            if (!profile.FileName.Equals(profile.GetFileName(), StringComparison.InvariantCultureIgnoreCase))
-            {
-                // delete current file
-                File.Delete(fileName);
-
-                // set update source so UpdateOrCreateProfile() will (re)create the file
-                updateSource = UpdateSource.Creation;
-            }
-
-            // use ParentGuid
-            if (profile.IsSubProfile && profile.ParentGuid == Guid.Empty && !string.IsNullOrEmpty(profile.Path))
-                profile.ParentGuid = GetProfileFromPath(profile.Path, true, true).Guid;
         }
         catch (Exception ex)
         {
@@ -1098,8 +1024,11 @@ public class ProfileManager : IManager
                 Monitor.Exit(profileLock);
             }
 
-            // raise event
-            Discarded?.Invoke(profile, isCurrent, GetDefault());
+            lock (profileTransitionLock)
+            {
+                // raise event
+                Discarded?.Invoke(profile, isCurrent, GetDefault());
+            }
 
             // raise event(s)
             Deleted?.Invoke(profile);
@@ -1263,7 +1192,7 @@ public class ProfileManager : IManager
              fileName.Equals(p.FileName, StringComparison.InvariantCultureIgnoreCase)));
     }
 
-    public void UpdateOrCreateProfile(Profile profile, UpdateSource source = UpdateSource.Background)
+    public void UpdateOrCreateProfile(Profile profile, UpdateSource source = UpdateSource.Background, bool apply = true)
     {
         if (!HasValidProfileName(profile))
         {
@@ -1280,7 +1209,8 @@ public class ProfileManager : IManager
 
         string profileType = profile.IsSubProfile ? "subprofile" : "profile";
         string verb = source == UpdateSource.Serializer ? "Loaded" : "Attempting to update/create";
-        LogManager.LogInformation("{0} {1}: {2}", verb, profileType, profile.Name);
+        LogManager.LogInformation("{0} {1}: {2}, source: {3}, DC: {4}, AC: {5}", verb, profileType, profile.Name, source,
+            profile.PowerProfiles[(int)PowerLineStatus.Offline], profile.PowerProfiles[(int)PowerLineStatus.Online]);
 
         if (source is UpdateSource.Creation or UpdateSource.QuickProfilesCreation)
         {
@@ -1367,7 +1297,7 @@ public class ProfileManager : IManager
         }
 
         // apply profile (silently)
-        if (isCurrent)
+        if (isCurrent && apply)
         {
             SetFavorite(profile); // if sub profile, set it as favorite for main profile
             ApplyProfile(profile, source);

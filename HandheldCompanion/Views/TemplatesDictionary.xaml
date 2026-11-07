@@ -37,7 +37,11 @@
     <converters:ActionTypeIndexToNameConverter x:Key="ActionTypeIndexToNameConverter" />
     <converters:ActionDisplayConverter x:Key="ActionDisplayConverter" />
     <converters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
-    <effects:BloomEffect x:Key="ActiveLibraryBloomEffect" BloomIntensity="0.6" BloomSaturation="0.2" po:Freeze="True" />
+    <effects:BloomEffect
+        x:Key="ActiveLibraryBloomEffect"
+        po:Freeze="True"
+        BloomIntensity="0.6"
+        BloomSaturation="0.2" />
 
     <Style x:Key="LibraryImageFadeStyle" TargetType="Image">
         <Setter Property="Opacity" Value="1" />
@@ -723,14 +727,46 @@
         </ui:SettingsCard>
     </DataTemplate>
 
+    <ContextMenu
+        x:Key="CollectionActionContextMenu"
+        x:Shared="False"
+        DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+        <MenuItem Command="{Binding DeleteCommand}" Header="Delete collection" />
+    </ContextMenu>
+
+    <ui:MenuFlyout
+        x:Key="CollectionActionMenuFlyout"
+        x:Shared="False"
+        Placement="Bottom">
+        <MenuItem
+            Command="{Binding DeleteCommand}"
+            Header="Delete collection"
+            IsEnabled="{Binding CanDelete}">
+            <MenuItem.Icon>
+                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
+            </MenuItem.Icon>
+        </MenuItem>
+    </ui:MenuFlyout>
+
     <DataTemplate x:Key="LibraryCollectionOverviewTemplate" DataType="{x:Type viewmodels:CollectionGroupViewModel}">
         <Button
             Margin="0,0,8,8"
             Padding="0"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
+            primitives:FlyoutBase.AttachedFlyout="{StaticResource CollectionActionMenuFlyout}"
             Command="{Binding OpenCommand}"
+            Tag="{Binding}"
             Visibility="{Binding ShowInCollectionsOverview, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Button.Style>
+                <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CanDelete}" Value="True">
+                            <Setter Property="ContextMenu" Value="{StaticResource CollectionActionContextMenu}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
             <Button.Template>
                 <ControlTemplate TargetType="Button">
                     <Border

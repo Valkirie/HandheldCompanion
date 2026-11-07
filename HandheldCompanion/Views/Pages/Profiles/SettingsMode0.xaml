@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:HandheldCompanion.Localization"
+    xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
@@ -352,90 +353,81 @@
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.SettingsMode0_CustomResponseCurve}" />
 
                 <Border
-                    Padding="0,12,12,12"
+                    Padding="12,12,12,12"
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                    <Grid>
-                        <ikw:SimpleStackPanel
-                            HorizontalAlignment="Center"
-                            Background="{DynamicResource ExpanderHeaderBackground}"
-                            Orientation="Horizontal"
-                            Spacing="12">
-                            <Label VerticalAlignment="Center" Content="{l:Static resx:Resources.SettingsMode0_CustomResponseCurveGameOutput}">
-                                <Label.LayoutTransform>
-                                    <TransformGroup>
-                                        <RotateTransform Angle="90" />
-                                        <ScaleTransform ScaleX="-1" ScaleY="-1" />
-                                    </TransformGroup>
-                                </Label.LayoutTransform>
-                            </Label>
-                            <ikw:SimpleStackPanel Orientation="Vertical" Spacing="12">
-                                <Label HorizontalAlignment="Center" Content="{l:Static resx:Resources.SettingsMode0_CustomResponseIntensity}" />
-                                <ikw:SimpleStackPanel
-                                    Name="StackCurve"
-                                    Width="480"
-                                    Height="400"
-                                    MouseDown="StackCurve_MouseDown"
-                                    MouseMove="StackCurve_MouseMove"
-                                    Orientation="Horizontal"
-                                    Spacing="2">
-                                    <ikw:SimpleStackPanel.Background>
-                                        <DrawingBrush
-                                            TileMode="Tile"
-                                            Viewport="40,40,40,40"
-                                            ViewportUnits="Absolute">
-                                            <DrawingBrush.Drawing>
-                                                <GeometryDrawing>
-                                                    <GeometryDrawing.Geometry>
-                                                        <RectangleGeometry Rect="50,50,50,50" />
-                                                    </GeometryDrawing.Geometry>
-                                                    <GeometryDrawing.Pen>
-                                                        <Pen Brush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Thickness="1" />
-                                                    </GeometryDrawing.Pen>
-                                                </GeometryDrawing>
-                                            </DrawingBrush.Drawing>
-                                        </DrawingBrush>
-                                    </ikw:SimpleStackPanel.Background>
-                                </ikw:SimpleStackPanel>
-                                <ikw:SimpleStackPanel
-                                    Name="StackIndicator"
-                                    Height="10"
-                                    Orientation="Horizontal" />
-                                <Label HorizontalAlignment="Center" Content="{l:Static resx:Resources.SettingsMode0_CustomResponsePresetOptions}" />
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="3.33*" />
-                                        <ColumnDefinition Width="3.33*" />
-                                        <ColumnDefinition Width="3.33*" />
-                                    </Grid.ColumnDefinitions>
+                    <ikw:SimpleStackPanel Spacing="12">
+                        <lvc:CartesianChart
+                            Name="motionSensitivityChart"
+                            Height="400"
+                            DataTooltip="{x:Null}"
+                            DisableAnimations="True"
+                            Zoom="None">
+                            <lvc:CartesianChart.Series>
+                                <lvc:LineSeries
+                                    Name="motionSensitivityLineSeries"
+                                    Fill="{DynamicResource ExpanderHeaderBackground}"
+                                    LineSmoothness="0"
+                                    PointGeometry="{x:Static lvc:DefaultGeometries.Circle}"
+                                    PointGeometrySize="30"
+                                    Stroke="{DynamicResource AccentAAFillColorDefaultBrush}"
+                                    StrokeThickness="4"
+                                    Values="0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5" />
+                            </lvc:CartesianChart.Series>
+                            <lvc:CartesianChart.AxisY>
+                                <lvc:Axis
+                                    Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+                                    LabelFormatter="{Binding ResponseCurveAxisYFormatter}"
+                                    MaxValue="1"
+                                    MinValue="0">
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Step="0.1" Stroke="{DynamicResource ExpanderHeaderBackground}" />
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
+                            </lvc:CartesianChart.AxisY>
+                            <lvc:CartesianChart.AxisX>
+                                <lvc:Axis
+                                    Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+                                    MaxValue="9"
+                                    MinValue="0">
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Step="1" Stroke="{DynamicResource ExpanderHeaderBackground}" />
+                                    </lvc:Axis.Separator>
+                                    <lvc:Axis.Sections>
+                                        <lvc:AxisSection
+                                            Name="motionSensitivityIndicator"
+                                            Stroke="{DynamicResource SystemControlForegroundAccentBrush}"
+                                            StrokeDashArray="2,2"
+                                            StrokeThickness="2" />
+                                    </lvc:Axis.Sections>
+                                </lvc:Axis>
+                            </lvc:CartesianChart.AxisX>
+                        </lvc:CartesianChart>
+                        <Label HorizontalAlignment="Center" Content="{l:Static resx:Resources.SettingsMode0_CustomResponsePresetOptions}" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3.33*" />
+                                <ColumnDefinition Width="3.33*" />
+                                <ColumnDefinition Width="3.33*" />
+                            </Grid.ColumnDefinitions>
 
-                                    <Button
-                                        HorizontalAlignment="Center"
-                                        Click="Button_Click_1"
-                                        Content="{l:Static resx:Resources.SettingsMode0_CustomResponsePresetAgressive}" />
-                                    <Button
-                                        Grid.Column="1"
-                                        HorizontalAlignment="Center"
-                                        Click="Button_Click"
-                                        Content="{l:Static resx:Resources.SettingsMode0_CustomResponsePresetDefault}" />
-                                    <Button
-                                        Grid.Column="2"
-                                        HorizontalAlignment="Center"
-                                        Click="Button_Click_2"
-                                        Content="{l:Static resx:Resources.SettingsMode0_CustomResponsePresetPrecise}" />
-                                </Grid>
-                            </ikw:SimpleStackPanel>
-                            <Label VerticalAlignment="Center" Content="{l:Static resx:Resources.SettingsMode0_CustomResponseCurveGameOutput}">
-                                <Label.LayoutTransform>
-                                    <TransformGroup>
-                                        <RotateTransform Angle="-90" />
-                                        <ScaleTransform ScaleX="-1" ScaleY="-1" />
-                                    </TransformGroup>
-                                </Label.LayoutTransform>
-                            </Label>
-                        </ikw:SimpleStackPanel>
-                    </Grid>
+                            <Button
+                                HorizontalAlignment="Center"
+                                Click="Button_Click_1"
+                                Content="{l:Static resx:Resources.SettingsMode0_CustomResponsePresetAgressive}" />
+                            <Button
+                                Grid.Column="1"
+                                HorizontalAlignment="Center"
+                                Click="Button_Click"
+                                Content="{l:Static resx:Resources.SettingsMode0_CustomResponsePresetDefault}" />
+                            <Button
+                                Grid.Column="2"
+                                HorizontalAlignment="Center"
+                                Click="Button_Click_2"
+                                Content="{l:Static resx:Resources.SettingsMode0_CustomResponsePresetPrecise}" />
+                        </Grid>
+                    </ikw:SimpleStackPanel>
                 </Border>
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>

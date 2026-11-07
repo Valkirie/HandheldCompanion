@@ -79,7 +79,7 @@ public partial class Profile : ICloneable, IComparable, INotifyPropertyChanged
     internal object SyncRoot { get; } = new();
 
     [JsonIgnore]
-    public const int SensivityArraySize = 49; // x + 1 (hidden)
+    public const int MotionSensitivityArraySize = 10;
 
     [JsonIgnore]
     private ProfileErrorCode _ErrorCode = ProfileErrorCode.None;
@@ -194,6 +194,8 @@ public partial class Profile : ICloneable, IComparable, INotifyPropertyChanged
     // Getter-only so Newtonsoft.Json adds items to the existing instance instead
     // of replacing it, which guarantees the IsLiked migration always wins even
     // when "IsLiked" appears before "Collections" in old JSON files.
+    // Reuse also overrides the Replace setting used when cloning for persistence.
+    [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Reuse)]
     public HashSet<Guid> Collections { get; } = [];
     public bool SuspendOnSleep { get; set; }
     public bool SuspendOnQT { get; set; }
@@ -219,7 +221,29 @@ public partial class Profile : ICloneable, IComparable, INotifyPropertyChanged
     public bool MotionInvertVertical { get; set; } // if false, invert vertical axis
     public float MotionSensivityX { get; set; } = 1.0f;
     public float MotionSensivityY { get; set; } = 1.0f;
-    public SortedDictionary<double, double> MotionSensivityArray { get; set; } = [];
+
+    private double[] _motionSensitivityArray = InputUtils.CreateDefaultSensitivityCurve(MotionSensitivityArraySize);
+    private bool _hasMotionSensitivityArray;
+    public double[] MotionSensitivityArray
+    {
+        get => _motionSensitivityArray;
+        set
+        {
+            _motionSensitivityArray = InputUtils.NormalizeSensitivityCurve(value, MotionSensitivityArraySize);
+            _hasMotionSensitivityArray = true;
+        }
+    }
+
+    // Import the 49-point curve from profiles saved before the Cartesian chart migration.
+    [JsonProperty("MotionSensivityArray")]
+    private SortedDictionary<double, double>? LegacyMotionSensivityArray
+    {
+        set
+        {
+            if (!_hasMotionSensitivityArray && value is { Count: > 0 })
+                _motionSensitivityArray = InputUtils.ConvertLegacySensitivityCurve(value, MotionSensitivityArraySize);
+        }
+    }
 
     // steering
     public float SteeringMaxAngle { get; set; } = 30.0f;
@@ -262,17 +286,7 @@ public partial class Profile : ICloneable, IComparable, INotifyPropertyChanged
     public Dictionary<string, ProcessWindowSettings> WindowsSettings = new();
 
     public Profile()
-    {
-        // initialize aiming array
-        if (MotionSensivityArray.Count == 0)
-        {
-            for (var i = 0; i < SensivityArraySize; i++)
-            {
-                var value = i / (double)(SensivityArraySize - 1);
-                MotionSensivityArray[value] = 0.5f;
-            }
-        }
-    }
+    { }
 
     public Profile(string path) : this()
     {
