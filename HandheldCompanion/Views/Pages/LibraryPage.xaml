@@ -248,7 +248,10 @@
                                 </Button>
 
                                 <!--  Metadata & scan  -->
-                                <ui:DropDownButton HorizontalAlignment="Left" VerticalAlignment="Stretch">
+                                <ui:DropDownButton
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Stretch"
+                                    AutomationProperties.Name="Library options">
                                     <ui:DropDownButton.Content>
                                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Settings}" />
                                     </ui:DropDownButton.Content>

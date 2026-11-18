@@ -84,6 +84,7 @@
                                         Padding="0"
                                         HorizontalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
+                                        AutomationProperties.Name="{Binding LiveName, Mode=OneWay}"
                                         Command="{Binding ExecuteCommand}"
                                         IsChecked="{Binding IsToggled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                         IsEnabled="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -206,6 +207,7 @@
                 <Slider
                     x:Name="SliderBrightness"
                     Margin="6,0,6,0"
+                    AutomationProperties.Name="{l:Static resx:Resources.DevicePage_DynamicLighting_Brightness}"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
                     IsEnabled="False"
@@ -231,6 +233,7 @@
                 <Slider
                     x:Name="SliderVolume"
                     Margin="6,0,6,0"
+                    AutomationProperties.Name="Volume"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
                     IsMoveToPointEnabled="True"

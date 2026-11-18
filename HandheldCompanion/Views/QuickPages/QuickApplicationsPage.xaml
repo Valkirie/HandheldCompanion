@@ -307,10 +307,12 @@
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding IsSuspended}" Value="True">
                                                             <Setter Property="ToolTip" Value="{l:Static resx:Resources.QuickApplicationsPage_ResumeApplication}" />
+                                                            <Setter Property="AutomationProperties.Name" Value="{l:Static resx:Resources.QuickApplicationsPage_ResumeApplication}" />
                                                             <Setter Property="Content" Value="&#xe768;" />
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsSuspended}" Value="False">
                                                             <Setter Property="ToolTip" Value="{l:Static resx:Resources.QuickApplicationsPage_SuspendApplication}" />
+                                                            <Setter Property="AutomationProperties.Name" Value="{l:Static resx:Resources.QuickApplicationsPage_SuspendApplication}" />
                                                             <Setter Property="Content" Value="&#xe769;" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
