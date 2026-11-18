@@ -31,7 +31,7 @@ namespace HandheldCompanion.ViewModels
         private const string FavoritesNavigationKey = "favorites";
         private const string CollectionsNavigationKey = "collections";
         private const int CollectionPreviewImageCount = 4;
-        private const int RecentGamesCount = 20;
+        private const int RecentGamesCount = 10;
 
         private readonly LibraryNavigationItemViewModel _navL2 = new("nav-l2", "\u21B2");
         private readonly LibraryNavigationItemViewModel _navR2 = new("nav-r2", "\u21B3");

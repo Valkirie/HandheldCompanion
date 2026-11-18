@@ -17,7 +17,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -43,6 +42,8 @@ public class ProfileManager : IManager
     // public List<Profile> subProfiles = [];
 
     private object profileLock = new();
+    private readonly object profileFileLock = new();
+    private readonly object profileTransitionLock = new();
     private Profile? currentProfile;
 
     public FileSystemWatcher profileWatcher { get; set; }
@@ -64,7 +65,7 @@ public class ProfileManager : IManager
         profileWatcher = new FileSystemWatcher
         {
             Path = ManagerPath,
-            EnableRaisingEvents = true,
+            EnableRaisingEvents = false,
             IncludeSubdirectories = true,
             Filter = "*.json",
             NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size
@@ -81,14 +82,7 @@ public class ProfileManager : IManager
 
     public bool RenameCollection(Guid id, string newName) => collectionHelper.RenameCollection(id, newName);
 
-    // match the standard GUID pattern
-    private Regex guidRegex = new Regex(@"[0-9A-Fa-f]{8}(-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12}");
-
-    private static bool HasValidProfileName(Profile profile)
-    {
-        profile.Name = profile.Name?.Trim() ?? string.Empty;
-        return !string.IsNullOrWhiteSpace(profile.Name);
-    }
+    private static bool HasValidProfileName(Profile profile) => !string.IsNullOrWhiteSpace(profile.Name);
 
     public override void Start()
     {
@@ -99,11 +93,39 @@ public class ProfileManager : IManager
 
         // process existing profiles
         string[] fileEntries = Directory.GetFiles(ManagerPath, "*.json", SearchOption.AllDirectories);
-        string[] sorted = fileEntries.OrderBy(f => guidRegex.IsMatch(Path.GetFileNameWithoutExtension(f)))
-            .ThenBy(f => Path.GetFileNameWithoutExtension(f)).ToArray();
+        List<Profile> loadedProfiles = fileEntries.Select(ReadProfile).OfType<Profile>().ToList();
+        // Prefer completed migrations, then load parents before children regardless of filename order.
+        IEnumerable<Profile> sorted = loadedProfiles
+            .OrderByDescending(p => p.FileName.Equals(p.GetFileName(), StringComparison.OrdinalIgnoreCase))
+            .ThenBy(p => p.FileName, StringComparer.OrdinalIgnoreCase)
+            .GroupBy(p => p.Guid).Select(group => group.First())
+            .OrderByDescending(p => p.Default).ThenBy(p => p.IsSubProfile);
 
-        foreach (string fileName in sorted)
-            ProcessProfile(fileName, false);
+        foreach (Profile profile in sorted)
+            ProcessProfile(profile, Path.Combine(ManagerPath, profile.FileName));
+
+        foreach (Profile profile in profiles.Values)
+            if (!profile.FileName.Equals(profile.GetFileName(), StringComparison.OrdinalIgnoreCase))
+                SerializeProfile(profile);
+
+        // A crash after saving but before cleanup can leave a second copy of the same GUID.
+        foreach (Profile loaded in loadedProfiles)
+        {
+            if (profiles.TryGetValue(loaded.Guid, out Profile? registered) &&
+                registered.FileName.Equals(registered.GetFileName(), StringComparison.OrdinalIgnoreCase) &&
+                !loaded.FileName.Equals(registered.FileName, StringComparison.OrdinalIgnoreCase) &&
+                File.Exists(Path.Combine(ManagerPath, registered.FileName)))
+            {
+                try
+                {
+                    File.Delete(Path.Combine(ManagerPath, loaded.FileName));
+                }
+                catch (Exception ex)
+                {
+                    LogManager.LogError("Could not remove legacy profile: {0}. {1}", loaded.FileName, ex.Message);
+                }
+            }
+        }
 
         // check for default profile
         if (!HasDefault())
@@ -124,8 +146,11 @@ public class ProfileManager : IManager
         }
 
         // profile watcher events
+        pendingCreation.Clear();
+        pendingDeletion.Clear();
         profileWatcher.Created += ProfileCreated;
         profileWatcher.Deleted += ProfileDeleted;
+        profileWatcher.EnableRaisingEvents = true;
 
         // manage events
         ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
@@ -180,6 +205,7 @@ public class ProfileManager : IManager
         base.PrepareStop();
 
         // profile watcher events
+        profileWatcher.EnableRaisingEvents = false;
         profileWatcher.Created -= ProfileCreated;
         profileWatcher.Deleted -= ProfileDeleted;
 
@@ -216,15 +242,14 @@ public class ProfileManager : IManager
 
     public bool Contains(Profile profile)
     {
-        foreach (var pr in profiles.Values)
-            if (pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase))
-                return true;
-
-        return false;
+        return Contains(profile.Path);
     }
 
     public bool Contains(string fileName)
     {
+        if (string.IsNullOrWhiteSpace(fileName))
+            return false;
+
         foreach (var pr in profiles.Values)
             if (pr.Path.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
                 return true;
@@ -400,29 +425,32 @@ public class ProfileManager : IManager
         // might not be the same anymore if disabled
         profile = GetProfileFromGuid(profile.Guid, false, profile.IsSubProfile);
 
-        Profile? previousProfile;
-        lock (profileLock)
+        lock (profileTransitionLock)
         {
-            previousProfile = currentProfile;
-            currentProfile = profile;
-        }
+            Profile? previousProfile;
+            lock (profileLock)
+            {
+                previousProfile = currentProfile;
+                currentProfile = profile;
+            }
 
-        // we've already announced this profile
-        if (previousProfile is not null)
-        {
-            if (previousProfile.Guid == profile.Guid)
+            // we've already announced this profile
+            if (previousProfile is not null)
+            {
+                if (previousProfile.Guid == profile.Guid)
+                    announce = false;
+                if (profile.Default)
+                    announce = false;
+            }
+            else if (Status == ManagerStatus.Initializing)
                 announce = false;
-            if (profile.Default)
-                announce = false;
+
+            // refresh error code
+            SanitizeProfile(profile);
+
+            // raise event
+            Applied?.Invoke(profile, source);
         }
-        else if (Status == ManagerStatus.Initializing)
-            announce = false;
-
-        // refresh error code
-        SanitizeProfile(profile);
-
-        // raise event
-        Applied?.Invoke(profile, source);
 
         if (announce)
         {
@@ -562,15 +590,24 @@ public class ProfileManager : IManager
 
             bool isCurrent = profile.ErrorCode.HasFlag(ProfileErrorCode.Running);
 
-            // raise event
-            Discarded?.Invoke(profile, isCurrent, GetDefault());
+            if (!isCurrent)
+                return;
 
-            if (isCurrent)
+            // update profile
+            UpdateOrCreateProfile(profile, apply: false);
+
+            lock (profileTransitionLock)
             {
-                // update profile
-                UpdateOrCreateProfile(profile);
+                // check if the profile is still the current one, if not, don't discard it
+                if (!IsCurrentProfile(profile))
+                    return;
 
-                // restore default profile
+                // check if the foreground process is the same as the stopped process, if not, don't discard the profile
+                ProcessEx? foregroundProcess = ProcessManager.GetCurrent();
+                if (foregroundProcess is not null && foregroundProcess.ProcessId != processEx.ProcessId)
+                    return;
+
+                Discarded?.Invoke(profile, true, GetDefault());
                 ApplyProfile(GetDefault());
             }
         }
@@ -659,15 +696,31 @@ public class ProfileManager : IManager
                 }
             }
 
-            // raise event
-            if (backgroundEx is not null)
+            lock (profileTransitionLock)
             {
-                Profile backProfile = GetProfileFromPath(backgroundEx.Path, false);
-                if (!backProfile.Guid.Equals(profile.Guid))
-                    Discarded?.Invoke(backProfile, true, profile);
-            }
+                if (!Monitor.TryEnter(profileLock, TimeSpan.FromSeconds(2)))
+                    return;
 
-            ApplyProfile(profile);
+                try
+                {
+                    if (profile.Guid == currentProfile?.Guid)
+                        return;
+                }
+                finally
+                {
+                    Monitor.Exit(profileLock);
+                }
+
+                // raise event
+                if (backgroundEx is not null)
+                {
+                    Profile backProfile = GetProfileFromPath(backgroundEx.Path, false);
+                    if (!backProfile.Guid.Equals(profile.Guid))
+                        Discarded?.Invoke(backProfile, true, profile);
+                }
+
+                ApplyProfile(profile);
+            }
         }
         catch { }
     }
@@ -682,16 +735,19 @@ public class ProfileManager : IManager
 
     private void ProfileDeleted(object sender, FileSystemEventArgs e)
     {
-        if (pendingDeletion.TryRemove(e.FullPath, out _))
-            return;
+        lock (profileFileLock)
+        {
+            // Atomic replacement can report deletion before the new file is in place.
+            if (pendingDeletion.TryRemove(e.FullPath, out _) || File.Exists(e.FullPath))
+                return;
+        }
 
-        string deletedFileName = Path.GetFileName(e.FullPath);
+        string deletedFileName = Path.GetRelativePath(ManagerPath, e.FullPath);
         if (string.IsNullOrEmpty(deletedFileName))
             return;
 
         Profile? profile = profiles.Values.FirstOrDefault(p =>
-            (!string.IsNullOrEmpty(p.FileName) && p.FileName.Equals(deletedFileName, StringComparison.InvariantCultureIgnoreCase))
-            || p.GetFileName().Equals(deletedFileName, StringComparison.InvariantCultureIgnoreCase));
+            p.FileName.Equals(deletedFileName, StringComparison.OrdinalIgnoreCase));
 
         // couldn't find a matching profile
         if (profile is null)
@@ -764,10 +820,9 @@ public class ProfileManager : IManager
         }
     }
 
-    private void ProcessProfile(string fileName, bool imported = false)
+    private Profile? ReadProfile(string fileName)
     {
         Profile? profile;
-        UpdateSource updateSource = UpdateSource.Serializer;
 
         try
         {
@@ -775,7 +830,7 @@ public class ProfileManager : IManager
             if (string.IsNullOrEmpty(rawName))
             {
                 LogManager.LogError("Could not parse profile: {0}. {1}", fileName, "Profile has an incorrect file name.");
-                return;
+                return null;
             }
 
             string? json = null;
@@ -790,78 +845,18 @@ public class ProfileManager : IManager
             }
             else if (version <= AxisLayoutMigrationVersion)
             {
-                json = File.ReadAllText(fileName);
-                jObject = JObject.Parse(json, new JsonLoadSettings { LineInfoHandling = LineInfoHandling.Ignore });
-
-                // Navigate to the Layout object.
-                JObject? layout = jObject["Layout"] as JObject;
-                if (layout != null)
-                {
-                    // Navigate to the AxisLayout section.
-                    JObject? axisLayout = layout["AxisLayout"] as JObject;
-                    if (axisLayout != null && axisLayout.HasValues && axisLayout["$type"] is JToken token)
-                    {
-                        // Replace the overall "$type" if it matches the old type.
-                        string oldAxisLayoutType = "System.Collections.Generic.SortedDictionary`2[[HandheldCompanion.Inputs.AxisLayoutFlags, HandheldCompanion],[HandheldCompanion.Actions.IActions, HandheldCompanion]], System.Collections";
-                        string newAxisLayoutType = "System.Collections.Generic.SortedDictionary`2[[HandheldCompanion.Inputs.AxisLayoutFlags, HandheldCompanion],[System.Collections.Generic.List`1[[HandheldCompanion.Actions.IActions, HandheldCompanion]], System.Private.CoreLib]], System.Collections";
-                        if (axisLayout["$type"] != null && token.Type == JTokenType.String)
-                        {
-                            string currentType = token.ToString();
-                            if (currentType == oldAxisLayoutType)
-                            {
-                                axisLayout["$type"] = newAxisLayoutType;
-                            }
-                        }
-
-                        // Process each property in AxisLayout (skip "$type").
-                        foreach (var property in axisLayout.Properties().Where(p => p.Name != "$type").ToList())
-                        {
-                            // If the value is a JObject, check if it already has a "$values" array.
-                            if (property.Value.Type == JTokenType.Object)
-                            {
-                                JObject valueObj = (JObject)property.Value;
-                                if (valueObj["$values"] == null)
-                                {
-                                    // It is a single IActions object, so wrap it.
-                                    JToken singleValue = valueObj.DeepClone();
-                                    JObject newArrayObj = new JObject();
-                                    newArrayObj["$type"] = "System.Collections.Generic.List`1[[HandheldCompanion.Actions.IActions, HandheldCompanion]], System.Private.CoreLib";
-                                    newArrayObj["$values"] = new JArray(singleValue);
-                                    property.Value = newArrayObj;
-                                }
-                                // If it already has "$values", assume it's in the new format.
-                            }
-                            else
-                            {
-                                // For any other token type, wrap it in the new array format.
-                                JToken singleValue = property.Value.DeepClone();
-                                JObject newArrayObj = new JObject();
-                                newArrayObj["$type"] = "System.Collections.Generic.List`1[[HandheldCompanion.Actions.IActions, HandheldCompanion]], System.Private.CoreLib";
-                                newArrayObj["$values"] = new JArray(singleValue);
-                                property.Value = newArrayObj;
-                            }
-                        }
-
-                        // Convert the modified JObject back to a JSON string.
-                        json = jObject.ToString();
-                    }
-                }
+                // too old
+                throw new Exception("Profile is outdated.");
             }
             if (version <= DictionaryMigrationVersion)
             {
-                json ??= File.ReadAllText(fileName);
-
-                // let's make sure we get a Dictionary
-                json = json.Replace(
-                    "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"",
-                    "\"System.Collections.Generic.Dictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Private.CoreLib\"");
+                // too old
+                throw new Exception("Profile is outdated.");
             }
             if (version <= ButtonFlagsMigrationVersion)
             {
-                json ??= File.ReadAllText(fileName);
-
-                // Clean legacy/unknown ButtonFlags
-                json = HotkeysManager.StripUnknownButtonFlags(json, out var removed);
+                // too old
+                throw new Exception("Profile is outdated.");
             }
 
             // parse profile
@@ -877,72 +872,54 @@ public class ProfileManager : IManager
                 profile = JsonConvert.DeserializeObject<Profile>(json, serializerSettings);
             }
             if (profile is null)
-                return;
+                return null;
 
             // store fileName
-            profile.FileName = Path.GetFileName(fileName);
-
-            // post-parse manipulations
-            if (version <= PowerProfileMigrationVersion)
-            {
-                // Access the PowerProfile value
-                string? oldPowerProfile = jObject?["PowerProfile"]?.ToString();
-                if (!string.IsNullOrEmpty(oldPowerProfile))
-                {
-                    for (int idx = 0; idx < 2; idx++)
-                    {
-                        Guid powerProfile = profile.PowerProfiles[idx];
-                        if (powerProfile == Guid.Empty)
-                            profile.PowerProfiles[idx] = new Guid(oldPowerProfile);
-                    }
-                }
-            }
-
-            // hacky, fix broken profiles with Turbo and Toggle enabled across all actions
-            // the elements inside (IActions instances) are the same references as the ones stored in profile.Layout.ButtonLayout
-            List<IActions> allActions = profile.Layout.ButtonLayout.Values.SelectMany(list => list).ToList();
-            if (allActions.Any() && allActions.All(a => a.HasTurbo && a.HasToggle))
-            {
-                foreach (IActions action in allActions)
-                {
-                    action.HasTurbo = false;
-                    action.HasToggle = false;
-                }
-            }
-
-            // in case of updated profile naming convention
-            if (!profile.FileName.Equals(profile.GetFileName(), StringComparison.InvariantCultureIgnoreCase))
-            {
-                // delete current file
-                File.Delete(fileName);
-
-                // set update source so UpdateOrCreateProfile() will (re)create the file
-                updateSource = UpdateSource.Creation;
-            }
-
-            // use ParentGuid
-            if (profile.IsSubProfile && profile.ParentGuid == Guid.Empty && !string.IsNullOrEmpty(profile.Path))
-                profile.ParentGuid = GetProfileFromPath(profile.Path, true, true).Guid;
+            profile.FileName = Path.GetRelativePath(ManagerPath, fileName);
         }
         catch (Exception ex)
         {
             LogManager.LogError("Could not parse profile: {0}. {1}", fileName, ex.Message);
-            return;
+            return null;
         }
 
         // failed to parse, profile has no name
         if (!HasValidProfileName(profile))
         {
             LogManager.LogError("Corrupted profile: {0}. Profile has an empty name.", fileName);
-            return;
+            return null;
+        }
+
+        if (profile.Guid == Guid.Empty)
+        {
+            LogManager.LogError("Corrupted profile: {0}. Profile has an empty GUID.", fileName);
+            return null;
         }
 
         // failed to parse, profile has no path, no launchstring and non generic platform (can't be matched to any process, can't be a subprofile since it has no parent path, and is not default)
         if (!profile.Default && string.IsNullOrWhiteSpace(profile.Path) && string.IsNullOrEmpty(profile.LaunchString) && profile.PlatformType == Platforms.GamePlatform.Generic)
         {
             LogManager.LogError("Corrupted profile: {0}. Profile has an empty path, launchstring and non generic platform.", fileName);
-            return;
+            return null;
         }
+
+        return profile;
+    }
+
+    private void ProcessProfile(string fileName, bool imported = false)
+    {
+        Profile? profile = ReadProfile(fileName);
+        if (profile is not null)
+            ProcessProfile(profile, fileName, imported);
+    }
+
+    private void ProcessProfile(Profile profile, string fileName, bool imported = false)
+    {
+        UpdateSource updateSource = UpdateSource.Serializer;
+
+        if (profiles.TryGetValue(profile.Guid, out Profile? existing) &&
+            (!imported || profile.FileName.Equals(existing.FileName, StringComparison.OrdinalIgnoreCase)))
+            return;
 
         if (imported)
         {
@@ -993,18 +970,19 @@ public class ProfileManager : IManager
             // delete file and exit if user decided to skip this profile
             if (skipImported)
             {
+                pendingDeletion.TryAdd(fileName, 0);
                 File.Delete(fileName);
                 return;
             }
+
+            if (profiles.ContainsKey(profile.Guid))
+                profile.Guid = Guid.NewGuid();
         }
 
         // if a profile for this path exists, make this one a subprofile
         bool alreadyExist = Contains(profile.Path);
         if (alreadyExist && !profile.IsSubProfile)
         {
-            // delete current file
-            File.Delete(fileName);
-
             // skip if identical
             Profile mainProfile = GetProfileFromPath(profile.Path, true, true);
             if (mainProfile.Arguments.Equals(profile.Arguments))
@@ -1027,6 +1005,10 @@ public class ProfileManager : IManager
         }
 
         UpdateOrCreateProfile(profile, updateSource);
+
+        if (imported && updateSource == UpdateSource.Serializer &&
+            !profile.FileName.Equals(profile.GetFileName(), StringComparison.OrdinalIgnoreCase))
+            SerializeProfile(profile);
 
         // default specific
         if (profile.Default)
@@ -1058,8 +1040,7 @@ public class ProfileManager : IManager
 
     public void DeleteProfile(Profile profile)
     {
-        string profilePath = Path.Combine(ManagerPath, profile.GetFileName());
-        pendingDeletion.TryAdd(profilePath, 0);
+        string profilePath;
 
         if (profiles.ContainsKey(profile.Guid))
         {
@@ -1079,25 +1060,22 @@ public class ProfileManager : IManager
             if (profile.XInputPlus == XInputPlusMethod.Redirection)
                 XInputPlus.UnregisterApplication(profile);
 
-            profiles.TryRemove(profile.Guid, out Profile? removedValue);
-
-            // warn owner
-            bool isCurrent = false;
-
-            if (!Monitor.TryEnter(profileLock, TimeSpan.FromSeconds(2)))
-                return;
-
-            try
+            lock (profileTransitionLock)
             {
-                isCurrent = profile.Path.Equals(currentProfile?.Path, StringComparison.InvariantCultureIgnoreCase);
-            }
-            finally
-            {
-                Monitor.Exit(profileLock);
-            }
+                lock (profileFileLock)
+                {
+                    profilePath = Path.Combine(ManagerPath, string.IsNullOrEmpty(profile.FileName) ? profile.GetFileName() : profile.FileName);
+                    pendingDeletion.TryAdd(profilePath, 0);
+                    FileUtils.FileDelete(profilePath);
+                    profiles.TryRemove(profile.Guid, out Profile? removedValue);
+                }
 
-            // raise event
-            Discarded?.Invoke(profile, isCurrent, GetDefault());
+                if (IsCurrentProfile(profile))
+                {
+                    Discarded?.Invoke(profile, true, GetDefault());
+                    ApplyProfile(GetDefault());
+                }
+            }
 
             // raise event(s)
             Deleted?.Invoke(profile);
@@ -1113,56 +1091,64 @@ public class ProfileManager : IManager
             });
 
             LogManager.LogInformation("Deleted {0}: {1}", (profile.IsSubProfile ? "subprofile" : "profile"), profilePath);
-
-            // restore default profile
-            if (isCurrent)
-                ApplyProfile(GetDefault());
         }
-
-        FileUtils.FileDelete(profilePath);
     }
 
     public void SerializeProfile(Profile profile)
     {
-        // prepare for writing
-        string profilePath = Path.Combine(ManagerPath, profile.GetFileName());
-        pendingCreation.TryAdd(profilePath, 0);
-
-        Profile snapshot;
-        lock (profile.SyncRoot)
+        // ponytail: serialize file operations globally; use per-profile reservations if disk contention grows.
+        lock (profileFileLock)
         {
-            lock (profile.Layout.SyncRoot)
+            // Delayed artwork saves must not recreate a deleted or superseded profile.
+            if (!profiles.TryGetValue(profile.Guid, out Profile? registered) || !ReferenceEquals(registered, profile))
+                return;
+
+            string fileName = profile.GetFileName();
+            string profilePath = Path.Combine(ManagerPath, fileName);
+            string? oldFileName = profile.FileName;
+            string temporaryPath = Path.Combine(ManagerPath, $"{Guid.NewGuid():N}.tmp");
+
+            try
             {
-                // update profile version to current build
-                profile.Version = App.CurrentVersion;
-                snapshot = (Profile)profile.Clone();
+                Profile snapshot;
+                lock (profile.SyncRoot)
+                {
+                    lock (profile.Layout.SyncRoot)
+                    {
+                        // update profile version to current build
+                        profile.Version = App.CurrentVersion;
+                        snapshot = (Profile)profile.Clone();
+                    }
+                }
+
+                string jsonString = JsonConvert.SerializeObject(snapshot, Formatting.Indented, new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                });
+
+                File.WriteAllText(temporaryPath, jsonString);
+                pendingCreation.TryAdd(profilePath, 0);
+                File.Move(temporaryPath, profilePath, fileName.Equals(oldFileName, StringComparison.OrdinalIgnoreCase));
+                profile.FileName = fileName;
+
+                // Keep the previous file until its replacement has been written successfully.
+                if (!string.IsNullOrEmpty(oldFileName) && !oldFileName.Equals(fileName, StringComparison.OrdinalIgnoreCase))
+                {
+                    string oldPath = Path.Combine(ManagerPath, oldFileName);
+                    pendingDeletion.TryAdd(oldPath, 0);
+                    File.Delete(oldPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                pendingCreation.TryRemove(profilePath, out _);
+                LogManager.LogError("Could not save profile: {0}. {1}", profilePath, ex.Message);
+            }
+            finally
+            {
+                FileUtils.FileDelete(temporaryPath);
             }
         }
-
-        string jsonString = JsonConvert.SerializeObject(snapshot, Formatting.Indented, new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.All
-        });
-
-        try
-        {
-            // delete old file if fileName has changed
-            if (!string.IsNullOrEmpty(profile.FileName) && !profile.FileName.Equals(profile.GetFileName(), StringComparison.InvariantCultureIgnoreCase))
-            {
-                string oldPath = Path.Combine(ManagerPath, profile.FileName);
-                pendingDeletion.TryAdd(oldPath, 0);
-                File.Delete(oldPath);
-            }
-
-            if (FileUtils.IsFileWritable(profilePath))
-            {
-                // update profile filename
-                profile.FileName = profile.GetFileName();
-
-                File.WriteAllText(profilePath, jsonString);
-            }
-        }
-        catch { }
     }
 
     private void SanitizeProfile(Profile profile, UpdateSource source = UpdateSource.Background)
@@ -1245,12 +1231,20 @@ public class ProfileManager : IManager
         }
     }
 
-    public void UpdateOrCreateProfile(Profile profile, UpdateSource source = UpdateSource.Background)
+    public void UpdateOrCreateProfile(Profile profile, UpdateSource source = UpdateSource.Background, bool apply = true)
     {
         if (!HasValidProfileName(profile))
         {
             LogManager.LogWarning("Ignored profile update/create with empty name. Guid: {0}, Source: {1}", profile.Guid, source);
             return;
+        }
+
+        // Reject superseded artwork work before it can perform any update side effects.
+        lock (profileFileLock)
+        {
+            if (source == UpdateSource.LibraryUpdate &&
+                (!profiles.TryGetValue(profile.Guid, out Profile? registered) || !ReferenceEquals(registered, profile)))
+                return;
         }
 
         bool isCurrent = source switch
@@ -1262,7 +1256,8 @@ public class ProfileManager : IManager
 
         string profileType = profile.IsSubProfile ? "subprofile" : "profile";
         string verb = source == UpdateSource.Serializer ? "Loaded" : "Attempting to update/create";
-        LogManager.LogInformation("{0} {1}: {2}", verb, profileType, profile.Name);
+        LogManager.LogInformation("{0} {1}: {2}, source: {3}, DC: {4}, AC: {5}", verb, profileType, profile.Name, source,
+            profile.PowerProfiles[(int)PowerLineStatus.Offline], profile.PowerProfiles[(int)PowerLineStatus.Online]);
 
         if (source is UpdateSource.Creation or UpdateSource.QuickProfilesCreation)
         {
@@ -1310,8 +1305,15 @@ public class ProfileManager : IManager
             prevWrapper = prevProfile.XInputPlus;
         }
 
-        // update database
-        profiles[profile.Guid] = profile;
+        lock (profileFileLock)
+        {
+            // Artwork refreshes retain their instance across awaits; an overwrite supersedes it.
+            if (source == UpdateSource.LibraryUpdate &&
+                (!profiles.TryGetValue(profile.Guid, out Profile? registered) || !ReferenceEquals(registered, profile)))
+                return;
+
+            profiles[profile.Guid] = profile;
+        }
 
         // refresh error code
         SanitizeProfile(profile, source);
@@ -1341,7 +1343,7 @@ public class ProfileManager : IManager
         }
 
         // apply profile (silently)
-        if (isCurrent)
+        if (isCurrent && apply)
         {
             SetFavorite(profile); // if sub profile, set it as favorite for main profile
             ApplyProfile(profile, source);

@@ -593,6 +593,25 @@ namespace HandheldCompanion.IGCL
             return -1;
         }
 
+        internal static bool IsIntegrated(int deviceIdx)
+        {
+            var getDeviceProperties = GetDeviceProperties;
+            if (getDeviceProperties is null || deviceIdx < 0 || deviceIdx >= devices.Length)
+                return false;
+
+            IntPtr device = devices[deviceIdx];
+            if (device == IntPtr.Zero)
+                return false;
+
+            ctl_device_adapter_handle_t hDevice = new() { handle = device };
+            ctl_device_adapter_properties_t properties = new();
+            ctl_result_t result = getDeviceProperties(hDevice, ref properties);
+            if (result != ctl_result_t.CTL_RESULT_SUCCESS)
+                return false;
+
+            return properties.graphics_adapter_properties.HasFlag(ctl_adapter_properties_flag_t.CTL_ADAPTER_PROPERTIES_FLAG_INTEGRATED);
+        }
+
         internal static bool HasGPUScalingSupport(nint deviceIdx, uint displayIdx)
         {
             var getScalingCaps = GetScalingCaps;

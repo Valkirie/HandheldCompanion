@@ -877,6 +877,30 @@ namespace HandheldCompanion.Properties
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LEDMainColorSaved {
+            get {
+                return ((string)(this["LEDMainColorSaved"]));
+            }
+            set {
+                this["LEDMainColorSaved"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LEDSecondColorSaved {
+            get {
+                return ((string)(this["LEDSecondColorSaved"]));
+            }
+            set {
+                this["LEDSecondColorSaved"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool LEDAmbilightVerticalBlackBarDetection {
             get {
@@ -896,6 +920,30 @@ namespace HandheldCompanion.Properties
             }
             set {
                 this["LEDUseSecondColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LEDSecondSetBreathing {
+            get {
+                return ((bool)(this["LEDSecondSetBreathing"]));
+            }
+            set {
+                this["LEDSecondSetBreathing"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LEDSecondUseAccentColor {
+            get {
+                return ((bool)(this["LEDSecondUseAccentColor"]));
+            }
+            set {
+                this["LEDSecondUseAccentColor"] = value;
             }
         }
         

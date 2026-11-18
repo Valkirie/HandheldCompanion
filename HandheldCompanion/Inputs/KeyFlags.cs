@@ -196,10 +196,12 @@ namespace HandheldCompanion.Inputs
     {
         static KeyFlagsOrder()
         {
+#if DEBUG
             // make sure we haven't forgot anything
             var count1 = ((KeyFlags[])Enum.GetValues(typeof(KeyFlags))).Length;
             var count2 = arr.Length;
             Debug.Assert(count1 == count2);
+#endif
         }
 
         public static KeyFlags[] arr = {

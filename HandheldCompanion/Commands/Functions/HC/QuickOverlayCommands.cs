@@ -7,7 +7,7 @@ namespace HandheldCompanion.Commands.Functions.HC
     public class QuickOverlayCommands : FunctionCommands
     {
         private const string SettingsName = "OnScreenDisplayLevel";
-        private int prevDisplaylevel = 0;
+        private const string LastSettingsName = "LastOnScreenDisplayLevel";
 
         public QuickOverlayCommands()
         {
@@ -15,8 +15,6 @@ namespace HandheldCompanion.Commands.Functions.HC
             base.Description = Properties.Resources.Hotkey_OnScreenDisplayToggleDesc;
             base.Glyph = "\uE78B";
             base.OnKeyUp = true;
-
-            prevDisplaylevel = ManagerFactory.settingsManager.GetInt(Settings.OnScreenDisplayLevel);
 
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
@@ -26,11 +24,7 @@ namespace HandheldCompanion.Commands.Functions.HC
             switch (name)
             {
                 case SettingsName:
-                    {
-                        if (!temporary && value is not null)
-                            prevDisplaylevel = Convert.ToInt16(value);
-                        Update();
-                    }
+                    Update();
                     break;
             }
         }
@@ -41,20 +35,21 @@ namespace HandheldCompanion.Commands.Functions.HC
             {
                 // disable on-screen overlay
                 case true:
-                    ManagerFactory.settingsManager.SetProperty(SettingsName, 0, true, true);
+                    ManagerFactory.settingsManager.SetProperty(SettingsName, 0);
                     break;
                 // enable on-screen overlay
                 case false:
-                    if (prevDisplaylevel == 0)
-                        prevDisplaylevel = 1;
-                    ManagerFactory.settingsManager.SetProperty(SettingsName, prevDisplaylevel, true, true);
+                    int restore = ManagerFactory.settingsManager.GetInt(LastSettingsName);
+                    if (restore == 0)
+                        restore = 1;
+                    ManagerFactory.settingsManager.SetProperty(SettingsName, restore);
                     break;
             }
 
             base.Execute(IsKeyDown, IsKeyUp, false);
         }
 
-        public override bool IsToggled => ManagerFactory.settingsManager.GetInt(SettingsName, true) != 0;
+        public override bool IsToggled => ManagerFactory.settingsManager.GetInt(SettingsName) != 0;
 
         public override object Clone()
         {

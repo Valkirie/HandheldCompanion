@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -66,6 +67,20 @@ namespace HandheldCompanion.Utils
 
     public static class InputUtils
     {
+        static InputUtils()
+        {
+#if DEBUG
+            SortedDictionary<double, double> linearLegacyCurve = new()
+            {
+                [0d] = 0d,
+                [1d] = 1d,
+            };
+            double[] migratedCurve = ConvertLegacySensitivityCurve(linearLegacyCurve, 10);
+            Debug.Assert(migratedCurve.Length == 10 && Math.Abs(migratedCurve[5] - 5d / 9d) < 0.0001d,
+                "Legacy motion sensitivity curves must be resampled at evenly spaced positions.");
+#endif
+        }
+
         private const float SHORT_MAX_F = 32767f;
         private const float INV_SHORT_MAX = 1f / SHORT_MAX_F;
         private const float BYTE_MAX_F = 255f;
@@ -295,50 +310,100 @@ namespace HandheldCompanion.Utils
 
         // ---------- Custom sensitivity ----------
 
-        private static int SensivityIdx = 2; // average of 2 nearest points
+        public static double[] CreateDefaultSensitivityCurve(int pointCount)
+        {
+            if (pointCount < 2)
+                throw new ArgumentOutOfRangeException(nameof(pointCount));
+
+            double[] curve = new double[pointCount];
+            Array.Fill(curve, 0.5d);
+            return curve;
+        }
+
+        private static double ClampSensitivityValue(double value) => double.IsFinite(value) ? Math.Clamp(value, 0d, 1d) : 0.5d;
+
+        public static double[] NormalizeSensitivityCurve(double[]? curve, int pointCount)
+        {
+            if (pointCount < 2)
+                throw new ArgumentOutOfRangeException(nameof(pointCount));
+            if (curve is null || curve.Length < 2)
+                return CreateDefaultSensitivityCurve(pointCount);
+
+            double[] normalized = new double[pointCount];
+            for (int idx = 0; idx < pointCount; idx++)
+            {
+                double position = idx / (double)(pointCount - 1);
+                double sourcePosition = position * (curve.Length - 1);
+                int lowerIndex = (int)Math.Floor(sourcePosition);
+                int upperIndex = Math.Min(lowerIndex + 1, curve.Length - 1);
+                double amount = sourcePosition - lowerIndex;
+                double lowerValue = ClampSensitivityValue(curve[lowerIndex]);
+                double upperValue = ClampSensitivityValue(curve[upperIndex]);
+                normalized[idx] = ClampSensitivityValue(lowerValue + (upperValue - lowerValue) * amount);
+            }
+
+            return normalized;
+        }
+
+        public static double[] ConvertLegacySensitivityCurve(SortedDictionary<double, double> legacyCurve, int pointCount)
+        {
+            if (legacyCurve is null)
+                throw new ArgumentNullException(nameof(legacyCurve));
+            if (pointCount < 2)
+                throw new ArgumentOutOfRangeException(nameof(pointCount));
+            if (legacyCurve.Count == 0)
+                return CreateDefaultSensitivityCurve(pointCount);
+
+            double[] curve = new double[pointCount];
+            for (int idx = 0; idx < pointCount; idx++)
+            {
+                double position = idx / (double)(pointCount - 1);
+                KeyValuePair<double, double>? lower = null;
+                KeyValuePair<double, double>? upper = null;
+
+                foreach (KeyValuePair<double, double> point in legacyCurve)
+                {
+                    if (point.Key <= position)
+                        lower = point;
+
+                    if (point.Key >= position)
+                    {
+                        upper = point;
+                        break;
+                    }
+                }
+
+                lower ??= upper ?? new KeyValuePair<double, double>(position, 0.5d);
+                upper ??= lower;
+
+                double range = upper.Value.Key - lower.Value.Key;
+                double amount = range > 0d ? (position - lower.Value.Key) / range : 0d;
+                double lowerValue = ClampSensitivityValue(lower.Value.Value);
+                double upperValue = ClampSensitivityValue(upper.Value.Value);
+                curve[idx] = ClampSensitivityValue(lowerValue + (upperValue - lowerValue) * amount);
+            }
+
+            return curve;
+        }
 
         /// <summary>
-        /// Linear-ish interpolation using the 2 closest nodes without LINQ/allocs.
-        /// Nodes keys are in [0..1], values are scale factors.
+        /// Interpolates evenly spaced scale-factor points over the normalized angular range.
         /// </summary>
-        public static float ApplyCustomSensitivity(float AngularValue, float MaxValue, SortedDictionary<double, double> Nodes)
+        public static float ApplyCustomSensitivity(float angularValue, float maxValue, IReadOnlyList<double>? curve)
         {
-            float posAbs = MathF.Abs(AngularValue / MaxValue); // [0..1]
-            if (posAbs <= 0f) return 0f;
-            if (posAbs >= 1f) return 1f;
-            if (Nodes == null || Nodes.Count == 0) return posAbs;
+            if (curve is null || curve.Count < 2 || !float.IsFinite(angularValue) || !float.IsFinite(maxValue) || maxValue <= 0f)
+                return 1f;
 
-            // Find the two closest keys to posAbs
-            double best1Dist = double.MaxValue, best2Dist = double.MaxValue;
-            double best1 = 0.0, best2 = 0.0;
+            float position = Math.Clamp(MathF.Abs(angularValue / maxValue), 0f, 1f);
+            double curvePosition = position * (curve.Count - 1);
+            int lowerIndex = (int)Math.Floor(curvePosition);
+            int upperIndex = Math.Min(lowerIndex + 1, curve.Count - 1);
+            double amount = curvePosition - lowerIndex;
+            double lowerValue = ClampSensitivityValue(curve[lowerIndex]);
+            double upperValue = ClampSensitivityValue(curve[upperIndex]);
+            double value = lowerValue + (upperValue - lowerValue) * amount;
 
-            foreach (var kv in Nodes)
-            {
-                double d = Math.Abs(kv.Key - posAbs);
-                if (d < best1Dist)
-                {
-                    best2Dist = best1Dist; best2 = best1;
-                    best1Dist = d; best1 = kv.Value;
-                }
-                else if (d < best2Dist)
-                {
-                    best2Dist = d; best2 = kv.Value;
-                }
-            }
-
-            int k = Math.Min(SensivityIdx, Math.Max(1, Nodes.Count));
-            double w1 = 1.0 / (1.0 + best1Dist);
-            double sum = best1 * w1;
-
-            if (k > 1 && best2Dist < double.MaxValue)
-            {
-                double w2 = 1.0 / (1.0 + best2Dist);
-                sum += best2 * w2;
-            }
-
-            float adjusted = (float)(sum / k);
-            adjusted *= 2.0f; // keep original scaling intent (1.0 => +100%)
-            return adjusted;
+            return (float)(ClampSensitivityValue(value) * 2d);
         }
 
         // ---------- Motion helpers ----------

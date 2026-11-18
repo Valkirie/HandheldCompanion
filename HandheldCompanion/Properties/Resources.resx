@@ -2724,6 +2724,24 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="DevicePage_UseSecondColor" xml:space="preserve">
     <value>Use second color</value>
   </data>
+  <data name="DevicePage_SecondColorSource" xml:space="preserve">
+    <value>Color source</value>
+  </data>
+  <data name="DevicePage_SecondColorSource_Custom" xml:space="preserve">
+    <value>Custom color</value>
+  </data>
+  <data name="DevicePage_SecondColorSource_Main" xml:space="preserve">
+    <value>Main color</value>
+  </data>
+  <data name="DevicePage_SecondColorSource_Accent" xml:space="preserve">
+    <value>Windows accent color</value>
+  </data>
+  <data name="DevicePage_LEDFirstSet" xml:space="preserve">
+    <value>Sticks</value>
+  </data>
+  <data name="DevicePage_LEDSecondSet" xml:space="preserve">
+    <value>G-Key and logo</value>
+  </data>
   <data name="ProfilesPage_GraphicsSettings" xml:space="preserve">
     <value>Graphics settings</value>
   </data>
@@ -4667,5 +4685,17 @@ Thank you for using HC and helping us make it better.</value>
   </data>
   <data name="LibraryManager_ConnectivityUp" xml:space="preserve">
     <value>We are back online. All features are available.</value>
+  </data>
+  <data name="Hint_OneXConsoleCheck" xml:space="preserve">
+    <value>OneXConsole is running</value>
+  </data>
+  <data name="Hint_OneXConsoleCheckAction" xml:space="preserve">
+    <value>Disable OneXConsole</value>
+  </data>
+  <data name="Hint_OneXConsoleCheckDesc" xml:space="preserve">
+    <value>OneXConsole is running on your device. This may interfere with the application</value>
+  </data>
+  <data name="Hint_OneXConsoleCheckReadme" xml:space="preserve">
+    <value>You should disable OneXConsole, so that the application can run smoothly and without any conflicts</value>
   </data>
 </root>

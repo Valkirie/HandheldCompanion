@@ -128,6 +128,9 @@ public partial class ProfilesPage : Page
                 switch (dialogTask.Result)
                 {
                     case ContentDialogResult.Primary:
+                        // overwrite: take over the existing profile's identity and file
+                        profile.Guid = parentProfile.Guid;
+                        profile.FileName = parentProfile.FileName;
                         exists = false;
                         break;
                     case ContentDialogResult.Secondary:

@@ -2738,7 +2738,8 @@ namespace HandheldCompanion.Managers
                             return;
 
                         // open flyout
-                        if (gamepadWindow is MainWindow optionsWindow && focusedElement?.Tag is ProfileViewModel)
+                        if (gamepadWindow is MainWindow optionsWindow
+                            && focusedElement?.Tag is ProfileViewModel or CollectionGroupViewModel { CanDelete: true })
                         {
                             optionsWindow.ShowLibraryOptions(focusedElement);
                             return;
@@ -2812,6 +2813,12 @@ namespace HandheldCompanion.Managers
 
                         if (gamepadWindow is MainWindow mainWindow)
                         {
+                            if (focusedElement?.Tag is CollectionGroupViewModel { CanDelete: true })
+                            {
+                                mainWindow.ShowLibraryOptions(focusedElement);
+                                return;
+                            }
+
                             mainWindow.navView.IsPaneOpen = true;
                             return;
                         }

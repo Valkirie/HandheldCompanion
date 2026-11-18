@@ -211,6 +211,23 @@ public class OneXPlayerX2 : OneXPlayerX1
         }
     }
 
+    protected bool TryWriteEcByte(ushort register, byte value)
+    {
+        lock (updateLock)
+        {
+            try
+            {
+                (_wmiEc ?? throw new InvalidOperationException("X2 WMI EC is not open")).WriteByte(register, value);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Failed to write EC register 0x{0:X4}: {1}", register, ex.Message);
+                return false;
+            }
+        }
+    }
+
     private void WriteFanRegister(ushort register, byte value)
     {
         lock (updateLock)
