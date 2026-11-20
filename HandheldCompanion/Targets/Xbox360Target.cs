@@ -10,6 +10,7 @@ namespace HandheldCompanion.Targets
     {
         protected override string DeviceType => "xbox360";
         protected override int InputLength => 20;
+        public override bool HasGyro => false;
 
         public Xbox360Target(ushort vendorId, ushort productId) : base(vendorId, productId)
         {

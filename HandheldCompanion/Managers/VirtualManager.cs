@@ -651,32 +651,17 @@ namespace HandheldCompanion.Managers
         }
 
         /// <summary>
-        /// Compares gyro states with loose thresholds to ignore sensor noise.
-        /// Gyro/accel data changes constantly; we only detect large meaningful movements.
-        /// ponytail: Ceiling—this compares all sensor states which is O(n). For strict dedup, 
-        /// compare only the "active" sensor. Upgrade path: accept SensorState hint or cache last active.
+        /// Compares gyro states to decide whether gyro alone justifies a report.
+        /// A value threshold here acts as a deadzone and makes slow pans stair-step,
+        /// so targets with gyro get every tick while targets without gyro ignore it entirely.
         /// </summary>
-        private static bool GyroStateHasSignificantChange(GyroState? previous, GyroState current)
+        private static bool GyroStateHasSignificantChange()
         {
-            if (previous is null)
-                return true; // First update, always send
+            // no gyro/accel fields in the report (xbox 360), gyro alone changes nothing
+            if (vTarget is null || !vTarget.HasGyro)
+                return false;
 
-            // Loose thresholds: 1.0 deg/s for gyro, 0.2g for accel (human-perceptible movements)
-            const float gyroThreshold = 1.0f;
-            const float accelThreshold = 0.2f;
-
-            // Check the default sensor state (most common case)
-            var prevGyro = previous.GetGyroscope(GyroState.SensorState.Default);
-            var currGyro = current.GetGyroscope(GyroState.SensorState.Default);
-            var prevAccel = previous.GetAccelerometer(GyroState.SensorState.Default);
-            var currAccel = current.GetAccelerometer(GyroState.SensorState.Default);
-
-            // Simple distance check: if either gyro or accel vector moved significantly, report change
-            var gyroDelta = currGyro - prevGyro;
-            var accelDelta = currAccel - prevAccel;
-
-            return gyroDelta.LengthSquared() > (gyroThreshold * gyroThreshold) ||
-                   accelDelta.LengthSquared() > (accelThreshold * accelThreshold);
+            return SensorsManager.ActiveSensorFamily != DeviceUtils.SensorFamily.None;
         }
 
         public static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion)
@@ -693,7 +678,7 @@ namespace HandheldCompanion.Managers
             {
                 bool buttonChanged = ButtonStateHasChanged(prevControllerState.ButtonState, controllerState.ButtonState);
                 bool axisChanged = AxisStateHasSignificantChange(prevControllerState.AxisState, controllerState.AxisState);
-                bool gyroChanged = GyroStateHasSignificantChange(prevControllerState.GyroState, controllerState.GyroState);
+                bool gyroChanged = GyroStateHasSignificantChange();
 
                 if (!buttonChanged && !axisChanged && !gyroChanged)
                     return; // No significant change, skip update
