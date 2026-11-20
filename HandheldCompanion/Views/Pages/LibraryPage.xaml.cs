@@ -117,7 +117,11 @@ public partial class LibraryPage : Page
                 .FirstOrDefault(control => ReferenceEquals(control.Tag, profile)
                     || (control.Tag is null && ReferenceEquals(control.DataContext, profile)));
 
-            card?.Focus();
+            // An off-screen card is not created yet, fall back to the toolbar so the gamepad keeps a target
+            if (card is null)
+                SortComboBox.Focus();
+            else
+                card.Focus();
         }, DispatcherPriority.ApplicationIdle);
     }
 
