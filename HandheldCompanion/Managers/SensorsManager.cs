@@ -295,6 +295,14 @@ namespace HandheldCompanion.Managers
             if (sensorFamily == SensorFamily.SerialUSBIMU)
                 USBSensor?.Close();
 
+            // the last gyro reading stays in the device motion after the sensor stops, clear it so reports do not keep turning
+            GamepadMotion? deviceMotion = IDevice.GetCurrent()?.GamepadMotion;
+            if (deviceMotion is not null)
+            {
+                deviceMotion.GetRawAcceleration(out float accelX, out float accelY, out float accelZ);
+                deviceMotion.ProcessMotion(0.0f, 0.0f, 0.0f, accelX, accelY, accelZ);
+            }
+
             sensorFamily = selectedFamily;
 
             if (sensorFamily == SensorFamily.SerialUSBIMU)
