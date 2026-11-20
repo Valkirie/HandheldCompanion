@@ -406,6 +406,10 @@ namespace HandheldCompanion.Managers
         {
             lock (motionLock)
             {
+                // sensors are cleared while switching, keep the reset state until the new sensor is set
+                if (Gyrometer is null)
+                    return;
+
                 Vector3 accel = Accelerometer is not null ? Accelerometer.GetCurrentReading().reading : Vector3.Zero;
                 Vector3 gyro = Gyrometer is not null ? Gyrometer.GetCurrentReading().reading : Vector3.Zero;
 
