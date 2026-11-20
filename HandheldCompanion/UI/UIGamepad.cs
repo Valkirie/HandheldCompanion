@@ -1625,6 +1625,16 @@ namespace HandheldCompanion.Managers
                     if (control is null)
                         control = GetTopLeftFocusableContentControl(contentRoot);
 
+                    // Library view with nothing to focus (e.g. empty library): keep focus on the toolbar when it's already there,
+                    // otherwise start from its first control, so the gamepad isn't left without a target
+                    if (control is null && page is LibraryPage)
+                    {
+                        if (GetFocusedElement() is Control currentControl && currentControl.IsDescendantOf(page) && WPFUtils.CanTarget(currentControl, gamepadWindow))
+                            return;
+
+                        control = page.FindName("SortComboBox") as Control;
+                    }
+
                     if (control is not null)
                         Focus(control);
                 }

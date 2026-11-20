@@ -1543,6 +1543,13 @@ public partial class MainWindow : GamepadWindow
             WindowStyle = WindowStyle.None;
             ResizeMode = ResizeMode.NoResize;
             Topmost = true;
+
+            // Windows keeps an already maximized window sized to the work area after the
+            // border is removed, so the taskbar stays visible. Leave the maximized state
+            // first so the borderless window is maximized again over the whole monitor.
+            if (WindowState == WindowState.Maximized)
+                WindowState = WindowState.Normal;
+
             SetState(WindowState.Maximized);
             Topmost = false;
 

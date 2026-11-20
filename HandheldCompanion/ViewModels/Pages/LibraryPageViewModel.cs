@@ -43,6 +43,7 @@ namespace HandheldCompanion.ViewModels
         public ItemsPanelTemplate ProfilesCardsItemsPanel { get; } = CreateProfilesCardsItemsPanel();
 
         public int GameCount => Profiles.Count;
+        public bool HasLibraryItems => Profiles.Count > 0;
 
         public string LastLibraryCheckText => GetLastLibraryCheckText();
 
@@ -168,6 +169,10 @@ namespace HandheldCompanion.ViewModels
         }
 
         private ProfileViewModel? _focusedProfile;
+
+        // Raised when the focused game was deleted, with the game that takes its place (null when the library is empty), so the view can move keyboard focus too
+        public event Action<ProfileViewModel?>? FocusedProfileReplaced;
+
         private int _focusedArtworkRequestVersion;
 
         public void UpdateFocusedProfile(ProfileViewModel profile)
@@ -503,6 +508,13 @@ namespace HandheldCompanion.ViewModels
                 collectionNavigationItems.Remove($"collection:{collection.Id}");
                 if (SelectedNavigationItem?.CollectionId == collection.Id)
                     SelectedNavigationItem = FindNavigationItemByKey(AllGamesNavigationKey);
+
+                // The Collections count only covers games in the remaining collections
+                if (FindNavigationItemByKey(CollectionsNavigationKey) is { } collectionsItem)
+                {
+                    HashSet<Guid> activeCollectionIds = ManagerFactory.profileManager.GetCollections().Select(candidate => candidate.Id).ToHashSet();
+                    collectionsItem.GameCount = Profiles.Count(candidate => candidate.Profile.Collections.Any(activeCollectionIds.Contains));
+                }
                 OnPropertyChanged(nameof(NavigationItems));
 
                 // Remove the collection group.

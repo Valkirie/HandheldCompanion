@@ -411,6 +411,37 @@
             </ui:NavigationView.Content>
         </ui:NavigationView>
 
+        <!--  Caption buttons scrim: page content scrolls under the extended title bar, so fade the theme background behind min/max/close (3 x 46px buttons, 48px title bar)  -->
+        <Rectangle
+            Grid.Row="0"
+            Width="340"
+            Height="120"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Fill="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
+            IsHitTestVisible="False">
+            <Rectangle.Style>
+                <Style TargetType="Rectangle">
+                    <Style.Triggers>
+                        <!--  Borderless (fullscreen) windows have no caption buttons, so there is nothing to keep readable  -->
+                        <DataTrigger Binding="{Binding WindowStyle, RelativeSource={RelativeSource AncestorType=Window}}" Value="None">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Rectangle.Style>
+            <Rectangle.OpacityMask>
+                <RadialGradientBrush Center="1,0" GradientOrigin="1,0" RadiusX="1" RadiusY="1">
+                    <GradientStop Offset="0.0" Color="#B3000000" />
+                    <GradientStop Offset="0.25" Color="#A6000000" />
+                    <GradientStop Offset="0.45" Color="#80000000" />
+                    <GradientStop Offset="0.65" Color="#4D000000" />
+                    <GradientStop Offset="0.82" Color="#1F000000" />
+                    <GradientStop Offset="1.0" Color="#00000000" />
+                </RadialGradientBrush>
+            </Rectangle.OpacityMask>
+        </Rectangle>
+
         <!--  Bottom bar  -->
         <Border
             Grid.Row="1"

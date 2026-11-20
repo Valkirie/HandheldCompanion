@@ -1,6 +1,7 @@
 using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Reflection;
 using System.Threading;
@@ -148,6 +149,22 @@ namespace HandheldCompanion.Controls
         protected override void OnItemsChanged(object sender, ItemsChangedEventArgs args)
         {
             base.OnItemsChanged(sender, args);
+
+            // Drop containers of removed items right away: cleanup otherwise only runs on the next measure,
+            // which never happens while the panel is hidden (e.g. the last game was deleted), leaving a stale focusable card behind
+            switch (args.Action)
+            {
+                case NotifyCollectionChangedAction.Remove:
+                case NotifyCollectionChangedAction.Replace:
+                    if (args.ItemUICount > 0)
+                        RemoveInternalChildRange(args.Position.Index, args.ItemUICount);
+                    break;
+                case NotifyCollectionChangedAction.Move:
+                    if (args.ItemUICount > 0)
+                        RemoveInternalChildRange(args.OldPosition.Index, args.ItemUICount);
+                    break;
+            }
+
             currentLayout = LayoutInfo.Empty;
             currentLayoutState = LayoutState.Empty;
             InvalidateMeasure();

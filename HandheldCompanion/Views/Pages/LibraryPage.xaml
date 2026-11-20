@@ -99,7 +99,18 @@
             </Image.Triggers>
         </Image>
 
-        <StackPanel Margin="20,0,20,20">
+        <StackPanel>
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Setter Property="Margin" Value="20,0,20,20" />
+                    <Style.Triggers>
+                        <!--  Without the reserved hero area (empty library), the toolbar would sit inside the 48px title bar caption area  -->
+                        <DataTrigger Binding="{Binding HasLibraryItems}" Value="False">
+                            <Setter Property="Margin" Value="20,48,20,20" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
             <!--
         <TextBlock
             Margin="0,0,0,8"
@@ -110,8 +121,8 @@
 
             <ikw:SimpleStackPanel Spacing="28">
 
-                <!--  Recent games  -->
-                <StackPanel Visibility="{Binding HasRecentGames, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <!--  Recent games: the hero area stays reserved while the library has items, even when the strip is empty  -->
+                <StackPanel Visibility="{Binding HasLibraryItems, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ui:ScrollViewerEx
                         Height="{Binding HeroHeight, ConverterParameter=x*1.0, Converter={StaticResource Math}}"
                         MinHeight="250"
@@ -165,6 +176,7 @@
 
                             <!--  Sort by type  -->
                             <ComboBox
+                                x:Name="SortComboBox"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 SelectedIndex="{Binding SortTarget}">

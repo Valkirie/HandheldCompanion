@@ -26,6 +26,13 @@
         <converters:MarkdownToFlowDocumentConverter x:Key="MarkdownToFlowDocumentConverter" />
     </Page.Resources>
 
+    <StackPanel>
+        <TextBlock
+            Margin="0,0,0,8"
+            behaviors:TextBlockUpperCase.IsUpperCase="True"
+            Style="{StaticResource CapitalAccentTextBlockStyle}"
+            Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Page}}" />
+
     <ikw:SimpleStackPanel Spacing="28">
 
         <ikw:SimpleStackPanel Spacing="8">
@@ -572,4 +579,5 @@
             </ikw:SimpleStackPanel>
         </ikw:SimpleStackPanel>
     </ikw:SimpleStackPanel>
+    </StackPanel>
 </Page>
