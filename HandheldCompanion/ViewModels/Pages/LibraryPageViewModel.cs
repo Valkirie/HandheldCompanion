@@ -508,6 +508,13 @@ namespace HandheldCompanion.ViewModels
                 collectionNavigationItems.Remove($"collection:{collection.Id}");
                 if (SelectedNavigationItem?.CollectionId == collection.Id)
                     SelectedNavigationItem = FindNavigationItemByKey(AllGamesNavigationKey);
+
+                // The Collections count only covers games in the remaining collections
+                if (FindNavigationItemByKey(CollectionsNavigationKey) is { } collectionsItem)
+                {
+                    HashSet<Guid> activeCollectionIds = ManagerFactory.profileManager.GetCollections().Select(candidate => candidate.Id).ToHashSet();
+                    collectionsItem.GameCount = Profiles.Count(candidate => candidate.Profile.Collections.Any(activeCollectionIds.Contains));
+                }
                 OnPropertyChanged(nameof(NavigationItems));
 
                 // Remove the collection group.
