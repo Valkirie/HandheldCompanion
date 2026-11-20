@@ -142,6 +142,20 @@ namespace HandheldCompanion.Controllers
         }
 
         /// <summary>
+        /// Clears the gyro after the sensor stops, keeping the last acceleration.
+        /// Calibrated gyro is raw minus the calibration offset, so the offset is fed to keep it neutral while raw gyro reads zero.
+        /// </summary>
+        public void ResetGyro()
+        {
+            GetCalibrationOffset(handle, out float xOffset, out float yOffset, out float zOffset);
+            ProcessMotion(handle, xOffset, yOffset, zOffset, accelX, accelY, accelZ, deltaTime);
+
+            gyroX = 0.0f;
+            gyroY = 0.0f;
+            gyroZ = 0.0f;
+        }
+
+        /// <summary>
         /// Returns the current Madgwick-filter orientation quaternion
         /// </summary>
         public Quaternion GetQuaternion()

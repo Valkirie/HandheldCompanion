@@ -303,12 +303,7 @@ namespace HandheldCompanion.Managers
                 Gyrometer = null;
                 Accelerometer = null;
 
-                GamepadMotion? deviceMotion = IDevice.GetCurrent()?.GamepadMotion;
-                if (deviceMotion is not null)
-                {
-                    deviceMotion.GetRawAcceleration(out float accelX, out float accelY, out float accelZ);
-                    deviceMotion.ProcessMotion(0.0f, 0.0f, 0.0f, accelX, accelY, accelZ);
-                }
+                IDevice.GetCurrent()?.GamepadMotion?.ResetGyro();
             }
 
             sensorFamily = selectedFamily;
