@@ -90,6 +90,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager_SettingValueChanged("SensorCalibrationMode", ManagerFactory.settingsManager.GetString("SensorCalibrationMode"), false, true);
             SettingsManager_SettingValueChanged("SensorPlacement", ManagerFactory.settingsManager.GetString("SensorPlacement"), false, true);
             SettingsManager_SettingValueChanged("SensorPlacementUpsideDown", ManagerFactory.settingsManager.GetString("SensorPlacementUpsideDown"), false, true);
+            SettingsManager_SettingValueChanged("SensorGyroSmoothing", ManagerFactory.settingsManager.GetString("SensorGyroSmoothing"), false, true);
             SettingsManager_SettingValueChanged("RyzenAdjCoAll", ManagerFactory.settingsManager.GetString("RyzenAdjCoAll"), false, true);
             SettingsManager_SettingValueChanged("RyzenAdjCoGfx", ManagerFactory.settingsManager.GetString("RyzenAdjCoGfx"), false, true);
             SettingsManager_SettingValueChanged("MsrUndervoltCore", ManagerFactory.settingsManager.GetString("MsrUndervoltCore"), false, true);
@@ -210,6 +211,9 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "SensorPlacementUpsideDown":
                         Toggle_SensorPlacementUpsideDown.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "SensorGyroSmoothing":
+                        Toggle_SensorGyroSmoothing.IsOn = Convert.ToBoolean(value);
                         break;
                     case "RyzenAdjCoAll":
                         NumberBox_SetCoAll.Value = Convert.ToInt32(value);
@@ -712,6 +716,18 @@ namespace HandheldCompanion.Views.Pages
             {
                 bool isUpsideDown = toggleSwitch.IsOn;
                 ManagerFactory.settingsManager.SetProperty("SensorPlacementUpsideDown", isUpsideDown);
+            }
+        }
+
+        private void Toggle_SensorGyroSmoothing_Toggled(object? sender, RoutedEventArgs? e)
+        {
+            if (!IsLoaded)
+                return;
+
+            if (sender is ToggleSwitch toggleSwitch)
+            {
+                bool isOn = toggleSwitch.IsOn;
+                ManagerFactory.settingsManager.SetProperty("SensorGyroSmoothing", isOn);
             }
         }
         #endregion

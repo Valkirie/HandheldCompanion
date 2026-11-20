@@ -1735,6 +1735,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Smoothing.
+        /// </summary>
+        public static string DevicePage_SensorSmoothing {
+            get {
+                return ResourceManager.GetString("DevicePage_SensorSmoothing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Average all gyro samples between reports (smoother, adds lag). Off uses the latest sample.
+        /// </summary>
+        public static string DevicePage_SensorSmoothingDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_SensorSmoothingDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Thermal Design Power (TDP) Control method.
         /// </summary>
         public static string DevicePage_TDPControlMethod {

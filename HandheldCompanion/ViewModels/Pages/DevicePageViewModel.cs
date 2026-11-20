@@ -83,6 +83,7 @@ namespace HandheldCompanion.ViewModels
         public bool IsCalibrationEnabled => _isCalibrationEnabled;
         public bool IsExternalSensorExpanderEnabled => _isExternalSensorExpanderEnabled;
         public bool IsInternalSensorExpanderEnabled => _isInternalSensorExpanderEnabled;
+        public bool IsSensorSmoothingEnabled => _isInternalSensorExpanderEnabled || _isExternalSensorExpanderEnabled;
 
         public bool LegionControllerPassthrough
         {
@@ -364,6 +365,7 @@ namespace HandheldCompanion.ViewModels
             SetProperty(ref _isCalibrationEnabled, SensorsManager.ActiveCalibrationMode == CalibrationMode.Manual && (isExternal || isInternal || isController), propertyName: nameof(IsCalibrationEnabled));
             SetProperty(ref _isExternalSensorExpanderEnabled, isExternal, propertyName: nameof(IsExternalSensorExpanderEnabled));
             SetProperty(ref _isInternalSensorExpanderEnabled, isInternal, propertyName: nameof(IsInternalSensorExpanderEnabled));
+            OnPropertyChanged(nameof(IsSensorSmoothingEnabled));
         }
 
         private void Device_Opened(IDevice sender)
