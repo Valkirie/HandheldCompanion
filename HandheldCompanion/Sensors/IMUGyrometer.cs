@@ -1,4 +1,5 @@
 using HandheldCompanion.Devices;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Shared;
 using System;
 using System.Numerics;
@@ -13,6 +14,8 @@ public class IMUGyrometer : IMUSensor
     private readonly object readingLock = new();
     private Vector3 cumulativeReading;
     private int cumulativeReadingCount;
+    private static bool smoothingEnabled = true;
+    private static bool settingsHooked;
 
     static IMUGyrometer()
     {
@@ -50,6 +53,7 @@ public class IMUGyrometer : IMUSensor
         this.sensorFamily = sensorFamily;
         this.updateInterval = updateInterval;
         this.threshold = threshold;
+        HookSettings();
 
         UpdateSensor();
     }
@@ -210,7 +214,8 @@ public class IMUGyrometer : IMUSensor
         {
             if (cumulativeReadingCount > 0)
             {
-                reading.reading = GetAverageReading(cumulativeReading, cumulativeReadingCount, reading.reading);
+                if (smoothingEnabled)
+                    reading.reading = GetAverageReading(cumulativeReading, cumulativeReadingCount, reading.reading);
                 cumulativeReading = Vector3.Zero;
                 cumulativeReadingCount = 0;
             }
@@ -221,6 +226,42 @@ public class IMUGyrometer : IMUSensor
                 timestamp = reading.timestamp
             };
         }
+    }
+
+    private static void HookSettings()
+    {
+        if (settingsHooked)
+            return;
+
+        settingsHooked = true;
+
+        switch (ManagerFactory.settingsManager.Status)
+        {
+            default:
+            case ManagerStatus.Initializing:
+                ManagerFactory.settingsManager.Initialized += SettingsManager_Initialized;
+                break;
+            case ManagerStatus.Initialized:
+                QuerySettings();
+                break;
+        }
+    }
+
+    private static void SettingsManager_Initialized()
+    {
+        QuerySettings();
+    }
+
+    private static void QuerySettings()
+    {
+        ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        SettingsManager_SettingValueChanged("SensorGyroSmoothing", ManagerFactory.settingsManager.GetBoolean("SensorGyroSmoothing"), false, true);
+    }
+
+    private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
+    {
+        if (name == "SensorGyroSmoothing")
+            smoothingEnabled = Convert.ToBoolean(value);
     }
 
     private static Vector3 GetAverageReading(Vector3 cumulative, int count, Vector3 latest)

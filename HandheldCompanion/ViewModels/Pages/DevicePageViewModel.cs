@@ -6,6 +6,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Models;
 using HandheldCompanion.Processors;
+using HandheldCompanion.Sensors;
 using HandheldCompanion.ViewModels.Commands;
 using HandheldCompanion.Views;
 using HandheldCompanion.Watchers;
@@ -83,6 +84,8 @@ namespace HandheldCompanion.ViewModels
         public bool IsCalibrationEnabled => _isCalibrationEnabled;
         public bool IsExternalSensorExpanderEnabled => _isExternalSensorExpanderEnabled;
         public bool IsInternalSensorExpanderEnabled => _isInternalSensorExpanderEnabled;
+        // the legacy Windows gyrometer reads one sample per report, so there is nothing to average
+        public bool IsSensorSmoothingEnabled => _isExternalSensorExpanderEnabled || (_isInternalSensorExpanderEnabled && SensorsManager.Gyrometer is not IMUWindowsGyrometer);
 
         public bool LegionControllerPassthrough
         {
@@ -364,6 +367,7 @@ namespace HandheldCompanion.ViewModels
             SetProperty(ref _isCalibrationEnabled, SensorsManager.ActiveCalibrationMode == CalibrationMode.Manual && (isExternal || isInternal || isController), propertyName: nameof(IsCalibrationEnabled));
             SetProperty(ref _isExternalSensorExpanderEnabled, isExternal, propertyName: nameof(IsExternalSensorExpanderEnabled));
             SetProperty(ref _isInternalSensorExpanderEnabled, isInternal, propertyName: nameof(IsInternalSensorExpanderEnabled));
+            OnPropertyChanged(nameof(IsSensorSmoothingEnabled));
         }
 
         private void Device_Opened(IDevice sender)
@@ -992,7 +996,7 @@ namespace HandheldCompanion.ViewModels
             // manage events
             SensorsManager.Initialized += SensorsManager_Initialized;
             if (SensorsManager.IsInitialized)
-                UpdateSensorSelection(SensorsManager.ActiveSensorFamily);
+                SensorsManager_Initialized();
 
             // manage events
             ControllerManager.Initialized += ControllerManager_Initialized;

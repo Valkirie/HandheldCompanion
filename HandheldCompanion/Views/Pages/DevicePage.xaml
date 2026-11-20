@@ -888,6 +888,10 @@
                                     Style="{DynamicResource AccentButtonStyle}" />
                             </ui:SettingsCard>
 
+                            <ui:SettingsCard Description="{l:Static resx:Resources.DevicePage_SensorSmoothingDesc}" Header="{l:Static resx:Resources.DevicePage_SensorSmoothing}" IsEnabled="{Binding IsSensorSmoothingEnabled}">
+                                <ui:ToggleSwitch Name="Toggle_SensorGyroSmoothing" Toggled="Toggle_SensorGyroSmoothing_Toggled" />
+                            </ui:SettingsCard>
+
                             <ui:SettingsCard Header="Display virtual gamepad">
                                 <ToggleButton
                                     Name="ui_toggle_overlayGamepad"

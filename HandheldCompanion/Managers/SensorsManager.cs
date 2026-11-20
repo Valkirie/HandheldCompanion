@@ -20,6 +20,7 @@ namespace HandheldCompanion.Managers
         private static SerialUSBIMU? USBSensor;
 
         private static SensorFamily sensorFamily;
+        private static readonly object motionLock = new();
         private static SensorFamily sensorSelection;
         private static CalibrationMode calibrationMode = CalibrationMode.Manual;
 
@@ -295,6 +296,16 @@ namespace HandheldCompanion.Managers
             if (sensorFamily == SensorFamily.SerialUSBIMU)
                 USBSensor?.Close();
 
+            // the last gyro reading stays in the device motion after the sensor stops, clear it so reports do not keep turning
+            // same lock as UpdateReport, so a reading taken before the reset cannot be applied after it
+            lock (motionLock)
+            {
+                Gyrometer = null;
+                Accelerometer = null;
+
+                IDevice.GetCurrent()?.GamepadMotion?.ResetGyro();
+            }
+
             sensorFamily = selectedFamily;
 
             if (sensorFamily == SensorFamily.SerialUSBIMU)
@@ -393,15 +404,22 @@ namespace HandheldCompanion.Managers
 
         public static void UpdateReport(ControllerState controllerState, GamepadMotion gamepadMotion, ref float delta)
         {
-            Vector3 accel = Accelerometer is not null ? Accelerometer.GetCurrentReading().reading : Vector3.Zero;
-            Vector3 gyro = Gyrometer is not null ? Gyrometer.GetCurrentReading().reading : Vector3.Zero;
+            lock (motionLock)
+            {
+                // sensors are cleared while switching, keep the reset state until the new sensor is set
+                if (Gyrometer is null)
+                    return;
 
-            // store motion
-            controllerState.GyroState.SetGyroscope(gyro.X, gyro.Y, gyro.Z);
-            controllerState.GyroState.SetAccelerometer(accel.X, accel.Y, accel.Z);
+                Vector3 accel = Accelerometer is not null ? Accelerometer.GetCurrentReading().reading : Vector3.Zero;
+                Vector3 gyro = Gyrometer is not null ? Gyrometer.GetCurrentReading().reading : Vector3.Zero;
 
-            // process motion
-            gamepadMotion.ProcessMotion(gyro.X, gyro.Y, gyro.Z, accel.X, accel.Y, accel.Z, delta);
+                // store motion
+                controllerState.GyroState.SetGyroscope(gyro.X, gyro.Y, gyro.Z);
+                controllerState.GyroState.SetAccelerometer(accel.X, accel.Y, accel.Z);
+
+                // process motion
+                gamepadMotion.ProcessMotion(gyro.X, gyro.Y, gyro.Z, accel.X, accel.Y, accel.Z, delta);
+            }
         }
 
         public static void SetSensorFamily(SensorFamily sensorFamily)
