@@ -996,7 +996,7 @@ namespace HandheldCompanion.ViewModels
             // manage events
             SensorsManager.Initialized += SensorsManager_Initialized;
             if (SensorsManager.IsInitialized)
-                UpdateSensorSelection(SensorsManager.ActiveSensorFamily);
+                SensorsManager_Initialized();
 
             // manage events
             ControllerManager.Initialized += ControllerManager_Initialized;
