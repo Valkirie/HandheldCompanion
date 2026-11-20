@@ -20,13 +20,27 @@ public static class TimerManager
     private static PrecisionTimer? MasterTimer;
     public static Stopwatch Stopwatch;
 
-    private static float PreviousTotalMilliseconds;
+    private static long PreviousElapsedTicks;
 
     public static bool IsInitialized;
 
     static TimerManager()
     {
         Stopwatch = new Stopwatch();
+#if DEBUG
+        foreach (long uptimeSeconds in new long[] { 0, 86400, 604800 })
+        {
+            foreach (int intervalMs in new[] { 1, 2, 4, 8 })
+            {
+                long previousTicks = uptimeSeconds * System.Diagnostics.Stopwatch.Frequency;
+                long nextTicks = previousTicks + intervalMs * System.Diagnostics.Stopwatch.Frequency / 1000;
+                float delta = GetDelta(nextTicks, ref previousTicks);
+                Debug.Assert(Math.Abs(delta - intervalMs / 1000f) < 0.0000001f);
+                Debug.Assert(previousTicks == nextTicks);
+                Debug.Assert(GetDelta(nextTicks, ref previousTicks) == 0f);
+            }
+        }
+#endif
     }
 
     public static void Start()
@@ -49,9 +63,10 @@ public static class TimerManager
         // (re)create timer
         MasterTimer = new PrecisionTimer();
         ConfigureMasterTimer();
-        MasterTimer.Start();
 
         Stopwatch.Start();
+        PreviousElapsedTicks = Stopwatch.ElapsedTicks;
+        MasterTimer.Start();
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -172,11 +187,15 @@ public static class TimerManager
 
     public static float GetDelta()
     {
-        float TotalMilliseconds = (float)Stopwatch.Elapsed.TotalMilliseconds;
-        float delta = (TotalMilliseconds - PreviousTotalMilliseconds) / 1000.0f;
-        PreviousTotalMilliseconds = TotalMilliseconds;
+        return GetDelta(Stopwatch.ElapsedTicks, ref PreviousElapsedTicks);
+    }
 
-        return delta;
+    private static float GetDelta(long elapsedTicks, ref long previousTicks)
+    {
+        long deltaTicks = elapsedTicks - previousTicks;
+        previousTicks = elapsedTicks;
+
+        return (float)((double)deltaTicks / System.Diagnostics.Stopwatch.Frequency);
     }
 
     public static int GetPeriod()

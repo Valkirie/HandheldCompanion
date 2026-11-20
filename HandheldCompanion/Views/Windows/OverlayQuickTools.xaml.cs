@@ -7,7 +7,9 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.ViewModels;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.QuickPages;
+using iNKORE.UI.WPF.Modern;
 using iNKORE.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Helpers.Styles;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,6 +23,7 @@ using Windows.System.Power;
 using WpfScreenHelper;
 using WpfScreenHelper.Enum;
 using static HandheldCompanion.WinAPI;
+using ModernWindowHelper = iNKORE.UI.WPF.Modern.Controls.Helpers.WindowHelper;
 using Page = System.Windows.Controls.Page;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 using Screen = WpfScreenHelper.Screen;
@@ -52,6 +55,9 @@ public partial class OverlayQuickTools : GamepadWindow
     private readonly DispatcherTimer clockUpdateTimer;
     private string? _lastTimeString;
 
+    // theme changed while hidden, backdrop must be refreshed on next show
+    private bool _pendingBackdropRefresh;
+
     public QuickHomePage homePage = null!;
     public QuickDevicePage devicePage = null!;
     public QuickPerformancePage performancePage = null!;
@@ -72,6 +78,9 @@ public partial class OverlayQuickTools : GamepadWindow
 
         // used by gamepad navigation
         Tag = "QuickTools";
+
+        // follow theme changes (including system theme changes)
+        ThemeManager.AddActualThemeChangedHandler(this, Window_ActualThemeChanged);
 
         _MaxHeight = MaxHeight;
         _MaxWidth = MaxWidth;
@@ -625,6 +634,9 @@ public partial class OverlayQuickTools : GamepadWindow
                         performanceViewModel.OnPageLoaded();
                 }
 
+                if (_pendingBackdropRefresh)
+                    RefreshBackdrop();
+
                 UpdateStyle();
                 UpdateTime(null, EventArgs.Empty);
 
@@ -642,6 +654,32 @@ public partial class OverlayQuickTools : GamepadWindow
             return;
 
         WinAPI.SendMessage(hwndSource.Handle, WM_NCACTIVATE, (IntPtr)WM_NCACTIVATE, IntPtr.Zero);
+    }
+
+    private void Window_ActualThemeChanged(object sender, RoutedEventArgs e)
+    {
+        if (IsVisible)
+            RefreshBackdrop();
+        else
+            _pendingBackdropRefresh = true;
+    }
+
+    private void RefreshBackdrop()
+    {
+        if (hwndSource is null)
+            return;
+
+        _pendingBackdropRefresh = false;
+
+        // QuickTools is WS_EX_NOACTIVATE so it never gets the activation repaint that refreshes
+        // the DWM backdrop tint: re-apply dark mode and backdrop, then force a frame update
+        if (ThemeManager.GetActualTheme(this) == ElementTheme.Dark)
+            this.ApplyDarkMode();
+        else
+            this.RemoveDarkMode();
+
+        BackdropHelper.Apply(this, ModernWindowHelper.GetSystemBackdropType(this));
+        WinAPI.SetWindowPos(hwndSource.Handle, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
     }
 
     private void Window_Closing(object sender, CancelEventArgs e)
@@ -665,6 +703,7 @@ public partial class OverlayQuickTools : GamepadWindow
             ControllerManager.ControllerSelected -= ControllerManager_ControllerSelected;
             SystemManager.Initialized -= SystemManager_Initialized;
             SystemManager.PowerStatusChanged -= PowerManager_PowerStatusChanged;
+            ThemeManager.RemoveActualThemeChangedHandler(this, Window_ActualThemeChanged);
             clockUpdateTimer.Stop();
             devicePage.Dispose();
             overlayPage.Dispose();

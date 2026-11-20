@@ -14,6 +14,8 @@ namespace HandheldCompanion.ViewModels.Misc
     public class WindowListItemViewModel : BaseViewModel
     {
         private ProcessWindow? _processWindow;       // when live window
+        // last window this row showed, kept after the window is disposed so a deferred detach can still find the row
+        private ProcessWindow? _lastWindow;
         private ProcessWindowSettings? _settings;    // when not live
         private Screen? _currentScreen = Screen.PrimaryScreen;
 
@@ -30,6 +32,8 @@ namespace HandheldCompanion.ViewModels.Misc
 
                 if (_processWindow != null)
                 {
+                    _lastWindow = _processWindow;
+
                     // mirror live settings
                     _settings = _processWindow.windowSettings ?? _settings ?? new ProcessWindowSettings();
                     _currentScreen = Screen.FromHandle(_processWindow.Hwnd) ?? Screen.PrimaryScreen;
@@ -40,6 +44,8 @@ namespace HandheldCompanion.ViewModels.Misc
                 RefreshBindings();
             }
         }
+
+        public ProcessWindow? LastWindow => _lastWindow;
 
         public ProcessWindowSettings Settings
         {
@@ -325,6 +331,7 @@ namespace HandheldCompanion.ViewModels.Misc
                 SystemEvents.DisplaySettingsChanged -= SystemEvents_DisplaySettingsChanged;
 
                 _processWindow = null;
+                _lastWindow = null;
             }
 
             base.Dispose(disposing);

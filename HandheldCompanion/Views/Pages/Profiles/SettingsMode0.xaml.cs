@@ -1,17 +1,13 @@
 using HandheldCompanion.Actions;
-using HandheldCompanion.Devices;
 using HandheldCompanion.Helpers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HandheldCompanion.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 
 namespace HandheldCompanion.Views.Pages.Profiles;
 
@@ -24,11 +20,16 @@ public partial class SettingsMode0 : Page
 
     private const ButtonFlags gyroButtonFlags = ButtonFlags.HOTKEY_GYRO_AIMING;
     private Hotkey GyroHotkey = new(gyroButtonFlags) { IsInternal = true, Name = "HOTKEY_GYRO_AIMING" };
+    private readonly SettingsMode0ViewModel _viewModel;
 
     public SettingsMode0()
     {
-        DataContext = new SettingsMode0ViewModel();
+        _viewModel = new SettingsMode0ViewModel();
+        DataContext = _viewModel;
         InitializeComponent();
+
+        _viewModel.InitializeMotionChart(motionSensitivityChart, motionSensitivityLineSeries, motionSensitivityIndicator);
+        _viewModel.MotionSensitivityCurveChanged += ViewModel_MotionSensitivityCurveChanged;
     }
 
     public SettingsMode0(string Tag) : this()
@@ -62,32 +63,7 @@ public partial class SettingsMode0 : Page
                     GyroHotkey.inputsChord.ButtonState = (ButtonState)selectedProfile.AimingSightsTrigger.Clone();
                     ManagerFactory.hotkeysManager.UpdateOrCreateHotkey(GyroHotkey);
 
-                    // temp
-                    StackCurve.Children.Clear();
-                    foreach (KeyValuePair<double, double> elem in selectedProfile.MotionSensivityArray)
-                    {
-                        // skip first item ?
-                        if (elem.Key == 0)
-                            continue;
-
-                        double height = elem.Value * StackCurve.Height;
-                        Thumb thumb = new Thumb
-                        {
-                            Tag = elem.Key,
-                            Width = 8,
-                            MaxHeight = StackCurve.Height,
-                            Height = height,
-                            VerticalAlignment = VerticalAlignment.Bottom,
-                            BorderThickness = new Thickness(0),
-                            IsEnabled = false // prevent the control from being clickable
-                        };
-
-                        // Bind the Stroke property to a dynamic resource
-                        thumb.SetResourceReference(Thumb.BackgroundProperty, "SystemControlHighlightAltListAccentLowBrush");
-                        thumb.SetResourceReference(Thumb.BorderBrushProperty, "SystemControlHighlightAltListAccentHighBrush");
-
-                        StackCurve.Children.Add(thumb);
-                    }
+                    _viewModel.SetMotionSensitivityCurve(selectedProfile.MotionSensitivityArray);
                 });
             }
             catch { }
@@ -102,14 +78,14 @@ public partial class SettingsMode0 : Page
     {
         MotionManager.SettingsMode0Update -= MotionManager_SettingsMode0Update;
         ManagerFactory.hotkeysManager.Updated -= HotkeysManager_Updated;
+        _viewModel.MotionSensitivityCurveChanged -= ViewModel_MotionSensitivityCurveChanged;
 
-        if (DataContext is IDisposable disposable)
-            disposable.Dispose();
+        _viewModel.Dispose();
     }
 
     private void MotionManager_SettingsMode0Update(Vector3 gyrometer)
     {
-        Highlight_Thumb(Math.Max(Math.Max(Math.Abs(gyrometer.Z), Math.Abs(gyrometer.X)), Math.Abs(gyrometer.Y)));
+        UIHelper.TryInvoke(() => _viewModel.UpdateMotionSensitivityIndicator(Math.Max(Math.Max(Math.Abs(gyrometer.Z), Math.Abs(gyrometer.X)), Math.Abs(gyrometer.Y))));
     }
 
     private void SliderSensitivityX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -138,115 +114,27 @@ public partial class SettingsMode0 : Page
         ProfilesPage.SubmitProfile();
     }
 
-    private void Highlight_Thumb(float value)
-    {
-        // UI thread
-        UIHelper.TryInvoke(() =>
-        {
-            double dist_x = value / IDevice.GetCurrent().GamepadMotion.GetCalibration().GetGyroThreshold();
-
-            foreach (Control control in StackCurve.Children)
-            {
-                double x = (double)control.Tag;
-
-                if (dist_x > x)
-                    control.BorderThickness = new Thickness(0, 0, 0, 20);
-                else
-                    control.BorderThickness = new Thickness(0);
-            }
-        });
-    }
-
-    private void StackCurve_MouseDown(object sender, MouseButtonEventArgs e)
-    {
-        StackCurve_MouseMove(sender, e);
-    }
-
-    private void StackCurve_MouseMove(object sender, MouseEventArgs e)
-    {
-        if (ProfilesPage.selectedProfile is null)
-            return;
-
-        Control? thumb = null;
-
-        foreach (Control control in StackCurve.Children)
-        {
-            var position = e.GetPosition(control);
-            var dist_x = Math.Abs(position.X);
-
-            // Bind the Stroke property to a dynamic resource
-            control.SetResourceReference(BackgroundProperty, "SystemControlHighlightAltListAccentLowBrush");
-
-            if (dist_x <= control.Width)
-                thumb = control;
-        }
-
-        if (thumb is null)
-            return;
-
-        // Bind the Stroke property to a dynamic resource
-        thumb.SetResourceReference(Thumb.BackgroundProperty, "SystemControlHighlightAltListAccentHighBrush");
-
-        if (e.LeftButton == MouseButtonState.Pressed)
-        {
-            var x = (double)thumb.Tag;
-            thumb.Height = StackCurve.ActualHeight - e.GetPosition(StackCurve).Y;
-            ProfilesPage.selectedProfile.MotionSensivityArray[x] = thumb.Height / StackCurve.Height;
-            ProfilesPage.SubmitProfile();
-        }
-    }
-
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-        Profile? selectedProfile = ProfilesPage.selectedProfile;
-        if (selectedProfile is null)
-            return;
-
-        // default preset
-        foreach (Control Thumb in StackCurve.Children)
-        {
-            var x = (double)Thumb.Tag;
-            Thumb.Height = StackCurve.Height / 2.0f;
-            selectedProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
-        }
-        ProfilesPage.SubmitProfile();
+        _viewModel.ApplyDefaultMotionSensitivityPreset();
     }
 
     private void Button_Click_1(object sender, RoutedEventArgs e)
     {
-        Profile? selectedProfile = ProfilesPage.selectedProfile;
-        if (selectedProfile is null)
-            return;
-
-        // agressive preset
-        var tempx = 24f / Profile.SensivityArraySize;
-        foreach (Control Thumb in StackCurve.Children)
-        {
-            var x = (double)Thumb.Tag;
-            var value = (float)(-Math.Sqrt(x * tempx) + 0.85f);
-
-            Thumb.Height = StackCurve.Height * value;
-            selectedProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
-        }
-        ProfilesPage.SubmitProfile();
+        _viewModel.ApplyAggressiveMotionSensitivityPreset();
     }
 
     private void Button_Click_2(object sender, RoutedEventArgs e)
     {
-        Profile? selectedProfile = ProfilesPage.selectedProfile;
-        if (selectedProfile is null)
+        _viewModel.ApplyPreciseMotionSensitivityPreset();
+    }
+
+    private void ViewModel_MotionSensitivityCurveChanged(double[] curve)
+    {
+        if (ProfilesPage.selectedProfile is not Profile selectedProfile)
             return;
 
-        // precise preset
-        var tempx = 12f / Profile.SensivityArraySize;
-        foreach (Control Thumb in StackCurve.Children)
-        {
-            var x = (double)Thumb.Tag;
-            var value = (float)(Math.Sqrt(x * tempx) + 0.25f - tempx * x);
-
-            Thumb.Height = StackCurve.Height * value;
-            selectedProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
-        }
+        selectedProfile.MotionSensitivityArray = curve;
         ProfilesPage.SubmitProfile();
     }
 

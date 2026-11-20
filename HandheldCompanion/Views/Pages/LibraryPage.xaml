@@ -188,7 +188,7 @@
                                                     <ui:FontIcon
                                                         Height="28"
                                                         VerticalAlignment="Center"
-                                                        Icon="{x:Static ui:FluentSystemIcons.ArrowSortDownLines_24_Regular}" />
+                                                        Icon="{x:Static ui:FluentSystemIcons.ArrowSortUpLines_24_Regular}" />
                                                 </Setter.Value>
                                             </Setter>
 
@@ -199,7 +199,7 @@
                                                             <ui:FontIcon
                                                                 Height="28"
                                                                 VerticalAlignment="Center"
-                                                                Icon="{x:Static ui:FluentSystemIcons.ArrowSortUpLines_24_Regular}" />
+                                                                Icon="{x:Static ui:FluentSystemIcons.ArrowSortDownLines_24_Regular}" />
                                                         </Setter.Value>
                                                     </Setter>
                                                 </DataTrigger>
@@ -217,7 +217,7 @@
                                                     <ui:FontIcon
                                                         Height="28"
                                                         VerticalAlignment="Center"
-                                                        Icon="{x:Static ui:FluentSystemIcons.AppsListDetail_24_Filled}" />
+                                                        Icon="{x:Static ui:FluentSystemIcons.Grid_20_Filled}" />
                                                 </Setter.Value>
                                             </Setter>
 
@@ -228,7 +228,7 @@
                                                             <ui:FontIcon
                                                                 Height="28"
                                                                 VerticalAlignment="Center"
-                                                                Icon="{x:Static ui:FluentSystemIcons.Grid_20_Filled}" />
+                                                                Icon="{x:Static ui:FluentSystemIcons.AppsListDetail_24_Filled}" />
                                                         </Setter.Value>
                                                     </Setter>
                                                 </DataTrigger>
@@ -250,7 +250,7 @@
                                 <!--  Metadata & scan  -->
                                 <ui:DropDownButton HorizontalAlignment="Left" VerticalAlignment="Stretch">
                                     <ui:DropDownButton.Content>
-                                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe712;" />
+                                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Settings}" />
                                     </ui:DropDownButton.Content>
 
                                     <ui:DropDownButton.Flyout>

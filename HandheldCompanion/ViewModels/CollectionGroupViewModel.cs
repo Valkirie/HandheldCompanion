@@ -78,8 +78,9 @@ namespace HandheldCompanion.ViewModels
             {
                 Dialog dialog = new Dialog(MainWindow.GetCurrent())
                 {
-                    Title = string.Format(Resources.ProfilesPage_AreYouSureDelete1, collection.Name),
-                    Content = Resources.ProfilesPage_AreYouSureDelete2,
+                    Title = $"Delete collection \"{collection.Name}\"?",
+                    Content = "This removes the collection and its memberships. Games and profiles will not be deleted.",
+                    DefaultButton = ContentDialogButton.Close,
                     CloseButtonText = Resources.ProfilesPage_Cancel,
                     PrimaryButtonText = Resources.ProfilesPage_Delete
                 };

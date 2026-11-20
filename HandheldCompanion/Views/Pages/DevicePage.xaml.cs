@@ -50,7 +50,6 @@ namespace HandheldCompanion.Views.Pages
                     QuerySettings();
                     break;
             }
-
         }
 
         private void SettingsManager_Initialized()
@@ -77,6 +76,8 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager_SettingValueChanged("LEDSecondColor", ManagerFactory.settingsManager.GetString("LEDSecondColor"), false, true);
             SettingsManager_SettingValueChanged("LEDAmbilightVerticalBlackBarDetection", ManagerFactory.settingsManager.GetString("LEDAmbilightVerticalBlackBarDetection"), false, true);
             SettingsManager_SettingValueChanged("LEDUseSecondColor", ManagerFactory.settingsManager.GetString("LEDUseSecondColor"), false, true);
+            SettingsManager_SettingValueChanged("LEDSecondUseAccentColor", ManagerFactory.settingsManager.GetString("LEDSecondUseAccentColor"), false, true);
+            SettingsManager_SettingValueChanged("LEDSecondSetBreathing", ManagerFactory.settingsManager.GetString("LEDSecondSetBreathing"), false, true);
             SettingsManager_SettingValueChanged("LEDPresetIndex", ManagerFactory.settingsManager.GetString("LEDPresetIndex"), false, true);
             SettingsManager_SettingValueChanged("LegionControllerPassthrough", ManagerFactory.settingsManager.GetString("LegionControllerPassthrough"), false, true);
             SettingsManager_SettingValueChanged("LegionControllerSwap", ManagerFactory.settingsManager.GetString("LegionControllerSwap"), false, true);
@@ -105,7 +106,7 @@ namespace HandheldCompanion.Views.Pages
             ManagerFactory.settingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
         }
 
-        private void SettingsManager_SettingValueChanged(string? name, object? value, bool temporary, bool initializing)
+        private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
         {
             // UI thread
             UIHelper.TryBeginInvoke(() =>
@@ -132,6 +133,14 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "LEDSettingsLevel":
                         {
+                            // Migrate the old whole-device breathing setting to secondary-only breathing.
+                            if (Convert.ToInt32(value) == (int)LEDLevel.Breathing && HasSecondLEDSet)
+                            {
+                                ManagerFactory.settingsManager.SetProperty("LEDSecondSetBreathing", true);
+                                ManagerFactory.settingsManager.SetProperty("LEDSettingsLevel", (int)LEDLevel.SolidColor);
+                                break;
+                            }
+
                             foreach (Control control in LEDSettingsLevel.Items)
                             {
                                 if (control is not ComboBoxItem)
@@ -166,6 +175,13 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "LEDUseSecondColor":
                         Toggle_UseSecondColor.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "LEDSecondUseAccentColor":
+                        if (initializing && HasSecondLEDSet && Convert.ToBoolean(value))
+                            ApplyAccentColor(false);
+                        break;
+                    case "LEDSecondSetBreathing":
+                        Toggle_SecondSetBreathing.IsOn = Convert.ToBoolean(value);
                         break;
                     case "LEDPresetIndex":
                         int presetIndex = Convert.ToInt32(value);
@@ -227,6 +243,8 @@ namespace HandheldCompanion.Views.Pages
             {
                 if (MatchAccentColor.IsOn)
                     SetAccentColor();
+                if (HasSecondLEDSet && ManagerFactory.settingsManager.GetBoolean("LEDSecondUseAccentColor"))
+                    ApplyAccentColor(false);
             });
         }
 
@@ -307,19 +325,58 @@ namespace HandheldCompanion.Views.Pages
             if (!IsLoaded)
                 return;
 
+            // Settings synchronization must not replace saved custom colors with the accent.
+            if (MatchAccentColor.IsOn == ManagerFactory.settingsManager.GetBoolean("LEDSettingsUseAccentColor"))
+                return;
+
             if (MatchAccentColor.IsOn)
+            {
+                SaveColor(true);
+                if (!HasSecondLEDSet)
+                    SaveColor(false);
                 SetAccentColor();
+            }
+            else
+            {
+                RestoreColor(true);
+                if (!HasSecondLEDSet)
+                    RestoreColor(false);
+            }
 
             ManagerFactory.settingsManager.SetProperty("LEDSettingsUseAccentColor", MatchAccentColor.IsOn);
         }
 
+        private static bool HasSecondLEDSet => IDevice.GetCurrent().Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDSet);
+
+        private void SaveColor(bool main)
+        {
+            string name = main ? "LEDMainColor" : "LEDSecondColor";
+            ManagerFactory.settingsManager.SetProperty(name + "Saved", ManagerFactory.settingsManager.GetString(name));
+        }
+
+        private void RestoreColor(bool main)
+        {
+            string name = main ? "LEDMainColor" : "LEDSecondColor";
+            string saved = ManagerFactory.settingsManager.GetString(name + "Saved");
+            if (string.IsNullOrEmpty(saved))
+                return;
+
+            ManagerFactory.settingsManager.SetProperty(name, saved);
+            (main ? MainColorPicker : SecondColorPicker).SelectedColor = ManagerFactory.settingsManager.GetColor(name);
+        }
+
+        private void ApplyAccentColor(bool main)
+        {
+            Color accent = (Color)ColorConverter.ConvertFromString(Convert.ToString(App.uiSettings.GetColorValue(UIColorType.Accent).ToString()));
+            (main ? MainColorPicker : SecondColorPicker).SelectedColor = accent;
+            ManagerFactory.settingsManager.SetProperty(main ? "LEDMainColor" : "LEDSecondColor", accent);
+        }
+
         private void SetAccentColor()
         {
-            MainColorPicker.SelectedColor = (Color)ColorConverter.ConvertFromString(Convert.ToString(App.uiSettings.GetColorValue(UIColorType.Accent).ToString()));
-            SecondColorPicker.SelectedColor = (Color)ColorConverter.ConvertFromString(Convert.ToString(App.uiSettings.GetColorValue(UIColorType.Accent).ToString()));
-
-            ManagerFactory.settingsManager.SetProperty("LEDMainColor", MainColorPicker.SelectedColor);
-            ManagerFactory.settingsManager.SetProperty("LEDSecondColor", MainColorPicker.SelectedColor);
+            ApplyAccentColor(true);
+            if (!HasSecondLEDSet)
+                ApplyAccentColor(false);
         }
 
         private void LEDSettingsLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -347,10 +404,7 @@ namespace HandheldCompanion.Views.Pages
             // workaround: NotifyableColor is raising ColorChanged event infinitely
             ColorRoutedEventArgs colorArgs = (ColorRoutedEventArgs)e;
             if (prevMainColor == colorArgs.Color)
-            {
-                MainColorPicker.Color = new NotifyableColor(new PickerControlBase());
                 return;
-            }
             prevMainColor = colorArgs.Color;
 
             if (!IsLoaded)
@@ -364,10 +418,7 @@ namespace HandheldCompanion.Views.Pages
             // workaround: NotifyableColor is raising ColorChanged event infinitely
             ColorRoutedEventArgs colorArgs = (ColorRoutedEventArgs)e;
             if (prevSecondColor == colorArgs.Color)
-            {
-                SecondColorPicker.Color = new NotifyableColor(new PickerControlBase());
                 return;
-            }
             prevSecondColor = colorArgs.Color;
 
             if (!IsLoaded)
@@ -394,6 +445,42 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             ManagerFactory.settingsManager.SetProperty("LEDAmbilightVerticalBlackBarDetection", Toggle_AmbilightVerticalBlackBarDetection.IsOn);
+        }
+
+        private void SecondColorSource_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            int index = SecondColorSource.SelectedIndex;
+            // Binding updates reflect saved settings and must not write them back as user choices.
+            if (index < 0 || index == ((DevicePageViewModel)DataContext).SecondColorSourceIndex)
+                return;
+
+            SettingsManager sm = ManagerFactory.settingsManager;
+            bool wasAccent = sm.GetBoolean("LEDSecondUseAccentColor");
+            if (index == 2)
+            {
+                if (!wasAccent)
+                    SaveColor(false);
+                sm.SetProperty("LEDSecondUseAccentColor", true);
+                ApplyAccentColor(false);
+            }
+            else if (wasAccent)
+            {
+                sm.SetProperty("LEDSecondUseAccentColor", false);
+                RestoreColor(false);
+            }
+
+            sm.SetProperty("LEDUseSecondColor", index != 1);
+        }
+
+        private void Toggle_SecondSetBreathing_Toggled(object? sender, RoutedEventArgs? e)
+        {
+            if (!IsLoaded)
+                return;
+
+            ManagerFactory.settingsManager.SetProperty("LEDSecondSetBreathing", Toggle_SecondSetBreathing.IsOn);
         }
 
         private async void Toggle_UseSecondColor_Toggled(object? sender, RoutedEventArgs? e)

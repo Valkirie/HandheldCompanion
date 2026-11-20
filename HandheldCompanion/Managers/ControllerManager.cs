@@ -389,6 +389,7 @@ public static partial class ControllerManager
         mapped.ButtonState[ButtonFlags.RightPadTouch] |= Math.Abs((int)mapped.AxisState[AxisFlags.RightPadX]) > PAD_TOUCH_DEADZONE || Math.Abs((int)mapped.AxisState[AxisFlags.RightPadY]) > PAD_TOUCH_DEADZONE;
 
         DS4Touch.UpdateInputs(mapped);
+        mapped = DS4Touch.ApplyOverlayInputs(mapped);
         VirtualManager.UpdateInputs(mapped, gamepadMotion);
         DSUServer.UpdateInputs(mapped, motions);
         DSUServer.Tick(ticks, delta);

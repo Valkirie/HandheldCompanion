@@ -17,6 +17,7 @@ namespace HandheldCompanion.Managers
     public class PowerProfileManager : IManager
     {
         private object profileLock = new();
+        private readonly object profileTransitionLock = new();
         private PowerProfile? currentProfile;
         private Profile? currentGameProfile;
         private int currentPowerLineStatus;
@@ -108,6 +109,7 @@ namespace HandheldCompanion.Managers
         {
             // manage events
             PlatformManager.LibreHardware.CPUTemperatureChanged += LibreHardwareMonitor_CpuTemperatureChanged;
+            PlatformManager.LibreHardware.GPUTemperatureChanged += LibreHardwareMonitor_GpuTemperatureChanged;
         }
 
         private void PlatformManager_Initialized()
@@ -154,6 +156,7 @@ namespace HandheldCompanion.Managers
 
             // manage events
             PlatformManager.LibreHardware.CPUTemperatureChanged -= LibreHardwareMonitor_CpuTemperatureChanged;
+            PlatformManager.LibreHardware.GPUTemperatureChanged -= LibreHardwareMonitor_GpuTemperatureChanged;
             ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
             ManagerFactory.profileManager.Discarded -= ProfileManager_Discarded;
             ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
@@ -211,13 +214,32 @@ namespace HandheldCompanion.Managers
 
         private void LibreHardwareMonitor_CpuTemperatureChanged(float? value)
         {
+            UpdateSoftwareFan();
+        }
+
+        private void LibreHardwareMonitor_GpuTemperatureChanged(float? value)
+        {
+            if (GPUManager.GetCurrent()?.IsEmbedded() ?? false)
+                UpdateSoftwareFan();
+        }
+
+        private void UpdateSoftwareFan()
+        {
+            float? temperature = PlatformManager.LibreHardware.GetCPUTemperature();
+            if (GPUManager.GetCurrent()?.IsEmbedded() ?? false)
+            {
+                float? gpuTemperature = PlatformManager.LibreHardware.GetGPUTemperature();
+                if (gpuTemperature.HasValue && (!temperature.HasValue || gpuTemperature > temperature))
+                    temperature = gpuTemperature;
+            }
+
             lock (profileLock)
             {
-                if (currentProfile is null || currentProfile.FanProfile is null || value is null)
+                if (currentProfile is null || currentProfile.FanProfile is null || !temperature.HasValue)
                     return;
 
                 // update fan profile
-                currentProfile.FanProfile.SetTemperature((float)value);
+                currentProfile.FanProfile.SetTemperature(temperature.Value);
 
                 switch (currentProfile.FanProfile.fanMode)
                 {
@@ -242,34 +264,46 @@ namespace HandheldCompanion.Managers
             ProfileManager_Applied(profile, UpdateSource.Background);
         }
 
+        private void ApplyProfile(PowerProfile profile, UpdateSource source)
+        {
+            lock (profileTransitionLock)
+            {
+                lock (profileLock)
+                    currentProfile = profile;
+
+                // apply device-specific power profile behavior before other subscribers
+                IDevice.GetCurrent().PowerProfileManager_Applied(profile, source);
+
+                Applied?.Invoke(profile, source);
+
+                LogManager.LogInformation("Power profile {0} applied", profile.Name);
+            }
+        }
+
         private void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
-            lock (profileLock)
+            lock (profileTransitionLock)
             {
                 // Get the power status
                 PowerStatus powerStatus = SystemInformation.PowerStatus;
 
                 // Get the power profile
-                int powerLineStatus = streamingPowerOverride ? (int)PowerLineStatus.Offline : (int)powerStatus.PowerLineStatus;
-
-                // the per power state overrides follow the game profile and power state, with or without a power profile
-                currentGameProfile = profile;
-                currentPowerLineStatus = powerLineStatus;
-
-                PowerProfile powerProfile = GetProfile(profile.PowerProfiles[powerLineStatus]);
-                if (powerProfile is not null)
+                int powerLineStatus;
+                lock (profileLock)
                 {
-                    // update current profile
-                    currentProfile = powerProfile;
+                    powerLineStatus = streamingPowerOverride ? (int)PowerLineStatus.Offline : (int)powerStatus.PowerLineStatus;
 
-                    // apply device-specific power profile behavior before other subscribers
-                    IDevice.GetCurrent().PowerProfileManager_Applied(powerProfile, source);
-
-                    Applied?.Invoke(powerProfile, source);
-
-                    LogManager.LogInformation("Power profile {0} applied", powerProfile.Name);
+                    // the per power state overrides follow the game profile and power state, with or without a power profile
+                    currentGameProfile = profile;
+                    currentPowerLineStatus = powerLineStatus;
                 }
 
+                // ApplyProfile() sets currentProfile under profileLock
+                PowerProfile powerProfile = GetProfile(profile.PowerProfiles[powerLineStatus]);
+                if (powerProfile is not null)
+                    ApplyProfile(powerProfile, source);
+
+                // raised with or without a power profile
                 OverridesApplied?.Invoke(profile, powerLineStatus, source);
             }
         }
@@ -280,32 +314,35 @@ namespace HandheldCompanion.Managers
             if (!profile.Default || isCurrent || source == UpdateSource.Serializer)
                 return;
 
-            Profile? gameProfile;
-            int powerLineStatus;
-            lock (profileLock)
+            // serialized with profile and power state transitions so stale overrides can't be applied
+            lock (profileTransitionLock)
             {
-                gameProfile = currentGameProfile;
-                powerLineStatus = currentPowerLineStatus;
+                Profile? gameProfile;
+                int powerLineStatus;
+                lock (profileLock)
+                {
+                    gameProfile = currentGameProfile;
+                    powerLineStatus = currentPowerLineStatus;
+                }
+
+                if (gameProfile is null)
+                    return;
+
+                OverridesApplied?.Invoke(gameProfile, powerLineStatus, source);
             }
-
-            if (gameProfile is null)
-                return;
-
-            OverridesApplied?.Invoke(gameProfile, powerLineStatus, source);
         }
 
         private void ProfileManager_Discarded(Profile profile, bool swapped, Profile nextProfile)
         {
-            lock (profileLock)
+            lock (profileTransitionLock)
             {
-                // reset current profile
-                currentProfile = null;
+                PowerProfile? powerProfile;
+                lock (profileLock)
+                {
+                    powerProfile = currentProfile;
+                    currentProfile = null;
+                }
 
-                // Get the power status
-                PowerStatus powerStatus = SystemInformation.PowerStatus;
-
-                // Get the power profile
-                PowerProfile powerProfile = GetProfile(profile.PowerProfiles[(int)powerStatus.PowerLineStatus]);
                 if (powerProfile is null)
                     return;
 
@@ -380,17 +417,15 @@ namespace HandheldCompanion.Managers
             if (source == UpdateSource.Serializer)
                 return;
 
-            lock (profileLock)
+            lock (profileTransitionLock)
             {
                 // warn owner
-                bool isCurrent = profile.Guid == currentProfile?.Guid;
-                if (isCurrent)
-                {
-                    // apply device-specific power profile behavior before other subscribers
-                    IDevice.GetCurrent().PowerProfileManager_Applied(profile, source);
+                bool isCurrent;
+                lock (profileLock)
+                    isCurrent = profile.Guid == currentProfile?.Guid;
 
-                    Applied?.Invoke(profile, source);
-                }
+                if (isCurrent)
+                    ApplyProfile(profile, source);
             }
 
             // serialize profile
@@ -649,16 +684,19 @@ namespace HandheldCompanion.Managers
 
         public void SetStreamingPowerOverride(bool enabled)
         {
-            lock (profileLock)
+            lock (profileTransitionLock)
             {
-                if (streamingPowerOverride == enabled)
-                    return;
+                lock (profileLock)
+                {
+                    if (streamingPowerOverride == enabled)
+                        return;
 
-                streamingPowerOverride = enabled;
+                    streamingPowerOverride = enabled;
+                }
+
+                if (ManagerFactory.profileManager.IsReady)
+                    ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
             }
-
-            if (ManagerFactory.profileManager.IsReady)
-                ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
         }
 
         public void SerializeProfile(PowerProfile profile)
@@ -701,13 +739,16 @@ namespace HandheldCompanion.Managers
 
             if (profiles.ContainsKey(profile.Guid))
             {
-                profiles.Remove(profile.Guid, out _);
+                lock (profileTransitionLock)
+                {
+                    profiles.Remove(profile.Guid, out _);
 
-                // raise event
-                Discarded?.Invoke(profile, false);
+                    // raise event
+                    Discarded?.Invoke(profile, false);
 
-                // raise event(s)
-                Deleted?.Invoke(profile);
+                    // raise event(s)
+                    Deleted?.Invoke(profile);
+                }
 
                 // send toast
                 // todo: localize me

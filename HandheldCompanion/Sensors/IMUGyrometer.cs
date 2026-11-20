@@ -10,6 +10,18 @@ namespace HandheldCompanion.Sensors;
 
 public class IMUGyrometer : IMUSensor
 {
+    private readonly object readingLock = new();
+    private Vector3 cumulativeReading;
+    private int cumulativeReadingCount;
+
+    static IMUGyrometer()
+    {
+#if DEBUG
+        System.Diagnostics.Debug.Assert(GetAverageReading(new Vector3(3000.0f), 2, Vector3.Zero).X == 1500.0f);
+        System.Diagnostics.Debug.Assert(GetAverageReading(Vector3.Zero, 0, new Vector3(750.0f)).X == 750.0f);
+#endif
+    }
+
     public static IMUSensor Create(SensorFamily sensorFamily, int updateInterval, float threshold)
     {
         const bool forceLegacy = false;
@@ -150,10 +162,7 @@ public class IMUGyrometer : IMUSensor
 
     private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg, double timestamp)
     {
-        reading.reading.X = AngularVelocityDeg.X;
-        reading.reading.Y = AngularVelocityDeg.Y;
-        reading.reading.Z = AngularVelocityDeg.Z;
-        reading.timestamp = timestamp;
+        StoreReading(AngularVelocityDeg, timestamp);
 
         base.ReadingChanged();
     }
@@ -165,10 +174,9 @@ public class IMUGyrometer : IMUSensor
         Vector3 gyrometerAxis = device.GyroMatrix.Axis;
         int[] remapIndices = device.GyroMatrix.AxisRemapIndices;
 
-        // Get raw readings with threshold check
-        double rawX = Math.Abs(args.Reading.AngularVelocityX) >= threshold ? 0 : args.Reading.AngularVelocityX;
-        double rawY = Math.Abs(args.Reading.AngularVelocityY) >= threshold ? 0 : args.Reading.AngularVelocityY;
-        double rawZ = Math.Abs(args.Reading.AngularVelocityZ) >= threshold ? 0 : args.Reading.AngularVelocityZ;
+        double rawX = ClampToThreshold(args.Reading.AngularVelocityX, threshold);
+        double rawY = ClampToThreshold(args.Reading.AngularVelocityY, threshold);
+        double rawZ = ClampToThreshold(args.Reading.AngularVelocityZ, threshold);
 
         // Direct axis remapping using pre-computed indices
         // remapIndices[input] tells us which output axis each input goes to
@@ -176,16 +184,47 @@ public class IMUGyrometer : IMUSensor
         readingAxis[remapIndices[1]] = rawY;  // Y input → output axis at remapIndices[1]
         readingAxis[remapIndices[2]] = rawZ;  // Z input → output axis at remapIndices[2]
 
-        reading.reading.X = (float)readingAxis[0] * gyrometerAxis.X;
-        reading.reading.Y = (float)readingAxis[1] * gyrometerAxis.Y;
-        reading.reading.Z = (float)readingAxis[2] * gyrometerAxis.Z;
-        reading.timestamp = args.Reading.Timestamp.DateTime.TimeOfDay.TotalMilliseconds;
+        Vector3 currentReading = new(
+            (float)readingAxis[0] * gyrometerAxis.X,
+            (float)readingAxis[1] * gyrometerAxis.Y,
+            (float)readingAxis[2] * gyrometerAxis.Z);
+        StoreReading(currentReading, args.Reading.Timestamp.DateTime.TimeOfDay.TotalMilliseconds);
 
         base.ReadingChanged();
     }
 
+    private void StoreReading(Vector3 currentReading, double timestamp)
+    {
+        lock (readingLock)
+        {
+            reading.reading = currentReading;
+            reading.timestamp = timestamp;
+            cumulativeReading += currentReading;
+            cumulativeReadingCount++;
+        }
+    }
+
     public override SensorReading GetCurrentReading(bool center = false, bool ratio = false)
     {
-        return this.reading;
+        lock (readingLock)
+        {
+            if (cumulativeReadingCount > 0)
+            {
+                reading.reading = GetAverageReading(cumulativeReading, cumulativeReadingCount, reading.reading);
+                cumulativeReading = Vector3.Zero;
+                cumulativeReadingCount = 0;
+            }
+
+            return new SensorReading
+            {
+                reading = reading.reading,
+                timestamp = reading.timestamp
+            };
+        }
+    }
+
+    private static Vector3 GetAverageReading(Vector3 cumulative, int count, Vector3 latest)
+    {
+        return count > 0 ? cumulative / count : latest;
     }
 }

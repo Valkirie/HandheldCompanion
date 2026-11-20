@@ -712,7 +712,7 @@ public class OneXPlayerX1 : OneXAOKZOE
         return false;
     }
 
-    public void SetBatteryChargeLimit(int chargeLimit)
+    public virtual void SetBatteryChargeLimit(int chargeLimit)
     {
         if (!UseOpenLib || !IsOpen)
             return;
@@ -723,7 +723,7 @@ public class OneXPlayerX1 : OneXAOKZOE
         ECRamDirectWriteByte(ECBatteryLimitAddress, ECDetails, (byte)chargeLimit);
     }
 
-    public void SetBatteryBypassChargingMode(int modeIndex)
+    public virtual void SetBatteryBypassChargingMode(int modeIndex)
     {
         if (!UseOpenLib || !IsOpen)
             return;
