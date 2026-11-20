@@ -6,6 +6,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Models;
 using HandheldCompanion.Processors;
+using HandheldCompanion.Sensors;
 using HandheldCompanion.ViewModels.Commands;
 using HandheldCompanion.Views;
 using HandheldCompanion.Watchers;
@@ -83,7 +84,8 @@ namespace HandheldCompanion.ViewModels
         public bool IsCalibrationEnabled => _isCalibrationEnabled;
         public bool IsExternalSensorExpanderEnabled => _isExternalSensorExpanderEnabled;
         public bool IsInternalSensorExpanderEnabled => _isInternalSensorExpanderEnabled;
-        public bool IsSensorSmoothingEnabled => _isInternalSensorExpanderEnabled || _isExternalSensorExpanderEnabled;
+        // the legacy Windows gyrometer reads one sample per report, so there is nothing to average
+        public bool IsSensorSmoothingEnabled => _isExternalSensorExpanderEnabled || (_isInternalSensorExpanderEnabled && SensorsManager.Gyrometer is not IMUWindowsGyrometer);
 
         public bool LegionControllerPassthrough
         {

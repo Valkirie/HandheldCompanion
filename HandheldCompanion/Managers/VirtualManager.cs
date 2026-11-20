@@ -657,12 +657,22 @@ namespace HandheldCompanion.Managers
         /// </summary>
         private static bool GyroStateHasSignificantChange()
         {
+            // read once, vTarget can be cleared by a controller switch
+            VTarget? target = vTarget;
+
             // no gyro/accel fields in the report (xbox 360), gyro alone changes nothing
-            if (vTarget is null || !vTarget.HasGyro)
+            if (target is null || !target.HasGyro)
                 return false;
 
-            return SensorsManager.ActiveSensorFamily != DeviceUtils.SensorFamily.None;
+            // keep reporting one more tick after the sensor is turned off, so the target gets the neutral gyro state
+            bool gyroActive = SensorsManager.ActiveSensorFamily != DeviceUtils.SensorFamily.None;
+            bool changed = gyroActive || wasGyroActive;
+            wasGyroActive = gyroActive;
+
+            return changed;
         }
+
+        private static bool wasGyroActive;
 
         public static void UpdateInputs(ControllerState controllerState, GamepadMotion gamepadMotion)
         {
