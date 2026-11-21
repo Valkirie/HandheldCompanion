@@ -13,7 +13,7 @@ namespace HandheldCompanion.Managers.Desktop;
 /// <summary>
 /// Reads monitor identity from the device path and the EDID, and matches connected screens to known monitors.
 /// Matching never guesses: an exact path, then a unique EDID serial, then a unique EDID text serial,
-/// then a unique model, otherwise a new monitor.
+/// then a unique model when serials do not contradict, otherwise a new monitor.
 /// </summary>
 public static class MonitorIdentity
 {
@@ -225,6 +225,7 @@ public static class MonitorIdentity
     /// 2. EDID serial, when valid and unique among connected and known monitors
     /// 3. EDID text serial, when the numeric serial is invalid and the text is usable and unique
     /// 4. manufacturer + product, when exactly one known and one connected monitor have that model
+    ///    and their serials do not identify different units
     /// 5. otherwise a new known monitor
     /// The stored path is updated on a serial, text serial or model match.
     /// </summary>
@@ -253,8 +254,8 @@ public static class MonitorIdentity
         // 3. EDID text serial
         MatchUniqueKey(screens, known, pending, claimed, now, s => s.SerialTextKey, k => k.SerialTextKey);
 
-        // 4. manufacturer + product
-        MatchUniqueKey(screens, known, pending, claimed, now, s => s.ModelKey, k => k.ModelKey);
+        // 4. manufacturer + product, skipped when serials identify different units
+        MatchUniqueKey(screens, known, pending, claimed, now, s => s.ModelKey, k => k.ModelKey, SerialsContradict);
 
         // 5. new monitor
         foreach (DesktopScreen screen in pending)
@@ -273,7 +274,8 @@ public static class MonitorIdentity
 
     // binds pending screens whose key is unique among connected screens and matches exactly one unclaimed known monitor
     private static void MatchUniqueKey(IReadOnlyList<DesktopScreen> screens, List<KnownMonitor> known, List<DesktopScreen> pending,
-        HashSet<Guid> claimed, DateTime now, Func<DesktopScreen, string> screenKey, Func<KnownMonitor, string> knownKey)
+        HashSet<Guid> claimed, DateTime now, Func<DesktopScreen, string> screenKey, Func<KnownMonitor, string> knownKey,
+        Func<DesktopScreen, KnownMonitor, bool>? reject = null)
     {
         foreach (DesktopScreen screen in pending.ToList())
         {
@@ -284,10 +286,26 @@ public static class MonitorIdentity
             List<KnownMonitor> matches = known.Where(k => knownKey(k) == key).ToList();
             if (matches.Count != 1 || claimed.Contains(matches[0].Id))
                 continue;
+            if (reject?.Invoke(screen, matches[0]) == true)
+                continue;
 
             Bind(screen, matches[0], claimed, now, true);
             pending.Remove(screen);
         }
+    }
+
+    // a replacement of the same model must not inherit the previous unit's ID
+    private static bool SerialsContradict(DesktopScreen screen, KnownMonitor known)
+    {
+        if (IsValidSerialNumber(screen.EdidSerialNumber) && IsValidSerialNumber(known.SerialNumber)
+            && screen.EdidSerialNumber != known.SerialNumber)
+            return true;
+
+        if (IsValidSerialString(screen.EdidSerialString) && IsValidSerialString(known.SerialString)
+            && !string.Equals(screen.EdidSerialString.Trim(), known.SerialString.Trim(), StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
     }
 
     private static void Bind(DesktopScreen screen, KnownMonitor monitor, HashSet<Guid> claimed, DateTime now, bool rebindPath)
@@ -302,10 +320,14 @@ public static class MonitorIdentity
             monitor.DevicePath = screen.NormalizedPath;
         }
 
-        monitor.Manufacturer = screen.EdidManufacturer;
-        monitor.ProductCode = screen.EdidProductCode;
-        monitor.SerialNumber = screen.EdidSerialNumber;
-        monitor.SerialString = screen.EdidSerialString;
+        // an exact-path match can succeed without EDID; keep the stored identity then
+        if (IsValidSerialNumber(screen.EdidSerialNumber) || IsValidSerialString(screen.EdidSerialString))
+        {
+            monitor.Manufacturer = screen.EdidManufacturer;
+            monitor.ProductCode = screen.EdidProductCode;
+            monitor.SerialNumber = screen.EdidSerialNumber;
+            monitor.SerialString = screen.EdidSerialString;
+        }
         // keep the stored name when the current one is empty or generic
         if (CleanName(screen.FriendlyName) is not null)
             monitor.FriendlyName = screen.FriendlyName;

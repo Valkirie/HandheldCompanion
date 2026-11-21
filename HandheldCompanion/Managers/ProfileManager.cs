@@ -1088,8 +1088,8 @@ public class ProfileManager : IManager
     /// <summary>
     /// Moves the graphics settings of a profile saved before they were set per power state into both power states.
     /// The default profile keeps every group as an override with its values, it is the baseline and can't inherit.
-    /// In a game profile a group still at its default values inherits (follows the default profile),
-    /// a group with any other value becomes an override so the profile keeps applying it.
+    /// A migrated game profile also keeps every group as an override so its effective settings stay as they were.
+    /// New profiles still start their groups as Inherit.
     /// Returns false when the file has no legacy graphics key (already migrated, the profile no longer writes them).
     /// </summary>
     private static bool MigrateGraphicsSlots(Profile profile, JObject jObject)
@@ -1142,28 +1142,14 @@ public class ProfileManager : IManager
                 },
             };
 
-            // the default profile is the baseline: every group applies its values
-            // a game profile only overrides the groups it changed from their default values
+            // keep the effective legacy values on both the default profile and migrated game profiles
             foreach (GraphicsGroupOverride group in new GraphicsGroupOverride[] { overrides.Graphics.Scaling, overrides.Graphics.RSR, overrides.Graphics.IntegerScaling, overrides.Graphics.RIS, overrides.Graphics.AFMF })
-                group.Mode = profile.Default || !HasDefaultGraphicsValues(group) ? GraphicsOverrideMode.Override : GraphicsOverrideMode.Inherit;
+                group.Mode = GraphicsOverrideMode.Override;
         }
 
         LogManager.LogInformation("Moved graphics settings of profile {0} to both power states", profile.Name);
         return true;
     }
-
-    /// <summary>
-    /// True when a graphics group holds the values of a profile that never changed it (the legacy field defaults).
-    /// </summary>
-    private static bool HasDefaultGraphicsValues(GraphicsGroupOverride group) => group switch
-    {
-        ScalingOverride scaling => !scaling.Enabled && scaling.ScalingMode == 0,
-        RSROverride rsr => !rsr.Enabled && rsr.Sharpness == 20,
-        IntegerScalingOverride integerScaling => !integerScaling.Enabled && integerScaling.Divider == 1 && integerScaling.Type == 0,
-        RISOverride ris => !ris.Enabled && ris.Sharpness == 80,
-        AFMFOverride afmf => !afmf.Enabled && afmf.Algorithm == 0 && afmf.SearchMode == 0 && afmf.PerformanceMode == 0 && afmf.FastMotionResponse == 0,
-        _ => false,
-    };
 
     /// <summary>
     /// The default profile is the graphics baseline: both power states exist and every group applies its stored values.

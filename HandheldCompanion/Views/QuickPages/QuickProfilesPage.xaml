@@ -156,11 +156,10 @@
             <ikw:SimpleStackPanel Spacing="8">
                 <TextBlock
                     Style="{StaticResource BaseTextBlockStyle}"
-                    Text="{l:Static resx:Resources.ProfilesPage_PerformanceSettings}"
-                    Visibility="{Binding ShowPowerSlots, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Text="{l:Static resx:Resources.ProfilesPage_PerformanceSettings}" />
 
-                <!--  the power slots also hold the graphics settings, the power preset needs the performance manager  -->
-                <ikw:SimpleStackPanel Spacing="3" Visibility="{Binding ShowPowerSlots, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <!--  the power preset needs the performance manager, graphics rows need GPU management; FPS and display stay visible  -->
+                <ikw:SimpleStackPanel Spacing="3">
                     <ui:SettingsExpander Header="{l:Static resx:Resources.PowerState_PluggedIn}" IsExpanded="False">
                         <ui:SettingsExpander.HeaderIcon>
                             <ui:FontIcon Glyph="&#xec4a;" />

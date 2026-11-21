@@ -232,8 +232,6 @@ namespace HandheldCompanion.ViewModels
         public bool GPUManagementEnabled => ManagerFactory.settingsManager.GetBoolean("GPUManagementEnabled");
         public bool PerformanceManagerEnabled => ManagerFactory.settingsManager.GetBoolean("PerformanceManagerEnabled");
 
-        // power slots hold performance and graphics settings
-        public bool ShowPowerSlots => PerformanceManagerEnabled || GPUManagementEnabled;
         public bool HasPrebuiltShaderDownload => SelectedProfile is not null && !string.IsNullOrEmpty(SelectedProfile.Executable) && GPUManager.GetCurrent() is GPU gpu && gpu.HasPrebuiltShaderDownload(out bool perAppSupported) && perAppSupported;
 
         public bool PrebuiltShaderDownloadEnabled
@@ -2399,6 +2397,14 @@ namespace HandheldCompanion.ViewModels
 
         private void RefreshGraphicsOverrideRows()
         {
+            if (UIHelper.TryBeginInvoke(RefreshGraphicsOverrideRowsCore))
+                return;
+
+            RefreshGraphicsOverrideRowsCore();
+        }
+
+        private void RefreshGraphicsOverrideRowsCore()
+        {
             foreach (GraphicsOverrideRow row in AllGraphicsOverrideRows)
                 row.Refresh();
         }
@@ -3647,7 +3653,6 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             OnPropertyChanged(nameof(GPUManagementEnabled));
             OnPropertyChanged(nameof(PerformanceManagerEnabled));
-            OnPropertyChanged(nameof(ShowPowerSlots));
         }
 
         private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
@@ -3656,8 +3661,6 @@ namespace HandheldCompanion.ViewModels
                 OnPropertyChanged(nameof(GPUManagementEnabled));
             if (name == "PerformanceManagerEnabled")
                 OnPropertyChanged(nameof(PerformanceManagerEnabled));
-            if (name is "GPUManagementEnabled" or "PerformanceManagerEnabled")
-                OnPropertyChanged(nameof(ShowPowerSlots));
         }
 
         private void QueryPlatforms()
