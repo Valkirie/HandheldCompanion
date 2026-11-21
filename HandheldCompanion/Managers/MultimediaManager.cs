@@ -1342,6 +1342,10 @@ public class MultimediaManager : IManager
 
                 bool result = SetDisplayMode(target, width, height, frequency, false);
 
+                // a successful temporary change invalidates the previous enforcement entry
+                if (result)
+                    _enforcedDisplayModes.TryRemove(target.Id, out _);
+
                 // the current profile display mode counts as enforced only if the override context didn't change during SetDisplayMode
                 if (result && context is not null
                     && ManagerFactory.powerProfileManager.GetCurrentGameProfile(out Profile? currentProfile, out int currentPowerLineStatus)
