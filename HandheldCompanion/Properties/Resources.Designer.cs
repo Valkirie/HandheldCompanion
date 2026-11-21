@@ -1591,6 +1591,159 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Connected.
+        /// </summary>
+        public static string DevicePage_KnownMonitorConnected {
+            get {
+                return ResourceManager.GetString("DevicePage_KnownMonitorConnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connected now.
+        /// </summary>
+        public static string DevicePage_KnownMonitorConnectedNow {
+            get {
+                return ResourceManager.GetString("DevicePage_KnownMonitorConnectedNow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forget.
+        /// </summary>
+        public static string DevicePage_KnownMonitorForget {
+            get {
+                return ResourceManager.GetString("DevicePage_KnownMonitorForget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forget {0}? Its resolution and refresh rate overrides are removed from every profile. HC treats it as a new monitor the next time it is connected..
+        /// </summary>
+        public static string DevicePage_KnownMonitorForgetContent {
+            get {
+                return ResourceManager.GetString("DevicePage_KnownMonitorForgetContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forget monitor.
+        /// </summary>
+        public static string DevicePage_KnownMonitorForgetTitle {
+            get {
+                return ResourceManager.GetString("DevicePage_KnownMonitorForgetTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove this monitor and its overrides from all profiles.
+        /// </summary>
+        public static string DevicePage_KnownMonitorForgetToolTip {
+            get {
+                return ResourceManager.GetString("DevicePage_KnownMonitorForgetToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Last seen {0:g}.
+        /// </summary>
+        public static string DevicePage_KnownMonitorLastSeen {
+            get {
+                return ResourceManager.GetString("DevicePage_KnownMonitorLastSeen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Last seen: unknown.
+        /// </summary>
+        public static string DevicePage_KnownMonitorLastSeenUnknown {
+            get {
+                return ResourceManager.GetString("DevicePage_KnownMonitorLastSeenUnknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No profile overrides.
+        /// </summary>
+        public static string DevicePage_KnownMonitorNoOverrides {
+            get {
+                return ResourceManager.GetString("DevicePage_KnownMonitorNoOverrides", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 profile with overrides.
+        /// </summary>
+        public static string DevicePage_KnownMonitorOneOverride {
+            get {
+                return ResourceManager.GetString("DevicePage_KnownMonitorOneOverride", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} profiles with overrides.
+        /// </summary>
+        public static string DevicePage_KnownMonitorOverrides {
+            get {
+                return ResourceManager.GetString("DevicePage_KnownMonitorOverrides", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Known monitors.
+        /// </summary>
+        public static string DevicePage_KnownMonitors {
+            get {
+                return ResourceManager.GetString("DevicePage_KnownMonitors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} connected.
+        /// </summary>
+        public static string DevicePage_KnownMonitorsConnected {
+            get {
+                return ResourceManager.GetString("DevicePage_KnownMonitorsConnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} connected, {1} not connected.
+        /// </summary>
+        public static string DevicePage_KnownMonitorsConnectedAndNotConnected {
+            get {
+                return ResourceManager.GetString("DevicePage_KnownMonitorsConnectedAndNotConnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not connected.
+        /// </summary>
+        public static string DevicePage_KnownMonitorsNotConnected {
+            get {
+                return ResourceManager.GetString("DevicePage_KnownMonitorsNotConnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown display.
+        /// </summary>
+        public static string DevicePage_KnownMonitorUnknownDisplay {
+            get {
+                return ResourceManager.GetString("DevicePage_KnownMonitorUnknownDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown model.
+        /// </summary>
+        public static string DevicePage_KnownMonitorUnknownModel {
+            get {
+                return ResourceManager.GetString("DevicePage_KnownMonitorUnknownModel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto Sleep Time.
         /// </summary>
         public static string DevicePage_Lenovo_ControllerAutoSleepTime {
@@ -1848,6 +2001,96 @@ namespace HandheldCompanion.Properties {
         public static string Dialog_Yes {
             get {
                 return ResourceManager.GetString("Dialog_Yes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display {0}.
+        /// </summary>
+        public static string DisplayMonitor_Fallback {
+            get {
+                return ResourceManager.GetString("DisplayMonitor_Fallback", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Internal.
+        /// </summary>
+        public static string DisplayMonitor_Internal {
+            get {
+                return ResourceManager.GetString("DisplayMonitor_Internal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Built-in display.
+        /// </summary>
+        public static string DisplayMonitor_InternalToolTip {
+            get {
+                return ResourceManager.GetString("DisplayMonitor_InternalToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display {0}: {1}.
+        /// </summary>
+        public static string DisplayMonitor_Label {
+            get {
+                return ResourceManager.GetString("DisplayMonitor_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Last used.
+        /// </summary>
+        public static string DisplayMonitor_LastUsed {
+            get {
+                return ResourceManager.GetString("DisplayMonitor_LastUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FPS presets source: the game window was last on this display.
+        /// </summary>
+        public static string DisplayMonitor_LastUsedToolTip {
+            get {
+                return ResourceManager.GetString("DisplayMonitor_LastUsedToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Main.
+        /// </summary>
+        public static string DisplayMonitor_Main {
+            get {
+                return ResourceManager.GetString("DisplayMonitor_Main", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current main display.
+        /// </summary>
+        public static string DisplayMonitor_MainToolTip {
+            get {
+                return ResourceManager.GetString("DisplayMonitor_MainToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Running here.
+        /// </summary>
+        public static string DisplayMonitor_RunningHere {
+            get {
+                return ResourceManager.GetString("DisplayMonitor_RunningHere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FPS presets source: the game window is on this display.
+        /// </summary>
+        public static string DisplayMonitor_RunningHereToolTip {
+            get {
+                return ResourceManager.GetString("DisplayMonitor_RunningHereToolTip", resourceCulture);
             }
         }
         
@@ -8994,6 +9237,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Default profile ({0}).
+        /// </summary>
+        public static string OverrideMode_UseDefaultProfile {
+            get {
+                return ResourceManager.GetString("OverrideMode_UseDefaultProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Power profile ({0}).
+        /// </summary>
+        public static string OverrideMode_UsePowerProfile {
+            get {
+                return ResourceManager.GetString("OverrideMode_UsePowerProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to System settings ({0}).
+        /// </summary>
+        public static string OverrideMode_UseSystemSettings {
+            get {
+                return ResourceManager.GetString("OverrideMode_UseSystemSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to System ({0}).
+        /// </summary>
+        public static string OverrideMode_UseSystemSettingsShort {
+            get {
+                return ResourceManager.GetString("OverrideMode_UseSystemSettingsShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Aggressive.
         /// </summary>
         public static string PerformancePage_CPUBoost_Aggressive {
@@ -9705,6 +9984,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to On battery.
+        /// </summary>
+        public static string PowerState_OnBattery {
+            get {
+                return ResourceManager.GetString("PowerState_OnBattery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Plugged in.
+        /// </summary>
+        public static string PowerState_PluggedIn {
+            get {
+                return ResourceManager.GetString("PowerState_PluggedIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Resume.
         /// </summary>
         public static string ProcessEx_processResume {
@@ -10263,6 +10560,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Set by integer scaling.
+        /// </summary>
+        public static string ProfilesPage_DisplayResolutionLocked {
+            get {
+                return ResourceManager.GetString("ProfilesPage_DisplayResolutionLocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Controller type.
         /// </summary>
         public static string ProfilesPage_EmulatedController {
@@ -10389,6 +10695,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No limit.
+        /// </summary>
+        public static string ProfilesPage_FramerateNoLimit {
+            get {
+                return ResourceManager.GetString("ProfilesPage_FramerateNoLimit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Global settings.
         /// </summary>
         public static string ProfilesPage_GlobalSettings {
@@ -10452,6 +10767,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to On, {0}%.
+        /// </summary>
+        public static string ProfilesPage_GraphicsOnPercent {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GraphicsOnPercent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Change the graphics settings.
         /// </summary>
         public static string ProfilesPage_GraphicsSetting_Desc {
@@ -10466,6 +10790,33 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_GraphicsSetting_Title {
             get {
                 return ResourceManager.GetString("ProfilesPage_GraphicsSetting_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Needs GPU scaling on this power state.
+        /// </summary>
+        public static string ProfilesPage_GraphicsNeedsGPUScaling {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GraphicsNeedsGPUScaling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Off.
+        /// </summary>
+        public static string ProfilesPage_GraphicsOff {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GraphicsOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to On.
+        /// </summary>
+        public static string ProfilesPage_GraphicsOn {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GraphicsOn", resourceCulture);
             }
         }
         
@@ -10749,6 +11100,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Performance settings.
+        /// </summary>
+        public static string ProfilesPage_PerformanceSettings {
+            get {
+                return ResourceManager.GetString("ProfilesPage_PerformanceSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display the profile in Quick start section from the Quicktools Applications page.
         /// </summary>
         public static string ProfilesPage_Pinned {
@@ -10790,6 +11150,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_PowerPresetDesc {
             get {
                 return ResourceManager.GetString("ProfilesPage_PowerPresetDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Power: {0}.
+        /// </summary>
+        public static string ProfilesPage_PowerProfileSummary {
+            get {
+                return ResourceManager.GetString("ProfilesPage_PowerProfileSummary", resourceCulture);
             }
         }
         
@@ -11480,6 +11849,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} (not available).
+        /// </summary>
+        public static string ProfilesPage_ValueNotAvailable {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ValueNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Controller passthrough.
         /// </summary>
         public static string ProfilesPage_Whitelist {
@@ -11687,7 +12065,16 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Display resolution.
+        ///   Looks up a localized string similar to Display.
+        /// </summary>
+        public static string QuickDevicePage_DisplayMonitor {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_DisplayMonitor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resolution.
         /// </summary>
         public static string QuickDevicePage_DisplayResolution {
             get {
@@ -11701,6 +12088,15 @@ namespace HandheldCompanion.Properties {
         public static string QuickDevicePage_DisplayResolutionDesc {
             get {
                 return ResourceManager.GetString("QuickDevicePage_DisplayResolutionDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Saved to {0} · {1}.
+        /// </summary>
+        public static string QuickDevicePage_DisplaySaveNote {
+            get {
+                return ResourceManager.GetString("QuickDevicePage_DisplaySaveNote", resourceCulture);
             }
         }
         

@@ -4,6 +4,7 @@ using HandheldCompanion.Helpers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Shared;
 using HandheldCompanion.ViewModels.Misc;
 using HandheldCompanion.Views.QuickPages;
 using System;
@@ -32,6 +33,18 @@ namespace HandheldCompanion.ViewModels
         // Collections
         public ObservableCollection<ScreenResolution> Resolutions { get; } = new();
         public ObservableCollection<ScreenFrequencyViewModel> Frequencies { get; } = new();
+
+        // Monitor picker, UI state only: a monitor picked by the user is kept until the page is shown again
+        private Guid _selectedMonitorId = Guid.Empty;
+        private bool _monitorPickedByUser = false;
+        private bool isLoadingMonitors = false;
+        private int _displayRefreshQueued = 0;
+
+        // monitor the resolutions list was built for
+        private Guid _listedMonitorId = Guid.Empty;
+
+        // serializes the profile saves of display mode changes
+        private readonly object _profileSaveLock = new();
 
         // Device Capabilities
         private bool _IsDynamicLightingSupported;
@@ -227,6 +240,65 @@ namespace HandheldCompanion.ViewModels
             set { if (value != _ResolutionOverrideStackVisibility) { _ResolutionOverrideStackVisibility = value; OnPropertyChanged(nameof(ResolutionOverrideStackVisibility)); } }
         }
 
+        private IReadOnlyList<DisplayMonitorItem> _DisplayMonitorItems = [];
+        public IReadOnlyList<DisplayMonitorItem> DisplayMonitorItems
+        {
+            get => _DisplayMonitorItems;
+            private set
+            {
+                _DisplayMonitorItems = value;
+                OnPropertyChanged(nameof(DisplayMonitorItems));
+                OnPropertyChanged(nameof(HasMultipleDisplays));
+                OnPropertyChanged(nameof(HasDisplayMonitors));
+                OnPropertyChanged(nameof(IsSingleDisplay));
+                OnPropertyChanged(nameof(SingleDisplayMonitor));
+            }
+        }
+
+        // several monitors get a picker, a single one is shown as read-only text
+        public bool HasMultipleDisplays => _DisplayMonitorItems.Count > 1;
+        public bool HasDisplayMonitors => _DisplayMonitorItems.Count > 0;
+        public bool IsSingleDisplay => _DisplayMonitorItems.Count == 1;
+        public DisplayMonitorItem? SingleDisplayMonitor => IsSingleDisplay ? _DisplayMonitorItems[0] : null;
+
+        public Guid SelectedDisplayMonitor
+        {
+            get => _selectedMonitorId;
+            set
+            {
+                if (isLoadingMonitors || value == Guid.Empty || value == _selectedMonitorId)
+                    return;
+
+                if (!ManagerFactory.multimediaManager.GetConnectedMonitors().Any(m => m.KnownMonitorId == value))
+                    return;
+
+                _selectedMonitorId = value;
+                _monitorPickedByUser = true;
+                OnPropertyChanged(nameof(SelectedDisplayMonitor));
+
+                Profile? gameProfile = GetActiveGameProfile(out int slot);
+                LoadSelectedMonitorModes(gameProfile, slot);
+            }
+        }
+
+        // where a change is stored while a game profile is applied, empty otherwise
+        private string _DisplaySaveNote = string.Empty;
+        public string DisplaySaveNote
+        {
+            get => _DisplaySaveNote;
+            private set
+            {
+                if (value != _DisplaySaveNote)
+                {
+                    _DisplaySaveNote = value;
+                    OnPropertyChanged(nameof(DisplaySaveNote));
+                    OnPropertyChanged(nameof(HasDisplaySaveNote));
+                }
+            }
+        }
+
+        public bool HasDisplaySaveNote => !string.IsNullOrEmpty(_DisplaySaveNote);
+
         private ScreenResolution _SelectedResolution = null!;
         public ScreenResolution SelectedResolution
         {
@@ -240,16 +312,21 @@ namespace HandheldCompanion.ViewModels
 
                     if (!isLoadingDisplay && value != null)
                     {
-                        // Get current frequency from desktop screen before updating frequencies
-                        int? currentFrequency = null;
-                        DesktopScreen? desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
-                        if (desktopScreen != null)
+                        // list the refresh rates of the new resolution, keeping the current one selected when possible;
+                        // selecting it is not a user change of the refresh rate
+                        int? currentFrequency = GetSelectedScreen()?.GetCurrentFrequency();
+
+                        isLoadingDisplay = true;
+                        try
                         {
-                            currentFrequency = desktopScreen.GetCurrentFrequency();
+                            UpdateFrequenciesForResolution(value, currentFrequency);
+                        }
+                        finally
+                        {
+                            isLoadingDisplay = false;
                         }
 
-                        UpdateFrequenciesForResolution(value, currentFrequency);
-                        ApplyResolution();
+                        ApplyDisplayChange(true);
                     }
                 }
             }
@@ -268,7 +345,7 @@ namespace HandheldCompanion.ViewModels
                     OnPropertyChanged(nameof(SelectedFrequencyValue));
 
                     if (!isLoadingDisplay)
-                        ApplyResolution();
+                        ApplyDisplayChange(false);
                 }
             }
         }
@@ -408,7 +485,10 @@ namespace HandheldCompanion.ViewModels
             // manage events
             ManagerFactory.profileManager.Applied += ProfileManager_Applied;
             ManagerFactory.profileManager.Updated += ProfileManager_Updated;
-            ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
+            ManagerFactory.profileManager.LastMonitorChanged += ProfileManager_LastMonitorChanged;
+
+            // the power state picks the profile slot a change is stored in
+            ManagerFactory.powerProfileManager.OverridesApplied += PowerProfileManager_OverridesApplied;
 
             ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
         }
@@ -471,11 +551,7 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.multimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
             ManagerFactory.multimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
 
-            if (ManagerFactory.multimediaManager.PrimaryDesktop is not null)
-            {
-                MultimediaManager_PrimaryScreenChanged(ManagerFactory.multimediaManager.PrimaryDesktop);
-                MultimediaManager_DisplaySettingsChanged(ManagerFactory.multimediaManager.PrimaryDesktop, ManagerFactory.multimediaManager.PrimaryDesktop.GetResolution());
-            }
+            QueueDisplayRefresh();
         }
 
         private void MultimediaManager_Initialized()
@@ -485,10 +561,207 @@ namespace HandheldCompanion.ViewModels
 
         private void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
         {
+            // raised while the display list is updated, DisplaySettingsChanged follows with the new list
+            QueueDisplayRefresh();
+        }
+
+        private void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution? resolution)
+        {
+            // raised for any display change with the primary display as argument, re-read the selected monitor
             UIHelper.TryBeginInvoke(() =>
             {
-                isLoadingDisplay = true;
-                try
+                QueueDisplayRefresh();
+            });
+        }
+
+        /// <summary>
+        /// Coalesces monitor list refreshes onto the UI thread.
+        /// </summary>
+        private void QueueDisplayRefresh()
+        {
+            if (Interlocked.Exchange(ref _displayRefreshQueued, 1) == 1)
+                return;
+
+            UIHelper.TryBeginInvoke(() =>
+            {
+                Interlocked.Exchange(ref _displayRefreshQueued, 0);
+                RefreshDisplayMonitors();
+            });
+        }
+
+        /// <summary>
+        /// Called when the page is shown: the monitor is picked again by the default rule.
+        /// </summary>
+        public void OnPageShown()
+        {
+            _monitorPickedByUser = false;
+            QueueDisplayRefresh();
+        }
+
+        /// <summary>
+        /// Rebuilds the monitor picker and re-reads the selected monitor modes.
+        /// Default selection: the monitor the game of the applied game profile runs on, otherwise the main monitor.
+        /// A monitor picked by the user is kept while it stays connected.
+        /// </summary>
+        private void RefreshDisplayMonitors()
+        {
+            List<DesktopScreen> monitors = ManagerFactory.multimediaManager.GetConnectedMonitors();
+            Profile? gameProfile = GetActiveGameProfile(out int slot);
+
+            Guid primaryId = (monitors.FirstOrDefault(m => m.IsPrimary) ?? monitors.FirstOrDefault())?.KnownMonitorId ?? Guid.Empty;
+            Guid gameMonitorId = GetGameMonitorId(gameProfile, monitors);
+
+            if (!_monitorPickedByUser || !monitors.Any(m => m.KnownMonitorId == _selectedMonitorId))
+            {
+                _monitorPickedByUser = false;
+                _selectedMonitorId = gameMonitorId != Guid.Empty ? gameMonitorId : primaryId;
+            }
+
+            // same badges as the profile Display picker, the source badge only while a game profile is applied
+            FramerateSourceBadge sourceBadge = FramerateSourceBadge.None;
+            Guid sourceId = primaryId;
+            if (gameProfile is not null)
+            {
+                if (gameMonitorId == Guid.Empty)
+                    sourceBadge = FramerateSourceBadge.Default;
+                else
+                {
+                    sourceId = gameMonitorId;
+                    sourceBadge = DisplayModeHelper.IsGameRunning(gameProfile) ? FramerateSourceBadge.RunningHere : FramerateSourceBadge.LastUsed;
+                }
+            }
+
+            List<DisplayMonitorItem> items = monitors
+                .Select((m, index) => new DisplayMonitorItem(m.KnownMonitorId, GetMonitorLabel(m, index + 1), m.IsPrimary,
+                    m.KnownMonitorId == sourceId ? sourceBadge : FramerateSourceBadge.None) { IsInternal = m.IsInternal })
+                .ToList();
+
+            isLoadingMonitors = true;
+            try
+            {
+                DisplayMonitorItems = items;
+                OnPropertyChanged(nameof(SelectedDisplayMonitor));
+            }
+            finally
+            {
+                isLoadingMonitors = false;
+            }
+
+            UpdateDisplaySaveNote(gameProfile, slot);
+            LoadSelectedMonitorModes(gameProfile, slot);
+        }
+
+        private static string GetMonitorLabel(DesktopScreen screen, int position)
+        {
+            KnownMonitor? known = ManagerFactory.multimediaManager.GetKnownMonitor(screen.KnownMonitorId);
+            // QuickTools is narrow: name only, without the "Display N: " prefix; internal and main are badges
+            return MonitorIdentity.GetDisplayName(screen, known, position);
+        }
+
+        // connected monitor the game window was last active on, sub profiles fall back to their parent
+        private static Guid GetGameMonitorId(Profile? gameProfile, List<DesktopScreen> monitors)
+        {
+            if (gameProfile is null)
+                return Guid.Empty;
+
+            Guid monitorId = DisplayModeHelper.GetLastMonitorId(gameProfile);
+            return monitors.Any(m => m.KnownMonitorId == monitorId) ? monitorId : Guid.Empty;
+        }
+
+
+        /// <summary>
+        /// The applied profile when it is a game profile (sub profiles included), with the power slot the apply path uses.
+        /// </summary>
+        private static Profile? GetActiveGameProfile(out int slot)
+        {
+            slot = 0;
+
+            if (!ManagerFactory.profileManager.IsReady)
+                return null;
+
+            Profile? profile = ManagerFactory.profileManager.GetCurrent();
+            if (profile is null || profile.Default)
+                return null;
+
+            if (!ManagerFactory.powerProfileManager.GetCurrentGameProfile(out _, out int powerLineStatus))
+                powerLineStatus = (int)System.Windows.Forms.SystemInformation.PowerStatus.PowerLineStatus;
+
+            // profile slots only exist for battery and plugged in
+            if (powerLineStatus != (int)System.Windows.Forms.PowerLineStatus.Offline && powerLineStatus != (int)System.Windows.Forms.PowerLineStatus.Online)
+                return null;
+
+            slot = powerLineStatus;
+            return profile;
+        }
+
+        private DesktopScreen? GetSelectedScreen()
+        {
+            List<DesktopScreen> monitors = ManagerFactory.multimediaManager.GetConnectedMonitors();
+            return monitors.FirstOrDefault(m => m.KnownMonitorId == _selectedMonitorId)
+                ?? monitors.FirstOrDefault(m => m.IsPrimary)
+                ?? monitors.FirstOrDefault()
+                ?? ManagerFactory.multimediaManager.PrimaryDesktop;
+        }
+
+        private bool IsSelectedMonitorPrimary()
+        {
+            return GetSelectedScreen()?.IsPrimary ?? true;
+        }
+
+        private void UpdateDisplaySaveNote(Profile? gameProfile, int slot)
+        {
+            if (gameProfile is null)
+            {
+                DisplaySaveNote = string.Empty;
+                return;
+            }
+
+            string name = gameProfile.Name;
+            if (gameProfile.IsSubProfile)
+            {
+                Profile? parent = ManagerFactory.profileManager.GetParent(gameProfile);
+                if (parent is not null)
+                    name = $"{parent.Name} / {gameProfile.Name}";
+            }
+
+            string powerState = slot == (int)System.Windows.Forms.PowerLineStatus.Online
+                ? Properties.Resources.PowerState_PluggedIn
+                : Properties.Resources.PowerState_OnBattery;
+            DisplaySaveNote = string.Format(Properties.Resources.QuickDevicePage_DisplaySaveNote, name, powerState);
+        }
+
+        private static ScreenResolution? FindResolution(DesktopScreen screen, int width, int height)
+        {
+            return DisplayModeHelper.FindResolution(screen.screenResolutions, width, height, r => r.Width, r => r.Height);
+        }
+
+        // same rule as the apply path: closest available, higher on a tie
+        private static int SnapFrequency(ScreenResolution resolution, int frequency)
+        {
+            return DisplayModeHelper.SnapRefreshRate(resolution.Frequencies.Keys, frequency);
+        }
+
+        /// <summary>
+        /// Loads the resolutions and refresh rates of the selected monitor without applying anything.
+        /// While a game profile is applied, the selection shows the mode the profile resolves to for this monitor and slot.
+        /// </summary>
+        private void LoadSelectedMonitorModes(Profile? gameProfile, int slot)
+        {
+            DesktopScreen? screen = GetSelectedScreen();
+            if (screen is null)
+                return;
+
+            UpdateDisplayOverrideUI();
+
+            isLoadingDisplay = true;
+            try
+            {
+                List<ScreenResolution> resolutions = screen.screenResolutions.ToList();
+                bool sameList = _listedMonitorId == screen.KnownMonitorId
+                    && Resolutions.Count == resolutions.Count
+                    && Resolutions.Zip(resolutions).All(pair => pair.First.Equals(pair.Second));
+
+                if (!sameList)
                 {
                     if (!Monitor.TryEnter(_collectionLock, TimeSpan.FromSeconds(2)))
                         return;
@@ -496,49 +769,48 @@ namespace HandheldCompanion.ViewModels
                     try
                     {
                         Resolutions.Clear();
-                        foreach (ScreenResolution resolution in screen.screenResolutions)
+                        foreach (ScreenResolution resolution in resolutions)
                             Resolutions.Add(resolution);
                     }
                     finally
                     {
                         Monitor.Exit(_collectionLock);
                     }
-                }
-                finally
-                {
-                    isLoadingDisplay = false;
-                }
-            });
-        }
 
-        private void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution? resolution)
-        {
-            UIHelper.TryBeginInvoke(() =>
+                    _listedMonitorId = screen.KnownMonitorId;
+                }
+
+                // integer scaling drives the primary display resolution, leave the selection alone
+                if (IsIntegerScalingActive() && screen.IsPrimary)
+                    return;
+
+                ScreenResolution? currentResolution = screen.GetResolution();
+                ScreenResolution? selected = currentResolution;
+                int frequency = screen.GetCurrentFrequency();
+
+                if (gameProfile is not null && screen.KnownMonitorId != Guid.Empty)
+                {
+                    ResolvedDisplayMode mode = ManagerFactory.powerProfileManager.ResolveDisplayMode(gameProfile, slot, screen.KnownMonitorId);
+                    if (mode.HasResolution)
+                        selected = FindResolution(screen, mode.Width, mode.Height) ?? selected;
+                    if (mode.HasRefreshRate)
+                        frequency = mode.RefreshRate;
+                }
+
+                if (selected is null)
+                    return;
+
+                // a refresh rate that isn't the current one must exist for the shown resolution
+                if (!ReferenceEquals(selected, currentResolution) || frequency != screen.GetCurrentFrequency())
+                    frequency = SnapFrequency(selected, frequency);
+
+                SelectedResolution = Resolutions.FirstOrDefault(r => r.Equals(selected)) ?? selected;
+                UpdateFrequenciesForResolution(SelectedResolution, frequency);
+            }
+            finally
             {
-                isLoadingDisplay = true;
-                try
-                {
-                    // Don't change display settings if profile has integer scaling enabled
-                    Profile? currentProfile = ManagerFactory.profileManager.GetCurrent();
-                    if (currentProfile is not null && currentProfile.IntegerScalingEnabled)
-                    {
-                        ProfileManager_Applied(currentProfile, UpdateSource.Background);
-                        return;
-                    }
-
-                    int screenFrequency = desktopScreen.GetCurrentFrequency();
-
-                    if (resolution is not null)
-                    {
-                        SelectedResolution = resolution;
-                        UpdateFrequenciesForResolution(resolution, screenFrequency);
-                    }
-                }
-                finally
-                {
-                    isLoadingDisplay = false;
-                }
-            });
+                isLoadingDisplay = false;
+            }
         }
 
         private void UpdateFrequenciesForResolution(ScreenResolution resolution, int? currentFrequency = null)
@@ -590,73 +862,63 @@ namespace HandheldCompanion.ViewModels
 
         private void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
-            // Go to profile integer scaling resolution
-            if (profile.IntegerScalingEnabled)
-            {
-                DesktopScreen? desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
-                if (desktopScreen == null)
-                    return;
-
-                ScreenDivider? profileResolution = desktopScreen.screenDividers.FirstOrDefault(d => d.divider == profile.IntegerScalingDivider);
-                if (profileResolution is not null)
-                    SetResolution(profileResolution.resolution);
-            }
-
             // Update UI
-            UpdateDisplayOverrideUI(profile);
+            UpdateDisplayOverrideUI();
+
+            // default monitor, save note and shown mode depend on the applied profile
+            QueueDisplayRefresh();
         }
 
         private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
         {
+            // the default profile is an inherit layer of the shown game profile mode
+            if (profile.Default && !isCurrent)
+            {
+                QueueDisplayRefresh();
+                return;
+            }
+
             // Only update UI if this is the currently applied profile
             if (!isCurrent)
                 return;
 
             // Update UI based on the updated profile's integer scaling state
-            UpdateDisplayOverrideUI(profile);
+            UpdateDisplayOverrideUI();
+            QueueDisplayRefresh();
         }
 
-        private void UpdateDisplayOverrideUI(Profile profile)
+        private void ProfileManager_LastMonitorChanged(Profile profile)
+        {
+            // the game window moved: badges, and the default monitor unless the user picked one
+            QueueDisplayRefresh();
+        }
+
+        private void PowerProfileManager_OverridesApplied(Profile gameProfile, int powerLineStatus, UpdateSource source)
+        {
+            // power state changes switch the profile slot
+            QueueDisplayRefresh();
+        }
+
+        // integer scaling of the applied profile and power state drives the primary display resolution
+        private static bool IsIntegerScalingActive()
+        {
+            return ManagerFactory.powerProfileManager.IsReady
+                && ManagerFactory.powerProfileManager.GetGraphics().IntegerScaling.IsEnabled;
+        }
+
+        private void UpdateDisplayOverrideUI()
         {
             isLoadingDisplay = true;
             try
             {
-                var canChangeDisplay = !profile.IntegerScalingEnabled;
+                // integer scaling only drives the primary display
+                var canChangeDisplay = !(IsIntegerScalingActive() && IsSelectedMonitorPrimary());
                 IsDisplayStackEnabled = canChangeDisplay;
                 ResolutionOverrideStackVisibility = canChangeDisplay ? Visibility.Collapsed : Visibility.Visible;
             }
             finally
             {
                 isLoadingDisplay = false;
-            }
-        }
-
-        private void ProfileManager_Discarded(Profile profile, bool swapped, Profile nextProfile)
-        {
-            // Don't bother discarding settings, new one will be enforced shortly
-            if (swapped && nextProfile.IntegerScalingEnabled)
-                return;
-
-            if (profile.IntegerScalingEnabled)
-            {
-                isLoadingDisplay = true;
-                try
-                {
-                    IsDisplayStackEnabled = true;
-                    ResolutionOverrideStackVisibility = Visibility.Collapsed;
-                }
-                finally
-                {
-                    isLoadingDisplay = false;
-                }
-
-                // Restore default resolution by reapplying current selection
-                if (profile.IntegerScalingDivider != 1 && SelectedResolution != null)
-                {
-                    DesktopScreen? desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
-                    if (desktopScreen != null)
-                        SetResolution(desktopScreen.GetResolution());
-                }
             }
         }
 
@@ -738,33 +1000,123 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        private void ApplyResolution()
+        /// <summary>
+        /// Applies a resolution or refresh rate picked by the user on the selected monitor.
+        /// With a game profile applied, the changed field is stored as an override of that profile for the current
+        /// power slot and monitor, and the profile apply path changes the mode. Otherwise the change is temporary.
+        /// </summary>
+        private void ApplyDisplayChange(bool resolutionChanged)
         {
-            if (SelectedResolution == null || SelectedFrequency == null)
+            ScreenResolution? resolution = SelectedResolution;
+            ScreenFrequencyViewModel? frequency = SelectedFrequency;
+            DesktopScreen? screen = GetSelectedScreen();
+            if (resolution is null || frequency is null || screen is null)
                 return;
 
-            int frequency = SelectedFrequency.Frequency;
-
-            DesktopScreen? desktopScreen = ManagerFactory.multimediaManager.PrimaryDesktop;
-            if (desktopScreen == null)
-                return;
+            Guid monitorId = screen.KnownMonitorId;
+            int width = resolution.Width;
+            int height = resolution.Height;
+            int refreshRate = frequency.Frequency;
 
             try
             {
-                // Don't apply if already at this resolution
-                if (desktopScreen.devMode.dmPelsWidth == SelectedResolution.Width &&
-                    desktopScreen.devMode.dmPelsHeight == SelectedResolution.Height &&
-                    desktopScreen.devMode.dmDisplayFrequency == frequency &&
-                    desktopScreen.devMode.dmBitsPerPel == SelectedResolution.BitsPerPel)
+                Profile? gameProfile = GetActiveGameProfile(out int slot);
+                if (gameProfile is not null && monitorId != Guid.Empty)
+                {
+                    // integer scaling drives the primary display resolution
+                    if (resolutionChanged && screen.IsPrimary && ManagerFactory.powerProfileManager.ResolveGraphics(gameProfile, slot).IntegerScaling.IsEnabled)
+                        return;
+
+                    bool changed = resolutionChanged
+                        ? WriteDisplayModeOverride(gameProfile, slot, monitorId, width, height, null)
+                        : WriteDisplayModeOverride(gameProfile, slot, monitorId, 0, 0, refreshRate);
+
+                    if (changed)
+                        QueueProfileSave(gameProfile);
+                    return;
+                }
+
+                // Don't apply if already at this mode
+                if (screen.devMode.dmPelsWidth == width &&
+                    screen.devMode.dmPelsHeight == height &&
+                    screen.devMode.dmDisplayFrequency == refreshRate)
                     return;
 
-                ManagerFactory.multimediaManager.SetResolution(
-                    SelectedResolution.Width,
-                    SelectedResolution.Height,
-                    frequency,
-                    SelectedResolution.BitsPerPel);
+                if (monitorId == Guid.Empty)
+                {
+                    // monitor without a known id, only the primary display can be changed
+                    if (screen.IsPrimary)
+                        ManagerFactory.multimediaManager.SetResolution(width, height, refreshRate, resolution.BitsPerPel);
+                    return;
+                }
+
+                // the per-monitor path takes the display lock, keep it off the UI thread
+                Task.Run(() => ManagerFactory.multimediaManager.SetMonitorDisplayMode(monitorId, width, height, refreshRate));
             }
             catch { }
+        }
+
+        /// <summary>
+        /// Stores a resolution (width and height) or a refresh rate override in a profile slot. Returns true when it changed.
+        /// </summary>
+        private static bool WriteDisplayModeOverride(Profile profile, int slot, Guid monitorId, int width, int height, int? refreshRate)
+        {
+            lock (profile.SyncRoot)
+            {
+                profile.PerformanceOverrides ??= new();
+                if (!profile.PerformanceOverrides.TryGetValue(slot, out PerformanceOverrides? overrides) || overrides is null)
+                {
+                    overrides = new();
+                    profile.PerformanceOverrides[slot] = overrides;
+                }
+
+                overrides.DisplayModes ??= new();
+                if (!overrides.DisplayModes.TryGetValue(monitorId, out DisplayModeOverride? displayMode) || displayMode is null)
+                {
+                    displayMode = new();
+                    overrides.DisplayModes[monitorId] = displayMode;
+                }
+
+                if (refreshRate is int frequency)
+                {
+                    if (frequency <= 0 || (displayMode.RefreshMode == DisplayOverrideMode.Override && displayMode.RefreshRate == frequency))
+                        return false;
+
+                    displayMode.RefreshMode = DisplayOverrideMode.Override;
+                    displayMode.RefreshRate = frequency;
+                    return true;
+                }
+
+                if (width <= 0 || height <= 0
+                    || (displayMode.ResolutionMode == DisplayOverrideMode.Override && displayMode.Width == width && displayMode.Height == height))
+                    return false;
+
+                displayMode.ResolutionMode = DisplayOverrideMode.Override;
+                displayMode.Width = width;
+                displayMode.Height = height;
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Saves the profile through the normal update path, which applies it when it is current.
+        /// </summary>
+        private void QueueProfileSave(Profile profile)
+        {
+            Task.Run(() =>
+            {
+                lock (_profileSaveLock)
+                {
+                    try
+                    {
+                        ManagerFactory.profileManager.UpdateOrCreateProfile(profile, UpdateSource.Background);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogManager.LogError("Failed to save display mode of profile {0}: {1}", profile.Name, ex.Message);
+                    }
+                }
+            });
         }
 
         public void SetResolution(ScreenResolution? resolution)
@@ -834,7 +1186,8 @@ namespace HandheldCompanion.ViewModels
                 ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
                 ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
                 ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
-                ManagerFactory.profileManager.Discarded -= ProfileManager_Discarded;
+                ManagerFactory.profileManager.LastMonitorChanged -= ProfileManager_LastMonitorChanged;
+                ManagerFactory.powerProfileManager.OverridesApplied -= PowerProfileManager_OverridesApplied;
                 NightLight.Toggled -= NightLight_Toggled;
 
                 // Unhook from Radio StateChanged events

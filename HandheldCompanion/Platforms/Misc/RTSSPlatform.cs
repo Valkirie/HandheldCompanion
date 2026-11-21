@@ -149,6 +149,7 @@ public class RTSSPlatform : IPlatform
     {
         // manage events
         ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
+        ManagerFactory.powerProfileManager.OverridesApplied += PowerProfileManager_OverridesApplied;
 
         PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
     }
@@ -165,6 +166,7 @@ public class RTSSPlatform : IPlatform
         ManagerFactory.processManager.ProcessStopped -= ProcessManager_ProcessStopped;
         ManagerFactory.processManager.Initialized -= ProcessManager_Initialized;
         ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
+        ManagerFactory.powerProfileManager.OverridesApplied -= PowerProfileManager_OverridesApplied;
         ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
 
         return base.Stop(kill);
@@ -177,8 +179,15 @@ public class RTSSPlatform : IPlatform
 
     private void PowerProfileManager_Applied(PowerProfile powerProfile, UpdateSource source)
     {
-        if (powerProfile.FramerateLimitEnabled ?? powerProfile.FramerateValue != 0)
-            SetTargetFPS(powerProfile.FramerateValue);
+        if (ManagerFactory.powerProfileManager.GetFramerateLimit(out int framerate))
+            SetTargetFPS(framerate);
+    }
+
+    private void PowerProfileManager_OverridesApplied(Profile gameProfile, int powerLineStatus, UpdateSource source)
+    {
+        // a default profile edit changes an inherited limit without a power profile apply
+        if (ManagerFactory.powerProfileManager.GetFramerateLimit(out int framerate) && GetTargetFPS() != framerate)
+            SetTargetFPS(framerate);
     }
 
     private void ProcessManager_ForegroundChanged(ProcessEx? processEx, ProcessEx? backgroundEx, ProcessFilter filter)
@@ -261,10 +270,8 @@ public class RTSSPlatform : IPlatform
     {
         lock (updateLock)
         {
-            PowerProfile currentPowerProfile = ManagerFactory.powerProfileManager.GetCurrent();
-            if (currentPowerProfile.FramerateLimitEnabled ?? currentPowerProfile.FramerateValue != 0)
+            if (ManagerFactory.powerProfileManager.GetFramerateLimit(out int RequestedFramerate))
             {
-                int RequestedFramerate = currentPowerProfile.FramerateValue;
                 if (GetTargetFPS() != RequestedFramerate)
                     SetTargetFPS(RequestedFramerate);
             }

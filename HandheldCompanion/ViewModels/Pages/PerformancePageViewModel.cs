@@ -53,6 +53,77 @@ namespace HandheldCompanion.ViewModels
         }
     }
 
+    public sealed record DisplayMonitorOption(Guid Id, string Label, bool IsPrimary, int CurrentWidth, int CurrentHeight, int CurrentFrequency, IReadOnlyList<DisplayResolutionOption> Resolutions)
+    {
+        // built-in panel, shown as an Internal badge on the profile monitor rows
+        public bool IsInternal { get; init; }
+
+        public override string ToString() => Label;
+    }
+
+    // which monitor the framerate presets of a profile come from
+    public enum FramerateSourceBadge
+    {
+        None = 0,
+        RunningHere = 1,
+        LastUsed = 2,
+        Default = 3,
+    }
+
+    // monitor entry of the profile Display picker, with its badges
+    public sealed record DisplayMonitorItem(Guid Id, string Label, bool IsMain, FramerateSourceBadge SourceBadge)
+    {
+        // built-in panel, shown as an Internal badge
+        public bool IsInternal { get; init; }
+
+        // the main display fallback (Default) still drives the presets but carries no badge
+        public bool HasSourceBadge => SourceBadge is FramerateSourceBadge.RunningHere or FramerateSourceBadge.LastUsed;
+        public bool IsRunningHere => SourceBadge == FramerateSourceBadge.RunningHere;
+        public string SourceBadgeText => SourceBadge switch
+        {
+            FramerateSourceBadge.RunningHere => Resources.DisplayMonitor_RunningHere,
+            FramerateSourceBadge.LastUsed => Resources.DisplayMonitor_LastUsed,
+            _ => string.Empty,
+        };
+        public string SourceBadgeToolTip => SourceBadge switch
+        {
+            FramerateSourceBadge.RunningHere => Resources.DisplayMonitor_RunningHereToolTip,
+            FramerateSourceBadge.LastUsed => Resources.DisplayMonitor_LastUsedToolTip,
+            _ => string.Empty,
+        };
+
+        // badges as secondary text, e.g. "Internal · Main · Last used"; null without badges so a row stays single line
+        public string? BadgeText
+        {
+            get
+            {
+                List<string> parts = [];
+                if (IsInternal)
+                    parts.Add(Resources.DisplayMonitor_Internal);
+                if (IsMain)
+                    parts.Add(Resources.DisplayMonitor_Main);
+                if (HasSourceBadge)
+                    parts.Add(SourceBadgeText);
+                return parts.Count == 0 ? null : string.Join(" \u00B7 ", parts);
+            }
+        }
+
+        public override string ToString() => Label;
+    }
+
+    public sealed record DisplayResolutionOption(int Width, int Height, IReadOnlyList<DisplayRefreshOption> RefreshRates)
+    {
+        public string Key => $"{Width}x{Height}";
+        public string Label => $"{Width} x {Height}";
+        public override string ToString() => Label;
+    }
+
+    public sealed record DisplayRefreshOption(int Frequency)
+    {
+        public string Label => $"{Frequency} Hz";
+        public override string ToString() => Label;
+    }
+
     public class PerformancePageViewModel : BaseViewModel
     {
         public ObservableCollection<ScreenFramelimitViewModel> FramerateLimits { get; } = [];
@@ -68,9 +139,10 @@ namespace HandheldCompanion.ViewModels
                     // update variable
                     _selectedPreset = value;
 
+                    _customFrameLimitValue = null;
                     IsCustomFrameLimitSelected = ShouldUseCustomFrameLimit(_selectedPreset.FramerateValue);
                     if (IsCustomFrameLimitSelected)
-                        _customFrameLimitValue = Math.Clamp(_selectedPreset.FramerateValue, 0, FrameLimitMaximum);
+                        _customFrameLimitValue = ClampCustomFrameLimit(_selectedPreset.FramerateValue);
 
                     // page-specific behaviors
                     switch (IsQuickTools)
@@ -400,7 +472,16 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public int FrameLimitMinimum => 10;
+        public int FrameLimitMinimum => ScreenFramelimitViewModel.CustomMinimum;
+
+        private int ClampCustomFrameLimit(int value)
+        {
+            // coming from Disabled (0), start the custom limit at the refresh rate
+            if (value <= 0)
+                return FrameLimitMaximum;
+
+            return Math.Clamp(value, FrameLimitMinimum, Math.Max(FrameLimitMinimum, FrameLimitMaximum));
+        }
 
         public bool FramerateLimitEnabled
         {
@@ -439,16 +520,16 @@ namespace HandheldCompanion.ViewModels
                     return _customFrameLimitValue.Value;
 
                 if (SelectedPreset is null)
-                    return 0;
+                    return FrameLimitMinimum;
 
-                return Math.Clamp(SelectedPreset.FramerateValue, 0, FrameLimitMaximum);
+                return ClampCustomFrameLimit(SelectedPreset.FramerateValue);
             }
             set
             {
                 if (SelectedPreset is null)
                     return;
 
-                int clamped = Math.Clamp(value, 0, FrameLimitMaximum);
+                int clamped = ClampCustomFrameLimit(value);
                 bool customValueChanged = _customFrameLimitValue != clamped;
                 bool selectionChanged = !IsCustomFrameLimitSelected;
                 bool presetChanged = SelectedPreset.FramerateValue != clamped;
@@ -506,7 +587,7 @@ namespace HandheldCompanion.ViewModels
                 {
                     int customValue = _customFrameLimitValue.HasValue
                         ? _customFrameLimitValue.Value
-                        : Math.Clamp(SelectedPreset.FramerateValue, 0, FrameLimitMaximum);
+                        : ClampCustomFrameLimit(SelectedPreset.FramerateValue);
 
                     if (!_customFrameLimitValue.HasValue)
                     {
@@ -1456,13 +1537,8 @@ namespace HandheldCompanion.ViewModels
             {
                 FramerateLimits.Clear();
 
-                if (screen is not null)
-                {
-                    foreach (ScreenFramelimit frameLimit in screen.GetFramelimits())
-                        FramerateLimits.Add(new ScreenFramelimitViewModel(frameLimit));
-                }
-
-                FramerateLimits.Add(new ScreenFramelimitViewModel(new ScreenFramelimit(-1, 0), Resources.Enum_InputsHotkeyType_Custom, true));
+                foreach (ScreenFramelimitViewModel frameLimit in ScreenFramelimitViewModel.BuildList(screen))
+                    FramerateLimits.Add(frameLimit);
             }
             finally
             {
@@ -1470,7 +1546,7 @@ namespace HandheldCompanion.ViewModels
             }
 
             if (SelectedPreset is not null && ShouldUseCustomFrameLimit(SelectedPreset.FramerateValue))
-                _customFrameLimitValue = Math.Clamp(SelectedPreset.FramerateValue, 0, FrameLimitMaximum);
+                _customFrameLimitValue = ClampCustomFrameLimit(SelectedPreset.FramerateValue);
 
             OnPropertyChanged(nameof(FramerateLimits));
             OnPropertyChanged(nameof(IsCustomFrameLimitSelected));
@@ -1509,7 +1585,7 @@ namespace HandheldCompanion.ViewModels
 
             // Update all properties
             if (ShouldUseCustomFrameLimit(preset.FramerateValue))
-                _customFrameLimitValue = Math.Clamp(preset.FramerateValue, 0, FrameLimitMaximum);
+                _customFrameLimitValue = ClampCustomFrameLimit(preset.FramerateValue);
 
             OnPropertyChanged(string.Empty);
 

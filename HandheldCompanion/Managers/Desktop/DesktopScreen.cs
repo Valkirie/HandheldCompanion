@@ -112,6 +112,18 @@ public class DesktopScreen : IDisposable
     public string DevicePath;
     public string FriendlyName;
 
+    // identity, see MonitorIdentity
+    public string NormalizedPath = string.Empty;
+    public string EdidManufacturer = string.Empty;
+    public ushort EdidProductCode;
+    public uint EdidSerialNumber;
+    public string EdidSerialString = string.Empty;
+    public Guid KnownMonitorId = Guid.Empty;
+
+    public string ModelKey => MonitorIdentity.GetModelKey(EdidManufacturer, EdidProductCode);
+    public string SerialKey => MonitorIdentity.GetSerialKey(EdidManufacturer, EdidProductCode, EdidSerialNumber, EdidSerialString);
+    public string SerialTextKey => MonitorIdentity.GetSerialTextKey(EdidManufacturer, EdidProductCode, EdidSerialNumber, EdidSerialString);
+
     public bool IsPrimary => screen?.Primary ?? false;
     public bool IsSecondary => !IsPrimary;
 
@@ -155,6 +167,7 @@ public class DesktopScreen : IDisposable
         devMode = MultimediaManager.GetDisplay(screen.DeviceName);
         FriendlyName = MultimediaManager.GetDisplayFriendlyName(screen.DeviceName);
         DevicePath = MultimediaManager.GetDisplayPath(screen.DeviceName);
+        MonitorIdentity.Populate(this);
     }
 
     public override string ToString()
@@ -203,12 +216,24 @@ public class DesktopScreen : IDisposable
     // A function that takes a screen frequency int value and returns a list of integer values that are the quotient of the frequency and the closest divisor
     public List<ScreenFramelimit> GetFramelimits()
     {
+        return GetFramelimits(GetCurrentFrequency());
+    }
+
+    // Same presets for any refresh rate, e.g. the one a game profile applies
+    public static List<ScreenFramelimit> GetFramelimits(int refreshRate)
+    {
+        lock (_cachedFrameLimits)
+            return BuildFramelimits(refreshRate);
+    }
+
+    private static List<ScreenFramelimit> BuildFramelimits(int refreshRate)
+    {
         // A list to store the quotients
         List<ScreenFramelimit> Limits = new List<ScreenFramelimit> { new ScreenFramelimit(0, 0) };
 
         // A variable to store the divider value, rounded to nearest even number
         int divider = 1;
-        int dmDisplayFrequency = RoundToEven(GetCurrentFrequency());
+        int dmDisplayFrequency = RoundToEven(refreshRate);
 
         if (_cachedFrameLimits.ContainsKey(dmDisplayFrequency))
         {
@@ -282,7 +307,7 @@ public class DesktopScreen : IDisposable
     }
 
     // A function that takes an int as a parameter and returns the closest even number
-    private int RoundToEven(int num)
+    private static int RoundToEven(int num)
     {
         if (num % 2 == 0)
             return num;

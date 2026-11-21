@@ -13,6 +13,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:vmmisc="clr-namespace:HandheldCompanion.ViewModels.Misc"
     xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="Device"
     Title="{l:Static resx:Resources.DevicePage_Device}"
@@ -423,6 +424,74 @@
                         <ComboBoxItem Content="{l:Static resx:Resources.DevicePage_DockedDisplayBehavior_SwitchToExternalWhenCharging}" />
                     </ComboBox>
                 </ui:SettingsCard>
+
+                <!--  Known monitors  -->
+                <ui:SettingsExpander
+                    d:IsExpanded="True"
+                    DataContext="{Binding KnownMonitors}"
+                    Description="{Binding Summary, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    Header="{l:Static resx:Resources.DevicePage_KnownMonitors}"
+                    ItemsSource="{Binding Rows}">
+                    <ui:SettingsExpander.HeaderIcon>
+                        <ui:FontIcon Glyph="&#xE7F4;" />
+                    </ui:SettingsExpander.HeaderIcon>
+
+                    <!--  the expander renders ItemsSource through its ItemTemplate only, implicit DataType templates are not used  -->
+                    <ui:SettingsExpander.ItemTemplate>
+                        <vmmisc:KnownMonitorRowTemplateSelector>
+                            <vmmisc:KnownMonitorRowTemplateSelector.SectionHeaderTemplate>
+                                <DataTemplate DataType="{x:Type vmmisc:KnownMonitorsSectionHeader}">
+                                    <!--  a local style keeps the expander from applying its SettingsCard item style  -->
+                                    <TextBlock
+                                        Margin="16,8,0,4"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{Binding Title, Mode=OneWay}" />
+                                </DataTemplate>
+                            </vmmisc:KnownMonitorRowTemplateSelector.SectionHeaderTemplate>
+
+                            <vmmisc:KnownMonitorRowTemplateSelector.MonitorTemplate>
+                                <DataTemplate DataType="{x:Type vmmisc:KnownMonitorItemViewModel}">
+                                    <ui:SettingsCard Description="{Binding Description, Mode=OneWay}" Opacity="{Binding RowOpacity, Mode=OneWay}">
+                                        <ui:SettingsCard.Header>
+                                            <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                                <TextBlock VerticalAlignment="Center" Text="{Binding Name, Mode=OneWay}" />
+                                                <Border
+                                                    Style="{StaticResource DisplayMonitorBadgeStyle}"
+                                                    ToolTip="{l:Static resx:Resources.DisplayMonitor_InternalToolTip}"
+                                                    Visibility="{Binding IsInternal, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                    <TextBlock FontSize="11" Text="{l:Static resx:Resources.DisplayMonitor_Internal}" />
+                                                </Border>
+                                                <Border
+                                                    Style="{StaticResource DisplayMonitorBadgeStyle}"
+                                                    ToolTip="{l:Static resx:Resources.DisplayMonitor_MainToolTip}"
+                                                    Visibility="{Binding IsMain, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                    <TextBlock FontSize="11" Text="{l:Static resx:Resources.DisplayMonitor_Main}" />
+                                                </Border>
+                                                <Border
+                                                    Padding="5,0"
+                                                    VerticalAlignment="Center"
+                                                    Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
+                                                    CornerRadius="4"
+                                                    Visibility="{Binding IsConnected, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                    <TextBlock
+                                                        FontSize="11"
+                                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                        Text="{l:Static resx:Resources.DevicePage_KnownMonitorConnected}" />
+                                                </Border>
+                                            </ikw:SimpleStackPanel>
+                                        </ui:SettingsCard.Header>
+                                        <Button
+                                            Command="{Binding ForgetCommand}"
+                                            Content="{l:Static resx:Resources.DevicePage_KnownMonitorForget}"
+                                            ToolTip="{l:Static resx:Resources.DevicePage_KnownMonitorForgetToolTip}"
+                                            Visibility="{Binding CanForget, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    </ui:SettingsCard>
+                                </DataTemplate>
+                            </vmmisc:KnownMonitorRowTemplateSelector.MonitorTemplate>
+                        </vmmisc:KnownMonitorRowTemplateSelector>
+                    </ui:SettingsExpander.ItemTemplate>
+                </ui:SettingsExpander>
             </ikw:SimpleStackPanel>
 
             <!--  Battery options  -->

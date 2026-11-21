@@ -1446,6 +1446,13 @@ public partial class MainWindow : GamepadWindow
 
             // stop managers
             await VirtualManager.Stop().ConfigureAwait(false);
+
+            // put back the display modes changed for a profile, off the UI thread and without blocking it:
+            // a mode change broadcasts WM_DISPLAYCHANGE and display handlers may marshal to the UI thread
+            // started after VirtualManager (its stop waits while a mode change runs) and awaited before exit
+            long displayRestoreStart = Environment.TickCount64;
+            Task displayRestore = Task.Run(() => ManagerFactory.multimediaManager.Stop());
+
             MotionManager.Stop();
             SensorsManager.Stop();
             ControllerManager.Stop();
@@ -1458,6 +1465,16 @@ public partial class MainWindow : GamepadWindow
             TaskManager.Stop();
             PerformanceManager.Stop();
             UpdateManager.Stop();
+
+            try
+            {
+                long remaining = Math.Max(0, 3000 - (Environment.TickCount64 - displayRestoreStart));
+                await displayRestore.WaitAsync(TimeSpan.FromMilliseconds(remaining)).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogWarning("Failed to restore display modes before shutdown: {0}", ex.Message);
+            }
 
             // mark shutdown as completed
             shutdownCompleted = true;

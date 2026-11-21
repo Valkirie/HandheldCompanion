@@ -1857,5 +1857,17 @@ namespace HandheldCompanion.Properties
                 this["LegionControllerMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastSystemDisplayModes {
+            get {
+                return ((string)(this["LastSystemDisplayModes"]));
+            }
+            set {
+                this["LastSystemDisplayModes"] = value;
+            }
+        }
     }
 }

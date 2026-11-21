@@ -7,6 +7,7 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Models;
 using HandheldCompanion.Processors;
 using HandheldCompanion.ViewModels.Commands;
+using HandheldCompanion.ViewModels.Misc;
 using HandheldCompanion.Views;
 using HandheldCompanion.Watchers;
 using iNKORE.UI.WPF.Modern.Controls;
@@ -947,6 +948,9 @@ namespace HandheldCompanion.ViewModels
         }
         #endregion
 
+        // Known monitors section
+        public KnownMonitorsViewModel KnownMonitors { get; } = new();
+
         public DevicePageViewModel()
         {
             // manufacturer watcher
@@ -1187,6 +1191,7 @@ namespace HandheldCompanion.ViewModels
         {
             if (disposing)
             {
+                KnownMonitors.Dispose();
                 CurrentDevice.CapabilitiesChanged -= OnCapabilitiesChanged;
                 CurrentDevice.Opened -= Device_Opened;
                 CurrentDevice.Closed -= Device_Closed;

@@ -21,6 +21,14 @@ public partial class QuickDevicePage : Page
         ViewModel = new QuickDevicePageViewModel(this);
         DataContext = ViewModel;
         ViewModel.RequestAYANEOFlipScreenConfirmation += ViewModel_RequestAYANEOFlipScreenConfirmation;
+        IsVisibleChanged += QuickDevicePage_IsVisibleChanged;
+    }
+
+    private void QuickDevicePage_IsVisibleChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+    {
+        // page opened (navigation or overlay shown): pick the display monitor again by the default rule
+        if (e.NewValue is true)
+            ViewModel?.OnPageShown();
     }
 
     public QuickDevicePage(string Tag) : this()
@@ -31,6 +39,7 @@ public partial class QuickDevicePage : Page
     public void Dispose()
     {
         ViewModel?.RequestAYANEOFlipScreenConfirmation -= ViewModel_RequestAYANEOFlipScreenConfirmation;
+        IsVisibleChanged -= QuickDevicePage_IsVisibleChanged;
     }
 
     private async void ViewModel_RequestAYANEOFlipScreenConfirmation(object? sender, TaskCompletionSource<bool> tcs)

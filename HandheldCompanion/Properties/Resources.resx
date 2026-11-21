@@ -3691,7 +3691,7 @@ Thank you for using HC and helping us make it better.</value>
     <value>Night light</value>
   </data>
   <data name="QuickDevicePage_DisplayResolution" xml:space="preserve">
-    <value>Display resolution</value>
+    <value>Resolution</value>
   </data>
   <data name="QuickDevicePage_DynamicLighting" xml:space="preserve">
     <value>Dynamic lighting settings</value>
@@ -4685,6 +4685,138 @@ Thank you for using HC and helping us make it better.</value>
   </data>
   <data name="LibraryManager_ConnectivityUp" xml:space="preserve">
     <value>We are back online. All features are available.</value>
+  </data>
+  <data name="DevicePage_KnownMonitorConnected" xml:space="preserve">
+    <value>Connected</value>
+  </data>
+  <data name="DevicePage_KnownMonitorConnectedNow" xml:space="preserve">
+    <value>Connected now</value>
+  </data>
+  <data name="DevicePage_KnownMonitorForget" xml:space="preserve">
+    <value>Forget</value>
+  </data>
+  <data name="DevicePage_KnownMonitorForgetContent" xml:space="preserve">
+    <value>Forget {0}? Its resolution and refresh rate overrides are removed from every profile. HC treats it as a new monitor the next time it is connected.</value>
+  </data>
+  <data name="DevicePage_KnownMonitorForgetTitle" xml:space="preserve">
+    <value>Forget monitor</value>
+  </data>
+  <data name="DevicePage_KnownMonitorForgetToolTip" xml:space="preserve">
+    <value>Remove this monitor and its overrides from all profiles</value>
+  </data>
+  <data name="DevicePage_KnownMonitorLastSeen" xml:space="preserve">
+    <value>Last seen {0:g}</value>
+  </data>
+  <data name="DevicePage_KnownMonitorLastSeenUnknown" xml:space="preserve">
+    <value>Last seen: unknown</value>
+  </data>
+  <data name="DevicePage_KnownMonitorNoOverrides" xml:space="preserve">
+    <value>No profile overrides</value>
+  </data>
+  <data name="DevicePage_KnownMonitorOneOverride" xml:space="preserve">
+    <value>1 profile with overrides</value>
+  </data>
+  <data name="DevicePage_KnownMonitorOverrides" xml:space="preserve">
+    <value>{0} profiles with overrides</value>
+  </data>
+  <data name="DevicePage_KnownMonitors" xml:space="preserve">
+    <value>Known monitors</value>
+  </data>
+  <data name="DevicePage_KnownMonitorsConnected" xml:space="preserve">
+    <value>{0} connected</value>
+  </data>
+  <data name="DevicePage_KnownMonitorsConnectedAndNotConnected" xml:space="preserve">
+    <value>{0} connected, {1} not connected</value>
+  </data>
+  <data name="DevicePage_KnownMonitorsNotConnected" xml:space="preserve">
+    <value>Not connected</value>
+  </data>
+  <data name="DevicePage_KnownMonitorUnknownDisplay" xml:space="preserve">
+    <value>Unknown display</value>
+  </data>
+  <data name="DevicePage_KnownMonitorUnknownModel" xml:space="preserve">
+    <value>Unknown model</value>
+  </data>
+  <data name="DisplayMonitor_Fallback" xml:space="preserve">
+    <value>Display {0}</value>
+  </data>
+  <data name="DisplayMonitor_Internal" xml:space="preserve">
+    <value>Internal</value>
+  </data>
+  <data name="DisplayMonitor_InternalToolTip" xml:space="preserve">
+    <value>Built-in display</value>
+  </data>
+  <data name="DisplayMonitor_Label" xml:space="preserve">
+    <value>Display {0}: {1}</value>
+  </data>
+  <data name="DisplayMonitor_LastUsed" xml:space="preserve">
+    <value>Last used</value>
+  </data>
+  <data name="DisplayMonitor_LastUsedToolTip" xml:space="preserve">
+    <value>FPS presets source: the game window was last on this display</value>
+  </data>
+  <data name="DisplayMonitor_Main" xml:space="preserve">
+    <value>Main</value>
+  </data>
+  <data name="DisplayMonitor_MainToolTip" xml:space="preserve">
+    <value>Current main display</value>
+  </data>
+  <data name="DisplayMonitor_RunningHere" xml:space="preserve">
+    <value>Running here</value>
+  </data>
+  <data name="DisplayMonitor_RunningHereToolTip" xml:space="preserve">
+    <value>FPS presets source: the game window is on this display</value>
+  </data>
+  <data name="ProfilesPage_GraphicsNeedsGPUScaling" xml:space="preserve">
+    <value>Needs GPU scaling on this power state</value>
+  </data>
+  <data name="OverrideMode_UseDefaultProfile" xml:space="preserve">
+    <value>Default profile ({0})</value>
+  </data>
+  <data name="OverrideMode_UsePowerProfile" xml:space="preserve">
+    <value>Power profile ({0})</value>
+  </data>
+  <data name="OverrideMode_UseSystemSettings" xml:space="preserve">
+    <value>System settings ({0})</value>
+  </data>
+  <data name="OverrideMode_UseSystemSettingsShort" xml:space="preserve">
+    <value>System ({0})</value>
+  </data>
+  <data name="ProfilesPage_ValueNotAvailable" xml:space="preserve">
+    <value>{0} (not available)</value>
+  </data>
+  <data name="ProfilesPage_GraphicsOnPercent" xml:space="preserve">
+    <value>On, {0}%</value>
+  </data>
+  <data name="ProfilesPage_GraphicsOff" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="ProfilesPage_GraphicsOn" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="PowerState_OnBattery" xml:space="preserve">
+    <value>On battery</value>
+  </data>
+  <data name="PowerState_PluggedIn" xml:space="preserve">
+    <value>Plugged in</value>
+  </data>
+  <data name="ProfilesPage_DisplayResolutionLocked" xml:space="preserve">
+    <value>Set by integer scaling</value>
+  </data>
+  <data name="ProfilesPage_FramerateNoLimit" xml:space="preserve">
+    <value>No limit</value>
+  </data>
+  <data name="ProfilesPage_PerformanceSettings" xml:space="preserve">
+    <value>Performance settings</value>
+  </data>
+  <data name="ProfilesPage_PowerProfileSummary" xml:space="preserve">
+    <value>Power: {0}</value>
+  </data>
+  <data name="QuickDevicePage_DisplayMonitor" xml:space="preserve">
+    <value>Display</value>
+  </data>
+  <data name="QuickDevicePage_DisplaySaveNote" xml:space="preserve">
+    <value>Saved to {0} · {1}</value>
   </data>
   <data name="Hint_OneXConsoleCheck" xml:space="preserve">
     <value>OneXConsole is running</value>

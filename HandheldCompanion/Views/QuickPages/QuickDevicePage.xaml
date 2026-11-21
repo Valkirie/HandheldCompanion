@@ -18,6 +18,49 @@
     KeepAlive="True"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <DataTemplate x:Key="DisplayMonitorItemTemplate" DataType="{x:Type viewmodels:DisplayMonitorItem}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center" Text="{Binding Label}" />
+                <Border
+                    Margin="6,0,0,0"
+                    Style="{StaticResource DisplayMonitorBadgeStyle}"
+                    ToolTip="{l:Static resx:Resources.DisplayMonitor_InternalToolTip}"
+                    Visibility="{Binding IsInternal, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed, TargetNullValue=Collapsed}">
+                    <TextBlock FontSize="11" Text="{l:Static resx:Resources.DisplayMonitor_Internal}" />
+                </Border>
+                <Border
+                    Margin="6,0,0,0"
+                    Style="{StaticResource DisplayMonitorBadgeStyle}"
+                    ToolTip="{l:Static resx:Resources.DisplayMonitor_MainToolTip}"
+                    Visibility="{Binding IsMain, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed, TargetNullValue=Collapsed}">
+                    <TextBlock FontSize="11" Text="{l:Static resx:Resources.DisplayMonitor_Main}" />
+                </Border>
+                <Border
+                    Margin="6,0,0,0"
+                    Padding="5,0"
+                    VerticalAlignment="Center"
+                    CornerRadius="4"
+                    ToolTip="{Binding SourceBadgeToolTip}"
+                    Visibility="{Binding HasSourceBadge, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed, TargetNullValue=Collapsed}">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+                            <Setter Property="TextElement.Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsRunningHere}" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+                                    <Setter Property="TextElement.Foreground" Value="{DynamicResource TextOnAccentFillColorPrimaryBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <TextBlock FontSize="11" Text="{Binding SourceBadgeText}" />
+                </Border>
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+
     <ikw:SimpleStackPanel Spacing="28">
 
         <!--  Device settings  -->
@@ -25,11 +68,38 @@
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{l:Static resx:Resources.QuickDevicePage_DeviceSettings}" />
 
             <ikw:SimpleStackPanel Spacing="3">
+                <!--  Monitor the resolution and refresh rate apply to  -->
+                <ui:SettingsCard Header="{l:Static resx:Resources.QuickDevicePage_DisplayMonitor}" Visibility="{Binding HasDisplayMonitors, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.TVMonitor}" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <Grid>
+                        <!--  several monitors: picker  -->
+                        <ComboBox
+                            Name="ComboBoxDisplayMonitor"
+                            MinWidth="140"
+                            ItemTemplate="{StaticResource DisplayMonitorItemTemplate}"
+                            ItemsSource="{Binding DisplayMonitorItems, Mode=OneWay}"
+                            SelectedValue="{Binding SelectedDisplayMonitor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedValuePath="Id"
+                            Visibility="{Binding HasMultipleDisplays, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <!--  a single monitor: its name and badges as read-only text  -->
+                        <!--  ContentControl, not ContentPresenter: a ContentPresenter takes its Content as DataContext, which broke its own Visibility binding  -->
+                        <ContentControl
+                            VerticalAlignment="Center"
+                            Focusable="False"
+                            IsTabStop="False"
+                            Content="{Binding SingleDisplayMonitor, Mode=OneWay}"
+                            ContentTemplate="{StaticResource DisplayMonitorItemTemplate}"
+                            Visibility="{Binding IsSingleDisplay, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </Grid>
+                </ui:SettingsCard>
+
                 <ikw:SimpleStackPanel
                     Name="DisplayStack"
                     IsEnabled="{Binding IsDisplayStackEnabled}"
                     Spacing="3">
-                    <ui:SettingsCard Description="{l:Static resx:Resources.QuickDevicePage_DisplayResolutionDesc}" Header="{l:Static resx:Resources.QuickDevicePage_DisplayResolution}">
+                    <ui:SettingsCard Header="{l:Static resx:Resources.QuickDevicePage_DisplayResolution}">
                         <ui:SettingsCard.HeaderIcon>
                             <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.AspectRatio}" />
                         </ui:SettingsCard.HeaderIcon>
@@ -39,7 +109,7 @@
                             ItemsSource="{Binding Resolutions, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             SelectedItem="{Binding SelectedResolution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </ui:SettingsCard>
-                    <ui:SettingsCard Description="{l:Static resx:Resources.QuickDevicePage_DisplayFrequencyDesc}" Header="{l:Static resx:Resources.QuickDevicePage_DisplayFrequency}">
+                    <ui:SettingsCard Header="{l:Static resx:Resources.QuickDevicePage_DisplayFrequency}">
                         <ui:SettingsCard.HeaderIcon>
                             <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.DeviceLaptopNoPic}" />
                         </ui:SettingsCard.HeaderIcon>
@@ -51,6 +121,15 @@
                             SelectedValuePath="Frequency" />
                     </ui:SettingsCard>
                 </ikw:SimpleStackPanel>
+
+                <!--  Where a change is stored while a game profile is applied  -->
+                <TextBlock
+                    Margin="12,2,12,0"
+                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Text="{Binding DisplaySaveNote, Mode=OneWay}"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding HasDisplaySaveNote, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <Border
                     Name="ResolutionOverrideStack"

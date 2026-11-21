@@ -30,6 +30,9 @@ namespace HandheldCompanion.Managers
         public static bool IsLoaded_ADLX = false;
 
         private static GPU? currentGPU;
+
+        // the driver doesn't report the integer scaling type, remember the last one applied
+        private byte? appliedIntegerScalingType;
         private static ConcurrentDictionary<AdapterInformation, GPU> DisplayGPU = new();
 
         private bool _gpuManagementEnabled = true;
@@ -153,6 +156,9 @@ namespace HandheldCompanion.Managers
             }
 
             base.Start();
+
+            // anything resolved or hooked while starting was skipped
+            ApplyCurrentGraphics();
         }
 
         public override void Stop()
@@ -164,11 +170,11 @@ namespace HandheldCompanion.Managers
 
             // manage events
             ManagerFactory.profileManager.Applied -= ProfileManager_Applied;
-            ManagerFactory.profileManager.Discarded -= ProfileManager_Discarded;
             ManagerFactory.profileManager.Updated -= ProfileManager_Updated;
             ManagerFactory.profileManager.Initialized -= ProfileManager_Initialized;
             ManagerFactory.powerProfileManager.Applied -= PowerProfileManager_Applied;
             ManagerFactory.powerProfileManager.Discarded -= PowerProfileManager_Discarded;
+            ManagerFactory.powerProfileManager.OverridesApplied -= PowerProfileManager_OverridesApplied;
             ManagerFactory.powerProfileManager.Initialized -= PowerProfileManager_Initialized;
             ManagerFactory.deviceManager.DisplayAdapterArrived -= DeviceManager_DisplayAdapterArrived;
             ManagerFactory.deviceManager.DisplayAdapterRemoved -= DeviceManager_DisplayAdapterRemoved;
@@ -219,6 +225,8 @@ namespace HandheldCompanion.Managers
                         Profile? profile = ManagerFactory.profileManager.GetCurrent();
                         if (profile is not null)
                             ProfileManager_Applied(profile, UpdateSource.Background);
+
+                        ApplyCurrentGraphics();
                     }
                     break;
             }
@@ -233,7 +241,6 @@ namespace HandheldCompanion.Managers
         {
             // manage events
             ManagerFactory.profileManager.Applied += ProfileManager_Applied;
-            ManagerFactory.profileManager.Discarded += ProfileManager_Discarded;
             ManagerFactory.profileManager.Updated += ProfileManager_Updated;
 
             ProfileManager_Applied(ManagerFactory.profileManager.GetCurrent(), UpdateSource.Background);
@@ -249,8 +256,16 @@ namespace HandheldCompanion.Managers
             // manage events
             ManagerFactory.powerProfileManager.Applied += PowerProfileManager_Applied;
             ManagerFactory.powerProfileManager.Discarded += PowerProfileManager_Discarded;
+            ManagerFactory.powerProfileManager.OverridesApplied += PowerProfileManager_OverridesApplied;
 
             PowerProfileManager_Applied(ManagerFactory.powerProfileManager.GetCurrent(), UpdateSource.Background);
+            ApplyCurrentGraphics();
+        }
+
+        private void PowerProfileManager_OverridesApplied(Profile gameProfile, int powerLineStatus, UpdateSource source)
+        {
+            // graphics follow the game profile and power state, profile activation and power state changes alike
+            ApplyGraphics(ManagerFactory.powerProfileManager.ResolveGraphics(gameProfile, powerLineStatus));
         }
 
         private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
@@ -306,6 +321,7 @@ namespace HandheldCompanion.Managers
 
             // update current GPU
             currentGPU = GPU;
+            appliedIntegerScalingType = null;
 
             GPU.ImageSharpeningChanged += CurrentGPU_ImageSharpeningChanged;
             GPU.GPUScalingChanged += CurrentGPU_GPUScalingChanged;
@@ -328,6 +344,9 @@ namespace HandheldCompanion.Managers
                 Hooked?.Invoke(GPU);
 
                 LogManager.LogInformation("Hooked DisplayAdapter: {0}", GPU.ToString());
+
+                // a new or reconnected adapter gets the current graphics
+                ApplyCurrentGraphics();
             }
         }
 
@@ -493,15 +512,14 @@ namespace HandheldCompanion.Managers
             if (!IsReady || !_gpuManagementEnabled)
                 return;
 
-            // todo: use ProfileManager events
-            Profile? profile = ManagerFactory.profileManager.GetCurrent();
-            if (profile is null || currentGPU is not AMDGPU amdGPU)
+            // a group without an override is left as the driver has it
+            if (ManagerFactory.powerProfileManager.GetGraphics().RSR.Values is not RSROverride rsr || currentGPU is not AMDGPU amdGPU)
                 return;
 
-            if (Enabled != profile.RSREnabled)
-                amdGPU.SetRSR(profile.RSREnabled);
-            if (Sharpness != profile.RSRSharpness)
-                amdGPU.SetRSRSharpness(profile.RSRSharpness);
+            if (Enabled != rsr.Enabled)
+                amdGPU.SetRSR(rsr.Enabled);
+            if (Sharpness != rsr.Sharpness)
+                amdGPU.SetRSRSharpness(rsr.Sharpness);
         }
 
         private void CurrentGPU_AFMFStateChanged(bool Supported, bool Enabled)
@@ -509,13 +527,11 @@ namespace HandheldCompanion.Managers
             if (!IsReady || !_gpuManagementEnabled)
                 return;
 
-            // todo: use ProfileManager events
-            Profile? profile = ManagerFactory.profileManager.GetCurrent();
-            if (profile is null || currentGPU is not AMDGPU amdGPU)
+            if (ManagerFactory.powerProfileManager.GetGraphics().AFMF.Values is not AFMFOverride afmf || currentGPU is not AMDGPU amdGPU)
                 return;
 
-            if (Enabled != profile.AFMFEnabled)
-                amdGPU.SetAFMF(profile.AFMFEnabled);
+            if (Enabled != afmf.Enabled)
+                amdGPU.SetAFMF(afmf.Enabled);
         }
 
         private void CurrentGPU_AFMF21StateChanged(bool AlgorithmSupported, int Algorithm, int SearchMode, int PerformanceMode, int FastMotionResponse)
@@ -523,19 +539,17 @@ namespace HandheldCompanion.Managers
             if (!IsReady || !_gpuManagementEnabled)
                 return;
 
-            // todo: use ProfileManager events
-            Profile? profile = ManagerFactory.profileManager.GetCurrent();
-            if (profile is null || currentGPU is not AMDGPU amdGPU || !AlgorithmSupported)
+            if (ManagerFactory.powerProfileManager.GetGraphics().AFMF.Values is not AFMFOverride afmf || currentGPU is not AMDGPU amdGPU || !AlgorithmSupported)
                 return;
 
-            if (Algorithm != profile.AFMFAlgorithm)
-                amdGPU.SetAFMFAlgorithm(profile.AFMFAlgorithm);
-            if (SearchMode != profile.AFMFSearchMode)
-                amdGPU.SetAFMFSearchMode(profile.AFMFSearchMode);
-            if (PerformanceMode != profile.AFMFPerformanceMode)
-                amdGPU.SetAFMFPerformanceMode(profile.AFMFPerformanceMode);
-            if (FastMotionResponse != profile.AFMFFastMotionResponse)
-                amdGPU.SetAFMFFastMotionResponse(profile.AFMFFastMotionResponse);
+            if (Algorithm != afmf.Algorithm)
+                amdGPU.SetAFMFAlgorithm(afmf.Algorithm);
+            if (SearchMode != afmf.SearchMode)
+                amdGPU.SetAFMFSearchMode(afmf.SearchMode);
+            if (PerformanceMode != afmf.PerformanceMode)
+                amdGPU.SetAFMFPerformanceMode(afmf.PerformanceMode);
+            if (FastMotionResponse != afmf.FastMotionResponse)
+                amdGPU.SetAFMFFastMotionResponse(afmf.FastMotionResponse);
         }
 
         private void CurrentGPU_IntegerScalingChanged(bool Supported, bool Enabled)
@@ -543,13 +557,14 @@ namespace HandheldCompanion.Managers
             if (!IsReady || !_gpuManagementEnabled)
                 return;
 
-            // todo: use ProfileManager events
-            Profile? profile = ManagerFactory.profileManager.GetCurrent();
-            if (profile is null || currentGPU is null)
+            if (ManagerFactory.powerProfileManager.GetGraphics().IntegerScaling.Values is not IntegerScalingOverride integerScaling || currentGPU is null)
                 return;
 
-            if (Enabled != profile.IntegerScalingEnabled)
-                currentGPU.SetIntegerScaling(profile.IntegerScalingEnabled, profile.IntegerScalingType);
+            if (Enabled != integerScaling.Enabled)
+            {
+                if (currentGPU.SetIntegerScaling(integerScaling.Enabled, integerScaling.Type) && integerScaling.Enabled)
+                    appliedIntegerScalingType = integerScaling.Type;
+            }
         }
 
         private void CurrentGPU_GPUScalingChanged(bool Supported, bool Enabled, int Mode)
@@ -557,15 +572,13 @@ namespace HandheldCompanion.Managers
             if (!IsReady || !_gpuManagementEnabled)
                 return;
 
-            // todo: use ProfileManager events
-            Profile? profile = ManagerFactory.profileManager.GetCurrent();
-            if (profile is null || currentGPU is null)
+            if (ManagerFactory.powerProfileManager.GetGraphics().Scaling.Values is not ScalingOverride scaling || currentGPU is null)
                 return;
 
-            if (Enabled != profile.GPUScaling)
-                currentGPU.SetGPUScaling(profile.GPUScaling);
-            if (Mode != profile.ScalingMode)
-                currentGPU.SetScalingMode(profile.ScalingMode);
+            if (Enabled != scaling.Enabled)
+                currentGPU.SetGPUScaling(scaling.Enabled);
+            if (Mode != scaling.ScalingMode)
+                currentGPU.SetScalingMode(scaling.ScalingMode);
         }
 
         private void IntelGPU_EnduranceGamingState(bool Supported, ctl_3d_endurance_gaming_control_t Control, ctl_3d_endurance_gaming_mode_t Mode)
@@ -588,15 +601,13 @@ namespace HandheldCompanion.Managers
             if (!IsReady || !_gpuManagementEnabled)
                 return;
 
-            // todo: use ProfileManager events
-            Profile? profile = ManagerFactory.profileManager.GetCurrent();
-            if (profile is null || currentGPU is null)
+            if (ManagerFactory.powerProfileManager.GetGraphics().RIS.Values is not RISOverride ris || currentGPU is null)
                 return;
 
-            if (Enabled != profile.RISEnabled)
-                currentGPU.SetImageSharpening(profile.RISEnabled);
-            if (Sharpness != profile.RISSharpness)
-                currentGPU.SetImageSharpeningSharpness(Sharpness);
+            if (Enabled != ris.Enabled)
+                currentGPU.SetImageSharpening(ris.Enabled);
+            if (Sharpness != ris.Sharpness)
+                currentGPU.SetImageSharpeningSharpness(ris.Sharpness);
         }
 
         private void ProfileManager_Applied(Profile? profile, UpdateSource source)
@@ -611,127 +622,129 @@ namespace HandheldCompanion.Managers
             {
                 if (!string.IsNullOrEmpty(profile.Executable) && currentGPU.HasPrebuiltShaderDownload(out bool perAppSupported) && perAppSupported)
                     currentGPU.SetPrebuiltShaderDownload(profile.Executable, profile.PrebuiltShaderDownloadEnabled);
-
-                // apply profile GPU Scaling
-                // apply profile scaling mode
-                if (profile.GPUScaling)
-                {
-                    if (!currentGPU.GetGPUScaling())
-                        currentGPU.SetGPUScaling(true);
-
-                    if (currentGPU.GetScalingMode() != profile.ScalingMode)
-                        currentGPU.SetScalingMode(profile.ScalingMode);
-                }
-                else if (currentGPU.GetGPUScaling())
-                {
-                    currentGPU.SetGPUScaling(false);
-                }
-
-                // apply profile RSR / AFMF
-                if (currentGPU is AMDGPU amdGPU)
-                {
-                    if (profile.RSREnabled)
-                    {
-                        if (!amdGPU.GetRSR())
-                            amdGPU.SetRSR(true);
-
-                        if (amdGPU.GetRSRSharpness() != profile.RSRSharpness)
-                            amdGPU.SetRSRSharpness(profile.RSRSharpness);
-                    }
-                    else if (amdGPU.GetRSR())
-                    {
-                        amdGPU.SetRSR(false);
-                    }
-
-                    if (profile.AFMFEnabled)
-                    {
-                        if (!amdGPU.GetAFMF())
-                            amdGPU.SetAFMF(true);
-
-                        if (!amdGPU.GetAntiLag())
-                            amdGPU.SetAntiLag(true);
-
-                        // apply AFMF 2.1 sub-controls when supported
-                        if (amdGPU.GetAFMFAlgorithmSupport())
-                        {
-                            if (amdGPU.GetAFMFAlgorithm() != profile.AFMFAlgorithm)
-                                amdGPU.SetAFMFAlgorithm(profile.AFMFAlgorithm);
-                            if (amdGPU.GetAFMFSearchMode() != profile.AFMFSearchMode)
-                                amdGPU.SetAFMFSearchMode(profile.AFMFSearchMode);
-                            if (amdGPU.GetAFMFPerformanceMode() != profile.AFMFPerformanceMode)
-                                amdGPU.SetAFMFPerformanceMode(profile.AFMFPerformanceMode);
-                            if (amdGPU.GetAFMFFastMotionResponse() != profile.AFMFFastMotionResponse)
-                                amdGPU.SetAFMFFastMotionResponse(profile.AFMFFastMotionResponse);
-                        }
-                    }
-                    else if (amdGPU.GetAFMF())
-                    {
-                        amdGPU.SetAFMF(false);
-                    }
-                }
-
-                // apply profile Integer Scaling
-                if (profile.IntegerScalingEnabled)
-                {
-                    if (!currentGPU.GetIntegerScaling())
-                        currentGPU.SetIntegerScaling(true, profile.IntegerScalingType);
-                }
-                else if (currentGPU.GetIntegerScaling())
-                {
-                    currentGPU.SetIntegerScaling(false, 0);
-                }
-
-                // apply profile image sharpening
-                if (profile.RISEnabled)
-                {
-                    if (!currentGPU.GetImageSharpening())
-                        currentGPU.SetImageSharpening(profile.RISEnabled);
-
-                    if (currentGPU.GetImageSharpeningSharpness() != profile.RISSharpness)
-                        currentGPU.SetImageSharpeningSharpness(profile.RISSharpness);
-                }
-                else if (currentGPU.GetImageSharpening())
-                {
-                    currentGPU.SetImageSharpening(false);
-                }
             }
             catch { }
         }
 
-        private void ProfileManager_Discarded(Profile? profile, bool swapped, Profile nextProfile)
+        private void ApplyCurrentGraphics()
         {
-            if (!IsReady || currentGPU is null || profile is null)
+            if (ManagerFactory.powerProfileManager.IsReady)
+                ApplyGraphics(ManagerFactory.powerProfileManager.GetGraphics());
+        }
+
+        /// <summary>
+        /// Applies the resolved graphics groups. A group without an override on any layer is left as the driver has it,
+        /// nothing is restored when a profile is discarded.
+        /// </summary>
+        private void ApplyGraphics(ResolvedGraphics graphics)
+        {
+            if (!IsReady || currentGPU is null)
                 return;
 
             if (!_gpuManagementEnabled)
                 return;
 
-            // don't bother discarding settings, new one will be enforce shortly
-            if (swapped)
-                return;
-
             try
             {
-                /*
-                // restore default GPU Scaling
-                if (profile.GPUScaling && currentGPU.GetGPUScaling())
-                    currentGPU.SetGPUScaling(false);
-                */
-
-                // restore default RSR
-                if (currentGPU is AMDGPU amdGPU)
+                // apply GPU Scaling
+                // apply scaling mode
+                if (graphics.Scaling.Values is ScalingOverride scaling)
                 {
-                    if (profile.RSREnabled && amdGPU.GetRSR())
-                        amdGPU.SetRSR(false);
+                    if (scaling.Enabled)
+                    {
+                        if (!currentGPU.GetGPUScaling())
+                            currentGPU.SetGPUScaling(true);
+
+                        if (currentGPU.GetScalingMode() != scaling.ScalingMode)
+                            currentGPU.SetScalingMode(scaling.ScalingMode);
+                    }
+                    else if (currentGPU.GetGPUScaling())
+                    {
+                        currentGPU.SetGPUScaling(false);
+                    }
                 }
 
-                // restore default integer scaling
-                if (profile.IntegerScalingEnabled && currentGPU.GetIntegerScaling())
-                    currentGPU.SetIntegerScaling(false, 0);
+                // apply RSR / AFMF
+                if (currentGPU is AMDGPU amdGPU)
+                {
+                    if (graphics.RSR.Values is RSROverride rsr)
+                    {
+                        if (rsr.Enabled)
+                        {
+                            if (!amdGPU.GetRSR())
+                                amdGPU.SetRSR(true);
 
-                // restore default image sharpening
-                if (profile.RISEnabled && currentGPU.GetImageSharpening())
-                    currentGPU.SetImageSharpening(false);
+                            if (amdGPU.GetRSRSharpness() != rsr.Sharpness)
+                                amdGPU.SetRSRSharpness(rsr.Sharpness);
+                        }
+                        else if (amdGPU.GetRSR())
+                        {
+                            amdGPU.SetRSR(false);
+                        }
+                    }
+
+                    if (graphics.AFMF.Values is AFMFOverride afmf)
+                    {
+                        if (afmf.Enabled)
+                        {
+                            if (!amdGPU.GetAFMF())
+                                amdGPU.SetAFMF(true);
+
+                            if (!amdGPU.GetAntiLag())
+                                amdGPU.SetAntiLag(true);
+
+                            // apply AFMF 2.1 sub-controls when supported
+                            if (amdGPU.GetAFMFAlgorithmSupport())
+                            {
+                                if (amdGPU.GetAFMFAlgorithm() != afmf.Algorithm)
+                                    amdGPU.SetAFMFAlgorithm(afmf.Algorithm);
+                                if (amdGPU.GetAFMFSearchMode() != afmf.SearchMode)
+                                    amdGPU.SetAFMFSearchMode(afmf.SearchMode);
+                                if (amdGPU.GetAFMFPerformanceMode() != afmf.PerformanceMode)
+                                    amdGPU.SetAFMFPerformanceMode(afmf.PerformanceMode);
+                                if (amdGPU.GetAFMFFastMotionResponse() != afmf.FastMotionResponse)
+                                    amdGPU.SetAFMFFastMotionResponse(afmf.FastMotionResponse);
+                            }
+                        }
+                        else if (amdGPU.GetAFMF())
+                        {
+                            amdGPU.SetAFMF(false);
+                        }
+                    }
+                }
+
+                // apply Integer Scaling
+                if (graphics.IntegerScaling.Values is IntegerScalingOverride integerScaling)
+                {
+                    if (integerScaling.Enabled)
+                    {
+                        // a type change while enabled needs a new set too
+                        if ((!currentGPU.GetIntegerScaling() || appliedIntegerScalingType != integerScaling.Type)
+                            && currentGPU.SetIntegerScaling(true, integerScaling.Type))
+                            appliedIntegerScalingType = integerScaling.Type;
+                    }
+                    else if (currentGPU.GetIntegerScaling())
+                    {
+                        currentGPU.SetIntegerScaling(false, 0);
+                    }
+                }
+
+                // apply image sharpening
+                if (graphics.RIS.Values is RISOverride ris)
+                {
+                    if (ris.Enabled)
+                    {
+                        if (!currentGPU.GetImageSharpening())
+                            currentGPU.SetImageSharpening(true);
+
+                        if (currentGPU.GetImageSharpeningSharpness() != ris.Sharpness)
+                            currentGPU.SetImageSharpeningSharpness(ris.Sharpness);
+                    }
+                    else if (currentGPU.GetImageSharpening())
+                    {
+                        currentGPU.SetImageSharpening(false);
+                    }
+                }
             }
             catch { }
         }

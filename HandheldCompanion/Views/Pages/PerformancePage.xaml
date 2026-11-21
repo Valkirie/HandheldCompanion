@@ -418,7 +418,7 @@
                                             IsSnapToTickEnabled="True"
                                             LargeChange="10"
                                             Maximum="{Binding FrameLimitMaximum, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                            Minimum="0"
+                                            Minimum="{Binding FrameLimitMinimum, Mode=OneWay}"
                                             SmallChange="1"
                                             TickFrequency="1"
                                             TickPlacement="BottomRight"

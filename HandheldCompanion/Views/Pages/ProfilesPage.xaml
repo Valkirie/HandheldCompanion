@@ -852,21 +852,17 @@
                     </ikw:SimpleStackPanel>
                 </ikw:SimpleStackPanel>
 
-                <!--  Power settings  -->
+                <!--  Performance settings  -->
                 <ikw:SimpleStackPanel Spacing="8">
                     <TextBlock
                         Style="{StaticResource BaseTextBlockStyle}"
-                        Text="Power settings"
-                        Visibility="{Binding PerformanceManagerEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        Text="{l:Static resx:Resources.ProfilesPage_PerformanceSettings}" />
+                    <!--  the power preset needs the performance manager, graphics rows need GPU management; FPS and display stay visible  -->
                     <ikw:SimpleStackPanel
                         Name="PowerSettings"
-                        Spacing="3"
-                        Visibility="{Binding PerformanceManagerEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Spacing="3">
 
-                        <ui:SettingsExpander
-                            Description="{l:Static resx:Resources.ProfilesPage_PowerPresetDesc}"
-                            Header="{l:Static resx:Resources.ProfilesPage_PowerPreset}"
-                            IsExpanded="True">
+                        <ui:SettingsExpander Header="{l:Static resx:Resources.PowerState_PluggedIn}" IsExpanded="False">
                             <ui:SettingsExpander.HeaderIcon>
                                 <ui:FontIcon Glyph="&#xec4a;" />
                             </ui:SettingsExpander.HeaderIcon>
@@ -874,14 +870,113 @@
                             <TextBlock
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                 Style="{StaticResource BodyTextBlockStyle}"
-                                Text="{Binding SelectedPowerProfileName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                Text="{Binding SelectedPickerAC.Text, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ResourceStringFormatConverter}, ConverterParameter=ProfilesPage_PowerProfileSummary}"
+                                Visibility="{Binding PerformanceManagerEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                            <ui:SettingsExpander.Items>
+                                <ui:SettingsCard
+                                    Command="{Binding OpenPowerProfilePluggedCommand}"
+                                    Header="{l:Static resx:Resources.ProfilesPage_PowerPreset}"
+                                    IsClickEnabled="True"
+                                    Tag="Navigation"
+                                    Visibility="{Binding PerformanceManagerEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <ComboBox
+                                        Name="PowerProfilePlugged"
+                                        MaxWidth="{Binding ActualWidth, ConverterParameter=x/2.4, Converter={StaticResource Math}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}"
+                                        DisplayMemberPath="Text"
+                                        ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
+                                        ItemsSource="{Binding ProfilePickerCollectionViewAC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        SelectedItem="{Binding SelectedPickerAC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        SelectedValuePath="Text">
+                                        <ComboBox.GroupStyle>
+                                            <GroupStyle>
+                                                <GroupStyle.HeaderTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock
+                                                            Margin="4,0,0,0"
+                                                            Style="{StaticResource BaseTextBlockStyle}"
+                                                            Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                    </DataTemplate>
+                                                </GroupStyle.HeaderTemplate>
+                                            </GroupStyle>
+                                        </ComboBox.GroupStyle>
+                                    </ComboBox>
+                                </ui:SettingsCard>
+
+                                <!--  one choice: Inherit with the value it gives, or a value that overrides it; Custom adds the slider row  -->
+                                <ui:SettingsCard Header="{l:Static resx:Resources.ProfilesPage_FramerateLimit}">
+                                    <ComboBox
+                                        MinWidth="160"
+                                        ItemContainerStyle="{StaticResource OverrideChoiceItemStyle}"
+                                        ItemTemplate="{StaticResource OverrideChoiceItemTemplate}"
+                                        ItemsSource="{Binding FramerateRowAC.Choices, Mode=OneWay}"
+                                        SelectedItem="{Binding FramerateRowAC.SelectedChoice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </ui:SettingsCard>
+
+                                <ui:SettingsCard Visibility="{Binding FramerateRowAC.ShowCustom, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
+                                        <TextBox
+                                            Height="31"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            HorizontalContentAlignment="Center"
+                                            IsReadOnly="True"
+                                            Text="{Binding FramerateRowAC.CustomValue, StringFormat={}{0:N0} FPS, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+                                        <Slider
+                                            Margin="8,0,104,0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Center"
+                                            AutoToolTipPrecision="0"
+                                            IsMoveToPointEnabled="True"
+                                            IsSnapToTickEnabled="True"
+                                            LargeChange="10"
+                                            Maximum="{Binding FramerateRowAC.CustomMaximum, Mode=OneWay}"
+                                            Minimum="{Binding FramerateRowAC.CustomMinimum, Mode=OneWay}"
+                                            SmallChange="1"
+                                            TickFrequency="1"
+                                            TickPlacement="BottomRight"
+                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                            Value="{Binding FramerateRowAC.CustomValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DockPanel>
+                                </ui:SettingsCard>
+
+                                <!--  resolution and refresh rate overrides, one row per connected monitor; a local style keeps the expander item style off  -->
+                                <ikw:SimpleStackPanel Style="{x:Null}">
+                                    <ItemsControl
+                                        Focusable="False"
+                                        ItemTemplate="{StaticResource DisplayOverrideRowTemplate}"
+                                        ItemsSource="{Binding DisplayOverrideRowsAC, Mode=OneWay}"
+                                        Style="{x:Null}" />
+                                </ikw:SimpleStackPanel>
+
+                                <!--  graphics overrides, one row per graphics group  -->
+                                <ikw:SimpleStackPanel Style="{x:Null}" Visibility="{Binding GPUManagementEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <ItemsControl
+                                        Focusable="False"
+                                        ItemTemplate="{StaticResource GraphicsOverrideRowTemplate}"
+                                        ItemsSource="{Binding GraphicsOverrideRowsAC, Mode=OneWay}"
+                                        Style="{x:Null}" />
+                                </ikw:SimpleStackPanel>
+                            </ui:SettingsExpander.Items>
+                        </ui:SettingsExpander>
+                        <ui:SettingsExpander Header="{l:Static resx:Resources.PowerState_OnBattery}" IsExpanded="False">
+                            <ui:SettingsExpander.HeaderIcon>
+                                <ui:FontIcon Glyph="&#xebb2;" />
+                            </ui:SettingsExpander.HeaderIcon>
+
+                            <TextBlock
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource BodyTextBlockStyle}"
+                                Text="{Binding SelectedPickerDC.Text, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ResourceStringFormatConverter}, ConverterParameter=ProfilesPage_PowerProfileSummary}"
+                                Visibility="{Binding PerformanceManagerEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                             <ui:SettingsExpander.Items>
                                 <ui:SettingsCard
                                     Command="{Binding OpenPowerProfileOnBatteryCommand}"
-                                    Header="On battery"
+                                    Header="{l:Static resx:Resources.ProfilesPage_PowerPreset}"
                                     IsClickEnabled="True"
-                                    Tag="Navigation">
+                                    Tag="Navigation"
+                                    Visibility="{Binding PerformanceManagerEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                                     <ComboBox
                                         Name="PowerProfileOnBattery"
                                         MaxWidth="{Binding ActualWidth, ConverterParameter=x/2.4, Converter={StaticResource Math}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}"
@@ -905,33 +1000,60 @@
                                     </ComboBox>
                                 </ui:SettingsCard>
 
-                                <ui:SettingsCard
-                                    Command="{Binding OpenPowerProfilePluggedCommand}"
-                                    Header="Plugged in"
-                                    IsClickEnabled="True"
-                                    Tag="Navigation">
+                                <!--  one choice: Inherit with the value it gives, or a value that overrides it; Custom adds the slider row  -->
+                                <ui:SettingsCard Header="{l:Static resx:Resources.ProfilesPage_FramerateLimit}">
                                     <ComboBox
-                                        Name="PowerProfilePlugged"
-                                        MaxWidth="{Binding ActualWidth, ConverterParameter=x/2.4, Converter={StaticResource Math}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}"
-                                        DisplayMemberPath="Text"
-                                        ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}"
-                                        ItemsSource="{Binding ProfilePickerCollectionViewAC, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                        SelectedItem="{Binding SelectedPickerAC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        SelectedValuePath="Text">
-                                        <ComboBox.GroupStyle>
-                                            <GroupStyle>
-                                                <GroupStyle.HeaderTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock
-                                                            Margin="4,0,0,0"
-                                                            Style="{StaticResource BaseTextBlockStyle}"
-                                                            Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                    </DataTemplate>
-                                                </GroupStyle.HeaderTemplate>
-                                            </GroupStyle>
-                                        </ComboBox.GroupStyle>
-                                    </ComboBox>
+                                        MinWidth="160"
+                                        ItemContainerStyle="{StaticResource OverrideChoiceItemStyle}"
+                                        ItemTemplate="{StaticResource OverrideChoiceItemTemplate}"
+                                        ItemsSource="{Binding FramerateRowDC.Choices, Mode=OneWay}"
+                                        SelectedItem="{Binding FramerateRowDC.SelectedChoice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </ui:SettingsCard>
+
+                                <ui:SettingsCard Visibility="{Binding FramerateRowDC.ShowCustom, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <DockPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ui:SettingsCard}}">
+                                        <TextBox
+                                            Height="31"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            HorizontalContentAlignment="Center"
+                                            IsReadOnly="True"
+                                            Text="{Binding FramerateRowDC.CustomValue, StringFormat={}{0:N0} FPS, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+                                        <Slider
+                                            Margin="8,0,104,0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Center"
+                                            AutoToolTipPrecision="0"
+                                            IsMoveToPointEnabled="True"
+                                            IsSnapToTickEnabled="True"
+                                            LargeChange="10"
+                                            Maximum="{Binding FramerateRowDC.CustomMaximum, Mode=OneWay}"
+                                            Minimum="{Binding FramerateRowDC.CustomMinimum, Mode=OneWay}"
+                                            SmallChange="1"
+                                            TickFrequency="1"
+                                            TickPlacement="BottomRight"
+                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                            Value="{Binding FramerateRowDC.CustomValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DockPanel>
+                                </ui:SettingsCard>
+
+                                <!--  resolution and refresh rate overrides, one row per connected monitor; a local style keeps the expander item style off  -->
+                                <ikw:SimpleStackPanel Style="{x:Null}">
+                                    <ItemsControl
+                                        Focusable="False"
+                                        ItemTemplate="{StaticResource DisplayOverrideRowTemplate}"
+                                        ItemsSource="{Binding DisplayOverrideRowsDC, Mode=OneWay}"
+                                        Style="{x:Null}" />
+                                </ikw:SimpleStackPanel>
+
+                                <!--  graphics overrides, one row per graphics group  -->
+                                <ikw:SimpleStackPanel Style="{x:Null}" Visibility="{Binding GPUManagementEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <ItemsControl
+                                        Focusable="False"
+                                        ItemTemplate="{StaticResource GraphicsOverrideRowTemplate}"
+                                        ItemsSource="{Binding GraphicsOverrideRowsDC, Mode=OneWay}"
+                                        Style="{x:Null}" />
+                                </ikw:SimpleStackPanel>
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>
                     </ikw:SimpleStackPanel>
@@ -948,31 +1070,6 @@
                         Spacing="3"
                         Visibility="{Binding GPUManagementEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                        <!--  GPU Scaling  -->
-                        <ui:SettingsExpander
-                            Name="StackProfileGPUScaling"
-                            d:IsEnabled="True"
-                            d:IsExpanded="True"
-                            Description="{l:Static resx:Resources.ProfilesPage_GPUScalingDesc}"
-                            Header="{l:Static resx:Resources.ProfilesPage_GPUScaling}"
-                            IsEnabled="{Binding HasGPUScalingSupport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ui:SettingsExpander.HeaderIcon>
-                                <ui:FontIcon Glyph="&#xe9a6;" />
-                            </ui:SettingsExpander.HeaderIcon>
-
-                            <ui:ToggleSwitch x:Name="GPUScalingToggle" IsOn="{Binding GPUScalingEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                            <ui:SettingsExpander.Items>
-                                <ui:SettingsCard Header="{l:Static resx:Resources.ProfilesPage_ScalingMode}" IsEnabled="{Binding GPUScalingEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <ComboBox x:Name="GPUScalingComboBox" SelectedIndex="{Binding ScalingModeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                        <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_ScalingMode_PreserveAspectRatio}" />
-                                        <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_ScalingMode_FullPanel}" />
-                                        <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_ScalingMode_Center}" IsEnabled="{Binding RSREnabled, Converter={StaticResource InvertBooleanConverter}}" />
-                                    </ComboBox>
-                                </ui:SettingsCard>
-                            </ui:SettingsExpander.Items>
-                        </ui:SettingsExpander>
-
                         <!--  Pre-built shader download  -->
                         <ui:SettingsCard
                             Description="Download pre-built shaders for this application"
@@ -984,205 +1081,6 @@
 
                             <ui:ToggleSwitch IsOn="{Binding PrebuiltShaderDownloadEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </ui:SettingsCard>
-
-                        <!--  (AMD: AFMF)  -->
-                        <ui:SettingsExpander
-                            Name="StackProfileAFMF"
-                            d:IsEnabled="True"
-                            d:IsExpanded="True"
-                            d:Visibility="Visible"
-                            Description="{l:Static resx:Resources.ProfilesPage_AFMFDesc}"
-                            Header="{l:Static resx:Resources.ProfilesPage_AFMF}"
-                            IsEnabled="{Binding HasAFMFSupport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            Visibility="{Binding IsAMDGPU, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <ui:SettingsExpander.HeaderIcon>
-                                <ui:FontIcon Glyph="&#xe91b;" />
-                            </ui:SettingsExpander.HeaderIcon>
-
-                            <ui:ToggleSwitch x:Name="AFMFToggle" IsOn="{Binding AFMFEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                            <ui:SettingsExpander.Items>
-                                <ui:SettingsCard
-                                    d:IsEnabled="True"
-                                    Description="{l:Static resx:Resources.ProfilesPage_AFMFAlgorithmDesc}"
-                                    Header="{l:Static resx:Resources.ProfilesPage_AFMFAlgorithm}"
-                                    IsEnabled="{Binding AFMFEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Visibility="{Binding HasAFMF21Support, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                    <ComboBox Name="AFMFAlgorithmComboBox" SelectedIndex="{Binding AFMFAlgorithm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                        <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_AFMFAlgorithm_Auto}" />
-                                        <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_AFMFAlgorithm_Enhanced}" />
-                                        <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_AFMFAlgorithm_Standard}" />
-                                    </ComboBox>
-                                </ui:SettingsCard>
-
-                                <ui:SettingsCard
-                                    d:IsEnabled="True"
-                                    Description="{l:Static resx:Resources.ProfilesPage_AFMFSearchModeDesc}"
-                                    Header="{l:Static resx:Resources.ProfilesPage_AFMFSearchMode}"
-                                    IsEnabled="{Binding AFMFEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Visibility="{Binding HasAFMF21Support, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                    <ComboBox Name="AFMFSearchModeComboBox" SelectedIndex="{Binding AFMFSearchMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                        <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_AFMFSearchMode_Auto}" />
-                                        <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_AFMFSearchMode_Standard}" />
-                                        <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_AFMFSearchMode_High}" />
-                                    </ComboBox>
-                                </ui:SettingsCard>
-
-                                <ui:SettingsCard
-                                    d:IsEnabled="True"
-                                    Description="{l:Static resx:Resources.ProfilesPage_AFMFPerformanceModeDesc}"
-                                    Header="{l:Static resx:Resources.ProfilesPage_AFMFPerformanceMode}"
-                                    IsEnabled="{Binding AFMFEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Visibility="{Binding HasAFMF21Support, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                    <ComboBox Name="AFMFPerformanceModeComboBox" SelectedIndex="{Binding AFMFPerformanceMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                        <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_AFMFPerformanceMode_Auto}" />
-                                        <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_AFMFPerformanceMode_Quality}" />
-                                        <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_AFMFPerformanceMode_Performance}" />
-                                    </ComboBox>
-                                </ui:SettingsCard>
-
-                                <ui:SettingsCard
-                                    d:IsEnabled="True"
-                                    Description="{l:Static resx:Resources.ProfilesPage_AFMFFastMotionResponseDesc}"
-                                    Header="{l:Static resx:Resources.ProfilesPage_AFMFFastMotionResponse}"
-                                    IsEnabled="{Binding AFMFEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Visibility="{Binding HasAFMF21Support, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                    <ComboBox Name="AFMFFastMotionResponseComboBox" SelectedIndex="{Binding AFMFFastMotionResponse, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                        <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_AFMFFastMotionResponse_RepeatFrames}" />
-                                        <ComboBoxItem Content="{l:Static resx:Resources.ProfilesPage_AFMFFastMotionResponse_BlendedFrames}" />
-                                    </ComboBox>
-                                </ui:SettingsCard>
-                            </ui:SettingsExpander.Items>
-                        </ui:SettingsExpander>
-
-                        <!--  (AMD: RSR)  -->
-                        <ui:SettingsExpander
-                            Name="StackProfileRSR"
-                            d:IsEnabled="True"
-                            d:IsExpanded="True"
-                            d:Visibility="Visible"
-                            Description="{l:Static resx:Resources.ProfilesPage_RSRDesc}"
-                            Header="{l:Static resx:Resources.ProfilesPage_RSR}"
-                            IsEnabled="{Binding HasRSRSupport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            Visibility="{Binding IsAMDGPU, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <ui:SettingsExpander.HeaderIcon>
-                                <ui:FontIcon Glyph="&#xE80A;" />
-                            </ui:SettingsExpander.HeaderIcon>
-
-                            <ui:ToggleSwitch x:Name="RSRToggle" IsOn="{Binding RSREnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                            <ui:SettingsExpander.Items>
-                                <ui:SettingsCard
-                                    d:IsEnabled="True"
-                                    Header="{l:Static resx:Resources.ProfilesPage_ResolutionScale}"
-                                    IsEnabled="{Binding RSREnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <DockPanel>
-                                        <TextBox
-                                            Height="31"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Center"
-                                            HorizontalContentAlignment="Center"
-                                            IsReadOnly="True"
-                                            Text="{Binding RSRValue, StringFormat={}{0:N0}%, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                                        <Slider
-                                            Name="RSRSlider"
-                                            Width="200"
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            AutoToolTipPrecision="0"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            LargeChange="5"
-                                            Maximum="100"
-                                            Minimum="0"
-                                            SmallChange="1"
-                                            TickFrequency="5"
-                                            TickPlacement="BottomRight"
-                                            ToolTip="{Binding Value, StringFormat={}{0:N0}%, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            Value="{Binding RSRValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </DockPanel>
-                                </ui:SettingsCard>
-                            </ui:SettingsExpander.Items>
-                        </ui:SettingsExpander>
-
-                        <!--  Integer Scaling  -->
-                        <ui:SettingsExpander
-                            Name="StackProfileIS"
-                            d:IsEnabled="True"
-                            d:IsExpanded="True"
-                            Description="{l:Static resx:Resources.ProfilesPage_ISDesc}"
-                            Header="{l:Static resx:Resources.ProfilesPage_IS}"
-                            IsEnabled="{Binding HasIntegerScalingSupport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ui:SettingsExpander.HeaderIcon>
-                                <ui:FontIcon Glyph="&#xeb3c;" />
-                            </ui:SettingsExpander.HeaderIcon>
-
-                            <ui:ToggleSwitch x:Name="IntegerScalingToggle" IsOn="{Binding IntegerScalingEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                            <ui:SettingsExpander.Items>
-                                <ui:SettingsCard
-                                    d:IsEnabled="True"
-                                    Header="{l:Static resx:Resources.ProfilesPage_ResolutionScale}"
-                                    IsEnabled="{Binding IntegerScalingEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-
-                                    <ComboBox
-                                        Name="IntegerScalingComboBox"
-                                        ItemsSource="{Binding IntegerScalingDividers}"
-                                        SelectedIndex="{Binding IntegerScalingDividerIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </ui:SettingsCard>
-                            </ui:SettingsExpander.Items>
-                        </ui:SettingsExpander>
-
-                        <!--  RIS  -->
-                        <ui:SettingsExpander
-                            Name="StackProfileRIS"
-                            d:IsEnabled="True"
-                            d:IsExpanded="True"
-                            Description="{l:Static resx:Resources.ProfilesPage_ImageSharpeningDesc}"
-                            Header="{l:Static resx:Resources.ProfilesPage_ImageSharpening}"
-                            IsEnabled="{Binding HasGPUScalingSupport, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ui:SettingsExpander.HeaderIcon>
-                                <ui:FontIcon Glyph="&#xed63;" />
-                            </ui:SettingsExpander.HeaderIcon>
-
-                            <ui:ToggleSwitch x:Name="RISToggle" IsOn="{Binding RISEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                            <ui:SettingsExpander.Items>
-                                <ui:SettingsCard
-                                    d:IsEnabled="True"
-                                    Header="{l:Static resx:Resources.ProfilesPage_SharpeningScale}"
-                                    IsEnabled="{Binding RISEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <DockPanel>
-                                        <TextBox
-                                            Height="31"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Center"
-                                            HorizontalContentAlignment="Center"
-                                            IsReadOnly="True"
-                                            Text="{Binding RISValue, StringFormat={}{0:N0}%, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                                        <Slider
-                                            x:Name="RISSlider"
-                                            Width="200"
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            AutoToolTipPrecision="0"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            LargeChange="5"
-                                            Maximum="100"
-                                            Minimum="0"
-                                            SmallChange="1"
-                                            TickFrequency="5"
-                                            TickPlacement="BottomRight"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            Value="{Binding RISValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </DockPanel>
-                                </ui:SettingsCard>
-                            </ui:SettingsExpander.Items>
-                        </ui:SettingsExpander>
-
                     </ikw:SimpleStackPanel>
                 </ikw:SimpleStackPanel>
 
