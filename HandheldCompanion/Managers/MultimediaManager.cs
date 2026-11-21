@@ -756,7 +756,7 @@ public class MultimediaManager : IManager
         lock (_knownMonitorsLock)
         {
             // write next to the live file and replace it only once the write succeeded, so a failed write keeps the previous inventory
-            string temporaryPath = KnownMonitorsPath + ".tmp";
+            string temporaryPath = $"{KnownMonitorsPath}.{Guid.NewGuid():N}.tmp";
             try
             {
                 string json = JsonConvert.SerializeObject(_knownMonitors, Formatting.Indented);
