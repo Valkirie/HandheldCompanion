@@ -320,14 +320,16 @@ public static class MonitorIdentity
             monitor.DevicePath = screen.NormalizedPath;
         }
 
-        // an exact-path match can succeed without EDID; keep the stored identity then
-        if (IsValidSerialNumber(screen.EdidSerialNumber) || IsValidSerialString(screen.EdidSerialString))
+        // an exact-path match can succeed without EDID; keep stored fields the current scan did not read
+        if (!string.IsNullOrEmpty(screen.ModelKey))
         {
             monitor.Manufacturer = screen.EdidManufacturer;
             monitor.ProductCode = screen.EdidProductCode;
-            monitor.SerialNumber = screen.EdidSerialNumber;
-            monitor.SerialString = screen.EdidSerialString;
         }
+        if (IsValidSerialNumber(screen.EdidSerialNumber))
+            monitor.SerialNumber = screen.EdidSerialNumber;
+        if (IsValidSerialString(screen.EdidSerialString))
+            monitor.SerialString = screen.EdidSerialString;
         // keep the stored name when the current one is empty or generic
         if (CleanName(screen.FriendlyName) is not null)
             monitor.FriendlyName = screen.FriendlyName;

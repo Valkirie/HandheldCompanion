@@ -751,7 +751,7 @@ public class MultimediaManager : IManager
         }
     }
 
-    private void SaveKnownMonitors()
+    private bool SaveKnownMonitors()
     {
         lock (_knownMonitorsLock)
         {
@@ -759,10 +759,12 @@ public class MultimediaManager : IManager
             {
                 string json = JsonConvert.SerializeObject(_knownMonitors, Formatting.Indented);
                 File.WriteAllText(KnownMonitorsPath, json);
+                return true;
             }
             catch (Exception ex)
             {
                 LogManager.LogError("Failed to save known monitors: {0}", ex.Message);
+                return false;
             }
         }
     }
@@ -792,7 +794,7 @@ public class MultimediaManager : IManager
     /// </summary>
     public bool ForgetKnownMonitor(Guid monitorId)
     {
-        bool removed;
+        bool removed = false;
         lock (_displayLock)
         lock (_knownMonitorsLock)
         {
@@ -802,9 +804,15 @@ public class MultimediaManager : IManager
                 return false;
             }
 
-            removed = _knownMonitors.RemoveAll(m => m.Id == monitorId) > 0;
-            if (removed)
-                SaveKnownMonitors();
+            List<KnownMonitor> removedEntries = _knownMonitors.Where(m => m.Id == monitorId).ToList();
+            if (removedEntries.Count > 0)
+            {
+                _knownMonitors.RemoveAll(m => m.Id == monitorId);
+                if (SaveKnownMonitors())
+                    removed = true;
+                else
+                    _knownMonitors.AddRange(removedEntries);
+            }
         }
 
         if (removed)
@@ -1328,11 +1336,17 @@ public class MultimediaManager : IManager
         {
             try
             {
+                EnforcedDisplayMode? context = ManagerFactory.powerProfileManager.GetCurrentGameProfile(out Profile? profile, out int powerLineStatus)
+                    ? ResolveEnforcedDisplayMode(target, profile, powerLineStatus)
+                    : null;
+
                 bool result = SetDisplayMode(target, width, height, frequency, false);
 
-                // the current profile display mode counts as enforced, so the next apply of the same profile doesn't undo this one
-                if (result && ManagerFactory.powerProfileManager.GetCurrentGameProfile(out Profile? profile, out int powerLineStatus))
-                    _enforcedDisplayModes[target.Id] = ResolveEnforcedDisplayMode(target, profile, powerLineStatus);
+                // the current profile display mode counts as enforced only if the override context didn't change during SetDisplayMode
+                if (result && context is not null
+                    && ManagerFactory.powerProfileManager.GetCurrentGameProfile(out Profile? currentProfile, out int currentPowerLineStatus)
+                    && ResolveEnforcedDisplayMode(target, currentProfile, currentPowerLineStatus) == context)
+                    _enforcedDisplayModes[target.Id] = context;
 
                 return result;
             }

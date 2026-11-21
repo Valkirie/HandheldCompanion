@@ -20,8 +20,11 @@ namespace HandheldCompanion.Managers
         private readonly object profileTransitionLock = new();
         private PowerProfile? currentProfile;
         private Profile? currentGameProfile;
-        private int currentPowerLineStatus;
+        private int currentPowerLineStatus = (int)PowerLineStatus.Online;
         private bool streamingPowerOverride;
+
+        // call under profileLock
+        private int GetEffectivePowerLineStatusLocked() => streamingPowerOverride ? (int)PowerLineStatus.Offline : currentPowerLineStatus;
 
         public ConcurrentDictionary<Guid, PowerProfile> profiles = [];
 
@@ -291,18 +294,14 @@ namespace HandheldCompanion.Managers
                 int powerLineStatus;
                 lock (profileLock)
                 {
-                    powerLineStatus = streamingPowerOverride ? (int)PowerLineStatus.Offline : (int)powerStatus.PowerLineStatus;
-                    if (powerLineStatus != (int)PowerLineStatus.Offline && powerLineStatus != (int)PowerLineStatus.Online)
-                    {
-                        powerLineStatus = currentPowerLineStatus == (int)PowerLineStatus.Offline
-                            || currentPowerLineStatus == (int)PowerLineStatus.Online
-                            ? currentPowerLineStatus
-                            : (int)PowerLineStatus.Online;
-                    }
+                    int hardwareStatus = (int)powerStatus.PowerLineStatus;
+                    if (hardwareStatus == (int)PowerLineStatus.Offline || hardwareStatus == (int)PowerLineStatus.Online)
+                        currentPowerLineStatus = hardwareStatus;
+
+                    powerLineStatus = GetEffectivePowerLineStatusLocked();
 
                     // the per power state overrides follow the game profile and power state, with or without a power profile
                     currentGameProfile = profile;
-                    currentPowerLineStatus = powerLineStatus;
                 }
 
                 // ApplyProfile() sets currentProfile under profileLock
@@ -329,7 +328,7 @@ namespace HandheldCompanion.Managers
                 lock (profileLock)
                 {
                     gameProfile = currentGameProfile;
-                    powerLineStatus = currentPowerLineStatus;
+                    powerLineStatus = GetEffectivePowerLineStatusLocked();
                 }
 
                 if (gameProfile is null)
@@ -572,7 +571,7 @@ namespace HandheldCompanion.Managers
             lock (profileLock)
             {
                 gameProfile = currentGameProfile;
-                powerLineStatus = currentPowerLineStatus;
+                powerLineStatus = GetEffectivePowerLineStatusLocked();
             }
 
             (FramerateLimitMode mode, int value, _) = ResolveFramerateLimit(gameProfile, powerLineStatus, GetCurrent());
@@ -644,7 +643,7 @@ namespace HandheldCompanion.Managers
             lock (profileLock)
             {
                 gameProfile = currentGameProfile;
-                powerLineStatus = currentPowerLineStatus;
+                powerLineStatus = GetEffectivePowerLineStatusLocked();
             }
 
             // nothing applied yet, nothing to enforce
@@ -683,7 +682,7 @@ namespace HandheldCompanion.Managers
             lock (profileLock)
             {
                 gameProfile = currentGameProfile;
-                powerLineStatus = currentPowerLineStatus;
+                powerLineStatus = GetEffectivePowerLineStatusLocked();
             }
 
             return gameProfile is not null;
