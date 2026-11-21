@@ -755,15 +755,19 @@ public class MultimediaManager : IManager
     {
         lock (_knownMonitorsLock)
         {
+            // write next to the live file and replace it only once the write succeeded, so a failed write keeps the previous inventory
+            string temporaryPath = KnownMonitorsPath + ".tmp";
             try
             {
                 string json = JsonConvert.SerializeObject(_knownMonitors, Formatting.Indented);
-                File.WriteAllText(KnownMonitorsPath, json);
+                File.WriteAllText(temporaryPath, json);
+                File.Move(temporaryPath, KnownMonitorsPath, true);
                 return true;
             }
             catch (Exception ex)
             {
                 LogManager.LogError("Failed to save known monitors: {0}", ex.Message);
+                try { File.Delete(temporaryPath); } catch { }
                 return false;
             }
         }
