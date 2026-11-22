@@ -31,6 +31,7 @@ namespace HandheldCompanion.Views.Pages
         {
             DataContext = new DevicePageViewModel();
             InitializeComponent();
+            InitSleepHibernateTimeCombo();
         }
 
         public DevicePage(string? Tag) : this()
@@ -96,6 +97,10 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager_SettingValueChanged("MsrUndervoltGpu", ManagerFactory.settingsManager.GetString("MsrUndervoltGpu"), false, true);
             SettingsManager_SettingValueChanged("MsrUndervoltSoc", ManagerFactory.settingsManager.GetString("MsrUndervoltSoc"), false, true);
             SettingsManager_SettingValueChanged("EnhancedSleep", ManagerFactory.settingsManager.GetString("EnhancedSleep"), false, true);
+            SettingsManager_SettingValueChanged("SuspendOnSleep", ManagerFactory.settingsManager.GetString("SuspendOnSleep"), false, true);
+            SettingsManager_SettingValueChanged("SleepHibernate", ManagerFactory.settingsManager.GetString("SleepHibernate"), false, true);
+            SettingsManager_SettingValueChanged("SleepHibernateBatteryPercent", ManagerFactory.settingsManager.GetString("SleepHibernateBatteryPercent"), false, true);
+            SettingsManager_SettingValueChanged("SleepHibernateAtMinutes", ManagerFactory.settingsManager.GetString("SleepHibernateAtMinutes"), false, true);
             SettingsManager_SettingValueChanged("DockedDisplayBehavior", ManagerFactory.settingsManager.GetString("DockedDisplayBehavior"), false, true);
         }
 
@@ -228,6 +233,18 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "EnhancedSleep":
                         Toggle_EnhancedSleep.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "SuspendOnSleep":
+                        Toggle_SuspendOnSleep.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "SleepHibernate":
+                        Toggle_SleepHibernate.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "SleepHibernateBatteryPercent":
+                        NumberBox_SleepHibernateBattery.Value = Convert.ToDouble(value);
+                        break;
+                    case "SleepHibernateAtMinutes":
+                        SelectSleepHibernateTime(Convert.ToInt32(value));
                         break;
                     case "DockedDisplayBehavior":
                         cB_DockedDisplayBehavior.SelectedIndex = Convert.ToInt32(value);
@@ -629,6 +646,79 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             ManagerFactory.settingsManager.SetProperty("EnhancedSleep", Toggle_EnhancedSleep.IsOn);
+        }
+
+        private void Toggle_SuspendOnSleep_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            ManagerFactory.settingsManager.SetProperty("SuspendOnSleep", Toggle_SuspendOnSleep.IsOn);
+        }
+
+        private void Toggle_SleepHibernate_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            ManagerFactory.settingsManager.SetProperty("SleepHibernate", Toggle_SleepHibernate.IsOn);
+        }
+
+        private void NumberBox_SleepHibernateBattery_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
+        {
+            if (!IsLoaded)
+                return;
+
+            var value = NumberBox_SleepHibernateBattery.Value;
+            if (double.IsNaN(value))
+                return;
+
+            int percent = (int)Math.Round(value);
+            if (NumberBox_SleepHibernateBattery.Value != percent)
+                NumberBox_SleepHibernateBattery.Value = percent;
+
+            ManagerFactory.settingsManager.SetProperty("SleepHibernateBatteryPercent", percent);
+        }
+
+        private void InitSleepHibernateTimeCombo()
+        {
+            Combo_SleepHibernateTime.Items.Clear();
+            Combo_SleepHibernateTime.Items.Add(new ComboBoxItem
+            {
+                Content = Properties.Resources.DevicePage_SleepHibernateTimeNever,
+                Tag = SleepPowerPolicy.NeverMinutes
+            });
+            for (int hour = 0; hour < 24; hour++)
+            {
+                Combo_SleepHibernateTime.Items.Add(new ComboBoxItem
+                {
+                    Content = $"{hour:00}:00",
+                    Tag = hour * 60
+                });
+            }
+        }
+
+        private void SelectSleepHibernateTime(int minutes)
+        {
+            foreach (ComboBoxItem item in Combo_SleepHibernateTime.Items)
+            {
+                if (item.Tag is int tag && tag == minutes)
+                {
+                    Combo_SleepHibernateTime.SelectedItem = item;
+                    return;
+                }
+            }
+
+            Combo_SleepHibernateTime.SelectedIndex = 0;
+        }
+
+        private void Combo_SleepHibernateTime_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            if (Combo_SleepHibernateTime.SelectedItem is ComboBoxItem item && item.Tag is int minutes)
+                ManagerFactory.settingsManager.SetProperty("SleepHibernateAtMinutes", minutes);
         }
 
         #region Display

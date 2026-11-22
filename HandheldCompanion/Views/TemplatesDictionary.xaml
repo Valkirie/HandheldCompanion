@@ -2066,4 +2066,31 @@
             <ItemsControl ItemTemplate="{StaticResource TriggerMappingTemplate}" ItemsSource="{Binding TriggerMappings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
     </DataTemplate>
+
+    <!--  override choice entries: a choice that can't apply right now stays listed but disabled  -->
+    <Style
+        x:Key="OverrideChoiceItemStyle"
+        BasedOn="{StaticResource {x:Type ComboBoxItem}}"
+        TargetType="ComboBoxItem">
+        <Setter Property="IsEnabled" Value="{Binding IsEnabled, Mode=OneWay}" />
+    </Style>
+
+    <!--  the inherit choice reads italic like inherited parts of the row summaries; a stored value the list no longer offers reads dimmed and italic, in the list and in the closed combo  -->
+    <DataTemplate x:Key="OverrideChoiceItemTemplate">
+        <TextBlock Text="{Binding Label, Mode=OneWay}">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsInherit, Mode=OneTime}" Value="True">
+                            <Setter Property="FontStyle" Value="Italic" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsStale, Mode=OneTime}" Value="True">
+                            <Setter Property="FontStyle" Value="Italic" />
+                            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+    </DataTemplate>
 </ResourceDictionary>

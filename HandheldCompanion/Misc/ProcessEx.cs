@@ -283,6 +283,11 @@ public class ProcessEx : IDisposable, ICloneable
         Dispose(false);
     }
 
+    /// <summary>
+    /// True for a game platform's own client or helper executable, such as steamwebhelper.exe, as opposed to a game.
+    /// </summary>
+    public bool IsLauncher => launcherExecutables.Contains(Executable, StringComparer.InvariantCultureIgnoreCase);
+
     public bool IsGame()
     {
         if (IsDisposing)
@@ -301,7 +306,7 @@ public class ProcessEx : IDisposable, ICloneable
         }
 
         // avoid launchers
-        if (launcherExecutables.Contains(Executable, StringComparer.InvariantCultureIgnoreCase))
+        if (IsLauncher)
             return false;
 
         // some gaming platforms won't let us read modules, try the certificate instead

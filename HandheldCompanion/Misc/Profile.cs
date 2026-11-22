@@ -197,7 +197,8 @@ public partial class Profile : ICloneable, IComparable, INotifyPropertyChanged
     // Reuse also overrides the Replace setting used when cloning for persistence.
     [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Reuse)]
     public HashSet<Guid> Collections { get; } = [];
-    public bool SuspendOnSleep { get; set; }
+    [JsonConverter(typeof(SuspendOnSleepModeConverter))]
+    public SuspendOnSleepMode SuspendOnSleep { get; set; } = SuspendOnSleepMode.Inherit;
     public bool SuspendOnQT { get; set; }
 
     public bool Default { get; set; }

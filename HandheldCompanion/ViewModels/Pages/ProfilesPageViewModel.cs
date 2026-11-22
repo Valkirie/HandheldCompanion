@@ -1286,20 +1286,77 @@ namespace HandheldCompanion.ViewModels
             }
         }
 
-        public bool SuspendOnSleep
-        {
-            get => SelectedProfile?.SuspendOnSleep ?? false;
-            set
-            {
-                if (SelectedProfile != null && SelectedProfile.SuspendOnSleep != value)
-                {
-                    SelectedProfile.SuspendOnSleep = value;
-                    OnPropertyChanged(nameof(SuspendOnSleep));
+        private const string SuspendOnSleepOnKey = "on";
+        private const string SuspendOnSleepOffKey = "off";
+        private readonly OverrideChoiceList _suspendOnSleepChoices = new();
 
-                    if (!isLoadingProfile)
-                        UpdateProfile();
-                }
+        public IReadOnlyList<OverrideChoice> SuspendOnSleepChoices => _suspendOnSleepChoices.Items;
+
+        public OverrideChoice? SelectedSuspendOnSleepChoice
+        {
+            get => _suspendOnSleepChoices.Find(GetSuspendOnSleepChoiceKey());
+            set => SelectSuspendOnSleepChoice(value?.Key);
+        }
+
+        private string GetSuspendOnSleepInheritLabel()
+        {
+            string state = ManagerFactory.settingsManager.GetBoolean("SuspendOnSleep")
+                ? Properties.Resources.ProfilesPage_On
+                : Properties.Resources.ProfilesPage_Off;
+            return string.Format(Properties.Resources.OverrideMode_UseDeviceSettings, state);
+        }
+
+        private string GetSuspendOnSleepChoiceKey() => SelectedProfile?.SuspendOnSleep switch
+        {
+            SuspendOnSleepMode.On => SuspendOnSleepOnKey,
+            SuspendOnSleepMode.Off => SuspendOnSleepOffKey,
+            _ => OverrideChoice.InheritKey,
+        };
+
+        private void SelectSuspendOnSleepChoice(string? key)
+        {
+            // a list swap clears the selection on its way, that is not a pick
+            if (string.IsNullOrEmpty(key) || key == GetSuspendOnSleepChoiceKey())
+                return;
+
+            if (SelectedProfile is null)
+                return;
+
+            SuspendOnSleepMode mode;
+            switch (key)
+            {
+                case OverrideChoice.InheritKey:
+                    mode = SuspendOnSleepMode.Inherit;
+                    break;
+                case SuspendOnSleepOnKey:
+                    mode = SuspendOnSleepMode.On;
+                    break;
+                case SuspendOnSleepOffKey:
+                    mode = SuspendOnSleepMode.Off;
+                    break;
+                default:
+                    return;
             }
+
+            SelectedProfile.SuspendOnSleep = mode;
+            RefreshSuspendOnSleepChoices();
+
+            if (!isLoadingProfile)
+                UpdateProfile();
+        }
+
+        private void RefreshSuspendOnSleepChoices()
+        {
+            (string Key, string Label, bool IsEnabled)[] values =
+            [
+                (SuspendOnSleepOnKey, Properties.Resources.ProfilesPage_On, true),
+                (SuspendOnSleepOffKey, Properties.Resources.ProfilesPage_Off, true),
+            ];
+
+            if (_suspendOnSleepChoices.Update(GetSuspendOnSleepInheritLabel(), values, GetSuspendOnSleepChoiceKey()))
+                _suspendOnSleepChoices.Publish(OnPropertyChanged, nameof(SuspendOnSleepChoices), nameof(SelectedSuspendOnSleepChoice));
+            else
+                OnPropertyChanged(nameof(SelectedSuspendOnSleepChoice));
         }
 
         public bool FullScreenOptimization
@@ -2520,6 +2577,7 @@ namespace HandheldCompanion.ViewModels
             ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             OnPropertyChanged(nameof(GPUManagementEnabled));
             OnPropertyChanged(nameof(PerformanceManagerEnabled));
+            RefreshSuspendOnSleepChoices();
         }
 
         private void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
@@ -2528,6 +2586,8 @@ namespace HandheldCompanion.ViewModels
                 OnPropertyChanged(nameof(GPUManagementEnabled));
             if (name == "PerformanceManagerEnabled")
                 OnPropertyChanged(nameof(PerformanceManagerEnabled));
+            if (name == "SuspendOnSleep")
+                RefreshSuspendOnSleepChoices();
         }
 
         private void QueryPlatforms()
@@ -3308,7 +3368,7 @@ namespace HandheldCompanion.ViewModels
             OnPropertyChanged(nameof(MotionInvertHorizontal));
             OnPropertyChanged(nameof(MotionInvertVertical));
             OnPropertyChanged(nameof(SuspendOnQT));
-            OnPropertyChanged(nameof(SuspendOnSleep));
+            RefreshSuspendOnSleepChoices();
             OnPropertyChanged(nameof(FullScreenOptimization));
             OnPropertyChanged(nameof(HighDPIAware));
             OnPropertyChanged(nameof(IsLiked));

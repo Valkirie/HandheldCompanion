@@ -429,6 +429,7 @@ public partial class App : Application
         Task.Run(() => TaskManager.Start(exePath));
         Task.Run(() => PerformanceManager.Start());
         Task.Run(() => UpdateManager.Start());
+        Task.Run(() => QuickSleep.Start());
     }
 
     private void RunUninstallRestoreMode()

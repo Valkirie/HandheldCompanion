@@ -20,6 +20,43 @@ namespace HandheldCompanion.Helpers
         }
 
         /// <summary>
+        /// True when the firmware offers a classic sleep state (S1-S3). Modern Standby devices return false,
+        /// and on them SetSuspendState(false, ...) hibernates instead of sleeping.
+        /// </summary>
+        public static bool IsSleepAvailable()
+        {
+            return IsPwrSuspendAllowed();
+        }
+
+        /// <summary>
+        /// True when Windows reports AC power. Unknown (no battery, or the query failed) counts as AC.
+        /// </summary>
+        public static bool IsOnAC()
+        {
+            return !GetSystemPowerStatus(out SYSTEM_POWER_STATUS status) || status.ACLineStatus != 0;
+        }
+
+        /// <summary>
+        /// Sleep on S3 devices, or turn the display off on Modern Standby (where SetSuspendState becomes S4).
+        /// </summary>
+        public static bool SleepOrStandby(bool force = false, bool disableWakeEvent = false)
+        {
+            if (!IsSleepAvailable())
+                return TurnDisplayOff();
+
+            return Sleep(force, disableWakeEvent);
+        }
+
+        /// <summary>
+        /// Turn the display off, which puts a Modern Standby device into standby.
+        /// The message is posted, not sent, so a frozen or hung window cannot block the caller.
+        /// </summary>
+        public static bool TurnDisplayOff()
+        {
+            return PostMessage(HWND_BROADCAST, WM_SYSCOMMAND, (IntPtr)SC_MONITORPOWER, (IntPtr)MONITOR_OFF);
+        }
+
+        /// <summary>
         /// Put the system to sleep. If hybrid sleep is enabled by policy, Windows may hibernate instead.
         /// </summary>
         public static bool Sleep(bool force = false, bool disableWakeEvent = false)
@@ -117,6 +154,31 @@ namespace HandheldCompanion.Helpers
 
         [DllImport("powrprof.dll")]
         private static extern bool IsPwrHibernateAllowed();
+
+        [DllImport("powrprof.dll")]
+        private static extern bool IsPwrSuspendAllowed();
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct SYSTEM_POWER_STATUS
+        {
+            public byte ACLineStatus;
+            public byte BatteryFlag;
+            public byte BatteryLifePercent;
+            public byte SystemStatusFlag;
+            public int BatteryLifeTime;
+            public int BatteryFullLifeTime;
+        }
+
+        [DllImport("kernel32.dll")]
+        private static extern bool GetSystemPowerStatus(out SYSTEM_POWER_STATUS status);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        private static readonly IntPtr HWND_BROADCAST = (IntPtr)0xFFFF;
+        private const uint WM_SYSCOMMAND = 0x0112;
+        private const int SC_MONITORPOWER = 0xF170;
+        private const int MONITOR_OFF = 2;
 
         [DllImport("advapi32.dll", SetLastError = true)]
         private static extern bool OpenProcessToken(IntPtr ProcessHandle, uint DesiredAccess, out IntPtr TokenHandle);

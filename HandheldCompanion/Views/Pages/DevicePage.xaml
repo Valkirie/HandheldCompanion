@@ -302,6 +302,53 @@
                         <ui:ToggleSwitch x:Name="Toggle_EnhancedSleep" Toggled="Toggle_EnhancedSleep_Toggled" />
                     </ui:SettingsCard>
 
+                    <!--  Hibernate while asleep (battery only)  -->
+                    <ui:SettingsExpander
+                        x:Name="SleepHibernateExpander"
+                        Description="{l:Static resx:Resources.DevicePage_SleepHibernateDesc}"
+                        Header="{l:Static resx:Resources.DevicePage_SleepHibernate}">
+                        <ui:SettingsExpander.HeaderIcon>
+                            <ui:FontIcon Glyph="&#xE708;" />
+                        </ui:SettingsExpander.HeaderIcon>
+                        <ui:ToggleSwitch x:Name="Toggle_SleepHibernate" Toggled="Toggle_SleepHibernate_Toggled" />
+                        <ui:SettingsExpander.Items>
+                            <ui:SettingsCard
+                                Description="{l:Static resx:Resources.DevicePage_SleepHibernateBatteryDesc}"
+                                Header="{l:Static resx:Resources.DevicePage_SleepHibernateBattery}"
+                                IsEnabled="{Binding IsOn, ElementName=Toggle_SleepHibernate}">
+                                <ui:NumberBox
+                                    x:Name="NumberBox_SleepHibernateBattery"
+                                    MinWidth="20"
+                                    LargeChange="1"
+                                    Maximum="50"
+                                    Minimum="1"
+                                    SmallChange="1"
+                                    SpinButtonPlacementMode="Inline"
+                                    ValueChanged="NumberBox_SleepHibernateBattery_ValueChanged" />
+                            </ui:SettingsCard>
+                            <ui:SettingsCard
+                                Description="{l:Static resx:Resources.DevicePage_SleepHibernateTimeDesc}"
+                                Header="{l:Static resx:Resources.DevicePage_SleepHibernateTime}"
+                                IsEnabled="{Binding IsOn, ElementName=Toggle_SleepHibernate}">
+                                <ComboBox
+                                    x:Name="Combo_SleepHibernateTime"
+                                    MinWidth="120"
+                                    SelectionChanged="Combo_SleepHibernateTime_SelectionChanged" />
+                            </ui:SettingsCard>
+                        </ui:SettingsExpander.Items>
+                    </ui:SettingsExpander>
+
+                    <!--  Suspend and resume with standby state  -->
+                    <ui:SettingsCard
+                        x:Name="SuspendOnSleepCard"
+                        Description="{l:Static resx:Resources.DevicePage_SuspendOnSleepDesc}"
+                        Header="{l:Static resx:Resources.ProfilesPage_SuspendOnSleep}">
+                        <ui:SettingsCard.HeaderIcon>
+                            <ui:FontIcon Glyph="&#xE708;" />
+                        </ui:SettingsCard.HeaderIcon>
+                        <ui:ToggleSwitch x:Name="Toggle_SuspendOnSleep" Toggled="Toggle_SuspendOnSleep_Toggled" />
+                    </ui:SettingsCard>
+
                 </ikw:SimpleStackPanel>
             </ikw:SimpleStackPanel>
 

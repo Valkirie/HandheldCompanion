@@ -1360,11 +1360,15 @@
                                 </ui:SettingsCard>
 
                                 <!--  Suspend on sleep/resume  -->
-                                <ui:SettingsCard ContentAlignment="Left">
-                                    <CheckBox
-                                        Name="SuspendOnSleepCheckBox"
-                                        Content="{l:Static resx:Resources.ProfilesPage_SuspendOnSleep}"
-                                        IsChecked="{Binding SuspendOnSleep, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <ui:SettingsCard
+                                    Description="{l:Static resx:Resources.ProfilesPage_SuspendOnSleepDesc}"
+                                    Header="{l:Static resx:Resources.ProfilesPage_SuspendOnSleep}">
+                                    <ComboBox
+                                        MinWidth="160"
+                                        ItemContainerStyle="{StaticResource OverrideChoiceItemStyle}"
+                                        ItemTemplate="{StaticResource OverrideChoiceItemTemplate}"
+                                        ItemsSource="{Binding SuspendOnSleepChoices, Mode=OneWay}"
+                                        SelectedItem="{Binding SelectedSuspendOnSleepChoice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </ui:SettingsCard>
                             </ui:SettingsExpander.Items>
                         </ui:SettingsExpander>

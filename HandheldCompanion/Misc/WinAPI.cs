@@ -165,6 +165,14 @@ public static class WinAPI
     [DllImport("user32.dll")]
     public static extern bool SetForegroundWindow(nint hWnd);
 
+    public const uint GW_HWNDNEXT = 2;
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
+
+    [DllImport("user32.dll")]
+    public static extern bool IsWindow(IntPtr hWnd);
+
     [return: MarshalAs(UnmanagedType.Bool)]
     [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
     public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);

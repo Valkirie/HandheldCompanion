@@ -39,7 +39,10 @@ namespace HandheldCompanion.ViewModels
             {
                 switch (action)
                 {
-                    case "Sleep": PowerActionsHelper.Sleep(force: false); break;
+                    case "Sleep":
+                        // Modern Standby: display off (SetSuspendState would hibernate). S3: freeze then sleep.
+                        await QuickSleep.Run();
+                        break;
                     case "Hibernate":
                         if (PowerActionsHelper.IsHibernateAvailable())
                             PowerActionsHelper.Hibernate(force: false);
