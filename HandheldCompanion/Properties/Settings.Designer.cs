@@ -1693,12 +1693,60 @@ namespace HandheldCompanion.Properties
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool QuickSleep {
+        public bool SuspendOnSleep {
             get {
-                return ((bool)(this["QuickSleep"]));
+                return ((bool)(this["SuspendOnSleep"]));
             }
             set {
-                this["QuickSleep"] = value;
+                this["SuspendOnSleep"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SleepHibernate {
+            get {
+                return ((bool)(this["SleepHibernate"]));
+            }
+            set {
+                this["SleepHibernate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int SleepHibernateBatteryPercent {
+            get {
+                return ((int)(this["SleepHibernateBatteryPercent"]));
+            }
+            set {
+                this["SleepHibernateBatteryPercent"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("240")]
+        public int SleepHibernateAtMinutes {
+            get {
+                return ((int)(this["SleepHibernateAtMinutes"]));
+            }
+            set {
+                this["SleepHibernateAtMinutes"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SleepHibernateEnabledHiberfil {
+            get {
+                return ((bool)(this["SleepHibernateEnabledHiberfil"]));
+            }
+            set {
+                this["SleepHibernateEnabledHiberfil"] = value;
             }
         }
         

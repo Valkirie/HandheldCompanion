@@ -1,3 +1,4 @@
+using HandheldCompanion;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
@@ -19,11 +20,9 @@ using System.Threading.Tasks;
 namespace HandheldCompanion.Helpers;
 
 /// <summary>
-/// Quick Sleep/Wake: freezes the foreground game before Windows sleeps and thaws it and brings it back in front after wake.
-/// On devices with S3 the Quick Tools sleep is the regular SetSuspendState call, with the game frozen first.
-/// On Modern Standby devices a watcher follows the console display state while the setting is on. Whenever the
-/// display goes off for a sleep (power button, Quick Tools sleep, or an idle timeout that also sleeps) the game is frozen,
-/// and when the display comes back on it is thawed. The Quick Tools sleep only turns the display off there.
+/// Freezes the selected game when the device sleeps and thaws it on wake (refocus only if it was in front).
+/// Primary trigger is a display-off that leads to sleep; SystemPending is the fallback if the game is not already frozen.
+/// On Modern Standby, Quick Tools Sleep turns the display off instead of SetSuspendState (which becomes S4 there).
 /// </summary>
 public static class QuickSleep
 {
@@ -56,7 +55,8 @@ public static class QuickSleep
     }
 
     /// <summary>
-    /// Starts following the QuickSleep setting. The display watcher runs while the setting is on.
+    /// Starts following the SuspendOnSleep / SleepHibernate settings. Restores any Windows
+    /// power settings left over from a previous sleep before thawing a game.
     /// </summary>
     public static void Start()
     {
@@ -64,16 +64,19 @@ public static class QuickSleep
             return;
         started = true;
 
+        SleepPowerPolicy.RestoreIfNeeded();
+        if (ManagerFactory.settingsManager.GetBoolean("SleepHibernate"))
+            SleepPowerPolicy.SetHibernateToggle(true);
+
         ManagerFactory.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ManagerFactory.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         ManagerFactory.processManager.ProcessStopped += ProcessManager_ProcessStopped;
 
-        bool enabled = ManagerFactory.settingsManager.GetBoolean("QuickSleep");
-        UpdateWatcher(enabled);
+        // Modern Standby: the watcher is the primary freeze path, including profile On when global is Off.
+        UpdateWatcher(modernStandby);
 
         // a game already in front when HC starts raises no foreground change
-        if (enabled)
-            Task.Run(WarmForeground);
+        Task.Run(WarmForeground);
     }
 
     public static void Stop()
@@ -95,26 +98,23 @@ public static class QuickSleep
 
     private static void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
     {
-        if (name != "QuickSleep")
+        if (name is not ("SuspendOnSleep" or "SleepHibernate"))
             return;
 
-        bool enabled = Convert.ToBoolean(value);
-        UpdateWatcher(enabled);
-        if (enabled)
-            Task.Run(WarmForeground);
+        if (name == "SleepHibernate")
+        {
+            bool enabled = Convert.ToBoolean(value);
+            SleepPowerPolicy.SetHibernateToggle(enabled);
+            if (!enabled)
+                SleepPowerPolicy.RestoreIfNeeded();
+        }
+
+        UpdateWatcher(modernStandby);
+        Task.Run(WarmForeground);
     }
 
     public static async Task Run()
     {
-        if (!ManagerFactory.settingsManager.GetBoolean("QuickSleep"))
-        {
-            if (modernStandby)
-                PowerActionsHelper.TurnDisplayOff();
-            else
-                await Task.Run(() => PowerActionsHelper.Sleep(force: false)).ConfigureAwait(false);
-            return;
-        }
-
         if (Interlocked.Exchange(ref busy, 1) == 1)
         {
             LogManager.LogInformation("[QuickSleep] Ignored, a sleep request is already running.");
@@ -123,6 +123,8 @@ public static class QuickSleep
 
         try
         {
+            SleepPowerPolicy.ApplyForSleep();
+
             if (modernStandby)
             {
                 EnterStandby();
@@ -143,10 +145,10 @@ public static class QuickSleep
                 LogManager.LogError("[QuickSleep] Sleep request failed: {0}", ex.Message);
             }
 
-            // While the system is still on its way down, the SystemReady handler thaws the game on wake.
-            // Otherwise the system is already back, or never left, so thaw now.
-            if (!slept || SystemManager.currentSystemStatus != SystemManager.SystemStatus.SystemPending)
-                await Thaw(refocus: slept).ConfigureAwait(false);
+            // Sleep() returns after wake (or if sleep never started). Always restore and thaw:
+            // a missed PowerModes.Resume must not leave Windows settings changed or the game frozen.
+            SleepPowerPolicy.RestoreIfNeeded();
+            await Thaw(refocus: slept).ConfigureAwait(false);
         }
         finally
         {
@@ -175,6 +177,7 @@ public static class QuickSleep
         if (!PowerActionsHelper.TurnDisplayOff())
         {
             Interlocked.Exchange(ref requestedTick, long.MinValue);
+            SleepPowerPolicy.RestoreIfNeeded();
             LogManager.LogWarning("[QuickSleep] Could not turn the display off.");
         }
     }
@@ -210,9 +213,17 @@ public static class QuickSleep
 
     private static void UpdateWatcher(bool enabled)
     {
-        // S3 devices keep the plain sleep path
+        // S3 capture is SystemPending only
         if (!modernStandby)
+        {
+            if (!enabled)
+            {
+                SleepPowerPolicy.RestoreIfNeeded();
+                if (HasPending())
+                    _ = Thaw(refocus: false);
+            }
             return;
+        }
 
         lock (updateLock)
         {
@@ -250,8 +261,12 @@ public static class QuickSleep
         }
 
         // a game frozen just before the setting was turned off must not stay frozen
-        if (!enabled && HasPending())
-            _ = Thaw(refocus: false);
+        if (!enabled)
+        {
+            SleepPowerPolicy.RestoreIfNeeded();
+            if (HasPending())
+                _ = Thaw(refocus: false);
+        }
     }
 
     private static uint OnDisplayCallback(IntPtr context, uint type, IntPtr setting)
@@ -284,10 +299,14 @@ public static class QuickSleep
                 }
             }
 
-            if (state == 1 && HasPending())
+            if (state == 1)
             {
-                LogManager.LogInformation("[QuickSleep] Display on, thawing.");
-                _ = Thaw(refocus: true);
+                SleepPowerPolicy.RestoreIfNeeded();
+                if (HasPending())
+                {
+                    LogManager.LogInformation("[QuickSleep] Display on, thawing.");
+                    _ = Thaw(refocus: true);
+                }
             }
         }
         catch (Exception ex)
@@ -300,15 +319,17 @@ public static class QuickSleep
 
     private static void OnDisplayOff()
     {
-        if (HasPending())
-            return;
-
         // long.MinValue means no request: subtracting it would overflow into a negative and always count as requested
         long tick = Interlocked.Exchange(ref requestedTick, long.MinValue);
         bool requested = tick != long.MinValue && Environment.TickCount64 - tick <= (long)RequestWindow.TotalMilliseconds;
         if (requested)
             LogManager.LogInformation("[QuickSleep] Display off: requested by Quick Sleep {0:0.0}s ago, freeze True.", (Environment.TickCount64 - tick) / 1000.0);
         else if (!ShouldFreezeOnDisplayOff())
+            return;
+
+        SleepPowerPolicy.ApplyForSleep();
+
+        if (HasPending())
             return;
 
         // freeze only once the display is off: a game frozen while it still owns the screen
@@ -329,7 +350,7 @@ public static class QuickSleep
     /// </summary>
     private static bool ShouldFreezeOnDisplayOff()
     {
-        bool ac = IsOnAC();
+        bool ac = PowerActionsHelper.IsOnAC();
         PowerIndexType index = ac ? PowerIndexType.AC : PowerIndexType.DC;
 
         uint displayTimeout = 0, sleepTimeout = 0, buttonAction = uint.MaxValue;
@@ -369,33 +390,13 @@ public static class QuickSleep
         return freeze;
     }
 
-    // ---------- power settings ----------
+    // ---------- power settings (used to tell a sleep display-off from a plain display timeout) ----------
     private static readonly Guid SUB_VIDEO = new("7516B95F-F776-4464-8C53-06167F40CC99");
     private static readonly Guid VIDEOIDLE = new("3C0BC021-C8A8-4E07-A973-6B14CBCB2B7E");
     private static readonly Guid STANDBYIDLE = new("29F6C1DB-86DA-48C5-9FDB-F2B67B1F44DA");
     private static readonly Guid SUB_BUTTONS = new("4F971E89-EEBD-4455-A8DE-9E59040E7347");
     private static readonly Guid PBUTTONACTION = new("7648EFA3-DD9C-4E3E-B566-50F929386280");
     private const uint BUTTON_ACTION_DISPLAY_OFF = 4;
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct SYSTEM_POWER_STATUS
-    {
-        public byte ACLineStatus;
-        public byte BatteryFlag;
-        public byte BatteryLifePercent;
-        public byte SystemStatusFlag;
-        public int BatteryLifeTime;
-        public int BatteryFullLifeTime;
-    }
-
-    [DllImport("kernel32.dll")]
-    private static extern bool GetSystemPowerStatus(out SYSTEM_POWER_STATUS status);
-
-    private static bool IsOnAC()
-    {
-        // unknown counts as AC, like Windows does for devices without a battery
-        return !GetSystemPowerStatus(out SYSTEM_POWER_STATUS status) || status.ACLineStatus != 0;
-    }
 
     [StructLayout(LayoutKind.Sequential)]
     private struct LASTINPUTINFO
@@ -434,8 +435,19 @@ public static class QuickSleep
 
     private static async void SystemManager_SystemStatusChanged(SystemManager.SystemStatus status, SystemManager.SystemStatus prevStatus)
     {
+        if (status == SystemManager.SystemStatus.SystemPending && prevStatus == SystemManager.SystemStatus.SystemReady)
+        {
+            SleepPowerPolicy.ApplyForSleep();
+            if (!HasPending())
+                FreezeNow(PrepareFreeze());
+            return;
+        }
+
         if (status == SystemManager.SystemStatus.SystemReady && prevStatus == SystemManager.SystemStatus.SystemPending)
+        {
+            SleepPowerPolicy.RestoreIfNeeded();
             await Thaw(refocus: true).ConfigureAwait(false);
+        }
     }
 
     private sealed record FreezeTarget(ProcessEx Game, nint Window, List<Process> Children, string? AntiCheat, bool WasInFront, string Reason);
@@ -475,7 +487,7 @@ public static class QuickSleep
 
             List<SnapshotEntry> snapshot = TakeProcessSnapshot();
             string? antiCheat = IsAntiCheatProtected(game, snapshot);
-            List<Process> children = antiCheat is null ? GetChildProcesses(game.ProcessId, snapshot) : new();
+            List<Process> children = GetChildProcesses(game.ProcessId, snapshot);
             return new FreezeTarget(game, window, children, antiCheat, wasInFront, source);
         }
         catch (Exception ex)
@@ -602,29 +614,48 @@ public static class QuickSleep
             return;
 
         ProcessEx game = target.Game;
+        List<Process> suspendedChildren = new();
         try
         {
             if (game.Process is null || game.Process.HasExited)
                 return;
 
-            if (target.AntiCheat is not null)
+            if (!WantsSuspend(game))
+            {
+                LogManager.LogInformation("[QuickSleep] {0} is not set to suspend on sleep, not freezing.", game.Executable);
+                return;
+            }
+
+            bool explicitOn = HasExplicitSuspendOnSleep(game);
+            if (target.AntiCheat is not null && !explicitOn)
             {
                 // frozen threads can look like tampering to an anti-cheat and risk a ban, so Windows handles the sleep
                 LogManager.LogInformation("[QuickSleep] Anti-cheat detected ({0}), not freezing {1}.", target.AntiCheat, game.Executable);
-                if (target.Window != 0)
+                if (target.WasInFront && target.Window != 0)
                 {
-                    Interlocked.Exchange(ref bringToFront, target.WasInFront ? 1 : 0);
+                    Interlocked.Exchange(ref bringToFront, 1);
                     Interlocked.Exchange(ref gameWindow, target.Window);
                     Interlocked.Exchange(ref refocusOnly, game);
                 }
                 return;
             }
 
+            if (target.AntiCheat is not null)
+                LogManager.LogWarning("[QuickSleep] Anti-cheat detected ({0}), freezing {1} because the profile enables suspend. This can risk a ban.", target.AntiCheat, game.Executable);
+
+            if (game.IsSuspended)
+                return;
+
             foreach (Process child in target.Children.Where(p => !p.HasExited))
-                ProcessUtils.NtSuspendProcess(child.Handle);
+            {
+                if (ProcessUtils.NtSuspendProcess(child.Handle) == 0)
+                    suspendedChildren.Add(child);
+            }
 
             if (ProcessUtils.NtSuspendProcess(game.Handle) != 0)
             {
+                foreach (Process child in suspendedChildren.Where(p => !p.HasExited))
+                    ProcessUtils.NtResumeProcess(child.Handle);
                 LogManager.LogWarning("[QuickSleep] Could not freeze {0}. Sleep continues.", game.Executable);
                 return;
             }
@@ -633,10 +664,15 @@ public static class QuickSleep
             Interlocked.Exchange(ref bringToFront, target.WasInFront ? 1 : 0);
             Interlocked.Exchange(ref gameWindow, target.Window);
             Interlocked.Exchange(ref frozen, game);
-            LogManager.LogInformation("[QuickSleep] Froze {0} and {1} child process(es).", game.Executable, target.Children.Count);
+            LogManager.LogInformation("[QuickSleep] Froze {0} and {1} child process(es).", game.Executable, suspendedChildren.Count);
         }
         catch (Exception ex)
         {
+            foreach (Process child in suspendedChildren.Where(p => !p.HasExited))
+            {
+                try { ProcessUtils.NtResumeProcess(child.Handle); }
+                catch { }
+            }
             LogManager.LogWarning("[QuickSleep] Could not freeze {0}: {1}", game.Executable, ex.Message);
         }
     }
@@ -812,7 +848,7 @@ public static class QuickSleep
         if (processEx is null || processEx.ProcessId == 0 || processEx.ProcessId == Environment.ProcessId)
             return;
 
-        if (!ManagerFactory.settingsManager.GetBoolean("QuickSleep") || IsMarkerCached(processEx))
+        if (IsMarkerCached(processEx))
             return;
 
         Task.Run(() => GetMarkerAntiCheat(processEx));
@@ -1154,6 +1190,48 @@ public static class QuickSleep
         try
         {
             return !ManagerFactory.profileManager.GetProfileFromPath(game.Path, true).Default;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Per-profile SuspendOnSleep: Inherit uses the Device setting; On/Off override it.
+    /// </summary>
+    public static bool WantsSuspend(ProcessEx game)
+    {
+        bool global = ManagerFactory.settingsManager.GetBoolean("SuspendOnSleep");
+        if (string.IsNullOrEmpty(game.Path))
+            return global;
+
+        try
+        {
+            return ManagerFactory.profileManager.GetProfileFromPath(game.Path, true).SuspendOnSleep switch
+            {
+                SuspendOnSleepMode.On => true,
+                SuspendOnSleepMode.Off => false,
+                _ => global,
+            };
+        }
+        catch
+        {
+            return global;
+        }
+    }
+
+    /// <summary>
+    /// True when the profile explicitly enables suspend (not inherit). Used for the anti-cheat override.
+    /// </summary>
+    public static bool HasExplicitSuspendOnSleep(ProcessEx game)
+    {
+        if (string.IsNullOrEmpty(game.Path))
+            return false;
+
+        try
+        {
+            return ManagerFactory.profileManager.GetProfileFromPath(game.Path, true).SuspendOnSleep == SuspendOnSleepMode.On;
         }
         catch
         {

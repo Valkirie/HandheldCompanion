@@ -29,6 +29,25 @@ namespace HandheldCompanion.Helpers
         }
 
         /// <summary>
+        /// True when Windows reports AC power. Unknown (no battery, or the query failed) counts as AC.
+        /// </summary>
+        public static bool IsOnAC()
+        {
+            return !GetSystemPowerStatus(out SYSTEM_POWER_STATUS status) || status.ACLineStatus != 0;
+        }
+
+        /// <summary>
+        /// Sleep on S3 devices, or turn the display off on Modern Standby (where SetSuspendState becomes S4).
+        /// </summary>
+        public static bool SleepOrStandby(bool force = false, bool disableWakeEvent = false)
+        {
+            if (!IsSleepAvailable())
+                return TurnDisplayOff();
+
+            return Sleep(force, disableWakeEvent);
+        }
+
+        /// <summary>
         /// Turn the display off, which puts a Modern Standby device into standby.
         /// The message is posted, not sent, so a frozen or hung window cannot block the caller.
         /// </summary>
@@ -138,6 +157,20 @@ namespace HandheldCompanion.Helpers
 
         [DllImport("powrprof.dll")]
         private static extern bool IsPwrSuspendAllowed();
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct SYSTEM_POWER_STATUS
+        {
+            public byte ACLineStatus;
+            public byte BatteryFlag;
+            public byte BatteryLifePercent;
+            public byte SystemStatusFlag;
+            public int BatteryLifeTime;
+            public int BatteryFullLifeTime;
+        }
+
+        [DllImport("kernel32.dll")]
+        private static extern bool GetSystemPowerStatus(out SYSTEM_POWER_STATUS status);
 
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);

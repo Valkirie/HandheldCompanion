@@ -136,6 +136,8 @@ public static class SystemManager
         switch (e.Mode)
         {
             case PowerModes.Suspend:
+                // SystemPending (PBT_APMSUSPEND). QuickSleep uses this as a fallback freeze
+                // if the display-off path did not already freeze the game.
                 if (!isPowerSuspended)
                 {
                     isPowerSuspended = true;

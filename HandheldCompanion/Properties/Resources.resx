@@ -4353,11 +4353,29 @@ Thank you for using HC and helping us make it better.</value>
   <data name="DevicePage_EnhancedSleepDesc" xml:space="preserve">
     <value>Optimizes Modern Standby power policies to reduce sleep drain (e.g., disables wake timers and network activity).</value>
   </data>
-  <data name="DevicePage_QuickSleep" xml:space="preserve">
-    <value>Quick Sleep/Wake</value>
+  <data name="DevicePage_SuspendOnSleepDesc" xml:space="preserve">
+    <value>Pause the selected game when the device sleeps and resume it on wake. A per-profile setting overrides this. Games with anti-cheat are skipped unless the profile explicitly enables it.</value>
   </data>
-  <data name="DevicePage_QuickSleepDesc" xml:space="preserve">
-    <value>Experimental. Pauses the foreground game while the device sleeps and brings it back right after wake. Games with anti-cheat are not paused.</value>
+  <data name="DevicePage_SleepHibernate" xml:space="preserve">
+    <value>Hibernate while asleep</value>
+  </data>
+  <data name="DevicePage_SleepHibernateDesc" xml:space="preserve">
+    <value>Only applies while the device sleeps on battery. For hibernate while awake, use the Windows power settings. If sleep starts less than 1 hour before the chosen time, hibernate happens 1 hour after sleep entry, not the next night. Enabling this may turn on Windows hibernation, which reserves disk space (hiberfil.sys).</value>
+  </data>
+  <data name="DevicePage_SleepHibernateBattery" xml:space="preserve">
+    <value>Critical battery level</value>
+  </data>
+  <data name="DevicePage_SleepHibernateBatteryDesc" xml:space="preserve">
+    <value>While asleep on battery, hibernate when the battery reaches this percent.</value>
+  </data>
+  <data name="DevicePage_SleepHibernateTime" xml:space="preserve">
+    <value>Hibernate at</value>
+  </data>
+  <data name="DevicePage_SleepHibernateTimeDesc" xml:space="preserve">
+    <value>Optional clock time. Minimum delay is 1 hour: if sleep starts less than 1 hour before this time, hibernate happens 1 hour after sleep entry.</value>
+  </data>
+  <data name="DevicePage_SleepHibernateTimeNever" xml:space="preserve">
+    <value>Never</value>
   </data>
   <data name="ProfilesPage_Whitelist" xml:space="preserve">
     <value>Controller passthrough</value>
@@ -4369,7 +4387,19 @@ Thank you for using HC and helping us make it better.</value>
     <value>Improve compatibility by applying XInputPlus</value>
   </data>
   <data name="ProfilesPage_SuspendOnSleepDesc" xml:space="preserve">
-    <value>Pause the active application when the system enters or exits standby state</value>
+    <value>Overrides the global setting for this game. Enabling this on a game with anti-cheat can look like tampering and may risk a ban.</value>
+  </data>
+  <data name="ProfilesPage_On" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="ProfilesPage_Off" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="OverrideMode_UseDeviceSettings" xml:space="preserve">
+    <value>Device settings ({0})</value>
+  </data>
+  <data name="ProfilesPage_ValueNotAvailable" xml:space="preserve">
+    <value>{0} (not available)</value>
   </data>
   <data name="ProfilesPage_LibrarySettings" xml:space="preserve">
     <value>Library settings</value>

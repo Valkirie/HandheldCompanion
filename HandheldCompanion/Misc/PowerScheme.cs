@@ -17,6 +17,7 @@ public static class PowerSubGroup
 {
     public static readonly Guid SUB_PROCESSOR = new("54533251-82be-4824-96c1-47b60b740d00");
     public static readonly Guid SUB_SLEEP = new("238C9FA8-0AAD-41ED-83F4-97BE242C8F20");
+    public static readonly Guid SUB_BATTERY = new("e73a048d-bf27-4f12-9731-8b6278e9fce4");
 }
 
 public static class PowerProfileGroup
@@ -55,6 +56,15 @@ public static class PowerProfileGroup
 public static class SleepSetting
 {
     public static readonly Guid HIBERNATE_TIMEOUT = new Guid("9D7815A6-7EE4-497E-8888-515A05F02364");
+}
+
+public static class BatterySetting
+{
+    // powercfg aliases BATLEVELCRIT / BATACTIONCRIT
+    public static readonly Guid CRITICAL_LEVEL = new("9A66D8D7-4FF7-4EF9-B5A2-5A326CA2A469");
+    public static readonly Guid CRITICAL_ACTION = new("637EA02F-BBCB-4015-8E2C-A1C7B9C0B546");
+
+    public const uint ACTION_HIBERNATE = 2;
 }
 
 public static class PowerSetting
@@ -195,6 +205,25 @@ public static class PowerScheme
             // activate scheme
             SetActiveScheme(currentScheme);
         }
+    }
+
+    /// <summary>
+    /// Writes one AC or DC value and activates the scheme. Leaves the other index unchanged.
+    /// </summary>
+    public static void WritePowerCfg(PowerIndexType powerType, Guid SubGroup, Guid Settings, uint value)
+    {
+        if (GetActiveScheme(out var currentScheme))
+            WritePowerCfg(currentScheme, powerType, SubGroup, Settings, value);
+    }
+
+    /// <summary>
+    /// Writes one AC or DC value on a specific scheme and activates that scheme.
+    /// </summary>
+    public static void WritePowerCfg(Guid scheme, PowerIndexType powerType, Guid SubGroup, Guid Settings, uint value)
+    {
+        SetAttribute(SubGroup, Settings, 2);
+        SetValue(powerType, scheme, SubGroup, Settings, value);
+        SetActiveScheme(scheme);
     }
 
     #region imports

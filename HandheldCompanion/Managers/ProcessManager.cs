@@ -215,42 +215,16 @@ public class ProcessManager : IManager
         base.Stop();
     }
 
-    private bool Settings_SuspendOnSleep => ManagerFactory.settingsManager.GetBoolean("SuspendOnSleep");
-
     public override void Resume()
     {
         // reset known foreground window
         currenthWnd = IntPtr.Zero;
-
-        if (Settings_SuspendOnSleep)
-        {
-            foreach (ProcessEx processEx in Processes.Values)
-            {
-                Profile profile = ManagerFactory.profileManager.GetProfileFromPath(processEx.Path, true);
-                if (!processEx.IsSuspended || !profile.SuspendOnSleep)
-                    continue;
-
-                _ = ResumeProcess(processEx, false);
-            }
-        }
     }
 
     public override void Suspend()
     {
         // reset known foreground window
         currenthWnd = IntPtr.Zero;
-
-        if (Settings_SuspendOnSleep)
-        {
-            foreach (ProcessEx processEx in Processes.Values)
-            {
-                Profile profile = ManagerFactory.profileManager.GetProfileFromPath(processEx.Path, true);
-                if (processEx.IsSuspended || !profile.SuspendOnSleep)
-                    continue;
-
-                _ = SuspendProcess(processEx, false);
-            }
-        }
     }
 
     private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)

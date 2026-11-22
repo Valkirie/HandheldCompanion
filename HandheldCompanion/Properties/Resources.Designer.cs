@@ -1546,20 +1546,74 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Quick Sleep/Wake.
+        ///   Looks up a localized string similar to Pause the selected game when the device sleeps and resume it on wake. A per-profile setting overrides this. Games with anti-cheat are skipped unless the profile explicitly enables it.
         /// </summary>
-        public static string DevicePage_QuickSleep {
+        public static string DevicePage_SuspendOnSleepDesc {
             get {
-                return ResourceManager.GetString("DevicePage_QuickSleep", resourceCulture);
+                return ResourceManager.GetString("DevicePage_SuspendOnSleepDesc", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Experimental. Pauses the foreground game while the device sleeps and brings it back right after wake. Games with anti-cheat are not paused.
+        ///   Looks up a localized string similar to Hibernate while asleep.
         /// </summary>
-        public static string DevicePage_QuickSleepDesc {
+        public static string DevicePage_SleepHibernate {
             get {
-                return ResourceManager.GetString("DevicePage_QuickSleepDesc", resourceCulture);
+                return ResourceManager.GetString("DevicePage_SleepHibernate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only applies while the device sleeps on battery. For hibernate while awake, use the Windows power settings. If sleep starts less than 1 hour before the chosen time, hibernate happens 1 hour after sleep entry, not the next night. Enabling this may turn on Windows hibernation, which reserves disk space (hiberfil.sys).
+        /// </summary>
+        public static string DevicePage_SleepHibernateDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_SleepHibernateDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Critical battery level.
+        /// </summary>
+        public static string DevicePage_SleepHibernateBattery {
+            get {
+                return ResourceManager.GetString("DevicePage_SleepHibernateBattery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to While asleep on battery, hibernate when the battery reaches this percent.
+        /// </summary>
+        public static string DevicePage_SleepHibernateBatteryDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_SleepHibernateBatteryDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hibernate at.
+        /// </summary>
+        public static string DevicePage_SleepHibernateTime {
+            get {
+                return ResourceManager.GetString("DevicePage_SleepHibernateTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Optional clock time. Minimum delay is 1 hour: if sleep starts less than 1 hour before this time, hibernate happens 1 hour after sleep entry.
+        /// </summary>
+        public static string DevicePage_SleepHibernateTimeDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_SleepHibernateTimeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Never.
+        /// </summary>
+        public static string DevicePage_SleepHibernateTimeNever {
+            get {
+                return ResourceManager.GetString("DevicePage_SleepHibernateTimeNever", resourceCulture);
             }
         }
         
@@ -11271,11 +11325,47 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pause the active application when the system enters or exits standby state.
+        ///   Looks up a localized string similar to Overrides the global setting for this game. Enabling this on a game with anti-cheat can look like tampering and may risk a ban.
         /// </summary>
         public static string ProfilesPage_SuspendOnSleepDesc {
             get {
                 return ResourceManager.GetString("ProfilesPage_SuspendOnSleepDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to On.
+        /// </summary>
+        public static string ProfilesPage_On {
+            get {
+                return ResourceManager.GetString("ProfilesPage_On", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Off.
+        /// </summary>
+        public static string ProfilesPage_Off {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Off", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Device settings ({0}).
+        /// </summary>
+        public static string OverrideMode_UseDeviceSettings {
+            get {
+                return ResourceManager.GetString("OverrideMode_UseDeviceSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (not available).
+        /// </summary>
+        public static string ProfilesPage_ValueNotAvailable {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ValueNotAvailable", resourceCulture);
             }
         }
         
