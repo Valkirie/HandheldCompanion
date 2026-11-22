@@ -318,6 +318,7 @@
                                 IsEnabled="{Binding IsOn, ElementName=Toggle_SleepHibernate}">
                                 <ui:NumberBox
                                     x:Name="NumberBox_SleepHibernateBattery"
+                                    MinWidth="20"
                                     LargeChange="1"
                                     Maximum="50"
                                     Minimum="1"
