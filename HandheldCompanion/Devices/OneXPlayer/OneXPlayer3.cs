@@ -230,42 +230,13 @@ namespace HandheldCompanion.Devices
         }
 
         // Battery protection (OneXConsole BatteryService defaults: charge limit 0x4A3, bypass 0x4A4).
-        // Verified on OXP3: 0x4A3 reads back the charge limit set in OneXConsole.
+        // Verified on OXP3: 0x4A3 reads back the charge limit; 0x4A4 Off=0x00, sleep-only=0x01, Always=0x03.
         public override bool IsBatteryProtectionSupported(int majorVersion, int minorVersion) => true;
 
-        protected override void SettingsManager_SettingValueChanged(string name, object? value, bool temporary, bool initializing)
-        {
-            if (name == "BatteryChargeLimit")
-            {
-                // re-apply: limit is only enforced while the toggle is on
-                SetBatteryChargeLimit(ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPercent"));
-                return;
-            }
+        protected override bool TryReadBatteryEcByte(ushort register, out byte value) =>
+            TryReadEcByte(register, out value);
 
-            base.SettingsManager_SettingValueChanged(name, value, temporary, initializing);
-        }
-
-        public override void SetBatteryChargeLimit(int chargeLimit)
-        {
-            if (!ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"))
-                chargeLimit = 100;
-
-            if (chargeLimit < 0 || chargeLimit > 100)
-                return;
-
-            TryWriteEcByte(ECBatteryLimitAddress, (byte)chargeLimit);
-        }
-
-        public override void SetBatteryBypassChargingMode(int modeIndex)
-        {
-            byte modeValue = modeIndex switch
-            {
-                1 => 0x01, // bypass on, charges during sleep/shutdown
-                2 => 0x0B, // bypass always on (OneXConsole EC_VALUE_BYPASS_POWER_MODE2)
-                _ => 0x00, // bypass off
-            };
-
-            TryWriteEcByte(ECBypassChargingAddress, modeValue);
-        }
+        protected override bool TryWriteBatteryEcByte(ushort register, byte value) =>
+            TryWriteEcByte(register, value);
     }
 }

@@ -59,6 +59,7 @@ public class OneXPlayerX1 : OneXAOKZOE
     // Battery Protection
     public ushort ECBatteryLimitAddress = 0x4A3;
     public ushort ECBypassChargingAddress = 0x4A4;
+    private bool? batteryProtectionSupported;
 
     public OneXPlayerX1()
     {
@@ -205,8 +206,10 @@ public class OneXPlayerX1 : OneXAOKZOE
         // raise events
         if (CheckIsBatteryProtectionSupported())
         {
-            SettingsManager_SettingValueChanged("BatteryChargeLimitPercent", ManagerFactory.settingsManager.GetString("BatteryChargeLimitPercent"), false, true);
-            SettingsManager_SettingValueChanged("BatteryBypassChargingMode", ManagerFactory.settingsManager.GetString("BatteryBypassChargingMode"), false, true);
+            // Apply (or skip) battery EC through the toggle handler so a disabled
+            // BatteryChargeLimit never writes 0x4A3/0x4A4 at startup. Capture of OEM
+            // values is runtime-only (OFF->ON); startup with the toggle on only applies HC.
+            SettingsManager_SettingValueChanged("BatteryChargeLimit", ManagerFactory.settingsManager.GetString("BatteryChargeLimit"), false, true);
         }
 
         SettingsManager_SettingValueChanged("LEDSettingsEnabled", ManagerFactory.settingsManager.GetString("LEDSettingsEnabled"), false, true);
@@ -255,13 +258,35 @@ public class OneXPlayerX1 : OneXAOKZOE
     {
         switch (name)
         {
+            case "BatteryChargeLimit":
+                {
+                    if (!CheckIsBatteryProtectionSupported())
+                        break;
+
+                    bool enabled = Convert.ToBoolean(value);
+                    if (enabled)
+                    {
+                        // Startup with toggle on: apply HC only. Capturing here would store
+                        // HC's own pre-upgrade EC values as "previous" and skip the 100/0x00 fallback.
+                        if (!initializing)
+                            CapturePreviousBatteryEc();
+                        ApplySavedBatterySettings();
+                    }
+                    else if (!initializing)
+                    {
+                        RestorePreviousBatteryEc();
+                    }
+                    break;
+                }
             case "BatteryChargeLimitPercent":
-                int percent = Convert.ToInt32(value);
-                SetBatteryChargeLimit(percent);
+                if (!CheckIsBatteryProtectionSupported())
+                    break;
+                SetBatteryChargeLimit(Convert.ToInt32(value));
                 break;
             case "BatteryBypassChargingMode":
-                int modeIndex = Convert.ToInt32(value);
-                SetBatteryBypassChargingMode(modeIndex);
+                if (!CheckIsBatteryProtectionSupported())
+                    break;
+                SetBatteryBypassChargingMode(Convert.ToInt32(value));
                 break;
             case "LEDSettingsEnabled":
                 LEDEnabled = Convert.ToBoolean(value);
@@ -683,6 +708,9 @@ public class OneXPlayerX1 : OneXAOKZOE
 
     private bool CheckIsBatteryProtectionSupported()
     {
+        if (batteryProtectionSupported.HasValue)
+            return batteryProtectionSupported.Value;
+
         try
         {
             // Create a ManagementObjectSearcher to query the Win32_BIOS class
@@ -696,7 +724,8 @@ public class OneXPlayerX1 : OneXAOKZOE
             {
                 int majorVersion = Convert.ToInt32(obj["EmbeddedControllerMajorVersion"]);
                 int minorVersion = Convert.ToInt32(obj["EmbeddedControllerMinorVersion"]);
-                return IsBatteryProtectionSupported(majorVersion, minorVersion);
+                batteryProtectionSupported = IsBatteryProtectionSupported(majorVersion, minorVersion);
+                return batteryProtectionSupported.Value;
             }
         }
         catch (Exception ex)
@@ -704,6 +733,7 @@ public class OneXPlayerX1 : OneXAOKZOE
             LogManager.LogError("Cannot found ECVersion: " + ex.Message);
         }
 
+        batteryProtectionSupported = false;
         return false;
     }
 
@@ -712,41 +742,90 @@ public class OneXPlayerX1 : OneXAOKZOE
         return false;
     }
 
-    public virtual void SetBatteryChargeLimit(int chargeLimit)
+    protected virtual bool TryReadBatteryEcByte(ushort register, out byte value)
+    {
+        value = 0;
+        if (!UseOpenLib || !IsOpen)
+            return false;
+
+        value = ECRamDirectReadByte(register, ECDetails);
+        return true;
+    }
+
+    protected virtual bool TryWriteBatteryEcByte(ushort register, byte value)
     {
         if (!UseOpenLib || !IsOpen)
+            return false;
+
+        return ECRamDirectWriteByte(register, ECDetails, value);
+    }
+
+    public virtual void SetBatteryChargeLimit(int chargeLimit)
+    {
+        if (!ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"))
             return;
 
         if (chargeLimit < 0 || chargeLimit > 100)
             return;
 
-        ECRamDirectWriteByte(ECBatteryLimitAddress, ECDetails, (byte)chargeLimit);
+        TryWriteBatteryEcByte(ECBatteryLimitAddress, (byte)chargeLimit);
     }
 
     public virtual void SetBatteryBypassChargingMode(int modeIndex)
     {
-        if (!UseOpenLib || !IsOpen)
+        if (!ManagerFactory.settingsManager.GetBoolean("BatteryChargeLimit"))
             return;
 
         if (modeIndex < 0 || modeIndex > 4)
             return;
 
-        int modeValue = 0;
+        TryWriteBatteryEcByte(ECBypassChargingAddress, OneXPlayerBatteryEc.MapBypassModeIndex(modeIndex));
+    }
 
-        switch (modeIndex)
+    private void ApplySavedBatterySettings()
+    {
+        SetBatteryChargeLimit(ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPercent"));
+        SetBatteryBypassChargingMode(ManagerFactory.settingsManager.GetInt("BatteryBypassChargingMode"));
+    }
+
+    private void CapturePreviousBatteryEc()
+    {
+        int previousLimit = ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPreviousPercent");
+        int previousBypass = ManagerFactory.settingsManager.GetInt("BatteryBypassChargingPreviousValue");
+        if (!OneXPlayerBatteryEc.ShouldCapture(previousLimit, previousBypass))
         {
-            case 0:
-                modeValue = 0x00; // Disabled
-                break;
-            case 1:
-                modeValue = 0x01; // Disabled on Sleep and Reboot
-                break;
-            case 2:
-                modeValue = 0x03; // Always On
-                break;
+            LogManager.LogInformation("OXP kept previously saved battery EC: limit={0}, bypass=0x{1:X2}", previousLimit, previousBypass);
+            return;
         }
 
-        ECRamDirectWriteByte(ECBypassChargingAddress, ECDetails, (byte)modeValue);
+        if (!TryReadBatteryEcByte(ECBatteryLimitAddress, out byte limit) ||
+            !TryReadBatteryEcByte(ECBypassChargingAddress, out byte bypass))
+        {
+            LogManager.LogWarning("OXP could not read current battery EC values before applying HC settings");
+            return;
+        }
+
+        ManagerFactory.settingsManager.SetProperty("BatteryChargeLimitPreviousPercent", (int)limit);
+        ManagerFactory.settingsManager.SetProperty("BatteryBypassChargingPreviousValue", (int)bypass);
+        LogManager.LogInformation("OXP saved previous battery EC: limit={0}, bypass=0x{1:X2}", limit, bypass);
+    }
+
+    private void RestorePreviousBatteryEc()
+    {
+        int previousLimit = ManagerFactory.settingsManager.GetInt("BatteryChargeLimitPreviousPercent");
+        int previousBypass = ManagerFactory.settingsManager.GetInt("BatteryBypassChargingPreviousValue");
+        (byte limit, byte bypass) = OneXPlayerBatteryEc.ResolveRestore(previousLimit, previousBypass);
+
+        bool wroteLimit = TryWriteBatteryEcByte(ECBatteryLimitAddress, limit);
+        bool wroteBypass = TryWriteBatteryEcByte(ECBypassChargingAddress, bypass);
+        LogManager.LogInformation("OXP restored battery EC: limit={0}, bypass=0x{1:X2} (hadPrevious={2})",
+            limit, bypass, previousLimit != OneXPlayerBatteryEc.UnsavedValue && previousBypass != OneXPlayerBatteryEc.UnsavedValue);
+
+        if (wroteLimit && wroteBypass)
+        {
+            ManagerFactory.settingsManager.SetProperty("BatteryChargeLimitPreviousPercent", OneXPlayerBatteryEc.UnsavedValue);
+            ManagerFactory.settingsManager.SetProperty("BatteryBypassChargingPreviousValue", OneXPlayerBatteryEc.UnsavedValue);
+        }
     }
 }
 

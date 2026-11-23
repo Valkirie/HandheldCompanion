@@ -211,6 +211,24 @@ public class OneXPlayerX2 : OneXPlayerX1
         }
     }
 
+    protected bool TryReadEcByte(ushort register, out byte value)
+    {
+        lock (updateLock)
+        {
+            try
+            {
+                value = (_wmiEc ?? throw new InvalidOperationException("X2 WMI EC is not open")).ReadByte(register);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Failed to read EC register 0x{0:X4}: {1}", register, ex.Message);
+                value = 0;
+                return false;
+            }
+        }
+    }
+
     protected bool TryWriteEcByte(ushort register, byte value)
     {
         lock (updateLock)

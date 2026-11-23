@@ -1857,5 +1857,29 @@ namespace HandheldCompanion.Properties
                 this["LegionControllerMode"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int BatteryChargeLimitPreviousPercent {
+            get {
+                return ((int)(this["BatteryChargeLimitPreviousPercent"]));
+            }
+            set {
+                this["BatteryChargeLimitPreviousPercent"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int BatteryBypassChargingPreviousValue {
+            get {
+                return ((int)(this["BatteryBypassChargingPreviousValue"]));
+            }
+            set {
+                this["BatteryBypassChargingPreviousValue"] = value;
+            }
+        }
     }
 }
